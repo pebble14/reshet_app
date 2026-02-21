@@ -51,4 +51,10 @@ class DatabaseService {
 
     return _database!;
   }
+
+  /// 테스트용 DB 연결 확인 메서드
+  /// 실제 테이블 없이 간단한 문자열을 반환한다.
+  static Future<String> getTestData() async {
+    return "DB 연결 확인 완료";
+  }
 }

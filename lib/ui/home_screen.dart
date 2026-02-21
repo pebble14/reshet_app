@@ -36,6 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
   /// true  → 로딩 중
   /// false → 준비 완료
   bool _isLoading = true;
+  String _dbMessage = '';
 
   /// 위젯이 처음 생성될 때 1회 호출되는 생명주기 메서드
   /// 여기서 데이터베이스 초기화를 시작한다.
@@ -51,6 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       await DatabaseService.initialize();
       await DatabaseService.openDatabaseFile();
+      _dbMessage = await DatabaseService.getTestData();
 
       // 위젯이 여전히 화면에 존재할 때만 상태 변경
       if (!mounted) return;
@@ -75,7 +77,10 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Center(
         child: _isLoading
             ? const CircularProgressIndicator() // 로딩 중 표시
-            : const Text('Reshet 데이터 관리 프로그램', style: TextStyle(fontSize: 20)),
+            : Text(
+                _dbMessage,
+                style: const TextStyle(fontSize: 20),
+              ), // DB 준비 완료 후 메시지 표시
       ),
     );
   }
