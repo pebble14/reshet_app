@@ -45,7 +45,7 @@ class DatabaseService {
     final currentPath = Directory.current.path;
 
     // data/reshet.db 경로 생성
-    final dbPath = join(currentPath, 'data', 'reshet.db');
+    final dbPath = join(currentPath, 'data', 'bbwdb_20260106.db');
 
     _database = await databaseFactory.openDatabase(dbPath);
 
