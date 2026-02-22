@@ -52,7 +52,14 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       await DatabaseService.initialize();
       await DatabaseService.openDatabaseFile();
+
       _dbMessage = await DatabaseService.getTestData();
+
+      final tables = await DatabaseService.getTableList();
+      print("테이블 목록:");
+      for (var table in tables) {
+        print(" - $table");
+      }
 
       // 위젯이 여전히 화면에 존재할 때만 상태 변경
       if (!mounted) return;
@@ -74,14 +81,42 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Reshet')),
-      body: Center(
-        child: _isLoading
-            ? const CircularProgressIndicator() // 로딩 중 표시
-            : Text(
-                _dbMessage,
-                style: const TextStyle(fontSize: 20),
-              ), // DB 준비 완료 후 메시지 표시
-      ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : FutureBuilder<List<Map<String, dynamic>>>(
+              future: DatabaseService.getWords(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (snapshot.hasError) {
+                  return Center(child: Text('에러 발생: ${snapshot.error}'));
+                }
+
+                final words = snapshot.data ?? [];
+
+                if (words.isEmpty) {
+                  return const Center(child: Text('데이터 없음'));
+                }
+
+                return ListView.builder(
+                  itemCount: words.length,
+                  itemBuilder: (context, index) {
+                    final word = words[index];
+
+                    return ListTile(
+                      title: Text(word['WORD']?.toString() ?? '컬럼 확인 필요'),
+                      subtitle: Text(
+                        word.toString(),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
     );
   }
 }

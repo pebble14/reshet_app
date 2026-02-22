@@ -57,4 +57,30 @@ class DatabaseService {
   static Future<String> getTestData() async {
     return "DB 연결 확인 완료";
   }
+
+  /// 현재 연결된 DB의 모든 테이블 목록을 조회한다.
+  static Future<List<String>> getTableList() async {
+    final db = _database;
+
+    if (db == null) {
+      throw Exception("데이터베이스가 초기화되지 않았습니다.");
+    }
+
+    final result = await db.rawQuery(
+      "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;",
+    );
+
+    return result.map((row) => row['name'] as String).toList();
+  }
+
+  /// WORD_TABLE 데이터 일부 조회 (테스트용)
+  static Future<List<Map<String, dynamic>>> getWords() async {
+    final db = _database;
+
+    if (db == null) {
+      throw Exception("데이터베이스가 초기화되지 않았습니다.");
+    }
+
+    return await db.query('WORD_TABLE', limit: 50);
+  }
 }
