@@ -8,6 +8,7 @@
 
 import 'package:flutter/material.dart';
 import '../database/database_service.dart';
+import 'word_detail_screen.dart';
 
 /*
   HomeScreen 클래스
@@ -120,6 +121,14 @@ class _HomeScreenState extends State<HomeScreen> {
                         word['스트롱넘버']?.toString() ?? '',
                         style: const TextStyle(fontSize: 12),
                       ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => WordDetailScreen(word: word),
+                          ),
+                        );
+                      },
                     );
                   },
                 );
