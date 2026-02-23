@@ -106,11 +106,19 @@ class _HomeScreenState extends State<HomeScreen> {
                     final word = words[index];
 
                     return ListTile(
-                      title: Text(word['WORD']?.toString() ?? '컬럼 확인 필요'),
+                      title: Text(
+                        word['표기1']?.toString().isNotEmpty == true
+                            ? word['표기1'].toString()
+                            : (word['표기2'] ?? '').toString(),
+                      ),
                       subtitle: Text(
-                        word.toString(),
-                        maxLines: 1,
+                        word['의미1']?.toString() ?? '',
+                        maxLines: 2,
                         overflow: TextOverflow.ellipsis,
+                      ),
+                      trailing: Text(
+                        word['스트롱넘버']?.toString() ?? '',
+                        style: const TextStyle(fontSize: 12),
                       ),
                     );
                   },
