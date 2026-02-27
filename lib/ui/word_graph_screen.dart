@@ -14,40 +14,32 @@ class WordGraphScreen extends StatelessWidget {
         builder: (context, constraints) {
           final centerX = constraints.maxWidth / 2;
           final centerY = constraints.maxHeight / 2;
+          final dummyNodes = [
+            'A',
+            'B',
+            'C',
+            'D',
+            'E',
+            'F',
+            'G',
+          ]; // 나중에 실제 데이터로 대체 가능
 
           return Stack(
             children: [
               CustomPaint(
                 size: Size(constraints.maxWidth, constraints.maxHeight),
-                painter: GraphLinePainter(centerX, centerY),
+                painter: GraphLinePainter(centerX, centerY, dummyNodes.length),
               ),
 
+              // 중앙 노드
               Positioned(
                 left: centerX - 90,
                 top: centerY - 90,
                 child: _buildCenterNode(),
               ),
 
-              // 오른쪽 노드
-              Positioned(
-                left: centerX + 120,
-                top: centerY - 40,
-                child: _buildDummyNode('A'),
-              ),
-
-              // 왼쪽 노드
-              Positioned(
-                left: centerX - 240,
-                top: centerY - 40,
-                child: _buildDummyNode('B'),
-              ),
-
-              // 아래 노드
-              Positioned(
-                left: centerX - 40,
-                top: centerY + 140,
-                child: _buildDummyNode('C'),
-              ),
+              // 자동 배치 노드들
+              ..._buildDummyNodes(centerX, centerY, dummyNodes),
             ],
           );
         },
@@ -103,13 +95,42 @@ class WordGraphScreen extends StatelessWidget {
       child: Center(child: Text(label, textAlign: TextAlign.center)),
     );
   }
+
+  List<Widget> _buildDummyNodes(
+    double centerX,
+    double centerY,
+    List<String> nodes,
+  ) {
+    const double radius = 160;
+    const double nodeRadius = 40;
+
+    List<Widget> widgets = [];
+
+    for (int i = 0; i < nodes.length; i++) {
+      final angle = (2 * pi / nodes.length) * i;
+
+      final dx = centerX + radius * cos(angle);
+      final dy = centerY + radius * sin(angle);
+
+      widgets.add(
+        Positioned(
+          left: dx - nodeRadius,
+          top: dy - nodeRadius,
+          child: _buildDummyNode(nodes[i]),
+        ),
+      );
+    }
+
+    return widgets;
+  }
 }
 
 class GraphLinePainter extends CustomPainter {
   final double centerX;
   final double centerY;
+  final int nodeCount;
 
-  GraphLinePainter(this.centerX, this.centerY);
+  GraphLinePainter(this.centerX, this.centerY, this.nodeCount);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -117,21 +138,20 @@ class GraphLinePainter extends CustomPainter {
       ..color = Colors.grey
       ..strokeWidth = 2;
 
-    // 중앙점
+    const double radius = 160;
+
     final center = Offset(centerX, centerY);
 
-    // 오른쪽 노드 중심
-    final right = Offset(centerX + 160, centerY);
+    for (int i = 0; i < nodeCount; i++) {
+      final angle = (2 * pi / nodeCount) * i;
 
-    // 왼쪽 노드 중심
-    final left = Offset(centerX - 160, centerY);
+      final dx = centerX + radius * cos(angle);
+      final dy = centerY + radius * sin(angle);
 
-    // 아래 노드 중심
-    final bottom = Offset(centerX, centerY + 160);
+      final nodeCenter = Offset(dx, dy);
 
-    canvas.drawLine(center, right, paint);
-    canvas.drawLine(center, left, paint);
-    canvas.drawLine(center, bottom, paint);
+      canvas.drawLine(center, nodeCenter, paint);
+    }
   }
 
   @override
