@@ -17,10 +17,36 @@ class WordGraphScreen extends StatelessWidget {
 
           return Stack(
             children: [
+              CustomPaint(
+                size: Size(constraints.maxWidth, constraints.maxHeight),
+                painter: GraphLinePainter(centerX, centerY),
+              ),
+
               Positioned(
                 left: centerX - 90,
                 top: centerY - 90,
                 child: _buildCenterNode(),
+              ),
+
+              // 오른쪽 노드
+              Positioned(
+                left: centerX + 120,
+                top: centerY - 40,
+                child: _buildDummyNode('A'),
+              ),
+
+              // 왼쪽 노드
+              Positioned(
+                left: centerX - 240,
+                top: centerY - 40,
+                child: _buildDummyNode('B'),
+              ),
+
+              // 아래 노드
+              Positioned(
+                left: centerX - 40,
+                top: centerY + 140,
+                child: _buildDummyNode('C'),
               ),
             ],
           );
@@ -64,4 +90,50 @@ class WordGraphScreen extends StatelessWidget {
       ),
     );
   }
+
+  Widget _buildDummyNode(String label) {
+    return Container(
+      width: 80,
+      height: 80,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(color: Colors.grey, width: 2),
+        color: Colors.white,
+      ),
+      child: Center(child: Text(label, textAlign: TextAlign.center)),
+    );
+  }
+}
+
+class GraphLinePainter extends CustomPainter {
+  final double centerX;
+  final double centerY;
+
+  GraphLinePainter(this.centerX, this.centerY);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.grey
+      ..strokeWidth = 2;
+
+    // 중앙점
+    final center = Offset(centerX, centerY);
+
+    // 오른쪽 노드 중심
+    final right = Offset(centerX + 160, centerY);
+
+    // 왼쪽 노드 중심
+    final left = Offset(centerX - 160, centerY);
+
+    // 아래 노드 중심
+    final bottom = Offset(centerX, centerY + 160);
+
+    canvas.drawLine(center, right, paint);
+    canvas.drawLine(center, left, paint);
+    canvas.drawLine(center, bottom, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
