@@ -1,46 +1,115 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+
 import '../data/models/word.dart';
+import '../data/repositories/word_repository.dart';
 
-/// 단어 관계 그래프 화면 (현재: 더미 노드 기반)
-/// - 중앙 노드는 선택된 단어(centerWord)
-/// - 주변 노드는 더미 리스트를 원형으로 자동 배치
-/// - 엣지는 노드 개수에 맞춰 자동으로 연결선 렌더링
-class WordGraphScreen extends StatelessWidget {
-  /// 그래프의 중심이 되는 단어(모델)
-  final Word centerWord;
+/// WordGraphScreen
+/// - 중심 단어(선택된 단어)를 기준으로
+/// - WORD_RELATION을 통해 연결된 단어들을 원형으로 배치하고
+/// - 중심↔연결 단어 간 엣지(선)를 그리는 화면
+class WordGraphScreen extends StatefulWidget {
+  /// WordDetailScreen 등에서 넘겨준 중심 단어 (Map 형태)
+  /// ※ 지금은 기존 흐름을 깨지 않기 위해 Map을 유지하고,
+  ///    화면 내부에서 Word 모델로 변환한다.
+  final Map<String, dynamic> word;
 
-  const WordGraphScreen({super.key, required this.centerWord});
+  const WordGraphScreen({super.key, required this.word});
+
+  @override
+  State<WordGraphScreen> createState() => _WordGraphScreenState();
+}
+
+class _WordGraphScreenState extends State<WordGraphScreen> {
+  final WordRepository _repository = WordRepository();
+
+  late final Word _centerWord;
+
+  bool _isLoading = true;
+  String? _errorMessage;
+
+  /// 중심 단어와 연결된 단어 목록
+  List<Word> _connectedWords = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _centerWord = Word.fromMap(widget.word);
+    _loadConnectedWords();
+  }
+
+  Future<void> _loadConnectedWords() async {
+    try {
+      final words = await _repository.getConnectedWords(_centerWord.id);
+
+      if (!mounted) return;
+      setState(() {
+        _connectedWords = words;
+        _isLoading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _errorMessage = '연결 단어 로딩 실패: $e';
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    // 로딩
+    if (_isLoading) {
+      return Scaffold(
+        appBar: AppBar(title: Text('Word Graph')),
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    // 에러
+    if (_errorMessage != null) {
+      return Scaffold(
+        appBar: AppBar(title: Text('Word Graph')),
+        body: Center(child: Text(_errorMessage!)),
+      );
+    }
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Word Graph')),
+      appBar: AppBar(title: Text('Word Graph')),
       body: LayoutBuilder(
         builder: (context, constraints) {
           final centerX = constraints.maxWidth / 2;
           final centerY = constraints.maxHeight / 2;
 
-          // TODO: 다음 단계에서 DB(WORD_RELATION) 기반 실제 연결 단어로 교체
-          final dummyNodes = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
+          final nodes = _connectedWords;
 
           return Stack(
             children: [
-              /// 연결선(엣지) 렌더링
-              CustomPaint(
-                size: Size(constraints.maxWidth, constraints.maxHeight),
-                painter: GraphLinePainter(centerX, centerY, dummyNodes.length),
-              ),
+              // nodeCount가 0이면 painter에서 0으로 나누는 문제가 생길 수 있으므로 조건 처리
+              if (nodes.isNotEmpty)
+                CustomPaint(
+                  size: Size(constraints.maxWidth, constraints.maxHeight),
+                  painter: GraphLinePainter(centerX, centerY, nodes.length),
+                ),
 
-              /// 중앙 노드(선택 단어)
+              // 중앙 노드
               Positioned(
                 left: centerX - 90,
                 top: centerY - 90,
-                child: _buildCenterNode(),
+                child: _buildCenterNode(_centerWord),
               ),
 
-              /// 주변 노드(더미)
-              ..._buildDummyNodes(centerX, centerY, dummyNodes),
+              // 연결 노드들
+              ..._buildWordNodes(centerX, centerY, nodes),
+
+              // 연결이 없을 때 안내 문구
+              if (nodes.isEmpty)
+                Center(
+                  child: Text(
+                    '연결된 단어가 없습니다.',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                ),
             ],
           );
         },
@@ -48,8 +117,8 @@ class WordGraphScreen extends StatelessWidget {
     );
   }
 
-  /// 중앙 노드 UI
-  Widget _buildCenterNode() {
+  /// 중앙(선택) 단어 노드
+  Widget _buildCenterNode(Word word) {
     return Container(
       width: 180,
       height: 180,
@@ -63,21 +132,19 @@ class WordGraphScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(centerWord.language ?? '', style: const TextStyle(fontSize: 12)),
+          Text(word.language ?? '', style: const TextStyle(fontSize: 12)),
           const SizedBox(height: 4),
-          Text(centerWord.strongNumber ?? '',
-              style: const TextStyle(fontSize: 12)),
+          Text(word.strongNumber ?? '', style: const TextStyle(fontSize: 12)),
           const SizedBox(height: 6),
           Text(
-            centerWord.spelling1 ?? '',
+            word.spelling1 ?? '',
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 6),
-          Text(centerWord.pronunciation1 ?? '',
-              style: const TextStyle(fontSize: 12)),
+          Text(word.pronunciation1 ?? '', style: const TextStyle(fontSize: 12)),
           const SizedBox(height: 6),
           Text(
-            centerWord.meaning1 ?? '',
+            word.meaning1 ?? '',
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(fontSize: 12),
@@ -87,8 +154,12 @@ class WordGraphScreen extends StatelessWidget {
     );
   }
 
-  /// 주변(더미) 노드 UI
-  Widget _buildDummyNode(String label) {
+  /// 연결 단어 노드(원형)
+  Widget _buildWordNode(Word word) {
+    final label = (word.spelling1 != null && word.spelling1!.trim().isNotEmpty)
+        ? word.spelling1!
+        : word.id;
+
     return Container(
       width: 80,
       height: 80,
@@ -97,23 +168,33 @@ class WordGraphScreen extends StatelessWidget {
         border: Border.all(color: Colors.grey, width: 2),
         color: Colors.white,
       ),
-      child: Center(child: Text(label, textAlign: TextAlign.center)),
+      child: Center(
+        child: Text(
+          label,
+          textAlign: TextAlign.center,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(fontSize: 12),
+        ),
+      ),
     );
   }
 
-  /// 더미 노드들을 원형으로 자동 배치한다.
-  List<Widget> _buildDummyNodes(
+  /// 연결 단어들을 원형으로 자동 배치
+  List<Widget> _buildWordNodes(
     double centerX,
     double centerY,
-    List<String> nodes,
+    List<Word> words,
   ) {
+    if (words.isEmpty) return [];
+
     const double radius = 160;
     const double nodeRadius = 40;
 
     final List<Widget> widgets = [];
 
-    for (int i = 0; i < nodes.length; i++) {
-      final angle = (2 * pi / nodes.length) * i;
+    for (int i = 0; i < words.length; i++) {
+      final angle = (2 * pi / words.length) * i;
 
       final dx = centerX + radius * cos(angle);
       final dy = centerY + radius * sin(angle);
@@ -122,7 +203,7 @@ class WordGraphScreen extends StatelessWidget {
         Positioned(
           left: dx - nodeRadius,
           top: dy - nodeRadius,
-          child: _buildDummyNode(nodes[i]),
+          child: _buildWordNode(words[i]),
         ),
       );
     }
@@ -131,7 +212,7 @@ class WordGraphScreen extends StatelessWidget {
   }
 }
 
-/// 그래프 연결선(엣지) 렌더러
+/// 연결선(엣지) 렌더러
 class GraphLinePainter extends CustomPainter {
   final double centerX;
   final double centerY;
@@ -146,7 +227,6 @@ class GraphLinePainter extends CustomPainter {
       ..strokeWidth = 2;
 
     const double radius = 160;
-
     final center = Offset(centerX, centerY);
 
     for (int i = 0; i < nodeCount; i++) {
