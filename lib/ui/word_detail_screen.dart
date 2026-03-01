@@ -42,7 +42,7 @@ class WordDetailScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => WordGraphScreen(word: word),
+                  builder: (context) => WordGraphScreen(centerWord: centerWord),
                 ),
               );
             },

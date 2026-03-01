@@ -9,12 +9,10 @@ import '../data/repositories/word_repository.dart';
 /// - WORD_RELATION을 통해 연결된 단어들을 원형으로 배치하고
 /// - 중심↔연결 단어 간 엣지(선)를 그리는 화면
 class WordGraphScreen extends StatefulWidget {
-  /// WordDetailScreen 등에서 넘겨준 중심 단어 (Map 형태)
-  /// ※ 지금은 기존 흐름을 깨지 않기 위해 Map을 유지하고,
-  ///    화면 내부에서 Word 모델로 변환한다.
-  final Map<String, dynamic> word;
+  /// 그래프의 중심이 되는 단어(모델)
+  final Word centerWord;
 
-  const WordGraphScreen({super.key, required this.word});
+  const WordGraphScreen({super.key, required this.centerWord});
 
   @override
   State<WordGraphScreen> createState() => _WordGraphScreenState();
@@ -34,7 +32,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   @override
   void initState() {
     super.initState();
-    _centerWord = Word.fromMap(widget.word);
+    _centerWord = widget.centerWord;
     _loadConnectedWords();
   }
 
@@ -160,21 +158,31 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         ? word.spelling1!
         : word.id;
 
-    return Container(
-      width: 80,
-      height: 80,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        border: Border.all(color: Colors.grey, width: 2),
-        color: Colors.white,
-      ),
-      child: Center(
-        child: Text(
-          label,
-          textAlign: TextAlign.center,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-          style: const TextStyle(fontSize: 12),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => WordGraphScreen(centerWord: word),
+          ),
+        );
+      },
+      child: Container(
+        width: 80,
+        height: 80,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(color: Colors.grey, width: 2),
+          color: Colors.white,
+        ),
+        child: Center(
+          child: Text(
+            label,
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(fontSize: 12),
+          ),
         ),
       ),
     );
