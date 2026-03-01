@@ -1,3 +1,6 @@
+/// WORD_TABLE의 한 행을 앱에서 다루기 위한 모델 클래스
+/// - DB 컬럼(한글 키)을 Dart 필드(영문)로 매핑한다.
+/// - fromMap()은 DB 조회 결과 Map을 Word 객체로 변환한다.
 class Word {
   final String id;
   final String? language;

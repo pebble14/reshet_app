@@ -1,10 +1,16 @@
-import 'package:flutter/material.dart';
 import 'dart:math';
+import 'package:flutter/material.dart';
+import '../data/models/word.dart';
 
+/// 단어 관계 그래프 화면 (현재: 더미 노드 기반)
+/// - 중앙 노드는 선택된 단어(centerWord)
+/// - 주변 노드는 더미 리스트를 원형으로 자동 배치
+/// - 엣지는 노드 개수에 맞춰 자동으로 연결선 렌더링
 class WordGraphScreen extends StatelessWidget {
-  final Map<String, dynamic> word;
+  /// 그래프의 중심이 되는 단어(모델)
+  final Word centerWord;
 
-  const WordGraphScreen({super.key, required this.word});
+  const WordGraphScreen({super.key, required this.centerWord});
 
   @override
   Widget build(BuildContext context) {
@@ -14,31 +20,26 @@ class WordGraphScreen extends StatelessWidget {
         builder: (context, constraints) {
           final centerX = constraints.maxWidth / 2;
           final centerY = constraints.maxHeight / 2;
-          final dummyNodes = [
-            'A',
-            'B',
-            'C',
-            'D',
-            'E',
-            'F',
-            'G',
-          ]; // 나중에 실제 데이터로 대체 가능
+
+          // TODO: 다음 단계에서 DB(WORD_RELATION) 기반 실제 연결 단어로 교체
+          final dummyNodes = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
 
           return Stack(
             children: [
+              /// 연결선(엣지) 렌더링
               CustomPaint(
                 size: Size(constraints.maxWidth, constraints.maxHeight),
                 painter: GraphLinePainter(centerX, centerY, dummyNodes.length),
               ),
 
-              // 중앙 노드
+              /// 중앙 노드(선택 단어)
               Positioned(
                 left: centerX - 90,
                 top: centerY - 90,
                 child: _buildCenterNode(),
               ),
 
-              // 자동 배치 노드들
+              /// 주변 노드(더미)
               ..._buildDummyNodes(centerX, centerY, dummyNodes),
             ],
           );
@@ -47,6 +48,7 @@ class WordGraphScreen extends StatelessWidget {
     );
   }
 
+  /// 중앙 노드 UI
   Widget _buildCenterNode() {
     return Container(
       width: 180,
@@ -61,19 +63,21 @@ class WordGraphScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(word['언어'] ?? '', style: const TextStyle(fontSize: 12)),
+          Text(centerWord.language ?? '', style: const TextStyle(fontSize: 12)),
           const SizedBox(height: 4),
-          Text(word['스트롱넘버'] ?? '', style: const TextStyle(fontSize: 12)),
+          Text(centerWord.strongNumber ?? '',
+              style: const TextStyle(fontSize: 12)),
           const SizedBox(height: 6),
           Text(
-            word['표기1'] ?? '',
+            centerWord.spelling1 ?? '',
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 6),
-          Text(word['발음1'] ?? '', style: const TextStyle(fontSize: 12)),
+          Text(centerWord.pronunciation1 ?? '',
+              style: const TextStyle(fontSize: 12)),
           const SizedBox(height: 6),
           Text(
-            word['의미1'] ?? '',
+            centerWord.meaning1 ?? '',
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(fontSize: 12),
@@ -83,6 +87,7 @@ class WordGraphScreen extends StatelessWidget {
     );
   }
 
+  /// 주변(더미) 노드 UI
   Widget _buildDummyNode(String label) {
     return Container(
       width: 80,
@@ -96,6 +101,7 @@ class WordGraphScreen extends StatelessWidget {
     );
   }
 
+  /// 더미 노드들을 원형으로 자동 배치한다.
   List<Widget> _buildDummyNodes(
     double centerX,
     double centerY,
@@ -104,7 +110,7 @@ class WordGraphScreen extends StatelessWidget {
     const double radius = 160;
     const double nodeRadius = 40;
 
-    List<Widget> widgets = [];
+    final List<Widget> widgets = [];
 
     for (int i = 0; i < nodes.length; i++) {
       final angle = (2 * pi / nodes.length) * i;
@@ -125,6 +131,7 @@ class WordGraphScreen extends StatelessWidget {
   }
 }
 
+/// 그래프 연결선(엣지) 렌더러
 class GraphLinePainter extends CustomPainter {
   final double centerX;
   final double centerY;
@@ -148,9 +155,7 @@ class GraphLinePainter extends CustomPainter {
       final dx = centerX + radius * cos(angle);
       final dy = centerY + radius * sin(angle);
 
-      final nodeCenter = Offset(dx, dy);
-
-      canvas.drawLine(center, nodeCenter, paint);
+      canvas.drawLine(center, Offset(dx, dy), paint);
     }
   }
 

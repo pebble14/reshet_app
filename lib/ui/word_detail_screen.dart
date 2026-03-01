@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'word_graph_screen.dart';
+import '../data/models/word.dart';
 
 class WordDetailScreen extends StatelessWidget {
   final Map<String, dynamic> word;
@@ -36,10 +37,12 @@ class WordDetailScreen extends StatelessWidget {
 
           ElevatedButton(
             onPressed: () {
+              final Word centerWord = Word.fromMap(word);
+
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => WordGraphScreen(word: word),
+                  builder: (context) => WordGraphScreen(centerWord: centerWord),
                 ),
               );
             },
