@@ -175,6 +175,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                           edgeColors,
                           edgeLabels,
                           showLabels: _currentScale >= _labelVisibleScaleThreshold,
+                          sceneScale: _currentScale,
                         ),
                       ),
 
@@ -352,7 +353,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
   /// 엣지(관계) 라벨 텍스트 생성
   /// - 우선순위: relationTypeLabel(코드 테이블 라벨) > relationType(코드) > 빈 문자열
-  /// - 너무 길면 잘라서 그래프 가독성을 유지한다.
+  /// - 내부적으로 코드/영문 라벨을 사람이 읽기 좋은 짧은 라벨로 정리한다.
   String _labelForEdge(WordRelationEdgeInfo? info) {
     final raw = (info?.relationTypeLabel?.trim().isNotEmpty ?? false)
         ? info!.relationTypeLabel!.trim()
@@ -360,13 +361,42 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
     if (raw.isEmpty) return '';
 
+    final normalized = _normalizeRelationLabel(raw);
+
     // 너무 길면 잘라서 표시(가독성)
-    const maxLen = 14;
-    if (raw.length <= maxLen) return raw;
-    return '${raw.substring(0, maxLen)}…';
+    const maxLen = 10; // 태그가 잘린다고 했으니 여기서 조금 더 짧게
+    if (normalized.length <= maxLen) return normalized;
+    return '${normalized.substring(0, maxLen)}…';
   }
 
-    /// 마우스 휠(스크롤)로 마우스 위치를 기준으로 확대/축소한다.
+  /// 관계 라벨 정리
+  /// - DB에 코드 테이블에 없는 값이 들어올 수 있어(예: unspecified, related, root-related)
+  /// - 그래프 태그는 짧고 명확해야 하므로 사용자 친화 라벨로 바꾼다.
+  String _normalizeRelationLabel(String raw) {
+    final v = raw.trim();
+
+    // 이미 한글이면 그대로 사용(불필요 변환 방지)
+    final hasKorean = RegExp(r'[가-힣]').hasMatch(v);
+    if (hasKorean) return v;
+
+    switch (v) {
+      case 'unspecified':
+        return '미분류';
+      case 'related':
+        return '관련';
+      case 'root-related':
+        return '어근관련';
+      case 'synonym':
+        return '동의어';
+      case 'antonym':
+        return '반의어';
+      default:
+        // 기타 영문 라벨/코드는 보기 좋게 정리
+        return v.replaceAll('-', ' ');
+    }
+  }
+
+  /// 마우스 휠(스크롤)로 마우스 위치를 기준으로 확대/축소한다.
   /// - Windows 데스크탑에서 "마우스 중심 줌"을 구현하기 위함.
   void _handlePointerScroll(PointerScrollEvent event) {
     // 휠 아래로: 확대, 위로: 축소(감각은 취향이지만 이게 일반적)
@@ -412,6 +442,9 @@ class GraphLinePainter extends CustomPainter {
 
   /// 줌 레벨에 따라 라벨 표시/숨김
   final bool showLabels;
+  /// 현재 씬(그래프) 줌 배율
+  /// - 태그 텍스트/패딩을 1/scale로 보정하여 “거의 고정 크기”처럼 보이게 한다.
+  final double sceneScale;
 
   GraphLinePainter(
     this.centerX,
@@ -419,6 +452,7 @@ class GraphLinePainter extends CustomPainter {
     this.edgeColors,
     this.edgeLabels, {
     required this.showLabels,
+    required this.sceneScale,
   });
 
   @override
@@ -444,23 +478,48 @@ class GraphLinePainter extends CustomPainter {
       // 라벨(관계 타입) 태그 표시: 선 중간 근처(약간 중심 쪽)
       final label = (i < edgeLabels.length) ? edgeLabels[i] : '';
       if (showLabels && label.isNotEmpty) {
-        // 선의 중간보다 약간 중심 쪽 위치가 보기 좋다(겹침 감소)
-        final mid = Offset(
-          (center.dx + dx) / 2,
-          (center.dy + dy) / 2,
+        // 중심 -> 주변 노드 방향 벡터
+        final vx = dx - center.dx;
+        final vy = dy - center.dy;
+
+        // 태그는 선의 "중간"이 아니라, 중심에서 더 멀리(주변 노드 쪽) 배치한다.
+        // t가 클수록 주변 노드에 가까워진다. (0.5 = 중간)
+        const t = 0.68;
+
+        // 태그 기준점(중앙에서 멀어진 지점)
+        final anchor = Offset(
+          center.dx + vx * t,
+          center.dy + vy * t,
         );
 
-        _drawEdgeLabel(canvas, mid, label, edgeColors[i]);
+        // 선 벡터의 수직 방향으로 약간 이동(선/태그 겹침 완화)
+        final len = sqrt(vx * vx + vy * vy);
+        final nx = (len == 0) ? 0.0 : -vy / len; // 수직 단위벡터 x
+        final ny = (len == 0) ? 0.0 : vx / len;  // 수직 단위벡터 y
+
+        final scale = sceneScale <= 0 ? 1.0 : sceneScale;
+        // 줌과 관계없이 적당한 오프셋(역스케일) 유지
+        final offset = (12.0 / scale).clamp(6.0, 14.0);
+
+        final shifted = Offset(anchor.dx + nx * offset, anchor.dy + ny * offset);
+
+        _drawEdgeLabel(canvas, shifted, label, edgeColors[i]);
       }
     }
   }
 
   void _drawEdgeLabel(Canvas canvas, Offset pos, String text, Color edgeColor) {
+    
+    final scale = sceneScale <= 0 ? 1.0 : sceneScale;
+    final fontSize = (11.0 / scale).clamp(9.0, 12.0);
+    final padX = (6.0 / scale).clamp(4.0, 7.0);
+    final padY = (3.0 / scale).clamp(2.0, 4.0);
+    
     final textPainter = TextPainter(
       text: TextSpan(
         text: text,
-        style: const TextStyle(
-          fontSize: 11,
+          style: TextStyle(
+          fontSize: fontSize,
           fontWeight: FontWeight.w600,
           color: Colors.black87,
         ),
@@ -469,9 +528,6 @@ class GraphLinePainter extends CustomPainter {
       maxLines: 1,
       ellipsis: '…',
     )..layout();
-
-    const padX = 6.0;
-    const padY = 3.0;
 
     final rect = Rect.fromCenter(
       center: pos,
