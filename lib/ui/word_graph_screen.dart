@@ -186,7 +186,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                           centerY,
                           edgeColors,
                           edgeLabels,
-                          showLabels: _currentScale >= _labelVisibleScaleThreshold,
+                          showLabels: false,
                           sceneScale: _currentScale,
                           selectedIndex: selectedIndex,
                         ),
@@ -196,6 +196,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                       top: centerY - 90,
                       child: _buildCenterNode(_centerWord),
                     ),
+                    ..._buildEdgeLabelWidgets(centerX, centerY, nodes, edgeLabels, edgeColors),
+
                     ..._buildWordNodes(centerX, centerY, nodes),
                     if (nodes.isEmpty)
                       Center(
@@ -342,6 +344,134 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     }
 
     return widgets;
+  }
+
+  /// 엣지 태그(라벨)를 "클릭 가능한 위젯"으로 렌더링한다.
+  /// - Painter는 선만 그리고, 태그는 위젯으로 올려서 클릭 이벤트를 처리한다.
+  List<Widget> _buildEdgeLabelWidgets(
+    double centerX,
+    double centerY,
+    List<Word> nodes,
+    List<String> edgeLabels,
+    List<Color> edgeColors,
+  ) {
+    // 줌이 작으면 태그 숨김(기존 정책 유지)
+    if (_currentScale < _labelVisibleScaleThreshold) return [];
+    if (nodes.isEmpty) return [];
+
+    const double radius = 160.0;
+
+    // 태그가 선 위에 겹치지 않도록 약간 수직 방향 오프셋(줌 역보정)
+    final double offset = (12.0 / (_currentScale <= 0 ? 1.0 : _currentScale)).clamp(6.0, 14.0);
+
+    final List<Widget> widgets = [];
+
+    for (int i = 0; i < nodes.length; i++) {
+      final label = edgeLabels[i].trim();
+      if (label.isEmpty) continue;
+
+      final angle = (2 * pi / nodes.length) * i;
+
+      final dx = centerX + radius * cos(angle);
+      final dy = centerY + radius * sin(angle);
+
+      // 중심 -> 주변 방향 벡터
+      final vx = dx - centerX;
+      final vy = dy - centerY;
+
+      // 태그는 중심에서 멀어지게(주변 노드 쪽)
+      const t = 0.68;
+      final anchor = Offset(centerX + vx * t, centerY + vy * t);
+
+      // 수직 단위벡터
+      final len = sqrt(vx * vx + vy * vy);
+      final nx = (len == 0) ? 0.0 : -vy / len;
+      final ny = (len == 0) ? 0.0 : vx / len;
+
+      final pos = Offset(anchor.dx + nx * offset, anchor.dy + ny * offset);
+
+      final otherWord = nodes[i];
+      final edgeInfo = _edgeInfoByOtherId[otherWord.id];
+
+      widgets.add(
+        Positioned(
+          left: pos.dx,
+          top: pos.dy,
+          child: FractionalTranslation(
+            translation: const Offset(-0.5, -0.5),
+            child: GestureDetector(
+              onTap: () {
+                if (edgeInfo == null) return;
+                _showEdgeDetailDialog(otherWord, edgeInfo);
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(color: edgeColors[i].withOpacity(0.9), width: 1.5),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  label,
+                  style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return widgets;
+  }
+
+  /// 엣지(관계) 상세 팝업을 표시한다.
+  void _showEdgeDetailDialog(Word otherWord, WordRelationEdgeInfo info) {
+    final categoryText = (info.categoryLabel?.trim().isNotEmpty ?? false)
+        ? info.categoryLabel!.trim()
+        : (info.categoryCode?.trim().isNotEmpty ?? false)
+            ? info.categoryCode!.trim()
+            : 'unspecified';
+
+    final typeText = (info.relationTypeLabel?.trim().isNotEmpty ?? false)
+        ? info.relationTypeLabel!.trim()
+        : (info.relationType?.trim().isNotEmpty ?? false)
+            ? info.relationType!.trim()
+            : 'unspecified';
+
+    final noteText = (info.note?.trim().isNotEmpty ?? false) ? info.note!.trim() : '(없음)';
+    final sourceText = (info.source?.trim().isNotEmpty ?? false) ? info.source!.trim() : '(없음)';
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('관계 상세: ${otherWord.spelling1 ?? otherWord.id}'),
+          content: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('카테고리: $categoryText'),
+                const SizedBox(height: 8),
+                Text('타입: $typeText'),
+                const SizedBox(height: 12),
+                const Text('노트:', style: TextStyle(fontWeight: FontWeight.bold)),
+                Text(noteText),
+                const SizedBox(height: 12),
+                const Text('소스:', style: TextStyle(fontWeight: FontWeight.bold)),
+                Text(sourceText),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('닫기'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   /// 관계 카테고리 코드에 따른 색상 매핑

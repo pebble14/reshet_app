@@ -12,6 +12,8 @@ class WordRelationEdgeInfo {
   final String? categoryLabel;
   final String? relationType;
   final String? relationTypeLabel;
+  final String? note;
+  final String? source;
 
   WordRelationEdgeInfo({
     required this.otherWordId,
@@ -19,6 +21,8 @@ class WordRelationEdgeInfo {
     this.categoryLabel,
     this.relationType,
     this.relationTypeLabel,
+    this.note,
+    this.source,
   });
 
   factory WordRelationEdgeInfo.fromMap(Map<String, dynamic> map) {
@@ -28,6 +32,8 @@ class WordRelationEdgeInfo {
       categoryLabel: map['category_label'] as String?,
       relationType: map['relation_type'] as String?,
       relationTypeLabel: map['relation_type_label'] as String?,
+      note: map['note'] as String?,
+      source: map['source'] as String?,
     );
   }
 }
@@ -88,7 +94,9 @@ class WordRepository {
         wr.category_code AS category_code,
         rc.label AS category_label,
         wr.relation_type AS relation_type,
-        rt.label AS relation_type_label
+        rt.label AS relation_type_label,
+        wr.note AS note,
+        wr.source AS source
       FROM WORD_RELATION wr
       LEFT JOIN RELATION_CATEGORY rc
         ON rc.code = wr.category_code
