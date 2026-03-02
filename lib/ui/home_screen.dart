@@ -12,6 +12,7 @@ import 'word_detail_screen.dart';
 import '../data/models/word.dart';
 import '../data/repositories/word_repository.dart';
 import 'word_graph_screen.dart';
+import 'word_explorer_screen.dart';
 
 /*
   HomeScreen 클래스
@@ -208,11 +209,24 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             // 탭은 기본적으로 상세로
                             onTap: () {
+                              final width = MediaQuery.of(context).size.width;
+
+                              // 넓은 화면(데스크탑/태블릿)에서는 스플릿뷰
+                              if (width >= 900) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => WordExplorerScreen(initialWordMap: wordMap),
+                                  ),
+                                );
+                                return;
+                              }
+
+                              // 좁은 화면에서는 기존 상세 화면
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) =>
-                                      WordDetailScreen(word: wordMap),
+                                  builder: (_) => WordDetailScreen(word: wordMap),
                                 ),
                               );
                             },

@@ -10,9 +10,17 @@ import '../data/repositories/word_repository.dart';
 /// - 중심↔연결 단어 간 엣지(선)를 그리는 화면
 class WordGraphScreen extends StatefulWidget {
   /// 그래프의 중심이 되는 단어(모델)
-  final Word centerWord;
+    final Word centerWord;
 
-  const WordGraphScreen({super.key, required this.centerWord});
+  /// 스플릿뷰 등에서 노드 클릭 시 화면 push 대신
+  /// 선택 이벤트만 전달하고 싶을 때 사용한다.
+  final ValueChanged<Word>? onSelectWord;
+
+  const WordGraphScreen({
+    super.key,
+    required this.centerWord,
+    this.onSelectWord,
+  });
 
   @override
   State<WordGraphScreen> createState() => _WordGraphScreenState();
@@ -160,10 +168,17 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
     return GestureDetector(
       onTap: () {
+        // ✅ 콜백이 있으면(스플릿뷰) 우측 패널 갱신용으로 전달
+        if (widget.onSelectWord != null) {
+          widget.onSelectWord!(word);
+          return;
+        }
+
+        // ✅ 콜백이 없으면(기존 방식) push 탐색 유지
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => WordGraphScreen(centerWord: word),
+            builder: (_) => WordGraphScreen(centerWord: word),
           ),
         );
       },
