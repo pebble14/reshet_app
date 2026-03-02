@@ -2,6 +2,36 @@ import '../../database/database_service.dart';
 import '../models/word.dart';
 
 /// 단어(WORD_TABLE) 및 관계(WORD_RELATION) 조회 전용 Repository
+/// 그래프 엣지(관계선) 표시를 위한 관계 메타 정보
+/// - otherWordId: 중심 단어 기준으로 연결된 “상대 단어 id”
+/// - categoryCode/categoryLabel: RELATION_CATEGORY 기반(없으면 null)
+/// - relationType/relationTypeLabel: RELATION_TYPE 기반(없으면 null)
+class WordRelationEdgeInfo {
+  final String otherWordId;
+  final String? categoryCode;
+  final String? categoryLabel;
+  final String? relationType;
+  final String? relationTypeLabel;
+
+  WordRelationEdgeInfo({
+    required this.otherWordId,
+    this.categoryCode,
+    this.categoryLabel,
+    this.relationType,
+    this.relationTypeLabel,
+  });
+
+  factory WordRelationEdgeInfo.fromMap(Map<String, dynamic> map) {
+    return WordRelationEdgeInfo(
+      otherWordId: map['other_word_id'] as String,
+      categoryCode: map['category_code'] as String?,
+      categoryLabel: map['category_label'] as String?,
+      relationType: map['relation_type'] as String?,
+      relationTypeLabel: map['relation_type_label'] as String?,
+    );
+  }
+}
+
 class WordRepository {
   /// id로 단어 1건 조회
   Future<Word?> getWordById(String id) async {
@@ -40,6 +70,39 @@ class WordRepository {
 
     return result.map((map) => Word.fromMap(map)).toList();
   }
+
+  /// 특정 단어(wordId)와 연결된 관계(엣지) 메타 정보 조회
+  /// - WORD_RELATION + RELATION_TYPE + RELATION_CATEGORY를 조인한다.
+  /// - WORD_RELATION에 존재하지만 코드 테이블에 없는 값(예: unspecified, related)은
+  ///   조인 결과가 null이 될 수 있으므로 UI에서 fallback 처리한다.
+  Future<List<WordRelationEdgeInfo>> getRelationEdges(String wordId) async {
+    final db = await DatabaseService.openDatabaseFile();
+
+    final rows = await db.rawQuery(
+      '''
+      SELECT
+        CASE
+          WHEN wr.word_id_1 = ? THEN wr.word_id_2
+          ELSE wr.word_id_1
+        END AS other_word_id,
+        wr.category_code AS category_code,
+        rc.label AS category_label,
+        wr.relation_type AS relation_type,
+        rt.label AS relation_type_label
+      FROM WORD_RELATION wr
+      LEFT JOIN RELATION_CATEGORY rc
+        ON rc.code = wr.category_code
+      LEFT JOIN RELATION_TYPE rt
+        ON rt.code = wr.relation_type
+      WHERE wr.word_id_1 = ?
+         OR wr.word_id_2 = ?
+      ''',
+      [wordId, wordId, wordId],
+    );
+
+    return rows.map((m) => WordRelationEdgeInfo.fromMap(m)).toList();
+  }
+
   /// WORD_TABLE에서 단어 목록을 일부 조회한다 (홈 화면 기본 리스트용)
   /// - 상세 화면에서 모든 컬럼을 보여주기 위해 Map 그대로 반환한다.
   Future<List<Map<String, dynamic>>> getWordsMap({int limit = 50}) async {

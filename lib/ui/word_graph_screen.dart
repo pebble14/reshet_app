@@ -37,6 +37,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   /// 중심 단어와 연결된 단어 목록
   List<Word> _connectedWords = [];
 
+  /// 상대 단어 id 기준으로 관계(엣지) 메타를 보관한다.
+  /// - 여러 관계가 있을 수 있으나, 현재는 “표시용 1개”만 선택(마지막으로 덮어씀)
+  final Map<String, WordRelationEdgeInfo> _edgeInfoByOtherId = {};
+
   @override
   void initState() {
     super.initState();
@@ -47,10 +51,17 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   Future<void> _loadConnectedWords() async {
     try {
       final words = await _repository.getConnectedWords(_centerWord.id);
+      final edges = await _repository.getRelationEdges(_centerWord.id);
 
       if (!mounted) return;
       setState(() {
         _connectedWords = words;
+
+        _edgeInfoByOtherId.clear();
+        for (final e in edges) {
+          _edgeInfoByOtherId[e.otherWordId] = e;
+        }
+
         _isLoading = false;
       });
     } catch (e) {
@@ -88,6 +99,11 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
           final centerY = constraints.maxHeight / 2;
 
           final nodes = _connectedWords;
+          // 노드 배치 순서(원형 배치 순서)와 동일한 순서로 엣지 색상을 만든다.
+          final edgeColors = nodes.map((w) {
+            final info = _edgeInfoByOtherId[w.id];
+            return _colorForCategory(info?.categoryCode);
+          }).toList();
 
           return Stack(
             children: [
@@ -95,7 +111,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
               if (nodes.isNotEmpty)
                 CustomPaint(
                   size: Size(constraints.maxWidth, constraints.maxHeight),
-                  painter: GraphLinePainter(centerX, centerY, nodes.length),
+                  painter: GraphLinePainter(centerX, centerY, edgeColors),
                 ),
 
               // 중앙 노드
@@ -136,7 +152,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(word.language ?? '', style: const TextStyle(fontSize: 12)),
           const SizedBox(height: 4),
@@ -151,6 +167,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
           const SizedBox(height: 6),
           Text(
             word.meaning1 ?? '',
+            textAlign: TextAlign.center,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(fontSize: 12),
@@ -161,7 +178,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   }
 
   /// 연결 단어 노드(원형)
-  Widget _buildWordNode(Word word) {
+  Widget _buildWordNode(Word word, Color borderColor) {
     final label = (word.spelling1 != null && word.spelling1!.trim().isNotEmpty)
         ? word.spelling1!
         : word.id;
@@ -187,7 +204,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         height: 80,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          border: Border.all(color: Colors.grey, width: 2),
+          border: Border.all(color: borderColor, width: 2),
           color: Colors.white,
         ),
         child: Center(
@@ -226,12 +243,44 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         Positioned(
           left: dx - nodeRadius,
           top: dy - nodeRadius,
-          child: _buildWordNode(words[i]),
+          child: _buildWordNode(
+            words[i],
+            _colorForCategory(_edgeInfoByOtherId[words[i].id]?.categoryCode),
+          ),
         ),
       );
     }
 
     return widgets;
+  }
+
+  /// 관계 카테고리 코드에 따른 색상 매핑
+  /// - RELATION_CATEGORY.code 값 기준
+  /// - WORD_RELATION에 code 테이블에 없는 값(예: unspecified)이 있을 수 있으므로 기본값을 둔다.
+  Color _colorForCategory(String? categoryCode) {
+    switch (categoryCode) {
+      case 'semantic':
+        return Colors.green;
+      case 'lexical':
+        return Colors.blue;
+      case 'morphological':
+        return Colors.orange;
+      case 'etymological':
+        return Colors.purple;
+      case 'phonological':
+        return Colors.teal;
+      case 'transliteration':
+        return Colors.brown;
+      case 'translation':
+        return Colors.indigo;
+
+      // DB에 'unspecified'가 존재하지만 RELATION_CATEGORY엔 없어서 fallback 필요
+      case 'unspecified':
+        return Colors.grey;
+
+      default:
+        return Colors.grey;
+    }
   }
 }
 
@@ -239,18 +288,19 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 class GraphLinePainter extends CustomPainter {
   final double centerX;
   final double centerY;
-  final int nodeCount;
 
-  GraphLinePainter(this.centerX, this.centerY, this.nodeCount);
+  /// 노드 배치 순서와 동일한 순서의 엣지 색상 리스트
+  final List<Color> edgeColors;
+
+  GraphLinePainter(this.centerX, this.centerY, this.edgeColors);
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.grey
-      ..strokeWidth = 2;
-
     const double radius = 160;
     final center = Offset(centerX, centerY);
+
+    final nodeCount = edgeColors.length;
+    if (nodeCount == 0) return;
 
     for (int i = 0; i < nodeCount; i++) {
       final angle = (2 * pi / nodeCount) * i;
@@ -258,10 +308,18 @@ class GraphLinePainter extends CustomPainter {
       final dx = centerX + radius * cos(angle);
       final dy = centerY + radius * sin(angle);
 
+      final paint = Paint()
+        ..color = edgeColors[i]
+        ..strokeWidth = 2;
+
       canvas.drawLine(center, Offset(dx, dy), paint);
     }
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(covariant GraphLinePainter oldDelegate) {
+    // node 수나 색상이 변하면 다시 그리기
+    return oldDelegate.edgeColors.length != edgeColors.length ||
+        oldDelegate.edgeColors != edgeColors;
+  }
 }
