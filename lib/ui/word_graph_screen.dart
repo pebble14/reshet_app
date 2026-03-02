@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 
 import '../data/models/word.dart';
 import '../data/repositories/word_repository.dart';
@@ -29,6 +30,15 @@ class WordGraphScreen extends StatefulWidget {
 class _WordGraphScreenState extends State<WordGraphScreen> {
   final WordRepository _repository = WordRepository();
 
+  /// 그래프 줌/팬 상태를 관리하는 컨트롤러
+  final TransformationController _transformController = TransformationController();
+
+  /// 현재 줌 배율(태그 표시/숨김 등에 사용)
+  double _currentScale = 1.0;
+
+  /// 이 배율보다 작아지면 엣지 태그를 숨긴다(가독성/겹침 감소)
+  static const double _labelVisibleScaleThreshold = 1.15;
+
   late final Word _centerWord;
 
   bool _isLoading = true;
@@ -46,6 +56,12 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     super.initState();
     _centerWord = widget.centerWord;
     _loadConnectedWords();
+  }
+
+  @override
+  void dispose() {
+    _transformController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadConnectedWords() async {
@@ -78,7 +94,19 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     // 로딩
     if (_isLoading) {
       return Scaffold(
-        appBar: AppBar(title: Text('Word Graph')),
+        appBar: AppBar(
+          title: const Text('Word Graph'),
+          actions: [
+            IconButton(
+              tooltip: '보기 초기화',
+              icon: const Icon(Icons.refresh),
+              onPressed: () {
+                _transformController.value = Matrix4.identity();
+                setState(() => _currentScale = 1.0);
+              },
+            ),
+          ],
+        ),
         body: Center(child: CircularProgressIndicator()),
       );
     }
@@ -110,34 +138,68 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
             return _labelForEdge(info);
           }).toList();
 
-          return Stack(
-            children: [
-              // nodeCount가 0이면 painter에서 0으로 나누는 문제가 생길 수 있으므로 조건 처리
-              if (nodes.isNotEmpty)
-                CustomPaint(
-                  size: Size(constraints.maxWidth, constraints.maxHeight),
-                  painter: GraphLinePainter(centerX, centerY, edgeColors, edgeLabels),
-                ),
+          final canvasSize = Size(constraints.maxWidth, constraints.maxHeight);
 
-              // 중앙 노드
-              Positioned(
-                left: centerX - 90,
-                top: centerY - 90,
-                child: _buildCenterNode(_centerWord),
+          // Stack을 고정 크기 캔버스로 만들고, InteractiveViewer로 줌/팬을 적용한다.
+          return Listener(
+            onPointerSignal: (event) {
+              if (event is PointerScrollEvent) {
+                _handlePointerScroll(event);
+              }
+            },
+            child: InteractiveViewer(
+              transformationController: _transformController,
+              minScale: 0.6,
+              maxScale: 3.5,
+              boundaryMargin: const EdgeInsets.all(2000),
+              panEnabled: true,
+              scaleEnabled: true,
+              onInteractionUpdate: (_) {
+                final newScale = _transformController.value.getMaxScaleOnAxis();
+                if (newScale != _currentScale) {
+                  setState(() => _currentScale = newScale);
+                }
+              },
+              child: SizedBox(
+                width: canvasSize.width,
+                height: canvasSize.height,
+                child: Stack(
+                  children: [
+                    // nodeCount가 0이면 painter에서 0으로 나누는 문제가 생길 수 있으므로 조건 처리
+                    if (nodes.isNotEmpty)
+                      CustomPaint(
+                        size: canvasSize,
+                        painter: GraphLinePainter(
+                          centerX,
+                          centerY,
+                          edgeColors,
+                          edgeLabels,
+                          showLabels: _currentScale >= _labelVisibleScaleThreshold,
+                        ),
+                      ),
+
+                    // 중앙 노드
+                    Positioned(
+                      left: centerX - 90,
+                      top: centerY - 90,
+                      child: _buildCenterNode(_centerWord),
+                    ),
+
+                    // 연결 노드들
+                    ..._buildWordNodes(centerX, centerY, nodes),
+
+                    // 연결이 없을 때 안내 문구
+                    if (nodes.isEmpty)
+                      Center(
+                        child: Text(
+                          '연결된 단어가 없습니다.',
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                      ),
+                  ],
+                ),
               ),
-
-              // 연결 노드들
-              ..._buildWordNodes(centerX, centerY, nodes),
-
-              // 연결이 없을 때 안내 문구
-              if (nodes.isEmpty)
-                Center(
-                  child: Text(
-                    '연결된 단어가 없습니다.',
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                ),
-            ],
+            ),
           );
         },
       ),
@@ -303,6 +365,41 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     if (raw.length <= maxLen) return raw;
     return '${raw.substring(0, maxLen)}…';
   }
+
+    /// 마우스 휠(스크롤)로 마우스 위치를 기준으로 확대/축소한다.
+  /// - Windows 데스크탑에서 "마우스 중심 줌"을 구현하기 위함.
+  void _handlePointerScroll(PointerScrollEvent event) {
+    // 휠 아래로: 확대, 위로: 축소(감각은 취향이지만 이게 일반적)
+    final scrollDelta = event.scrollDelta.dy;
+
+    // 스케일 변화량(너무 크지 않게)
+    final scaleFactor = (scrollDelta > 0) ? 0.92 : 1.08;
+
+    final matrix = _transformController.value;
+
+    // 현재 스케일
+    final currentScale = matrix.getMaxScaleOnAxis();
+    final nextScale = (currentScale * scaleFactor).clamp(0.6, 3.5);
+
+    // 실제 적용될 비율
+    final effective = nextScale / currentScale;
+
+    // 마우스 위치(로컬 좌표) 기준으로 줌
+    final focalPoint = event.localPosition;
+
+    final next = Matrix4.identity()
+      ..translate(focalPoint.dx, focalPoint.dy)
+      ..scale(effective)
+      ..translate(-focalPoint.dx, -focalPoint.dy)
+      ..multiply(matrix);
+
+    _transformController.value = next;
+
+    // 줌 값 갱신(태그 표시/숨김을 위해)
+    if (nextScale != _currentScale) {
+      setState(() => _currentScale = nextScale);
+    }
+  }
 }
 
 /// 연결선(엣지) 렌더러
@@ -310,12 +407,19 @@ class GraphLinePainter extends CustomPainter {
   final double centerX;
   final double centerY;
 
-  /// 노드 배치 순서와 동일한 순서의 엣지 색상 리스트
   final List<Color> edgeColors;
-    /// 엣지 라벨(노드 배치 순서와 동일한 순서)
   final List<String> edgeLabels;
 
-  GraphLinePainter(this.centerX, this.centerY, this.edgeColors, this.edgeLabels);
+  /// 줌 레벨에 따라 라벨 표시/숨김
+  final bool showLabels;
+
+  GraphLinePainter(
+    this.centerX,
+    this.centerY,
+    this.edgeColors,
+    this.edgeLabels, {
+    required this.showLabels,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -339,7 +443,7 @@ class GraphLinePainter extends CustomPainter {
 
       // 라벨(관계 타입) 태그 표시: 선 중간 근처(약간 중심 쪽)
       final label = (i < edgeLabels.length) ? edgeLabels[i] : '';
-      if (label.isNotEmpty) {
+      if (showLabels && label.isNotEmpty) {
         // 선의 중간보다 약간 중심 쪽 위치가 보기 좋다(겹침 감소)
         final mid = Offset(
           (center.dx + dx) / 2,
@@ -400,6 +504,7 @@ class GraphLinePainter extends CustomPainter {
     return oldDelegate.edgeColors.length != edgeColors.length ||
         oldDelegate.edgeColors != edgeColors ||
         oldDelegate.edgeLabels.length != edgeLabels.length ||
-        oldDelegate.edgeLabels != edgeLabels;
+        oldDelegate.edgeLabels != edgeLabels ||
+        oldDelegate.showLabels != showLabels;
   }
 }
