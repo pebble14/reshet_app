@@ -104,6 +104,11 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
             final info = _edgeInfoByOtherId[w.id];
             return _colorForCategory(info?.categoryCode);
           }).toList();
+          // 노드 배치 순서와 동일한 순서로 엣지 라벨을 만든다.
+          final edgeLabels = nodes.map((w) {
+            final info = _edgeInfoByOtherId[w.id];
+            return _labelForEdge(info);
+          }).toList();
 
           return Stack(
             children: [
@@ -111,7 +116,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
               if (nodes.isNotEmpty)
                 CustomPaint(
                   size: Size(constraints.maxWidth, constraints.maxHeight),
-                  painter: GraphLinePainter(centerX, centerY, edgeColors),
+                  painter: GraphLinePainter(centerX, centerY, edgeColors, edgeLabels),
                 ),
 
               // 중앙 노드
@@ -282,6 +287,22 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         return Colors.grey;
     }
   }
+
+  /// 엣지(관계) 라벨 텍스트 생성
+  /// - 우선순위: relationTypeLabel(코드 테이블 라벨) > relationType(코드) > 빈 문자열
+  /// - 너무 길면 잘라서 그래프 가독성을 유지한다.
+  String _labelForEdge(WordRelationEdgeInfo? info) {
+    final raw = (info?.relationTypeLabel?.trim().isNotEmpty ?? false)
+        ? info!.relationTypeLabel!.trim()
+        : (info?.relationType ?? '').trim();
+
+    if (raw.isEmpty) return '';
+
+    // 너무 길면 잘라서 표시(가독성)
+    const maxLen = 14;
+    if (raw.length <= maxLen) return raw;
+    return '${raw.substring(0, maxLen)}…';
+  }
 }
 
 /// 연결선(엣지) 렌더러
@@ -291,8 +312,10 @@ class GraphLinePainter extends CustomPainter {
 
   /// 노드 배치 순서와 동일한 순서의 엣지 색상 리스트
   final List<Color> edgeColors;
+    /// 엣지 라벨(노드 배치 순서와 동일한 순서)
+  final List<String> edgeLabels;
 
-  GraphLinePainter(this.centerX, this.centerY, this.edgeColors);
+  GraphLinePainter(this.centerX, this.centerY, this.edgeColors, this.edgeLabels);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -313,13 +336,70 @@ class GraphLinePainter extends CustomPainter {
         ..strokeWidth = 2;
 
       canvas.drawLine(center, Offset(dx, dy), paint);
+
+      // 라벨(관계 타입) 태그 표시: 선 중간 근처(약간 중심 쪽)
+      final label = (i < edgeLabels.length) ? edgeLabels[i] : '';
+      if (label.isNotEmpty) {
+        // 선의 중간보다 약간 중심 쪽 위치가 보기 좋다(겹침 감소)
+        final mid = Offset(
+          (center.dx + dx) / 2,
+          (center.dy + dy) / 2,
+        );
+
+        _drawEdgeLabel(canvas, mid, label, edgeColors[i]);
+      }
     }
+  }
+
+  void _drawEdgeLabel(Canvas canvas, Offset pos, String text, Color edgeColor) {
+    final textPainter = TextPainter(
+      text: TextSpan(
+        text: text,
+        style: const TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          color: Colors.black87,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+      maxLines: 1,
+      ellipsis: '…',
+    )..layout();
+
+    const padX = 6.0;
+    const padY = 3.0;
+
+    final rect = Rect.fromCenter(
+      center: pos,
+      width: textPainter.width + padX * 2,
+      height: textPainter.height + padY * 2,
+    );
+
+    final rrect = RRect.fromRectAndRadius(rect, const Radius.circular(10));
+
+    final bgPaint = Paint()..color = Colors.white.withOpacity(0.92);
+    final borderPaint = Paint()
+      ..color = edgeColor.withOpacity(0.75)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1;
+
+    canvas.drawRRect(rrect, bgPaint);
+    canvas.drawRRect(rrect, borderPaint);
+
+    // 텍스트는 중앙 배치
+    final textOffset = Offset(
+      rect.left + padX,
+      rect.top + padY,
+    );
+    textPainter.paint(canvas, textOffset);
   }
 
   @override
   bool shouldRepaint(covariant GraphLinePainter oldDelegate) {
     // node 수나 색상이 변하면 다시 그리기
     return oldDelegate.edgeColors.length != edgeColors.length ||
-        oldDelegate.edgeColors != edgeColors;
+        oldDelegate.edgeColors != edgeColors ||
+        oldDelegate.edgeLabels.length != edgeLabels.length ||
+        oldDelegate.edgeLabels != edgeLabels;
   }
 }
