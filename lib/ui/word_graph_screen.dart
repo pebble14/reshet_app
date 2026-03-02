@@ -94,19 +94,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     // 로딩
     if (_isLoading) {
       return Scaffold(
-        appBar: AppBar(
-          title: const Text('Word Graph'),
-          actions: [
-            IconButton(
-              tooltip: '보기 초기화',
-              icon: const Icon(Icons.refresh),
-              onPressed: () {
-                _transformController.value = Matrix4.identity();
-                setState(() => _currentScale = 1.0);
-              },
-            ),
-          ],
-        ),
+        appBar: AppBar(title: Text('Word Graph')),
         body: Center(child: CircularProgressIndicator()),
       );
     }
@@ -119,29 +107,44 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       );
     }
 
-    return Scaffold(
-      appBar: AppBar(title: Text('Word Graph')),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          final centerX = constraints.maxWidth / 2;
-          final centerY = constraints.maxHeight / 2;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final centerX = constraints.maxWidth / 2;
+        final centerY = constraints.maxHeight / 2;
 
-          final nodes = _connectedWords;
-          // 노드 배치 순서(원형 배치 순서)와 동일한 순서로 엣지 색상을 만든다.
-          final edgeColors = nodes.map((w) {
-            final info = _edgeInfoByOtherId[w.id];
-            return _colorForCategory(info?.categoryCode);
-          }).toList();
-          // 노드 배치 순서와 동일한 순서로 엣지 라벨을 만든다.
-          final edgeLabels = nodes.map((w) {
-            final info = _edgeInfoByOtherId[w.id];
-            return _labelForEdge(info);
-          }).toList();
+        final canvasSize = Size(constraints.maxWidth, constraints.maxHeight);
+        final nodes = _connectedWords;
 
-          final canvasSize = Size(constraints.maxWidth, constraints.maxHeight);
+        // 노드 배치 순서와 동일한 순서로 엣지 색상/라벨 생성
+        final edgeColors = nodes.map((w) {
+          final info = _edgeInfoByOtherId[w.id];
+          return _colorForCategory(info?.categoryCode);
+        }).toList();
+        final edgeLabels = nodes.map((w) {
+          final info = _edgeInfoByOtherId[w.id];
+          return _labelForEdge(info);
+        }).toList();
 
-          // Stack을 고정 크기 캔버스로 만들고, InteractiveViewer로 줌/팬을 적용한다.
-          return Listener(
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('Word Graph'),
+            actions: [
+              IconButton(
+                tooltip: '전체보기',
+                icon: const Icon(Icons.fit_screen),
+                onPressed: () => _fitToView(canvasSize, centerX, centerY, nodes),
+              ),
+              IconButton(
+                tooltip: '보기 초기화',
+                icon: const Icon(Icons.refresh),
+                onPressed: () {
+                  _transformController.value = Matrix4.identity();
+                  setState(() => _currentScale = 1.0);
+                },
+              ),
+            ],
+          ),
+          body: Listener(
             onPointerSignal: (event) {
               if (event is PointerScrollEvent) {
                 _handlePointerScroll(event);
@@ -165,7 +168,6 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                 height: canvasSize.height,
                 child: Stack(
                   children: [
-                    // nodeCount가 0이면 painter에서 0으로 나누는 문제가 생길 수 있으므로 조건 처리
                     if (nodes.isNotEmpty)
                       CustomPaint(
                         size: canvasSize,
@@ -178,18 +180,12 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                           sceneScale: _currentScale,
                         ),
                       ),
-
-                    // 중앙 노드
                     Positioned(
                       left: centerX - 90,
                       top: centerY - 90,
                       child: _buildCenterNode(_centerWord),
                     ),
-
-                    // 연결 노드들
                     ..._buildWordNodes(centerX, centerY, nodes),
-
-                    // 연결이 없을 때 안내 문구
                     if (nodes.isEmpty)
                       Center(
                         child: Text(
@@ -201,9 +197,9 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                 ),
               ),
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -429,6 +425,58 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     if (nextScale != _currentScale) {
       setState(() => _currentScale = nextScale);
     }
+  }
+
+  /// 현재 그래프(중심 노드 + 연결 노드들)가 화면에 잘 들어오도록 자동으로 줌/팬을 맞춘다.
+  void _fitToView(Size canvasSize, double centerX, double centerY, List<Word> nodes) {
+    // 노드 배치 반지름(현재 GraphLinePainter와 _buildWordNodes에서 쓰는 값과 맞춰야 함)
+    const radius = 160.0;
+
+    // 중심 노드/주변 노드 크기(현재 위젯 크기와 맞춰야 함)
+    const centerHalf = 90.0; // 180 / 2
+    const nodeHalf = 40.0;   // 80 / 2
+
+    double minX = centerX - centerHalf;
+    double maxX = centerX + centerHalf;
+    double minY = centerY - centerHalf;
+    double maxY = centerY + centerHalf;
+
+    final n = nodes.length;
+    if (n > 0) {
+      for (int i = 0; i < n; i++) {
+        final angle = (2 * pi / n) * i;
+        final x = centerX + radius * cos(angle);
+        final y = centerY + radius * sin(angle);
+
+        minX = min(minX, x - nodeHalf);
+        maxX = max(maxX, x + nodeHalf);
+        minY = min(minY, y - nodeHalf);
+        maxY = max(maxY, y + nodeHalf);
+      }
+    }
+
+    // 여백(태그/선 고려)
+    const margin = 60.0;
+    final bboxW = (maxX - minX) + margin * 2;
+    final bboxH = (maxY - minY) + margin * 2;
+
+    // 스케일 계산
+    final sx = canvasSize.width / bboxW;
+    final sy = canvasSize.height / bboxH;
+    final scale = min(sx, sy).clamp(0.6, 3.5);
+
+    // 바운딩 박스 중심
+    final bboxCenterX = (minX + maxX) / 2;
+    final bboxCenterY = (minY + maxY) / 2;
+
+    // bbox 중심이 화면 중앙에 오도록 변환 설정
+    final m = Matrix4.identity()
+      ..translate(canvasSize.width / 2, canvasSize.height / 2)
+      ..scale(scale)
+      ..translate(-bboxCenterX, -bboxCenterY);
+
+    _transformController.value = m;
+    setState(() => _currentScale = scale);
   }
 }
 
