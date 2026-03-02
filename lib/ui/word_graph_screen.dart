@@ -425,50 +425,281 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     return widgets;
   }
 
-  /// 엣지(관계) 상세 팝업을 표시한다.
+  /// 엣지(관계) 상세/편집 팝업
+  /// - 기본은 읽기 전용
+  /// - [편집] 버튼을 눌러야 입력 컨트롤이 활성화된다(실수 방지)
   void _showEdgeDetailDialog(Word otherWord, WordRelationEdgeInfo info) {
-    final categoryText = (info.categoryLabel?.trim().isNotEmpty ?? false)
-        ? info.categoryLabel!.trim()
-        : (info.categoryCode?.trim().isNotEmpty ?? false)
-            ? info.categoryCode!.trim()
-            : 'unspecified';
-
-    final typeText = (info.relationTypeLabel?.trim().isNotEmpty ?? false)
-        ? info.relationTypeLabel!.trim()
-        : (info.relationType?.trim().isNotEmpty ?? false)
-            ? info.relationType!.trim()
-            : 'unspecified';
-
-    final noteText = (info.note?.trim().isNotEmpty ?? false) ? info.note!.trim() : '(없음)';
-    final sourceText = (info.source?.trim().isNotEmpty ?? false) ? info.source!.trim() : '(없음)';
-
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: Text('관계 상세: ${otherWord.spelling1 ?? otherWord.id}'),
-          content: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('카테고리: $categoryText'),
-                const SizedBox(height: 8),
-                Text('타입: $typeText'),
-                const SizedBox(height: 12),
-                const Text('노트:', style: TextStyle(fontWeight: FontWeight.bold)),
-                Text(noteText),
-                const SizedBox(height: 12),
-                const Text('소스:', style: TextStyle(fontWeight: FontWeight.bold)),
-                Text(sourceText),
+        bool isEditing = false;
+        bool isSaving = false;
+
+        // 초기값(읽기용)
+        String? selectedCategoryCode = info.categoryCode;
+        String? selectedRelationType = info.relationType;
+        // 'unspecified' 같은 표시용 값이 들어오면 드롭다운 value 규칙 위반이므로 null 처리
+        if ((selectedCategoryCode ?? '').toLowerCase() == 'unspecified') selectedCategoryCode = null;
+        if ((selectedRelationType ?? '').toLowerCase() == 'unspecified') selectedRelationType = null;
+
+        final noteController = TextEditingController(text: info.note ?? '');
+        final sourceController = TextEditingController(text: info.source ?? '');
+
+        // 드롭다운 옵션(편집 눌렀을 때 로딩)
+        List<Map<String, dynamic>> categories = [];
+        List<Map<String, dynamic>> types = [];
+        bool isOptionsLoading = false;
+
+        bool hasChanges() {
+          final note = noteController.text.trim();
+          final src = sourceController.text.trim();
+
+          final originalNote = (info.note ?? '').trim();
+          final originalSrc = (info.source ?? '').trim();
+
+          return selectedCategoryCode != info.categoryCode ||
+              selectedRelationType != info.relationType ||
+              note != originalNote ||
+              src != originalSrc;
+        }
+
+        Future<void> loadOptionsIfNeeded(StateSetter setState) async {
+          if (categories.isNotEmpty && types.isNotEmpty) return;
+
+          setState(() => isOptionsLoading = true);
+          try {
+            final c = await _repository.getRelationCategories();
+            final t = await _repository.getRelationTypes();
+            setState(() {
+              categories = c;
+              types = t;
+              isOptionsLoading = false;
+
+              // 현재 선택값이 실제 items에 없으면 null로 보정(드롭다운 assert 방지)
+              final categoryCodes = categories
+                  .map((m) => (m['code'] as String?) ?? '')
+                  .where((s) => s.isNotEmpty)
+                  .toSet();
+              final typeCodes = types
+                  .map((m) => (m['code'] as String?) ?? '')
+                  .where((s) => s.isNotEmpty)
+                  .toSet();
+
+              if (selectedCategoryCode != null &&
+                  !categoryCodes.contains(selectedCategoryCode)) {
+                selectedCategoryCode = null;
+              }
+              if (selectedRelationType != null &&
+                  !typeCodes.contains(selectedRelationType)) {
+                selectedRelationType = null;
+              }
+            });
+          } catch (e) {
+            setState(() => isOptionsLoading = false);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('코드표 로딩 실패: $e')),
+            );
+          }
+        }
+
+        Future<void> save(StateSetter setState) async {
+          if (!hasChanges()) return;
+
+          setState(() => isSaving = true);
+          try {
+            await _repository.updateRelation(
+              relationId: info.relationId,
+              categoryCode: selectedCategoryCode,
+              relationType: selectedRelationType,
+              note: noteController.text.trim(),
+              source: sourceController.text.trim(),
+            );
+
+            // 그래프 갱신(색/라벨/팝업 내용 반영)
+            await _loadConnectedWords();
+
+            if (!mounted) return;
+            Navigator.pop(context);
+
+            ScaffoldMessenger.of(this.context).showSnackBar(
+              const SnackBar(content: Text('관계가 저장되었습니다.')),
+            );
+          } catch (e) {
+            setState(() => isSaving = false);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('저장 실패: $e')),
+            );
+          }
+        }
+
+        return StatefulBuilder(
+          builder: (context, setState) {
+            final categoryText = (info.categoryLabel?.trim().isNotEmpty ?? false)
+                ? info.categoryLabel!.trim()
+                : (info.categoryCode?.trim().isNotEmpty ?? false)
+                    ? info.categoryCode!.trim()
+                    : 'unspecified';
+
+            final typeText = (info.relationTypeLabel?.trim().isNotEmpty ?? false)
+                ? info.relationTypeLabel!.trim()
+                : (info.relationType?.trim().isNotEmpty ?? false)
+                    ? info.relationType!.trim()
+                    : 'unspecified';
+
+            final canSave = isEditing && !isSaving && hasChanges();
+
+            return AlertDialog(
+              title: Text('관계: ${otherWord.spelling1 ?? otherWord.id}'),
+              content: SizedBox(
+                width: 420,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // --- 카테고리 ---
+                      const Text('카테고리', style: TextStyle(fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 6),
+                      if (!isEditing)
+                        Text(categoryText)
+                      else if (isOptionsLoading)
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 8),
+                          child: LinearProgressIndicator(),
+                        )
+                      else
+                        DropdownButtonFormField<String>(
+                          value: selectedCategoryCode,
+                          isExpanded: true,
+                          decoration: const InputDecoration(border: OutlineInputBorder()),
+                          items: [
+                            const DropdownMenuItem<String>(
+                              value: null,
+                              child: Text('(없음)'),
+                            ),
+                            ...categories.map((m) {
+                              final code = (m['code'] as String?) ?? '';
+                              final label = (m['label'] as String?) ?? '';
+                              final text = label.isNotEmpty ? '$label ($code)' : code;
+                              return DropdownMenuItem<String>(
+                                value: code,
+                                child: Text(text),
+                              );
+                            }).toList(),
+                          ],
+                          onChanged: (v) => setState(() => selectedCategoryCode = v),
+                        ),
+
+                      const SizedBox(height: 14),
+
+                      // --- 타입 ---
+                      const Text('타입', style: TextStyle(fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 6),
+                      if (!isEditing)
+                        Text(typeText)
+                      else if (isOptionsLoading)
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 8),
+                          child: LinearProgressIndicator(),
+                        )
+                      else
+                        DropdownButtonFormField<String>(
+                          value: selectedRelationType,
+                          isExpanded: true,
+                          decoration: const InputDecoration(border: OutlineInputBorder()),
+                          items: [
+                            const DropdownMenuItem<String>(
+                              value: null,
+                              child: Text('(없음)'),
+                            ),
+                            ...types.map((m) {
+                              final code = (m['code'] as String?) ?? '';
+                              final label = (m['label'] as String?) ?? '';
+                              final text = label.isNotEmpty ? '$label ($code)' : code;
+                              return DropdownMenuItem<String>(
+                                value: code,
+                                child: Text(text),
+                              );
+                            }).toList(),
+                          ],
+                          onChanged: (v) => setState(() => selectedRelationType = v),
+                        ),
+
+                      const SizedBox(height: 14),
+
+                      // --- 노트 ---
+                      const Text('노트', style: TextStyle(fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 6),
+                      TextField(
+                        controller: noteController,
+                        enabled: isEditing && !isSaving,
+                        maxLines: 3,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          hintText: '(없음)',
+                        ),
+                      ),
+
+                      const SizedBox(height: 14),
+
+                      // --- 소스 ---
+                      const Text('소스', style: TextStyle(fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 6),
+                      TextField(
+                        controller: sourceController,
+                        enabled: isEditing && !isSaving,
+                        maxLines: 2,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          hintText: '(없음)',
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: isSaving ? null : () => Navigator.pop(context),
+                  child: const Text('닫기'),
+                ),
+                if (!isEditing)
+                  TextButton(
+                    onPressed: () async {
+                      setState(() => isEditing = true);
+                      await loadOptionsIfNeeded(setState);
+                    },
+                    child: const Text('편집'),
+                  )
+                else ...[
+                  TextButton(
+                    onPressed: isSaving
+                        ? null
+                        : () {
+                            setState(() {
+                              isEditing = false;
+                              // 편집 취소 시 값을 원래대로 되돌리기
+                              selectedCategoryCode = info.categoryCode;
+                              selectedRelationType = info.relationType;
+                              noteController.text = info.note ?? '';
+                              sourceController.text = info.source ?? '';
+                            });
+                          },
+                    child: const Text('취소'),
+                  ),
+                  ElevatedButton(
+                    onPressed: canSave ? () => save(setState) : null,
+                    child: isSaving
+                        ? const SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Text('저장'),
+                  ),
+                ],
               ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('닫기'),
-            ),
-          ],
+            );
+          },
         );
       },
     );
