@@ -47,6 +47,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   /// 중심 단어와 연결된 단어 목록
   List<Word> _connectedWords = [];
 
+  /// 사용자가 클릭(선택)한 주변 노드 id
+  /// - 같은 노드를 다시 클릭하면 이동(push)하는 트리거로 사용
+  String? _selectedWordId;
+
   /// 상대 단어 id 기준으로 관계(엣지) 메타를 보관한다.
   /// - 여러 관계가 있을 수 있으나, 현재는 “표시용 1개”만 선택(마지막으로 덮어씀)
   final Map<String, WordRelationEdgeInfo> _edgeInfoByOtherId = {};
@@ -125,6 +129,12 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
           return _labelForEdge(info);
         }).toList();
 
+        // 선택된 노드가 연결 노드 목록에서 몇 번째인지(없으면 null)
+        final int selectedIndexRaw =
+            nodes.indexWhere((w) => w.id == _selectedWordId);
+        final int? selectedIndex =
+            (selectedIndexRaw >= 0) ? selectedIndexRaw : null;
+
         return Scaffold(
           appBar: AppBar(
             title: const Text('Word Graph'),
@@ -178,6 +188,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                           edgeLabels,
                           showLabels: _currentScale >= _labelVisibleScaleThreshold,
                           sceneScale: _currentScale,
+                          selectedIndex: selectedIndex,
                         ),
                       ),
                     Positioned(
@@ -247,29 +258,44 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         ? word.spelling1!
         : word.id;
 
+    final bool isSelected = (_selectedWordId == word.id);
+
     return GestureDetector(
       onTap: () {
-        // ✅ 콜백이 있으면(스플릿뷰) 우측 패널 갱신용으로 전달
+        // 1) 먼저 선택 상태를 갱신한다(강조 표시용).
+        //    - 이미 선택된 노드를 다시 클릭한 경우에만 "이동"을 허용한다.
+        final bool isSameTap = (_selectedWordId == word.id);
+
+        if (!isSameTap) {
+          setState(() => _selectedWordId = word.id);
+        }
+
+        // 2) 스플릿뷰 모드: 선택 이벤트 전달(화면 push는 하지 않음)
         if (widget.onSelectWord != null) {
           widget.onSelectWord!(word);
           return;
         }
 
-        // ✅ 콜백이 없으면(기존 방식) push 탐색 유지
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => WordGraphScreen(centerWord: word),
-          ),
-        );
+        // 3) 단독 화면 모드: 같은 노드를 2번 눌렀을 때만 그래프 이동
+        if (isSameTap) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => WordGraphScreen(centerWord: word),
+            ),
+          );
+        }
       },
       child: Container(
         width: 80,
         height: 80,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          border: Border.all(color: borderColor, width: 2),
-          color: Colors.white,
+          border: Border.all(
+            color: borderColor,
+            width: isSelected ? 4 : 2,
+          ),
+          color: isSelected ? Colors.grey.shade100 : Colors.white,
         ),
         child: Center(
           child: Text(
@@ -494,6 +520,9 @@ class GraphLinePainter extends CustomPainter {
   /// - 태그 텍스트/패딩을 1/scale로 보정하여 “거의 고정 크기”처럼 보이게 한다.
   final double sceneScale;
 
+    /// 선택된 연결 노드 인덱스(없으면 null)
+  final int? selectedIndex;
+
   GraphLinePainter(
     this.centerX,
     this.centerY,
@@ -501,6 +530,7 @@ class GraphLinePainter extends CustomPainter {
     this.edgeLabels, {
     required this.showLabels,
     required this.sceneScale,
+    required this.selectedIndex,
   });
 
   @override
@@ -517,9 +547,15 @@ class GraphLinePainter extends CustomPainter {
       final dx = centerX + radius * cos(angle);
       final dy = centerY + radius * sin(angle);
 
+            final bool hasSelection = (selectedIndex != null);
+      final bool isSelectedEdge = (selectedIndex == i);
+
       final paint = Paint()
-        ..color = edgeColors[i]
-        ..strokeWidth = 2;
+        ..color = hasSelection && !isSelectedEdge
+            ? edgeColors[i].withOpacity(0.35)
+            : edgeColors[i]
+        ..strokeWidth = isSelectedEdge ? 4.0 : 2.0
+        ..style = PaintingStyle.stroke;
 
       canvas.drawLine(center, Offset(dx, dy), paint);
 
@@ -609,6 +645,7 @@ class GraphLinePainter extends CustomPainter {
         oldDelegate.edgeColors != edgeColors ||
         oldDelegate.edgeLabels.length != edgeLabels.length ||
         oldDelegate.edgeLabels != edgeLabels ||
-        oldDelegate.showLabels != showLabels;
+        oldDelegate.showLabels != showLabels ||
+        oldDelegate.selectedIndex != selectedIndex;
   }
 }
