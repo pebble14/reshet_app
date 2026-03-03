@@ -42,7 +42,8 @@ class _HomeScreenState extends State<HomeScreen> {
   /// false → 준비 완료
   bool _isLoading = true;
   String _dbMessage = '';
-    /// 홈 화면에서 사용할 Repository
+
+  /// 홈 화면에서 사용할 Repository
   final WordRepository _repository = WordRepository();
 
   /// 검색 입력 컨트롤러
@@ -89,12 +90,98 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  /// DB 초기화를 실행하기 전에 사용자에게 확인을 받는다.
+  Future<void> _confirmAndResetDb() async {
+    bool backup = true;
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('데이터베이스 초기화'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    '작업용 DB를 초기 상태(Seed)로 되돌립니다.\n'
+                    '편집한 관계/내용이 모두 초기화됩니다.',
+                  ),
+                  const SizedBox(height: 12),
+                  CheckboxListTile(
+                    contentPadding: EdgeInsets.zero,
+                    value: backup,
+                    onChanged: (v) => setState(() => backup = v ?? true),
+                    title: const Text('초기화 전에 현재 DB 백업하기'),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  child: const Text('취소'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(context, true),
+                  child: const Text('초기화'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+
+    if (confirmed != true) return;
+
+    // UX: 초기화 중 로딩 표시
+    setState(() => _isLoading = true);
+
+    try {
+      await DatabaseService.resetToSeed(backup: backup);
+
+      if (!mounted) return;
+
+      setState(() {
+        _isLoading = false;
+      });
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('DB가 초기 상태로 되돌아갔습니다.')));
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('DB 초기화 실패: $e')));
+    }
+  }
+
   /// 화면을 그리는 메서드
   /// _isLoading 값에 따라 로딩 화면 또는 본문 화면 표시
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Reshet')),
+      appBar: AppBar(
+        title: const Text('Reshet'),
+        actions: [
+          PopupMenuButton<String>(
+            onSelected: (value) async {
+              if (value == 'reset_db') {
+                await _confirmAndResetDb();
+              }
+            },
+            itemBuilder: (context) => [
+              const PopupMenuItem<String>(
+                value: 'reset_db',
+                child: Text('데이터베이스 초기화(Seed로 롤백)'),
+              ),
+            ],
+          ),
+        ],
+      ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : Column(
@@ -135,11 +222,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: FutureBuilder<List<Map<String, dynamic>>>(
                     future: _wordsFuture,
                     builder: (context, snapshot) {
-                      if (snapshot.connectionState ==
-                          ConnectionState.waiting) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
                       }
 
                       if (snapshot.hasError) {
@@ -158,8 +242,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           final wordMap = words[index];
                           final spelling = (wordMap['표기1'] ?? '').toString();
                           final meaning = (wordMap['의미1'] ?? '').toString();
-                          final strong =
-                              (wordMap['스트롱넘버'] ?? '').toString();
+                          final strong = (wordMap['스트롱넘버'] ?? '').toString();
 
                           return ListTile(
                             title: Text(
@@ -216,7 +299,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (_) => WordExplorerScreen(initialWordMap: wordMap),
+                                    builder: (_) => WordExplorerScreen(
+                                      initialWordMap: wordMap,
+                                    ),
                                   ),
                                 );
                                 return;
@@ -226,7 +311,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) => WordDetailScreen(word: wordMap),
+                                  builder: (_) =>
+                                      WordDetailScreen(word: wordMap),
                                 ),
                               );
                             },
@@ -241,7 +327,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-    /// 검색 실행: 입력값으로 Repository 검색을 수행하고 리스트를 갱신한다.
+  /// 검색 실행: 입력값으로 Repository 검색을 수행하고 리스트를 갱신한다.
   void _runSearch() {
     final keyword = _searchController.text;
     setState(() {
