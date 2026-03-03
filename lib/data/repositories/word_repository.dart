@@ -147,6 +147,19 @@ class WordRepository {
     );
   }
 
+  /// WORD_RELATION 1건 삭제(트랜잭션)
+  Future<void> deleteRelation(int relationId) async {
+    final db = await DatabaseService.openDatabaseFile();
+
+    await db.transaction((txn) async {
+      await txn.delete(
+        'WORD_RELATION',
+        where: 'id = ?',
+        whereArgs: [relationId],
+      );
+    });
+  }
+
   /// RELATION_CATEGORY 코드/라벨 목록
   Future<List<Map<String, dynamic>>> getRelationCategories() async {
     final db = await DatabaseService.openDatabaseFile();

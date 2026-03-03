@@ -11,7 +11,7 @@ import '../data/repositories/word_repository.dart';
 /// - 중심↔연결 단어 간 엣지(선)를 그리는 화면
 class WordGraphScreen extends StatefulWidget {
   /// 그래프의 중심이 되는 단어(모델)
-    final Word centerWord;
+  final Word centerWord;
 
   /// 스플릿뷰 등에서 노드 클릭 시 화면 push 대신
   /// 선택 이벤트만 전달하고 싶을 때 사용한다.
@@ -31,7 +31,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   final WordRepository _repository = WordRepository();
 
   /// 그래프 줌/팬 상태를 관리하는 컨트롤러
-  final TransformationController _transformController = TransformationController();
+  final TransformationController _transformController =
+      TransformationController();
 
   /// 현재 줌 배율(태그 표시/숨김 등에 사용)
   double _currentScale = 1.0;
@@ -130,10 +131,12 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         }).toList();
 
         // 선택된 노드가 연결 노드 목록에서 몇 번째인지(없으면 null)
-        final int selectedIndexRaw =
-            nodes.indexWhere((w) => w.id == _selectedWordId);
-        final int? selectedIndex =
-            (selectedIndexRaw >= 0) ? selectedIndexRaw : null;
+        final int selectedIndexRaw = nodes.indexWhere(
+          (w) => w.id == _selectedWordId,
+        );
+        final int? selectedIndex = (selectedIndexRaw >= 0)
+            ? selectedIndexRaw
+            : null;
 
         return Scaffold(
           appBar: AppBar(
@@ -142,7 +145,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
               IconButton(
                 tooltip: '전체보기',
                 icon: const Icon(Icons.fit_screen),
-                onPressed: () => _fitToView(canvasSize, centerX, centerY, nodes),
+                onPressed: () =>
+                    _fitToView(canvasSize, centerX, centerY, nodes),
               ),
               IconButton(
                 tooltip: '보기 초기화',
@@ -196,7 +200,13 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                       top: centerY - 90,
                       child: _buildCenterNode(_centerWord),
                     ),
-                    ..._buildEdgeLabelWidgets(centerX, centerY, nodes, edgeLabels, edgeColors),
+                    ..._buildEdgeLabelWidgets(
+                      centerX,
+                      centerY,
+                      nodes,
+                      edgeLabels,
+                      edgeColors,
+                    ),
 
                     ..._buildWordNodes(centerX, centerY, nodes),
                     if (nodes.isEmpty)
@@ -293,10 +303,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         height: 80,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          border: Border.all(
-            color: borderColor,
-            width: isSelected ? 4 : 2,
-          ),
+          border: Border.all(color: borderColor, width: isSelected ? 4 : 2),
           color: isSelected ? Colors.grey.shade100 : Colors.white,
         ),
         child: Center(
@@ -362,7 +369,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     const double radius = 160.0;
 
     // 태그가 선 위에 겹치지 않도록 약간 수직 방향 오프셋(줌 역보정)
-    final double offset = (12.0 / (_currentScale <= 0 ? 1.0 : _currentScale)).clamp(6.0, 14.0);
+    final double offset = (12.0 / (_currentScale <= 0 ? 1.0 : _currentScale))
+        .clamp(6.0, 14.0);
 
     final List<Widget> widgets = [];
 
@@ -408,12 +416,18 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  border: Border.all(color: edgeColors[i].withOpacity(0.9), width: 1.5),
+                  border: Border.all(
+                    color: edgeColors[i].withOpacity(0.9),
+                    width: 1.5,
+                  ),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
                   label,
-                  style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+                  style: const TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ),
@@ -439,8 +453,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         String? selectedCategoryCode = info.categoryCode;
         String? selectedRelationType = info.relationType;
         // 'unspecified' 같은 표시용 값이 들어오면 드롭다운 value 규칙 위반이므로 null 처리
-        if ((selectedCategoryCode ?? '').toLowerCase() == 'unspecified') selectedCategoryCode = null;
-        if ((selectedRelationType ?? '').toLowerCase() == 'unspecified') selectedRelationType = null;
+        if ((selectedCategoryCode ?? '').toLowerCase() == 'unspecified')
+          selectedCategoryCode = null;
+        if ((selectedRelationType ?? '').toLowerCase() == 'unspecified')
+          selectedRelationType = null;
 
         final noteController = TextEditingController(text: info.note ?? '');
         final sourceController = TextEditingController(text: info.source ?? '');
@@ -496,9 +512,9 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
             });
           } catch (e) {
             setState(() => isOptionsLoading = false);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('코드표 로딩 실패: $e')),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text('코드표 로딩 실패: $e')));
           }
         }
 
@@ -521,30 +537,55 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
             if (!mounted) return;
             Navigator.pop(context);
 
-            ScaffoldMessenger.of(this.context).showSnackBar(
-              const SnackBar(content: Text('관계가 저장되었습니다.')),
-            );
+            ScaffoldMessenger.of(
+              this.context,
+            ).showSnackBar(const SnackBar(content: Text('관계가 저장되었습니다.')));
           } catch (e) {
             setState(() => isSaving = false);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('저장 실패: $e')),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text('저장 실패: $e')));
+          }
+        }
+
+        Future<void> deleteEdge(StateSetter setState) async {
+          setState(() => isSaving = true);
+
+          try {
+            await _repository.deleteRelation(info.relationId);
+
+            // 그래프 갱신(엣지/라벨/색 반영)
+            await _loadConnectedWords();
+
+            if (!mounted) return;
+            Navigator.pop(context);
+
+            ScaffoldMessenger.of(
+              this.context,
+            ).showSnackBar(const SnackBar(content: Text('관계가 삭제되었습니다.')));
+          } catch (e) {
+            setState(() => isSaving = false);
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text('삭제 실패: $e')));
           }
         }
 
         return StatefulBuilder(
           builder: (context, setState) {
-            final categoryText = (info.categoryLabel?.trim().isNotEmpty ?? false)
+            final categoryText =
+                (info.categoryLabel?.trim().isNotEmpty ?? false)
                 ? info.categoryLabel!.trim()
                 : (info.categoryCode?.trim().isNotEmpty ?? false)
-                    ? info.categoryCode!.trim()
-                    : 'unspecified';
+                ? info.categoryCode!.trim()
+                : 'unspecified';
 
-            final typeText = (info.relationTypeLabel?.trim().isNotEmpty ?? false)
+            final typeText =
+                (info.relationTypeLabel?.trim().isNotEmpty ?? false)
                 ? info.relationTypeLabel!.trim()
                 : (info.relationType?.trim().isNotEmpty ?? false)
-                    ? info.relationType!.trim()
-                    : 'unspecified';
+                ? info.relationType!.trim()
+                : 'unspecified';
 
             final canSave = isEditing && !isSaving && hasChanges();
 
@@ -557,7 +598,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // --- 카테고리 ---
-                      const Text('카테고리', style: TextStyle(fontWeight: FontWeight.bold)),
+                      const Text(
+                        '카테고리',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                       const SizedBox(height: 6),
                       if (!isEditing)
                         Text(categoryText)
@@ -570,7 +614,9 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                         DropdownButtonFormField<String>(
                           value: selectedCategoryCode,
                           isExpanded: true,
-                          decoration: const InputDecoration(border: OutlineInputBorder()),
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                          ),
                           items: [
                             const DropdownMenuItem<String>(
                               value: null,
@@ -579,20 +625,26 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                             ...categories.map((m) {
                               final code = (m['code'] as String?) ?? '';
                               final label = (m['label'] as String?) ?? '';
-                              final text = label.isNotEmpty ? '$label ($code)' : code;
+                              final text = label.isNotEmpty
+                                  ? '$label ($code)'
+                                  : code;
                               return DropdownMenuItem<String>(
                                 value: code,
                                 child: Text(text),
                               );
                             }).toList(),
                           ],
-                          onChanged: (v) => setState(() => selectedCategoryCode = v),
+                          onChanged: (v) =>
+                              setState(() => selectedCategoryCode = v),
                         ),
 
                       const SizedBox(height: 14),
 
                       // --- 타입 ---
-                      const Text('타입', style: TextStyle(fontWeight: FontWeight.bold)),
+                      const Text(
+                        '타입',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                       const SizedBox(height: 6),
                       if (!isEditing)
                         Text(typeText)
@@ -605,7 +657,9 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                         DropdownButtonFormField<String>(
                           value: selectedRelationType,
                           isExpanded: true,
-                          decoration: const InputDecoration(border: OutlineInputBorder()),
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                          ),
                           items: [
                             const DropdownMenuItem<String>(
                               value: null,
@@ -614,20 +668,26 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                             ...types.map((m) {
                               final code = (m['code'] as String?) ?? '';
                               final label = (m['label'] as String?) ?? '';
-                              final text = label.isNotEmpty ? '$label ($code)' : code;
+                              final text = label.isNotEmpty
+                                  ? '$label ($code)'
+                                  : code;
                               return DropdownMenuItem<String>(
                                 value: code,
                                 child: Text(text),
                               );
                             }).toList(),
                           ],
-                          onChanged: (v) => setState(() => selectedRelationType = v),
+                          onChanged: (v) =>
+                              setState(() => selectedRelationType = v),
                         ),
 
                       const SizedBox(height: 14),
 
                       // --- 노트 ---
-                      const Text('노트', style: TextStyle(fontWeight: FontWeight.bold)),
+                      const Text(
+                        '노트',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                       const SizedBox(height: 6),
                       TextField(
                         controller: noteController,
@@ -642,7 +702,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                       const SizedBox(height: 14),
 
                       // --- 소스 ---
-                      const Text('소스', style: TextStyle(fontWeight: FontWeight.bold)),
+                      const Text(
+                        '소스',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                       const SizedBox(height: 6),
                       TextField(
                         controller: sourceController,
@@ -686,6 +749,41 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                           },
                     child: const Text('취소'),
                   ),
+
+                  // ✅ 삭제(편집 모드에서만, 확인 후 실행)
+                  TextButton(
+                    onPressed: isSaving
+                        ? null
+                        : () async {
+                            final confirmed = await showDialog<bool>(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text('관계 삭제'),
+                                content: const Text(
+                                  '이 관계를 삭제할까요?\n이 작업은 되돌리기 어렵습니다.',
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.pop(context, false),
+                                    child: const Text('취소'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.pop(context, true),
+                                    child: const Text('삭제'),
+                                  ),
+                                ],
+                              ),
+                            );
+
+                            if (confirmed == true) {
+                              await deleteEdge(setState);
+                            }
+                          },
+                    child: const Text('삭제'),
+                  ),
+
                   ElevatedButton(
                     onPressed: canSave ? () => save(setState) : null,
                     child: isSaving
@@ -815,13 +913,18 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   }
 
   /// 현재 그래프(중심 노드 + 연결 노드들)가 화면에 잘 들어오도록 자동으로 줌/팬을 맞춘다.
-  void _fitToView(Size canvasSize, double centerX, double centerY, List<Word> nodes) {
+  void _fitToView(
+    Size canvasSize,
+    double centerX,
+    double centerY,
+    List<Word> nodes,
+  ) {
     // 노드 배치 반지름(현재 GraphLinePainter와 _buildWordNodes에서 쓰는 값과 맞춰야 함)
     const radius = 160.0;
 
     // 중심 노드/주변 노드 크기(현재 위젯 크기와 맞춰야 함)
     const centerHalf = 90.0; // 180 / 2
-    const nodeHalf = 40.0;   // 80 / 2
+    const nodeHalf = 40.0; // 80 / 2
 
     double minX = centerX - centerHalf;
     double maxX = centerX + centerHalf;
@@ -877,11 +980,12 @@ class GraphLinePainter extends CustomPainter {
 
   /// 줌 레벨에 따라 라벨 표시/숨김
   final bool showLabels;
+
   /// 현재 씬(그래프) 줌 배율
   /// - 태그 텍스트/패딩을 1/scale로 보정하여 “거의 고정 크기”처럼 보이게 한다.
   final double sceneScale;
 
-    /// 선택된 연결 노드 인덱스(없으면 null)
+  /// 선택된 연결 노드 인덱스(없으면 null)
   final int? selectedIndex;
 
   GraphLinePainter(
@@ -908,7 +1012,7 @@ class GraphLinePainter extends CustomPainter {
       final dx = centerX + radius * cos(angle);
       final dy = centerY + radius * sin(angle);
 
-            final bool hasSelection = (selectedIndex != null);
+      final bool hasSelection = (selectedIndex != null);
       final bool isSelectedEdge = (selectedIndex == i);
 
       final paint = Paint()
@@ -932,21 +1036,21 @@ class GraphLinePainter extends CustomPainter {
         const t = 0.68;
 
         // 태그 기준점(중앙에서 멀어진 지점)
-        final anchor = Offset(
-          center.dx + vx * t,
-          center.dy + vy * t,
-        );
+        final anchor = Offset(center.dx + vx * t, center.dy + vy * t);
 
         // 선 벡터의 수직 방향으로 약간 이동(선/태그 겹침 완화)
         final len = sqrt(vx * vx + vy * vy);
         final nx = (len == 0) ? 0.0 : -vy / len; // 수직 단위벡터 x
-        final ny = (len == 0) ? 0.0 : vx / len;  // 수직 단위벡터 y
+        final ny = (len == 0) ? 0.0 : vx / len; // 수직 단위벡터 y
 
         final scale = sceneScale <= 0 ? 1.0 : sceneScale;
         // 줌과 관계없이 적당한 오프셋(역스케일) 유지
         final offset = (12.0 / scale).clamp(6.0, 14.0);
 
-        final shifted = Offset(anchor.dx + nx * offset, anchor.dy + ny * offset);
+        final shifted = Offset(
+          anchor.dx + nx * offset,
+          anchor.dy + ny * offset,
+        );
 
         _drawEdgeLabel(canvas, shifted, label, edgeColors[i]);
       }
@@ -954,16 +1058,15 @@ class GraphLinePainter extends CustomPainter {
   }
 
   void _drawEdgeLabel(Canvas canvas, Offset pos, String text, Color edgeColor) {
-    
     final scale = sceneScale <= 0 ? 1.0 : sceneScale;
     final fontSize = (11.0 / scale).clamp(9.0, 12.0);
     final padX = (6.0 / scale).clamp(4.0, 7.0);
     final padY = (3.0 / scale).clamp(2.0, 4.0);
-    
+
     final textPainter = TextPainter(
       text: TextSpan(
         text: text,
-          style: TextStyle(
+        style: TextStyle(
           fontSize: fontSize,
           fontWeight: FontWeight.w600,
           color: Colors.black87,
@@ -992,10 +1095,7 @@ class GraphLinePainter extends CustomPainter {
     canvas.drawRRect(rrect, borderPaint);
 
     // 텍스트는 중앙 배치
-    final textOffset = Offset(
-      rect.left + padX,
-      rect.top + padY,
-    );
+    final textOffset = Offset(rect.left + padX, rect.top + padY);
     textPainter.paint(canvas, textOffset);
   }
 
