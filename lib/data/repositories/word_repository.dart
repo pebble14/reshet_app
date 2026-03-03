@@ -7,6 +7,7 @@ import '../models/word.dart';
 /// - categoryCode/categoryLabel: RELATION_CATEGORY 기반(없으면 null)
 /// - relationType/relationTypeLabel: RELATION_TYPE 기반(없으면 null)
 class WordRelationEdgeInfo {
+  final int relationId;
   final String otherWordId;
   final String? categoryCode;
   final String? categoryLabel;
@@ -16,6 +17,7 @@ class WordRelationEdgeInfo {
   final String? source;
 
   WordRelationEdgeInfo({
+    required this.relationId,
     required this.otherWordId,
     this.categoryCode,
     this.categoryLabel,
@@ -27,6 +29,7 @@ class WordRelationEdgeInfo {
 
   factory WordRelationEdgeInfo.fromMap(Map<String, dynamic> map) {
     return WordRelationEdgeInfo(
+      relationId: map['relation_id'] as int,
       otherWordId: map['other_word_id'] as String,
       categoryCode: map['category_code'] as String?,
       categoryLabel: map['category_label'] as String?,
@@ -87,6 +90,7 @@ class WordRepository {
     final rows = await db.rawQuery(
       '''
       SELECT
+        wr.id AS relation_id,
         CASE
           WHEN wr.word_id_1 = ? THEN wr.word_id_2
           ELSE wr.word_id_1
@@ -141,5 +145,51 @@ class WordRepository {
       whereArgs: [like, like, like],
       limit: limit,
     );
+  }
+
+  /// RELATION_CATEGORY 코드/라벨 목록
+  Future<List<Map<String, dynamic>>> getRelationCategories() async {
+    final db = await DatabaseService.openDatabaseFile();
+    return await db.query(
+      'RELATION_CATEGORY',
+      columns: ['code', 'label'],
+      orderBy: 'code',
+    );
+  }
+
+  /// RELATION_TYPE 코드/라벨 목록
+  Future<List<Map<String, dynamic>>> getRelationTypes() async {
+    final db = await DatabaseService.openDatabaseFile();
+    return await db.query(
+      'RELATION_TYPE',
+      columns: ['code', 'label'],
+      orderBy: 'code',
+    );
+  }
+
+  /// WORD_RELATION 1건 수정(트랜잭션)
+  Future<void> updateRelation({
+    required int relationId,
+    required String? categoryCode,
+    required String? relationType,
+    required String? note,
+    required String? source,
+  }) async {
+    final db = await DatabaseService.openDatabaseFile();
+
+    await db.transaction((txn) async {
+      await txn.update(
+        'WORD_RELATION',
+        {
+          'category_code': categoryCode,
+          'relation_type': relationType,
+          'note': note,
+          'source': source,
+          'updated_at': DateTime.now().toIso8601String(),
+        },
+        where: 'id = ?',
+        whereArgs: [relationId],
+      );
+    });
   }
 }
