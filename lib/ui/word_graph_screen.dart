@@ -5,6 +5,24 @@ import 'package:flutter/gestures.dart';
 import '../data/models/word.dart';
 import '../data/repositories/word_repository.dart';
 
+/// CreateRelationPayload
+/// - "관계 추가" 다이얼로그에서 사용자가 입력한 값을 담는 DTO(전달용 객체)
+/// - WordGraphScreen 내부 로직에서만 쓰지만, Dart의 스코프 제약 때문에
+///   파일 최상단에 둔다(타입 인식 안정성 확보).
+class CreateRelationPayload {
+  final String? categoryCode;
+  final String? relationType;
+  final String? note;
+  final String? source;
+
+  CreateRelationPayload({
+    required this.categoryCode,
+    required this.relationType,
+    required this.note,
+    required this.source,
+  });
+}
+
 /// WordGraphScreen
 /// - 중심 단어(선택된 단어)를 기준으로
 /// - WORD_RELATION을 통해 연결된 단어들을 원형으로 배치하고
@@ -155,6 +173,11 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                   _transformController.value = Matrix4.identity();
                   setState(() => _currentScale = 1.0);
                 },
+              ),
+              IconButton(
+                tooltip: '관계 추가',
+                icon: const Icon(Icons.add_link),
+                onPressed: _showAddRelationFlow,
               ),
             ],
           ),
@@ -967,6 +990,271 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
     _transformController.value = m;
     setState(() => _currentScale = scale);
+  }
+
+  /// [관계 추가] 전체 흐름
+  /// 1) 상대 단어 검색/선택
+  /// 2) 관계 정보(카테고리/타입/노트/소스) 입력
+  /// 3) 중복 관계 검사 후 INSERT
+  /// 4) 그래프 갱신
+  Future<void> _showAddRelationFlow() async {
+    // 1) 상대 단어 선택
+    final other = await _showSelectWordDialog();
+    if (other == null) return;
+
+    // 자기 자신 선택 방지
+    if (other.id == _centerWord.id) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('자기 자신과의 관계는 추가할 수 없습니다.')));
+      return;
+    }
+
+    // 2) 관계 입력
+    final payload = await _showCreateRelationDialog(other);
+    if (payload == null) return;
+
+    // 3) 중복 검사
+    final existingId = await _repository.findExistingRelationId(
+      _centerWord.id,
+      other.id,
+    );
+
+    if (existingId != null) {
+      if (!mounted) return;
+      await showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: const Text('이미 존재하는 관계'),
+          content: const Text('이 두 단어 사이의 관계가 이미 DB에 존재합니다.\n중복 생성은 막았습니다.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('확인'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    // 4) INSERT
+    await _repository.createRelation(
+      wordId1: _centerWord.id,
+      wordId2: other.id,
+      categoryCode: payload.categoryCode,
+      relationType: payload.relationType,
+      note: payload.note,
+      source: payload.source,
+    );
+
+    // 5) 갱신
+    await _loadConnectedWords();
+
+    if (!mounted) return;
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('관계를 추가했습니다.')));
+  }
+
+  /// 상대 단어를 검색해서 고르는 다이얼로그
+  Future<Word?> _showSelectWordDialog() async {
+    final controller = TextEditingController();
+    List<Word> results = [];
+
+    return showDialog<Word?>(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            Future<void> doSearch(String q) async {
+              final r = await _repository.searchWords(q, limit: 200);
+              // 중심 단어는 결과에서 제외(혼동 방지)
+              final filtered = r.where((w) => w.id != _centerWord.id).toList();
+              setState(() => results = filtered);
+            }
+
+            return AlertDialog(
+              title: const Text('관계 추가: 상대 단어 선택'),
+              content: SizedBox(
+                width: 520,
+                height: 520,
+                child: Column(
+                  children: [
+                    TextField(
+                      controller: controller,
+                      decoration: const InputDecoration(
+                        labelText: '검색 (표기/의미/스트롱넘버)',
+                        prefixIcon: Icon(Icons.search),
+                      ),
+                      onChanged: (v) {
+                        // 너무 잦은 쿼리를 피하려면 debounce가 좋지만,
+                        // 지금은 단순 onChanged로 시작(안정 우선)
+                        if (v.trim().length >= 2) {
+                          doSearch(v);
+                        } else {
+                          setState(() => results = []);
+                        }
+                      },
+                      onSubmitted: (v) => doSearch(v),
+                    ),
+                    const SizedBox(height: 12),
+                    Expanded(
+                      child: results.isEmpty
+                          ? const Center(child: Text('검색어를 입력하세요.'))
+                          : ListView.separated(
+                              itemCount: results.length,
+                              separatorBuilder: (_, __) =>
+                                  const Divider(height: 1),
+                              itemBuilder: (context, i) {
+                                final w = results[i];
+                                return ListTile(
+                                  title: Text(w.spelling1 ?? w.id),
+                                  subtitle: Text(
+                                    [
+                                      if ((w.meaning1 ?? '').trim().isNotEmpty)
+                                        w.meaning1!,
+                                      if ((w.strongNumber ?? '')
+                                          .trim()
+                                          .isNotEmpty)
+                                        '스트롱: ${w.strongNumber}',
+                                    ].join(' / '),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  onTap: () => Navigator.pop(context, w),
+                                );
+                              },
+                            ),
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('취소'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  /// 관계 정보를 입력받는 다이얼로그
+  Future<CreateRelationPayload?> _showCreateRelationDialog(Word other) async {
+    // 드롭다운 옵션 로딩
+    final categories = await _repository.getRelationCategories();
+    final types = await _repository.getRelationTypes();
+
+    String? selectedCategoryCode;
+    String? selectedRelationType;
+
+    final noteController = TextEditingController();
+    final sourceController = TextEditingController();
+
+    return showDialog<CreateRelationPayload?>(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text('관계 추가: ${other.spelling1 ?? other.id}'),
+              content: SizedBox(
+                width: 520,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    DropdownButtonFormField<String>(
+                      value: selectedCategoryCode,
+                      isExpanded: true,
+                      decoration: const InputDecoration(labelText: '카테고리'),
+                      items: [
+                        const DropdownMenuItem<String>(
+                          value: null,
+                          child: Text('없음'),
+                        ),
+                        ...categories.map((c) {
+                          final code = c['code'] as String;
+                          final label = c['label'] as String? ?? code;
+                          return DropdownMenuItem<String>(
+                            value: code,
+                            child: Text('$label ($code)'),
+                          );
+                        }),
+                      ],
+                      onChanged: (v) =>
+                          setState(() => selectedCategoryCode = v),
+                    ),
+                    const SizedBox(height: 12),
+                    DropdownButtonFormField<String>(
+                      value: selectedRelationType,
+                      isExpanded: true,
+                      decoration: const InputDecoration(labelText: '타입'),
+                      items: [
+                        const DropdownMenuItem<String>(
+                          value: null,
+                          child: Text('없음'),
+                        ),
+                        ...types.map((t) {
+                          final code = t['code'] as String;
+                          final label = t['label'] as String? ?? code;
+                          return DropdownMenuItem<String>(
+                            value: code,
+                            child: Text('$label ($code)'),
+                          );
+                        }),
+                      ],
+                      onChanged: (v) =>
+                          setState(() => selectedRelationType = v),
+                    ),
+                    const SizedBox(height: 12),
+                    TextField(
+                      controller: noteController,
+                      decoration: const InputDecoration(labelText: '노트'),
+                      maxLines: 2,
+                    ),
+                    const SizedBox(height: 12),
+                    TextField(
+                      controller: sourceController,
+                      decoration: const InputDecoration(labelText: '소스'),
+                      maxLines: 2,
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('취소'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(
+                      context,
+                      CreateRelationPayload(
+                        categoryCode: selectedCategoryCode,
+                        relationType: selectedRelationType,
+                        note: noteController.text.trim().isEmpty
+                            ? null
+                            : noteController.text.trim(),
+                        source: sourceController.text.trim().isEmpty
+                            ? null
+                            : sourceController.text.trim(),
+                      ),
+                    );
+                  },
+                  child: const Text('저장'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 }
 
