@@ -205,4 +205,81 @@ class WordRepository {
       );
     });
   }
+
+  /// 키워드로 단어 검색 (그래프에서 "관계 추가" 대상 단어 선택용)
+  /// - 표기1, 의미1, 스트롱넘버 부분일치 검색
+  /// - 결과를 Word 모델로 반환한다(그래프 노드에서 사용하기 쉬움)
+  Future<List<Word>> searchWords(String keyword, {int limit = 200}) async {
+    final db = await DatabaseService.openDatabaseFile();
+
+    final q = keyword.trim();
+    if (q.isEmpty) return [];
+
+    final like = '%$q%';
+
+    final rows = await db.query(
+      'WORD_TABLE',
+      where: '표기1 LIKE ? OR 의미1 LIKE ? OR 스트롱넘버 LIKE ?',
+      whereArgs: [like, like, like],
+      limit: limit,
+    );
+
+    return rows.map((m) => Word.fromMap(m)).toList();
+  }
+
+  /// 두 단어 사이에 이미 관계(WORD_RELATION)가 존재하는지 검사한다.
+  /// - (A,B)와 (B,A)를 동일 관계로 본다.
+  /// - 있으면 relation id를 반환하고, 없으면 null
+  Future<int?> findExistingRelationId(String wordIdA, String wordIdB) async {
+    final db = await DatabaseService.openDatabaseFile();
+
+    // DB CHECK 제약(word_id_1 < word_id_2)에 맞게 정렬
+    final a = wordIdA.compareTo(wordIdB) <= 0 ? wordIdA : wordIdB;
+    final b = wordIdA.compareTo(wordIdB) <= 0 ? wordIdB : wordIdA;
+
+    final rows = await db.rawQuery(
+      '''
+      SELECT id
+      FROM WORD_RELATION
+      WHERE word_id_1 = ? AND word_id_2 = ?
+      LIMIT 1
+      ''',
+      [a, b],
+    );
+
+    if (rows.isEmpty) return null;
+    return rows.first['id'] as int;
+  }
+
+  /// WORD_RELATION에 관계 1건을 추가한다(트랜잭션)
+  /// - status_code/created_at/updated_at은 DB default를 활용하되,
+  ///   updated_at은 명시적으로 ISO 문자열로 넣어준다.
+  Future<int> createRelation({
+    required String wordId1,
+    required String wordId2,
+    required String? categoryCode,
+    required String? relationType,
+    required String? note,
+    required String? source,
+  }) async {
+    final db = await DatabaseService.openDatabaseFile();
+
+    // DB CHECK 제약: word_id_1 < word_id_2 를 만족시키기 위해 정렬
+    final a = wordId1.compareTo(wordId2) <= 0 ? wordId1 : wordId2;
+    final b = wordId1.compareTo(wordId2) <= 0 ? wordId2 : wordId1;
+
+    return await db.transaction((txn) async {
+      final id = await txn.insert('WORD_RELATION', {
+        'word_id_1': a,
+        'word_id_2': b,
+        'category_code': categoryCode,
+        'relation_type': relationType,
+        'note': note,
+        'source': source,
+        'updated_at': DateTime.now().toIso8601String(),
+      });
+
+      return id;
+    });
+  }
 }
