@@ -171,6 +171,9 @@ class DatabaseService {
 
     // 다시 열기(이후 쿼리 즉시 가능)
     _database = await databaseFactory.openDatabase(workPath);
+
+    // ✅ reset 이후에도 인덱스/중복제거 보장
+    await _ensureWordRelationIndexes(_database!);
   }
 
   /// WORD_RELATION 테이블 무결성/성능 보강
