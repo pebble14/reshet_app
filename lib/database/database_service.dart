@@ -87,6 +87,9 @@ class DatabaseService {
 
     _database = await databaseFactory.openDatabase(workPath);
 
+    // ✅ 여기 추가 (DB 무결성/인덱스 보장)
+    await _ensureWordRelationIndexes(_database!);
+
     return _database!;
   }
 
@@ -168,5 +171,44 @@ class DatabaseService {
 
     // 다시 열기(이후 쿼리 즉시 가능)
     _database = await databaseFactory.openDatabase(workPath);
+  }
+
+  /// WORD_RELATION 테이블 무결성/성능 보강
+  /// 1) (word_id_1, word_id_2) 완전 중복 row 제거
+  /// 2) UNIQUE 인덱스 추가 (중복 관계 DB 차단)
+  /// 3) 조회 성능 인덱스 추가 (그래프 로딩 개선)
+  static Future<void> _ensureWordRelationIndexes(Database db) async {
+    await db.transaction((txn) async {
+      // 1) 완전 중복 제거: (word_id_1, word_id_2)별로 가장 작은 id만 남긴다
+      // - DB에 이미 CHECK(word_id_1 < word_id_2)가 있어서 방향 정규화는 되어 있음
+      final deleted = await txn.rawDelete('''
+        DELETE FROM WORD_RELATION
+        WHERE id NOT IN (
+          SELECT MIN(id)
+          FROM WORD_RELATION
+          GROUP BY word_id_1, word_id_2
+        )
+      ''');
+
+      // 디버그 로그(원하면 지워도 됨)
+      // ignore: avoid_print
+      print('[DB] WORD_RELATION 중복 제거: $deleted row 삭제');
+
+      // 2) 중복 관계 차단(핵심): 같은 두 단어 쌍은 1개만 허용
+      await txn.execute('''
+        CREATE UNIQUE INDEX IF NOT EXISTS idx_word_relation_pair
+        ON WORD_RELATION(word_id_1, word_id_2)
+      ''');
+
+      // 3) 그래프 로딩 최적화: OR 조건 조회에 대비해 개별 인덱스도 추가
+      await txn.execute('''
+        CREATE INDEX IF NOT EXISTS idx_word_relation_word1
+        ON WORD_RELATION(word_id_1)
+      ''');
+      await txn.execute('''
+        CREATE INDEX IF NOT EXISTS idx_word_relation_word2
+        ON WORD_RELATION(word_id_2)
+      ''');
+    });
   }
 }
