@@ -282,4 +282,178 @@ class WordRepository {
       return id;
     });
   }
+
+  /// 언어명을 Reshet 내부 id prefix로 변환한다.
+  /// - 히브리어/아람어 -> H
+  /// - 헬라어 -> G
+  /// - 라틴어 -> L
+  /// - 영어 -> E
+  /// - 그 외 -> X
+  String _languageCodeFromLanguage(String language) {
+    if (language.contains('히브리')) return 'H';
+    if (language.contains('아람')) return 'H';
+    if (language.contains('헬라')) return 'G';
+    if (language.contains('라틴')) return 'L';
+    if (language.contains('영어')) return 'E';
+    return 'X';
+  }
+
+  /// 중복 검사 비교용 표기 정규화
+  /// - trim
+  /// - NFC 수준 전체 정규화까지는 라이브러리 추가가 필요하므로,
+  ///   현재 단계에서는 히브리어/아람어의 모음부호(niqqud) 제거 + 공백 정리만 적용
+  String _normalizeSpellingForDuplicateCheck(String value) {
+    final trimmed = value.trim();
+
+    // 히브리어 결합부호/모음부호 제거 (U+0591 ~ U+05C7)
+    final withoutHebrewMarks = trimmed.replaceAll(
+      RegExp(r'[\u0591-\u05C7]'),
+      '',
+    );
+
+    // 연속 공백 정리
+    return withoutHebrewMarks.replaceAll(RegExp(r'\s+'), ' ');
+  }
+
+  /// 다음 WORD_TABLE.id 생성
+  /// - Strong가 있으면: <STRONG>_<SEQ4>
+  /// - Strong가 없으면: <LANGCODE>0000_<SEQ4>
+  Future<String> generateNextWordId({
+    required String language,
+    String? strongNumber,
+  }) async {
+    final db = await DatabaseService.openDatabaseFile();
+
+    final strong = (strongNumber ?? '').trim().toUpperCase();
+
+    // 1) Strong가 있는 경우
+    if (strong.isNotEmpty) {
+      final rows = await db.rawQuery(
+        '''
+        SELECT id
+        FROM WORD_TABLE
+        WHERE id GLOB ?
+        ''',
+        ['${strong}_[0-9][0-9][0-9][0-9]'],
+      );
+
+      int maxSeq = -1;
+      final re = RegExp('^${RegExp.escape(strong)}_(\\d{4})\$');
+
+      for (final row in rows) {
+        final id = row['id'] as String;
+        final m = re.firstMatch(id);
+        if (m != null) {
+          final seq = int.tryParse(m.group(1)!) ?? 0;
+          if (seq > maxSeq) maxSeq = seq;
+        }
+      }
+
+      final nextSeq = maxSeq + 1;
+      final seqText = nextSeq.toString().padLeft(4, '0');
+      return '${strong}_$seqText';
+    }
+
+    // 2) Strong가 없는 경우
+    final langCode = _languageCodeFromLanguage(language);
+    final base = '${langCode}0000';
+
+    final rows = await db.rawQuery(
+      '''
+      SELECT id
+      FROM WORD_TABLE
+      WHERE id GLOB ?
+      ''',
+      ['${base}_[0-9][0-9][0-9][0-9]'],
+    );
+
+    int maxSeq = 0;
+    final re = RegExp('^${RegExp.escape(base)}_(\\d{4})\$');
+
+    for (final row in rows) {
+      final id = row['id'] as String;
+      final m = re.firstMatch(id);
+      if (m != null) {
+        final seq = int.tryParse(m.group(1)!) ?? 0;
+        if (seq > maxSeq) maxSeq = seq;
+      }
+    }
+
+    final nextSeq = maxSeq + 1;
+    final seqText = nextSeq.toString().padLeft(4, '0');
+    return '${base}_$seqText';
+  }
+
+  /// 신규 단어 생성 전 중복 후보 검색
+  /// - Strong가 있으면: 스트롱넘버 기준
+  /// - Strong가 없으면: (언어, 표기1) 기준
+  Future<List<Map<String, dynamic>>> findDuplicateCandidates({
+    required String language,
+    String? strongNumber,
+    required String spelling1,
+  }) async {
+    final db = await DatabaseService.openDatabaseFile();
+
+    final strong = (strongNumber ?? '').trim();
+    final spelling = spelling1.trim();
+
+    if (strong.isNotEmpty) {
+      return await db.query(
+        'WORD_TABLE',
+        columns: ['id', '언어', '스트롱넘버', '표기1', '의미1'],
+        where: '스트롱넘버 = ?',
+        whereArgs: [strong],
+        limit: 20,
+      );
+    }
+
+    final rows = await db.query(
+      'WORD_TABLE',
+      columns: ['id', '언어', '스트롱넘버', '표기1', '의미1'],
+      where: '언어 = ?',
+      whereArgs: [language],
+      limit: 200,
+    );
+
+    final target = _normalizeSpellingForDuplicateCheck(spelling);
+
+    return rows.where((row) {
+      final existingSpelling = (row['표기1'] ?? '').toString();
+      final normalizedExisting = _normalizeSpellingForDuplicateCheck(
+        existingSpelling,
+      );
+
+      return normalizedExisting == target;
+    }).toList();
+  }
+
+  /// WORD_TABLE에 신규 단어를 추가한다.
+  /// - 현재 단계에서는 핵심 컬럼만 입력하고, 나머지는 null로 둔다.
+  Future<void> createWord({
+    required String id,
+    required String language,
+    String? strongNumber,
+    required String spelling1,
+    String? pronunciation1,
+    String? meaning1,
+    String? note,
+  }) async {
+    final db = await DatabaseService.openDatabaseFile();
+
+    await db.transaction((txn) async {
+      await txn.insert('WORD_TABLE', {
+        'id': id,
+        '언어': language,
+        '스트롱넘버': (strongNumber ?? '').trim().isEmpty
+            ? null
+            : strongNumber!.trim(),
+        '표기1': spelling1.trim(),
+        '발음1': (pronunciation1 ?? '').trim().isEmpty
+            ? null
+            : pronunciation1!.trim(),
+        '의미1': (meaning1 ?? '').trim().isEmpty ? null : meaning1!.trim(),
+        '비고': (note ?? '').trim().isEmpty ? null : note!.trim(),
+      });
+    });
+  }
 }

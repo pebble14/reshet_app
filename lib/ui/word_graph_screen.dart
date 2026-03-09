@@ -5,6 +5,29 @@ import 'package:flutter/gestures.dart';
 import '../data/models/word.dart';
 import '../data/repositories/word_repository.dart';
 
+/// 신규 단어 생성 다이얼로그의 결과를 담는 DTO
+class CreateWordPayload {
+  final String language;
+  final String? strongNumber;
+  final String spelling1;
+  final String? pronunciation1;
+  final String? meaning1;
+  final String? note;
+
+  /// true면 단어 저장 후 현재 중심 단어와 관계 추가를 이어서 진행
+  final bool createRelationAfterSave;
+
+  CreateWordPayload({
+    required this.language,
+    required this.strongNumber,
+    required this.spelling1,
+    required this.pronunciation1,
+    required this.meaning1,
+    required this.note,
+    required this.createRelationAfterSave,
+  });
+}
+
 /// CreateRelationPayload
 /// - "관계 추가" 다이얼로그에서 사용자가 입력한 값을 담는 DTO(전달용 객체)
 /// - WordGraphScreen 내부 로직에서만 쓰지만, Dart의 스코프 제약 때문에
@@ -178,6 +201,12 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                 tooltip: '관계 추가',
                 icon: const Icon(Icons.add_link),
                 onPressed: _showAddRelationFlow,
+              ),
+
+              IconButton(
+                tooltip: '단어 추가',
+                icon: const Icon(Icons.note_add),
+                onPressed: _showCreateWordFlow,
               ),
             ],
           ),
@@ -935,6 +964,431 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     }
   }
 
+  /// [단어 추가] 전체 흐름
+  /// 1) 단어 입력
+  /// 2) 중복 후보 경고
+  /// 3) 단어 저장
+  /// 4) (옵션) 현재 중심 단어와 관계 추가
+  /// 5) 그래프 갱신
+  Future<void> _showCreateWordFlow() async {
+    final payload = await _showCreateWordDialog();
+    if (payload == null) return;
+
+    final duplicates = await _repository.findDuplicateCandidates(
+      language: payload.language,
+      strongNumber: payload.strongNumber,
+      spelling1: payload.spelling1,
+    );
+
+    if (duplicates.isNotEmpty) {
+      final shouldContinue = await _showDuplicateWarningDialog(
+        language: payload.language,
+        strongNumber: payload.strongNumber,
+        spelling1: payload.spelling1,
+        candidates: duplicates,
+      );
+
+      if (shouldContinue != true) return;
+    }
+
+    final newId = await _repository.generateNextWordId(
+      language: payload.language,
+      strongNumber: payload.strongNumber,
+    );
+
+    await _repository.createWord(
+      id: newId,
+      language: payload.language,
+      strongNumber: payload.strongNumber,
+      spelling1: payload.spelling1,
+      pronunciation1: payload.pronunciation1,
+      meaning1: payload.meaning1,
+      note: payload.note,
+    );
+
+    // 저장 후 관계 추가 옵션
+    if (payload.createRelationAfterSave) {
+      final createdWord = await _repository.getWordById(newId);
+      if (createdWord != null) {
+        final relationPayload = await _showCreateRelationDialog(createdWord);
+
+        if (relationPayload != null) {
+          final existing = await _repository.findExistingRelationId(
+            _centerWord.id,
+            createdWord.id,
+          );
+
+          if (existing == null) {
+            await _repository.createRelation(
+              wordId1: _centerWord.id,
+              wordId2: createdWord.id,
+              categoryCode: relationPayload.categoryCode,
+              relationType: relationPayload.relationType,
+              note: relationPayload.note,
+              source: relationPayload.source,
+            );
+          } else {
+            if (!mounted) return;
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(const SnackBar(content: Text('이미 관계가 존재합니다.')));
+          }
+        }
+      }
+    }
+
+    await _loadConnectedWords();
+
+    if (!mounted) return;
+    setState(() => _selectedWordId = newId);
+
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('단어가 추가되었습니다: $newId')));
+  }
+
+  /// 신규 단어 생성 다이얼로그
+  Future<CreateWordPayload?> _showCreateWordDialog() async {
+    final strongController = TextEditingController();
+    final spellingController = TextEditingController();
+    final pronunciationController = TextEditingController();
+    final meaningController = TextEditingController();
+    final noteController = TextEditingController();
+
+    String selectedLanguageGroup = '헬라어';
+    final customLanguageController = TextEditingController();
+    bool createRelationAfterSave = false;
+
+    const languages = ['히브리어/아람어', '헬라어', '라틴어', '영어', '기타'];
+
+    return showDialog<CreateWordPayload?>(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('신규 단어 생성'),
+              content: SizedBox(
+                width: 520,
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      DropdownButtonFormField<String>(
+                        value: selectedLanguageGroup,
+                        isExpanded: true,
+                        decoration: const InputDecoration(labelText: '언어 그룹'),
+                        items: languages
+                            .map(
+                              (lang) => DropdownMenuItem<String>(
+                                value: lang,
+                                child: Text(lang),
+                              ),
+                            )
+                            .toList(),
+                        onChanged: (v) {
+                          if (v != null) {
+                            setState(() {
+                              selectedLanguageGroup = v;
+                              if (v != '히브리어/아람어' && v != '기타') {
+                                customLanguageController.clear();
+                              }
+                            });
+                          }
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                      if (selectedLanguageGroup == '히브리어/아람어' ||
+                          selectedLanguageGroup == '기타') ...[
+                        TextField(
+                          controller: customLanguageController,
+                          decoration: InputDecoration(
+                            labelText: selectedLanguageGroup == '히브리어/아람어'
+                                ? '실제 언어명 (예: 히브리어, 아람어)'
+                                : '실제 언어명 입력',
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                      ],
+                      TextField(
+                        controller: strongController,
+                        decoration: const InputDecoration(
+                          labelText: '스트롱넘버 (없으면 비워둠)',
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      TextField(
+                        controller: spellingController,
+                        decoration: const InputDecoration(labelText: '표기1'),
+                      ),
+                      const SizedBox(height: 12),
+                      TextField(
+                        controller: pronunciationController,
+                        decoration: const InputDecoration(labelText: '발음1'),
+                      ),
+                      const SizedBox(height: 12),
+                      TextField(
+                        controller: meaningController,
+                        maxLines: 2,
+                        decoration: const InputDecoration(labelText: '의미1'),
+                      ),
+                      const SizedBox(height: 12),
+                      TextField(
+                        controller: noteController,
+                        maxLines: 2,
+                        decoration: const InputDecoration(labelText: '비고'),
+                      ),
+                      const SizedBox(height: 12),
+                      CheckboxListTile(
+                        contentPadding: EdgeInsets.zero,
+                        value: createRelationAfterSave,
+                        onChanged: (v) => setState(
+                          () => createRelationAfterSave = v ?? false,
+                        ),
+                        title: const Text('저장 후 현재 중심 단어와 관계 추가'),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('취소'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    final spelling = spellingController.text.trim();
+                    if (spelling.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('표기1은 필수입니다.')),
+                      );
+                      return;
+                    }
+
+                    String resolvedLanguage;
+                    if (selectedLanguageGroup == '히브리어/아람어' ||
+                        selectedLanguageGroup == '기타') {
+                      resolvedLanguage = customLanguageController.text.trim();
+                      if (resolvedLanguage.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('실제 언어명을 입력해주세요.')),
+                        );
+                        return;
+                      }
+                    } else {
+                      resolvedLanguage = selectedLanguageGroup;
+                    }
+
+                    Navigator.pop(
+                      context,
+                      CreateWordPayload(
+                        language: resolvedLanguage,
+                        strongNumber: strongController.text.trim().isEmpty
+                            ? null
+                            : strongController.text.trim().toUpperCase(),
+                        spelling1: spelling,
+                        pronunciation1:
+                            pronunciationController.text.trim().isEmpty
+                            ? null
+                            : pronunciationController.text.trim(),
+                        meaning1: meaningController.text.trim().isEmpty
+                            ? null
+                            : meaningController.text.trim(),
+                        note: noteController.text.trim().isEmpty
+                            ? null
+                            : noteController.text.trim(),
+                        createRelationAfterSave: createRelationAfterSave,
+                      ),
+                    );
+                  },
+                  child: const Text('저장'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  /// 중복 후보 경고 다이얼로그
+  Future<bool?> _showDuplicateWarningDialog({
+    required String language,
+    String? strongNumber,
+    required String spelling1,
+    required List<Map<String, dynamic>> candidates,
+  }) async {
+    final isStrongCase = (strongNumber ?? '').trim().isNotEmpty;
+
+    return showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('중복 가능성 경고'),
+          content: SizedBox(
+            width: 560,
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    isStrongCase
+                        ? '같은 스트롱넘버를 가진 기존 단어가 있습니다.'
+                        : '같은 언어/표기1을 가진 기존 단어가 있습니다.',
+                  ),
+                  const SizedBox(height: 12),
+                  ...candidates.map((c) {
+                    final id = (c['id'] ?? '').toString();
+                    final lang = (c['언어'] ?? '').toString();
+                    final strong = (c['스트롱넘버'] ?? '').toString();
+                    final spelling = (c['표기1'] ?? '').toString();
+                    final meaning = (c['의미1'] ?? '').toString();
+
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey.shade300),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          'id: $id\n언어: $lang\n스트롱: $strong\n표기1: $spelling\n의미1: $meaning',
+                        ),
+                      ),
+                    );
+                  }),
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('취소'),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('계속 추가'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// 새로 만든 단어와 현재 중심 단어 사이의 관계 생성 정보 입력
+  Future<CreateRelationPayload?> _showCreateRelationDialog(Word other) async {
+    final categories = await _repository.getRelationCategories();
+    final types = await _repository.getRelationTypes();
+
+    String? selectedCategoryCode;
+    String? selectedRelationType;
+    final noteController = TextEditingController();
+    final sourceController = TextEditingController();
+
+    return showDialog<CreateRelationPayload?>(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text('관계 추가: ${other.spelling1 ?? other.id}'),
+              content: SizedBox(
+                width: 520,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    DropdownButtonFormField<String>(
+                      value: selectedCategoryCode,
+                      isExpanded: true,
+                      decoration: const InputDecoration(labelText: '카테고리'),
+                      items: [
+                        const DropdownMenuItem<String>(
+                          value: null,
+                          child: Text('없음'),
+                        ),
+                        ...categories.map((c) {
+                          final code = c['code'] as String;
+                          final label = (c['label'] as String?) ?? code;
+                          return DropdownMenuItem<String>(
+                            value: code,
+                            child: Text('$label ($code)'),
+                          );
+                        }),
+                      ],
+                      onChanged: (v) =>
+                          setState(() => selectedCategoryCode = v),
+                    ),
+                    const SizedBox(height: 12),
+                    DropdownButtonFormField<String>(
+                      value: selectedRelationType,
+                      isExpanded: true,
+                      decoration: const InputDecoration(labelText: '타입'),
+                      items: [
+                        const DropdownMenuItem<String>(
+                          value: null,
+                          child: Text('없음'),
+                        ),
+                        ...types.map((t) {
+                          final code = t['code'] as String;
+                          final label = (t['label'] as String?) ?? code;
+                          return DropdownMenuItem<String>(
+                            value: code,
+                            child: Text('$label ($code)'),
+                          );
+                        }),
+                      ],
+                      onChanged: (v) =>
+                          setState(() => selectedRelationType = v),
+                    ),
+                    const SizedBox(height: 12),
+                    TextField(
+                      controller: noteController,
+                      decoration: const InputDecoration(labelText: '노트'),
+                      maxLines: 2,
+                    ),
+                    const SizedBox(height: 12),
+                    TextField(
+                      controller: sourceController,
+                      decoration: const InputDecoration(labelText: '소스'),
+                      maxLines: 2,
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('취소'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(
+                      context,
+                      CreateRelationPayload(
+                        categoryCode: selectedCategoryCode,
+                        relationType: selectedRelationType,
+                        note: noteController.text.trim().isEmpty
+                            ? null
+                            : noteController.text.trim(),
+                        source: sourceController.text.trim().isEmpty
+                            ? null
+                            : sourceController.text.trim(),
+                      ),
+                    );
+                  },
+                  child: const Text('저장'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   /// 현재 그래프(중심 노드 + 연결 노드들)가 화면에 잘 들어오도록 자동으로 줌/팬을 맞춘다.
   void _fitToView(
     Size canvasSize,
@@ -1135,119 +1589,6 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                 TextButton(
                   onPressed: () => Navigator.pop(context),
                   child: const Text('취소'),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
-  }
-
-  /// 관계 정보를 입력받는 다이얼로그
-  Future<CreateRelationPayload?> _showCreateRelationDialog(Word other) async {
-    // 드롭다운 옵션 로딩
-    final categories = await _repository.getRelationCategories();
-    final types = await _repository.getRelationTypes();
-
-    String? selectedCategoryCode;
-    String? selectedRelationType;
-
-    final noteController = TextEditingController();
-    final sourceController = TextEditingController();
-
-    return showDialog<CreateRelationPayload?>(
-      context: context,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              title: Text('관계 추가: ${other.spelling1 ?? other.id}'),
-              content: SizedBox(
-                width: 520,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    DropdownButtonFormField<String>(
-                      value: selectedCategoryCode,
-                      isExpanded: true,
-                      decoration: const InputDecoration(labelText: '카테고리'),
-                      items: [
-                        const DropdownMenuItem<String>(
-                          value: null,
-                          child: Text('없음'),
-                        ),
-                        ...categories.map((c) {
-                          final code = c['code'] as String;
-                          final label = c['label'] as String? ?? code;
-                          return DropdownMenuItem<String>(
-                            value: code,
-                            child: Text('$label ($code)'),
-                          );
-                        }),
-                      ],
-                      onChanged: (v) =>
-                          setState(() => selectedCategoryCode = v),
-                    ),
-                    const SizedBox(height: 12),
-                    DropdownButtonFormField<String>(
-                      value: selectedRelationType,
-                      isExpanded: true,
-                      decoration: const InputDecoration(labelText: '타입'),
-                      items: [
-                        const DropdownMenuItem<String>(
-                          value: null,
-                          child: Text('없음'),
-                        ),
-                        ...types.map((t) {
-                          final code = t['code'] as String;
-                          final label = t['label'] as String? ?? code;
-                          return DropdownMenuItem<String>(
-                            value: code,
-                            child: Text('$label ($code)'),
-                          );
-                        }),
-                      ],
-                      onChanged: (v) =>
-                          setState(() => selectedRelationType = v),
-                    ),
-                    const SizedBox(height: 12),
-                    TextField(
-                      controller: noteController,
-                      decoration: const InputDecoration(labelText: '노트'),
-                      maxLines: 2,
-                    ),
-                    const SizedBox(height: 12),
-                    TextField(
-                      controller: sourceController,
-                      decoration: const InputDecoration(labelText: '소스'),
-                      maxLines: 2,
-                    ),
-                  ],
-                ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('취소'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(
-                      context,
-                      CreateRelationPayload(
-                        categoryCode: selectedCategoryCode,
-                        relationType: selectedRelationType,
-                        note: noteController.text.trim().isEmpty
-                            ? null
-                            : noteController.text.trim(),
-                        source: sourceController.text.trim().isEmpty
-                            ? null
-                            : sourceController.text.trim(),
-                      ),
-                    );
-                  },
-                  child: const Text('저장'),
                 ),
               ],
             );
