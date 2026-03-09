@@ -1006,9 +1006,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       note: payload.note,
     );
 
+    final createdWord = await _repository.getWordById(newId);
+
     // 저장 후 관계 추가 옵션
     if (payload.createRelationAfterSave) {
-      final createdWord = await _repository.getWordById(newId);
       if (createdWord != null) {
         final relationPayload = await _showCreateRelationDialog(createdWord);
 
@@ -1035,8 +1036,32 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
           }
         }
       }
+
+      await _loadConnectedWords();
+
+      if (!mounted) return;
+      setState(() => _selectedWordId = newId);
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('단어가 추가되었습니다: $newId')));
+      return;
     }
 
+    // 관계를 만들지 않은 경우:
+    // 새로 만든 단어를 중심으로 하는 그래프 화면으로 즉시 전환
+    if (!mounted) return;
+
+    if (createdWord != null) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (_) => WordGraphScreen(centerWord: createdWord),
+        ),
+      );
+      return;
+    }
+
+    // 혹시 단어 조회가 실패하면, 현재 화면만 갱신하고 알림
     await _loadConnectedWords();
 
     if (!mounted) return;
