@@ -466,6 +466,42 @@ class WordRepository {
     });
   }
 
+  /// 특정 단어와 연결된 관계 개수 조회
+  Future<int> countRelationsForWord(String wordId) async {
+    final db = await DatabaseService.openDatabaseFile();
+
+    final rows = await db.rawQuery(
+      '''
+      SELECT COUNT(*) AS cnt
+      FROM WORD_RELATION
+      WHERE word_id_1 = ? OR word_id_2 = ?
+      ''',
+      [wordId, wordId],
+    );
+
+    if (rows.isEmpty) return 0;
+    final value = rows.first['cnt'];
+    if (value is int) return value;
+    return int.tryParse(value.toString()) ?? 0;
+  }
+
+  /// 단어 1건 삭제
+  /// - 현재 구조에서는 연결 관계도 함께 삭제한다.
+  /// - 관계 삭제 + 단어 삭제를 하나의 트랜잭션으로 묶는다.
+  Future<void> deleteWord(String wordId) async {
+    final db = await DatabaseService.openDatabaseFile();
+
+    await db.transaction((txn) async {
+      await txn.delete(
+        'WORD_RELATION',
+        where: 'word_id_1 = ? OR word_id_2 = ?',
+        whereArgs: [wordId, wordId],
+      );
+
+      await txn.delete('WORD_TABLE', where: 'id = ?', whereArgs: [wordId]);
+    });
+  }
+
   /// WORD_TABLE의 기존 단어 1건 수정
   /// - 현재 단계에서는 핵심 편집 필드만 수정한다.
   /// - id는 수정하지 않는다.
