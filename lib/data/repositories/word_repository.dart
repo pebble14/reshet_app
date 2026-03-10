@@ -391,6 +391,7 @@ class WordRepository {
     required String language,
     String? strongNumber,
     required String spelling1,
+    String? excludeId,
   }) async {
     final db = await DatabaseService.openDatabaseFile();
 
@@ -398,13 +399,18 @@ class WordRepository {
     final spelling = spelling1.trim();
 
     if (strong.isNotEmpty) {
-      return await db.query(
+      final rows = await db.query(
         'WORD_TABLE',
         columns: ['id', '언어', '스트롱넘버', '표기1', '의미1'],
         where: '스트롱넘버 = ?',
         whereArgs: [strong],
         limit: 20,
       );
+
+      return rows.where((row) {
+        final id = (row['id'] ?? '').toString();
+        return excludeId == null || id != excludeId;
+      }).toList();
     }
 
     final rows = await db.query(
@@ -418,6 +424,9 @@ class WordRepository {
     final target = _normalizeSpellingForDuplicateCheck(spelling);
 
     return rows.where((row) {
+      final id = (row['id'] ?? '').toString();
+      if (excludeId != null && id == excludeId) return false;
+
       final existingSpelling = (row['표기1'] ?? '').toString();
       final normalizedExisting = _normalizeSpellingForDuplicateCheck(
         existingSpelling,
@@ -454,6 +463,41 @@ class WordRepository {
         '의미1': (meaning1 ?? '').trim().isEmpty ? null : meaning1!.trim(),
         '비고': (note ?? '').trim().isEmpty ? null : note!.trim(),
       });
+    });
+  }
+
+  /// WORD_TABLE의 기존 단어 1건 수정
+  /// - 현재 단계에서는 핵심 편집 필드만 수정한다.
+  /// - id는 수정하지 않는다.
+  Future<void> updateWord({
+    required String id,
+    required String language,
+    String? strongNumber,
+    required String spelling1,
+    String? pronunciation1,
+    String? meaning1,
+    String? note,
+  }) async {
+    final db = await DatabaseService.openDatabaseFile();
+
+    await db.transaction((txn) async {
+      await txn.update(
+        'WORD_TABLE',
+        {
+          '언어': language,
+          '스트롱넘버': (strongNumber ?? '').trim().isEmpty
+              ? null
+              : strongNumber!.trim(),
+          '표기1': spelling1.trim(),
+          '발음1': (pronunciation1 ?? '').trim().isEmpty
+              ? null
+              : pronunciation1!.trim(),
+          '의미1': (meaning1 ?? '').trim().isEmpty ? null : meaning1!.trim(),
+          '비고': (note ?? '').trim().isEmpty ? null : note!.trim(),
+        },
+        where: 'id = ?',
+        whereArgs: [id],
+      );
     });
   }
 }
