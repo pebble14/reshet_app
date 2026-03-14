@@ -4,6 +4,7 @@ import 'package:flutter/gestures.dart';
 
 import '../data/models/word.dart';
 import '../data/repositories/word_repository.dart';
+import 'word_graph_cache.dart';
 
 const double _centerNodeSize = 180.0;
 const double _centerNodeHalf = _centerNodeSize / 2;
@@ -173,6 +174,15 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   void initState() {
     super.initState();
     _centerWord = widget.centerWord;
+    final cachedGraph = WordGraphDataCache.get(_centerWord.id);
+    if (cachedGraph != null) {
+      _applyGraphData(
+        words: cachedGraph.connectedWords,
+        edges: cachedGraph.relationEdges,
+      );
+      return;
+    }
+
     _loadConnectedWords();
   }
 
@@ -182,21 +192,46 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     super.dispose();
   }
 
+  void _applyGraphData({
+    required List<Word> words,
+    required List<WordRelationEdgeInfo> edges,
+  }) {
+    _connectedWords = words;
+
+    _edgeInfoByOtherId.clear();
+    for (final e in edges) {
+      _edgeInfoByOtherId[e.otherWordId] = e;
+    }
+
+    _errorMessage = null;
+    _isLoading = false;
+  }
+
   Future<void> _loadConnectedWords() async {
+    final cachedGraph = WordGraphDataCache.get(_centerWord.id);
+    if (cachedGraph != null) {
+      if (!mounted) return;
+      setState(() {
+        _applyGraphData(
+          words: cachedGraph.connectedWords,
+          edges: cachedGraph.relationEdges,
+        );
+      });
+      return;
+    }
+
     try {
       final words = await _repository.getConnectedWords(_centerWord.id);
       final edges = await _repository.getRelationEdges(_centerWord.id);
+      WordGraphDataCache.put(
+        centerWordId: _centerWord.id,
+        connectedWords: words,
+        relationEdges: edges,
+      );
 
       if (!mounted) return;
       setState(() {
-        _connectedWords = words;
-
-        _edgeInfoByOtherId.clear();
-        for (final e in edges) {
-          _edgeInfoByOtherId[e.otherWordId] = e;
-        }
-
-        _isLoading = false;
+        _applyGraphData(words: words, edges: edges);
       });
     } catch (e) {
       if (!mounted) return;
@@ -524,7 +559,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       if (countOnRing <= 0) continue;
 
       final angleStep = 2 * pi / countOnRing;
-      final startAngle = -pi / 2 +
+      final startAngle =
+          -pi / 2 +
           ((ringIndex.isOdd && countOnRing > 1) ? angleStep / 2 : 0.0);
 
       for (
@@ -646,10 +682,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     return nodeCount * spacingPerNode / (2 * pi);
   }
 
-  List<Widget> _buildWordNodes(
-    _GraphLayoutData layout,
-    List<Word> words,
-  ) {
+  List<Widget> _buildWordNodes(_GraphLayoutData layout, List<Word> words) {
     if (words.isEmpty) return [];
 
     final List<Widget> widgets = [];
@@ -662,7 +695,9 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
           top: nodeLayout.nodeBounds.top,
           child: _buildWordNode(
             words[index],
-            _colorForCategory(_edgeInfoByOtherId[words[index].id]?.categoryCode),
+            _colorForCategory(
+              _edgeInfoByOtherId[words[index].id]?.categoryCode,
+            ),
           ),
         ),
       );
@@ -683,7 +718,6 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     if (_currentScale < _labelVisibleScaleThreshold) return [];
     if (nodes.isEmpty) return [];
 
-
     // 태그가 선 위에 겹치지 않도록 약간 수직 방향 오프셋(줌 역보정)
 
     final List<Widget> widgets = [];
@@ -695,13 +729,11 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
       final pos = nodeLayout.labelCenter(_currentScale);
 
-
       // 중심 -> 주변 방향 벡터
 
       // 태그는 중심에서 멀어지게(주변 노드 쪽)
 
       // 수직 단위벡터
-
 
       final otherWord = nodes[index];
       final edgeInfo = _edgeInfoByOtherId[otherWord.id];
@@ -837,6 +869,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
             );
 
             // 그래프 갱신(색/라벨/팝업 내용 반영)
+            WordGraphDataCache.invalidateMany([_centerWord.id, otherWord.id]);
             await _loadConnectedWords();
 
             if (!mounted) return;
@@ -860,6 +893,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
             await _repository.deleteRelation(info.relationId);
 
             // 그래프 갱신(엣지/라벨/색 반영)
+            WordGraphDataCache.invalidateMany([_centerWord.id, otherWord.id]);
             await _loadConnectedWords();
 
             if (!mounted) return;
@@ -1260,6 +1294,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     );
 
     final createdWord = await _repository.getWordById(newId);
+    bool didCreateRelation = false;
 
     // 저장 후 관계 추가 옵션
     if (payload.createRelationAfterSave) {
@@ -1281,6 +1316,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
               note: relationPayload.note,
               source: relationPayload.source,
             );
+            didCreateRelation = true;
           } else {
             if (!mounted) return;
             ScaffoldMessenger.of(
@@ -1288,6 +1324,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
             ).showSnackBar(const SnackBar(content: Text('이미 관계가 존재합니다.')));
           }
         }
+      }
+
+      if (didCreateRelation && createdWord != null) {
+        WordGraphDataCache.invalidateMany([_centerWord.id, createdWord.id]);
       }
 
       await _loadConnectedWords();
@@ -1676,8 +1716,6 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     final bboxW = max(bounds.width, 1.0);
     final bboxH = max(bounds.height, 1.0);
 
-
-
     // 여백(태그/선 고려)
 
     // 스케일 계산
@@ -1756,6 +1794,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     );
 
     // 5) 갱신
+    WordGraphDataCache.invalidateMany([_centerWord.id, other.id]);
     await _loadConnectedWords();
 
     if (!mounted) return;
