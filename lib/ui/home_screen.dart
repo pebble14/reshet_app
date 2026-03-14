@@ -73,6 +73,10 @@ class _HomeScreenState extends State<HomeScreen> {
     return '';
   }
 
+  String _joinNonEmptyValues(Iterable<String> values, String separator) {
+    return values.where((value) => value.isNotEmpty).join(separator);
+  }
+
   String _buildDisplaySpelling(Map<String, dynamic> wordMap) {
     final spelling1 = (wordMap['표기1'] ?? '').toString().trim();
     if (spelling1.isNotEmpty) {
@@ -96,32 +100,79 @@ class _HomeScreenState extends State<HomeScreen> {
     return '$prefix$numericPart';
   }
 
-  String _buildWordTitle(Map<String, dynamic> wordMap) {
-    final displaySpelling = _buildDisplaySpelling(wordMap);
+  InlineSpan _buildWordTitle(Map<String, dynamic> wordMap) {
     final strong = _formatDisplayStrong(
       (wordMap['스트롱넘버'] ?? '').toString(),
     );
+    final displaySpelling = _buildDisplaySpelling(wordMap);
+    final language = (wordMap['언어'] ?? '').toString().trim();
+    final children = <InlineSpan>[];
 
-    if (strong.isEmpty) {
-      return displaySpelling;
+    if (strong.isNotEmpty) {
+      children.add(
+        TextSpan(
+          text: strong,
+          style: const TextStyle(fontWeight: FontWeight.w500),
+        ),
+      );
     }
-    if (displaySpelling.isEmpty) {
-      return strong;
+
+    if (strong.isNotEmpty && displaySpelling.isNotEmpty) {
+      children.add(
+        const WidgetSpan(
+          alignment: PlaceholderAlignment.middle,
+          child: SizedBox(width: 12),
+        ),
+      );
     }
-    return '$strong $displaySpelling';
+
+    if (displaySpelling.isNotEmpty) {
+      children.add(
+        TextSpan(
+          text: displaySpelling,
+          style: const TextStyle(fontWeight: FontWeight.w600),
+        ),
+      );
+    }
+
+    if (language.isNotEmpty) {
+      if (children.isNotEmpty) {
+        children.add(
+          const TextSpan(
+            text: ' · ',
+            style: TextStyle(fontWeight: FontWeight.normal),
+          ),
+        );
+      }
+      children.add(
+        TextSpan(
+          text: language,
+          style: const TextStyle(fontWeight: FontWeight.normal),
+        ),
+      );
+    }
+
+    return TextSpan(children: children);
   }
 
   String _buildWordSubtitle(Map<String, dynamic> wordMap) {
     final pronunciation = _readFirstNonEmptyValue(wordMap, [
-      '음역',
-      '음역1',
       '발음1',
+      '발음',
     ]);
-    final language = (wordMap['언어'] ?? '').toString().trim();
-    final parts = [pronunciation, language]
-        .where((value) => value.isNotEmpty)
-        .toList();
-    return parts.join(' · ');
+    final transliteration = _readFirstNonEmptyValue(wordMap, [
+      '음역1',
+      '음역',
+    ]);
+    final meaning = _readFirstNonEmptyValue(wordMap, [
+      '의미1',
+      '의미',
+    ]);
+
+    return _joinNonEmptyValues(
+      [pronunciation, transliteration, meaning],
+      ' · ',
+    );
   }
 
   /// 위젯이 처음 생성될 때 1회 호출되는 생명주기 메서드
@@ -358,12 +409,16 @@ class _HomeScreenState extends State<HomeScreen> {
                           final subtitleText = _buildWordSubtitle(wordMap);
 
                           return ListTile(
-                            title: Text(_buildWordTitle(wordMap)),
+                            title: Text.rich(
+                              _buildWordTitle(wordMap),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                             subtitle: subtitleText.isEmpty
                                 ? null
                                 : Text(
                                     subtitleText,
-                                    maxLines: 1,
+                                    maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                   ),
                             trailing: Row(
