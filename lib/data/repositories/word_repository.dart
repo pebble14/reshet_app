@@ -128,11 +128,10 @@ class WordRepository {
   /// - 스트롱넘버가 있고 prefix가 H/G인 항목만 반환한다.
   /// - 정렬은 H -> G -> 숫자 오름차순 -> id 순서로 고정한다.
   Future<List<Map<String, dynamic>>> getStrongWordsMap({
-    int limit = 50,
+    int? limit,
   }) async {
     final db = await DatabaseService.openDatabaseFile();
-
-    return await db.rawQuery(
+    final sql = StringBuffer(
       '''
       SELECT *
       FROM WORD_TABLE
@@ -147,10 +146,16 @@ class WordRepository {
         END,
         CAST(SUBSTR(TRIM(스트롱넘버), 2) AS INTEGER),
         id
-      LIMIT ?
       ''',
-      [limit],
     );
+    final args = <Object?>[];
+
+    if (limit != null) {
+      sql.writeln('LIMIT ?');
+      args.add(limit);
+    }
+
+    return await db.rawQuery(sql.toString(), args);
   }
 
   /// 키워드로 단어 검색 (홈 검색용)
