@@ -58,10 +58,15 @@ class WordGraphScreen extends StatefulWidget {
   /// 선택 이벤트만 전달하고 싶을 때 사용한다.
   final ValueChanged<Word>? onSelectWord;
 
+  /// 스플릿뷰에서 이미 선택된 노드를 다시 클릭했을 때
+  /// 부모가 중심 단어를 바꾸도록 알린다.
+  final ValueChanged<Word>? onChangeCenterWord;
+
   const WordGraphScreen({
     super.key,
     required this.centerWord,
     this.onSelectWord,
+    this.onChangeCenterWord,
   });
 
   @override
@@ -336,6 +341,11 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
         // 2) 스플릿뷰 모드: 선택 이벤트 전달(화면 push는 하지 않음)
         if (widget.onSelectWord != null) {
+          if (isSameTap && widget.onChangeCenterWord != null) {
+            widget.onChangeCenterWord!(word);
+            return;
+          }
+
           widget.onSelectWord!(word);
           return;
         }

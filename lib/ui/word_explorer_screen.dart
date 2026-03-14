@@ -52,19 +52,21 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Reshet - 탐색'),
-      ),
+      appBar: AppBar(title: Text('Reshet - 탐색')),
       body: Row(
         children: [
           // ✅ 왼쪽(그래프)
           Expanded(
             flex: 3,
             child: WordGraphScreen(
+              key: ValueKey(_centerWord.id),
               centerWord: _centerWord,
               // 스플릿뷰에서는 push 탐색 대신 "선택 콜백"을 사용
               onSelectWord: (word) async {
                 await _selectWord(word);
+              },
+              onChangeCenterWord: (word) async {
+                await _selectWord(word, changeCenterWord: true);
               },
             ),
           ),
@@ -73,18 +75,18 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
           const VerticalDivider(width: 1),
 
           // ✅ 오른쪽(상세 패널)
-          Expanded(
-            flex: 2,
-            child: _buildDetailPanel(),
-          ),
+          Expanded(flex: 2, child: _buildDetailPanel()),
         ],
       ),
     );
   }
 
   /// 그래프에서 선택된 단어를 오른쪽 상세 패널에 반영한다.
-  Future<void> _selectWord(Word word) async {
+  Future<void> _selectWord(Word word, {bool changeCenterWord = false}) async {
     setState(() {
+      if (changeCenterWord) {
+        _centerWord = word;
+      }
       _isDetailLoading = true;
       _detailError = null;
     });
@@ -156,9 +158,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
-                Expanded(
-                  child: Text(entry.value?.toString() ?? ''),
-                ),
+                Expanded(child: Text(entry.value?.toString() ?? '')),
               ],
             ),
           );
