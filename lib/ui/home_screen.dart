@@ -56,8 +56,72 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<List<Map<String, dynamic>>> _createWordsFuture() {
     final keyword = _searchController.text.trim();
     return keyword.isEmpty
-        ? _repository.getWordsMap(limit: 50)
+        ? _repository.getStrongWordsMap()
         : _repository.searchWordsMap(keyword, limit: 200);
+  }
+
+  String _readFirstNonEmptyValue(
+    Map<String, dynamic> wordMap,
+    List<String> keys,
+  ) {
+    for (final key in keys) {
+      final value = (wordMap[key] ?? '').toString().trim();
+      if (value.isNotEmpty) {
+        return value;
+      }
+    }
+    return '';
+  }
+
+  String _buildDisplaySpelling(Map<String, dynamic> wordMap) {
+    final spelling1 = (wordMap['표기1'] ?? '').toString().trim();
+    if (spelling1.isNotEmpty) {
+      return spelling1;
+    }
+    return (wordMap['표기2'] ?? '').toString().trim();
+  }
+
+  String _formatDisplayStrong(String strong) {
+    final trimmed = strong.trim();
+    final match = RegExp(r'^([A-Za-z])(\d+)$').firstMatch(trimmed);
+    if (match == null) {
+      return trimmed;
+    }
+
+    final prefix = match.group(1)!.toUpperCase();
+    final numericPart = int.tryParse(match.group(2)!);
+    if (numericPart == null) {
+      return trimmed;
+    }
+    return '$prefix$numericPart';
+  }
+
+  String _buildWordTitle(Map<String, dynamic> wordMap) {
+    final displaySpelling = _buildDisplaySpelling(wordMap);
+    final strong = _formatDisplayStrong(
+      (wordMap['스트롱넘버'] ?? '').toString(),
+    );
+
+    if (strong.isEmpty) {
+      return displaySpelling;
+    }
+    if (displaySpelling.isEmpty) {
+      return strong;
+    }
+    return '$strong $displaySpelling';
+  }
+
+  String _buildWordSubtitle(Map<String, dynamic> wordMap) {
+    final pronunciation = _readFirstNonEmptyValue(wordMap, [
+      '음역',
+      '음역1',
+      '발음1',
+    ]);
+    final language = (wordMap['언어'] ?? '').toString().trim();
+    final parts = [pronunciation, language]
+        .where((value) => value.isNotEmpty)
+        .toList();
+    return parts.join(' · ');
   }
 
   /// 위젯이 처음 생성될 때 1회 호출되는 생명주기 메서드
@@ -291,21 +355,17 @@ class _HomeScreenState extends State<HomeScreen> {
                         itemCount: words.length,
                         itemBuilder: (context, index) {
                           final wordMap = words[index];
-                          final spelling = (wordMap['표기1'] ?? '').toString();
-                          final meaning = (wordMap['의미1'] ?? '').toString();
-                          final strong = (wordMap['스트롱넘버'] ?? '').toString();
+                          final subtitleText = _buildWordSubtitle(wordMap);
 
                           return ListTile(
-                            title: Text(
-                              spelling.isNotEmpty
-                                  ? spelling
-                                  : (wordMap['표기2'] ?? '').toString(),
-                            ),
-                            subtitle: Text(
-                              meaning,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                            title: Text(_buildWordTitle(wordMap)),
+                            subtitle: subtitleText.isEmpty
+                                ? null
+                                : Text(
+                                    subtitleText,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                             trailing: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
