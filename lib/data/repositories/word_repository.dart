@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:sqflite_common/sqlite_api.dart';
 import '../../database/database_service.dart';
 import '../models/word.dart';
 
@@ -150,8 +152,23 @@ class WordRepository {
   /// WORD_RELATION 1건 삭제(트랜잭션)
   Future<void> deleteRelation(int relationId) async {
     final db = await DatabaseService.openDatabaseFile();
+    final groupId = _newHistoryGroupId();
 
     await db.transaction((txn) async {
+      final before = await _getRelationRowById(txn, relationId);
+      if (before == null) {
+        throw Exception('삭제할 관계를 찾을 수 없습니다: $relationId');
+      }
+
+      await _insertHistory(
+        txn,
+        groupId: groupId,
+        actionType: 'delete',
+        entityType: 'relation',
+        entityId: relationId.toString(),
+        beforeJson: before,
+      );
+
       await txn.delete(
         'WORD_RELATION',
         where: 'id = ?',
@@ -189,8 +206,21 @@ class WordRepository {
     required String? source,
   }) async {
     final db = await DatabaseService.openDatabaseFile();
+    final groupId = _newHistoryGroupId();
 
     await db.transaction((txn) async {
+      final before = await _getRelationRowById(txn, relationId);
+      if (before == null) {
+        throw Exception('수정할 관계를 찾을 수 없습니다: $relationId');
+      }
+
+      final after = Map<String, dynamic>.from(before);
+      after['category_code'] = categoryCode;
+      after['relation_type'] = relationType;
+      after['note'] = note;
+      after['source'] = source;
+      after['updated_at'] = DateTime.now().toIso8601String();
+
       await txn.update(
         'WORD_RELATION',
         {
@@ -198,10 +228,20 @@ class WordRepository {
           'relation_type': relationType,
           'note': note,
           'source': source,
-          'updated_at': DateTime.now().toIso8601String(),
+          'updated_at': after['updated_at'],
         },
         where: 'id = ?',
         whereArgs: [relationId],
+      );
+
+      await _insertHistory(
+        txn,
+        groupId: groupId,
+        actionType: 'update',
+        entityType: 'relation',
+        entityId: relationId.toString(),
+        beforeJson: before,
+        afterJson: after,
       );
     });
   }
@@ -263,13 +303,12 @@ class WordRepository {
     required String? source,
   }) async {
     final db = await DatabaseService.openDatabaseFile();
-
-    // DB CHECK 제약: word_id_1 < word_id_2 를 만족시키기 위해 정렬
-    final a = wordId1.compareTo(wordId2) <= 0 ? wordId1 : wordId2;
-    final b = wordId1.compareTo(wordId2) <= 0 ? wordId2 : wordId1;
+    final groupId = _newHistoryGroupId();
+    final a = wordId1.compareTo(wordId2) < 0 ? wordId1 : wordId2;
+    final b = wordId1.compareTo(wordId2) < 0 ? wordId2 : wordId1;
 
     return await db.transaction((txn) async {
-      final id = await txn.insert('WORD_RELATION', {
+      final row = {
         'word_id_1': a,
         'word_id_2': b,
         'category_code': categoryCode,
@@ -277,7 +316,21 @@ class WordRepository {
         'note': note,
         'source': source,
         'updated_at': DateTime.now().toIso8601String(),
-      });
+      };
+
+      final id = await txn.insert('WORD_RELATION', row);
+
+      final after = Map<String, dynamic>.from(row);
+      after['id'] = id;
+
+      await _insertHistory(
+        txn,
+        groupId: groupId,
+        actionType: 'create',
+        entityType: 'relation',
+        entityId: id.toString(),
+        afterJson: after,
+      );
 
       return id;
     });
@@ -448,9 +501,10 @@ class WordRepository {
     String? note,
   }) async {
     final db = await DatabaseService.openDatabaseFile();
+    final groupId = _newHistoryGroupId();
 
     await db.transaction((txn) async {
-      await txn.insert('WORD_TABLE', {
+      final row = {
         'id': id,
         '언어': language,
         '스트롱넘버': (strongNumber ?? '').trim().isEmpty
@@ -462,7 +516,18 @@ class WordRepository {
             : pronunciation1!.trim(),
         '의미1': (meaning1 ?? '').trim().isEmpty ? null : meaning1!.trim(),
         '비고': (note ?? '').trim().isEmpty ? null : note!.trim(),
-      });
+      };
+
+      await txn.insert('WORD_TABLE', row);
+
+      await _insertHistory(
+        txn,
+        groupId: groupId,
+        actionType: 'create',
+        entityType: 'word',
+        entityId: id,
+        afterJson: row,
+      );
     });
   }
 
@@ -490,8 +555,48 @@ class WordRepository {
   /// - 관계 삭제 + 단어 삭제를 하나의 트랜잭션으로 묶는다.
   Future<void> deleteWord(String wordId) async {
     final db = await DatabaseService.openDatabaseFile();
+    final groupId = _newHistoryGroupId();
 
     await db.transaction((txn) async {
+      final wordRows = await txn.query(
+        'WORD_TABLE',
+        where: 'id = ?',
+        whereArgs: [wordId],
+        limit: 1,
+      );
+      if (wordRows.isEmpty) {
+        throw Exception('삭제할 단어를 찾을 수 없습니다: $wordId');
+      }
+
+      final wordBefore = Map<String, dynamic>.from(wordRows.first);
+
+      final relationRows = await txn.query(
+        'WORD_RELATION',
+        where: 'word_id_1 = ? OR word_id_2 = ?',
+        whereArgs: [wordId, wordId],
+      );
+
+      for (final rel in relationRows) {
+        final relMap = Map<String, dynamic>.from(rel);
+        await _insertHistory(
+          txn,
+          groupId: groupId,
+          actionType: 'delete',
+          entityType: 'relation',
+          entityId: relMap['id'].toString(),
+          beforeJson: relMap,
+        );
+      }
+
+      await _insertHistory(
+        txn,
+        groupId: groupId,
+        actionType: 'delete',
+        entityType: 'word',
+        entityId: wordId,
+        beforeJson: wordBefore,
+      );
+
       await txn.delete(
         'WORD_RELATION',
         where: 'word_id_1 = ? OR word_id_2 = ?',
@@ -515,25 +620,268 @@ class WordRepository {
     String? note,
   }) async {
     final db = await DatabaseService.openDatabaseFile();
+    final groupId = _newHistoryGroupId();
 
     await db.transaction((txn) async {
+      final before = await _getWordRowById(txn, id);
+      if (before == null) {
+        throw Exception('수정할 단어를 찾을 수 없습니다: $id');
+      }
+
+      final after = Map<String, dynamic>.from(before);
+      after['언어'] = language;
+      after['스트롱넘버'] = (strongNumber ?? '').trim().isEmpty
+          ? null
+          : strongNumber!.trim();
+      after['표기1'] = spelling1.trim();
+      after['발음1'] = (pronunciation1 ?? '').trim().isEmpty
+          ? null
+          : pronunciation1!.trim();
+      after['의미1'] = (meaning1 ?? '').trim().isEmpty ? null : meaning1!.trim();
+      after['비고'] = (note ?? '').trim().isEmpty ? null : note!.trim();
+
       await txn.update(
         'WORD_TABLE',
         {
-          '언어': language,
-          '스트롱넘버': (strongNumber ?? '').trim().isEmpty
-              ? null
-              : strongNumber!.trim(),
-          '표기1': spelling1.trim(),
-          '발음1': (pronunciation1 ?? '').trim().isEmpty
-              ? null
-              : pronunciation1!.trim(),
-          '의미1': (meaning1 ?? '').trim().isEmpty ? null : meaning1!.trim(),
-          '비고': (note ?? '').trim().isEmpty ? null : note!.trim(),
+          '언어': after['언어'],
+          '스트롱넘버': after['스트롱넘버'],
+          '표기1': after['표기1'],
+          '발음1': after['발음1'],
+          '의미1': after['의미1'],
+          '비고': after['비고'],
         },
         where: 'id = ?',
         whereArgs: [id],
       );
+
+      await _insertHistory(
+        txn,
+        groupId: groupId,
+        actionType: 'update',
+        entityType: 'word',
+        entityId: id,
+        beforeJson: before,
+        afterJson: after,
+      );
+    });
+  }
+
+  String _newHistoryGroupId() {
+    return DateTime.now().microsecondsSinceEpoch.toString();
+  }
+
+  Future<void> _insertHistory(
+    DatabaseExecutor db, {
+    required String groupId,
+    required String actionType,
+    required String entityType,
+    required String entityId,
+    Map<String, dynamic>? beforeJson,
+    Map<String, dynamic>? afterJson,
+  }) async {
+    await db.insert('CHANGE_HISTORY', {
+      'group_id': groupId,
+      'action_type': actionType,
+      'entity_type': entityType,
+      'entity_id': entityId,
+      'before_json': beforeJson == null ? null : jsonEncode(beforeJson),
+      'after_json': afterJson == null ? null : jsonEncode(afterJson),
+      'created_at': DateTime.now().toIso8601String(),
+      'undone_at': null,
+    });
+  }
+
+  Future<Map<String, dynamic>?> _getWordRowById(
+    DatabaseExecutor db,
+    String id,
+  ) async {
+    final rows = await db.query(
+      'WORD_TABLE',
+      where: 'id = ?',
+      whereArgs: [id],
+      limit: 1,
+    );
+    if (rows.isEmpty) return null;
+    return Map<String, dynamic>.from(rows.first);
+  }
+
+  Future<Map<String, dynamic>?> _getRelationRowById(
+    DatabaseExecutor db,
+    int id,
+  ) async {
+    final rows = await db.query(
+      'WORD_RELATION',
+      where: 'id = ?',
+      whereArgs: [id],
+      limit: 1,
+    );
+    if (rows.isEmpty) return null;
+    return Map<String, dynamic>.from(rows.first);
+  }
+
+  int _requireIntValue(Map<String, dynamic> row, String key) {
+    final value = row[key];
+    if (value is int) return value;
+    if (value is num) return value.toInt();
+
+    final parsed = int.tryParse(value?.toString() ?? '');
+    if (parsed != null) return parsed;
+
+    throw Exception('CHANGE_HISTORY relation 복원값이 잘못되었습니다: $key=$value');
+  }
+
+  String _requireStringValue(Map<String, dynamic> row, String key) {
+    final value = row[key]?.toString() ?? '';
+    if (value.isEmpty) {
+      throw Exception('CHANGE_HISTORY relation 복원값이 비어 있습니다: $key');
+    }
+    return value;
+  }
+
+  Future<void> _restoreDeletedRelation(
+    DatabaseExecutor txn,
+    Map<String, dynamic> before,
+  ) async {
+    final relationId = _requireIntValue(before, 'id');
+    final originalWordId1 = _requireStringValue(before, 'word_id_1');
+    final originalWordId2 = _requireStringValue(before, 'word_id_2');
+
+    if (originalWordId1 == originalWordId2) {
+      throw Exception('관계 Undo 복원 실패: 동일한 단어 id 쌍입니다. ($originalWordId1)');
+    }
+
+    final orderedWordId1 = originalWordId1.compareTo(originalWordId2) < 0
+        ? originalWordId1
+        : originalWordId2;
+    final orderedWordId2 = originalWordId1.compareTo(originalWordId2) < 0
+        ? originalWordId2
+        : originalWordId1;
+
+    final existingSameId = await _getRelationRowById(txn, relationId);
+    if (existingSameId != null) {
+      throw Exception('관계 Undo 복원 실패: 동일 id가 이미 존재합니다. ($relationId)');
+    }
+
+    final existingPair = await txn.query(
+      'WORD_RELATION',
+      columns: ['id'],
+      where: 'word_id_1 = ? AND word_id_2 = ?',
+      whereArgs: [orderedWordId1, orderedWordId2],
+      limit: 1,
+    );
+
+    if (existingPair.isNotEmpty) {
+      final existingId = existingPair.first['id'];
+      throw Exception(
+        '관계 Undo 복원 실패: 동일 단어 쌍이 이미 존재합니다. '
+        '($orderedWordId1, $orderedWordId2 / existing id=$existingId)',
+      );
+    }
+
+    await txn.insert('WORD_RELATION', {
+      'id': relationId,
+      'word_id_1': orderedWordId1,
+      'word_id_2': orderedWordId2,
+      'category_code': before['category_code'],
+      'relation_type': before['relation_type'],
+      'status_code': before['status_code'],
+      'note': before['note'],
+      'source': before['source'],
+      'created_at': before['created_at'],
+      'updated_at': before['updated_at'],
+    });
+  }
+
+  /// 최근 1회 변경 실행 취소
+  Future<bool> undoLastChange() async {
+    final db = await DatabaseService.openDatabaseFile();
+
+    return await db.transaction((txn) async {
+      final latestRows = await txn.rawQuery('''
+        SELECT group_id
+        FROM CHANGE_HISTORY
+        WHERE undone_at IS NULL
+        ORDER BY created_at DESC, id DESC
+        LIMIT 1
+        ''');
+
+      if (latestRows.isEmpty) return false;
+
+      final groupId = latestRows.first['group_id'] as String;
+
+      final rows = await txn.query(
+        'CHANGE_HISTORY',
+        where: 'group_id = ? AND undone_at IS NULL',
+        whereArgs: [groupId],
+        orderBy: 'id DESC',
+      );
+
+      if (rows.isEmpty) return false;
+
+      for (final raw in rows) {
+        final row = Map<String, dynamic>.from(raw);
+        final actionType = row['action_type'].toString();
+        final entityType = row['entity_type'].toString();
+        final beforeJsonText = row['before_json'] as String?;
+        final afterJsonText = row['after_json'] as String?;
+
+        final before = beforeJsonText == null
+            ? null
+            : Map<String, dynamic>.from(jsonDecode(beforeJsonText));
+        final after = afterJsonText == null
+            ? null
+            : Map<String, dynamic>.from(jsonDecode(afterJsonText));
+
+        if (actionType == 'create') {
+          // 생성 취소 => 삭제
+          if (entityType == 'word') {
+            await txn.delete(
+              'WORD_TABLE',
+              where: 'id = ?',
+              whereArgs: [after!['id']],
+            );
+          } else if (entityType == 'relation') {
+            await txn.delete(
+              'WORD_RELATION',
+              where: 'id = ?',
+              whereArgs: [after!['id']],
+            );
+          }
+        } else if (actionType == 'update') {
+          // 수정 취소 => before 복원
+          if (entityType == 'word') {
+            await txn.update(
+              'WORD_TABLE',
+              before!,
+              where: 'id = ?',
+              whereArgs: [before['id']],
+            );
+          } else if (entityType == 'relation') {
+            await txn.update(
+              'WORD_RELATION',
+              before!,
+              where: 'id = ?',
+              whereArgs: [before['id']],
+            );
+          }
+        } else if (actionType == 'delete') {
+          // 삭제 취소 => before 복원
+          if (entityType == 'word') {
+            await txn.insert('WORD_TABLE', before!);
+          } else if (entityType == 'relation') {
+            await _restoreDeletedRelation(txn, before!);
+          }
+        }
+
+        await txn.update(
+          'CHANGE_HISTORY',
+          {'undone_at': DateTime.now().toIso8601String()},
+          where: 'id = ?',
+          whereArgs: [row['id']],
+        );
+      }
+
+      return true;
     });
   }
 }

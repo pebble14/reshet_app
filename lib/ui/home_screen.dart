@@ -52,6 +52,13 @@ class _HomeScreenState extends State<HomeScreen> {
   /// 홈 리스트에 표시할 단어 목록 Future
   Future<List<Map<String, dynamic>>>? _wordsFuture;
 
+  Future<List<Map<String, dynamic>>> _createWordsFuture() {
+    final keyword = _searchController.text.trim();
+    return keyword.isEmpty
+        ? _repository.getWordsMap(limit: 50)
+        : _repository.searchWordsMap(keyword, limit: 200);
+  }
+
   /// 위젯이 처음 생성될 때 1회 호출되는 생명주기 메서드
   /// 여기서 데이터베이스 초기화를 시작한다.
   @override
@@ -81,7 +88,7 @@ class _HomeScreenState extends State<HomeScreen> {
       // DB 준비 완료 → 로딩 종료
       setState(() {
         _isLoading = false;
-        _wordsFuture = _repository.getWordsMap(limit: 50);
+        _wordsFuture = _createWordsFuture();
       });
 
       print('데이터베이스 연결 성공');
@@ -145,6 +152,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       setState(() {
         _isLoading = false;
+        _wordsFuture = _createWordsFuture();
       });
 
       ScaffoldMessenger.of(
@@ -152,10 +160,43 @@ class _HomeScreenState extends State<HomeScreen> {
       ).showSnackBar(const SnackBar(content: Text('DB가 초기 상태로 되돌아갔습니다.')));
     } catch (e) {
       if (!mounted) return;
-      setState(() => _isLoading = false);
+      setState(() {
+        _isLoading = false;
+        _wordsFuture = _createWordsFuture();
+      });
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('DB 초기화 실패: $e')));
+    }
+  }
+
+  Future<void> _undoLastChange() async {
+    setState(() => _isLoading = true);
+
+    try {
+      final repository = WordRepository();
+      final undone = await repository.undoLastChange();
+
+      if (!mounted) return;
+
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(undone ? '최근 변경을 되돌렸습니다.' : '되돌릴 변경이 없습니다.')),
+      );
+
+      // Home 리스트 즉시 갱신
+      setState(() {
+        _isLoading = false;
+        _wordsFuture = _createWordsFuture();
+      });
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() => _isLoading = false);
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('실행 취소 실패: $e')));
     }
   }
 
@@ -171,12 +212,18 @@ class _HomeScreenState extends State<HomeScreen> {
             onSelected: (value) async {
               if (value == 'reset_db') {
                 await _confirmAndResetDb();
+              } else if (value == 'undo_last_change') {
+                await _undoLastChange();
               }
             },
             itemBuilder: (context) => [
               const PopupMenuItem<String>(
                 value: 'reset_db',
                 child: Text('데이터베이스 초기화(Seed로 롤백)'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'undo_last_change',
+                child: Text('실행 취소'),
               ),
             ],
           ),
@@ -262,59 +309,27 @@ class _HomeScreenState extends State<HomeScreen> {
                                 IconButton(
                                   icon: const Icon(Icons.article_outlined),
                                   tooltip: '상세',
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) =>
-                                            WordDetailScreen(word: wordMap),
-                                      ),
-                                    );
-                                  },
+                                  onPressed: () => _openWordDetail(wordMap),
                                 ),
                                 // 그래프
                                 IconButton(
                                   icon: const Icon(Icons.hub_outlined),
                                   tooltip: '그래프',
-                                  onPressed: () {
-                                    final centerWord = Word.fromMap(wordMap);
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) => WordGraphScreen(
-                                          centerWord: centerWord,
-                                        ),
-                                      ),
-                                    );
-                                  },
+                                  onPressed: () => _openWordGraph(wordMap),
                                 ),
                               ],
                             ),
                             // 탭은 기본적으로 상세로
-                            onTap: () {
+                            onTap: () async {
                               final width = MediaQuery.of(context).size.width;
 
                               // 넓은 화면(데스크탑/태블릿)에서는 스플릿뷰
                               if (width >= 900) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => WordExplorerScreen(
-                                      initialWordMap: wordMap,
-                                    ),
-                                  ),
-                                );
+                                await _openWordExplorer(wordMap);
                                 return;
                               }
 
-                              // 좁은 화면에서는 기존 상세 화면
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) =>
-                                      WordDetailScreen(word: wordMap),
-                                ),
-                              );
+                              await _openWordDetail(wordMap);
                             },
                           );
                         },
@@ -329,9 +344,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   /// 검색 실행: 입력값으로 Repository 검색을 수행하고 리스트를 갱신한다.
   void _runSearch() {
-    final keyword = _searchController.text;
     setState(() {
-      _wordsFuture = _repository.searchWordsMap(keyword, limit: 200);
+      _wordsFuture = _createWordsFuture();
     });
   }
 
@@ -339,8 +353,51 @@ class _HomeScreenState extends State<HomeScreen> {
   void _clearSearch() {
     _searchController.clear();
     setState(() {
-      _wordsFuture = _repository.getWordsMap(limit: 50);
+      _wordsFuture = _createWordsFuture();
     });
+  }
+
+  /// 현재 검색 상태에 맞춰 홈 리스트 Future를 다시 만든다.
+  void _refreshWords() {
+    setState(() {
+      _wordsFuture = _createWordsFuture();
+    });
+  }
+
+  Future<void> _openWordDetail(Map<String, dynamic> wordMap) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => WordDetailScreen(word: wordMap)),
+    );
+
+    if (!mounted) return;
+    _refreshWords();
+  }
+
+  Future<void> _openWordExplorer(Map<String, dynamic> wordMap) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => WordExplorerScreen(initialWordMap: wordMap),
+      ),
+    );
+
+    if (!mounted) return;
+    _refreshWords();
+  }
+
+  Future<void> _openWordGraph(Map<String, dynamic> wordMap) async {
+    final centerWord = Word.fromMap(wordMap);
+
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => WordGraphScreen(centerWord: centerWord),
+      ),
+    );
+
+    if (!mounted) return;
+    _refreshWords();
   }
 
   @override

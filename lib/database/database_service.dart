@@ -90,6 +90,8 @@ class DatabaseService {
     // ✅ 여기 추가 (DB 무결성/인덱스 보장)
     await _ensureWordRelationIndexes(_database!);
 
+    await _ensureHistoryTable(_database!);
+
     return _database!;
   }
 
@@ -174,6 +176,8 @@ class DatabaseService {
 
     // ✅ reset 이후에도 인덱스/중복제거 보장
     await _ensureWordRelationIndexes(_database!);
+
+    await _ensureHistoryTable(_database!);
   }
 
   /// WORD_RELATION 테이블 무결성/성능 보강
@@ -213,5 +217,32 @@ class DatabaseService {
         ON WORD_RELATION(word_id_2)
       ''');
     });
+  }
+
+  /// 변경 이력 테이블 보장
+  static Future<void> _ensureHistoryTable(Database db) async {
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS CHANGE_HISTORY (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        group_id TEXT NOT NULL,
+        action_type TEXT NOT NULL,
+        entity_type TEXT NOT NULL,
+        entity_id TEXT NOT NULL,
+        before_json TEXT,
+        after_json TEXT,
+        created_at TEXT NOT NULL,
+        undone_at TEXT
+      )
+    ''');
+
+    await db.execute('''
+      CREATE INDEX IF NOT EXISTS idx_change_history_group
+      ON CHANGE_HISTORY(group_id)
+    ''');
+
+    await db.execute('''
+      CREATE INDEX IF NOT EXISTS idx_change_history_undone
+      ON CHANGE_HISTORY(undone_at, created_at)
+    ''');
   }
 }
