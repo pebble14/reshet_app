@@ -5,6 +5,73 @@ import 'package:flutter/gestures.dart';
 import '../data/models/word.dart';
 import '../data/repositories/word_repository.dart';
 
+const double _centerNodeSize = 180.0;
+const double _centerNodeHalf = _centerNodeSize / 2;
+const double _connectedNodeSize = 80.0;
+const double _connectedNodeHalf = _connectedNodeSize / 2;
+const double _graphViewportPadding = 28.0;
+const double _preferredNodeGap = 28.0;
+const double _minimumNodeGap = 12.0;
+const double _preferredCenterGap = 18.0;
+const double _minimumCenterGap = 8.0;
+const double _ringSpacing = 92.0;
+const double _labelAnchorFactor = 0.68;
+const double _fitBoundsPadding = 72.0;
+const double _baseLabelOffset = 12.0;
+
+class _GraphNodeLayout {
+  final int index;
+  final Offset center;
+  final Rect nodeBounds;
+  final Offset labelAnchor;
+  final Offset labelNormal;
+  final double radius;
+  final double angle;
+  final int ringIndex;
+
+  const _GraphNodeLayout({
+    required this.index,
+    required this.center,
+    required this.nodeBounds,
+    required this.labelAnchor,
+    required this.labelNormal,
+    required this.radius,
+    required this.angle,
+    required this.ringIndex,
+  });
+
+  Offset labelCenter(double sceneScale) {
+    final scale = sceneScale <= 0 ? 1.0 : sceneScale;
+    final offset = (_baseLabelOffset / scale).clamp(6.0, 14.0);
+    return Offset(
+      labelAnchor.dx + labelNormal.dx * offset,
+      labelAnchor.dy + labelNormal.dy * offset,
+    );
+  }
+}
+
+class _GraphLayoutData {
+  final Size canvasSize;
+  final Offset center;
+  final Rect centerBounds;
+  final List<_GraphNodeLayout> nodeLayouts;
+  final Rect contentBounds;
+  final Rect fitBounds;
+  final List<double> ringRadii;
+
+  const _GraphLayoutData({
+    required this.canvasSize,
+    required this.center,
+    required this.centerBounds,
+    required this.nodeLayouts,
+    required this.contentBounds,
+    required this.fitBounds,
+    required this.ringRadii,
+  });
+
+  bool get usesMultipleRings => ringRadii.length > 1;
+}
+
 /// 신규 단어 생성 다이얼로그의 결과를 담는 DTO
 class CreateWordPayload {
   final String language;
@@ -58,10 +125,15 @@ class WordGraphScreen extends StatefulWidget {
   /// 선택 이벤트만 전달하고 싶을 때 사용한다.
   final ValueChanged<Word>? onSelectWord;
 
+  /// 스플릿뷰에서 이미 선택된 노드를 다시 클릭했을 때
+  /// 부모가 중심 단어를 바꾸도록 알린다.
+  final ValueChanged<Word>? onChangeCenterWord;
+
   const WordGraphScreen({
     super.key,
     required this.centerWord,
     this.onSelectWord,
+    this.onChangeCenterWord,
   });
 
   @override
@@ -155,11 +227,9 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final centerX = constraints.maxWidth / 2;
-        final centerY = constraints.maxHeight / 2;
-
         final canvasSize = Size(constraints.maxWidth, constraints.maxHeight);
         final nodes = _connectedWords;
+        final layout = _computeGraphLayout(canvasSize, nodes.length);
 
         // 노드 배치 순서와 동일한 순서로 엣지 색상/라벨 생성
         final edgeColors = nodes.map((w) {
@@ -186,8 +256,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
               IconButton(
                 tooltip: '전체보기',
                 icon: const Icon(Icons.fit_screen),
-                onPressed: () =>
-                    _fitToView(canvasSize, centerX, centerY, nodes),
+                onPressed: () => _fitToView(layout),
               ),
               IconButton(
                 tooltip: '보기 초기화',
@@ -233,34 +302,33 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                 width: canvasSize.width,
                 height: canvasSize.height,
                 child: Stack(
+                  clipBehavior: Clip.none,
                   children: [
                     if (nodes.isNotEmpty)
                       CustomPaint(
                         size: canvasSize,
                         painter: GraphLinePainter(
-                          centerX,
-                          centerY,
-                          edgeColors,
-                          edgeLabels,
+                          layout: layout,
+                          edgeColors: edgeColors,
+                          edgeLabels: edgeLabels,
                           showLabels: false,
                           sceneScale: _currentScale,
                           selectedIndex: selectedIndex,
                         ),
                       ),
                     Positioned(
-                      left: centerX - 90,
-                      top: centerY - 90,
+                      left: layout.centerBounds.left,
+                      top: layout.centerBounds.top,
                       child: _buildCenterNode(_centerWord),
                     ),
                     ..._buildEdgeLabelWidgets(
-                      centerX,
-                      centerY,
+                      layout,
                       nodes,
                       edgeLabels,
                       edgeColors,
                     ),
 
-                    ..._buildWordNodes(centerX, centerY, nodes),
+                    ..._buildWordNodes(layout, nodes),
                     if (nodes.isEmpty)
                       Center(
                         child: Text(
@@ -281,8 +349,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   /// 중앙(선택) 단어 노드
   Widget _buildCenterNode(Word word) {
     return Container(
-      width: 180,
-      height: 180,
+      width: _centerNodeSize,
+      height: _centerNodeSize,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         shape: BoxShape.circle,
@@ -336,6 +404,11 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
         // 2) 스플릿뷰 모드: 선택 이벤트 전달(화면 push는 하지 않음)
         if (widget.onSelectWord != null) {
+          if (isSameTap && widget.onChangeCenterWord != null) {
+            widget.onChangeCenterWord!(word);
+            return;
+          }
+
           widget.onSelectWord!(word);
           return;
         }
@@ -351,8 +424,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         }
       },
       child: Container(
-        width: 80,
-        height: 80,
+        width: _connectedNodeSize,
+        height: _connectedNodeSize,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           border: Border.all(color: borderColor, width: isSelected ? 4 : 2),
@@ -372,31 +445,224 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   }
 
   /// 연결 단어들을 원형으로 자동 배치
+  _GraphLayoutData _computeGraphLayout(Size canvasSize, int nodeCount) {
+    final center = Offset(canvasSize.width / 2, canvasSize.height / 2);
+    final centerBounds = Rect.fromCenter(
+      center: center,
+      width: _centerNodeSize,
+      height: _centerNodeSize,
+    );
+
+    if (nodeCount == 0) {
+      return _GraphLayoutData(
+        canvasSize: canvasSize,
+        center: center,
+        centerBounds: centerBounds,
+        nodeLayouts: const [],
+        contentBounds: centerBounds,
+        fitBounds: centerBounds.inflate(_fitBoundsPadding * 0.5),
+        ringRadii: const [],
+      );
+    }
+
+    final availableRadiusX = max(
+      0.0,
+      canvasSize.width / 2 - _connectedNodeHalf - _graphViewportPadding,
+    );
+    final availableRadiusY = max(
+      0.0,
+      canvasSize.height / 2 - _connectedNodeHalf - _graphViewportPadding,
+    );
+    final maxRadius = max(0.0, min(availableRadiusX, availableRadiusY));
+
+    final preferredMinimumRadius =
+        _centerNodeHalf + _connectedNodeHalf + _preferredCenterGap;
+    final minimumInnerRadius =
+        _centerNodeHalf + _connectedNodeHalf + _minimumCenterGap;
+    final preferredSpacing = _connectedNodeSize + _preferredNodeGap;
+    final minimumSpacing = _connectedNodeSize + _minimumNodeGap;
+
+    final preferredSingleRingRadius = max(
+      preferredMinimumRadius,
+      _requiredRingRadius(nodeCount, preferredSpacing),
+    );
+    final singleRingCapacity = _ringCapacity(maxRadius, minimumSpacing);
+
+    List<double> ringRadii;
+    if (maxRadius <= 0) {
+      ringRadii = const [0.0];
+    } else if (preferredSingleRingRadius <= maxRadius ||
+        nodeCount <= singleRingCapacity) {
+      final singleRingRadius = preferredSingleRingRadius <= maxRadius
+          ? preferredSingleRingRadius
+          : maxRadius;
+      ringRadii = [singleRingRadius];
+    } else {
+      ringRadii = _buildRingRadii(
+        nodeCount: nodeCount,
+        maxRadius: maxRadius,
+        innerRadiusFloor: min(maxRadius, minimumInnerRadius),
+        minimumSpacing: minimumSpacing,
+      );
+      if (ringRadii.length == 1) {
+        ringRadii = [maxRadius];
+      }
+    }
+
+    final nodeCounts = _distributeNodesAcrossRings(
+      nodeCount,
+      ringRadii,
+      minimumSpacing,
+    );
+
+    final nodeLayouts = <_GraphNodeLayout>[];
+    var nextIndex = 0;
+
+    for (int ringIndex = 0; ringIndex < ringRadii.length; ringIndex++) {
+      final radius = ringRadii[ringIndex];
+      final countOnRing = nodeCounts[ringIndex];
+      if (countOnRing <= 0) continue;
+
+      final angleStep = 2 * pi / countOnRing;
+      final startAngle = -pi / 2 +
+          ((ringIndex.isOdd && countOnRing > 1) ? angleStep / 2 : 0.0);
+
+      for (
+        int localIndex = 0;
+        localIndex < countOnRing && nextIndex < nodeCount;
+        localIndex++, nextIndex++
+      ) {
+        final angle = startAngle + angleStep * localIndex;
+        final dx = center.dx + radius * cos(angle);
+        final dy = center.dy + radius * sin(angle);
+        final nodeCenter = Offset(dx, dy);
+
+        final vx = nodeCenter.dx - center.dx;
+        final vy = nodeCenter.dy - center.dy;
+        final vectorLength = sqrt(vx * vx + vy * vy);
+        final safeLength = vectorLength == 0 ? 1.0 : vectorLength;
+
+        nodeLayouts.add(
+          _GraphNodeLayout(
+            index: nextIndex,
+            center: nodeCenter,
+            nodeBounds: Rect.fromCenter(
+              center: nodeCenter,
+              width: _connectedNodeSize,
+              height: _connectedNodeSize,
+            ),
+            labelAnchor: Offset(
+              center.dx + vx * _labelAnchorFactor,
+              center.dy + vy * _labelAnchorFactor,
+            ),
+            labelNormal: Offset(-vy / safeLength, vx / safeLength),
+            radius: radius,
+            angle: angle,
+            ringIndex: ringIndex,
+          ),
+        );
+      }
+    }
+
+    Rect contentBounds = centerBounds;
+    for (final nodeLayout in nodeLayouts) {
+      contentBounds = contentBounds.expandToInclude(nodeLayout.nodeBounds);
+    }
+
+    final fitPadding = _fitBoundsPadding + (ringRadii.length > 1 ? 12.0 : 0.0);
+
+    return _GraphLayoutData(
+      canvasSize: canvasSize,
+      center: center,
+      centerBounds: centerBounds,
+      nodeLayouts: nodeLayouts,
+      contentBounds: contentBounds,
+      fitBounds: contentBounds.inflate(fitPadding),
+      ringRadii: ringRadii,
+    );
+  }
+
+  List<double> _buildRingRadii({
+    required int nodeCount,
+    required double maxRadius,
+    required double innerRadiusFloor,
+    required double minimumSpacing,
+  }) {
+    final radiiDescending = <double>[maxRadius];
+    var totalCapacity = _ringCapacity(maxRadius, minimumSpacing);
+    var nextRadius = maxRadius - _ringSpacing;
+
+    while (totalCapacity < nodeCount && nextRadius >= innerRadiusFloor) {
+      radiiDescending.add(nextRadius);
+      totalCapacity += _ringCapacity(nextRadius, minimumSpacing);
+      nextRadius -= _ringSpacing;
+    }
+
+    if (totalCapacity < nodeCount) {
+      return [maxRadius];
+    }
+
+    return radiiDescending.reversed.toList();
+  }
+
+  List<int> _distributeNodesAcrossRings(
+    int nodeCount,
+    List<double> ringRadii,
+    double minimumSpacing,
+  ) {
+    if (ringRadii.isEmpty) return const [];
+    if (ringRadii.length == 1) return [nodeCount];
+
+    final capacities = ringRadii
+        .map((radius) => max(1, _ringCapacity(radius, minimumSpacing)))
+        .toList();
+    final counts = List<int>.filled(ringRadii.length, 0);
+
+    for (int nodeIndex = 0; nodeIndex < nodeCount; nodeIndex++) {
+      int targetRing = 0;
+      double targetLoad = double.infinity;
+
+      for (int ringIndex = 0; ringIndex < capacities.length; ringIndex++) {
+        final load = counts[ringIndex] / capacities[ringIndex];
+        if (load < targetLoad) {
+          targetLoad = load;
+          targetRing = ringIndex;
+        }
+      }
+
+      counts[targetRing]++;
+    }
+
+    return counts;
+  }
+
+  int _ringCapacity(double radius, double spacingPerNode) {
+    if (radius <= 0 || spacingPerNode <= 0) return 1;
+    return max(1, (2 * pi * radius / spacingPerNode).floor());
+  }
+
+  double _requiredRingRadius(int nodeCount, double spacingPerNode) {
+    if (nodeCount <= 0 || spacingPerNode <= 0) return 0;
+    return nodeCount * spacingPerNode / (2 * pi);
+  }
+
   List<Widget> _buildWordNodes(
-    double centerX,
-    double centerY,
+    _GraphLayoutData layout,
     List<Word> words,
   ) {
     if (words.isEmpty) return [];
 
-    const double radius = 160;
-    const double nodeRadius = 40;
-
     final List<Widget> widgets = [];
 
-    for (int i = 0; i < words.length; i++) {
-      final angle = (2 * pi / words.length) * i;
-
-      final dx = centerX + radius * cos(angle);
-      final dy = centerY + radius * sin(angle);
-
+    for (final nodeLayout in layout.nodeLayouts) {
+      final index = nodeLayout.index;
       widgets.add(
         Positioned(
-          left: dx - nodeRadius,
-          top: dy - nodeRadius,
+          left: nodeLayout.nodeBounds.left,
+          top: nodeLayout.nodeBounds.top,
           child: _buildWordNode(
-            words[i],
-            _colorForCategory(_edgeInfoByOtherId[words[i].id]?.categoryCode),
+            words[index],
+            _colorForCategory(_edgeInfoByOtherId[words[index].id]?.categoryCode),
           ),
         ),
       );
@@ -408,8 +674,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   /// 엣지 태그(라벨)를 "클릭 가능한 위젯"으로 렌더링한다.
   /// - Painter는 선만 그리고, 태그는 위젯으로 올려서 클릭 이벤트를 처리한다.
   List<Widget> _buildEdgeLabelWidgets(
-    double centerX,
-    double centerY,
+    _GraphLayoutData layout,
     List<Word> nodes,
     List<String> edgeLabels,
     List<Color> edgeColors,
@@ -418,39 +683,27 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     if (_currentScale < _labelVisibleScaleThreshold) return [];
     if (nodes.isEmpty) return [];
 
-    const double radius = 160.0;
 
     // 태그가 선 위에 겹치지 않도록 약간 수직 방향 오프셋(줌 역보정)
-    final double offset = (12.0 / (_currentScale <= 0 ? 1.0 : _currentScale))
-        .clamp(6.0, 14.0);
 
     final List<Widget> widgets = [];
 
-    for (int i = 0; i < nodes.length; i++) {
-      final label = edgeLabels[i].trim();
+    for (final nodeLayout in layout.nodeLayouts) {
+      final index = nodeLayout.index;
+      final label = edgeLabels[index].trim();
       if (label.isEmpty) continue;
 
-      final angle = (2 * pi / nodes.length) * i;
+      final pos = nodeLayout.labelCenter(_currentScale);
 
-      final dx = centerX + radius * cos(angle);
-      final dy = centerY + radius * sin(angle);
 
       // 중심 -> 주변 방향 벡터
-      final vx = dx - centerX;
-      final vy = dy - centerY;
 
       // 태그는 중심에서 멀어지게(주변 노드 쪽)
-      const t = 0.68;
-      final anchor = Offset(centerX + vx * t, centerY + vy * t);
 
       // 수직 단위벡터
-      final len = sqrt(vx * vx + vy * vy);
-      final nx = (len == 0) ? 0.0 : -vy / len;
-      final ny = (len == 0) ? 0.0 : vx / len;
 
-      final pos = Offset(anchor.dx + nx * offset, anchor.dy + ny * offset);
 
-      final otherWord = nodes[i];
+      final otherWord = nodes[index];
       final edgeInfo = _edgeInfoByOtherId[otherWord.id];
 
       widgets.add(
@@ -469,7 +722,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   border: Border.all(
-                    color: edgeColors[i].withOpacity(0.9),
+                    color: edgeColors[index].withOpacity(0.9),
                     width: 1.5,
                   ),
                   borderRadius: BorderRadius.circular(10),
@@ -1415,57 +1668,31 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   }
 
   /// 현재 그래프(중심 노드 + 연결 노드들)가 화면에 잘 들어오도록 자동으로 줌/팬을 맞춘다.
-  void _fitToView(
-    Size canvasSize,
-    double centerX,
-    double centerY,
-    List<Word> nodes,
-  ) {
+  void _fitToView(_GraphLayoutData layout) {
     // 노드 배치 반지름(현재 GraphLinePainter와 _buildWordNodes에서 쓰는 값과 맞춰야 함)
-    const radius = 160.0;
+    final bounds = layout.fitBounds;
 
     // 중심 노드/주변 노드 크기(현재 위젯 크기와 맞춰야 함)
-    const centerHalf = 90.0; // 180 / 2
-    const nodeHalf = 40.0; // 80 / 2
+    final bboxW = max(bounds.width, 1.0);
+    final bboxH = max(bounds.height, 1.0);
 
-    double minX = centerX - centerHalf;
-    double maxX = centerX + centerHalf;
-    double minY = centerY - centerHalf;
-    double maxY = centerY + centerHalf;
 
-    final n = nodes.length;
-    if (n > 0) {
-      for (int i = 0; i < n; i++) {
-        final angle = (2 * pi / n) * i;
-        final x = centerX + radius * cos(angle);
-        final y = centerY + radius * sin(angle);
-
-        minX = min(minX, x - nodeHalf);
-        maxX = max(maxX, x + nodeHalf);
-        minY = min(minY, y - nodeHalf);
-        maxY = max(maxY, y + nodeHalf);
-      }
-    }
 
     // 여백(태그/선 고려)
-    const margin = 60.0;
-    final bboxW = (maxX - minX) + margin * 2;
-    final bboxH = (maxY - minY) + margin * 2;
 
     // 스케일 계산
-    final sx = canvasSize.width / bboxW;
-    final sy = canvasSize.height / bboxH;
+    final sx = layout.canvasSize.width / bboxW;
+    final sy = layout.canvasSize.height / bboxH;
     final scale = min(sx, sy).clamp(0.6, 3.5);
 
     // 바운딩 박스 중심
-    final bboxCenterX = (minX + maxX) / 2;
-    final bboxCenterY = (minY + maxY) / 2;
+    final bboxCenter = bounds.center;
 
     // bbox 중심이 화면 중앙에 오도록 변환 설정
     final m = Matrix4.identity()
-      ..translate(canvasSize.width / 2, canvasSize.height / 2)
+      ..translate(layout.canvasSize.width / 2, layout.canvasSize.height / 2)
       ..scale(scale)
-      ..translate(-bboxCenterX, -bboxCenterY);
+      ..translate(-bboxCenter.dx, -bboxCenter.dy);
 
     _transformController.value = m;
     setState(() => _currentScale = scale);
@@ -1625,7 +1852,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 }
 
 /// 연결선(엣지) 렌더러
-class GraphLinePainter extends CustomPainter {
+class LegacyGraphLinePainter extends CustomPainter {
   final double centerX;
   final double centerY;
 
@@ -1642,7 +1869,7 @@ class GraphLinePainter extends CustomPainter {
   /// 선택된 연결 노드 인덱스(없으면 null)
   final int? selectedIndex;
 
-  GraphLinePainter(
+  LegacyGraphLinePainter(
     this.centerX,
     this.centerY,
     this.edgeColors,
@@ -1754,13 +1981,115 @@ class GraphLinePainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant GraphLinePainter oldDelegate) {
+  bool shouldRepaint(covariant LegacyGraphLinePainter oldDelegate) {
     // node 수나 색상이 변하면 다시 그리기
     return oldDelegate.edgeColors.length != edgeColors.length ||
         oldDelegate.edgeColors != edgeColors ||
         oldDelegate.edgeLabels.length != edgeLabels.length ||
         oldDelegate.edgeLabels != edgeLabels ||
         oldDelegate.showLabels != showLabels ||
+        oldDelegate.selectedIndex != selectedIndex;
+  }
+}
+
+class GraphLinePainter extends CustomPainter {
+  final _GraphLayoutData layout;
+  final List<Color> edgeColors;
+  final List<String> edgeLabels;
+  final bool showLabels;
+  final double sceneScale;
+  final int? selectedIndex;
+
+  GraphLinePainter({
+    required this.layout,
+    required this.edgeColors,
+    required this.edgeLabels,
+    required this.showLabels,
+    required this.sceneScale,
+    required this.selectedIndex,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (layout.nodeLayouts.isEmpty) return;
+
+    for (final nodeLayout in layout.nodeLayouts) {
+      final index = nodeLayout.index;
+      final bool hasSelection = selectedIndex != null;
+      final bool isSelectedEdge = selectedIndex == index;
+
+      final paint = Paint()
+        ..color = hasSelection && !isSelectedEdge
+            ? edgeColors[index].withOpacity(0.35)
+            : edgeColors[index]
+        ..strokeWidth = isSelectedEdge ? 4.0 : 2.0
+        ..style = PaintingStyle.stroke;
+
+      canvas.drawLine(layout.center, nodeLayout.center, paint);
+
+      final label = (index < edgeLabels.length) ? edgeLabels[index] : '';
+      if (showLabels && label.isNotEmpty) {
+        _drawEdgeLabel(
+          canvas,
+          nodeLayout.labelCenter(sceneScale),
+          label,
+          edgeColors[index],
+        );
+      }
+    }
+  }
+
+  void _drawEdgeLabel(Canvas canvas, Offset pos, String text, Color edgeColor) {
+    final scale = sceneScale <= 0 ? 1.0 : sceneScale;
+    final fontSize = (11.0 / scale).clamp(9.0, 12.0);
+    final padX = (6.0 / scale).clamp(4.0, 7.0);
+    final padY = (3.0 / scale).clamp(2.0, 4.0);
+
+    final textPainter = TextPainter(
+      text: TextSpan(
+        text: text,
+        style: TextStyle(
+          fontSize: fontSize,
+          fontWeight: FontWeight.w600,
+          color: Colors.black87,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+      maxLines: 1,
+      ellipsis: '...',
+    )..layout();
+
+    final rect = Rect.fromCenter(
+      center: pos,
+      width: textPainter.width + padX * 2,
+      height: textPainter.height + padY * 2,
+    );
+
+    final rrect = RRect.fromRectAndRadius(rect, const Radius.circular(10));
+
+    final bgPaint = Paint()..color = Colors.white.withOpacity(0.92);
+    final borderPaint = Paint()
+      ..color = edgeColor.withOpacity(0.75)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1;
+
+    canvas.drawRRect(rrect, bgPaint);
+    canvas.drawRRect(rrect, borderPaint);
+
+    final textOffset = Offset(rect.left + padX, rect.top + padY);
+    textPainter.paint(canvas, textOffset);
+  }
+
+  @override
+  bool shouldRepaint(covariant GraphLinePainter oldDelegate) {
+    return oldDelegate.layout.contentBounds != layout.contentBounds ||
+        oldDelegate.layout.ringRadii.length != layout.ringRadii.length ||
+        oldDelegate.edgeColors.length != edgeColors.length ||
+        oldDelegate.edgeColors != edgeColors ||
+        oldDelegate.edgeLabels.length != edgeLabels.length ||
+        oldDelegate.edgeLabels != edgeLabels ||
+        oldDelegate.showLabels != showLabels ||
+        oldDelegate.sceneScale != sceneScale ||
         oldDelegate.selectedIndex != selectedIndex;
   }
 }
