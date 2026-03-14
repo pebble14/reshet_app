@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../data/repositories/word_repository.dart';
+import 'word_graph_cache.dart';
 
 class WordEditScreen extends StatefulWidget {
   final Map<String, dynamic> word;
@@ -152,6 +153,7 @@ class _WordEditScreenState extends State<WordEditScreen> {
             ? null
             : _noteController.text.trim(),
       );
+      WordGraphDataCache.clear();
 
       if (!mounted) return;
 

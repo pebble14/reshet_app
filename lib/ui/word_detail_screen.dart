@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'word_graph_screen.dart';
+import 'word_graph_cache.dart';
 import 'word_edit_screen.dart';
 import '../data/models/word.dart';
 import '../data/repositories/word_repository.dart';
@@ -78,6 +79,7 @@ class _WordDetailScreenState extends State<WordDetailScreen> {
 
     try {
       await _repository.deleteWord(wordId);
+      WordGraphDataCache.clear();
 
       if (!mounted) return;
 

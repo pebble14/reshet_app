@@ -11,6 +11,7 @@ import '../database/database_service.dart';
 import 'word_detail_screen.dart';
 import '../data/models/word.dart';
 import '../data/repositories/word_repository.dart';
+import 'word_graph_cache.dart';
 import 'word_graph_screen.dart';
 import 'word_explorer_screen.dart';
 
@@ -147,6 +148,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     try {
       await DatabaseService.resetToSeed(backup: backup);
+      WordGraphDataCache.clear();
 
       if (!mounted) return;
 
@@ -176,9 +178,11 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       final repository = WordRepository();
       final undone = await repository.undoLastChange();
+      if (undone) {
+        WordGraphDataCache.clear();
+      }
 
       if (!mounted) return;
-
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(undone ? '최근 변경을 되돌렸습니다.' : '되돌릴 변경이 없습니다.')),
