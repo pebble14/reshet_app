@@ -155,6 +155,16 @@ class _HomeScreenState extends State<HomeScreen> {
     return TextSpan(children: children);
   }
 
+  Widget _buildLanguageSectionHeader(String label) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+      child: Text(
+        label,
+        style: const TextStyle(fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+
   String _buildWordSubtitle(Map<String, dynamic> wordMap) {
     final pronunciation = _readFirstNonEmptyValue(wordMap, [
       '발음1',
@@ -407,8 +417,22 @@ class _HomeScreenState extends State<HomeScreen> {
                         itemBuilder: (context, index) {
                           final wordMap = words[index];
                           final subtitleText = _buildWordSubtitle(wordMap);
+                          final rawStrong = (wordMap['스트롱넘버'] ?? '')
+                              .toString()
+                              .trim()
+                              .toUpperCase();
+                          final previousRawStrong = index > 0
+                              ? (words[index - 1]['스트롱넘버'] ?? '')
+                                  .toString()
+                                  .trim()
+                                  .toUpperCase()
+                              : '';
+                          final showHebrewHeader = rawStrong.startsWith('H') &&
+                              !previousRawStrong.startsWith('H');
+                          final showGreekHeader = rawStrong.startsWith('G') &&
+                              !previousRawStrong.startsWith('G');
 
-                          return ListTile(
+                          final tile = ListTile(
                             title: Text.rich(
                               _buildWordTitle(wordMap),
                               maxLines: 1,
@@ -450,6 +474,21 @@ class _HomeScreenState extends State<HomeScreen> {
 
                               await _openWordDetail(wordMap);
                             },
+                          );
+
+                          if (!showHebrewHeader && !showGreekHeader) {
+                            return tile;
+                          }
+
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (showHebrewHeader)
+                                _buildLanguageSectionHeader('Hebrew'),
+                              if (showGreekHeader)
+                                _buildLanguageSectionHeader('Greek'),
+                              tile,
+                            ],
                           );
                         },
                       );
