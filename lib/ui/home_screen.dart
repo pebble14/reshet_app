@@ -56,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<List<Map<String, dynamic>>> _createWordsFuture() {
     final keyword = _searchController.text.trim();
     return keyword.isEmpty
-        ? _repository.getWordsMap(limit: 50)
+        ? _repository.getStrongWordsMap(limit: 50)
         : _repository.searchWordsMap(keyword, limit: 200);
   }
 
@@ -294,13 +294,17 @@ class _HomeScreenState extends State<HomeScreen> {
                           final spelling = (wordMap['표기1'] ?? '').toString();
                           final meaning = (wordMap['의미1'] ?? '').toString();
                           final strong = (wordMap['스트롱넘버'] ?? '').toString();
+                          final displaySpelling = spelling.isNotEmpty
+                              ? spelling
+                              : (wordMap['표기2'] ?? '').toString();
+                          final titleText = strong.isNotEmpty
+                              ? displaySpelling.isNotEmpty
+                                    ? '$strong $displaySpelling'
+                                    : strong
+                              : displaySpelling;
 
                           return ListTile(
-                            title: Text(
-                              spelling.isNotEmpty
-                                  ? spelling
-                                  : (wordMap['표기2'] ?? '').toString(),
-                            ),
+                            title: Text(titleText),
                             subtitle: Text(
                               meaning,
                               maxLines: 2,

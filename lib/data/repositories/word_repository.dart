@@ -124,6 +124,35 @@ class WordRepository {
     return await db.query('WORD_TABLE', limit: limit);
   }
 
+  /// 홈 화면 기본 리스트용 Strong 사전형 목록 조회
+  /// - 스트롱넘버가 있고 prefix가 H/G인 항목만 반환한다.
+  /// - 정렬은 H -> G -> 숫자 오름차순 -> id 순서로 고정한다.
+  Future<List<Map<String, dynamic>>> getStrongWordsMap({
+    int limit = 50,
+  }) async {
+    final db = await DatabaseService.openDatabaseFile();
+
+    return await db.rawQuery(
+      '''
+      SELECT *
+      FROM WORD_TABLE
+      WHERE 스트롱넘버 IS NOT NULL
+        AND TRIM(스트롱넘버) <> ''
+        AND UPPER(SUBSTR(TRIM(스트롱넘버), 1, 1)) IN ('H', 'G')
+      ORDER BY
+        CASE UPPER(SUBSTR(TRIM(스트롱넘버), 1, 1))
+          WHEN 'H' THEN 0
+          WHEN 'G' THEN 1
+          ELSE 2
+        END,
+        CAST(SUBSTR(TRIM(스트롱넘버), 2) AS INTEGER),
+        id
+      LIMIT ?
+      ''',
+      [limit],
+    );
+  }
+
   /// 키워드로 단어 검색 (홈 검색용)
   /// - 표기1, 의미1, 스트롱넘버를 대상으로 부분일치 검색한다.
   /// - 결과는 Map 그대로 반환하여 상세 화면에서 컬럼 손실이 없게 한다.
