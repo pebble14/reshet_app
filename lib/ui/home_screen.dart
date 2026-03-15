@@ -50,10 +50,20 @@ class _HomeScreenState extends State<HomeScreen> {
   /// 검색 입력 컨트롤러
   final TextEditingController _searchController = TextEditingController();
 
+  static const double _defaultStrongListItemExtent = 56.0;
+
+  final ScrollController _listScrollController = ScrollController();
+
   /// 홈 리스트에 표시할 단어 목록 Future
   Future<List<Map<String, dynamic>>>? _wordsFuture;
+  List<Map<String, dynamic>> _currentWords = const [];
+  bool _isShowingDefaultStrongList = true;
 
   Future<List<Map<String, dynamic>>> _createWordsFuture() {
+    if (_isShowingDefaultStrongList) {
+      return _repository.getStrongWordsMap();
+    }
+
     final keyword = _searchController.text.trim();
     return keyword.isEmpty
         ? _repository.getStrongWordsMap()
@@ -100,37 +110,111 @@ class _HomeScreenState extends State<HomeScreen> {
     return '$prefix$numericPart';
   }
 
-  String _buildDefaultStrongListTitle(Map<String, dynamic> wordMap) {
-    final strong = _formatDisplayStrong(
-      (wordMap['스트롱넘버'] ?? '').toString(),
+  String _normalizeStrongInput(String input) {
+    final trimmed = input.trim();
+    final match = RegExp(r'^([HhGg])(\d+)$').firstMatch(trimmed);
+    if (match == null) {
+      return trimmed;
+    }
+    return _formatDisplayStrong(
+      '${match.group(1)!.toUpperCase()}${match.group(2)!}',
     );
+  }
+
+  bool _isStrongJumpInput(String input) {
+    return RegExp(r'^[HhGg]\d+$').hasMatch(input.trim());
+  }
+
+  int _findStrongIndex(
+    List<Map<String, dynamic>> words,
+    String normalizedStrong,
+  ) {
+    for (var index = 0; index < words.length; index++) {
+      final displayStrong = _formatDisplayStrong(
+        (words[index]['스트롱넘버'] ?? '').toString(),
+      );
+      if (displayStrong == normalizedStrong) {
+        return index;
+      }
+    }
+    return -1;
+  }
+
+  void _showStrongJumpNotFoundSnackBar(String normalizedStrong) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: Text('$normalizedStrong 항목을 찾을 수 없습니다.'),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+  }
+
+  double _calculateDefaultStrongOffset(int targetIndex) {
+    return targetIndex * _defaultStrongListItemExtent;
+  }
+
+  void _scrollToDefaultStrongIndex(int targetIndex) {
+    void animateToIndex() {
+      if (!_listScrollController.hasClients) {
+        return;
+      }
+
+      final maxScrollExtent = _listScrollController.position.maxScrollExtent;
+      final targetOffset = _calculateDefaultStrongOffset(targetIndex);
+      final clampedOffset = targetOffset.clamp(0.0, maxScrollExtent).toDouble();
+
+      _listScrollController.animateTo(
+        clampedOffset,
+        duration: const Duration(milliseconds: 220),
+        curve: Curves.easeInOut,
+      );
+    }
+
+    if (_listScrollController.hasClients) {
+      animateToIndex();
+      return;
+    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+
+      animateToIndex();
+    });
+  }
+
+  void _jumpToStrongInDefaultList(String normalizedStrong) {
+    final targetIndex = _findStrongIndex(_currentWords, normalizedStrong);
+    if (targetIndex < 0) {
+      _showStrongJumpNotFoundSnackBar(normalizedStrong);
+      return;
+    }
+
+    _scrollToDefaultStrongIndex(targetIndex);
+  }
+
+  String _buildDefaultStrongListTitle(Map<String, dynamic> wordMap) {
+    final strong = _formatDisplayStrong((wordMap['스트롱넘버'] ?? '').toString());
     final displaySpelling = _buildDisplaySpelling(wordMap);
     return _joinNonEmptyValues([strong, displaySpelling], ' · ');
   }
 
   InlineSpan _buildWordTitle(Map<String, dynamic> wordMap) {
-    final strong = _formatDisplayStrong(
-      (wordMap['스트롱넘버'] ?? '').toString(),
-    );
+    final strong = _formatDisplayStrong((wordMap['스트롱넘버'] ?? '').toString());
     final displaySpelling = _buildDisplaySpelling(wordMap);
     final transliteration = _readFirstNonEmptyValue(wordMap, ['음역1', '음역']);
     final pronunciation = _readFirstNonEmptyValue(wordMap, ['발음1', '발음']);
 
     return TextSpan(
-      text: _joinNonEmptyValues(
-        [strong, displaySpelling, transliteration, pronunciation],
-        ' · ',
-      ),
-    );
-  }
-
-  Widget _buildLanguageSectionHeader(String label) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
-      child: Text(
-        label,
-        style: const TextStyle(fontWeight: FontWeight.bold),
-      ),
+      text: _joinNonEmptyValues([
+        strong,
+        displaySpelling,
+        transliteration,
+        pronunciation,
+      ], ' · '),
     );
   }
 
@@ -368,100 +452,83 @@ class _HomeScreenState extends State<HomeScreen> {
                       }
 
                       final words = snapshot.data ?? [];
-                      final isDefaultStrongList =
-                          _searchController.text.trim().isEmpty;
+                      _currentWords = words;
+                      final isDefaultStrongList = _isShowingDefaultStrongList;
 
                       if (words.isEmpty) {
                         return const Center(child: Text('검색 결과 없음'));
                       }
 
-                      return ListView.builder(
-                        itemCount: words.length,
-                        itemBuilder: (context, index) {
-                          final wordMap = words[index];
-                          final subtitleText = isDefaultStrongList
-                              ? ''
-                              : _buildWordSubtitle(wordMap);
-                          final rawStrong = (wordMap['스트롱넘버'] ?? '')
-                              .toString()
-                              .trim()
-                              .toUpperCase();
-                          final previousRawStrong = index > 0
-                              ? (words[index - 1]['스트롱넘버'] ?? '')
-                                  .toString()
-                                  .trim()
-                                  .toUpperCase()
-                              : '';
-                          final showHebrewHeader = rawStrong.startsWith('H') &&
-                              !previousRawStrong.startsWith('H');
-                          final showGreekHeader = rawStrong.startsWith('G') &&
-                              !previousRawStrong.startsWith('G');
+                      Widget buildWordTile(BuildContext context, int index) {
+                        final wordMap = words[index];
+                        final subtitleText = isDefaultStrongList
+                            ? ''
+                            : _buildWordSubtitle(wordMap);
 
-                          final tile = ListTile(
-                            title: isDefaultStrongList
-                                ? Text(
-                                    _buildDefaultStrongListTitle(wordMap),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  )
-                                : Text.rich(
-                                    _buildWordTitle(wordMap),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                            subtitle: isDefaultStrongList || subtitleText.isEmpty
-                                ? null
-                                : Text(
-                                    subtitleText,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                // 상세
-                                IconButton(
-                                  icon: const Icon(Icons.article_outlined),
-                                  tooltip: '상세',
-                                  onPressed: () => _openWordDetail(wordMap),
+                        return ListTile(
+                          title: isDefaultStrongList
+                              ? Text(
+                                  _buildDefaultStrongListTitle(wordMap),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                )
+                              : Text.rich(
+                                  _buildWordTitle(wordMap),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
-                                // 그래프
-                                IconButton(
-                                  icon: const Icon(Icons.hub_outlined),
-                                  tooltip: '그래프',
-                                  onPressed: () => _openWordGraph(wordMap),
+                          subtitle: isDefaultStrongList || subtitleText.isEmpty
+                              ? null
+                              : Text(
+                                  subtitleText,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
-                              ],
-                            ),
-                            // 탭은 기본적으로 상세로
-                            onTap: () async {
-                              final width = MediaQuery.of(context).size.width;
-
-                              // 넓은 화면(데스크탑/태블릿)에서는 스플릿뷰
-                              if (width >= 900) {
-                                await _openWordExplorer(wordMap);
-                                return;
-                              }
-
-                              await _openWordDetail(wordMap);
-                            },
-                          );
-
-                          if (!showHebrewHeader && !showGreekHeader) {
-                            return tile;
-                          }
-
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              if (showHebrewHeader)
-                                _buildLanguageSectionHeader('히브리어/아람어'),
-                              if (showGreekHeader)
-                                _buildLanguageSectionHeader('헬라어'),
-                              tile,
+                              // 상세
+                              IconButton(
+                                icon: const Icon(Icons.article_outlined),
+                                tooltip: '상세',
+                                onPressed: () => _openWordDetail(wordMap),
+                              ),
+                              // 그래프
+                              IconButton(
+                                icon: const Icon(Icons.hub_outlined),
+                                tooltip: '그래프',
+                                onPressed: () => _openWordGraph(wordMap),
+                              ),
                             ],
-                          );
-                        },
+                          ),
+                          // 탭은 기본적으로 상세로
+                          onTap: () async {
+                            final width = MediaQuery.of(context).size.width;
+
+                            // 넓은 화면(데스크탑/태블릿)에서는 스플릿뷰
+                            if (width >= 900) {
+                              await _openWordExplorer(wordMap);
+                              return;
+                            }
+
+                            await _openWordDetail(wordMap);
+                          },
+                        );
+                      }
+
+                      if (isDefaultStrongList) {
+                        return ListView.builder(
+                          controller: _listScrollController,
+                          itemExtent: _defaultStrongListItemExtent,
+                          itemCount: words.length,
+                          itemBuilder: buildWordTile,
+                        );
+                      }
+
+                      return ListView.builder(
+                        controller: _listScrollController,
+                        itemCount: words.length,
+                        itemBuilder: buildWordTile,
                       );
                     },
                   ),
@@ -473,7 +540,23 @@ class _HomeScreenState extends State<HomeScreen> {
 
   /// 검색 실행: 입력값으로 Repository 검색을 수행하고 리스트를 갱신한다.
   void _runSearch() {
+    final keyword = _searchController.text.trim();
+    if (keyword.isEmpty) {
+      setState(() {
+        _isShowingDefaultStrongList = true;
+        _wordsFuture = _createWordsFuture();
+      });
+      return;
+    }
+
+    if (_isShowingDefaultStrongList && _isStrongJumpInput(keyword)) {
+      final normalizedStrong = _normalizeStrongInput(keyword);
+      _jumpToStrongInDefaultList(normalizedStrong);
+      return;
+    }
+
     setState(() {
+      _isShowingDefaultStrongList = false;
       _wordsFuture = _createWordsFuture();
     });
   }
@@ -482,6 +565,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void _clearSearch() {
     _searchController.clear();
     setState(() {
+      _isShowingDefaultStrongList = true;
       _wordsFuture = _createWordsFuture();
     });
   }
@@ -531,6 +615,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void dispose() {
+    _listScrollController.dispose();
     _searchController.dispose();
     super.dispose();
   }
