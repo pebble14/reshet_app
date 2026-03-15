@@ -100,59 +100,28 @@ class _HomeScreenState extends State<HomeScreen> {
     return '$prefix$numericPart';
   }
 
+  String _buildDefaultStrongListTitle(Map<String, dynamic> wordMap) {
+    final strong = _formatDisplayStrong(
+      (wordMap['스트롱넘버'] ?? '').toString(),
+    );
+    final displaySpelling = _buildDisplaySpelling(wordMap);
+    return _joinNonEmptyValues([strong, displaySpelling], ' · ');
+  }
+
   InlineSpan _buildWordTitle(Map<String, dynamic> wordMap) {
     final strong = _formatDisplayStrong(
       (wordMap['스트롱넘버'] ?? '').toString(),
     );
     final displaySpelling = _buildDisplaySpelling(wordMap);
-    final language = (wordMap['언어'] ?? '').toString().trim();
-    final children = <InlineSpan>[];
+    final transliteration = _readFirstNonEmptyValue(wordMap, ['음역1', '음역']);
+    final pronunciation = _readFirstNonEmptyValue(wordMap, ['발음1', '발음']);
 
-    if (strong.isNotEmpty) {
-      children.add(
-        TextSpan(
-          text: strong,
-          style: const TextStyle(fontWeight: FontWeight.w500),
-        ),
-      );
-    }
-
-    if (strong.isNotEmpty && displaySpelling.isNotEmpty) {
-      children.add(
-        const WidgetSpan(
-          alignment: PlaceholderAlignment.middle,
-          child: SizedBox(width: 12),
-        ),
-      );
-    }
-
-    if (displaySpelling.isNotEmpty) {
-      children.add(
-        TextSpan(
-          text: displaySpelling,
-          style: const TextStyle(fontWeight: FontWeight.w600),
-        ),
-      );
-    }
-
-    if (language.isNotEmpty) {
-      if (children.isNotEmpty) {
-        children.add(
-          const TextSpan(
-            text: ' · ',
-            style: TextStyle(fontWeight: FontWeight.normal),
-          ),
-        );
-      }
-      children.add(
-        TextSpan(
-          text: language,
-          style: const TextStyle(fontWeight: FontWeight.normal),
-        ),
-      );
-    }
-
-    return TextSpan(children: children);
+    return TextSpan(
+      text: _joinNonEmptyValues(
+        [strong, displaySpelling, transliteration, pronunciation],
+        ' · ',
+      ),
+    );
   }
 
   Widget _buildLanguageSectionHeader(String label) {
@@ -166,23 +135,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   String _buildWordSubtitle(Map<String, dynamic> wordMap) {
-    final pronunciation = _readFirstNonEmptyValue(wordMap, [
-      '발음1',
-      '발음',
-    ]);
-    final transliteration = _readFirstNonEmptyValue(wordMap, [
-      '음역1',
-      '음역',
-    ]);
-    final meaning = _readFirstNonEmptyValue(wordMap, [
-      '의미1',
-      '의미',
-    ]);
-
-    return _joinNonEmptyValues(
-      [pronunciation, transliteration, meaning],
-      ' · ',
-    );
+    return _readFirstNonEmptyValue(wordMap, ['의미1', '의미']);
   }
 
   /// 위젯이 처음 생성될 때 1회 호출되는 생명주기 메서드
@@ -333,9 +286,17 @@ class _HomeScreenState extends State<HomeScreen> {
   /// _isLoading 값에 따라 로딩 화면 또는 본문 화면 표시
   @override
   Widget build(BuildContext context) {
+    final platform = Theme.of(context).platform;
+    final isDesktopPlatform =
+        platform == TargetPlatform.windows ||
+        platform == TargetPlatform.linux ||
+        platform == TargetPlatform.macOS;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Reshet'),
+        title: isDesktopPlatform
+            ? const Text('רשת : 그물')
+            : const Text('Reshet'),
         actions: [
           PopupMenuButton<String>(
             onSelected: (value) async {
@@ -407,6 +368,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       }
 
                       final words = snapshot.data ?? [];
+                      final isDefaultStrongList =
+                          _searchController.text.trim().isEmpty;
 
                       if (words.isEmpty) {
                         return const Center(child: Text('검색 결과 없음'));
@@ -416,7 +379,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         itemCount: words.length,
                         itemBuilder: (context, index) {
                           final wordMap = words[index];
-                          final subtitleText = _buildWordSubtitle(wordMap);
+                          final subtitleText = isDefaultStrongList
+                              ? ''
+                              : _buildWordSubtitle(wordMap);
                           final rawStrong = (wordMap['스트롱넘버'] ?? '')
                               .toString()
                               .trim()
@@ -433,12 +398,18 @@ class _HomeScreenState extends State<HomeScreen> {
                               !previousRawStrong.startsWith('G');
 
                           final tile = ListTile(
-                            title: Text.rich(
-                              _buildWordTitle(wordMap),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            subtitle: subtitleText.isEmpty
+                            title: isDefaultStrongList
+                                ? Text(
+                                    _buildDefaultStrongListTitle(wordMap),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  )
+                                : Text.rich(
+                                    _buildWordTitle(wordMap),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                            subtitle: isDefaultStrongList || subtitleText.isEmpty
                                 ? null
                                 : Text(
                                     subtitleText,
@@ -484,9 +455,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               if (showHebrewHeader)
-                                _buildLanguageSectionHeader('Hebrew'),
+                                _buildLanguageSectionHeader('히브리어/아람어'),
                               if (showGreekHeader)
-                                _buildLanguageSectionHeader('Greek'),
+                                _buildLanguageSectionHeader('헬라어'),
                               tile,
                             ],
                           );
