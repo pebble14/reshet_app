@@ -13,7 +13,10 @@
 import 'package:flutter/material.dart';
 import '../database/database_service.dart';
 import '../data/models/word.dart';
+import 'word_detail_screen.dart';
+import 'word_edit_screen.dart';
 import 'word_graph_screen.dart';
+import 'word_info_panel.dart';
 
 /// WordExplorerScreen
 /// - 초기 단어(Map)를 받아서:
@@ -35,6 +38,9 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
 
   /// 오른쪽 상세 패널에 표시할 단어(Map)
   Map<String, dynamic>? _selectedWordMap;
+
+  /// 같은 중심 단어 id에서도 그래프를 다시 생성하기 위한 revision 값
+  int _graphRevision = 0;
 
   /// 상세 로딩 상태
   bool _isDetailLoading = false;
@@ -59,7 +65,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
           Expanded(
             flex: 3,
             child: WordGraphScreen(
-              key: ValueKey(_centerWord.id),
+              key: ValueKey('${_centerWord.id}-$_graphRevision'),
               centerWord: _centerWord,
               // 스플릿뷰에서는 push 탐색 대신 "선택 콜백"을 사용
               onSelectWord: (word) async {
@@ -92,18 +98,12 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
     });
 
     try {
-      final db = await DatabaseService.openDatabaseFile();
-      final rows = await db.query(
-        'WORD_TABLE',
-        where: 'id = ?',
-        whereArgs: [word.id],
-        limit: 1,
-      );
+      final selectedWordMap = await _loadWordMap(word.id);
 
       if (!mounted) return;
 
       setState(() {
-        _selectedWordMap = rows.isNotEmpty ? rows.first : null;
+        _selectedWordMap = selectedWordMap;
         _isDetailLoading = false;
       });
     } catch (e) {
@@ -113,6 +113,128 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
         _isDetailLoading = false;
       });
     }
+  }
+
+  Future<Map<String, dynamic>?> _loadWordMap(String wordId) async {
+    final db = await DatabaseService.openDatabaseFile();
+    final rows = await db.query(
+      'WORD_TABLE',
+      where: 'id = ?',
+      whereArgs: [wordId],
+      limit: 1,
+    );
+
+    if (rows.isEmpty) {
+      return null;
+    }
+
+    return Map<String, dynamic>.from(rows.first);
+  }
+
+  Future<void> _refreshSelectedWord({
+    required String wordId,
+    bool syncCenterWord = false,
+    bool refreshGraphIfChanged = false,
+  }) async {
+    final previousWordMap = _selectedWordMap == null
+        ? null
+        : Map<String, dynamic>.from(_selectedWordMap!);
+
+    setState(() {
+      _isDetailLoading = true;
+      _detailError = null;
+    });
+
+    try {
+      final refreshedWordMap = await _loadWordMap(wordId);
+      final hasChanged = !_wordMapsEqual(previousWordMap, refreshedWordMap);
+
+      if (!mounted) return;
+
+      setState(() {
+        _selectedWordMap = refreshedWordMap;
+        if (syncCenterWord && refreshedWordMap != null) {
+          _centerWord = Word.fromMap(refreshedWordMap);
+        }
+        if (refreshGraphIfChanged && hasChanged) {
+          _graphRevision++;
+        }
+        _isDetailLoading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _detailError = '상세 정보 로딩 실패: $e';
+        _isDetailLoading = false;
+      });
+    }
+  }
+
+  Future<void> _openEditSelectedWord() async {
+    final wordMap = _selectedWordMap;
+    if (wordMap == null) return;
+
+    final result = await Navigator.push<Map<String, dynamic>>(
+      context,
+      MaterialPageRoute(builder: (_) => WordEditScreen(word: wordMap)),
+    );
+
+    if (result == null || !mounted) return;
+
+    setState(() {
+      _selectedWordMap = Map<String, dynamic>.from(result);
+
+      if (_centerWord.id == result['id'].toString()) {
+        _centerWord = Word.fromMap(result);
+      }
+      _graphRevision++;
+    });
+
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('단어 정보가 수정되었습니다.')));
+  }
+
+  Future<void> _openSelectedWordDetail() async {
+    final wordMap = _selectedWordMap;
+    if (wordMap == null) return;
+
+    final selectedWordId = (wordMap['id'] ?? '').toString();
+
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => WordDetailScreen(word: wordMap)),
+    );
+
+    if (!mounted || selectedWordId.isEmpty) return;
+
+    await _refreshSelectedWord(
+      wordId: selectedWordId,
+      syncCenterWord: _centerWord.id == selectedWordId,
+      refreshGraphIfChanged: true,
+    );
+  }
+
+  bool _wordMapsEqual(Map<String, dynamic>? left, Map<String, dynamic>? right) {
+    if (identical(left, right)) {
+      return true;
+    }
+
+    if (left == null || right == null) {
+      return left == right;
+    }
+
+    if (left.length != right.length) {
+      return false;
+    }
+
+    for (final key in left.keys) {
+      if (!right.containsKey(key) || left[key] != right[key]) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   Widget _buildDetailPanel() {
@@ -129,41 +251,10 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
       return const Center(child: Text('상세 정보가 없습니다.'));
     }
 
-    // ✅ Scaffold 없이 "패널"로만 표시
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-        Text(
-          (wordMap['표기1'] ?? '').toString(),
-          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          (wordMap['의미1'] ?? '').toString(),
-          style: const TextStyle(fontSize: 14),
-        ),
-        const SizedBox(height: 16),
-        const Divider(),
-
-        ...wordMap.entries.map((entry) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 6),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  width: 110,
-                  child: Text(
-                    entry.key,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Expanded(child: Text(entry.value?.toString() ?? '')),
-              ],
-            ),
-          );
-        }).toList(),
-      ],
+    return WordInfoPanel(
+      wordMap: wordMap,
+      onEdit: _openEditSelectedWord,
+      onOpenDetail: _openSelectedWordDetail,
     );
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'word_graph_screen.dart';
 import 'word_graph_cache.dart';
 import 'word_edit_screen.dart';
+import 'word_info_panel.dart';
 import '../data/models/word.dart';
 import '../data/repositories/word_repository.dart';
 
@@ -39,6 +40,17 @@ class _WordDetailScreenState extends State<WordDetailScreen> {
         context,
       ).showSnackBar(const SnackBar(content: Text('단어 정보가 수정되었습니다.')));
     }
+  }
+
+  void _openGraph() {
+    final centerWord = Word.fromMap(_word);
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => WordGraphScreen(centerWord: centerWord),
+      ),
+    );
   }
 
   Future<void> _confirmDelete() async {
@@ -101,57 +113,15 @@ class _WordDetailScreenState extends State<WordDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(_word['표기1'] ?? '상세 정보')),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          ..._word.entries.map((entry) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 6),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    width: 110,
-                    child: Text(
-                      entry.key,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  Expanded(child: Text(entry.value?.toString() ?? '')),
-                ],
-              ),
-            );
-          }).toList(),
-          const SizedBox(height: 20),
-          ElevatedButton(onPressed: _openEdit, child: const Text('편집')),
-          const SizedBox(height: 12),
-          ElevatedButton(
-            onPressed: () {
-              final Word centerWord = Word.fromMap(_word);
-
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => WordGraphScreen(centerWord: centerWord),
-                ),
-              );
-            },
-            child: const Text('그래프 보기'),
-          ),
-
-          const SizedBox(height: 12),
-          ElevatedButton(
-            onPressed: _isDeleting ? null : _confirmDelete,
-            child: _isDeleting
-                ? const SizedBox(
-                    width: 18,
-                    height: 18,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const Text('삭제'),
-          ),
-        ],
+      appBar: AppBar(
+        title: Text(buildWordRepresentativeSpelling(_word, fallback: '상세 정보')),
+      ),
+      body: WordInfoPanel(
+        wordMap: _word,
+        onEdit: _openEdit,
+        onShowGraph: _openGraph,
+        onDelete: _confirmDelete,
+        isDeleting: _isDeleting,
       ),
     );
   }
