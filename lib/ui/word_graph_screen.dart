@@ -423,6 +423,80 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
   /// 중앙(선택) 단어 노드
   Widget _buildCenterNode(Word word) {
+    final language = (word.language ?? '').trim();
+    final strongNumber = (word.strongNumber ?? '').trim();
+    final spelling = (word.spelling1 ?? '').trim();
+    final pronunciation = (word.pronunciation1 ?? '').trim();
+    final transliteration = (word.transliteration1 ?? '').trim();
+    final meaning = (word.meaning1 ?? '').trim();
+    final children = <Widget>[];
+
+    void addNodeText(Widget child, {double gap = 6}) {
+      if (children.isNotEmpty) {
+        children.add(SizedBox(height: gap));
+      }
+      children.add(child);
+    }
+
+    if (language.isNotEmpty) {
+      addNodeText(Text(language, style: const TextStyle(fontSize: 12)), gap: 4);
+    }
+
+    if (strongNumber.isNotEmpty) {
+      addNodeText(
+        Text(strongNumber, style: const TextStyle(fontSize: 12)),
+        gap: 4,
+      );
+    }
+
+    if (spelling.isNotEmpty) {
+      addNodeText(
+        Text(
+          spelling,
+          textAlign: TextAlign.center,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+      );
+    }
+
+    if (transliteration.isNotEmpty) {
+      addNodeText(
+        Text(
+          transliteration,
+          textAlign: TextAlign.center,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(fontSize: 11),
+        ),
+      );
+    }
+
+    if (pronunciation.isNotEmpty) {
+      addNodeText(
+        Text(
+          pronunciation,
+          textAlign: TextAlign.center,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(fontSize: 12),
+        ),
+      );
+    }
+
+    if (meaning.isNotEmpty) {
+      addNodeText(
+        Text(
+          meaning,
+          textAlign: TextAlign.center,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(fontSize: 12),
+        ),
+      );
+    }
+
     return Container(
       width: _centerNodeSize,
       height: _centerNodeSize,
@@ -435,26 +509,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(word.language ?? '', style: const TextStyle(fontSize: 12)),
-          const SizedBox(height: 4),
-          Text(word.strongNumber ?? '', style: const TextStyle(fontSize: 12)),
-          const SizedBox(height: 6),
-          Text(
-            word.spelling1 ?? '',
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 6),
-          Text(word.pronunciation1 ?? '', style: const TextStyle(fontSize: 12)),
-          const SizedBox(height: 6),
-          Text(
-            word.meaning1 ?? '',
-            textAlign: TextAlign.center,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(fontSize: 12),
-          ),
-        ],
+        children: children,
       ),
     );
   }
@@ -462,8 +517,9 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   /// 연결 단어 노드(원형)
   Widget _buildWordNode(Word word, Color borderColor) {
     final label = (word.spelling1 != null && word.spelling1!.trim().isNotEmpty)
-        ? word.spelling1!
+        ? word.spelling1!.trim()
         : word.id;
+    final transliteration = (word.transliteration1 ?? '').trim();
 
     final bool isSelected = (_selectedWordId == word.id);
 
@@ -507,12 +563,27 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
           color: isSelected ? Colors.grey.shade100 : Colors.white,
         ),
         child: Center(
-          child: Text(
-            label,
-            textAlign: TextAlign.center,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(fontSize: 12),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                label,
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(fontSize: 12),
+              ),
+              if (transliteration.isNotEmpty) ...[
+                const SizedBox(height: 2),
+                Text(
+                  transliteration,
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontSize: 10),
+                ),
+              ],
+            ],
           ),
         ),
       ),
