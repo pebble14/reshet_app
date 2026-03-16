@@ -44,6 +44,39 @@ class WordRelationEdgeInfo {
 }
 
 class WordRepository {
+  static final List<String> _homeSearchSpellingColumns = List.unmodifiable(
+    List.generate(6, (index) => '표기${index + 1}'),
+  );
+  static final List<String> _homeSearchTransliterationColumns =
+      List.unmodifiable(
+        List.generate(6, (index) => '음역${index + 1}'),
+      );
+  static final List<String> _homeSearchMeaningColumns = List.unmodifiable(
+    List.generate(7, (index) => '의미${index + 1}'),
+  );
+  static final List<String> _homeSearchLikeColumns = List.unmodifiable([
+    '스트롱넘버',
+    ..._homeSearchSpellingColumns,
+    ..._homeSearchTransliterationColumns,
+    ..._homeSearchMeaningColumns,
+  ]);
+  static final RegExp _hebrewMarkPattern = RegExp(r'[\u0591-\u05C7]');
+  static final RegExp _hebrewScriptPattern = RegExp(r'[\u0590-\u05FF]');
+  static final RegExp _greekScriptPattern = RegExp(
+    r'[\u0370-\u03FF\u1F00-\u1FFF]',
+  );
+  static final RegExp _combiningMarkPattern = RegExp(r'[\u0300-\u036F]');
+  static final Map<String, String> _greekVariantGroups = {
+    'α': 'άὰἀἁἂἃἄἅἆἇᾀᾁᾂᾃᾄᾅᾆᾇᾰᾱᾲᾳᾴᾶᾷ',
+    'ε': 'έὲἐἑἒἓἔἕ',
+    'η': 'ήὴἠἡἢἣἤἥἦἧῂῃῄῆῇ',
+    'ι': 'ίὶϊΐἰἱἲἳἴἵἶἷῒΐῖῗῐῑ',
+    'ο': 'όὸὀὁὂὃὄὅ',
+    'υ': 'ύὺϋΰὐὑὒὓὔὕὖὗῢΰῦῧῠῡ',
+    'ω': 'ώὼὠὡὢὣὤὥὦὧῲῳῴῶῷ',
+    'ρ': 'ῤῥ',
+  };
+
   /// id로 단어 1건 조회
   Future<Word?> getWordById(String id) async {
     final db = await DatabaseService.openDatabaseFile();
@@ -186,6 +219,335 @@ class WordRepository {
     );
   }
 
+  String _stripHebrewMarks(String value) {
+    return value.replaceAll(_hebrewMarkPattern, '');
+  }
+
+  String _stripGreekDiacritics(String value) {
+    var normalized = value;
+
+    for (final entry in _greekVariantGroups.entries) {
+      normalized = normalized.replaceAll(
+        RegExp('[${entry.value}]'),
+        entry.key,
+      );
+    }
+
+    return normalized
+        .replaceAll(_combiningMarkPattern, '')
+        .replaceAll('ς', 'σ');
+  }
+
+  String _normalizeHomeSearchText(String value) {
+    final trimmed = value.trim();
+    if (trimmed.isEmpty) {
+      return '';
+    }
+
+    final lowerCased = trimmed.toLowerCase();
+    final withoutHebrewMarks = _stripHebrewMarks(lowerCased);
+    final withoutGreekDiacritics = _stripGreekDiacritics(withoutHebrewMarks);
+
+    return withoutGreekDiacritics.replaceAll(RegExp(r'\s+'), ' ');
+  }
+
+  bool _containsHebrewScript(String value) {
+    return _hebrewScriptPattern.hasMatch(value);
+  }
+
+  bool _containsGreekScript(String value) {
+    return _greekScriptPattern.hasMatch(value);
+  }
+
+  List<({String value, int fieldIndex})> _readIndexedValues(
+    Map<String, dynamic> row,
+    List<String> columns,
+  ) {
+    final values = <({String value, int fieldIndex})>[];
+
+    for (var index = 0; index < columns.length; index++) {
+      final value = (row[columns[index]] ?? '').toString().trim();
+      if (value.isEmpty) {
+        continue;
+      }
+      values.add((value: value, fieldIndex: index + 1));
+    }
+
+    return values;
+  }
+
+  ({int priority, int fieldIndex, int valueLength}) _rankRecord(
+    int priority,
+    int fieldIndex,
+    int valueLength,
+  ) {
+    return (
+      priority: priority,
+      fieldIndex: fieldIndex,
+      valueLength: valueLength,
+    );
+  }
+
+  int _compareSearchRank(
+    ({int priority, int fieldIndex, int valueLength}) left,
+    ({int priority, int fieldIndex, int valueLength}) right,
+  ) {
+    final byPriority = left.priority.compareTo(right.priority);
+    if (byPriority != 0) {
+      return byPriority;
+    }
+
+    final byFieldIndex = left.fieldIndex.compareTo(right.fieldIndex);
+    if (byFieldIndex != 0) {
+      return byFieldIndex;
+    }
+
+    return left.valueLength.compareTo(right.valueLength);
+  }
+
+  ({int priority, int fieldIndex, int valueLength})? _pickBetterRank(
+    ({int priority, int fieldIndex, int valueLength})? current,
+    ({int priority, int fieldIndex, int valueLength})? candidate,
+  ) {
+    if (candidate == null) {
+      return current;
+    }
+    if (current == null || _compareSearchRank(candidate, current) < 0) {
+      return candidate;
+    }
+    return current;
+  }
+
+  ({int priority, int fieldIndex, int valueLength})? _matchIndexedValues(
+    List<({String value, int fieldIndex})> values, {
+    required String normalizedKeyword,
+    int? exactPriority,
+    int? prefixPriority,
+    int? partialPriority,
+  }) {
+    ({int priority, int fieldIndex, int valueLength})? bestRank;
+
+    for (final entry in values) {
+      final normalizedValue = _normalizeHomeSearchText(entry.value);
+      if (normalizedValue.isEmpty) {
+        continue;
+      }
+
+      if (exactPriority != null && normalizedValue == normalizedKeyword) {
+        bestRank = _pickBetterRank(
+          bestRank,
+          _rankRecord(
+            exactPriority,
+            entry.fieldIndex,
+            normalizedValue.length,
+          ),
+        );
+      }
+
+      if (prefixPriority != null &&
+          normalizedValue.startsWith(normalizedKeyword)) {
+        bestRank = _pickBetterRank(
+          bestRank,
+          _rankRecord(
+            prefixPriority,
+            entry.fieldIndex,
+            normalizedValue.length,
+          ),
+        );
+      }
+
+      if (partialPriority != null &&
+          normalizedValue.contains(normalizedKeyword)) {
+        bestRank = _pickBetterRank(
+          bestRank,
+          _rankRecord(
+            partialPriority,
+            entry.fieldIndex,
+            normalizedValue.length,
+          ),
+        );
+      }
+    }
+
+    return bestRank;
+  }
+
+  ({int priority, int fieldIndex, int valueLength})? _matchStrongValue(
+    Map<String, dynamic> row, {
+    required String normalizedKeyword,
+    required String? normalizedStrongKeyword,
+  }) {
+    final strong = (row['스트롱넘버'] ?? '').toString().trim();
+    if (strong.isEmpty) {
+      return null;
+    }
+
+    final normalizedStrong = _normalizeStrongValue(strong).toLowerCase();
+    if (normalizedStrong.isEmpty) {
+      return null;
+    }
+
+    if (normalizedStrongKeyword != null) {
+      final normalizedSearchStrong = normalizedStrongKeyword.toLowerCase();
+      if (normalizedStrong == normalizedSearchStrong) {
+        return _rankRecord(0, 0, normalizedStrong.length);
+      }
+      if (normalizedStrong.startsWith(normalizedSearchStrong)) {
+        return _rankRecord(1, 0, normalizedStrong.length);
+      }
+      if (normalizedStrong.contains(normalizedSearchStrong)) {
+        return _rankRecord(9, 0, normalizedStrong.length);
+      }
+    }
+
+    if (normalizedStrong.contains(normalizedKeyword)) {
+      return _rankRecord(9, 0, normalizedStrong.length);
+    }
+
+    return null;
+  }
+
+  ({int priority, int fieldIndex, int valueLength})? _rankHomeSearchRow(
+    Map<String, dynamic> row, {
+    required String normalizedKeyword,
+    required String? normalizedStrongKeyword,
+  }) {
+    var bestRank = _matchStrongValue(
+      row,
+      normalizedKeyword: normalizedKeyword,
+      normalizedStrongKeyword: normalizedStrongKeyword,
+    );
+    final spellingValues = _readIndexedValues(row, _homeSearchSpellingColumns);
+    final transliterationValues = _readIndexedValues(
+      row,
+      _homeSearchTransliterationColumns,
+    );
+    final meaningValues = _readIndexedValues(row, _homeSearchMeaningColumns);
+
+    bestRank = _pickBetterRank(
+      bestRank,
+      _matchIndexedValues(
+        spellingValues,
+        normalizedKeyword: normalizedKeyword,
+        exactPriority: 2,
+        prefixPriority: 3,
+        partialPriority: 7,
+      ),
+    );
+    bestRank = _pickBetterRank(
+      bestRank,
+      _matchIndexedValues(
+        transliterationValues,
+        normalizedKeyword: normalizedKeyword,
+        exactPriority: 4,
+        prefixPriority: 5,
+        partialPriority: 8,
+      ),
+    );
+    bestRank = _pickBetterRank(
+      bestRank,
+      _matchIndexedValues(
+        meaningValues,
+        normalizedKeyword: normalizedKeyword,
+        partialPriority: 6,
+      ),
+    );
+
+    return bestRank;
+  }
+
+  Future<List<Map<String, dynamic>>> _queryHomeSearchLikeCandidates(
+    Database db,
+    Set<String> sqlTerms,
+  ) async {
+    if (sqlTerms.isEmpty) {
+      return const [];
+    }
+
+    final whereParts = <String>[];
+    final whereArgs = <Object?>[];
+
+    for (final term in sqlTerms) {
+      final like = '%$term%';
+      for (final column in _homeSearchLikeColumns) {
+        whereParts.add('LOWER(COALESCE("$column", \'\')) LIKE ?');
+        whereArgs.add(like);
+      }
+    }
+
+    return await db.query(
+      'WORD_TABLE',
+      where: whereParts.join(' OR '),
+      whereArgs: whereArgs,
+      orderBy: 'id',
+    );
+  }
+
+  Future<List<Map<String, dynamic>>> _queryHomeSearchLanguageCandidates(
+    Database db,
+    String keyword,
+  ) async {
+    final whereParts = <String>[];
+    final whereArgs = <Object?>[];
+
+    if (_containsHebrewScript(keyword)) {
+      whereParts.add('언어 LIKE ?');
+      whereArgs.add('%히브리%');
+      whereParts.add('언어 LIKE ?');
+      whereArgs.add('%아람%');
+    }
+
+    if (_containsGreekScript(keyword)) {
+      whereParts.add('언어 LIKE ?');
+      whereArgs.add('%헬라%');
+    }
+
+    if (whereParts.isEmpty) {
+      return const [];
+    }
+
+    return await db.query(
+      'WORD_TABLE',
+      where: whereParts.join(' OR '),
+      whereArgs: whereArgs,
+      orderBy: 'id',
+    );
+  }
+
+  Future<List<Map<String, dynamic>>> _collectHomeSearchCandidates(
+    Database db,
+    String keyword,
+    String normalizedKeyword,
+  ) async {
+    final sqlTerms = <String>{keyword.toLowerCase(), normalizedKeyword};
+    final normalizedStrongKeyword = _normalizeStrongSearchKeyword(keyword);
+    if (normalizedStrongKeyword != null) {
+      sqlTerms.add(normalizedStrongKeyword.toLowerCase());
+    }
+
+    final candidatesById = <String, Map<String, dynamic>>{};
+
+    void addRows(Iterable<Map<String, dynamic>> rows) {
+      for (final row in rows) {
+        final id = (row['id'] ?? '').toString();
+        if (id.isEmpty) {
+          continue;
+        }
+        candidatesById[id] = row;
+      }
+    }
+
+    addRows(await _queryHomeSearchLikeCandidates(db, sqlTerms));
+    addRows(await _queryHomeSearchLanguageCandidates(db, keyword));
+
+    if (candidatesById.isEmpty &&
+        (_containsHebrewScript(keyword) || _containsGreekScript(keyword))) {
+      addRows(await db.query('WORD_TABLE', orderBy: 'id'));
+    }
+
+    return candidatesById.values.toList();
+  }
+
   Future<List<Map<String, dynamic>>> searchStrongExactMap(
     String keyword, {
     int limit = 200,
@@ -222,8 +584,9 @@ class WordRepository {
   }
 
   /// 키워드로 단어 검색 (홈 검색용)
-  /// - 표기1, 의미1, 스트롱넘버를 대상으로 부분일치 검색한다.
-  /// - 결과는 Map 그대로 반환하여 상세 화면에서 컬럼 손실이 없게 한다.
+  /// - DB에서 1차 후보를 수집한 뒤 Dart에서 정규화 비교/정렬한다.
+  /// - 표기1~6, 음역1~6, 의미1~7, 스트롱넘버를 대상으로 한다.
+  /// - 결과는 exact/prefix/partial 우선순위를 적용한 뒤 limit를 건다.
   Future<List<Map<String, dynamic>>> searchWordsMap(
     String keyword, {
     int limit = 200,
@@ -235,15 +598,65 @@ class WordRepository {
       return getWordsMap(limit: limit);
     }
 
-    final like = '%$q%';
+    final normalizedKeyword = _normalizeHomeSearchText(q);
+    if (normalizedKeyword.isEmpty) {
+      return const [];
+    }
 
-    // NOTE: 컬럼명은 네 DB 기준(한글 컬럼) 사용
-    return await db.query(
-      'WORD_TABLE',
-      where: '표기1 LIKE ? OR 의미1 LIKE ? OR 스트롱넘버 LIKE ?',
-      whereArgs: [like, like, like],
-      limit: limit,
+    final normalizedStrongKeyword = _normalizeStrongSearchKeyword(q);
+    final candidates = await _collectHomeSearchCandidates(
+      db,
+      q,
+      normalizedKeyword,
     );
+    final scoredRows =
+        <({
+          Map<String, dynamic> row,
+          int priority,
+          int fieldIndex,
+          int valueLength,
+          String id,
+        })>[];
+
+    for (final row in candidates) {
+      final rank = _rankHomeSearchRow(
+        row,
+        normalizedKeyword: normalizedKeyword,
+        normalizedStrongKeyword: normalizedStrongKeyword,
+      );
+      if (rank == null) {
+        continue;
+      }
+
+      scoredRows.add((
+        row: row,
+        priority: rank.priority,
+        fieldIndex: rank.fieldIndex,
+        valueLength: rank.valueLength,
+        id: (row['id'] ?? '').toString(),
+      ));
+    }
+
+    scoredRows.sort((left, right) {
+      final byRank = _compareSearchRank(
+        (
+          priority: left.priority,
+          fieldIndex: left.fieldIndex,
+          valueLength: left.valueLength,
+        ),
+        (
+          priority: right.priority,
+          fieldIndex: right.fieldIndex,
+          valueLength: right.valueLength,
+        ),
+      );
+      if (byRank != 0) {
+        return byRank;
+      }
+      return left.id.compareTo(right.id);
+    });
+
+    return scoredRows.take(limit).map((entry) => entry.row).toList();
   }
 
   /// WORD_RELATION 1건 삭제(트랜잭션)
@@ -455,11 +868,7 @@ class WordRepository {
   String _normalizeSpellingForDuplicateCheck(String value) {
     final trimmed = value.trim();
 
-    // 히브리어 결합부호/모음부호 제거 (U+0591 ~ U+05C7)
-    final withoutHebrewMarks = trimmed.replaceAll(
-      RegExp(r'[\u0591-\u05C7]'),
-      '',
-    );
+    final withoutHebrewMarks = _stripHebrewMarks(trimmed);
 
     // 연속 공백 정리
     return withoutHebrewMarks.replaceAll(RegExp(r'\s+'), ' ');
