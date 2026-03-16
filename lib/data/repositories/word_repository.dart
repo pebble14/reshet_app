@@ -158,6 +158,69 @@ class WordRepository {
     return await db.rawQuery(sql.toString(), args);
   }
 
+  String _normalizeStrongValue(String strong) {
+    final trimmed = strong.trim();
+    final match = RegExp(r'^([A-Za-z])(\d+)$').firstMatch(trimmed);
+    if (match == null) {
+      return trimmed;
+    }
+
+    final prefix = match.group(1)!.toUpperCase();
+    final numericPart = int.tryParse(match.group(2)!);
+    if (numericPart == null) {
+      return trimmed;
+    }
+
+    return '$prefix$numericPart';
+  }
+
+  String? _normalizeStrongSearchKeyword(String input) {
+    final trimmed = input.trim();
+    final match = RegExp(r'^([HhGg])(\d+)$').firstMatch(trimmed);
+    if (match == null) {
+      return null;
+    }
+
+    return _normalizeStrongValue(
+      '${match.group(1)!.toUpperCase()}${match.group(2)!}',
+    );
+  }
+
+  Future<List<Map<String, dynamic>>> searchStrongExactMap(
+    String keyword, {
+    int limit = 200,
+  }) async {
+    final normalizedStrong = _normalizeStrongSearchKeyword(keyword);
+    if (normalizedStrong == null) {
+      return const [];
+    }
+
+    final prefix = normalizedStrong.substring(0, 1);
+    final numericPart = int.parse(normalizedStrong.substring(1));
+    final db = await DatabaseService.openDatabaseFile();
+    final rows = await db.rawQuery(
+      '''
+      SELECT *
+      FROM WORD_TABLE
+      WHERE 스트롱넘버 IS NOT NULL
+        AND TRIM(스트롱넘버) <> ''
+        AND UPPER(SUBSTR(TRIM(스트롱넘버), 1, 1)) = ?
+        AND CAST(SUBSTR(TRIM(스트롱넘버), 2) AS INTEGER) = ?
+      ORDER BY id
+      ''',
+      [prefix, numericPart],
+    );
+
+    return rows
+        .where(
+          (row) =>
+              _normalizeStrongValue((row['스트롱넘버'] ?? '').toString()) ==
+              normalizedStrong,
+        )
+        .take(limit)
+        .toList();
+  }
+
   /// 키워드로 단어 검색 (홈 검색용)
   /// - 표기1, 의미1, 스트롱넘버를 대상으로 부분일치 검색한다.
   /// - 결과는 Map 그대로 반환하여 상세 화면에서 컬럼 손실이 없게 한다.
