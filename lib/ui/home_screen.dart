@@ -59,15 +59,27 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Map<String, dynamic>> _currentWords = const [];
   bool _isShowingDefaultStrongList = true;
 
-  Future<List<Map<String, dynamic>>> _createWordsFuture() {
+  Future<List<Map<String, dynamic>>> _createWordsFuture() async {
     if (_isShowingDefaultStrongList) {
       return _repository.getStrongWordsMap();
     }
 
     final keyword = _searchController.text.trim();
-    return keyword.isEmpty
-        ? _repository.getStrongWordsMap()
-        : _repository.searchWordsMap(keyword, limit: 200);
+    if (keyword.isEmpty) {
+      return _repository.getStrongWordsMap();
+    }
+
+    if (_isStrongJumpInput(keyword)) {
+      final exactMatches = await _repository.searchStrongExactMap(
+        keyword,
+        limit: 200,
+      );
+      if (exactMatches.isNotEmpty) {
+        return exactMatches;
+      }
+    }
+
+    return _repository.searchWordsMap(keyword, limit: 200);
   }
 
   String _readFirstNonEmptyValue(
