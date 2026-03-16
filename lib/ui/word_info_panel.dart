@@ -14,6 +14,11 @@ String buildWordRepresentativeSpelling(
   return fallback;
 }
 
+String buildWordDisplayStrong(Map<String, dynamic> wordMap) {
+  final strong = (wordMap['스트롱넘버'] ?? '').toString();
+  return formatWordDisplayStrong(strong);
+}
+
 String formatWordDisplayStrong(String strong) {
   final trimmed = strong.trim();
   final match = RegExp(r'^([A-Za-z])(\d+)$').firstMatch(trimmed);
@@ -50,17 +55,27 @@ class WordInfoPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final representativeSpelling = buildWordRepresentativeSpelling(
-      wordMap,
-      fallback: '상세 정보',
-    );
+    final representativeSpelling = buildWordRepresentativeSpelling(wordMap);
+    final strong = buildWordDisplayStrong(wordMap);
+    final language = _readValue('언어');
     final spellings = _collectSeries('표기', 6);
     final transliterations = _collectSeries('음역', 6);
     final pronunciations = _collectSeries('발음', 6);
     final meanings = _collectSeries('의미', 7);
-    final strong = formatWordDisplayStrong(_readValue('스트롱넘버'));
-    final language = _readValue('언어');
     final note = _readValue('비고');
+    final sections = <_WordInfoSection>[
+      if (representativeSpelling.isNotEmpty)
+        _WordInfoSection(label: '대표 표기', values: [representativeSpelling]),
+      if (strong.isNotEmpty) _WordInfoSection(label: 'Strong', values: [strong]),
+      if (language.isNotEmpty) _WordInfoSection(label: '언어', values: [language]),
+      if (spellings.isNotEmpty) _WordInfoSection(label: '표기', values: spellings),
+      if (transliterations.isNotEmpty)
+        _WordInfoSection(label: '음역', values: transliterations),
+      if (pronunciations.isNotEmpty)
+        _WordInfoSection(label: '발음', values: pronunciations),
+      if (meanings.isNotEmpty) _WordInfoSection(label: '의미', values: meanings),
+      if (note.isNotEmpty) _WordInfoSection(label: '비고', values: [note]),
+    ];
     final hasActions =
         onEdit != null ||
         onDelete != null ||
@@ -70,36 +85,16 @@ class WordInfoPanel extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        Text(
-          representativeSpelling,
-          style: Theme.of(
-            context,
-          ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
-        ),
-        if (strong.isNotEmpty || language.isNotEmpty) ...[
-          const SizedBox(height: 12),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              if (strong.isNotEmpty)
-                _WordMetaChip(label: 'Strong', value: strong),
-              if (language.isNotEmpty)
-                _WordMetaChip(label: '언어', value: language),
-            ],
+        for (var index = 0; index < sections.length; index++) ...[
+          _WordInfoRow(
+            label: sections[index].label,
+            values: sections[index].values,
+            emphasizeValue: sections[index].label == '대표 표기',
           ),
+          if (index < sections.length - 1) const Divider(height: 24),
         ],
-        const SizedBox(height: 16),
-        const Divider(),
-        if (spellings.isNotEmpty) _WordInfoRow(label: '표기', values: spellings),
-        if (transliterations.isNotEmpty)
-          _WordInfoRow(label: '음역', values: transliterations),
-        if (pronunciations.isNotEmpty)
-          _WordInfoRow(label: '발음', values: pronunciations),
-        if (meanings.isNotEmpty) _WordInfoRow(label: '의미', values: meanings),
-        if (note.isNotEmpty) _WordInfoRow(label: '비고', values: [note]),
         if (hasActions) ...[
-          const SizedBox(height: 20),
+          if (sections.isNotEmpty) const SizedBox(height: 20),
           Wrap(
             spacing: 12,
             runSpacing: 12,
@@ -164,14 +159,32 @@ class WordInfoPanel extends StatelessWidget {
   }
 }
 
-class _WordInfoRow extends StatelessWidget {
+class _WordInfoSection {
   final String label;
   final List<String> values;
 
-  const _WordInfoRow({required this.label, required this.values});
+  const _WordInfoSection({required this.label, required this.values});
+}
+
+class _WordInfoRow extends StatelessWidget {
+  final String label;
+  final List<String> values;
+  final bool emphasizeValue;
+
+  const _WordInfoRow({
+    required this.label,
+    required this.values,
+    this.emphasizeValue = false,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final valueStyle = emphasizeValue
+        ? Theme.of(
+            context,
+          ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)
+        : Theme.of(context).textTheme.bodyMedium;
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
@@ -187,30 +200,11 @@ class _WordInfoRow extends StatelessWidget {
           Expanded(
             child: Text(
               values.join('\n'),
-              style: Theme.of(context).textTheme.bodyMedium,
+              style: valueStyle,
             ),
           ),
         ],
       ),
-    );
-  }
-}
-
-class _WordMetaChip extends StatelessWidget {
-  final String label;
-  final String value;
-
-  const _WordMetaChip({required this.label, required this.value});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Text('$label: $value'),
     );
   }
 }
