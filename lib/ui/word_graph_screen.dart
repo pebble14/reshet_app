@@ -31,6 +31,20 @@ const double _labelCollisionPadding = 4.0;
 const double _edgeLabelFontSize = 11.0;
 const double _edgeLabelHorizontalPadding = 8.0;
 const double _edgeLabelVerticalPadding = 4.0;
+const double _centerNodeBorderWidth = 4.0;
+const double _centerNodeShadowBlur = 26.0;
+const double _centerNodeShadowSpread = 2.0;
+const double _connectedNodeDefaultBorderWidth = 2.0;
+const double _connectedNodeSelectedBorderWidth = 4.0;
+const double _connectedNodeMutedBorderWidth = 1.6;
+const double _selectedEdgeStrokeWidth = 4.5;
+const double _defaultEdgeStrokeWidth = 2.0;
+const double _mutedEdgeStrokeWidth = 1.5;
+const double _mutedEdgeOpacity = 0.4;
+const double _defaultEdgeLabelBorderWidth = 1.5;
+const double _selectedEdgeLabelBorderWidth = 1.8;
+const double _defaultEdgeLabelBorderOpacity = 0.9;
+const double _mutedEdgeLabelBorderOpacity = 0.72;
 
 class _GraphNodeLayout {
   final int index;
@@ -401,9 +415,14 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                       nodes,
                       edgeLabels,
                       edgeColors,
+                      selectedIndex: selectedIndex,
                     ),
 
-                    ..._buildWordNodes(layout, nodes),
+                    ..._buildWordNodes(
+                      layout,
+                      nodes,
+                      hasSelection: selectedIndex != null,
+                    ),
                     if (nodes.isEmpty)
                       Center(
                         child: Text(
@@ -422,6 +441,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   }
 
   /// 중앙(선택) 단어 노드
+  Color _blendColor(Color color, Color target, double amount) {
+    return Color.lerp(color, target, amount) ?? color;
+  }
+
   Widget _buildCenterNode(Word word) {
     final language = (word.language ?? '').trim();
     final strongNumber = (word.strongNumber ?? '').trim();
@@ -503,8 +526,30 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: Colors.blue.shade100,
-        border: Border.all(color: Colors.blue, width: 3),
+        gradient: RadialGradient(
+          colors: [
+            Colors.white,
+            Colors.blue.shade50,
+            Colors.blue.shade100,
+          ],
+          stops: const [0.0, 0.62, 1.0],
+        ),
+        border: Border.all(
+          color: Colors.blue.shade700,
+          width: _centerNodeBorderWidth,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.blue.shade200.withValues(alpha: 0.5),
+            blurRadius: _centerNodeShadowBlur,
+            spreadRadius: _centerNodeShadowSpread,
+          ),
+          BoxShadow(
+            color: Colors.blue.shade900.withValues(alpha: 0.12),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -515,13 +560,38 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   }
 
   /// 연결 단어 노드(원형)
-  Widget _buildWordNode(Word word, Color borderColor) {
+  Widget _buildWordNode(
+    Word word,
+    Color borderColor, {
+    required bool hasSelection,
+  }) {
     final label = (word.spelling1 != null && word.spelling1!.trim().isNotEmpty)
         ? word.spelling1!.trim()
         : word.id;
     final transliteration = (word.transliteration1 ?? '').trim();
 
     final bool isSelected = (_selectedWordId == word.id);
+    final Color effectiveBorderColor = isSelected
+        ? _blendColor(borderColor, Colors.black, 0.18)
+        : hasSelection
+            ? _blendColor(borderColor, Colors.grey.shade500, 0.42)
+            : borderColor;
+    final Color fillColor = isSelected
+        ? Color.alphaBlend(
+            borderColor.withValues(alpha: 0.14),
+            Colors.white,
+          )
+        : hasSelection
+            ? Color.alphaBlend(
+                borderColor.withValues(alpha: 0.04),
+                Colors.white,
+              )
+            : Colors.white;
+    final double borderWidth = isSelected
+        ? _connectedNodeSelectedBorderWidth
+        : hasSelection
+            ? _connectedNodeMutedBorderWidth
+            : _connectedNodeDefaultBorderWidth;
 
     return GestureDetector(
       onTap: () {
@@ -559,8 +629,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         height: _connectedNodeSize,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          border: Border.all(color: borderColor, width: isSelected ? 4 : 2),
-          color: isSelected ? Colors.grey.shade100 : Colors.white,
+          border: Border.all(color: effectiveBorderColor, width: borderWidth),
+          color: fillColor,
         ),
         child: Center(
           child: Column(
@@ -1004,7 +1074,11 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     );
   }
 
-  List<Widget> _buildWordNodes(_GraphLayoutData layout, List<Word> words) {
+  List<Widget> _buildWordNodes(
+    _GraphLayoutData layout,
+    List<Word> words, {
+    required bool hasSelection,
+  }) {
     if (words.isEmpty) return [];
 
     final List<Widget> widgets = [];
@@ -1020,6 +1094,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
             _colorForCategory(
               _edgeInfoByOtherId[words[index].id]?.categoryCode,
             ),
+            hasSelection: hasSelection,
           ),
         ),
       );
@@ -1034,8 +1109,9 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     _GraphLayoutData layout,
     List<Word> nodes,
     List<String> edgeLabels,
-    List<Color> edgeColors,
-  ) {
+    List<Color> edgeColors, {
+    required int? selectedIndex,
+  }) {
     // 줌이 작으면 태그 숨김(기존 정책 유지)
     if (_currentScale < _labelVisibleScaleThreshold) return [];
     if (nodes.isEmpty) return [];
@@ -1073,6 +1149,24 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
       final otherWord = nodes[index];
       final edgeInfo = _edgeInfoByOtherId[otherWord.id];
+      final bool hasSelection = selectedIndex != null;
+      final bool isSelectedEdge = selectedIndex == index;
+      final Color labelBorderColor = isSelectedEdge
+          ? _blendColor(edgeColors[index], Colors.black, 0.08)
+          : edgeColors[index].withValues(
+              alpha: hasSelection
+                  ? _mutedEdgeLabelBorderOpacity
+                  : _defaultEdgeLabelBorderOpacity,
+            );
+      final Color labelBackgroundColor = isSelectedEdge
+          ? Color.alphaBlend(
+              edgeColors[index].withValues(alpha: 0.12),
+              Colors.white,
+            )
+          : Colors.white;
+      final double labelBorderWidth = isSelectedEdge
+          ? _selectedEdgeLabelBorderWidth
+          : _defaultEdgeLabelBorderWidth;
 
       widgets.add(
         Positioned(
@@ -1091,18 +1185,20 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                   vertical: _edgeLabelVerticalPadding,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: labelBackgroundColor,
                   border: Border.all(
-                    color: edgeColors[index].withOpacity(0.9),
-                    width: 1.5,
+                    color: labelBorderColor,
+                    width: labelBorderWidth,
                   ),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
                   label,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: _edgeLabelFontSize,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: isSelectedEdge
+                        ? FontWeight.w700
+                        : FontWeight.w600,
                   ),
                 ),
               ),
@@ -2531,12 +2627,19 @@ class GraphLinePainter extends CustomPainter {
       final index = nodeLayout.index;
       final bool hasSelection = selectedIndex != null;
       final bool isSelectedEdge = selectedIndex == index;
+      final double strokeWidth = hasSelection
+          ? isSelectedEdge
+              ? _selectedEdgeStrokeWidth
+              : _mutedEdgeStrokeWidth
+          : _defaultEdgeStrokeWidth;
+      final Color strokeColor = hasSelection && !isSelectedEdge
+          ? edgeColors[index].withValues(alpha: _mutedEdgeOpacity)
+          : edgeColors[index];
 
       final paint = Paint()
-        ..color = hasSelection && !isSelectedEdge
-            ? edgeColors[index].withOpacity(0.35)
-            : edgeColors[index]
-        ..strokeWidth = isSelectedEdge ? 4.0 : 2.0
+        ..color = strokeColor
+        ..strokeWidth = strokeWidth
+        ..strokeCap = StrokeCap.round
         ..style = PaintingStyle.stroke;
 
       canvas.drawLine(layout.center, nodeLayout.center, paint);
