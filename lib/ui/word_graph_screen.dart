@@ -197,6 +197,8 @@ class WordGraphScreen extends StatefulWidget {
 
   /// 스플릿뷰 등에서 노드 클릭 시 화면 push 대신
   /// 선택 이벤트만 전달하고 싶을 때 사용한다.
+  final String? selectedWordId;
+  final List<Widget> appBarActionPrefix;
   final ValueChanged<Word>? onSelectWord;
 
   /// 스플릿뷰에서 이미 선택된 노드를 다시 클릭했을 때
@@ -206,6 +208,8 @@ class WordGraphScreen extends StatefulWidget {
   const WordGraphScreen({
     super.key,
     required this.centerWord,
+    this.selectedWordId,
+    this.appBarActionPrefix = const [],
     this.onSelectWord,
     this.onChangeCenterWord,
   });
@@ -247,6 +251,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   void initState() {
     super.initState();
     _centerWord = widget.centerWord;
+    _selectedWordId = widget.selectedWordId;
     final cachedGraph = WordGraphDataCache.get(_centerWord.id);
     if (cachedGraph != null) {
       _applyGraphData(
@@ -257,6 +262,15 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     }
 
     _loadConnectedWords();
+  }
+
+  @override
+  void didUpdateWidget(covariant WordGraphScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (widget.selectedWordId != oldWidget.selectedWordId) {
+      _selectedWordId = widget.selectedWordId;
+    }
   }
 
   @override
@@ -320,7 +334,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     // 로딩
     if (_isLoading) {
       return Scaffold(
-        appBar: AppBar(title: Text('Word Graph')),
+        appBar: _buildAppBar(),
         body: Center(child: CircularProgressIndicator()),
       );
     }
@@ -328,7 +342,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     // 에러
     if (_errorMessage != null) {
       return Scaffold(
-        appBar: AppBar(title: Text('Word Graph')),
+        appBar: _buildAppBar(),
         body: Center(child: Text(_errorMessage!)),
       );
     }
@@ -358,7 +372,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
             : null;
 
         return Scaffold(
-          appBar: AppBar(
+          appBar: _buildAppBar(
             title: const Text('Word Graph'),
             actions: [
               IconButton(
@@ -460,6 +474,15 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   }
 
   /// 중앙(선택) 단어 노드
+  PreferredSizeWidget _buildAppBar({Widget? title, List<Widget>? actions}) {
+    final mergedActions = <Widget>[...widget.appBarActionPrefix, ...?actions];
+
+    return AppBar(
+      title: title ?? const Text('Word Graph'),
+      actions: mergedActions.isEmpty ? null : mergedActions,
+    );
+  }
+
   Color _blendColor(Color color, Color target, double amount) {
     return Color.lerp(color, target, amount) ?? color;
   }
