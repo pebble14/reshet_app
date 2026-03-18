@@ -31,9 +31,12 @@ const double _labelCollisionPadding = 4.0;
 const double _edgeLabelFontSize = 11.0;
 const double _edgeLabelHorizontalPadding = 8.0;
 const double _edgeLabelVerticalPadding = 4.0;
-const double _centerNodeBorderWidth = 4.0;
-const double _centerNodeShadowBlur = 26.0;
-const double _centerNodeShadowSpread = 2.0;
+const double _centerNodeBorderWidth = 4.6;
+const double _centerNodeHaloBlur = 16.0;
+const double _centerNodeHaloSpread = 1.8;
+const double _centerNodeMainShadowBlur = 20.0;
+const double _centerNodeMainShadowSpread = 1.1;
+const double _centerNodeMainShadowOffsetY = 5.5;
 const double _connectedNodeDefaultBorderWidth = 2.0;
 const double _connectedNodeSelectedBorderWidth = 4.0;
 const double _connectedNodeMutedBorderWidth = 1.6;
@@ -45,6 +48,22 @@ const double _defaultEdgeLabelBorderWidth = 1.5;
 const double _selectedEdgeLabelBorderWidth = 1.8;
 const double _defaultEdgeLabelBorderOpacity = 0.9;
 const double _mutedEdgeLabelBorderOpacity = 0.72;
+const double _centerNodeLanguageTintFactor = 0.08;
+const double _connectedNodeLanguageTintAlpha = 0.22;
+const double _selectedNodeLanguageTintAlpha = 0.26;
+const double _mutedNodeLanguageTintAlpha = 0.14;
+const String _languageGroupHebrewAramaic = 'hebrew_aramaic';
+const String _languageGroupGreek = 'greek';
+const String _languageGroupLatin = 'latin';
+const String _languageGroupEnglish = 'english';
+const String _languageGroupOther = 'other';
+const String _languageGroupFallback = 'fallback';
+const Color _languageGroupHebrewAramaicColor = Color(0xFFFFD700);
+const Color _languageGroupGreekColor = Color(0xFF4AC7D4);
+const Color _languageGroupLatinColor = Color(0xFF9F0807);
+const Color _languageGroupEnglishColor = Color(0xFF8B5FD3);
+const Color _languageGroupOtherColor = Color(0xFF9CA3AF);
+const Color _languageGroupFallbackColor = Color(0xFFC0C0C0);
 
 class _GraphNodeLayout {
   final int index;
@@ -445,6 +464,54 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     return Color.lerp(color, target, amount) ?? color;
   }
 
+  Color _surfaceTint(Color baseColor, double alpha) {
+    return Color.alphaBlend(baseColor.withValues(alpha: alpha), Colors.white);
+  }
+
+  String _wordIdPrefix(String wordId) {
+    final normalized = wordId.trim().toUpperCase();
+    if (normalized.isEmpty) return '';
+    return normalized.substring(0, 1);
+  }
+
+  String _languageGroupFromWordId(String wordId) {
+    switch (_wordIdPrefix(wordId)) {
+      case 'H':
+        return _languageGroupHebrewAramaic;
+      case 'G':
+        return _languageGroupGreek;
+      case 'L':
+        return _languageGroupLatin;
+      case 'E':
+        return _languageGroupEnglish;
+      case 'U':
+        return _languageGroupOther;
+      default:
+        return _languageGroupFallback;
+    }
+  }
+
+  Color _colorForLanguageGroup(String languageGroup) {
+    switch (languageGroup) {
+      case _languageGroupHebrewAramaic:
+        return _languageGroupHebrewAramaicColor;
+      case _languageGroupGreek:
+        return _languageGroupGreekColor;
+      case _languageGroupLatin:
+        return _languageGroupLatinColor;
+      case _languageGroupEnglish:
+        return _languageGroupEnglishColor;
+      case _languageGroupOther:
+        return _languageGroupOtherColor;
+      default:
+        return _languageGroupFallbackColor;
+    }
+  }
+
+  Color _colorForWordLanguageGroup(String wordId) {
+    return _colorForLanguageGroup(_languageGroupFromWordId(wordId));
+  }
+
   Widget _buildCenterNode(Word word) {
     final language = (word.language ?? '').trim();
     final strongNumber = (word.strongNumber ?? '').trim();
@@ -452,6 +519,19 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     final pronunciation = (word.pronunciation1 ?? '').trim();
     final transliteration = (word.transliteration1 ?? '').trim();
     final meaning = (word.meaning1 ?? '').trim();
+    final languageTintColor = _colorForWordLanguageGroup(word.id);
+    final centerInnerColor = _surfaceTint(
+      languageTintColor,
+      _centerNodeLanguageTintFactor * 0.8,
+    );
+    final centerMidColor = _surfaceTint(
+      languageTintColor,
+      _centerNodeLanguageTintFactor * 0.92,
+    );
+    final centerOuterColor = _surfaceTint(
+      languageTintColor,
+      _centerNodeLanguageTintFactor,
+    );
     final children = <Widget>[];
 
     void addNodeText(Widget child, {double gap = 6}) {
@@ -527,27 +607,24 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         gradient: RadialGradient(
-          colors: [
-            Colors.white,
-            Colors.blue.shade50,
-            Colors.blue.shade100,
-          ],
-          stops: const [0.0, 0.62, 1.0],
+          colors: [centerInnerColor, centerMidColor, centerOuterColor],
+          stops: const [0.0, 0.72, 1.0],
         ),
         border: Border.all(
-          color: Colors.blue.shade700,
+          color: Colors.black.withValues(alpha: 0.66),
           width: _centerNodeBorderWidth,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.blue.shade200.withValues(alpha: 0.5),
-            blurRadius: _centerNodeShadowBlur,
-            spreadRadius: _centerNodeShadowSpread,
+            color: Colors.white.withValues(alpha: 0.27),
+            blurRadius: _centerNodeHaloBlur,
+            spreadRadius: _centerNodeHaloSpread,
           ),
           BoxShadow(
-            color: Colors.blue.shade900.withValues(alpha: 0.12),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
+            color: Colors.black.withValues(alpha: 0.22),
+            blurRadius: _centerNodeMainShadowBlur,
+            spreadRadius: _centerNodeMainShadowSpread,
+            offset: const Offset(0, _centerNodeMainShadowOffsetY),
           ),
         ],
       ),
@@ -562,7 +639,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   /// 연결 단어 노드(원형)
   Widget _buildWordNode(
     Word word,
-    Color borderColor, {
+    Color accentColor, {
     required bool hasSelection,
   }) {
     final label = (word.spelling1 != null && word.spelling1!.trim().isNotEmpty)
@@ -571,27 +648,31 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     final transliteration = (word.transliteration1 ?? '').trim();
 
     final bool isSelected = (_selectedWordId == word.id);
-    final Color effectiveBorderColor = isSelected
-        ? _blendColor(borderColor, Colors.black, 0.18)
+    final languageColor = _colorForWordLanguageGroup(word.id);
+    final Color effectiveAccentColor = isSelected
+        ? _blendColor(accentColor, Colors.black, 0.18)
         : hasSelection
-            ? _blendColor(borderColor, Colors.grey.shade500, 0.42)
-            : borderColor;
-    final Color fillColor = isSelected
-        ? Color.alphaBlend(
-            borderColor.withValues(alpha: 0.14),
-            Colors.white,
-          )
+        ? _blendColor(accentColor, Colors.grey.shade500, 0.42)
+        : accentColor;
+    final double fillTintAlpha = isSelected
+        ? _selectedNodeLanguageTintAlpha
         : hasSelection
-            ? Color.alphaBlend(
-                borderColor.withValues(alpha: 0.04),
-                Colors.white,
-              )
-            : Colors.white;
+        ? _mutedNodeLanguageTintAlpha
+        : _connectedNodeLanguageTintAlpha;
+    final Color fillColor = _surfaceTint(languageColor, fillTintAlpha);
+    final Color innerFillColor = _surfaceTint(
+      languageColor,
+      (fillTintAlpha * 0.82).clamp(0.10, 0.22),
+    );
+    final Color midFillColor = _surfaceTint(
+      languageColor,
+      (fillTintAlpha * 0.92).clamp(0.12, 0.24),
+    );
     final double borderWidth = isSelected
         ? _connectedNodeSelectedBorderWidth
         : hasSelection
-            ? _connectedNodeMutedBorderWidth
-            : _connectedNodeDefaultBorderWidth;
+        ? _connectedNodeMutedBorderWidth
+        : _connectedNodeDefaultBorderWidth;
 
     return GestureDetector(
       onTap: () {
@@ -629,8 +710,11 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         height: _connectedNodeSize,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          border: Border.all(color: effectiveBorderColor, width: borderWidth),
-          color: fillColor,
+          gradient: RadialGradient(
+            colors: [innerFillColor, midFillColor, fillColor],
+            stops: const [0.0, 0.74, 1.0],
+          ),
+          border: Border.all(color: effectiveAccentColor, width: borderWidth),
         ),
         child: Center(
           child: Column(
@@ -2629,8 +2713,8 @@ class GraphLinePainter extends CustomPainter {
       final bool isSelectedEdge = selectedIndex == index;
       final double strokeWidth = hasSelection
           ? isSelectedEdge
-              ? _selectedEdgeStrokeWidth
-              : _mutedEdgeStrokeWidth
+                ? _selectedEdgeStrokeWidth
+                : _mutedEdgeStrokeWidth
           : _defaultEdgeStrokeWidth;
       final Color strokeColor = hasSelection && !isSelectedEdge
           ? edgeColors[index].withValues(alpha: _mutedEdgeOpacity)
