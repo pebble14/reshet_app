@@ -6,6 +6,8 @@
   이후 데이터베이스 연결 및 기능을 점진적으로 추가할 예정이다.
 */
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import '../database/database_service.dart';
 import 'word_detail_screen.dart';
@@ -51,12 +53,17 @@ class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
 
   static const double _defaultStrongListItemExtent = 56.0;
+  static const Duration _strongJumpDebounceDuration = Duration(
+    milliseconds: 300,
+  );
 
   final ScrollController _listScrollController = ScrollController();
+  Timer? _strongJumpDebounceTimer;
 
   /// 홈 리스트에 표시할 단어 목록 Future
   Future<List<Map<String, dynamic>>>? _wordsFuture;
   List<Map<String, dynamic>> _currentWords = const [];
+  bool _currentWordsAreDefaultStrongList = false;
   bool _isShowingDefaultStrongList = true;
 
   Future<List<Map<String, dynamic>>> _createWordsFuture() async {
@@ -198,10 +205,63 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  void _jumpToStrongInDefaultList(String normalizedStrong) {
+  void _cancelPendingStrongJump() {
+    _strongJumpDebounceTimer?.cancel();
+    _strongJumpDebounceTimer = null;
+  }
+
+  bool _canRunAutoStrongJump(String input) {
+    return _isShowingDefaultStrongList &&
+        _currentWordsAreDefaultStrongList &&
+        _currentWords.isNotEmpty &&
+        _isStrongJumpInput(input);
+  }
+
+  void _handleSearchChanged(String value) {
+    _cancelPendingStrongJump();
+
+    if (!_isShowingDefaultStrongList) {
+      return;
+    }
+
+    final scheduledInput = value.trim();
+    if (!_isStrongJumpInput(scheduledInput)) {
+      return;
+    }
+
+    _strongJumpDebounceTimer = Timer(_strongJumpDebounceDuration, () {
+      _strongJumpDebounceTimer = null;
+
+      if (!mounted) {
+        return;
+      }
+
+      final currentInput = _searchController.text.trim();
+      if (currentInput != scheduledInput) {
+        return;
+      }
+
+      if (!_canRunAutoStrongJump(currentInput)) {
+        return;
+      }
+
+      final normalizedStrong = _normalizeStrongInput(currentInput);
+      _jumpToStrongInDefaultList(
+        normalizedStrong,
+        showNotFoundFeedback: false,
+      );
+    });
+  }
+
+  void _jumpToStrongInDefaultList(
+    String normalizedStrong, {
+    bool showNotFoundFeedback = true,
+  }) {
     final targetIndex = _findStrongIndex(_currentWords, normalizedStrong);
     if (targetIndex < 0) {
-      _showStrongJumpNotFoundSnackBar(normalizedStrong);
+      if (showNotFoundFeedback) {
+        _showStrongJumpNotFoundSnackBar(normalizedStrong);
+      }
       return;
     }
 
@@ -432,6 +492,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             border: OutlineInputBorder(),
                             isDense: true,
                           ),
+                          onChanged: _handleSearchChanged,
                           onSubmitted: (_) => _runSearch(),
                         ),
                       ),
@@ -466,6 +527,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       final words = snapshot.data ?? [];
                       _currentWords = words;
                       final isDefaultStrongList = _isShowingDefaultStrongList;
+                      _currentWordsAreDefaultStrongList = isDefaultStrongList;
 
                       if (words.isEmpty) {
                         return const Center(child: Text('검색 결과 없음'));
@@ -552,18 +614,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   /// 검색 실행: 입력값으로 Repository 검색을 수행하고 리스트를 갱신한다.
   void _runSearch() {
+    _cancelPendingStrongJump();
+
     final keyword = _searchController.text.trim();
     if (keyword.isEmpty) {
       setState(() {
         _isShowingDefaultStrongList = true;
         _wordsFuture = _createWordsFuture();
       });
-      return;
-    }
-
-    if (_isShowingDefaultStrongList && _isStrongJumpInput(keyword)) {
-      final normalizedStrong = _normalizeStrongInput(keyword);
-      _jumpToStrongInDefaultList(normalizedStrong);
       return;
     }
 
@@ -575,6 +633,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   /// 검색어를 지우고 기본 목록으로 되돌린다.
   void _clearSearch() {
+    _cancelPendingStrongJump();
     _searchController.clear();
     setState(() {
       _isShowingDefaultStrongList = true;
@@ -627,6 +686,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void dispose() {
+    _cancelPendingStrongJump();
     _listScrollController.dispose();
     _searchController.dispose();
     super.dispose();
