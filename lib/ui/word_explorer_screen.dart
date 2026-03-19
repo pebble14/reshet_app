@@ -53,7 +53,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Reshet - 탐색')),
+      appBar: AppBar(title: const Text('탐색')),
       body: Row(
         children: [
           Expanded(

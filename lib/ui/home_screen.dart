@@ -347,7 +347,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const Text(
-                    '작업용 DB를 초기 상태(Seed)로 되돌립니다.\n'
+                    '작업용 데이터베이스를 초기 상태로 되돌립니다.\n'
                     '편집한 관계/내용이 모두 초기화됩니다.',
                   ),
                   const SizedBox(height: 12),
@@ -393,7 +393,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('DB가 초기 상태로 되돌아갔습니다.')));
+      ).showSnackBar(
+        const SnackBar(content: Text('데이터베이스가 초기 상태로 되돌아갔습니다.')),
+      );
     } catch (e) {
       if (!mounted) return;
       setState(() {
@@ -402,7 +404,7 @@ class _HomeScreenState extends State<HomeScreen> {
       });
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('DB 초기화 실패: $e')));
+      ).showSnackBar(SnackBar(content: Text('데이터베이스 초기화 실패: $e')));
     }
   }
 
@@ -442,17 +444,28 @@ class _HomeScreenState extends State<HomeScreen> {
   /// _isLoading 값에 따라 로딩 화면 또는 본문 화면 표시
   @override
   Widget build(BuildContext context) {
-    final platform = Theme.of(context).platform;
-    final isDesktopPlatform =
-        platform == TargetPlatform.windows ||
-        platform == TargetPlatform.linux ||
-        platform == TargetPlatform.macOS;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       appBar: AppBar(
-        title: isDesktopPlatform
-            ? const Text('רשת : 그물')
-            : const Text('Reshet'),
+        centerTitle: true,
+        title: Text(
+          'רשת',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w500,
+            letterSpacing: 0.6,
+            color: isDarkMode
+                ? Colors.white.withValues(alpha: 0.9)
+                : Colors.black87,
+            fontFamilyFallback: const [
+              'Noto Sans Hebrew',
+              'Noto Sans',
+              'Segoe UI',
+              'Arial',
+            ],
+          ),
+        ),
         actions: [
           PopupMenuButton<String>(
             onSelected: (value) async {
@@ -465,7 +478,7 @@ class _HomeScreenState extends State<HomeScreen> {
             itemBuilder: (context) => [
               const PopupMenuItem<String>(
                 value: 'reset_db',
-                child: Text('데이터베이스 초기화(Seed로 롤백)'),
+                child: Text('데이터베이스 초기화(초기 상태로 되돌리기)'),
               ),
               const PopupMenuItem<String>(
                 value: 'undo_last_change',
@@ -488,7 +501,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: TextField(
                           controller: _searchController,
                           decoration: const InputDecoration(
-                            labelText: '검색 (표기1/의미/스트롱넘버)',
+                            labelText: '검색 (표기/의미/스트롱 번호)',
                             border: OutlineInputBorder(),
                             isDense: true,
                           ),

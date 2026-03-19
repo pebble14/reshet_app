@@ -412,7 +412,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
         return Scaffold(
           appBar: _buildAppBar(
-            title: const Text('Word Graph'),
+            title: const Text('단어 그래프'),
             actions: [
               IconButton(
                 tooltip: '전체보기',
@@ -532,7 +532,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     final mergedActions = <Widget>[...widget.appBarActionPrefix, ...?actions];
 
     return AppBar(
-      title: title ?? const Text('Word Graph'),
+      title: title ?? const Text('단어 그래프'),
       actions: mergedActions.isEmpty ? null : mergedActions,
     );
   }
@@ -2327,7 +2327,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                       TextField(
                         controller: strongController,
                         decoration: const InputDecoration(
-                          labelText: '스트롱넘버 (없으면 비워둠)',
+                          labelText: '스트롱 번호 (없으면 비워둠)',
                         ),
                       ),
                       const SizedBox(height: 12),
@@ -2448,7 +2448,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                 children: [
                   Text(
                     isStrongCase
-                        ? '같은 스트롱넘버를 가진 기존 단어가 있습니다.'
+                        ? '같은 스트롱 번호를 가진 기존 단어가 있습니다.'
                         : '같은 언어/표기1을 가진 기존 단어가 있습니다.',
                   ),
                   const SizedBox(height: 12),
@@ -2468,7 +2468,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
-                          'id: $id\n언어: $lang\n스트롱: $strong\n표기1: $spelling\n의미1: $meaning',
+                          'ID: $id\n언어: $lang\n스트롱 번호: $strong\n표기1: $spelling\n의미1: $meaning',
                         ),
                       ),
                     );
@@ -2667,7 +2667,9 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         context: context,
         builder: (_) => AlertDialog(
           title: const Text('이미 존재하는 관계'),
-          content: const Text('이 두 단어 사이의 관계가 이미 DB에 존재합니다.\n중복 생성은 막았습니다.'),
+          content: const Text(
+            '이 두 단어 사이의 관계가 이미 데이터베이스에 존재합니다.\n중복 생성은 막았습니다.',
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
@@ -2726,7 +2728,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                     TextField(
                       controller: controller,
                       decoration: const InputDecoration(
-                        labelText: '검색 (표기/의미/스트롱넘버)',
+                        labelText: '검색 (표기/의미/스트롱 번호)',
                         prefixIcon: Icon(Icons.search),
                       ),
                       onChanged: (v) {
@@ -2759,7 +2761,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                                       if ((w.strongNumber ?? '')
                                           .trim()
                                           .isNotEmpty)
-                                        '스트롱: ${w.strongNumber}',
+                                        '스트롱 번호: ${w.strongNumber}',
                                     ].join(' / '),
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
