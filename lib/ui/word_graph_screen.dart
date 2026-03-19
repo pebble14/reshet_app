@@ -43,7 +43,8 @@ const double _connectedNodeMutedBorderWidth = 1.6;
 const double _selectedEdgeStrokeWidth = 3.4;
 const double _defaultEdgeStrokeWidth = 2.0;
 const double _mutedEdgeStrokeWidth = 1.8;
-const double _mutedEdgeOpacity = 0.30;
+const double _connectedEdgeOpacity = 0.80;
+const double _mutedEdgeOpacity = 0.40;
 const double _defaultEdgeLabelBorderWidth = 1.5;
 const double _selectedEdgeLabelBorderWidth = 1.8;
 const double _defaultEdgeLabelBorderOpacity = 0.9;
@@ -68,9 +69,35 @@ const Duration _visualStateAnimationDuration = Duration(milliseconds: 150);
 const double _dimmedNodeOpacity = 0.54;
 const double _dimmedNodeTextOpacity = 0.75;
 const double _connectedCenterOpacity = 0.94;
-const double _dimmedEdgeLabelOpacity = 0.84;
+const double _connectedEdgeLabelOpacity = 0.80;
+const double _dimmedEdgeLabelOpacity = 0.40;
+const double _selectedEdgeLabelTintAlpha = 0.18;
+const double _connectedEdgeLabelTintAlpha = 0.06;
+const double _dimmedEdgeLabelTintAlpha = 0.03;
+const double _dashedEdgeDashLength = 14.0;
+const double _dashedEdgeGapLength = 9.0;
+const double _dottedEdgeDotLength = 1.0;
+const double _dottedEdgeGapLength = 7.0;
 
 enum _GraphVisualState { selected, connected, dimmed }
+
+enum _GraphEdgeSemanticStyle { solid, dashed, dotted }
+
+_GraphEdgeSemanticStyle _edgeSemanticStyleForRelationType(
+  String? relationType,
+) {
+  final normalized = (relationType ?? '').trim().toLowerCase();
+
+  switch (normalized) {
+    case 'semantic':
+      return _GraphEdgeSemanticStyle.dashed;
+    case 'related':
+    case 'root-related':
+      return _GraphEdgeSemanticStyle.dotted;
+    default:
+      return _GraphEdgeSemanticStyle.solid;
+  }
+}
 
 class _GraphNodeLayout {
   final int index;
@@ -361,14 +388,18 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         final layout = _computeGraphLayout(canvasSize, nodes.length);
 
         // 노드 배치 순서와 동일한 순서로 엣지 색상/라벨 생성
-        final edgeColors = nodes.map((w) {
-          final info = _edgeInfoByOtherId[w.id];
-          return _colorForCategory(info?.categoryCode);
-        }).toList();
-        final edgeLabels = nodes.map((w) {
-          final info = _edgeInfoByOtherId[w.id];
-          return _labelForEdge(info);
-        }).toList();
+        final edgeInfos = nodes
+            .map((word) => _edgeInfoByOtherId[word.id])
+            .toList(growable: false);
+        final edgeColors = edgeInfos
+            .map((info) => _colorForCategory(info?.categoryCode))
+            .toList(growable: false);
+        final edgeLabels = edgeInfos
+            .map((info) => _labelForEdge(info))
+            .toList(growable: false);
+        final edgeRelationTypes = edgeInfos
+            .map((info) => info?.relationType)
+            .toList(growable: false);
 
         // 선택된 노드가 연결 노드 목록에서 몇 번째인지(없으면 null)
         final int selectedIndexRaw = nodes.indexWhere(
@@ -449,6 +480,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                               layout: layout,
                               edgeColors: edgeColors,
                               edgeLabels: edgeLabels,
+                              edgeRelationTypes: edgeRelationTypes,
                               showLabels: false,
                               sceneScale: _currentScale,
                               selectedIndex: selectedIndex,
@@ -467,6 +499,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                     ..._buildEdgeLabelWidgets(
                       layout,
                       nodes,
+                      edgeInfos,
                       edgeLabels,
                       edgeColors,
                       selectedIndex: selectedIndex,
@@ -1372,6 +1405,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   List<Widget> _buildEdgeLabelWidgets(
     _GraphLayoutData layout,
     List<Word> nodes,
+    List<WordRelationEdgeInfo?> edgeInfos,
     List<String> edgeLabels,
     List<Color> edgeColors, {
     required int? selectedIndex,
@@ -1412,28 +1446,47 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       placedLabelBounds.add(placement.bounds);
 
       final otherWord = nodes[index];
-      final edgeInfo = _edgeInfoByOtherId[otherWord.id];
+      final edgeInfo = edgeInfos[index];
       final bool hasFocusedNode = selectedIndex != null;
       final bool isFocusedEdge = selectedIndex == index;
-      final Color labelBorderColor = isFocusedEdge
-          ? _blendColor(edgeColors[index], Colors.black, 0.08)
-          : edgeColors[index].withValues(
-              alpha: hasFocusedNode
-                  ? _mutedEdgeLabelBorderOpacity
-                  : _defaultEdgeLabelBorderOpacity,
-            );
-      final Color labelBackgroundColor = isFocusedEdge
-          ? Color.alphaBlend(
-              edgeColors[index].withValues(alpha: 0.12),
-              Colors.white,
-            )
-          : Colors.white;
-      final double labelBorderWidth = isFocusedEdge
-          ? _selectedEdgeLabelBorderWidth
-          : _defaultEdgeLabelBorderWidth;
-      final double labelOpacity = !hasFocusedNode || isFocusedEdge
-          ? 1.0
-          : _dimmedEdgeLabelOpacity;
+      final Color labelBorderColor;
+      final Color labelBackgroundColor;
+      final double labelBorderWidth;
+      final double labelOpacity;
+      final FontWeight labelFontWeight;
+
+      if (isFocusedEdge) {
+        labelBorderColor = _blendColor(edgeColors[index], Colors.black, 0.08);
+        labelBackgroundColor = Color.alphaBlend(
+          edgeColors[index].withValues(alpha: _selectedEdgeLabelTintAlpha),
+          Colors.white,
+        );
+        labelBorderWidth = _selectedEdgeLabelBorderWidth;
+        labelOpacity = 1.0;
+        labelFontWeight = FontWeight.bold;
+      } else if (hasFocusedNode) {
+        labelBorderColor = edgeColors[index].withValues(
+          alpha: _mutedEdgeLabelBorderOpacity,
+        );
+        labelBackgroundColor = Color.alphaBlend(
+          edgeColors[index].withValues(alpha: _dimmedEdgeLabelTintAlpha),
+          Colors.white,
+        );
+        labelBorderWidth = _defaultEdgeLabelBorderWidth;
+        labelOpacity = _dimmedEdgeLabelOpacity;
+        labelFontWeight = FontWeight.w500;
+      } else {
+        labelBorderColor = edgeColors[index].withValues(
+          alpha: _defaultEdgeLabelBorderOpacity,
+        );
+        labelBackgroundColor = Color.alphaBlend(
+          edgeColors[index].withValues(alpha: _connectedEdgeLabelTintAlpha),
+          Colors.white,
+        );
+        labelBorderWidth = _defaultEdgeLabelBorderWidth;
+        labelOpacity = _connectedEdgeLabelOpacity;
+        labelFontWeight = FontWeight.w600;
+      }
 
       widgets.add(
         Positioned(
@@ -1469,9 +1522,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                     label,
                     style: TextStyle(
                       fontSize: _edgeLabelFontSize,
-                      fontWeight: isFocusedEdge
-                          ? FontWeight.w700
-                          : FontWeight.w600,
+                      fontWeight: labelFontWeight,
                     ),
                   ),
                 ),
@@ -2880,6 +2931,7 @@ class GraphLinePainter extends CustomPainter {
   final _GraphLayoutData layout;
   final List<Color> edgeColors;
   final List<String> edgeLabels;
+  final List<String?> edgeRelationTypes;
   final bool showLabels;
   final double sceneScale;
   final int? selectedIndex;
@@ -2888,6 +2940,7 @@ class GraphLinePainter extends CustomPainter {
     required this.layout,
     required this.edgeColors,
     required this.edgeLabels,
+    required this.edgeRelationTypes,
     required this.showLabels,
     required this.sceneScale,
     required this.selectedIndex,
@@ -2901,6 +2954,9 @@ class GraphLinePainter extends CustomPainter {
       final index = nodeLayout.index;
       final bool hasFocusedNode = selectedIndex != null;
       final bool isFocusedEdge = selectedIndex == index;
+      final edgeStyle = (index < edgeRelationTypes.length)
+          ? _edgeSemanticStyleForRelationType(edgeRelationTypes[index])
+          : _GraphEdgeSemanticStyle.solid;
       final double strokeWidth = hasFocusedNode
           ? isFocusedEdge
                 ? _selectedEdgeStrokeWidth
@@ -2910,7 +2966,7 @@ class GraphLinePainter extends CustomPainter {
           ? edgeColors[index].withValues(
               alpha: isFocusedEdge ? 1.0 : _mutedEdgeOpacity,
             )
-          : edgeColors[index];
+          : edgeColors[index].withValues(alpha: _connectedEdgeOpacity);
 
       final paint = Paint()
         ..color = strokeColor
@@ -2918,7 +2974,13 @@ class GraphLinePainter extends CustomPainter {
         ..strokeCap = StrokeCap.round
         ..style = PaintingStyle.stroke;
 
-      canvas.drawLine(layout.center, nodeLayout.center, paint);
+      _drawStyledEdge(
+        canvas,
+        layout.center,
+        nodeLayout.center,
+        paint,
+        edgeStyle,
+      );
 
       final label = (index < edgeLabels.length) ? edgeLabels[index] : '';
       if (showLabels && label.isNotEmpty) {
@@ -2973,6 +3035,64 @@ class GraphLinePainter extends CustomPainter {
     textPainter.paint(canvas, textOffset);
   }
 
+  void _drawStyledEdge(
+    Canvas canvas,
+    Offset start,
+    Offset end,
+    Paint paint,
+    _GraphEdgeSemanticStyle edgeStyle,
+  ) {
+    switch (edgeStyle) {
+      case _GraphEdgeSemanticStyle.solid:
+        canvas.drawLine(start, end, paint);
+        return;
+      case _GraphEdgeSemanticStyle.dashed:
+        _drawSegmentedEdge(
+          canvas,
+          start,
+          end,
+          paint,
+          segmentLength: _dashedEdgeDashLength,
+          gapLength: _dashedEdgeGapLength,
+        );
+        return;
+      case _GraphEdgeSemanticStyle.dotted:
+        _drawSegmentedEdge(
+          canvas,
+          start,
+          end,
+          paint,
+          segmentLength: _dottedEdgeDotLength,
+          gapLength: _dottedEdgeGapLength,
+        );
+        return;
+    }
+  }
+
+  void _drawSegmentedEdge(
+    Canvas canvas,
+    Offset start,
+    Offset end,
+    Paint paint, {
+    required double segmentLength,
+    required double gapLength,
+  }) {
+    final delta = end - start;
+    final totalLength = delta.distance;
+    if (totalLength <= 0 || segmentLength <= 0) return;
+
+    final direction = Offset(delta.dx / totalLength, delta.dy / totalLength);
+    var drawnLength = 0.0;
+
+    while (drawnLength < totalLength) {
+      final segmentStart = start + direction * drawnLength;
+      final segmentEndLength = min(drawnLength + segmentLength, totalLength);
+      final segmentEnd = start + direction * segmentEndLength;
+      canvas.drawLine(segmentStart, segmentEnd, paint);
+      drawnLength += segmentLength + gapLength;
+    }
+  }
+
   @override
   bool shouldRepaint(covariant GraphLinePainter oldDelegate) {
     return oldDelegate.layout.contentBounds != layout.contentBounds ||
@@ -2981,6 +3101,8 @@ class GraphLinePainter extends CustomPainter {
         oldDelegate.edgeColors != edgeColors ||
         oldDelegate.edgeLabels.length != edgeLabels.length ||
         oldDelegate.edgeLabels != edgeLabels ||
+        oldDelegate.edgeRelationTypes.length != edgeRelationTypes.length ||
+        oldDelegate.edgeRelationTypes != edgeRelationTypes ||
         oldDelegate.showLabels != showLabels ||
         oldDelegate.sceneScale != sceneScale ||
         oldDelegate.selectedIndex != selectedIndex;
