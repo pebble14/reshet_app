@@ -40,10 +40,10 @@ const double _centerNodeMainShadowOffsetY = 5.5;
 const double _connectedNodeDefaultBorderWidth = 2.0;
 const double _connectedNodeSelectedBorderWidth = 4.0;
 const double _connectedNodeMutedBorderWidth = 1.6;
-const double _selectedEdgeStrokeWidth = 4.5;
+const double _selectedEdgeStrokeWidth = 3.4;
 const double _defaultEdgeStrokeWidth = 2.0;
-const double _mutedEdgeStrokeWidth = 1.5;
-const double _mutedEdgeOpacity = 0.4;
+const double _mutedEdgeStrokeWidth = 1.8;
+const double _mutedEdgeOpacity = 0.30;
 const double _defaultEdgeLabelBorderWidth = 1.5;
 const double _selectedEdgeLabelBorderWidth = 1.8;
 const double _defaultEdgeLabelBorderOpacity = 0.9;
@@ -64,6 +64,13 @@ const Color _languageGroupLatinColor = Color(0xFF9F0807);
 const Color _languageGroupEnglishColor = Color(0xFF8B5FD3);
 const Color _languageGroupOtherColor = Color(0xFF9CA3AF);
 const Color _languageGroupFallbackColor = Color(0xFFC0C0C0);
+const Duration _visualStateAnimationDuration = Duration(milliseconds: 150);
+const double _dimmedNodeOpacity = 0.54;
+const double _dimmedNodeTextOpacity = 0.75;
+const double _connectedCenterOpacity = 0.94;
+const double _dimmedEdgeLabelOpacity = 0.84;
+
+enum _GraphVisualState { selected, connected, dimmed }
 
 class _GraphNodeLayout {
   final int index;
@@ -370,6 +377,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         final int? selectedIndex = (selectedIndexRaw >= 0)
             ? selectedIndexRaw
             : null;
+        final centerVisualState = _centerVisualState(selectedIndex);
 
         return Scaffold(
           appBar: _buildAppBar(
@@ -427,21 +435,34 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                   clipBehavior: Clip.none,
                   children: [
                     if (nodes.isNotEmpty)
-                      CustomPaint(
-                        size: canvasSize,
-                        painter: GraphLinePainter(
-                          layout: layout,
-                          edgeColors: edgeColors,
-                          edgeLabels: edgeLabels,
-                          showLabels: false,
-                          sceneScale: _currentScale,
-                          selectedIndex: selectedIndex,
+                      AnimatedSwitcher(
+                        duration: _visualStateAnimationDuration,
+                        switchInCurve: Curves.easeOutCubic,
+                        switchOutCurve: Curves.easeOutCubic,
+                        child: SizedBox(
+                          key: ValueKey<int?>(selectedIndex),
+                          width: canvasSize.width,
+                          height: canvasSize.height,
+                          child: CustomPaint(
+                            size: canvasSize,
+                            painter: GraphLinePainter(
+                              layout: layout,
+                              edgeColors: edgeColors,
+                              edgeLabels: edgeLabels,
+                              showLabels: false,
+                              sceneScale: _currentScale,
+                              selectedIndex: selectedIndex,
+                            ),
+                          ),
                         ),
                       ),
                     Positioned(
                       left: layout.centerBounds.left,
                       top: layout.centerBounds.top,
-                      child: _buildCenterNode(_centerWord),
+                      child: _buildCenterNode(
+                        _centerWord,
+                        visualState: centerVisualState,
+                      ),
                     ),
                     ..._buildEdgeLabelWidgets(
                       layout,
@@ -454,7 +475,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                     ..._buildWordNodes(
                       layout,
                       nodes,
-                      hasSelection: selectedIndex != null,
+                      selectedIndex: selectedIndex,
                     ),
                     if (nodes.isEmpty)
                       Center(
@@ -535,7 +556,50 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     return _colorForLanguageGroup(_languageGroupFromWordId(wordId));
   }
 
-  Widget _buildCenterNode(Word word) {
+  _GraphVisualState _centerVisualState(int? selectedIndex) {
+    return selectedIndex == null
+        ? _GraphVisualState.selected
+        : _GraphVisualState.connected;
+  }
+
+  _GraphVisualState _connectedNodeVisualState({
+    required int nodeIndex,
+    required int? selectedIndex,
+  }) {
+    if (selectedIndex == null) {
+      return _GraphVisualState.connected;
+    }
+
+    return selectedIndex == nodeIndex
+        ? _GraphVisualState.selected
+        : _GraphVisualState.dimmed;
+  }
+
+  double _nodeOpacityForState(
+    _GraphVisualState visualState, {
+    required bool isCenter,
+  }) {
+    switch (visualState) {
+      case _GraphVisualState.selected:
+        return 1.0;
+      case _GraphVisualState.connected:
+        return isCenter ? _connectedCenterOpacity : 1.0;
+      case _GraphVisualState.dimmed:
+        return _dimmedNodeOpacity;
+    }
+  }
+
+  double _nodeTextOpacityForState(_GraphVisualState visualState) {
+    switch (visualState) {
+      case _GraphVisualState.selected:
+      case _GraphVisualState.connected:
+        return 1.0;
+      case _GraphVisualState.dimmed:
+        return _dimmedNodeTextOpacity;
+    }
+  }
+
+  Widget _buildCenterNode(Word word, {required _GraphVisualState visualState}) {
     final language = (word.language ?? '').trim();
     final strongNumber = (word.strongNumber ?? '').trim();
     final spelling = (word.spelling1 ?? '').trim();
@@ -623,38 +687,80 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       );
     }
 
-    return Container(
+    final bool isSelected = visualState == _GraphVisualState.selected;
+    final backgroundOpacity = _nodeOpacityForState(visualState, isCenter: true);
+    final textOpacity = _nodeTextOpacityForState(visualState);
+    final List<BoxShadow> boxShadows = isSelected
+        ? [
+            BoxShadow(
+              color: Colors.white.withValues(alpha: 0.27),
+              blurRadius: _centerNodeHaloBlur,
+              spreadRadius: _centerNodeHaloSpread,
+            ),
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.22),
+              blurRadius: _centerNodeMainShadowBlur,
+              spreadRadius: _centerNodeMainShadowSpread,
+              offset: const Offset(0, _centerNodeMainShadowOffsetY),
+            ),
+          ]
+        : [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.16),
+              blurRadius: 14,
+              spreadRadius: 0.6,
+              offset: const Offset(0, 4),
+            ),
+          ];
+
+    return SizedBox(
       width: _centerNodeSize,
       height: _centerNodeSize,
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        gradient: RadialGradient(
-          colors: [centerInnerColor, centerMidColor, centerOuterColor],
-          stops: const [0.0, 0.72, 1.0],
-        ),
-        border: Border.all(
-          color: Colors.black.withValues(alpha: 0.66),
-          width: _centerNodeBorderWidth,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.white.withValues(alpha: 0.27),
-            blurRadius: _centerNodeHaloBlur,
-            spreadRadius: _centerNodeHaloSpread,
+      child: Stack(
+        clipBehavior: Clip.none,
+        alignment: Alignment.center,
+        children: [
+          AnimatedOpacity(
+            duration: _visualStateAnimationDuration,
+            curve: Curves.easeOutCubic,
+            opacity: backgroundOpacity,
+            child: AnimatedContainer(
+              duration: _visualStateAnimationDuration,
+              curve: Curves.easeOutCubic,
+              width: _centerNodeSize,
+              height: _centerNodeSize,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors: [centerInnerColor, centerMidColor, centerOuterColor],
+                  stops: const [0.0, 0.72, 1.0],
+                ),
+                border: Border.all(
+                  color: Colors.black.withValues(
+                    alpha: isSelected ? 0.66 : 0.48,
+                  ),
+                  width: isSelected
+                      ? _centerNodeBorderWidth
+                      : _centerNodeBorderWidth - 0.8,
+                ),
+                boxShadow: boxShadows,
+              ),
+            ),
           ),
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.22),
-            blurRadius: _centerNodeMainShadowBlur,
-            spreadRadius: _centerNodeMainShadowSpread,
-            offset: const Offset(0, _centerNodeMainShadowOffsetY),
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: AnimatedOpacity(
+              duration: _visualStateAnimationDuration,
+              curve: Curves.easeOutCubic,
+              opacity: textOpacity,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: children,
+              ),
+            ),
           ),
         ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: children,
       ),
     );
   }
@@ -663,23 +769,24 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   Widget _buildWordNode(
     Word word,
     Color accentColor, {
-    required bool hasSelection,
+    required _GraphVisualState visualState,
   }) {
     final label = (word.spelling1 != null && word.spelling1!.trim().isNotEmpty)
         ? word.spelling1!.trim()
         : word.id;
     final transliteration = (word.transliteration1 ?? '').trim();
 
-    final bool isSelected = (_selectedWordId == word.id);
+    final bool isSelected = visualState == _GraphVisualState.selected;
+    final bool isDimmed = visualState == _GraphVisualState.dimmed;
     final languageColor = _colorForWordLanguageGroup(word.id);
     final Color effectiveAccentColor = isSelected
         ? _blendColor(accentColor, Colors.black, 0.18)
-        : hasSelection
+        : isDimmed
         ? _blendColor(accentColor, Colors.grey.shade500, 0.42)
         : accentColor;
     final double fillTintAlpha = isSelected
         ? _selectedNodeLanguageTintAlpha
-        : hasSelection
+        : isDimmed
         ? _mutedNodeLanguageTintAlpha
         : _connectedNodeLanguageTintAlpha;
     final Color fillColor = _surfaceTint(languageColor, fillTintAlpha);
@@ -693,9 +800,29 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     );
     final double borderWidth = isSelected
         ? _connectedNodeSelectedBorderWidth
-        : hasSelection
+        : isDimmed
         ? _connectedNodeMutedBorderWidth
         : _connectedNodeDefaultBorderWidth;
+    final double backgroundOpacity = _nodeOpacityForState(
+      visualState,
+      isCenter: false,
+    );
+    final double textOpacity = _nodeTextOpacityForState(visualState);
+    final List<BoxShadow> boxShadows = isSelected
+        ? [
+            BoxShadow(
+              color: Colors.white.withValues(alpha: 0.22),
+              blurRadius: 14,
+              spreadRadius: 1.2,
+            ),
+            BoxShadow(
+              color: accentColor.withValues(alpha: 0.16),
+              blurRadius: 10,
+              spreadRadius: 0.6,
+              offset: const Offset(0, 3),
+            ),
+          ]
+        : const [];
 
     return GestureDetector(
       onTap: () {
@@ -728,40 +855,67 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
           );
         }
       },
-      child: Container(
+      child: SizedBox(
         width: _connectedNodeSize,
         height: _connectedNodeSize,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          gradient: RadialGradient(
-            colors: [innerFillColor, midFillColor, fillColor],
-            stops: const [0.0, 0.74, 1.0],
-          ),
-          border: Border.all(color: effectiveAccentColor, width: borderWidth),
-        ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                label,
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(fontSize: 12),
-              ),
-              if (transliteration.isNotEmpty) ...[
-                const SizedBox(height: 2),
-                Text(
-                  transliteration,
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontSize: 10),
+        child: Stack(
+          clipBehavior: Clip.none,
+          alignment: Alignment.center,
+          children: [
+            AnimatedOpacity(
+              duration: _visualStateAnimationDuration,
+              curve: Curves.easeOutCubic,
+              opacity: backgroundOpacity,
+              child: AnimatedContainer(
+                duration: _visualStateAnimationDuration,
+                curve: Curves.easeOutCubic,
+                width: _connectedNodeSize,
+                height: _connectedNodeSize,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [innerFillColor, midFillColor, fillColor],
+                    stops: const [0.0, 0.74, 1.0],
+                  ),
+                  border: Border.all(
+                    color: effectiveAccentColor,
+                    width: borderWidth,
+                  ),
+                  boxShadow: boxShadows,
                 ),
-              ],
-            ],
-          ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: AnimatedOpacity(
+                duration: _visualStateAnimationDuration,
+                curve: Curves.easeOutCubic,
+                opacity: textOpacity,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      label,
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                    if (transliteration.isNotEmpty) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        transliteration,
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(fontSize: 10),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -1184,7 +1338,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   List<Widget> _buildWordNodes(
     _GraphLayoutData layout,
     List<Word> words, {
-    required bool hasSelection,
+    required int? selectedIndex,
   }) {
     if (words.isEmpty) return [];
 
@@ -1201,7 +1355,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
             _colorForCategory(
               _edgeInfoByOtherId[words[index].id]?.categoryCode,
             ),
-            hasSelection: hasSelection,
+            visualState: _connectedNodeVisualState(
+              nodeIndex: index,
+              selectedIndex: selectedIndex,
+            ),
           ),
         ),
       );
@@ -1256,24 +1413,27 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
       final otherWord = nodes[index];
       final edgeInfo = _edgeInfoByOtherId[otherWord.id];
-      final bool hasSelection = selectedIndex != null;
-      final bool isSelectedEdge = selectedIndex == index;
-      final Color labelBorderColor = isSelectedEdge
+      final bool hasFocusedNode = selectedIndex != null;
+      final bool isFocusedEdge = selectedIndex == index;
+      final Color labelBorderColor = isFocusedEdge
           ? _blendColor(edgeColors[index], Colors.black, 0.08)
           : edgeColors[index].withValues(
-              alpha: hasSelection
+              alpha: hasFocusedNode
                   ? _mutedEdgeLabelBorderOpacity
                   : _defaultEdgeLabelBorderOpacity,
             );
-      final Color labelBackgroundColor = isSelectedEdge
+      final Color labelBackgroundColor = isFocusedEdge
           ? Color.alphaBlend(
               edgeColors[index].withValues(alpha: 0.12),
               Colors.white,
             )
           : Colors.white;
-      final double labelBorderWidth = isSelectedEdge
+      final double labelBorderWidth = isFocusedEdge
           ? _selectedEdgeLabelBorderWidth
           : _defaultEdgeLabelBorderWidth;
+      final double labelOpacity = !hasFocusedNode || isFocusedEdge
+          ? 1.0
+          : _dimmedEdgeLabelOpacity;
 
       widgets.add(
         Positioned(
@@ -1286,26 +1446,33 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                 if (edgeInfo == null) return;
                 _showEdgeDetailDialog(otherWord, edgeInfo);
               },
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: _edgeLabelHorizontalPadding,
-                  vertical: _edgeLabelVerticalPadding,
-                ),
-                decoration: BoxDecoration(
-                  color: labelBackgroundColor,
-                  border: Border.all(
-                    color: labelBorderColor,
-                    width: labelBorderWidth,
+              child: AnimatedOpacity(
+                duration: _visualStateAnimationDuration,
+                curve: Curves.easeOutCubic,
+                opacity: labelOpacity,
+                child: AnimatedContainer(
+                  duration: _visualStateAnimationDuration,
+                  curve: Curves.easeOutCubic,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: _edgeLabelHorizontalPadding,
+                    vertical: _edgeLabelVerticalPadding,
                   ),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: _edgeLabelFontSize,
-                    fontWeight: isSelectedEdge
-                        ? FontWeight.w700
-                        : FontWeight.w600,
+                  decoration: BoxDecoration(
+                    color: labelBackgroundColor,
+                    border: Border.all(
+                      color: labelBorderColor,
+                      width: labelBorderWidth,
+                    ),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: _edgeLabelFontSize,
+                      fontWeight: isFocusedEdge
+                          ? FontWeight.w700
+                          : FontWeight.w600,
+                    ),
                   ),
                 ),
               ),
@@ -2732,15 +2899,17 @@ class GraphLinePainter extends CustomPainter {
 
     for (final nodeLayout in layout.nodeLayouts) {
       final index = nodeLayout.index;
-      final bool hasSelection = selectedIndex != null;
-      final bool isSelectedEdge = selectedIndex == index;
-      final double strokeWidth = hasSelection
-          ? isSelectedEdge
+      final bool hasFocusedNode = selectedIndex != null;
+      final bool isFocusedEdge = selectedIndex == index;
+      final double strokeWidth = hasFocusedNode
+          ? isFocusedEdge
                 ? _selectedEdgeStrokeWidth
                 : _mutedEdgeStrokeWidth
           : _defaultEdgeStrokeWidth;
-      final Color strokeColor = hasSelection && !isSelectedEdge
-          ? edgeColors[index].withValues(alpha: _mutedEdgeOpacity)
+      final Color strokeColor = hasFocusedNode
+          ? edgeColors[index].withValues(
+              alpha: isFocusedEdge ? 1.0 : _mutedEdgeOpacity,
+            )
           : edgeColors[index];
 
       final paint = Paint()
