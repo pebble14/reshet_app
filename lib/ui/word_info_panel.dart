@@ -66,7 +66,8 @@ class WordInfoPanel extends StatelessWidget {
     final sections = <_WordInfoSection>[
       if (representativeSpelling.isNotEmpty)
         _WordInfoSection(label: '대표 표기', values: [representativeSpelling]),
-      if (strong.isNotEmpty) _WordInfoSection(label: 'Strong', values: [strong]),
+      if (strong.isNotEmpty)
+        _WordInfoSection(label: '스트롱 번호', values: [strong]),
       if (language.isNotEmpty) _WordInfoSection(label: '언어', values: [language]),
       if (spellings.isNotEmpty) _WordInfoSection(label: '표기', values: spellings),
       if (transliterations.isNotEmpty)
