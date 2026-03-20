@@ -9,6 +9,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../database/database_service.dart';
 import 'word_detail_screen.dart';
 import '../data/models/word.dart';
@@ -57,6 +58,8 @@ class _HomeScreenState extends State<HomeScreen> {
     milliseconds: 300,
   );
   static const String _aboutVersion = '1.0.0+1';
+  static const String _firstRunBrandIntroSeenKey =
+      'first_run_brand_intro_seen';
 
   final ScrollController _listScrollController = ScrollController();
   Timer? _strongJumpDebounceTimer;
@@ -301,6 +304,9 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _initializeDatabase();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      unawaited(_checkAndShowFirstRunBrandIntro());
+    });
   }
 
   /// 데이터베이스 초기화 및 파일 열기 수행
@@ -439,6 +445,99 @@ class _HomeScreenState extends State<HomeScreen> {
         context,
       ).showSnackBar(SnackBar(content: Text('실행 취소 실패: $e')));
     }
+  }
+
+  Future<void> _checkAndShowFirstRunBrandIntro() async {
+    final preferences = await SharedPreferences.getInstance();
+    if (!mounted) {
+      return;
+    }
+
+    final hasSeenBrandIntro =
+        preferences.getBool(_firstRunBrandIntroSeenKey) ?? false;
+    if (hasSeenBrandIntro) {
+      return;
+    }
+
+    final confirmed = await _showFirstRunBrandIntroDialog();
+    if (confirmed != true) {
+      return;
+    }
+
+    await preferences.setBool(_firstRunBrandIntroSeenKey, true);
+  }
+
+  Future<bool?> _showFirstRunBrandIntroDialog() {
+    final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
+
+    return showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        return PopScope(
+          canPop: false,
+          child: AlertDialog(
+            titlePadding: const EdgeInsets.fromLTRB(24, 24, 24, 8),
+            contentPadding: const EdgeInsets.fromLTRB(24, 0, 24, 16),
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'רשת',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: 0.6,
+                    color: isDarkMode
+                        ? Colors.white.withValues(alpha: 0.9)
+                        : Colors.black87,
+                    fontFamilyFallback: const [
+                      'Noto Sans Hebrew',
+                      'Noto Sans',
+                      'Segoe UI',
+                      'Arial',
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  'Reshet (레셰트)',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+            content: SizedBox(
+              width: 320,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '히브리어로 “그물”을 뜻합니다.',
+                    style: theme.textTheme.bodyMedium,
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    '단어와 단어의 관계를 그물처럼 탐색하는 도구입니다.',
+                    style: theme.textTheme.bodyMedium,
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(true),
+                child: const Text('확인'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   Future<void> _showAboutDialog() async {
