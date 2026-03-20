@@ -56,6 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
   static const Duration _strongJumpDebounceDuration = Duration(
     milliseconds: 300,
   );
+  static const String _aboutVersion = '1.0.0+1';
 
   final ScrollController _listScrollController = ScrollController();
   Timer? _strongJumpDebounceTimer;
@@ -440,6 +441,80 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  Future<void> _showAboutDialog() async {
+    final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
+
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          titlePadding: const EdgeInsets.fromLTRB(24, 24, 24, 8),
+          contentPadding: const EdgeInsets.fromLTRB(24, 0, 24, 16),
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'רשת',
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: 0.6,
+                  color: isDarkMode
+                      ? Colors.white.withValues(alpha: 0.9)
+                      : Colors.black87,
+                  fontFamilyFallback: const [
+                    'Noto Sans Hebrew',
+                    'Noto Sans',
+                    'Segoe UI',
+                    'Arial',
+                  ],
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                'Reshet (레셰트)',
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          content: SizedBox(
+            width: 320,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  '히브리어로 "그물"을 뜻합니다.',
+                  style: theme.textTheme.bodyMedium,
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  'Reshet은 성서 단어와 단어의 관계를 그물처럼 연결해 탐색하는 도구입니다.',
+                  style: theme.textTheme.bodyMedium,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  '버전 $_aboutVersion',
+                  style: theme.textTheme.bodySmall,
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text('닫기'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   /// 화면을 그리는 메서드
   /// _isLoading 값에 따라 로딩 화면 또는 본문 화면 표시
   @override
@@ -467,6 +542,11 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         actions: [
+          IconButton(
+            onPressed: _showAboutDialog,
+            icon: const Icon(Icons.info_outline),
+            tooltip: '프로그램 정보',
+          ),
           PopupMenuButton<String>(
             onSelected: (value) async {
               if (value == 'reset_db') {
