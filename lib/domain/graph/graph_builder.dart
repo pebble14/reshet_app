@@ -14,6 +14,64 @@ class GraphBuilder {
 
   const GraphBuilder();
 
+  GraphViewData buildFromVisibleGraphData({
+    required GraphBuildOptions options,
+    required Word centerWord,
+    required Iterable<Word> connectedWords,
+    required Iterable<WordRelationEdgeInfo> relationEdges,
+  }) {
+    final visibleEdges = List<WordRelationEdgeInfo>.unmodifiable(relationEdges);
+    final wordsById = <String, Word>{
+      for (final word in connectedWords) word.id: word,
+    };
+    final orderedWordIds = <String>[];
+    final seenWordIds = <String>{};
+
+    for (final edge in visibleEdges) {
+      if (seenWordIds.add(edge.otherWordId)) {
+        orderedWordIds.add(edge.otherWordId);
+      }
+    }
+
+    final relationCountsByWordId = <String, int>{};
+    for (final edge in visibleEdges) {
+      relationCountsByWordId.update(
+        edge.otherWordId,
+        (count) => count + 1,
+        ifAbsent: () => 1,
+      );
+    }
+
+    final centerNode = _buildGraphNode(
+      word: centerWord,
+      depth: 0,
+      isCenter: true,
+      weight: visibleEdges.isEmpty ? 1.0 : visibleEdges.length.toDouble(),
+    );
+    final nodes = orderedWordIds
+        .map((wordId) => wordsById[wordId])
+        .whereType<Word>()
+        .map(
+          (word) => _buildGraphNode(
+            word: word,
+            depth: 1,
+            isCenter: false,
+            weight: relationCountsByWordId[word.id]?.toDouble() ?? 1.0,
+          ),
+        )
+        .toList(growable: false);
+    final edges = visibleEdges
+        .map(_buildGraphEdgeFromEdgeInfo)
+        .toList(growable: false);
+
+    return build(
+      options: options,
+      centerNode: centerNode,
+      nodes: nodes,
+      edges: edges,
+    );
+  }
+
   Future<GraphViewData> buildFromRepository({
     required WordRepository repository,
     required GraphBuildOptions options,
@@ -280,6 +338,21 @@ class GraphBuilder {
       statusCode: _stringOrNull(row['status_code']),
       directionCode: _stringOrNull(row['direction_code']),
       description: _stringOrNull(row['description']),
+      weight: 1.0,
+      isHighlighted: false,
+    );
+  }
+
+  GraphEdge _buildGraphEdgeFromEdgeInfo(WordRelationEdgeInfo info) {
+    return GraphEdge(
+      sourceId: info.wordId1,
+      targetId: info.wordId2,
+      relationId: info.relationId,
+      relationType: info.relationType,
+      categoryCode: info.categoryCode,
+      statusCode: null,
+      directionCode: info.directionCode,
+      description: info.description,
       weight: 1.0,
       isHighlighted: false,
     );

@@ -4,25 +4,20 @@ import 'package:flutter/gestures.dart';
 
 import '../data/models/word.dart';
 import '../data/repositories/word_repository.dart';
+import '../domain/graph/graph_build_options.dart';
+import '../domain/graph/graph_builder.dart';
+import '../domain/graph/graph_view_data.dart';
+import '../domain/graph/layout/graph_layout_strategy.dart';
+import '../domain/graph/layout/radial_layout_strategy.dart';
 import 'word_graph_cache.dart';
 
 const double _centerNodeSize = 180.0;
 const double _centerNodeHalf = _centerNodeSize / 2;
 const double _connectedNodeSize = 80.0;
 const double _connectedNodeHalf = _connectedNodeSize / 2;
-const double _graphViewportPadding = 28.0;
-const double _preferredNodeGap = 28.0;
-const double _minimumNodeGap = 12.0;
-const double _preferredCenterGap = 18.0;
-const double _minimumCenterGap = 8.0;
-const double _ringSpacing = 92.0;
 const double _labelAnchorFactor = 0.68;
 const double _fitBoundsPadding = 72.0;
 const double _baseLabelOffset = 12.0;
-const int _nodeOverlapAdjustmentPasses = 6;
-const double _nodeMaxAngleShift = pi / 18;
-const double _nodeMaxRadialShift = 12.0;
-const double _crossRingNodeGap = 6.0;
 const int _labelPlacementMaxAttempts = 7;
 const double _labelPlacementStep = 8.0;
 const double _labelPlacementRadialStep = 6.0;
@@ -157,36 +152,6 @@ class _GraphLayoutData {
     required this.fitBounds,
     required this.ringRadii,
   });
-
-  bool get usesMultipleRings => ringRadii.length > 1;
-}
-
-class _MutableGraphNodePlacement {
-  final int index;
-  final int ringIndex;
-  final int orderOnRing;
-  final double baseAngle;
-  final double baseRadius;
-  final double minRadius;
-  final double maxRadius;
-  final double maxAngleShift;
-  double angle;
-  double radius;
-
-  _MutableGraphNodePlacement({
-    required this.index,
-    required this.ringIndex,
-    required this.orderOnRing,
-    required this.baseAngle,
-    required this.baseRadius,
-    required this.minRadius,
-    required this.maxRadius,
-    required this.maxAngleShift,
-  }) : angle = baseAngle,
-       radius = baseRadius;
-
-  double get minAngle => baseAngle - maxAngleShift;
-  double get maxAngle => baseAngle + maxAngleShift;
 }
 
 /// 신규 단어 생성 다이얼로그의 결과를 담는 DTO
@@ -269,6 +234,8 @@ class WordGraphScreen extends StatefulWidget {
 
 class _WordGraphScreenState extends State<WordGraphScreen> {
   final WordRepository _repository = WordRepository();
+  final GraphBuilder _graphBuilder = const GraphBuilder();
+  final GraphLayoutStrategy _layoutStrategy = const RadialLayoutStrategy();
 
   /// 그래프 줌/팬 상태를 관리하는 컨트롤러
   final TransformationController _transformController =
@@ -284,6 +251,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
   bool _isLoading = true;
   String? _errorMessage;
+  GraphViewData? _graphViewData;
 
   /// 중심 단어와 연결된 단어 목록
   List<Word> _connectedWords = [];
@@ -325,7 +293,12 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       graphExpandMode: _centerWord.graphExpandMode,
     );
     if (cachedGraph != null) {
+      final cachedViewData = _buildGraphViewData(
+        words: cachedGraph.connectedWords,
+        edges: cachedGraph.relationEdges,
+      );
       _applyGraphData(
+        viewData: cachedViewData,
         words: cachedGraph.connectedWords,
         edges: cachedGraph.relationEdges,
       );
@@ -381,10 +354,18 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   }
 
   void _applyGraphData({
+    required GraphViewData viewData,
     required List<Word> words,
     required List<WordRelationEdgeInfo> edges,
   }) {
-    _connectedWords = words;
+    final wordsById = <String, Word>{for (final word in words) word.id: word};
+
+    _graphViewData = viewData;
+    _connectedWords = viewData.nodes
+        .where((node) => node.id != viewData.centerNodeId)
+        .map((node) => wordsById[node.wordId])
+        .whereType<Word>()
+        .toList(growable: false);
 
     _edgeInfosByOtherId.clear();
     _primaryEdgeInfoByOtherId.clear();
@@ -404,15 +385,41 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     _isLoading = false;
   }
 
+  GraphBuildOptions _graphBuildOptions() {
+    return GraphBuildOptions(
+      centerWordId: _centerWord.id,
+      maxDepth: 1,
+      maxNodes: 30,
+      layoutMode: GraphLayoutMode.radial,
+    );
+  }
+
+  GraphViewData _buildGraphViewData({
+    required List<Word> words,
+    required List<WordRelationEdgeInfo> edges,
+  }) {
+    return _graphBuilder.buildFromVisibleGraphData(
+      options: _graphBuildOptions(),
+      centerWord: _centerWord,
+      connectedWords: words,
+      relationEdges: edges,
+    );
+  }
+
   Future<void> _loadConnectedWords() async {
     final cachedGraph = WordGraphDataCache.get(
       centerWordId: _centerWord.id,
       graphExpandMode: _centerWord.graphExpandMode,
     );
     if (cachedGraph != null) {
+      final cachedViewData = _buildGraphViewData(
+        words: cachedGraph.connectedWords,
+        edges: cachedGraph.relationEdges,
+      );
       if (!mounted) return;
       setState(() {
         _applyGraphData(
+          viewData: cachedViewData,
           words: cachedGraph.connectedWords,
           edges: cachedGraph.relationEdges,
         );
@@ -433,6 +440,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       ]);
       final words = results[0] as List<Word>;
       final edges = results[1] as List<WordRelationEdgeInfo>;
+      final viewData = _buildGraphViewData(words: words, edges: edges);
       WordGraphDataCache.put(
         centerWordId: _centerWord.id,
         graphExpandMode: _centerWord.graphExpandMode,
@@ -442,13 +450,14 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
       if (!mounted) return;
       setState(() {
-        _applyGraphData(words: words, edges: edges);
+        _applyGraphData(viewData: viewData, words: words, edges: edges);
       });
     } catch (e) {
       if (!mounted) return;
       setState(() {
         _errorMessage = '연결 단어 로딩 실패: $e';
         _isLoading = false;
+        _graphViewData = null;
       });
     }
   }
@@ -474,8 +483,21 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final canvasSize = Size(constraints.maxWidth, constraints.maxHeight);
+        final viewData = _graphViewData;
+        if (viewData == null) {
+          return Scaffold(
+            appBar: _buildAppBar(),
+            body: Center(
+              child: Text(
+                '?곌껐???⑥뼱媛 ?놁뒿?덈떎.',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+            ),
+          );
+        }
+
         final nodes = _connectedWords;
-        final layout = _computeGraphLayout(canvasSize, nodes.length);
+        final layout = _computeGraphLayout(canvasSize, viewData);
 
         // 노드 배치 순서와 동일한 순서로 엣지 색상/라벨 생성
         final edgeInfoGroups = nodes
@@ -555,66 +577,70 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                   setState(() => _currentScale = newScale);
                 }
               },
-              child: SizedBox(
-                width: canvasSize.width,
-                height: canvasSize.height,
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    if (nodes.isNotEmpty)
-                      AnimatedSwitcher(
-                        duration: _visualStateAnimationDuration,
-                        switchInCurve: Curves.easeOutCubic,
-                        switchOutCurve: Curves.easeOutCubic,
-                        child: SizedBox(
-                          key: ValueKey<int?>(selectedIndex),
-                          width: canvasSize.width,
-                          height: canvasSize.height,
-                          child: CustomPaint(
-                            size: canvasSize,
-                            painter: _GraphLinePainter(
-                              layout: layout,
-                              edgeColors: edgeColors,
-                              edgeLabels: edgeLabels,
-                              edgeRelationTypes: edgeRelationTypes,
-                              edgeDirectionSummaries: edgeDirectionSummaries,
-                              showLabels: false,
-                              sceneScale: _currentScale,
-                              selectedIndex: selectedIndex,
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: _clearSelectedWord,
+                child: SizedBox(
+                  width: canvasSize.width,
+                  height: canvasSize.height,
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      if (nodes.isNotEmpty)
+                        AnimatedSwitcher(
+                          duration: _visualStateAnimationDuration,
+                          switchInCurve: Curves.easeOutCubic,
+                          switchOutCurve: Curves.easeOutCubic,
+                          child: SizedBox(
+                            key: ValueKey<int?>(selectedIndex),
+                            width: canvasSize.width,
+                            height: canvasSize.height,
+                            child: CustomPaint(
+                              size: canvasSize,
+                              painter: _GraphLinePainter(
+                                layout: layout,
+                                edgeColors: edgeColors,
+                                edgeLabels: edgeLabels,
+                                edgeRelationTypes: edgeRelationTypes,
+                                edgeDirectionSummaries: edgeDirectionSummaries,
+                                showLabels: false,
+                                sceneScale: _currentScale,
+                                selectedIndex: selectedIndex,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    Positioned(
-                      left: layout.centerBounds.left,
-                      top: layout.centerBounds.top,
-                      child: _buildCenterNode(
-                        _centerWord,
-                        visualState: centerVisualState,
-                      ),
-                    ),
-                    ..._buildEdgeLabelWidgets(
-                      layout,
-                      nodes,
-                      edgeInfoGroups,
-                      edgeLabels,
-                      edgeColors,
-                      selectedIndex: selectedIndex,
-                    ),
-
-                    ..._buildWordNodes(
-                      layout,
-                      nodes,
-                      selectedIndex: selectedIndex,
-                    ),
-                    if (nodes.isEmpty)
-                      Center(
-                        child: Text(
-                          '연결된 단어가 없습니다.',
-                          style: Theme.of(context).textTheme.titleMedium,
+                      Positioned(
+                        left: layout.centerBounds.left,
+                        top: layout.centerBounds.top,
+                        child: _buildCenterNode(
+                          _centerWord,
+                          visualState: centerVisualState,
                         ),
                       ),
-                  ],
+                      ..._buildEdgeLabelWidgets(
+                        layout,
+                        nodes,
+                        edgeInfoGroups,
+                        edgeLabels,
+                        edgeColors,
+                        selectedIndex: selectedIndex,
+                      ),
+
+                      ..._buildWordNodes(
+                        layout,
+                        nodes,
+                        selectedIndex: selectedIndex,
+                      ),
+                      if (nodes.isEmpty)
+                        Center(
+                          child: Text(
+                            '연결된 단어가 없습니다.',
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -1052,128 +1078,73 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   }
 
   /// 연결 단어들을 원형으로 자동 배치
-  _GraphLayoutData _computeGraphLayout(Size canvasSize, int nodeCount) {
-    final center = Offset(canvasSize.width / 2, canvasSize.height / 2);
+  void _clearSelectedWord() {
+    if (_selectedWordId == null) return;
+    setState(() => _selectedWordId = null);
+  }
+
+  _GraphLayoutData _computeGraphLayout(
+    Size canvasSize,
+    GraphViewData viewData,
+  ) {
+    final layoutResult = _layoutStrategy.layout(
+      viewData,
+      canvasSize,
+      layoutSeed: _graphLayoutSeed(viewData),
+    );
+    final center =
+        layoutResult.positionFor(viewData.centerNodeId) ??
+        Offset(canvasSize.width / 2, canvasSize.height / 2);
     final centerBounds = Rect.fromCenter(
       center: center,
       width: _centerNodeSize,
       height: _centerNodeSize,
     );
+    final ringRadii = <double>[];
+    final nodeLayouts = <_GraphNodeLayout>[];
 
-    if (nodeCount == 0) {
-      return _GraphLayoutData(
-        canvasSize: canvasSize,
-        center: center,
-        centerBounds: centerBounds,
-        nodeLayouts: const [],
-        contentBounds: centerBounds,
-        fitBounds: centerBounds.inflate(_fitBoundsPadding * 0.5),
-        ringRadii: const [],
-      );
-    }
-
-    final availableRadiusX = max(
-      0.0,
-      canvasSize.width / 2 - _connectedNodeHalf - _graphViewportPadding,
-    );
-    final availableRadiusY = max(
-      0.0,
-      canvasSize.height / 2 - _connectedNodeHalf - _graphViewportPadding,
-    );
-    final maxRadius = max(0.0, min(availableRadiusX, availableRadiusY));
-
-    final preferredMinimumRadius =
-        _centerNodeHalf + _connectedNodeHalf + _preferredCenterGap;
-    final minimumInnerRadius =
-        _centerNodeHalf + _connectedNodeHalf + _minimumCenterGap;
-    final preferredSpacing = _connectedNodeSize + _preferredNodeGap;
-    final minimumSpacing = _connectedNodeSize + _minimumNodeGap;
-
-    final preferredSingleRingRadius = max(
-      preferredMinimumRadius,
-      _requiredRingRadius(nodeCount, preferredSpacing),
-    );
-    final singleRingCapacity = _ringCapacity(maxRadius, minimumSpacing);
-
-    List<double> ringRadii;
-    if (maxRadius <= 0) {
-      ringRadii = const [0.0];
-    } else if (preferredSingleRingRadius <= maxRadius ||
-        nodeCount <= singleRingCapacity) {
-      final singleRingRadius = preferredSingleRingRadius <= maxRadius
-          ? preferredSingleRingRadius
-          : maxRadius;
-      ringRadii = [singleRingRadius];
-    } else {
-      ringRadii = _buildRingRadii(
-        nodeCount: nodeCount,
-        maxRadius: maxRadius,
-        innerRadiusFloor: min(maxRadius, minimumInnerRadius),
-        minimumSpacing: minimumSpacing,
-      );
-      if (ringRadii.length == 1) {
-        ringRadii = [maxRadius];
+    for (var index = 0; index < _connectedWords.length; index++) {
+      final word = _connectedWords[index];
+      final nodeCenter = layoutResult.positionFor(word.id);
+      if (nodeCenter == null) {
+        continue;
       }
-    }
 
-    final nodeCounts = _distributeNodesAcrossRings(
-      nodeCount,
-      ringRadii,
-      minimumSpacing,
-    );
-
-    final placements = <_MutableGraphNodePlacement>[];
-    var nextIndex = 0;
-
-    for (int ringIndex = 0; ringIndex < ringRadii.length; ringIndex++) {
-      final radius = ringRadii[ringIndex];
-      final countOnRing = nodeCounts[ringIndex];
-      if (countOnRing <= 0) continue;
-
-      final angleStep = 2 * pi / countOnRing;
-      final maxAngleShift = countOnRing <= 1
-          ? 0.0
-          : min(_nodeMaxAngleShift, angleStep * 0.28);
-      final startAngle =
-          -pi / 2 +
-          ((ringIndex.isOdd && countOnRing > 1) ? angleStep / 2 : 0.0);
-      final minRadius = ringIndex == 0
-          ? radius
-          : max(minimumInnerRadius, radius - _nodeMaxRadialShift);
-      final maxRadiusForRing = min(maxRadius, radius + _nodeMaxRadialShift);
-
-      for (
-        int localIndex = 0;
-        localIndex < countOnRing && nextIndex < nodeCount;
-        localIndex++, nextIndex++
-      ) {
-        final angle = startAngle + angleStep * localIndex;
-        placements.add(
-          _MutableGraphNodePlacement(
-            index: nextIndex,
-            ringIndex: ringIndex,
-            orderOnRing: localIndex,
-            baseAngle: angle,
-            baseRadius: radius,
-            minRadius: minRadius,
-            maxRadius: maxRadiusForRing,
-            maxAngleShift: maxAngleShift,
-          ),
+      final radius = (nodeCenter - center).distance;
+      var ringIndex = ringRadii.indexWhere(
+        (ringRadius) => (ringRadius - radius).abs() < 0.5,
+      );
+      if (ringIndex == -1) {
+        ringRadii.add(radius);
+        ringRadii.sort();
+        ringIndex = ringRadii.indexWhere(
+          (ringRadius) => (ringRadius - radius).abs() < 0.5,
         );
       }
+
+      nodeLayouts.add(
+        _buildNodeLayout(
+          index: index,
+          center: center,
+          nodeCenter: nodeCenter,
+          ringIndex: max(ringIndex, 0),
+        ),
+      );
     }
-
-    _applyNodeOverlapReduction(center: center, placements: placements);
-
-    final nodeLayouts = placements
-        .map(
-          (placement) => _buildNodeLayout(center: center, placement: placement),
-        )
-        .toList(growable: false);
 
     Rect contentBounds = centerBounds;
     for (final nodeLayout in nodeLayouts) {
       contentBounds = contentBounds.expandToInclude(nodeLayout.nodeBounds);
+    }
+
+    if (!layoutResult.bounds.isEmpty) {
+      final positionedBounds = Rect.fromLTRB(
+        layoutResult.bounds.left - _connectedNodeHalf,
+        layoutResult.bounds.top - _connectedNodeHalf,
+        layoutResult.bounds.right + _connectedNodeHalf,
+        layoutResult.bounds.bottom + _connectedNodeHalf,
+      );
+      contentBounds = contentBounds.expandToInclude(positionedBounds);
     }
 
     final fitPadding = _fitBoundsPadding + (ringRadii.length > 1 ? 12.0 : 0.0);
@@ -1185,90 +1156,53 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       nodeLayouts: nodeLayouts,
       contentBounds: contentBounds,
       fitBounds: contentBounds.inflate(fitPadding),
-      ringRadii: ringRadii,
+      ringRadii: List<double>.unmodifiable(ringRadii),
     );
   }
 
-  List<double> _buildRingRadii({
-    required int nodeCount,
-    required double maxRadius,
-    required double innerRadiusFloor,
-    required double minimumSpacing,
-  }) {
-    final radiiDescending = <double>[maxRadius];
-    var totalCapacity = _ringCapacity(maxRadius, minimumSpacing);
-    var nextRadius = maxRadius - _ringSpacing;
+  int _graphLayoutSeed(GraphViewData viewData) {
+    var seed = 0x1f123bb5;
 
-    while (totalCapacity < nodeCount && nextRadius >= innerRadiusFloor) {
-      radiiDescending.add(nextRadius);
-      totalCapacity += _ringCapacity(nextRadius, minimumSpacing);
-      nextRadius -= _ringSpacing;
-    }
-
-    if (totalCapacity < nodeCount) {
-      return [maxRadius];
-    }
-
-    return radiiDescending.reversed.toList();
-  }
-
-  List<int> _distributeNodesAcrossRings(
-    int nodeCount,
-    List<double> ringRadii,
-    double minimumSpacing,
-  ) {
-    if (ringRadii.isEmpty) return const [];
-    if (ringRadii.length == 1) return [nodeCount];
-
-    final capacities = ringRadii
-        .map((radius) => max(1, _ringCapacity(radius, minimumSpacing)))
-        .toList();
-    final counts = List<int>.filled(ringRadii.length, 0);
-
-    for (int nodeIndex = 0; nodeIndex < nodeCount; nodeIndex++) {
-      int targetRing = 0;
-      double targetLoad = double.infinity;
-
-      for (int ringIndex = 0; ringIndex < capacities.length; ringIndex++) {
-        final load = counts[ringIndex] / capacities[ringIndex];
-        if (load < targetLoad) {
-          targetLoad = load;
-          targetRing = ringIndex;
-        }
+    void mix(String value) {
+      for (final unit in value.codeUnits) {
+        seed = 0x1fffffff & (seed + unit);
+        seed = 0x1fffffff & (seed + ((0x0007ffff & seed) << 10));
+        seed ^= (seed >> 6);
       }
-
-      counts[targetRing]++;
     }
 
-    return counts;
-  }
+    mix(viewData.centerNodeId);
+    for (final node in viewData.nodes) {
+      mix(node.id);
+      mix(node.label);
+      mix(node.depth.toString());
+    }
+    for (final edge in viewData.edges) {
+      mix(edge.id);
+      mix(edge.sourceId);
+      mix(edge.targetId);
+    }
 
-  int _ringCapacity(double radius, double spacingPerNode) {
-    if (radius <= 0 || spacingPerNode <= 0) return 1;
-    return max(1, (2 * pi * radius / spacingPerNode).floor());
-  }
+    seed = 0x1fffffff & (seed + ((0x03ffffff & seed) << 3));
+    seed ^= (seed >> 11);
+    seed = 0x1fffffff & (seed + ((0x00003fff & seed) << 15));
 
-  double _requiredRingRadius(int nodeCount, double spacingPerNode) {
-    if (nodeCount <= 0 || spacingPerNode <= 0) return 0;
-    return nodeCount * spacingPerNode / (2 * pi);
+    return seed & 0x7fffffff;
   }
 
   _GraphNodeLayout _buildNodeLayout({
+    required int index,
     required Offset center,
-    required _MutableGraphNodePlacement placement,
+    required Offset nodeCenter,
+    required int ringIndex,
   }) {
-    final nodeCenter = _polarOffset(
-      center: center,
-      radius: placement.radius,
-      angle: placement.angle,
-    );
     final vx = nodeCenter.dx - center.dx;
     final vy = nodeCenter.dy - center.dy;
-    final vectorLength = sqrt(vx * vx + vy * vy);
-    final safeLength = vectorLength == 0 ? 1.0 : vectorLength;
+    final radius = sqrt(vx * vx + vy * vy);
+    final safeLength = radius <= 0.001 ? 1.0 : radius;
 
     return _GraphNodeLayout(
-      index: placement.index,
+      index: index,
       center: nodeCenter,
       nodeBounds: Rect.fromCenter(
         center: nodeCenter,
@@ -1280,188 +1214,9 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         center.dy + vy * _labelAnchorFactor,
       ),
       labelNormal: Offset(-vy / safeLength, vx / safeLength),
-      radius: placement.radius,
-      angle: placement.angle,
-      ringIndex: placement.ringIndex,
-    );
-  }
-
-  void _applyNodeOverlapReduction({
-    required Offset center,
-    required List<_MutableGraphNodePlacement> placements,
-  }) {
-    if (placements.length < 2) return;
-
-    for (int pass = 0; pass < _nodeOverlapAdjustmentPasses; pass++) {
-      final angleDelta = List<double>.filled(placements.length, 0.0);
-      final radiusDelta = List<double>.filled(placements.length, 0.0);
-      final positions = placements
-          .map(
-            (placement) => _polarOffset(
-              center: center,
-              radius: placement.radius,
-              angle: placement.angle,
-            ),
-          )
-          .toList(growable: false);
-
-      var foundOverlap = false;
-
-      for (int i = 0; i < placements.length; i++) {
-        final a = placements[i];
-
-        for (int j = i + 1; j < placements.length; j++) {
-          final b = placements[j];
-          if ((a.ringIndex - b.ringIndex).abs() > 1) continue;
-
-          final desiredDistance = _desiredNodeDistance(a, b);
-          final dx = positions[j].dx - positions[i].dx;
-          final dy = positions[j].dy - positions[i].dy;
-          final distance = sqrt(dx * dx + dy * dy);
-          if (distance >= desiredDistance) continue;
-
-          foundOverlap = true;
-          final safeDistance = distance <= 0.001 ? 0.001 : distance;
-          final pushDistance = (desiredDistance - safeDistance) * 0.5;
-          final direction = Offset(dx / safeDistance, dy / safeDistance);
-          final sameRing = a.ringIndex == b.ringIndex;
-
-          _accumulateNodeRepulsion(
-            center: center,
-            placement: a,
-            currentPosition: positions[i],
-            pushDirection: Offset(-direction.dx, -direction.dy),
-            pushDistance: pushDistance,
-            sameRing: sameRing,
-            angleDelta: angleDelta,
-            radiusDelta: radiusDelta,
-            targetIndex: i,
-          );
-          _accumulateNodeRepulsion(
-            center: center,
-            placement: b,
-            currentPosition: positions[j],
-            pushDirection: direction,
-            pushDistance: pushDistance,
-            sameRing: sameRing,
-            angleDelta: angleDelta,
-            radiusDelta: radiusDelta,
-            targetIndex: j,
-          );
-        }
-      }
-
-      if (!foundOverlap) {
-        break;
-      }
-
-      for (int i = 0; i < placements.length; i++) {
-        final placement = placements[i];
-        final nextRadius = (placement.radius + radiusDelta[i].clamp(-4.0, 4.0))
-            .clamp(placement.minRadius, placement.maxRadius)
-            .toDouble();
-        final nextAngle = (placement.angle + angleDelta[i].clamp(-0.045, 0.045))
-            .clamp(placement.minAngle, placement.maxAngle)
-            .toDouble();
-
-        placement.radius = nextRadius;
-        placement.angle = nextAngle;
-      }
-
-      _enforceRingOrder(placements);
-    }
-  }
-
-  double _desiredNodeDistance(
-    _MutableGraphNodePlacement a,
-    _MutableGraphNodePlacement b,
-  ) {
-    final gap = a.ringIndex == b.ringIndex
-        ? _minimumNodeGap
-        : _crossRingNodeGap;
-    return _connectedNodeSize + gap;
-  }
-
-  void _accumulateNodeRepulsion({
-    required Offset center,
-    required _MutableGraphNodePlacement placement,
-    required Offset currentPosition,
-    required Offset pushDirection,
-    required double pushDistance,
-    required bool sameRing,
-    required List<double> angleDelta,
-    required List<double> radiusDelta,
-    required int targetIndex,
-  }) {
-    final vx = currentPosition.dx - center.dx;
-    final vy = currentPosition.dy - center.dy;
-    final vectorLength = sqrt(vx * vx + vy * vy);
-    final safeLength = vectorLength <= 0.001 ? 1.0 : vectorLength;
-    final radial = Offset(vx / safeLength, vy / safeLength);
-    final tangential = Offset(-radial.dy, radial.dx);
-    final radialComponent =
-        pushDirection.dx * radial.dx + pushDirection.dy * radial.dy;
-    final tangentialComponent =
-        pushDirection.dx * tangential.dx + pushDirection.dy * tangential.dy;
-    final radialWeight = sameRing ? 0.28 : 0.48;
-    final angularWeight = sameRing ? 0.82 : 0.45;
-
-    radiusDelta[targetIndex] += radialComponent * pushDistance * radialWeight;
-    angleDelta[targetIndex] +=
-        tangentialComponent *
-        pushDistance *
-        angularWeight /
-        max(placement.radius, 1.0);
-  }
-
-  void _enforceRingOrder(List<_MutableGraphNodePlacement> placements) {
-    final placementsByRing = <int, List<_MutableGraphNodePlacement>>{};
-    for (final placement in placements) {
-      placementsByRing
-          .putIfAbsent(
-            placement.ringIndex,
-            () => <_MutableGraphNodePlacement>[],
-          )
-          .add(placement);
-    }
-
-    for (final ringPlacements in placementsByRing.values) {
-      ringPlacements.sort((a, b) => a.orderOnRing.compareTo(b.orderOnRing));
-
-      double previousAngle = -double.infinity;
-      for (final placement in ringPlacements) {
-        final minAngle = max(placement.minAngle, previousAngle + 0.001);
-        final maxAngle = placement.maxAngle;
-        placement.angle =
-            (minAngle > maxAngle
-                    ? maxAngle
-                    : placement.angle.clamp(minAngle, maxAngle))
-                .toDouble();
-        previousAngle = placement.angle;
-      }
-
-      double nextAngle = double.infinity;
-      for (final placement in ringPlacements.reversed) {
-        final minAngle = placement.minAngle;
-        final maxAngle = min(placement.maxAngle, nextAngle - 0.001);
-        placement.angle =
-            (minAngle > maxAngle
-                    ? minAngle
-                    : placement.angle.clamp(minAngle, maxAngle))
-                .toDouble();
-        nextAngle = placement.angle;
-      }
-    }
-  }
-
-  Offset _polarOffset({
-    required Offset center,
-    required double radius,
-    required double angle,
-  }) {
-    return Offset(
-      center.dx + radius * cos(angle),
-      center.dy + radius * sin(angle),
+      radius: radius,
+      angle: atan2(vy, vx),
+      ringIndex: ringIndex,
     );
   }
 
