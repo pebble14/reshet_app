@@ -342,7 +342,13 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
     if (widget.selectedWordId != oldWidget.selectedWordId) {
       setState(() {
-        _selectedWordId = widget.selectedWordId;
+        final graphViewData = _graphViewData;
+        _selectedWordId = graphViewData == null
+            ? widget.selectedWordId
+            : _normalizedSelectedWordIdForViewData(
+                graphViewData,
+                widget.selectedWordId,
+              );
       });
     }
   }
@@ -366,6 +372,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         .map((node) => wordsById[node.wordId])
         .whereType<Word>()
         .toList(growable: false);
+    _selectedWordId = _resolvedSelectedWordIdForViewData(viewData);
 
     _edgeInfosByOtherId.clear();
     _primaryEdgeInfoByOtherId.clear();
@@ -383,6 +390,39 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
     _errorMessage = null;
     _isLoading = false;
+  }
+
+  String? _normalizedSelectedWordIdForViewData(
+    GraphViewData viewData,
+    String? candidateWordId,
+  ) {
+    final normalizedWordId = (candidateWordId ?? '').trim();
+    if (normalizedWordId.isEmpty) {
+      return null;
+    }
+
+    if (normalizedWordId == viewData.centerNodeId) {
+      return viewData.centerNodeId;
+    }
+
+    return viewData.nodeById(normalizedWordId) == null
+        ? null
+        : normalizedWordId;
+  }
+
+  String? _resolvedSelectedWordIdForViewData(GraphViewData viewData) {
+    final localSelectedWordId = _normalizedSelectedWordIdForViewData(
+      viewData,
+      _selectedWordId,
+    );
+    if (_selectedWordId == null || localSelectedWordId != null) {
+      return localSelectedWordId;
+    }
+
+    return _normalizedSelectedWordIdForViewData(
+      viewData,
+      widget.selectedWordId,
+    );
   }
 
   GraphBuildOptions _graphBuildOptions() {
@@ -613,9 +653,12 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                       Positioned(
                         left: layout.centerBounds.left,
                         top: layout.centerBounds.top,
-                        child: _buildCenterNode(
-                          _centerWord,
-                          visualState: centerVisualState,
+                        child: GestureDetector(
+                          onTap: _handleCenterNodeTap,
+                          child: _buildCenterNode(
+                            _centerWord,
+                            visualState: centerVisualState,
+                          ),
                         ),
                       ),
                       ..._buildEdgeLabelWidgets(
@@ -753,6 +796,39 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       case _GraphVisualState.dimmed:
         return _dimmedNodeTextOpacity;
     }
+  }
+
+  void _handleCenterNodeTap() {
+    if (_selectedWordId != _centerWord.id) {
+      setState(() => _selectedWordId = _centerWord.id);
+    }
+
+    widget.onSelectWord?.call(_centerWord);
+  }
+
+  void _handleConnectedWordTap(Word word) {
+    final isSameTap = _selectedWordId == word.id;
+
+    if (!isSameTap) {
+      setState(() => _selectedWordId = word.id);
+      widget.onSelectWord?.call(word);
+      return;
+    }
+
+    if (widget.onChangeCenterWord != null) {
+      widget.onChangeCenterWord!(word);
+      return;
+    }
+
+    if (widget.onSelectWord != null) {
+      widget.onSelectWord!(word);
+      return;
+    }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => WordGraphScreen(centerWord: word)),
+    );
   }
 
   Widget _buildCenterNode(Word word, {required _GraphVisualState visualState}) {
@@ -982,6 +1058,9 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
     return GestureDetector(
       onTap: () {
+        _handleConnectedWordTap(word);
+        return;
+        /*
         // 1) 먼저 선택 상태를 갱신한다(강조 표시용).
         //    - 이미 선택된 노드를 다시 클릭한 경우에만 "이동"을 허용한다.
         final bool isSameTap = (_selectedWordId == word.id);
@@ -1010,6 +1089,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
             ),
           );
         }
+        */
       },
       child: SizedBox(
         width: _connectedNodeSize,
