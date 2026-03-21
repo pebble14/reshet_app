@@ -17,6 +17,7 @@ class _WordEditScreenState extends State<WordEditScreen> {
 
   late final TextEditingController _strongController;
   late final TextEditingController _spellingController;
+  late final TextEditingController _transliterationController;
   late final TextEditingController _pronunciationController;
   late final TextEditingController _meaningController;
   late final TextEditingController _noteController;
@@ -60,6 +61,9 @@ class _WordEditScreenState extends State<WordEditScreen> {
     _meaningController = TextEditingController(
       text: (widget.word['의미1'] ?? '').toString(),
     );
+    _transliterationController = TextEditingController(
+      text: (widget.word['음역1'] ?? '').toString(),
+    );
     _noteController = TextEditingController(
       text: (widget.word['비고'] ?? '').toString(),
     );
@@ -69,6 +73,7 @@ class _WordEditScreenState extends State<WordEditScreen> {
   void dispose() {
     _strongController.dispose();
     _spellingController.dispose();
+    _transliterationController.dispose();
     _pronunciationController.dispose();
     _meaningController.dispose();
     _noteController.dispose();
@@ -143,6 +148,9 @@ class _WordEditScreenState extends State<WordEditScreen> {
         language: resolvedLanguage,
         strongNumber: strong,
         spelling1: spelling,
+        transliteration1: _transliterationController.text.trim().isEmpty
+            ? null
+            : _transliterationController.text.trim(),
         pronunciation1: _pronunciationController.text.trim().isEmpty
             ? null
             : _pronunciationController.text.trim(),
@@ -161,6 +169,9 @@ class _WordEditScreenState extends State<WordEditScreen> {
       updatedWord['언어'] = resolvedLanguage;
       updatedWord['스트롱넘버'] = strong;
       updatedWord['표기1'] = spelling;
+      updatedWord['음역1'] = _transliterationController.text.trim().isEmpty
+          ? null
+          : _transliterationController.text.trim();
       updatedWord['발음1'] = _pronunciationController.text.trim().isEmpty
           ? null
           : _pronunciationController.text.trim();
@@ -222,7 +233,7 @@ class _WordEditScreenState extends State<WordEditScreen> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
-                          'id: $id\n언어: $lang\n스트롱: $strong\n표기1: $spelling\n의미1: $meaning',
+                          '단어 ID: $id\n언어: $lang\n스트롱: $strong\n표기1: $spelling\n의미1: $meaning',
                         ),
                       ),
                     );
@@ -259,7 +270,7 @@ class _WordEditScreenState extends State<WordEditScreen> {
             initialValue: idText,
             enabled: false,
             decoration: const InputDecoration(
-              labelText: 'id',
+              labelText: '단어 ID',
               helperText: '현재 단계에서는 id를 수정하지 않습니다.',
             ),
           ),
@@ -310,6 +321,12 @@ class _WordEditScreenState extends State<WordEditScreen> {
             controller: _spellingController,
             enabled: !_isSaving,
             decoration: const InputDecoration(labelText: '표기1'),
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _transliterationController,
+            enabled: !_isSaving,
+            decoration: const InputDecoration(labelText: '음역1'),
           ),
           const SizedBox(height: 12),
           TextField(

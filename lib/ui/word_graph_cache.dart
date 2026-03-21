@@ -36,12 +36,39 @@ class WordGraphDataCache {
   static final LinkedHashMap<String, _GraphCacheEntry> _entries =
       LinkedHashMap<String, _GraphCacheEntry>();
 
-  static WordGraphCacheData? get(String centerWordId) {
-    final entry = _entries.remove(centerWordId);
+  static String _normalizeGraphExpandMode(String? graphExpandMode) {
+    switch ((graphExpandMode ?? '').trim().toLowerCase()) {
+      case 'incoming_only':
+        return 'incoming_only';
+      case 'outgoing_limited':
+        return 'outgoing_limited';
+      case 'full':
+        return 'full';
+      default:
+        return 'default';
+    }
+  }
+
+  static String _cacheKey({
+    required String centerWordId,
+    required String? graphExpandMode,
+  }) {
+    return '$centerWordId::${_normalizeGraphExpandMode(graphExpandMode)}';
+  }
+
+  static WordGraphCacheData? get({
+    required String centerWordId,
+    required String? graphExpandMode,
+  }) {
+    final cacheKey = _cacheKey(
+      centerWordId: centerWordId,
+      graphExpandMode: graphExpandMode,
+    );
+    final entry = _entries.remove(cacheKey);
     if (entry == null) return null;
 
     final touchedEntry = entry.touch(DateTime.now());
-    _entries[centerWordId] = touchedEntry;
+    _entries[cacheKey] = touchedEntry;
 
     return (
       connectedWords: List<Word>.from(touchedEntry.connectedWords),
@@ -53,11 +80,16 @@ class WordGraphDataCache {
 
   static void put({
     required String centerWordId,
+    required String? graphExpandMode,
     required List<Word> connectedWords,
     required List<WordRelationEdgeInfo> relationEdges,
   }) {
-    _entries.remove(centerWordId);
-    _entries[centerWordId] = _GraphCacheEntry(
+    final cacheKey = _cacheKey(
+      centerWordId: centerWordId,
+      graphExpandMode: graphExpandMode,
+    );
+    _entries.remove(cacheKey);
+    _entries[cacheKey] = _GraphCacheEntry(
       centerWordId: centerWordId,
       connectedWords: List<Word>.unmodifiable(connectedWords),
       relationEdges: List<WordRelationEdgeInfo>.unmodifiable(relationEdges),
@@ -70,13 +102,12 @@ class WordGraphDataCache {
   }
 
   static void invalidate(String centerWordId) {
-    _entries.remove(centerWordId);
+    _entries.removeWhere((_, entry) => entry.centerWordId == centerWordId);
   }
 
   static void invalidateMany(Iterable<String> centerWordIds) {
-    for (final centerWordId in centerWordIds.toSet()) {
-      _entries.remove(centerWordId);
-    }
+    final idSet = centerWordIds.toSet();
+    _entries.removeWhere((_, entry) => idSet.contains(entry.centerWordId));
   }
 
   static void clear() {
