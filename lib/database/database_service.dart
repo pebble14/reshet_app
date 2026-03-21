@@ -87,9 +87,9 @@ class DatabaseService {
 
     _database = await databaseFactory.openDatabase(workPath);
 
-    // ✅ 여기 추가 (DB 무결성/인덱스 보장)
+    await _ensureWordRelationV2Columns(_database!);
+    await _ensureWordTableV2Columns(_database!);
     await _ensureWordRelationIndexes(_database!);
-
     await _ensureHistoryTable(_database!);
 
     return _database!;
@@ -174,40 +174,116 @@ class DatabaseService {
     // 다시 열기(이후 쿼리 즉시 가능)
     _database = await databaseFactory.openDatabase(workPath);
 
-    // ✅ reset 이후에도 인덱스/중복제거 보장
+    await _ensureWordRelationV2Columns(_database!);
+    await _ensureWordTableV2Columns(_database!);
     await _ensureWordRelationIndexes(_database!);
-
     await _ensureHistoryTable(_database!);
   }
 
-  /// WORD_RELATION 테이블 무결성/성능 보강
-  /// 1) (word_id_1, word_id_2) 완전 중복 row 제거
-  /// 2) UNIQUE 인덱스 추가 (중복 관계 DB 차단)
-  /// 3) 조회 성능 인덱스 추가 (그래프 로딩 개선)
+  /// WORD_RELATION v2 컬럼 보장
+  static Future<void> _ensureWordRelationV2Columns(Database db) async {
+    final columns = await db.rawQuery("PRAGMA table_info('WORD_RELATION')");
+    final names = columns.map((row) => row['name'] as String).toSet();
+
+    if (!names.contains('direction_code')) {
+      await db.execute('''
+        ALTER TABLE WORD_RELATION
+        ADD COLUMN direction_code TEXT NOT NULL DEFAULT 'unknown'
+      ''');
+    }
+
+    if (!names.contains('description')) {
+      await db.execute('''
+        ALTER TABLE WORD_RELATION
+        ADD COLUMN description TEXT
+      ''');
+    }
+
+    if (!names.contains('relation_group_id')) {
+      await db.execute('''
+        ALTER TABLE WORD_RELATION
+        ADD COLUMN relation_group_id TEXT
+      ''');
+    }
+  }
+
+  /// WORD_TABLE v2 컬럼 보장
+  static Future<void> _ensureWordTableV2Columns(Database db) async {
+    final columns = await db.rawQuery("PRAGMA table_info('WORD_TABLE')");
+    final names = columns.map((row) => row['name'] as String).toSet();
+
+    if (!names.contains('graph_expand_mode')) {
+      await db.execute('''
+        ALTER TABLE WORD_TABLE
+        ADD COLUMN graph_expand_mode TEXT NOT NULL DEFAULT 'default'
+      ''');
+    }
+  }
+
+  /// 새 UNIQUE 인덱스 기준과 동일한 signature 충돌 후보 조회
+  static Future<List<Map<String, Object?>>> _findWordRelationSignatureConflicts(
+    DatabaseExecutor db,
+  ) async {
+    return await db.rawQuery('''
+      SELECT
+        word_id_1,
+        word_id_2,
+        COALESCE(relation_type, '') AS relation_type_key,
+        COALESCE(direction_code, 'unknown') AS direction_code_key,
+        COUNT(*) AS duplicate_count
+      FROM WORD_RELATION
+      GROUP BY
+        word_id_1,
+        word_id_2,
+        COALESCE(relation_type, ''),
+        COALESCE(direction_code, 'unknown')
+      HAVING COUNT(*) > 1
+      ORDER BY duplicate_count DESC, word_id_1, word_id_2
+    ''');
+  }
+
+  /// WORD_RELATION 테이블 v2 무결성/성능 보강
+  /// 1) v1 pair-only 인덱스 제거
+  /// 2) signature 조회용 인덱스 보장
+  /// 3) 충돌이 없을 때만 v2 UNIQUE 인덱스 생성
+  /// 4) 조회 성능 인덱스 추가
   static Future<void> _ensureWordRelationIndexes(Database db) async {
     await db.transaction((txn) async {
-      // 1) 완전 중복 제거: (word_id_1, word_id_2)별로 가장 작은 id만 남긴다
-      // - DB에 이미 CHECK(word_id_1 < word_id_2)가 있어서 방향 정규화는 되어 있음
-      final deleted = await txn.rawDelete('''
-        DELETE FROM WORD_RELATION
-        WHERE id NOT IN (
-          SELECT MIN(id)
-          FROM WORD_RELATION
-          GROUP BY word_id_1, word_id_2
+      await txn.execute('DROP INDEX IF EXISTS idx_word_relation_pair');
+      await txn.execute(
+        'DROP INDEX IF EXISTS idx_word_relation_pair_type_direction_unique',
+      );
+      await txn.execute(
+        'DROP INDEX IF EXISTS idx_word_relation_signature_lookup',
+      );
+
+      await txn.execute('''
+        CREATE INDEX IF NOT EXISTS idx_word_relation_signature_lookup
+        ON WORD_RELATION(
+          word_id_1,
+          word_id_2,
+          COALESCE(relation_type, ''),
+          COALESCE(direction_code, 'unknown')
         )
       ''');
 
-      // 디버그 로그(원하면 지워도 됨)
+      final conflicts = await _findWordRelationSignatureConflicts(txn);
+
       // ignore: avoid_print
-      print('[DB] WORD_RELATION 중복 제거: $deleted row 삭제');
+      print('[DB] WORD_RELATION v2 signature 충돌 후보: ${conflicts.length}건');
 
-      // 2) 중복 관계 차단(핵심): 같은 두 단어 쌍은 1개만 허용
-      await txn.execute('''
-        CREATE UNIQUE INDEX IF NOT EXISTS idx_word_relation_pair
-        ON WORD_RELATION(word_id_1, word_id_2)
-      ''');
+      if (conflicts.isEmpty) {
+        await txn.execute('''
+          CREATE UNIQUE INDEX IF NOT EXISTS idx_word_relation_pair_type_direction_unique
+          ON WORD_RELATION(
+            word_id_1,
+            word_id_2,
+            COALESCE(relation_type, ''),
+            COALESCE(direction_code, 'unknown')
+          )
+        ''');
+      }
 
-      // 3) 그래프 로딩 최적화: OR 조건 조회에 대비해 개별 인덱스도 추가
       await txn.execute('''
         CREATE INDEX IF NOT EXISTS idx_word_relation_word1
         ON WORD_RELATION(word_id_1)

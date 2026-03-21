@@ -10,33 +10,54 @@ import '../models/word.dart';
 /// - relationType/relationTypeLabel: RELATION_TYPE 기반(없으면 null)
 class WordRelationEdgeInfo {
   final int relationId;
+  final String wordId1;
+  final String wordId2;
   final String otherWordId;
+  final String directionCode;
+  final String centerRelativeDirection;
   final String? categoryCode;
   final String? categoryLabel;
   final String? relationType;
   final String? relationTypeLabel;
+  final String? description;
   final String? note;
   final String? source;
 
   WordRelationEdgeInfo({
     required this.relationId,
+    required this.wordId1,
+    required this.wordId2,
     required this.otherWordId,
+    required this.directionCode,
+    required this.centerRelativeDirection,
     this.categoryCode,
     this.categoryLabel,
     this.relationType,
     this.relationTypeLabel,
+    this.description,
     this.note,
     this.source,
   });
 
-  factory WordRelationEdgeInfo.fromMap(Map<String, dynamic> map) {
+  factory WordRelationEdgeInfo.fromMap(
+    Map<String, dynamic> map, {
+    required String centerWordId,
+    required String centerRelativeDirection,
+  }) {
+    final wordId1 = map['word_id_1'] as String;
+    final wordId2 = map['word_id_2'] as String;
     return WordRelationEdgeInfo(
       relationId: map['relation_id'] as int,
-      otherWordId: map['other_word_id'] as String,
+      wordId1: wordId1,
+      wordId2: wordId2,
+      otherWordId: wordId1 == centerWordId ? wordId2 : wordId1,
+      directionCode: (map['direction_code'] as String?) ?? 'unknown',
+      centerRelativeDirection: centerRelativeDirection,
       categoryCode: map['category_code'] as String?,
       categoryLabel: map['category_label'] as String?,
       relationType: map['relation_type'] as String?,
       relationTypeLabel: map['relation_type_label'] as String?,
+      description: map['description'] as String?,
       note: map['note'] as String?,
       source: map['source'] as String?,
     );
@@ -48,9 +69,7 @@ class WordRepository {
     List.generate(6, (index) => '표기${index + 1}'),
   );
   static final List<String> _homeSearchTransliterationColumns =
-      List.unmodifiable(
-        List.generate(6, (index) => '음역${index + 1}'),
-      );
+      List.unmodifiable(List.generate(6, (index) => '음역${index + 1}'));
   static final List<String> _homeSearchMeaningColumns = List.unmodifiable(
     List.generate(7, (index) => '의미${index + 1}'),
   );
@@ -77,6 +96,103 @@ class WordRepository {
     'ρ': 'ῤῥ',
   };
 
+  String _normalizeGraphExpandMode(String? value) {
+    switch ((value ?? '').trim()) {
+      case 'incoming_only':
+      case 'outgoing_limited':
+      case 'full':
+        return (value ?? '').trim();
+      case 'default':
+      default:
+        return 'default';
+    }
+  }
+
+  String _normalizeDirectionCode(String? value) {
+    switch ((value ?? '').trim()) {
+      case 'w1_to_w2':
+      case 'w2_to_w1':
+      case 'undirected':
+      case 'unknown':
+        return (value ?? '').trim();
+      default:
+        return 'unknown';
+    }
+  }
+
+  String _swapDirectionCode(String directionCode) {
+    switch (directionCode) {
+      case 'w1_to_w2':
+        return 'w2_to_w1';
+      case 'w2_to_w1':
+        return 'w1_to_w2';
+      default:
+        return directionCode;
+    }
+  }
+
+  ({String wordId1, String wordId2, String directionCode})
+  _normalizeRelationPair({
+    required String wordId1,
+    required String wordId2,
+    required String? directionCode,
+  }) {
+    final normalizedDirectionCode = _normalizeDirectionCode(directionCode);
+
+    if (wordId1.compareTo(wordId2) <= 0) {
+      return (
+        wordId1: wordId1,
+        wordId2: wordId2,
+        directionCode: normalizedDirectionCode,
+      );
+    }
+
+    return (
+      wordId1: wordId2,
+      wordId2: wordId1,
+      directionCode: _swapDirectionCode(normalizedDirectionCode),
+    );
+  }
+
+  String _resolveCenterRelativeDirection({
+    required String centerWordId,
+    required String wordId1,
+    required String wordId2,
+    required String? directionCode,
+  }) {
+    final normalizedDirectionCode = _normalizeDirectionCode(directionCode);
+
+    switch (normalizedDirectionCode) {
+      case 'w1_to_w2':
+        return centerWordId == wordId1 ? 'outgoing' : 'incoming';
+      case 'w2_to_w1':
+        return centerWordId == wordId1 ? 'incoming' : 'outgoing';
+      case 'undirected':
+        return 'undirected';
+      default:
+        return 'unknown';
+    }
+  }
+
+  bool _shouldIncludeByGraphExpandMode({
+    required String graphExpandMode,
+    required String centerRelativeDirection,
+    required int outgoingLimit,
+    required int currentOutgoingCount,
+  }) {
+    switch (graphExpandMode) {
+      case 'incoming_only':
+        return centerRelativeDirection != 'outgoing';
+      case 'outgoing_limited':
+        if (centerRelativeDirection != 'outgoing') return true;
+        return currentOutgoingCount < outgoingLimit;
+      case 'full':
+      case 'default':
+      default:
+        return true;
+    }
+  }
+
   /// id로 단어 1건 조회
   Future<Word?> getWordById(String id) async {
     final db = await DatabaseService.openDatabaseFile();
@@ -91,7 +207,9 @@ class WordRepository {
     return Word.fromMap(result.first);
   }
 
-  /// 특정 단어와 연결된 단어 목록 조회 (WORD_RELATION 기반)
+  /// 특정 단어와 연결된 모든 단어 목록 조회 (WORD_RELATION 기반)
+  /// - graph_expand_mode는 적용하지 않는다.
+  /// - 그래프 표시용 필터링은 getVisibleConnectedWordsForGraph()에서 처리한다.
   Future<List<Word>> getConnectedWords(String wordId) async {
     final db = await DatabaseService.openDatabaseFile();
 
@@ -126,10 +244,10 @@ class WordRepository {
       '''
       SELECT
         wr.id AS relation_id,
-        CASE
-          WHEN wr.word_id_1 = ? THEN wr.word_id_2
-          ELSE wr.word_id_1
-        END AS other_word_id,
+        wr.word_id_1 AS word_id_1,
+        wr.word_id_2 AS word_id_2,
+        wr.direction_code AS direction_code,
+        wr.description AS description,
         wr.category_code AS category_code,
         rc.label AS category_label,
         wr.relation_type AS relation_type,
@@ -143,11 +261,94 @@ class WordRepository {
         ON rt.code = wr.relation_type
       WHERE wr.word_id_1 = ?
          OR wr.word_id_2 = ?
+      ORDER BY wr.id ASC
       ''',
-      [wordId, wordId, wordId],
+      [wordId, wordId],
     );
 
-    return rows.map((m) => WordRelationEdgeInfo.fromMap(m)).toList();
+    return rows
+        .map((row) {
+          final centerRelativeDirection = _resolveCenterRelativeDirection(
+            centerWordId: wordId,
+            wordId1: row['word_id_1'] as String,
+            wordId2: row['word_id_2'] as String,
+            directionCode: row['direction_code'] as String?,
+          );
+
+          return WordRelationEdgeInfo.fromMap(
+            row,
+            centerWordId: wordId,
+            centerRelativeDirection: centerRelativeDirection,
+          );
+        })
+        .toList(growable: false);
+  }
+
+  /// graph_expand_mode를 반영한 그래프 표시용 엣지 조회
+  Future<List<WordRelationEdgeInfo>> getVisibleRelationEdgesForGraph(
+    String centerWordId, {
+    required int outgoingLimit,
+  }) async {
+    final centerWord = await getWordById(centerWordId);
+    final graphExpandMode = _normalizeGraphExpandMode(
+      centerWord?.graphExpandMode,
+    );
+    final edges = await getRelationEdges(centerWordId);
+    final visibleEdges = <WordRelationEdgeInfo>[];
+    var outgoingCount = 0;
+
+    for (final edge in edges) {
+      final include = _shouldIncludeByGraphExpandMode(
+        graphExpandMode: graphExpandMode,
+        centerRelativeDirection: edge.centerRelativeDirection,
+        outgoingLimit: outgoingLimit,
+        currentOutgoingCount: outgoingCount,
+      );
+      if (!include) continue;
+
+      visibleEdges.add(edge);
+      if (edge.centerRelativeDirection == 'outgoing') {
+        outgoingCount++;
+      }
+    }
+
+    return visibleEdges;
+  }
+
+  /// graph_expand_mode를 반영한 그래프 표시용 연결 단어 조회
+  Future<List<Word>> getVisibleConnectedWordsForGraph(
+    String centerWordId, {
+    required int outgoingLimit,
+  }) async {
+    final visibleEdges = await getVisibleRelationEdgesForGraph(
+      centerWordId,
+      outgoingLimit: outgoingLimit,
+    );
+    if (visibleEdges.isEmpty) return const [];
+
+    final orderedIds = <String>[];
+    final seenIds = <String>{};
+    for (final edge in visibleEdges) {
+      if (seenIds.add(edge.otherWordId)) {
+        orderedIds.add(edge.otherWordId);
+      }
+    }
+
+    final db = await DatabaseService.openDatabaseFile();
+    final placeholders = List.filled(orderedIds.length, '?').join(', ');
+    final rows = await db.rawQuery(
+      'SELECT * FROM WORD_TABLE WHERE id IN ($placeholders)',
+      orderedIds,
+    );
+
+    final wordsById = <String, Word>{
+      for (final row in rows) (row['id'] as String): Word.fromMap(row),
+    };
+
+    return orderedIds
+        .map((id) => wordsById[id])
+        .whereType<Word>()
+        .toList(growable: false);
   }
 
   /// WORD_TABLE에서 단어 목록을 일부 조회한다 (홈 화면 기본 리스트용)
@@ -160,12 +361,9 @@ class WordRepository {
   /// 홈 화면 기본 리스트용 Strong 사전형 목록 조회
   /// - 스트롱넘버가 있고 prefix가 H/G인 항목만 반환한다.
   /// - 정렬은 H -> G -> 숫자 오름차순 -> id 순서로 고정한다.
-  Future<List<Map<String, dynamic>>> getStrongWordsMap({
-    int? limit,
-  }) async {
+  Future<List<Map<String, dynamic>>> getStrongWordsMap({int? limit}) async {
     final db = await DatabaseService.openDatabaseFile();
-    final sql = StringBuffer(
-      '''
+    final sql = StringBuffer('''
       SELECT *
       FROM WORD_TABLE
       WHERE 스트롱넘버 IS NOT NULL
@@ -179,8 +377,7 @@ class WordRepository {
         END,
         CAST(SUBSTR(TRIM(스트롱넘버), 2) AS INTEGER),
         id
-      ''',
-    );
+      ''');
     final args = <Object?>[];
 
     if (limit != null) {
@@ -227,10 +424,7 @@ class WordRepository {
     var normalized = value;
 
     for (final entry in _greekVariantGroups.entries) {
-      normalized = normalized.replaceAll(
-        RegExp('[${entry.value}]'),
-        entry.key,
-      );
+      normalized = normalized.replaceAll(RegExp('[${entry.value}]'), entry.key);
     }
 
     return normalized
@@ -336,11 +530,7 @@ class WordRepository {
       if (exactPriority != null && normalizedValue == normalizedKeyword) {
         bestRank = _pickBetterRank(
           bestRank,
-          _rankRecord(
-            exactPriority,
-            entry.fieldIndex,
-            normalizedValue.length,
-          ),
+          _rankRecord(exactPriority, entry.fieldIndex, normalizedValue.length),
         );
       }
 
@@ -348,11 +538,7 @@ class WordRepository {
           normalizedValue.startsWith(normalizedKeyword)) {
         bestRank = _pickBetterRank(
           bestRank,
-          _rankRecord(
-            prefixPriority,
-            entry.fieldIndex,
-            normalizedValue.length,
-          ),
+          _rankRecord(prefixPriority, entry.fieldIndex, normalizedValue.length),
         );
       }
 
@@ -610,13 +796,15 @@ class WordRepository {
       normalizedKeyword,
     );
     final scoredRows =
-        <({
-          Map<String, dynamic> row,
-          int priority,
-          int fieldIndex,
-          int valueLength,
-          String id,
-        })>[];
+        <
+          ({
+            Map<String, dynamic> row,
+            int priority,
+            int fieldIndex,
+            int valueLength,
+            String id,
+          })
+        >[];
 
     for (final row in candidates) {
       final rank = _rankHomeSearchRow(
@@ -712,11 +900,18 @@ class WordRepository {
     required int relationId,
     required String? categoryCode,
     required String? relationType,
+    String? directionCode,
+    String? description,
     required String? note,
     required String? source,
   }) async {
     final db = await DatabaseService.openDatabaseFile();
     final groupId = _newHistoryGroupId();
+    final normalizedDirectionCode = _normalizeDirectionCode(directionCode);
+    final trimmedDescription = (description ?? '').trim();
+    final descriptionValue = trimmedDescription.isEmpty
+        ? null
+        : trimmedDescription;
 
     await db.transaction((txn) async {
       final before = await _getRelationRowById(txn, relationId);
@@ -724,9 +919,23 @@ class WordRepository {
         throw Exception('수정할 관계를 찾을 수 없습니다: $relationId');
       }
 
+      final existingId = await _findExistingRelationIdBySignatureOnExecutor(
+        txn,
+        wordIdA: before['word_id_1'] as String,
+        wordIdB: before['word_id_2'] as String,
+        relationType: relationType,
+        directionCode: normalizedDirectionCode,
+        excludeRelationId: relationId,
+      );
+      if (existingId != null) {
+        throw Exception('동일한 pair/type/direction 관계가 이미 존재합니다: $existingId');
+      }
+
       final after = Map<String, dynamic>.from(before);
       after['category_code'] = categoryCode;
       after['relation_type'] = relationType;
+      after['direction_code'] = normalizedDirectionCode;
+      after['description'] = descriptionValue;
       after['note'] = note;
       after['source'] = source;
       after['updated_at'] = DateTime.now().toIso8601String();
@@ -736,6 +945,8 @@ class WordRepository {
         {
           'category_code': categoryCode,
           'relation_type': relationType,
+          'direction_code': normalizedDirectionCode,
+          'description': descriptionValue,
           'note': note,
           'source': source,
           'updated_at': after['updated_at'],
@@ -801,6 +1012,65 @@ class WordRepository {
     return rows.first['id'] as int;
   }
 
+  /// v2 signature 기준 관계 존재 여부 검사
+  Future<int?> findExistingRelationIdBySignature(
+    String wordIdA,
+    String wordIdB, {
+    required String? relationType,
+    String? directionCode,
+    int? excludeRelationId,
+  }) async {
+    final db = await DatabaseService.openDatabaseFile();
+    return await _findExistingRelationIdBySignatureOnExecutor(
+      db,
+      wordIdA: wordIdA,
+      wordIdB: wordIdB,
+      relationType: relationType,
+      directionCode: directionCode,
+      excludeRelationId: excludeRelationId,
+    );
+  }
+
+  Future<int?> _findExistingRelationIdBySignatureOnExecutor(
+    DatabaseExecutor db, {
+    required String wordIdA,
+    required String wordIdB,
+    required String? relationType,
+    String? directionCode,
+    int? excludeRelationId,
+  }) async {
+    final normalized = _normalizeRelationPair(
+      wordId1: wordIdA,
+      wordId2: wordIdB,
+      directionCode: directionCode,
+    );
+    final sql = StringBuffer('''
+      SELECT id
+      FROM WORD_RELATION
+      WHERE word_id_1 = ?
+        AND word_id_2 = ?
+        AND COALESCE(relation_type, '') = COALESCE(?, '')
+        AND COALESCE(direction_code, 'unknown') = COALESCE(?, 'unknown')
+    ''');
+    final args = <Object?>[
+      normalized.wordId1,
+      normalized.wordId2,
+      relationType,
+      normalized.directionCode,
+    ];
+
+    if (excludeRelationId != null) {
+      sql.writeln('AND id <> ?');
+      args.add(excludeRelationId);
+    }
+
+    sql.writeln('LIMIT 1');
+
+    final rows = await db.rawQuery(sql.toString(), args);
+    if (rows.isEmpty) return null;
+    return rows.first['id'] as int;
+  }
+
   /// WORD_RELATION에 관계 1건을 추가한다(트랜잭션)
   /// - status_code/created_at/updated_at은 DB default를 활용하되,
   ///   updated_at은 명시적으로 ISO 문자열로 넣어준다.
@@ -809,20 +1079,42 @@ class WordRepository {
     required String wordId2,
     required String? categoryCode,
     required String? relationType,
+    String? directionCode,
+    String? description,
     required String? note,
     required String? source,
   }) async {
     final db = await DatabaseService.openDatabaseFile();
     final groupId = _newHistoryGroupId();
-    final a = wordId1.compareTo(wordId2) < 0 ? wordId1 : wordId2;
-    final b = wordId1.compareTo(wordId2) < 0 ? wordId2 : wordId1;
+    final normalized = _normalizeRelationPair(
+      wordId1: wordId1,
+      wordId2: wordId2,
+      directionCode: directionCode,
+    );
+    final trimmedDescription = (description ?? '').trim();
+    final descriptionValue = trimmedDescription.isEmpty
+        ? null
+        : trimmedDescription;
 
     return await db.transaction((txn) async {
+      final existingId = await _findExistingRelationIdBySignatureOnExecutor(
+        txn,
+        wordIdA: normalized.wordId1,
+        wordIdB: normalized.wordId2,
+        relationType: relationType,
+        directionCode: normalized.directionCode,
+      );
+      if (existingId != null) {
+        throw Exception('동일한 pair/type/direction 관계가 이미 존재합니다: $existingId');
+      }
+
       final row = {
-        'word_id_1': a,
-        'word_id_2': b,
+        'word_id_1': normalized.wordId1,
+        'word_id_2': normalized.wordId2,
         'category_code': categoryCode,
         'relation_type': relationType,
+        'direction_code': normalized.directionCode,
+        'description': descriptionValue,
         'note': note,
         'source': source,
         'updated_at': DateTime.now().toIso8601String(),
@@ -1005,6 +1297,7 @@ class WordRepository {
     String? pronunciation1,
     String? meaning1,
     String? note,
+    String? graphExpandMode,
   }) async {
     final db = await DatabaseService.openDatabaseFile();
     final groupId = _newHistoryGroupId();
@@ -1022,6 +1315,7 @@ class WordRepository {
             : pronunciation1!.trim(),
         '의미1': (meaning1 ?? '').trim().isEmpty ? null : meaning1!.trim(),
         '비고': (note ?? '').trim().isEmpty ? null : note!.trim(),
+        'graph_expand_mode': _normalizeGraphExpandMode(graphExpandMode),
       };
 
       await txn.insert('WORD_TABLE', row);
@@ -1124,6 +1418,7 @@ class WordRepository {
     String? pronunciation1,
     String? meaning1,
     String? note,
+    String? graphExpandMode,
   }) async {
     final db = await DatabaseService.openDatabaseFile();
     final groupId = _newHistoryGroupId();
@@ -1145,6 +1440,7 @@ class WordRepository {
           : pronunciation1!.trim();
       after['의미1'] = (meaning1 ?? '').trim().isEmpty ? null : meaning1!.trim();
       after['비고'] = (note ?? '').trim().isEmpty ? null : note!.trim();
+      after['graph_expand_mode'] = _normalizeGraphExpandMode(graphExpandMode);
 
       await txn.update(
         'WORD_TABLE',
@@ -1155,6 +1451,7 @@ class WordRepository {
           '발음1': after['발음1'],
           '의미1': after['의미1'],
           '비고': after['비고'],
+          'graph_expand_mode': after['graph_expand_mode'],
         },
         where: 'id = ?',
         whereArgs: [id],
@@ -1251,45 +1548,43 @@ class WordRepository {
     final relationId = _requireIntValue(before, 'id');
     final originalWordId1 = _requireStringValue(before, 'word_id_1');
     final originalWordId2 = _requireStringValue(before, 'word_id_2');
+    final originalDirectionCode = _normalizeDirectionCode(
+      before['direction_code'] as String?,
+    );
+    final originalRelationType = before['relation_type'] as String?;
 
     if (originalWordId1 == originalWordId2) {
       throw Exception('관계 Undo 복원 실패: 동일한 단어 id 쌍입니다. ($originalWordId1)');
     }
-
-    final orderedWordId1 = originalWordId1.compareTo(originalWordId2) < 0
-        ? originalWordId1
-        : originalWordId2;
-    final orderedWordId2 = originalWordId1.compareTo(originalWordId2) < 0
-        ? originalWordId2
-        : originalWordId1;
 
     final existingSameId = await _getRelationRowById(txn, relationId);
     if (existingSameId != null) {
       throw Exception('관계 Undo 복원 실패: 동일 id가 이미 존재합니다. ($relationId)');
     }
 
-    final existingPair = await txn.query(
-      'WORD_RELATION',
-      columns: ['id'],
-      where: 'word_id_1 = ? AND word_id_2 = ?',
-      whereArgs: [orderedWordId1, orderedWordId2],
-      limit: 1,
+    final existingId = await _findExistingRelationIdBySignatureOnExecutor(
+      txn,
+      wordIdA: originalWordId1,
+      wordIdB: originalWordId2,
+      relationType: originalRelationType,
+      directionCode: originalDirectionCode,
     );
-
-    if (existingPair.isNotEmpty) {
-      final existingId = existingPair.first['id'];
+    if (existingId != null) {
       throw Exception(
-        '관계 Undo 복원 실패: 동일 단어 쌍이 이미 존재합니다. '
-        '($orderedWordId1, $orderedWordId2 / existing id=$existingId)',
+        '관계 Undo 복원 실패: 동일 pair/type/direction 관계가 이미 존재합니다. '
+        '($originalWordId1, $originalWordId2 / existing id=$existingId)',
       );
     }
 
     await txn.insert('WORD_RELATION', {
       'id': relationId,
-      'word_id_1': orderedWordId1,
-      'word_id_2': orderedWordId2,
+      'word_id_1': originalWordId1,
+      'word_id_2': originalWordId2,
       'category_code': before['category_code'],
-      'relation_type': before['relation_type'],
+      'relation_type': originalRelationType,
+      'direction_code': originalDirectionCode,
+      'description': before['description'],
+      'relation_group_id': before['relation_group_id'],
       'status_code': before['status_code'],
       'note': before['note'],
       'source': before['source'],
