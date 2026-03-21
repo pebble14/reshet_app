@@ -34,10 +34,12 @@ direction_code:
 
 ## 관계 구성 요소
 
+- category_code
 - relation_type
 - direction_code
 - description
 - status_code
+- relation_group_id (동일 조합 사건 또는 관련 관계 묶음 식별용)
 
 ---
 
@@ -60,22 +62,30 @@ graph_expand_mode는 중심 단어가 그래프의 기준이 될 때,
 값은 다음과 같이 정의한다.
 
 - default  
-  incoming, outgoing, undirected, unknown 관계를 모두 표시 대상으로 포함한다.
+  incoming, outgoing, undirected, unknown 관계를 모두 표시 대상으로 포함한다.  
+  다만 그래프 엔진의 일반 표시 규칙(예: 화면 가독성 보조 규칙, 대표 edge 선택 등)은 적용될 수 있다.
 
 - incoming_only  
-  incoming, undirected, unknown 관계를 표시 대상으로 포함하고,
+  incoming, undirected, unknown 관계를 표시 대상으로 포함하고,  
   outgoing 관계는 표시 대상에서 제외한다.
 
 - outgoing_limited  
-  incoming, undirected, unknown 관계는 모두 포함한다.
-  outgoing 관계는 제한적으로만 포함한다.
+  incoming, undirected, unknown 관계는 모두 포함한다.  
+  outgoing 관계는 제한된 개수만 포함한다.
 
 - full  
-  incoming, outgoing, undirected, unknown 관계를 모두 제한 없이 표시 대상으로 포함한다.
+  incoming, outgoing, undirected, unknown 관계를 모두 포함하며,  
+  허브 단어에 대한 일반적인 제한 정책도 적용하지 않는 예외 모드로 본다.
+
+unknown 관계는 방향이 아직 결정되지 않은 관계이므로,
+초기 구현에서는 보수적으로 표시 대상에 포함한다.
+
+즉, unknown은 정보 부족 때문에 숨기지 않고,
+사용자 검토 대상이 되도록 기본적으로 노출하는 방향을 우선한다.
 
   ---
 
-  ## outgoing_limited의 제한 방식
+## outgoing_limited의 제한 방식
 
 outgoing_limited의 "limited"는 1차 구현에서는 개수 제한을 의미한다.
 
@@ -103,6 +113,40 @@ v2 이행 시 direction_code의 기본값은 undirected가 아니라 unknown으�
 - undirected: 본질적으로 무방향 관계
 
 이 둘은 반드시 구분한다.
+
+---
+
+## word_id_1 / word_id_2 저장 원칙
+
+word_id_1 / word_id_2는 정렬 저장을 조건부로 유지할 수 있다.
+
+조건은 다음과 같다.
+
+- 저장 시 단어 순서를 정렬했다면,
+  direction_code도 정렬된 저장 순서 기준으로 함께 보정해야 한다.
+- 입력 순서와 저장 순서가 달라져
+  word_id_1 / word_id_2가 뒤바뀌는 경우,
+  direction_code는 w1_to_w2 와 w2_to_w1 사이에서 함께 변환되어야 한다.
+- undirected 와 unknown은 방향 보정 없이 그대로 유지한다.
+
+---
+
+## WORD_RELATION UNIQUE 기준
+
+1차 v2 구현에서 WORD_RELATION의 UNIQUE 기준은
+다음 조합을 사용한다.
+
+- word_id_1
+- word_id_2
+- relation_type
+- direction_code
+
+초기 단계에서는 category_code를 UNIQUE 기준에 포함하지 않는다.
+category_code는 상위 분류이며,
+실제 관계 의미의 직접 구분은 relation_type 중심으로 처리한다.
+
+relation_group_id는 1차 UNIQUE 기준에 포함하지 않는다.
+relation_group_id는 초기 단계에서는 메타데이터로 취급한다.
 
 ---
 
