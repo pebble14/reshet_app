@@ -197,17 +197,92 @@ class WordRepository {
   }
 
   /// id로 단어 1건 조회
-  Future<Word?> getWordById(String id) async {
-    final db = await DatabaseService.openDatabaseFile();
+  Future<Map<String, dynamic>?> getWordMapById(String id) async {
+    final normalizedId = id.trim();
+    if (normalizedId.isEmpty) return null;
 
-    final result = await db.query(
+    final db = await DatabaseService.openDatabaseFile();
+    final rows = await db.query(
       'WORD_TABLE',
       where: 'id = ?',
-      whereArgs: [id],
+      whereArgs: [normalizedId],
+      limit: 1,
     );
 
-    if (result.isEmpty) return null;
-    return Word.fromMap(result.first);
+    if (rows.isEmpty) return null;
+    return Map<String, dynamic>.from(rows.first);
+  }
+
+  Future<List<Map<String, dynamic>>> getWordsByIds(List<String> wordIds) async {
+    final orderedIds = <String>[];
+    final seenIds = <String>{};
+
+    for (final wordId in wordIds) {
+      final normalizedId = wordId.trim();
+      if (normalizedId.isEmpty) continue;
+      if (seenIds.add(normalizedId)) {
+        orderedIds.add(normalizedId);
+      }
+    }
+
+    if (orderedIds.isEmpty) return const [];
+
+    final db = await DatabaseService.openDatabaseFile();
+    final placeholders = List.filled(orderedIds.length, '?').join(', ');
+    final rows = await db.rawQuery(
+      'SELECT * FROM WORD_TABLE WHERE id IN ($placeholders)',
+      orderedIds,
+    );
+
+    final rowsById = <String, Map<String, dynamic>>{
+      for (final row in rows)
+        (row['id'] as String): Map<String, dynamic>.from(row),
+    };
+
+    return orderedIds
+        .map((rowId) => rowsById[rowId])
+        .whereType<Map<String, dynamic>>()
+        .toList(growable: false);
+  }
+
+  Future<List<Map<String, dynamic>>> getRelationsForWord(String wordId) async {
+    final normalizedId = wordId.trim();
+    if (normalizedId.isEmpty) return const [];
+
+    final db = await DatabaseService.openDatabaseFile();
+    final rows = await db.rawQuery(
+      '''
+      SELECT
+        id,
+        word_id_1,
+        word_id_2,
+        category_code,
+        relation_type,
+        status_code,
+        direction_code,
+        description,
+        relation_group_id,
+        note,
+        source,
+        created_at,
+        updated_at
+      FROM WORD_RELATION
+      WHERE word_id_1 = ?
+         OR word_id_2 = ?
+      ORDER BY id ASC
+      ''',
+      [normalizedId, normalizedId],
+    );
+
+    return rows
+        .map((row) => Map<String, dynamic>.from(row))
+        .toList(growable: false);
+  }
+
+  Future<Word?> getWordById(String id) async {
+    final row = await getWordMapById(id);
+    if (row == null) return null;
+    return Word.fromMap(row);
   }
 
   /// 특정 단어와 연결된 모든 단어 목록 조회 (WORD_RELATION 기반)
@@ -338,13 +413,7 @@ class WordRepository {
       }
     }
 
-    final db = await DatabaseService.openDatabaseFile();
-    final placeholders = List.filled(orderedIds.length, '?').join(', ');
-    final rows = await db.rawQuery(
-      'SELECT * FROM WORD_TABLE WHERE id IN ($placeholders)',
-      orderedIds,
-    );
-
+    final rows = await getWordsByIds(orderedIds);
     final wordsById = <String, Word>{
       for (final row in rows) (row['id'] as String): Word.fromMap(row),
     };
