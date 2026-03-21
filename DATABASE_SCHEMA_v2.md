@@ -9,9 +9,7 @@
 
 ## WORD_RELATION 확장
 
-추가 컬럼:
-
-- direction_code TEXT
+- direction_code TEXT (기본값: 'unknown')
 - description TEXT
 - relation_group_id TEXT (optional)
 
@@ -43,6 +41,7 @@
 추가 컬럼:
 
 - graph_expand_mode TEXT
+graph_expand_mode의 기본값은 'default'로 둔다.
 
 ---
 
@@ -76,9 +75,9 @@ graph_expand_mode는 중심 단어가 그래프의 기준이 될 때,
 - full  
   incoming, outgoing, undirected, unknown 관계를 모두 제한 없이 표시 대상으로 포함한다.
 
-  ---
+---
 
-  ## outgoing_limited의 제한 방식
+## outgoing_limited의 제한 방식
 
 outgoing_limited의 "limited"는 1차 구현에서는 개수 제한을 의미한다.
 
@@ -140,6 +139,28 @@ category_code는 상위 분류이며,
 
 relation_group_id는 1차 UNIQUE 기준에 포함하지 않는다.
 relation_group_id는 초기 단계에서는 메타데이터로 취급한다.
+
+SQLite 인덱스 구현에서는 NULL 비교 문제를 피하기 위해
+다음과 같은 정규화 기준을 사용할 수 있다.
+
+- word_id_1
+- word_id_2
+- COALESCE(relation_type, '')
+- COALESCE(direction_code, 'unknown')
+
+즉, 문서상 UNIQUE 기준은 relation_type / direction_code 기준이지만,
+실제 SQLite 인덱스 구현에서는 COALESCE를 사용할 수 있다.
+
+---
+
+## 기존 필드의 역할
+
+- category_code: 관계의 상위 분류를 나타낸다.
+- relation_type: 관계의 직접 의미를 나타낸다.
+- status_code: 관계의 확정도 또는 편집 상태를 나타낸다.
+
+v2에서도 이 세 필드는 유지되며,
+direction_code / description / relation_group_id는 이를 보완하는 확장 필드로 본다.
 
 ---
 

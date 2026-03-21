@@ -15,6 +15,7 @@ class WordRelationEdgeInfo {
   final String otherWordId;
   final String directionCode;
   final String centerRelativeDirection;
+  final String? relationGroupId;
   final String? categoryCode;
   final String? categoryLabel;
   final String? relationType;
@@ -30,6 +31,7 @@ class WordRelationEdgeInfo {
     required this.otherWordId,
     required this.directionCode,
     required this.centerRelativeDirection,
+    this.relationGroupId,
     this.categoryCode,
     this.categoryLabel,
     this.relationType,
@@ -53,6 +55,7 @@ class WordRelationEdgeInfo {
       otherWordId: wordId1 == centerWordId ? wordId2 : wordId1,
       directionCode: (map['direction_code'] as String?) ?? 'unknown',
       centerRelativeDirection: centerRelativeDirection,
+      relationGroupId: map['relation_group_id'] as String?,
       categoryCode: map['category_code'] as String?,
       categoryLabel: map['category_label'] as String?,
       relationType: map['relation_type'] as String?,
@@ -248,6 +251,7 @@ class WordRepository {
         wr.word_id_2 AS word_id_2,
         wr.direction_code AS direction_code,
         wr.description AS description,
+        wr.relation_group_id AS relation_group_id,
         wr.category_code AS category_code,
         rc.label AS category_label,
         wr.relation_type AS relation_type,
@@ -902,6 +906,7 @@ class WordRepository {
     required String? relationType,
     String? directionCode,
     String? description,
+    String? relationGroupId,
     required String? note,
     required String? source,
   }) async {
@@ -912,6 +917,10 @@ class WordRepository {
     final descriptionValue = trimmedDescription.isEmpty
         ? null
         : trimmedDescription;
+    final trimmedRelationGroupId = (relationGroupId ?? '').trim();
+    final relationGroupIdValue = trimmedRelationGroupId.isEmpty
+        ? null
+        : trimmedRelationGroupId;
 
     await db.transaction((txn) async {
       final before = await _getRelationRowById(txn, relationId);
@@ -936,6 +945,7 @@ class WordRepository {
       after['relation_type'] = relationType;
       after['direction_code'] = normalizedDirectionCode;
       after['description'] = descriptionValue;
+      after['relation_group_id'] = relationGroupIdValue;
       after['note'] = note;
       after['source'] = source;
       after['updated_at'] = DateTime.now().toIso8601String();
@@ -947,6 +957,7 @@ class WordRepository {
           'relation_type': relationType,
           'direction_code': normalizedDirectionCode,
           'description': descriptionValue,
+          'relation_group_id': relationGroupIdValue,
           'note': note,
           'source': source,
           'updated_at': after['updated_at'],
@@ -1081,6 +1092,7 @@ class WordRepository {
     required String? relationType,
     String? directionCode,
     String? description,
+    String? relationGroupId,
     required String? note,
     required String? source,
   }) async {
@@ -1095,6 +1107,10 @@ class WordRepository {
     final descriptionValue = trimmedDescription.isEmpty
         ? null
         : trimmedDescription;
+    final trimmedRelationGroupId = (relationGroupId ?? '').trim();
+    final relationGroupIdValue = trimmedRelationGroupId.isEmpty
+        ? null
+        : trimmedRelationGroupId;
 
     return await db.transaction((txn) async {
       final existingId = await _findExistingRelationIdBySignatureOnExecutor(
@@ -1115,6 +1131,7 @@ class WordRepository {
         'relation_type': relationType,
         'direction_code': normalized.directionCode,
         'description': descriptionValue,
+        'relation_group_id': relationGroupIdValue,
         'note': note,
         'source': source,
         'updated_at': DateTime.now().toIso8601String(),
@@ -1294,6 +1311,7 @@ class WordRepository {
     required String language,
     String? strongNumber,
     required String spelling1,
+    String? transliteration1,
     String? pronunciation1,
     String? meaning1,
     String? note,
@@ -1415,6 +1433,7 @@ class WordRepository {
     required String language,
     String? strongNumber,
     required String spelling1,
+    String? transliteration1,
     String? pronunciation1,
     String? meaning1,
     String? note,
@@ -1440,6 +1459,9 @@ class WordRepository {
           : pronunciation1!.trim();
       after['의미1'] = (meaning1 ?? '').trim().isEmpty ? null : meaning1!.trim();
       after['비고'] = (note ?? '').trim().isEmpty ? null : note!.trim();
+      after['음역1'] = (transliteration1 ?? '').trim().isEmpty
+          ? null
+          : transliteration1!.trim();
       after['graph_expand_mode'] = _normalizeGraphExpandMode(graphExpandMode);
 
       await txn.update(
@@ -1451,6 +1473,7 @@ class WordRepository {
           '발음1': after['발음1'],
           '의미1': after['의미1'],
           '비고': after['비고'],
+          '음역1': after['음역1'],
           'graph_expand_mode': after['graph_expand_mode'],
         },
         where: 'id = ?',

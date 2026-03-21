@@ -78,10 +78,19 @@ const double _dashedEdgeDashLength = 14.0;
 const double _dashedEdgeGapLength = 9.0;
 const double _dottedEdgeDotLength = 1.0;
 const double _dottedEdgeGapLength = 7.0;
+const int _graphOutgoingLimit = 12;
 
 enum _GraphVisualState { selected, connected, dimmed }
 
 enum _GraphEdgeSemanticStyle { solid, dashed, dotted }
+
+enum _GraphEdgeDirectionSummary {
+  outgoing,
+  incoming,
+  undirected,
+  unknown,
+  mixed,
+}
 
 _GraphEdgeSemanticStyle _edgeSemanticStyleForRelationType(
   String? relationType,
@@ -210,12 +219,18 @@ class CreateWordPayload {
 class CreateRelationPayload {
   final String? categoryCode;
   final String? relationType;
+  final String directionCode;
+  final String? description;
+  final String? relationGroupId;
   final String? note;
   final String? source;
 
   CreateRelationPayload({
     required this.categoryCode,
     required this.relationType,
+    required this.directionCode,
+    required this.description,
+    required this.relationGroupId,
     required this.note,
     required this.source,
   });
@@ -265,7 +280,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   /// 이 배율보다 작아지면 엣지 태그를 숨긴다(가독성/겹침 감소)
   static const double _labelVisibleScaleThreshold = 1.15;
 
-  late final Word _centerWord;
+  late Word _centerWord;
 
   bool _isLoading = true;
   String? _errorMessage;
@@ -279,14 +294,36 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
   /// 상대 단어 id 기준으로 관계(엣지) 메타를 보관한다.
   /// - 여러 관계가 있을 수 있으나, 현재는 “표시용 1개”만 선택(마지막으로 덮어씀)
-  final Map<String, WordRelationEdgeInfo> _edgeInfoByOtherId = {};
+  final Map<String, List<WordRelationEdgeInfo>> _edgeInfosByOtherId = {};
+  final Map<String, WordRelationEdgeInfo> _primaryEdgeInfoByOtherId = {};
+
+  String _normalizedGraphExpandMode(String? graphExpandMode) {
+    switch ((graphExpandMode ?? '').trim().toLowerCase()) {
+      case 'incoming_only':
+        return 'incoming_only';
+      case 'outgoing_limited':
+        return 'outgoing_limited';
+      case 'full':
+        return 'full';
+      default:
+        return 'default';
+    }
+  }
+
+  String? _nullIfBlank(String? value) {
+    final trimmed = (value ?? '').trim();
+    return trimmed.isEmpty ? null : trimmed;
+  }
 
   @override
   void initState() {
     super.initState();
     _centerWord = widget.centerWord;
     _selectedWordId = widget.selectedWordId;
-    final cachedGraph = WordGraphDataCache.get(_centerWord.id);
+    final cachedGraph = WordGraphDataCache.get(
+      centerWordId: _centerWord.id,
+      graphExpandMode: _centerWord.graphExpandMode,
+    );
     if (cachedGraph != null) {
       _applyGraphData(
         words: cachedGraph.connectedWords,
@@ -302,8 +339,38 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   void didUpdateWidget(covariant WordGraphScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
 
+    final didCenterWordChange = widget.centerWord.id != oldWidget.centerWord.id;
+    final didGraphExpandModeChange =
+        widget.centerWord.id == oldWidget.centerWord.id &&
+        _normalizedGraphExpandMode(widget.centerWord.graphExpandMode) !=
+            _normalizedGraphExpandMode(oldWidget.centerWord.graphExpandMode);
+
+    if (didCenterWordChange) {
+      setState(() {
+        _centerWord = widget.centerWord;
+        _selectedWordId = widget.selectedWordId;
+        _isLoading = true;
+        _errorMessage = null;
+      });
+      _loadConnectedWords();
+      return;
+    }
+
+    if (didGraphExpandModeChange) {
+      setState(() {
+        _centerWord = widget.centerWord;
+        _selectedWordId = widget.selectedWordId;
+        _isLoading = true;
+        _errorMessage = null;
+      });
+      _loadConnectedWords();
+      return;
+    }
+
     if (widget.selectedWordId != oldWidget.selectedWordId) {
-      _selectedWordId = widget.selectedWordId;
+      setState(() {
+        _selectedWordId = widget.selectedWordId;
+      });
     }
   }
 
@@ -319,9 +386,18 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   }) {
     _connectedWords = words;
 
-    _edgeInfoByOtherId.clear();
+    _edgeInfosByOtherId.clear();
+    _primaryEdgeInfoByOtherId.clear();
     for (final e in edges) {
-      _edgeInfoByOtherId[e.otherWordId] = e;
+      _edgeInfosByOtherId
+          .putIfAbsent(e.otherWordId, () => <WordRelationEdgeInfo>[])
+          .add(e);
+    }
+
+    for (final entry in _edgeInfosByOtherId.entries) {
+      if (entry.value.isNotEmpty) {
+        _primaryEdgeInfoByOtherId[entry.key] = entry.value.first;
+      }
     }
 
     _errorMessage = null;
@@ -329,7 +405,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   }
 
   Future<void> _loadConnectedWords() async {
-    final cachedGraph = WordGraphDataCache.get(_centerWord.id);
+    final cachedGraph = WordGraphDataCache.get(
+      centerWordId: _centerWord.id,
+      graphExpandMode: _centerWord.graphExpandMode,
+    );
     if (cachedGraph != null) {
       if (!mounted) return;
       setState(() {
@@ -342,10 +421,21 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     }
 
     try {
-      final words = await _repository.getConnectedWords(_centerWord.id);
-      final edges = await _repository.getRelationEdges(_centerWord.id);
+      final results = await Future.wait([
+        _repository.getVisibleConnectedWordsForGraph(
+          _centerWord.id,
+          outgoingLimit: _graphOutgoingLimit,
+        ),
+        _repository.getVisibleRelationEdgesForGraph(
+          _centerWord.id,
+          outgoingLimit: _graphOutgoingLimit,
+        ),
+      ]);
+      final words = results[0] as List<Word>;
+      final edges = results[1] as List<WordRelationEdgeInfo>;
       WordGraphDataCache.put(
         centerWordId: _centerWord.id,
+        graphExpandMode: _centerWord.graphExpandMode,
         connectedWords: words,
         relationEdges: edges,
       );
@@ -388,17 +478,23 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         final layout = _computeGraphLayout(canvasSize, nodes.length);
 
         // 노드 배치 순서와 동일한 순서로 엣지 색상/라벨 생성
+        final edgeInfoGroups = nodes
+            .map((word) => _edgeInfosForOtherWord(word.id))
+            .toList(growable: false);
         final edgeInfos = nodes
-            .map((word) => _edgeInfoByOtherId[word.id])
+            .map((word) => _primaryEdgeInfoForOtherWord(word.id))
             .toList(growable: false);
         final edgeColors = edgeInfos
             .map((info) => _colorForCategory(info?.categoryCode))
             .toList(growable: false);
-        final edgeLabels = edgeInfos
-            .map((info) => _labelForEdge(info))
+        final edgeLabels = edgeInfoGroups
+            .map((infos) => _labelForEdgeGroup(infos))
             .toList(growable: false);
         final edgeRelationTypes = edgeInfos
             .map((info) => info?.relationType)
+            .toList(growable: false);
+        final edgeDirectionSummaries = edgeInfoGroups
+            .map((infos) => _directionSummaryForEdges(infos))
             .toList(growable: false);
 
         // 선택된 노드가 연결 노드 목록에서 몇 번째인지(없으면 null)
@@ -476,11 +572,12 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                           height: canvasSize.height,
                           child: CustomPaint(
                             size: canvasSize,
-                            painter: GraphLinePainter(
+                            painter: _GraphLinePainter(
                               layout: layout,
                               edgeColors: edgeColors,
                               edgeLabels: edgeLabels,
                               edgeRelationTypes: edgeRelationTypes,
+                              edgeDirectionSummaries: edgeDirectionSummaries,
                               showLabels: false,
                               sceneScale: _currentScale,
                               selectedIndex: selectedIndex,
@@ -499,7 +596,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                     ..._buildEdgeLabelWidgets(
                       layout,
                       nodes,
-                      edgeInfos,
+                      edgeInfoGroups,
                       edgeLabels,
                       edgeColors,
                       selectedIndex: selectedIndex,
@@ -1386,7 +1483,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
           child: _buildWordNode(
             words[index],
             _colorForCategory(
-              _edgeInfoByOtherId[words[index].id]?.categoryCode,
+              _primaryEdgeInfoByOtherId[words[index].id]?.categoryCode,
             ),
             visualState: _connectedNodeVisualState(
               nodeIndex: index,
@@ -1405,7 +1502,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   List<Widget> _buildEdgeLabelWidgets(
     _GraphLayoutData layout,
     List<Word> nodes,
-    List<WordRelationEdgeInfo?> edgeInfos,
+    List<List<WordRelationEdgeInfo>> edgeInfoGroups,
     List<String> edgeLabels,
     List<Color> edgeColors, {
     required int? selectedIndex,
@@ -1446,7 +1543,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       placedLabelBounds.add(placement.bounds);
 
       final otherWord = nodes[index];
-      final edgeInfo = edgeInfos[index];
+      final edgeInfos = edgeInfoGroups[index];
       final bool hasFocusedNode = selectedIndex != null;
       final bool isFocusedEdge = selectedIndex == index;
       final Color labelBorderColor;
@@ -1496,8 +1593,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
             translation: const Offset(-0.5, -0.5),
             child: GestureDetector(
               onTap: () {
-                if (edgeInfo == null) return;
-                _showEdgeDetailDialog(otherWord, edgeInfo);
+                if (edgeInfos.isEmpty) return;
+                _showEdgeDetailDialog(otherWord, edgeInfos);
               },
               child: AnimatedOpacity(
                 duration: _visualStateAnimationDuration,
@@ -1675,8 +1772,225 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     return Offset(vector.dx / length, vector.dy / length);
   }
 
-  void _showEdgeDetailDialog(Word otherWord, WordRelationEdgeInfo info) {
-    showDialog(
+  List<WordRelationEdgeInfo> _edgeInfosForOtherWord(String otherWordId) {
+    return List<WordRelationEdgeInfo>.unmodifiable(
+      _edgeInfosByOtherId[otherWordId] ?? const <WordRelationEdgeInfo>[],
+    );
+  }
+
+  WordRelationEdgeInfo? _primaryEdgeInfoForOtherWord(String otherWordId) {
+    return _primaryEdgeInfoByOtherId[otherWordId];
+  }
+
+  _GraphEdgeDirectionSummary _directionSummaryForEdges(
+    List<WordRelationEdgeInfo> infos,
+  ) {
+    if (infos.isEmpty) return _GraphEdgeDirectionSummary.unknown;
+
+    final directions = infos
+        .map((info) => info.centerRelativeDirection.trim())
+        .where((direction) => direction.isNotEmpty)
+        .toSet();
+
+    if (directions.length != 1) {
+      return _GraphEdgeDirectionSummary.mixed;
+    }
+
+    switch (directions.first) {
+      case 'outgoing':
+        return _GraphEdgeDirectionSummary.outgoing;
+      case 'incoming':
+        return _GraphEdgeDirectionSummary.incoming;
+      case 'undirected':
+        return _GraphEdgeDirectionSummary.undirected;
+      default:
+        return _GraphEdgeDirectionSummary.unknown;
+    }
+  }
+
+  String _directionTagForSummary(_GraphEdgeDirectionSummary summary) {
+    switch (summary) {
+      case _GraphEdgeDirectionSummary.outgoing:
+        return 'OUT';
+      case _GraphEdgeDirectionSummary.incoming:
+        return 'IN';
+      case _GraphEdgeDirectionSummary.undirected:
+        return 'UNDIR';
+      case _GraphEdgeDirectionSummary.mixed:
+        return 'MIX';
+      case _GraphEdgeDirectionSummary.unknown:
+        return 'UNK';
+    }
+  }
+
+  String _relationLabelForDetails(WordRelationEdgeInfo info) {
+    final raw = (info.relationTypeLabel?.trim().isNotEmpty ?? false)
+        ? info.relationTypeLabel!.trim()
+        : (info.relationType?.trim().isNotEmpty ?? false)
+        ? info.relationType!.trim()
+        : 'unspecified';
+
+    return _normalizeRelationLabel(raw);
+  }
+
+  String _labelForEdgeGroup(List<WordRelationEdgeInfo> infos) {
+    if (infos.isEmpty) return '';
+
+    final directionTag = _directionTagForSummary(
+      _directionSummaryForEdges(infos),
+    );
+    final relationLabel = _labelForEdge(infos.first);
+    final countSuffix = infos.length > 1 ? ' x${infos.length}' : '';
+
+    if (relationLabel.isEmpty) {
+      return '$directionTag$countSuffix';
+    }
+
+    return '$directionTag $relationLabel$countSuffix';
+  }
+
+  String _directionTextForRawCode({
+    required String directionCode,
+    required String centerWordId,
+    required String wordId1,
+    required String wordId2,
+  }) {
+    switch (directionCode.trim()) {
+      case 'w1_to_w2':
+        return centerWordId == wordId1 ? '중심 -> 상대' : '상대 -> 중심';
+      case 'w2_to_w1':
+        return centerWordId == wordId1 ? '상대 -> 중심' : '중심 -> 상대';
+      case 'undirected':
+        return '방향 없음';
+      default:
+        return '방향 미정';
+    }
+  }
+
+  List<DropdownMenuItem<String>> _directionDropdownItems({
+    required String centerWordId,
+    required String wordId1,
+    required String wordId2,
+  }) {
+    const directionCodes = <String>[
+      'unknown',
+      'w1_to_w2',
+      'w2_to_w1',
+      'undirected',
+    ];
+
+    return directionCodes
+        .map(
+          (code) => DropdownMenuItem<String>(
+            value: code,
+            child: Text(
+              _directionTextForRawCode(
+                directionCode: code,
+                centerWordId: centerWordId,
+                wordId1: wordId1,
+                wordId2: wordId2,
+              ),
+            ),
+          ),
+        )
+        .toList(growable: false);
+  }
+
+  Future<void> _showEdgeDetailDialog(
+    Word otherWord,
+    List<WordRelationEdgeInfo> infos,
+  ) async {
+    if (infos.isEmpty) return;
+    if (infos.length == 1) {
+      await _showSingleEdgeDetailDialog(otherWord, infos.first);
+      return;
+    }
+
+    final selectedInfo = await showDialog<WordRelationEdgeInfo>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('관계 목록 ${otherWord.spelling1 ?? otherWord.id}'),
+          content: SizedBox(
+            width: 460,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: infos
+                    .map((info) {
+                      final directionTag = _directionTagForSummary(
+                        _directionSummaryForEdges([info]),
+                      );
+                      final relationLabel = _relationLabelForDetails(info);
+                      final metaParts = <String>[
+                        directionTag,
+                        if ((info.categoryLabel?.trim().isNotEmpty ?? false))
+                          info.categoryLabel!.trim()
+                        else if ((info.categoryCode?.trim().isNotEmpty ??
+                            false))
+                          info.categoryCode!.trim(),
+                        'ID ${info.relationId}',
+                      ];
+
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: InkWell(
+                          onTap: () => Navigator.pop(context, info),
+                          borderRadius: BorderRadius.circular(10),
+                          child: Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey.shade300),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  relationLabel,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  metaParts.join(' | '),
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey.shade700,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    })
+                    .toList(growable: false),
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('닫기'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (!mounted || selectedInfo == null) return;
+    await _showSingleEdgeDetailDialog(otherWord, selectedInfo);
+  }
+
+  Future<void> _showSingleEdgeDetailDialog(
+    Word otherWord,
+    WordRelationEdgeInfo info,
+  ) async {
+    await showDialog(
       context: context,
       builder: (context) {
         bool isEditing = false;
@@ -1685,12 +1999,21 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         // 초기값(읽기용)
         String? selectedCategoryCode = info.categoryCode;
         String? selectedRelationType = info.relationType;
+        String selectedDirectionCode = info.directionCode;
         // 'unspecified' 같은 표시용 값이 들어오면 드롭다운 value 규칙 위반이므로 null 처리
-        if ((selectedCategoryCode ?? '').toLowerCase() == 'unspecified')
+        if ((selectedCategoryCode ?? '').toLowerCase() == 'unspecified') {
           selectedCategoryCode = null;
-        if ((selectedRelationType ?? '').toLowerCase() == 'unspecified')
+        }
+        if ((selectedRelationType ?? '').toLowerCase() == 'unspecified') {
           selectedRelationType = null;
+        }
 
+        final descriptionController = TextEditingController(
+          text: info.description ?? '',
+        );
+        final relationGroupIdController = TextEditingController(
+          text: info.relationGroupId ?? '',
+        );
         final noteController = TextEditingController(text: info.note ?? '');
         final sourceController = TextEditingController(text: info.source ?? '');
 
@@ -1700,14 +2023,21 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         bool isOptionsLoading = false;
 
         bool hasChanges() {
+          final description = descriptionController.text.trim();
+          final relationGroupId = relationGroupIdController.text.trim();
           final note = noteController.text.trim();
           final src = sourceController.text.trim();
 
+          final originalDescription = (info.description ?? '').trim();
+          final originalRelationGroupId = (info.relationGroupId ?? '').trim();
           final originalNote = (info.note ?? '').trim();
           final originalSrc = (info.source ?? '').trim();
 
           return selectedCategoryCode != info.categoryCode ||
               selectedRelationType != info.relationType ||
+              selectedDirectionCode != info.directionCode ||
+              description != originalDescription ||
+              relationGroupId != originalRelationGroupId ||
               note != originalNote ||
               src != originalSrc;
         }
@@ -1760,6 +2090,9 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
               relationId: info.relationId,
               categoryCode: selectedCategoryCode,
               relationType: selectedRelationType,
+              directionCode: selectedDirectionCode,
+              description: _nullIfBlank(descriptionController.text),
+              relationGroupId: _nullIfBlank(relationGroupIdController.text),
               note: noteController.text.trim(),
               source: sourceController.text.trim(),
             );
@@ -1813,14 +2146,24 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                 ? info.categoryLabel!.trim()
                 : (info.categoryCode?.trim().isNotEmpty ?? false)
                 ? info.categoryCode!.trim()
-                : 'unspecified';
+                : '(없음)';
 
             final typeText =
                 (info.relationTypeLabel?.trim().isNotEmpty ?? false)
                 ? info.relationTypeLabel!.trim()
                 : (info.relationType?.trim().isNotEmpty ?? false)
                 ? info.relationType!.trim()
-                : 'unspecified';
+                : '(없음)';
+            final directionText = _directionTextForRawCode(
+              directionCode: selectedDirectionCode,
+              centerWordId: _centerWord.id,
+              wordId1: info.wordId1,
+              wordId2: info.wordId2,
+            );
+            final descriptionText = _nullIfBlank(descriptionController.text);
+            final relationGroupIdText = _nullIfBlank(
+              relationGroupIdController.text,
+            );
 
             final canSave = isEditing && !isSaving && hasChanges();
 
@@ -1915,6 +2258,31 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                           onChanged: (v) =>
                               setState(() => selectedRelationType = v),
                         ),
+                      const SizedBox(height: 14),
+                      const Text(
+                        '방향',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 6),
+                      if (!isEditing)
+                        Text(directionText)
+                      else
+                        DropdownButtonFormField<String>(
+                          value: selectedDirectionCode,
+                          isExpanded: true,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                          ),
+                          items: _directionDropdownItems(
+                            centerWordId: _centerWord.id,
+                            wordId1: info.wordId1,
+                            wordId2: info.wordId2,
+                          ),
+                          onChanged: (value) {
+                            if (value == null) return;
+                            setState(() => selectedDirectionCode = value);
+                          },
+                        ),
 
                       const SizedBox(height: 14),
 
@@ -1927,6 +2295,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                       TextField(
                         controller: noteController,
                         enabled: isEditing && !isSaving,
+                        onChanged: (_) => setState(() {}),
                         maxLines: 3,
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
@@ -1945,12 +2314,50 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                       TextField(
                         controller: sourceController,
                         enabled: isEditing && !isSaving,
+                        onChanged: (_) => setState(() {}),
                         maxLines: 2,
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           hintText: '(없음)',
                         ),
                       ),
+                      const SizedBox(height: 14),
+                      const Text(
+                        '설명',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 6),
+                      if (!isEditing)
+                        Text(descriptionText ?? '(없음)')
+                      else
+                        TextField(
+                          controller: descriptionController,
+                          enabled: !isSaving,
+                          onChanged: (_) => setState(() {}),
+                          maxLines: 3,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            hintText: '(없음)',
+                          ),
+                        ),
+                      const SizedBox(height: 14),
+                      const Text(
+                        '관계 그룹 ID',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 6),
+                      if (!isEditing)
+                        Text(relationGroupIdText ?? '(없음)')
+                      else
+                        TextField(
+                          controller: relationGroupIdController,
+                          enabled: !isSaving,
+                          onChanged: (_) => setState(() {}),
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            hintText: '(없음)',
+                          ),
+                        ),
                     ],
                   ),
                 ),
@@ -1978,6 +2385,11 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                               // 편집 취소 시 값을 원래대로 되돌리기
                               selectedCategoryCode = info.categoryCode;
                               selectedRelationType = info.relationType;
+                              selectedDirectionCode = info.directionCode;
+                              descriptionController.text =
+                                  info.description ?? '';
+                              relationGroupIdController.text =
+                                  info.relationGroupId ?? '';
                               noteController.text = info.note ?? '';
                               sourceController.text = info.source ?? '';
                             });
@@ -2198,9 +2610,11 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         final relationPayload = await _showCreateRelationDialog(createdWord);
 
         if (relationPayload != null) {
-          final existing = await _repository.findExistingRelationId(
+          final existing = await _repository.findExistingRelationIdBySignature(
             _centerWord.id,
             createdWord.id,
+            relationType: relationPayload.relationType,
+            directionCode: relationPayload.directionCode,
           );
 
           if (existing == null) {
@@ -2209,6 +2623,9 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
               wordId2: createdWord.id,
               categoryCode: relationPayload.categoryCode,
               relationType: relationPayload.relationType,
+              directionCode: relationPayload.directionCode,
+              description: relationPayload.description,
+              relationGroupId: relationPayload.relationGroupId,
               note: relationPayload.note,
               source: relationPayload.source,
             );
@@ -2496,9 +2913,13 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   Future<CreateRelationPayload?> _showCreateRelationDialog(Word other) async {
     final categories = await _repository.getRelationCategories();
     final types = await _repository.getRelationTypes();
+    if (!mounted) return null;
 
     String? selectedCategoryCode;
     String? selectedRelationType;
+    String selectedDirectionCode = 'unknown';
+    final descriptionController = TextEditingController();
+    final relationGroupIdController = TextEditingController();
     final noteController = TextEditingController();
     final sourceController = TextEditingController();
 
@@ -2511,65 +2932,95 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
               title: Text('관계 추가: ${other.spelling1 ?? other.id}'),
               content: SizedBox(
                 width: 520,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    DropdownButtonFormField<String>(
-                      value: selectedCategoryCode,
-                      isExpanded: true,
-                      decoration: const InputDecoration(labelText: '카테고리'),
-                      items: [
-                        const DropdownMenuItem<String>(
-                          value: null,
-                          child: Text('없음'),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      DropdownButtonFormField<String>(
+                        value: selectedCategoryCode,
+                        isExpanded: true,
+                        decoration: const InputDecoration(labelText: '카테고리'),
+                        items: [
+                          const DropdownMenuItem<String>(
+                            value: null,
+                            child: Text('없음'),
+                          ),
+                          ...categories.map((c) {
+                            final code = c['code'] as String;
+                            final label = (c['label'] as String?) ?? code;
+                            return DropdownMenuItem<String>(
+                              value: code,
+                              child: Text('$label ($code)'),
+                            );
+                          }),
+                        ],
+                        onChanged: (v) =>
+                            setState(() => selectedCategoryCode = v),
+                      ),
+                      const SizedBox(height: 12),
+                      DropdownButtonFormField<String>(
+                        value: selectedRelationType,
+                        isExpanded: true,
+                        decoration: const InputDecoration(labelText: '타입'),
+                        items: [
+                          const DropdownMenuItem<String>(
+                            value: null,
+                            child: Text('없음'),
+                          ),
+                          ...types.map((t) {
+                            final code = t['code'] as String;
+                            final label = (t['label'] as String?) ?? code;
+                            return DropdownMenuItem<String>(
+                              value: code,
+                              child: Text('$label ($code)'),
+                            );
+                          }),
+                        ],
+                        onChanged: (v) =>
+                            setState(() => selectedRelationType = v),
+                      ),
+                      const SizedBox(height: 12),
+                      DropdownButtonFormField<String>(
+                        value: selectedDirectionCode,
+                        isExpanded: true,
+                        decoration: const InputDecoration(labelText: '방향'),
+                        items: _directionDropdownItems(
+                          centerWordId: _centerWord.id,
+                          wordId1: _centerWord.id,
+                          wordId2: other.id,
                         ),
-                        ...categories.map((c) {
-                          final code = c['code'] as String;
-                          final label = (c['label'] as String?) ?? code;
-                          return DropdownMenuItem<String>(
-                            value: code,
-                            child: Text('$label ($code)'),
-                          );
-                        }),
-                      ],
-                      onChanged: (v) =>
-                          setState(() => selectedCategoryCode = v),
-                    ),
-                    const SizedBox(height: 12),
-                    DropdownButtonFormField<String>(
-                      value: selectedRelationType,
-                      isExpanded: true,
-                      decoration: const InputDecoration(labelText: '타입'),
-                      items: [
-                        const DropdownMenuItem<String>(
-                          value: null,
-                          child: Text('없음'),
+                        onChanged: (value) {
+                          if (value == null) return;
+                          setState(() => selectedDirectionCode = value);
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                      TextField(
+                        controller: noteController,
+                        decoration: const InputDecoration(labelText: '노트'),
+                        maxLines: 2,
+                      ),
+                      const SizedBox(height: 12),
+                      TextField(
+                        controller: sourceController,
+                        decoration: const InputDecoration(labelText: '소스'),
+                        maxLines: 2,
+                      ),
+                      const SizedBox(height: 12),
+                      TextField(
+                        controller: descriptionController,
+                        decoration: const InputDecoration(labelText: '설명'),
+                        maxLines: 3,
+                      ),
+                      const SizedBox(height: 12),
+                      TextField(
+                        controller: relationGroupIdController,
+                        decoration: const InputDecoration(
+                          labelText: '관계 그룹 ID',
                         ),
-                        ...types.map((t) {
-                          final code = t['code'] as String;
-                          final label = (t['label'] as String?) ?? code;
-                          return DropdownMenuItem<String>(
-                            value: code,
-                            child: Text('$label ($code)'),
-                          );
-                        }),
-                      ],
-                      onChanged: (v) =>
-                          setState(() => selectedRelationType = v),
-                    ),
-                    const SizedBox(height: 12),
-                    TextField(
-                      controller: noteController,
-                      decoration: const InputDecoration(labelText: '노트'),
-                      maxLines: 2,
-                    ),
-                    const SizedBox(height: 12),
-                    TextField(
-                      controller: sourceController,
-                      decoration: const InputDecoration(labelText: '소스'),
-                      maxLines: 2,
-                    ),
-                  ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
               actions: [
@@ -2584,12 +3035,13 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                       CreateRelationPayload(
                         categoryCode: selectedCategoryCode,
                         relationType: selectedRelationType,
-                        note: noteController.text.trim().isEmpty
-                            ? null
-                            : noteController.text.trim(),
-                        source: sourceController.text.trim().isEmpty
-                            ? null
-                            : sourceController.text.trim(),
+                        directionCode: selectedDirectionCode,
+                        description: _nullIfBlank(descriptionController.text),
+                        relationGroupId: _nullIfBlank(
+                          relationGroupIdController.text,
+                        ),
+                        note: _nullIfBlank(noteController.text),
+                        source: _nullIfBlank(sourceController.text),
                       ),
                     );
                   },
@@ -2656,9 +3108,11 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     if (payload == null) return;
 
     // 3) 중복 검사
-    final existingId = await _repository.findExistingRelationId(
+    final existingId = await _repository.findExistingRelationIdBySignature(
       _centerWord.id,
       other.id,
+      relationType: payload.relationType,
+      directionCode: payload.directionCode,
     );
 
     if (existingId != null) {
@@ -2687,6 +3141,9 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       wordId2: other.id,
       categoryCode: payload.categoryCode,
       relationType: payload.relationType,
+      directionCode: payload.directionCode,
+      description: payload.description,
+      relationGroupId: payload.relationGroupId,
       note: payload.note,
       source: payload.source,
     );
@@ -2929,20 +3386,22 @@ class LegacyGraphLinePainter extends CustomPainter {
   }
 }
 
-class GraphLinePainter extends CustomPainter {
+class _GraphLinePainter extends CustomPainter {
   final _GraphLayoutData layout;
   final List<Color> edgeColors;
   final List<String> edgeLabels;
   final List<String?> edgeRelationTypes;
+  final List<_GraphEdgeDirectionSummary> edgeDirectionSummaries;
   final bool showLabels;
   final double sceneScale;
   final int? selectedIndex;
 
-  GraphLinePainter({
+  _GraphLinePainter({
     required this.layout,
     required this.edgeColors,
     required this.edgeLabels,
     required this.edgeRelationTypes,
+    required this.edgeDirectionSummaries,
     required this.showLabels,
     required this.sceneScale,
     required this.selectedIndex,
@@ -2959,6 +3418,9 @@ class GraphLinePainter extends CustomPainter {
       final edgeStyle = (index < edgeRelationTypes.length)
           ? _edgeSemanticStyleForRelationType(edgeRelationTypes[index])
           : _GraphEdgeSemanticStyle.solid;
+      final directionSummary = (index < edgeDirectionSummaries.length)
+          ? edgeDirectionSummaries[index]
+          : _GraphEdgeDirectionSummary.unknown;
       final double strokeWidth = hasFocusedNode
           ? isFocusedEdge
                 ? _selectedEdgeStrokeWidth
@@ -2982,6 +3444,13 @@ class GraphLinePainter extends CustomPainter {
         nodeLayout.center,
         paint,
         edgeStyle,
+      );
+      _drawDirectionIndicator(
+        canvas,
+        layout.center,
+        nodeLayout.center,
+        paint,
+        directionSummary,
       );
 
       final label = (index < edgeLabels.length) ? edgeLabels[index] : '';
@@ -3095,8 +3564,68 @@ class GraphLinePainter extends CustomPainter {
     }
   }
 
+  void _drawDirectionIndicator(
+    Canvas canvas,
+    Offset center,
+    Offset nodeCenter,
+    Paint paint,
+    _GraphEdgeDirectionSummary directionSummary,
+  ) {
+    final delta = nodeCenter - center;
+    final totalLength = delta.distance;
+    if (totalLength <= 0.001) return;
+
+    final direction = Offset(delta.dx / totalLength, delta.dy / totalLength);
+    const edgeInset = 8.0;
+    const arrowLength = 14.0;
+
+    switch (directionSummary) {
+      case _GraphEdgeDirectionSummary.outgoing:
+        final tip = nodeCenter - direction * (_connectedNodeHalf + edgeInset);
+        final tailReference = tip - direction * arrowLength;
+        _drawArrowHead(canvas, tip, tailReference, paint);
+        return;
+      case _GraphEdgeDirectionSummary.incoming:
+        final tip = center + direction * (_centerNodeHalf + edgeInset);
+        final tailReference = tip + direction * arrowLength;
+        _drawArrowHead(canvas, tip, tailReference, paint);
+        return;
+      case _GraphEdgeDirectionSummary.undirected:
+      case _GraphEdgeDirectionSummary.unknown:
+      case _GraphEdgeDirectionSummary.mixed:
+        return;
+    }
+  }
+
+  void _drawArrowHead(
+    Canvas canvas,
+    Offset tip,
+    Offset tailReference,
+    Paint paint,
+  ) {
+    final vector = tip - tailReference;
+    final length = vector.distance;
+    if (length <= 0.001) return;
+
+    final direction = Offset(vector.dx / length, vector.dy / length);
+    final perpendicular = Offset(-direction.dy, direction.dx);
+    final wingLength = 8.0 + paint.strokeWidth;
+    final wingWidth = wingLength * 0.56;
+    final base = tip - direction * wingLength;
+    final wingA = base + perpendicular * wingWidth;
+    final wingB = base - perpendicular * wingWidth;
+    final arrowPaint = Paint()
+      ..color = paint.color
+      ..strokeWidth = paint.strokeWidth
+      ..strokeCap = StrokeCap.round
+      ..style = PaintingStyle.stroke;
+
+    canvas.drawLine(tip, wingA, arrowPaint);
+    canvas.drawLine(tip, wingB, arrowPaint);
+  }
+
   @override
-  bool shouldRepaint(covariant GraphLinePainter oldDelegate) {
+  bool shouldRepaint(covariant _GraphLinePainter oldDelegate) {
     return oldDelegate.layout.contentBounds != layout.contentBounds ||
         oldDelegate.layout.ringRadii.length != layout.ringRadii.length ||
         oldDelegate.edgeColors.length != edgeColors.length ||
@@ -3105,6 +3634,9 @@ class GraphLinePainter extends CustomPainter {
         oldDelegate.edgeLabels != edgeLabels ||
         oldDelegate.edgeRelationTypes.length != edgeRelationTypes.length ||
         oldDelegate.edgeRelationTypes != edgeRelationTypes ||
+        oldDelegate.edgeDirectionSummaries.length !=
+            edgeDirectionSummaries.length ||
+        oldDelegate.edgeDirectionSummaries != edgeDirectionSummaries ||
         oldDelegate.showLabels != showLabels ||
         oldDelegate.sceneScale != sceneScale ||
         oldDelegate.selectedIndex != selectedIndex;

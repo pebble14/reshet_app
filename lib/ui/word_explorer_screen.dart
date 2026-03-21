@@ -204,17 +204,23 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
     if (wordMap == null) return;
 
     final selectedWordId = (wordMap['id'] ?? '').toString();
+    final wasCenterWord = _centerWord.id == selectedWordId;
 
-    await Navigator.push(
+    final wasDeleted = await Navigator.push<bool?>(
       context,
       MaterialPageRoute(builder: (_) => WordDetailScreen(word: wordMap)),
     );
 
     if (!mounted || selectedWordId.isEmpty) return;
 
+    if (wasDeleted == true && wasCenterWord) {
+      Navigator.pop(context, true);
+      return;
+    }
+
     await _refreshSelectedWord(
       wordId: selectedWordId,
-      syncCenterWord: _centerWord.id == selectedWordId,
+      syncCenterWord: wasCenterWord,
       refreshGraphIfChanged: true,
     );
   }
