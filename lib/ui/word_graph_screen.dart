@@ -477,18 +477,12 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     }
 
     try {
-      final results = await Future.wait([
-        _repository.getVisibleConnectedWordsForGraph(
-          _centerWord.id,
-          outgoingLimit: _graphOutgoingLimit,
-        ),
-        _repository.getVisibleRelationEdgesForGraph(
-          _centerWord.id,
-          outgoingLimit: _graphOutgoingLimit,
-        ),
-      ]);
-      final words = results[0] as List<Word>;
-      final edges = results[1] as List<WordRelationEdgeInfo>;
+      final visibleGraphData = await _repository.getVisibleGraphData(
+        _centerWord.id,
+        outgoingLimit: _graphOutgoingLimit,
+      );
+      final words = visibleGraphData.connectedWords;
+      final edges = visibleGraphData.relationEdges;
       final viewData = _buildGraphViewData(words: words, edges: edges);
       WordGraphDataCache.put(
         centerWordId: _centerWord.id,
@@ -1290,12 +1284,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     Size canvasSize,
     GraphViewData viewData,
   ) {
-    final layoutStrategy = GraphLayoutStrategyResolver.resolve(
-      _graphLayoutMode,
-    );
-    final layoutResult = layoutStrategy.layout(
-      viewData,
-      canvasSize,
+    final layoutResult = GraphLayoutStrategyResolver.layout(
+      layoutMode: _graphLayoutMode,
+      viewData: viewData,
+      viewportSize: canvasSize,
       layoutSeed: _graphLayoutSeed(viewData),
     );
     final center =

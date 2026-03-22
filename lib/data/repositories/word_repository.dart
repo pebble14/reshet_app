@@ -67,6 +67,11 @@ class WordRelationEdgeInfo {
   }
 }
 
+typedef VisibleWordGraphData = ({
+  List<Word> connectedWords,
+  List<WordRelationEdgeInfo> relationEdges,
+});
+
 class WordRepository {
   static final List<String> _homeSearchSpellingColumns = List.unmodifiable(
     List.generate(6, (index) => '표기${index + 1}'),
@@ -395,7 +400,7 @@ class WordRepository {
   }
 
   /// graph_expand_mode를 반영한 그래프 표시용 연결 단어 조회
-  Future<List<Word>> getVisibleConnectedWordsForGraph(
+  Future<VisibleWordGraphData> getVisibleGraphData(
     String centerWordId, {
     required int outgoingLimit,
   }) async {
@@ -403,7 +408,9 @@ class WordRepository {
       centerWordId,
       outgoingLimit: outgoingLimit,
     );
-    if (visibleEdges.isEmpty) return const [];
+    if (visibleEdges.isEmpty) {
+      return (connectedWords: const <Word>[], relationEdges: visibleEdges);
+    }
 
     final orderedIds = <String>[];
     final seenIds = <String>{};
@@ -417,11 +424,23 @@ class WordRepository {
     final wordsById = <String, Word>{
       for (final row in rows) (row['id'] as String): Word.fromMap(row),
     };
-
-    return orderedIds
+    final connectedWords = orderedIds
         .map((id) => wordsById[id])
         .whereType<Word>()
         .toList(growable: false);
+
+    return (connectedWords: connectedWords, relationEdges: visibleEdges);
+  }
+
+  Future<List<Word>> getVisibleConnectedWordsForGraph(
+    String centerWordId, {
+    required int outgoingLimit,
+  }) async {
+    final visibleGraphData = await getVisibleGraphData(
+      centerWordId,
+      outgoingLimit: outgoingLimit,
+    );
+    return visibleGraphData.connectedWords;
   }
 
   /// WORD_TABLE에서 단어 목록을 일부 조회한다 (홈 화면 기본 리스트용)
