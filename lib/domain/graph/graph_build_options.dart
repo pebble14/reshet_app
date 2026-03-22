@@ -2,7 +2,7 @@
 ///
 /// 그래프 빌드 단계에서 사용하는 입력 옵션이다.
 /// foundation 단계에서는 1-hop 그래프를 기본값으로 둔다.
-enum GraphLayoutMode { radial }
+enum GraphLayoutMode { radial, forceDirected }
 
 class GraphBuildOptions {
   final String centerWordId;
