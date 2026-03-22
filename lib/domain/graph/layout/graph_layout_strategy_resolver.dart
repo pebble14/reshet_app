@@ -4,6 +4,7 @@ import '../graph_build_options.dart';
 import '../graph_layout_result.dart';
 import '../graph_view_data.dart';
 import 'force_directed_layout_strategy.dart';
+import 'graph_layout_cache.dart';
 import 'graph_layout_strategy.dart';
 import 'radial_layout_strategy.dart';
 
@@ -23,6 +24,24 @@ class GraphLayoutStrategyResolver {
 
   static GraphLayoutStrategy resolve(GraphLayoutMode layoutMode) {
     return _strategies[layoutMode] ?? _radialStrategy;
+  }
+
+  static GraphLayoutResult layout({
+    required GraphLayoutMode layoutMode,
+    required GraphViewData viewData,
+    required Size viewportSize,
+    int? layoutSeed,
+  }) {
+    return GraphLayoutCache.getOrCompute(
+      layoutMode: layoutMode,
+      viewData: viewData,
+      viewportSize: viewportSize,
+      layoutSeed: layoutSeed,
+      compute: () {
+        final strategy = resolve(layoutMode);
+        return strategy.layout(viewData, viewportSize, layoutSeed: layoutSeed);
+      },
+    );
   }
 }
 
