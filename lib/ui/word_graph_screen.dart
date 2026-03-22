@@ -214,6 +214,7 @@ class WordGraphScreen extends StatefulWidget {
   final String? selectedWordId;
   final List<Widget> appBarActionPrefix;
   final ValueChanged<Word>? onSelectWord;
+  final VoidCallback? onClearSelection;
 
   /// 스플릿뷰에서 이미 선택된 노드를 다시 클릭했을 때
   /// 부모가 중심 단어를 바꾸도록 알린다.
@@ -225,6 +226,7 @@ class WordGraphScreen extends StatefulWidget {
     this.selectedWordId,
     this.appBarActionPrefix = const [],
     this.onSelectWord,
+    this.onClearSelection,
     this.onChangeCenterWord,
   });
 
@@ -293,12 +295,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       graphExpandMode: _centerWord.graphExpandMode,
     );
     if (cachedGraph != null) {
-      final cachedViewData = _buildGraphViewData(
-        words: cachedGraph.connectedWords,
-        edges: cachedGraph.relationEdges,
-      );
       _applyGraphData(
-        viewData: cachedViewData,
+        viewData: cachedGraph.viewData,
         words: cachedGraph.connectedWords,
         edges: cachedGraph.relationEdges,
       );
@@ -452,14 +450,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       graphExpandMode: _centerWord.graphExpandMode,
     );
     if (cachedGraph != null) {
-      final cachedViewData = _buildGraphViewData(
-        words: cachedGraph.connectedWords,
-        edges: cachedGraph.relationEdges,
-      );
       if (!mounted) return;
       setState(() {
         _applyGraphData(
-          viewData: cachedViewData,
+          viewData: cachedGraph.viewData,
           words: cachedGraph.connectedWords,
           edges: cachedGraph.relationEdges,
         );
@@ -484,6 +478,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       WordGraphDataCache.put(
         centerWordId: _centerWord.id,
         graphExpandMode: _centerWord.graphExpandMode,
+        viewData: viewData,
         connectedWords: words,
         relationEdges: edges,
       );
@@ -566,7 +561,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         final int? selectedIndex = (selectedIndexRaw >= 0)
             ? selectedIndexRaw
             : null;
-        final centerVisualState = _centerVisualState(selectedIndex);
+        final centerVisualState = _centerVisualState();
 
         return Scaffold(
           appBar: _buildAppBar(
@@ -755,8 +750,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     return _colorForLanguageGroup(_languageGroupFromWordId(wordId));
   }
 
-  _GraphVisualState _centerVisualState(int? selectedIndex) {
-    return selectedIndex == null
+  _GraphVisualState _centerVisualState() {
+    return _selectedWordId == _centerWord.id
         ? _GraphVisualState.selected
         : _GraphVisualState.connected;
   }
@@ -1057,40 +1052,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         : const [];
 
     return GestureDetector(
-      onTap: () {
-        _handleConnectedWordTap(word);
-        return;
-        /*
-        // 1) 먼저 선택 상태를 갱신한다(강조 표시용).
-        //    - 이미 선택된 노드를 다시 클릭한 경우에만 "이동"을 허용한다.
-        final bool isSameTap = (_selectedWordId == word.id);
-
-        if (!isSameTap) {
-          setState(() => _selectedWordId = word.id);
-        }
-
-        // 2) 스플릿뷰 모드: 선택 이벤트 전달(화면 push는 하지 않음)
-        if (widget.onSelectWord != null) {
-          if (isSameTap && widget.onChangeCenterWord != null) {
-            widget.onChangeCenterWord!(word);
-            return;
-          }
-
-          widget.onSelectWord!(word);
-          return;
-        }
-
-        // 3) 단독 화면 모드: 같은 노드를 2번 눌렀을 때만 그래프 이동
-        if (isSameTap) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => WordGraphScreen(centerWord: word),
-            ),
-          );
-        }
-        */
-      },
+      onTap: () => _handleConnectedWordTap(word),
       child: SizedBox(
         width: _connectedNodeSize,
         height: _connectedNodeSize,
@@ -1161,6 +1123,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   void _clearSelectedWord() {
     if (_selectedWordId == null) return;
     setState(() => _selectedWordId = null);
+    widget.onClearSelection?.call();
   }
 
   _GraphLayoutData _computeGraphLayout(

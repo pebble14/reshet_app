@@ -66,6 +66,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
               onSelectWord: (word) async {
                 await _selectWord(word);
               },
+              onClearSelection: _clearSelectedWordPanel,
               onChangeCenterWord: (word) async {
                 await _selectWord(word, changeCenterWord: true);
               },
@@ -231,6 +232,18 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
       return null;
     }
     return wordId;
+  }
+
+  void _clearSelectedWordPanel() {
+    if (_selectedWordMap == null && !_isDetailLoading && _detailError == null) {
+      return;
+    }
+
+    setState(() {
+      _selectedWordMap = null;
+      _isDetailLoading = false;
+      _detailError = null;
+    });
   }
 
   List<Widget> _buildHistoryActions() {
