@@ -59,7 +59,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
           Expanded(
             flex: 3,
             child: WordGraphScreen(
-              key: ValueKey('${_centerWord.id}-$_graphRevision'),
+              key: ValueKey(_graphRevision),
               centerWord: _centerWord,
               selectedWordId: _selectedWordId,
               appBarActionPrefix: _buildHistoryActions(),
@@ -277,17 +277,12 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
     WordNavigationHistoryEntry<_ExplorerHistorySnapshot> entry,
   ) {
     final snapshot = entry.payload;
-    final centerChanged = _centerWord.id != snapshot.centerWord.id;
 
     setState(() {
       _centerWord = snapshot.centerWord;
       _selectedWordMap = _cloneWordMap(snapshot.selectedWordMap);
       _detailError = null;
       _isDetailLoading = false;
-
-      if (centerChanged) {
-        _graphRevision++;
-      }
     });
   }
 

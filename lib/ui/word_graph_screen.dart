@@ -60,6 +60,7 @@ const Color _languageGroupEnglishColor = Color(0xFF8B5FD3);
 const Color _languageGroupOtherColor = Color(0xFF9CA3AF);
 const Color _languageGroupFallbackColor = Color(0xFFC0C0C0);
 const Duration _visualStateAnimationDuration = Duration(milliseconds: 150);
+const Duration _backgroundTapSuppressDuration = Duration(milliseconds: 140);
 const double _dimmedNodeOpacity = 0.54;
 const double _dimmedNodeTextOpacity = 0.75;
 const double _connectedCenterOpacity = 0.94;
@@ -68,6 +69,13 @@ const double _dimmedEdgeLabelOpacity = 0.40;
 const double _selectedEdgeLabelTintAlpha = 0.18;
 const double _connectedEdgeLabelTintAlpha = 0.06;
 const double _dimmedEdgeLabelTintAlpha = 0.03;
+const double _centerNodeAccentRingInset = 12.0;
+const double _centerNodeSelectedAccentRingInset = 8.0;
+const double _centerNodeAccentRingWidth = 1.8;
+const double _centerNodeSelectedAccentRingWidth = 2.6;
+const double _centerChangeFocusDistanceThreshold = 72.0;
+const double _centerChangeFocusShiftFactor = 0.38;
+const double _centerChangeFocusMaxShift = 112.0;
 const double _dashedEdgeDashLength = 14.0;
 const double _dashedEdgeGapLength = 9.0;
 const double _dottedEdgeDotLength = 1.0;
@@ -265,6 +273,12 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   /// - 여러 관계가 있을 수 있으나, 현재는 “표시용 1개”만 선택(마지막으로 덮어씀)
   final Map<String, List<WordRelationEdgeInfo>> _edgeInfosByOtherId = {};
   final Map<String, WordRelationEdgeInfo> _primaryEdgeInfoByOtherId = {};
+  bool _pendingCenterFocusAfterCenterChange = false;
+  bool _didSchedulePendingCenterFocus = false;
+  String? _pendingCenterFocusWordId;
+  bool _suppressBackgroundTapClear = false;
+  bool _isViewportInteracting = false;
+  DateTime? _lastViewportInteractionAt;
 
   String _normalizedGraphExpandMode(String? graphExpandMode) {
     switch ((graphExpandMode ?? '').trim().toLowerCase()) {
@@ -321,6 +335,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         _selectedWordId = widget.selectedWordId;
         _isLoading = true;
         _errorMessage = null;
+        _pendingCenterFocusAfterCenterChange = true;
+        _pendingCenterFocusWordId = widget.centerWord.id;
       });
       _loadConnectedWords();
       return;
@@ -492,6 +508,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         _errorMessage = '연결 단어 로딩 실패: $e';
         _isLoading = false;
         _graphViewData = null;
+        _pendingCenterFocusAfterCenterChange = false;
+        _pendingCenterFocusWordId = null;
       });
     }
   }
@@ -532,6 +550,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
         final nodes = _connectedWords;
         final layout = _computeGraphLayout(canvasSize, viewData);
+        _scheduleConditionalCenterFocus(layout);
 
         // 노드 배치 순서와 동일한 순서로 엣지 색상/라벨 생성
         final edgeInfoGroups = nodes
@@ -595,6 +614,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
           body: Listener(
             onPointerSignal: (event) {
               if (event is PointerScrollEvent) {
+                _markViewportInteraction();
                 _handlePointerScroll(event);
               }
             },
@@ -605,15 +625,23 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
               boundaryMargin: const EdgeInsets.all(2000),
               panEnabled: true,
               scaleEnabled: true,
+              onInteractionStart: (_) {
+                _isViewportInteracting = true;
+                _markViewportInteraction();
+              },
               onInteractionUpdate: (_) {
                 final newScale = _transformController.value.getMaxScaleOnAxis();
                 if (newScale != _currentScale) {
                   setState(() => _currentScale = newScale);
                 }
               },
+              onInteractionEnd: (_) {
+                _isViewportInteracting = false;
+                _markViewportInteraction();
+              },
               child: GestureDetector(
                 behavior: HitTestBehavior.opaque,
-                onTap: _clearSelectedWord,
+                onTap: _handleBackgroundTap,
                 child: SizedBox(
                   width: canvasSize.width,
                   height: canvasSize.height,
@@ -755,6 +783,14 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         : _GraphVisualState.connected;
   }
 
+  bool _hasActivePeripheralSelection() {
+    final selectedWordId = _selectedWordId;
+    if (selectedWordId == null) {
+      return false;
+    }
+    return selectedWordId != _centerWord.id;
+  }
+
   _GraphVisualState _connectedNodeVisualState({
     required int nodeIndex,
     required int? selectedIndex,
@@ -793,6 +829,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   }
 
   void _handleCenterNodeTap() {
+    _temporarilySuppressBackgroundTapClear();
     if (_selectedWordId != _centerWord.id) {
       setState(() => _selectedWordId = _centerWord.id);
     }
@@ -801,6 +838,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   }
 
   void _handleConnectedWordTap(Word word) {
+    _temporarilySuppressBackgroundTapClear();
     final isSameTap = _selectedWordId == word.id;
 
     if (!isSameTap) {
@@ -914,8 +952,27 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     }
 
     final bool isSelected = visualState == _GraphVisualState.selected;
+    final bool hasPeripheralSelection = _hasActivePeripheralSelection();
     final backgroundOpacity = _nodeOpacityForState(visualState, isCenter: true);
     final textOpacity = _nodeTextOpacityForState(visualState);
+    final centerAccentColor =
+        _blendColor(
+          languageTintColor,
+          Colors.black,
+          isSelected ? 0.12 : 0.24,
+        ).withValues(
+          alpha: isSelected
+              ? 0.38
+              : hasPeripheralSelection
+              ? 0.20
+              : 0.16,
+        );
+    final centerAccentInset = isSelected
+        ? _centerNodeSelectedAccentRingInset
+        : _centerNodeAccentRingInset;
+    final centerAccentWidth = isSelected
+        ? _centerNodeSelectedAccentRingWidth
+        : _centerNodeAccentRingWidth;
     final List<BoxShadow> boxShadows = isSelected
         ? [
             BoxShadow(
@@ -970,6 +1027,29 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                       : _centerNodeBorderWidth - 0.8,
                 ),
                 boxShadow: boxShadows,
+              ),
+            ),
+          ),
+          Positioned.fill(
+            child: IgnorePointer(
+              child: AnimatedOpacity(
+                duration: _visualStateAnimationDuration,
+                curve: Curves.easeOutCubic,
+                opacity: backgroundOpacity,
+                child: Padding(
+                  padding: EdgeInsets.all(centerAccentInset),
+                  child: AnimatedContainer(
+                    duration: _visualStateAnimationDuration,
+                    curve: Curves.easeOutCubic,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: centerAccentColor,
+                        width: centerAccentWidth,
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ),
           ),
@@ -1123,6 +1203,87 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     if (_selectedWordId == null) return;
     setState(() => _selectedWordId = null);
     widget.onClearSelection?.call();
+  }
+
+  void _markViewportInteraction() {
+    _lastViewportInteractionAt = DateTime.now();
+  }
+
+  void _temporarilySuppressBackgroundTapClear() {
+    _suppressBackgroundTapClear = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _suppressBackgroundTapClear = false;
+    });
+  }
+
+  bool _shouldIgnoreBackgroundTapClear() {
+    if (_suppressBackgroundTapClear || _isViewportInteracting) {
+      return true;
+    }
+
+    final lastViewportInteractionAt = _lastViewportInteractionAt;
+    if (lastViewportInteractionAt == null) {
+      return false;
+    }
+
+    return DateTime.now().difference(lastViewportInteractionAt) <
+        _backgroundTapSuppressDuration;
+  }
+
+  void _handleBackgroundTap() {
+    if (_shouldIgnoreBackgroundTapClear()) {
+      return;
+    }
+
+    _clearSelectedWord();
+  }
+
+  void _scheduleConditionalCenterFocus(_GraphLayoutData layout) {
+    if (!_pendingCenterFocusAfterCenterChange ||
+        _pendingCenterFocusWordId != _centerWord.id ||
+        _didSchedulePendingCenterFocus) {
+      return;
+    }
+
+    _didSchedulePendingCenterFocus = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _didSchedulePendingCenterFocus = false;
+      if (!mounted) return;
+      if (!_pendingCenterFocusAfterCenterChange ||
+          _pendingCenterFocusWordId != _centerWord.id) {
+        return;
+      }
+
+      _applyConditionalCenterFocus(layout);
+      _pendingCenterFocusAfterCenterChange = false;
+      _pendingCenterFocusWordId = null;
+    });
+  }
+
+  void _applyConditionalCenterFocus(_GraphLayoutData layout) {
+    final matrix = Matrix4.copy(_transformController.value);
+    final viewportCenter = Offset(
+      layout.canvasSize.width / 2,
+      layout.canvasSize.height / 2,
+    );
+    final currentCenter = MatrixUtils.transformPoint(matrix, layout.center);
+    final delta = viewportCenter - currentCenter;
+    if (delta.distance <= _centerChangeFocusDistanceThreshold) {
+      return;
+    }
+
+    var shift = delta * _centerChangeFocusShiftFactor;
+    final shiftDistance = shift.distance;
+    if (shiftDistance > _centerChangeFocusMaxShift) {
+      final clampFactor = _centerChangeFocusMaxShift / shiftDistance;
+      shift = Offset(shift.dx * clampFactor, shift.dy * clampFactor);
+    }
+
+    final next = Matrix4.copy(matrix);
+    next.storage[12] += shift.dx;
+    next.storage[13] += shift.dy;
+    _transformController.value = next;
   }
 
   _GraphLayoutData _computeGraphLayout(
@@ -1393,6 +1554,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
             translation: const Offset(-0.5, -0.5),
             child: GestureDetector(
               onTap: () {
+                _temporarilySuppressBackgroundTapClear();
                 if (edgeInfos.isEmpty) return;
                 _showEdgeDetailDialog(otherWord, edgeInfos);
               },
