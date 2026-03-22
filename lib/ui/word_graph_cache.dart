@@ -2,15 +2,18 @@ import 'dart:collection';
 
 import '../data/models/word.dart';
 import '../data/repositories/word_repository.dart';
+import '../domain/graph/graph_view_data.dart';
 
 class _GraphCacheEntry {
   final String centerWordId;
+  final GraphViewData viewData;
   final List<Word> connectedWords;
   final List<WordRelationEdgeInfo> relationEdges;
   final DateTime lastAccessedAt;
 
   const _GraphCacheEntry({
     required this.centerWordId,
+    required this.viewData,
     required this.connectedWords,
     required this.relationEdges,
     required this.lastAccessedAt,
@@ -19,6 +22,7 @@ class _GraphCacheEntry {
   _GraphCacheEntry touch(DateTime now) {
     return _GraphCacheEntry(
       centerWordId: centerWordId,
+      viewData: viewData,
       connectedWords: connectedWords,
       relationEdges: relationEdges,
       lastAccessedAt: now,
@@ -27,6 +31,7 @@ class _GraphCacheEntry {
 }
 
 typedef WordGraphCacheData = ({
+  GraphViewData viewData,
   List<Word> connectedWords,
   List<WordRelationEdgeInfo> relationEdges,
 });
@@ -71,6 +76,7 @@ class WordGraphDataCache {
     _entries[cacheKey] = touchedEntry;
 
     return (
+      viewData: touchedEntry.viewData,
       connectedWords: List<Word>.from(touchedEntry.connectedWords),
       relationEdges: List<WordRelationEdgeInfo>.from(
         touchedEntry.relationEdges,
@@ -81,6 +87,7 @@ class WordGraphDataCache {
   static void put({
     required String centerWordId,
     required String? graphExpandMode,
+    required GraphViewData viewData,
     required List<Word> connectedWords,
     required List<WordRelationEdgeInfo> relationEdges,
   }) {
@@ -91,6 +98,7 @@ class WordGraphDataCache {
     _entries.remove(cacheKey);
     _entries[cacheKey] = _GraphCacheEntry(
       centerWordId: centerWordId,
+      viewData: viewData,
       connectedWords: List<Word>.unmodifiable(connectedWords),
       relationEdges: List<WordRelationEdgeInfo>.unmodifiable(relationEdges),
       lastAccessedAt: DateTime.now(),
