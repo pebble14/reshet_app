@@ -7,8 +7,7 @@ import '../data/repositories/word_repository.dart';
 import '../domain/graph/graph_build_options.dart';
 import '../domain/graph/graph_builder.dart';
 import '../domain/graph/graph_view_data.dart';
-import '../domain/graph/layout/graph_layout_strategy.dart';
-import '../domain/graph/layout/radial_layout_strategy.dart';
+import '../domain/graph/layout/graph_layout_strategy_resolver.dart';
 import 'word_graph_cache.dart';
 
 const double _centerNodeSize = 180.0;
@@ -237,7 +236,7 @@ class WordGraphScreen extends StatefulWidget {
 class _WordGraphScreenState extends State<WordGraphScreen> {
   final WordRepository _repository = WordRepository();
   final GraphBuilder _graphBuilder = const GraphBuilder();
-  final GraphLayoutStrategy _layoutStrategy = const RadialLayoutStrategy();
+  static const GraphLayoutMode _graphLayoutMode = GraphLayoutMode.forceDirected;
 
   /// 그래프 줌/팬 상태를 관리하는 컨트롤러
   final TransformationController _transformController =
@@ -428,7 +427,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       centerWordId: _centerWord.id,
       maxDepth: 1,
       maxNodes: 30,
-      layoutMode: GraphLayoutMode.radial,
+      layoutMode: _graphLayoutMode,
     );
   }
 
@@ -1130,7 +1129,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     Size canvasSize,
     GraphViewData viewData,
   ) {
-    final layoutResult = _layoutStrategy.layout(
+    final layoutStrategy = GraphLayoutStrategyResolver.resolve(
+      _graphLayoutMode,
+    );
+    final layoutResult = layoutStrategy.layout(
       viewData,
       canvasSize,
       layoutSeed: _graphLayoutSeed(viewData),
