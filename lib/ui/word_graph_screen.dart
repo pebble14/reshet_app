@@ -17,6 +17,9 @@ const double _centerNodeSize = 180.0;
 const double _centerNodeHalf = _centerNodeSize / 2;
 const double _connectedNodeSize = 80.0;
 const double _connectedNodeHalf = _connectedNodeSize / 2;
+const double _depthOneNodeSize = 84.0;
+const double _depthOneNodeHalf = _depthOneNodeSize / 2;
+const double _depthTwoNodeSize = 76.0;
 const double _labelAnchorFactor = 0.68;
 const double _fitBoundsPadding = 72.0;
 const double _baseLabelOffset = 12.0;
@@ -35,19 +38,32 @@ const double _centerNodeMainShadowBlur = 20.0;
 const double _centerNodeMainShadowSpread = 1.1;
 const double _centerNodeMainShadowOffsetY = 5.5;
 const double _connectedNodeDefaultBorderWidth = 2.0;
+const double _depthOneNodeBorderWidth = _connectedNodeDefaultBorderWidth + 0.2;
+const double _depthTwoNodeBorderWidth = 1.8;
 const double _connectedNodeSelectedBorderWidth = 4.0;
 const double _connectedNodeMutedBorderWidth = 1.6;
+const double _selectedNodeOuterRingInset = 5.0;
+const double _selectedNodeOuterRingWidth = 2.4;
+const double _expansionSourceRingInset = 3.0;
+const double _expansionSourceRingWidth = 1.4;
 const double _selectedEdgeStrokeWidth = 3.4;
 const double _defaultEdgeStrokeWidth = 2.0;
 const double _mutedEdgeStrokeWidth = 1.8;
+const double _centerEdgeStrokeWidth = 2.2;
+const double _expansionEdgeStrokeWidth = 1.8;
 const double _connectedEdgeOpacity = 0.80;
 const double _mutedEdgeOpacity = 0.40;
+const double _centerEdgeOpacity = _connectedEdgeOpacity + 0.04;
+const double _expansionEdgeOpacity = _connectedEdgeOpacity - 0.12;
+const double _mutedCenterEdgeOpacity = _mutedEdgeOpacity + 0.10;
+const double _mutedExpansionEdgeOpacity = _mutedEdgeOpacity;
 const double _defaultEdgeLabelBorderWidth = 1.5;
 const double _selectedEdgeLabelBorderWidth = 1.8;
 const double _defaultEdgeLabelBorderOpacity = 0.9;
 const double _mutedEdgeLabelBorderOpacity = 0.72;
 const double _centerNodeLanguageTintFactor = 0.08;
 const double _connectedNodeLanguageTintAlpha = 0.22;
+const double _depthTwoNodeLanguageTintAlpha = 0.18;
 const double _selectedNodeLanguageTintAlpha = 0.26;
 const double _mutedNodeLanguageTintAlpha = 0.14;
 const String _languageGroupHebrewAramaic = 'hebrew_aramaic';
@@ -69,6 +85,10 @@ const double _dimmedNodeTextOpacity = 0.75;
 const double _connectedCenterOpacity = 0.94;
 const double _connectedEdgeLabelOpacity = 0.80;
 const double _dimmedEdgeLabelOpacity = 0.40;
+const double _centerEdgeLabelOpacity = _connectedEdgeLabelOpacity + 0.06;
+const double _expansionEdgeLabelOpacity = _connectedEdgeLabelOpacity - 0.06;
+const double _mutedCenterEdgeLabelOpacity = _dimmedEdgeLabelOpacity + 0.14;
+const double _mutedExpansionEdgeLabelOpacity = _dimmedEdgeLabelOpacity + 0.04;
 const double _selectedEdgeLabelTintAlpha = 0.18;
 const double _connectedEdgeLabelTintAlpha = 0.06;
 const double _dimmedEdgeLabelTintAlpha = 0.03;
@@ -88,6 +108,8 @@ const int _graphOutgoingLimit = 12;
 enum _GraphVisualState { selected, connected, dimmed }
 
 enum _GraphEdgeSemanticStyle { solid, dashed, dotted }
+
+enum _GraphEdgeVisualPriority { selected, center, expansion }
 
 enum _GraphEdgeDirectionSummary {
   outgoing,
@@ -113,6 +135,19 @@ _GraphEdgeSemanticStyle _edgeSemanticStyleForRelationType(
   }
 }
 
+_GraphEdgeVisualPriority _edgeVisualPriorityFor({
+  required bool isFocusedEdge,
+  required bool touchesCenter,
+}) {
+  if (isFocusedEdge) {
+    return _GraphEdgeVisualPriority.selected;
+  }
+
+  return touchesCenter
+      ? _GraphEdgeVisualPriority.center
+      : _GraphEdgeVisualPriority.expansion;
+}
+
 class _GraphNodeLayout {
   final String nodeId;
   final int index;
@@ -123,6 +158,9 @@ class _GraphNodeLayout {
   final double radius;
   final double angle;
   final int ringIndex;
+  final int depth;
+  final double nodeSize;
+  final bool isExpansionSource;
 
   const _GraphNodeLayout({
     required this.nodeId,
@@ -134,7 +172,12 @@ class _GraphNodeLayout {
     required this.radius,
     required this.angle,
     required this.ringIndex,
+    required this.depth,
+    required this.nodeSize,
+    required this.isExpansionSource,
   });
+
+  double get nodeHalf => nodeSize / 2;
 
   Offset labelCenter(double sceneScale) {
     final scale = sceneScale <= 0 ? 1.0 : sceneScale;
@@ -157,6 +200,7 @@ class _GraphEdgeLayout {
   final Color color;
   final String? relationType;
   final _GraphEdgeDirectionSummary directionSummary;
+  final bool touchesCenter;
 
   const _GraphEdgeLayout({
     required this.edgeId,
@@ -169,6 +213,7 @@ class _GraphEdgeLayout {
     required this.color,
     required this.relationType,
     required this.directionSummary,
+    required this.touchesCenter,
   });
 
   Offset labelCenter(double sceneScale) {
@@ -896,6 +941,16 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     }
   }
 
+  double _nodeSizeForDepth(int depth) {
+    return depth >= 2 ? _depthTwoNodeSize : _depthOneNodeSize;
+  }
+
+  double _fillTintAlphaForDepth(int depth) {
+    return depth >= 2
+        ? _depthTwoNodeLanguageTintAlpha
+        : _connectedNodeLanguageTintAlpha;
+  }
+
   void _handleCenterNodeTap() {
     _temporarilySuppressBackgroundTapClear();
     if (_selectedWordId != _centerWord.id) {
@@ -1213,26 +1268,30 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   Widget _buildWordNode(
     Word word,
     Color accentColor, {
+    required _GraphNodeLayout nodeLayout,
     required _GraphVisualState visualState,
   }) {
     final label = (word.spelling1 != null && word.spelling1!.trim().isNotEmpty)
         ? word.spelling1!.trim()
         : word.id;
     final transliteration = (word.transliteration1 ?? '').trim();
-
+    final bool isDepthTwo = nodeLayout.depth >= 2;
     final bool isSelected = visualState == _GraphVisualState.selected;
     final bool isDimmed = visualState == _GraphVisualState.dimmed;
+    final bool showExpansionSourceRing =
+        nodeLayout.isExpansionSource && !isSelected;
     final languageColor = _colorForWordLanguageGroup(word.id);
     final Color effectiveAccentColor = isSelected
         ? _blendColor(accentColor, Colors.black, 0.18)
         : isDimmed
         ? _blendColor(accentColor, Colors.grey.shade500, 0.42)
         : accentColor;
+    final double baseFillTintAlpha = _fillTintAlphaForDepth(nodeLayout.depth);
     final double fillTintAlpha = isSelected
         ? _selectedNodeLanguageTintAlpha
         : isDimmed
         ? _mutedNodeLanguageTintAlpha
-        : _connectedNodeLanguageTintAlpha;
+        : baseFillTintAlpha;
     final Color fillColor = _surfaceTint(languageColor, fillTintAlpha);
     final Color innerFillColor = _surfaceTint(
       languageColor,
@@ -1246,12 +1305,23 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         ? _connectedNodeSelectedBorderWidth
         : isDimmed
         ? _connectedNodeMutedBorderWidth
-        : _connectedNodeDefaultBorderWidth;
-    final double backgroundOpacity = _nodeOpacityForState(
-      visualState,
-      isCenter: false,
-    );
+        : isDepthTwo
+        ? _depthTwoNodeBorderWidth
+        : _depthOneNodeBorderWidth;
+    final double backgroundOpacity =
+        _nodeOpacityForState(visualState, isCenter: false) *
+        (isDepthTwo ? 0.94 : 1.0);
     final double textOpacity = _nodeTextOpacityForState(visualState);
+    final Color selectedRingColor = _blendColor(
+      effectiveAccentColor,
+      Colors.black,
+      0.10,
+    ).withValues(alpha: isDimmed ? 0.18 : 0.34);
+    final Color expansionSourceRingColor = _blendColor(
+      effectiveAccentColor,
+      Colors.black,
+      0.12,
+    ).withValues(alpha: isDimmed ? 0.10 : 0.18);
     final List<BoxShadow> boxShadows = isSelected
         ? [
             BoxShadow(
@@ -1267,16 +1337,77 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
             ),
           ]
         : const [];
+    final FontWeight labelFontWeight = isSelected
+        ? FontWeight.w700
+        : isDepthTwo
+        ? FontWeight.w500
+        : FontWeight.w600;
+    final FontWeight transliterationFontWeight = isDepthTwo
+        ? FontWeight.w400
+        : FontWeight.w500;
+    final double labelFontSize = isDepthTwo ? 11.0 : 12.0;
+    final double transliterationFontSize = isDepthTwo ? 9.0 : 10.0;
+    final double nodeSize = nodeLayout.nodeSize;
 
     return GestureDetector(
       onTap: () => _handleConnectedWordTap(word),
       child: SizedBox(
-        width: _connectedNodeSize,
-        height: _connectedNodeSize,
+        width: nodeSize,
+        height: nodeSize,
         child: Stack(
           clipBehavior: Clip.none,
           alignment: Alignment.center,
           children: [
+            if (isSelected)
+              Positioned(
+                left: -_selectedNodeOuterRingInset,
+                top: -_selectedNodeOuterRingInset,
+                child: IgnorePointer(
+                  child: AnimatedOpacity(
+                    duration: _visualStateAnimationDuration,
+                    curve: Curves.easeOutCubic,
+                    opacity: backgroundOpacity,
+                    child: AnimatedContainer(
+                      duration: _visualStateAnimationDuration,
+                      curve: Curves.easeOutCubic,
+                      width: nodeSize + _selectedNodeOuterRingInset * 2,
+                      height: nodeSize + _selectedNodeOuterRingInset * 2,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: selectedRingColor,
+                          width: _selectedNodeOuterRingWidth,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            if (showExpansionSourceRing)
+              Positioned(
+                left: -_expansionSourceRingInset,
+                top: -_expansionSourceRingInset,
+                child: IgnorePointer(
+                  child: AnimatedOpacity(
+                    duration: _visualStateAnimationDuration,
+                    curve: Curves.easeOutCubic,
+                    opacity: backgroundOpacity,
+                    child: AnimatedContainer(
+                      duration: _visualStateAnimationDuration,
+                      curve: Curves.easeOutCubic,
+                      width: nodeSize + _expansionSourceRingInset * 2,
+                      height: nodeSize + _expansionSourceRingInset * 2,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: expansionSourceRingColor,
+                          width: _expansionSourceRingWidth,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             AnimatedOpacity(
               duration: _visualStateAnimationDuration,
               curve: Curves.easeOutCubic,
@@ -1284,8 +1415,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
               child: AnimatedContainer(
                 duration: _visualStateAnimationDuration,
                 curve: Curves.easeOutCubic,
-                width: _connectedNodeSize,
-                height: _connectedNodeSize,
+                width: nodeSize,
+                height: nodeSize,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
@@ -1314,7 +1445,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                       textAlign: TextAlign.center,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontSize: 12),
+                      style: TextStyle(
+                        fontSize: labelFontSize,
+                        fontWeight: labelFontWeight,
+                      ),
                     ),
                     if (transliteration.isNotEmpty) ...[
                       const SizedBox(height: 2),
@@ -1323,7 +1457,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                         textAlign: TextAlign.center,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(fontSize: 10),
+                        style: TextStyle(
+                          fontSize: transliterationFontSize,
+                          fontWeight: transliterationFontWeight,
+                        ),
                       ),
                     ],
                   ],
@@ -1446,11 +1583,19 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       width: _centerNodeSize,
       height: _centerNodeSize,
     );
+    final expansionSourceIds = viewData.nodes
+        .where((node) => node.depth >= 2 && node.expansionSourceId != null)
+        .map((node) => node.expansionSourceId!)
+        .toSet();
     final ringRadii = <double>[];
     final nodeLayouts = <_GraphNodeLayout>[];
 
     for (var index = 0; index < _connectedWords.length; index++) {
       final word = _connectedWords[index];
+      final graphNode = viewData.nodeById(word.id);
+      if (graphNode == null) {
+        continue;
+      }
       final nodeCenter = layoutResult.positionFor(word.id);
       if (nodeCenter == null) {
         continue;
@@ -1475,6 +1620,9 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
           center: center,
           nodeCenter: nodeCenter,
           ringIndex: max(ringIndex, 0),
+          depth: graphNode.depth,
+          nodeSize: _nodeSizeForDepth(graphNode.depth),
+          isExpansionSource: expansionSourceIds.contains(word.id),
         ),
       );
     }
@@ -1498,10 +1646,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
     if (!layoutResult.bounds.isEmpty) {
       final positionedBounds = Rect.fromLTRB(
-        layoutResult.bounds.left - _connectedNodeHalf,
-        layoutResult.bounds.top - _connectedNodeHalf,
-        layoutResult.bounds.right + _connectedNodeHalf,
-        layoutResult.bounds.bottom + _connectedNodeHalf,
+        layoutResult.bounds.left - _depthOneNodeHalf,
+        layoutResult.bounds.top - _depthOneNodeHalf,
+        layoutResult.bounds.right + _depthOneNodeHalf,
+        layoutResult.bounds.bottom + _depthOneNodeHalf,
       );
       contentBounds = contentBounds.expandToInclude(positionedBounds);
     }
@@ -1560,6 +1708,9 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     required Offset center,
     required Offset nodeCenter,
     required int ringIndex,
+    required int depth,
+    required double nodeSize,
+    required bool isExpansionSource,
   }) {
     final vx = nodeCenter.dx - center.dx;
     final vy = nodeCenter.dy - center.dy;
@@ -1572,8 +1723,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       center: nodeCenter,
       nodeBounds: Rect.fromCenter(
         center: nodeCenter,
-        width: _connectedNodeSize,
-        height: _connectedNodeSize,
+        width: nodeSize,
+        height: nodeSize,
       ),
       labelAnchor: Offset(
         center.dx + vx * _labelAnchorFactor,
@@ -1583,6 +1734,9 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       radius: radius,
       angle: atan2(vy, vx),
       ringIndex: ringIndex,
+      depth: depth,
+      nodeSize: nodeSize,
+      isExpansionSource: isExpansionSource,
     );
   }
 
@@ -1617,6 +1771,9 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         final directionSummary = _directionSummaryForEdges(
           _edgeInfosForEdge(edge.id),
         );
+        final touchesCenter =
+            edge.sourceId == viewData.centerNodeId ||
+            edge.targetId == viewData.centerNodeId;
 
         final delta = end - start;
         final distance = max(delta.distance, 0.001);
@@ -1643,6 +1800,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
             color: _colorForCategory(primaryEdgeInfo?.categoryCode),
             relationType: primaryEdgeInfo?.relationType ?? edge.relationType,
             directionSummary: directionSummary,
+            touchesCenter: touchesCenter,
           ),
         );
       }
@@ -1671,6 +1829,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
             _colorForCategory(
               _primaryEdgeInfoForNode(words[index].id)?.categoryCode,
             ),
+            nodeLayout: nodeLayout,
             visualState: selectedWordId == null
                 ? _GraphVisualState.connected
                 : _visualStateForNodeId(words[index].id),
@@ -1726,43 +1885,67 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       final edgeColor = edgeLayout.color;
       final bool hasFocusedEdge = selectedEdgeIds.isNotEmpty;
       final bool isFocusedEdge = selectedEdgeIds.contains(edgeLayout.edgeId);
+      final edgePriority = _edgeVisualPriorityFor(
+        isFocusedEdge: isFocusedEdge,
+        touchesCenter: edgeLayout.touchesCenter,
+      );
       final Color labelBorderColor;
       final Color labelBackgroundColor;
       final double labelBorderWidth;
       final double labelOpacity;
       final FontWeight labelFontWeight;
 
-      if (isFocusedEdge) {
-        labelBorderColor = _blendColor(edgeColor, Colors.black, 0.08);
-        labelBackgroundColor = Color.alphaBlend(
-          edgeColor.withValues(alpha: _selectedEdgeLabelTintAlpha),
-          Colors.white,
-        );
-        labelBorderWidth = _selectedEdgeLabelBorderWidth;
-        labelOpacity = 1.0;
-        labelFontWeight = FontWeight.bold;
-      } else if (hasFocusedEdge) {
-        labelBorderColor = edgeColor.withValues(
-          alpha: _mutedEdgeLabelBorderOpacity,
-        );
-        labelBackgroundColor = Color.alphaBlend(
-          edgeColor.withValues(alpha: _dimmedEdgeLabelTintAlpha),
-          Colors.white,
-        );
-        labelBorderWidth = _defaultEdgeLabelBorderWidth;
-        labelOpacity = _dimmedEdgeLabelOpacity;
-        labelFontWeight = FontWeight.w500;
-      } else {
-        labelBorderColor = edgeColor.withValues(
-          alpha: _defaultEdgeLabelBorderOpacity,
-        );
-        labelBackgroundColor = Color.alphaBlend(
-          edgeColor.withValues(alpha: _connectedEdgeLabelTintAlpha),
-          Colors.white,
-        );
-        labelBorderWidth = _defaultEdgeLabelBorderWidth;
-        labelOpacity = _connectedEdgeLabelOpacity;
-        labelFontWeight = FontWeight.w600;
+      switch (edgePriority) {
+        case _GraphEdgeVisualPriority.selected:
+          labelBorderColor = _blendColor(edgeColor, Colors.black, 0.08);
+          labelBackgroundColor = Color.alphaBlend(
+            edgeColor.withValues(alpha: _selectedEdgeLabelTintAlpha),
+            Colors.white,
+          );
+          labelBorderWidth = _selectedEdgeLabelBorderWidth;
+          labelOpacity = 1.0;
+          labelFontWeight = FontWeight.bold;
+          break;
+        case _GraphEdgeVisualPriority.center:
+          labelBorderColor = edgeColor.withValues(
+            alpha: hasFocusedEdge
+                ? _mutedEdgeLabelBorderOpacity
+                : _defaultEdgeLabelBorderOpacity,
+          );
+          labelBackgroundColor = Color.alphaBlend(
+            edgeColor.withValues(
+              alpha: hasFocusedEdge
+                  ? _dimmedEdgeLabelTintAlpha + 0.01
+                  : _connectedEdgeLabelTintAlpha + 0.01,
+            ),
+            Colors.white,
+          );
+          labelBorderWidth = _defaultEdgeLabelBorderWidth;
+          labelOpacity = hasFocusedEdge
+              ? _mutedCenterEdgeLabelOpacity
+              : _centerEdgeLabelOpacity;
+          labelFontWeight = FontWeight.w600;
+          break;
+        case _GraphEdgeVisualPriority.expansion:
+          labelBorderColor = edgeColor.withValues(
+            alpha: hasFocusedEdge
+                ? _mutedEdgeLabelBorderOpacity - 0.06
+                : _defaultEdgeLabelBorderOpacity - 0.10,
+          );
+          labelBackgroundColor = Color.alphaBlend(
+            edgeColor.withValues(
+              alpha: hasFocusedEdge
+                  ? _dimmedEdgeLabelTintAlpha
+                  : _connectedEdgeLabelTintAlpha - 0.01,
+            ),
+            Colors.white,
+          );
+          labelBorderWidth = _defaultEdgeLabelBorderWidth;
+          labelOpacity = hasFocusedEdge
+              ? _mutedExpansionEdgeLabelOpacity
+              : _expansionEdgeLabelOpacity;
+          labelFontWeight = FontWeight.w500;
+          break;
       }
 
       widgets.add(
@@ -3691,19 +3874,37 @@ class _GraphLinePainter extends CustomPainter {
     final hasFocusedEdge = selectedWordId != null;
     for (final edgeLayout in layout.edgeLayouts) {
       final bool isFocusedEdge = selectedEdgeIds.contains(edgeLayout.edgeId);
+      final edgePriority = _edgeVisualPriorityFor(
+        isFocusedEdge: isFocusedEdge,
+        touchesCenter: edgeLayout.touchesCenter,
+      );
       final edgeStyle = _edgeSemanticStyleForRelationType(
         edgeLayout.relationType,
       );
-      final double strokeWidth = hasFocusedEdge
-          ? isFocusedEdge
-                ? _selectedEdgeStrokeWidth
-                : _mutedEdgeStrokeWidth
-          : _defaultEdgeStrokeWidth;
-      final Color strokeColor = hasFocusedEdge
-          ? edgeLayout.color.withValues(
-              alpha: isFocusedEdge ? 1.0 : _mutedEdgeOpacity,
-            )
-          : edgeLayout.color.withValues(alpha: _connectedEdgeOpacity);
+      final double strokeWidth;
+      final double alpha;
+
+      switch (edgePriority) {
+        case _GraphEdgeVisualPriority.selected:
+          strokeWidth = _selectedEdgeStrokeWidth;
+          alpha = 1.0;
+          break;
+        case _GraphEdgeVisualPriority.center:
+          strokeWidth = hasFocusedEdge
+              ? _defaultEdgeStrokeWidth
+              : _centerEdgeStrokeWidth;
+          alpha = hasFocusedEdge ? _mutedCenterEdgeOpacity : _centerEdgeOpacity;
+          break;
+        case _GraphEdgeVisualPriority.expansion:
+          strokeWidth = hasFocusedEdge
+              ? _mutedEdgeStrokeWidth
+              : _expansionEdgeStrokeWidth;
+          alpha = hasFocusedEdge
+              ? _mutedExpansionEdgeOpacity
+              : _expansionEdgeOpacity;
+          break;
+      }
+      final Color strokeColor = edgeLayout.color.withValues(alpha: alpha);
 
       final paint = Paint()
         ..color = strokeColor
@@ -3824,7 +4025,11 @@ class _GraphLinePainter extends CustomPainter {
   }
 
   double _nodeHalfFor(String nodeId) {
-    return nodeId == layout.centerNodeId ? _centerNodeHalf : _connectedNodeHalf;
+    if (nodeId == layout.centerNodeId) {
+      return _centerNodeHalf;
+    }
+
+    return layout.nodeLayoutById[nodeId]?.nodeHalf ?? _connectedNodeHalf;
   }
 
   void _drawArrowHead(
