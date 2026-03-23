@@ -2,27 +2,23 @@ import 'dart:collection';
 
 import '../data/models/word.dart';
 import '../data/repositories/word_repository.dart';
-import '../domain/graph/graph_view_data.dart';
 
-class _GraphCacheEntry {
+class _BaseGraphCacheEntry {
   final String centerWordId;
-  final GraphViewData viewData;
   final List<Word> connectedWords;
   final List<WordRelationEdgeInfo> relationEdges;
   final DateTime lastAccessedAt;
 
-  const _GraphCacheEntry({
+  const _BaseGraphCacheEntry({
     required this.centerWordId,
-    required this.viewData,
     required this.connectedWords,
     required this.relationEdges,
     required this.lastAccessedAt,
   });
 
-  _GraphCacheEntry touch(DateTime now) {
-    return _GraphCacheEntry(
+  _BaseGraphCacheEntry touch(DateTime now) {
+    return _BaseGraphCacheEntry(
       centerWordId: centerWordId,
-      viewData: viewData,
       connectedWords: connectedWords,
       relationEdges: relationEdges,
       lastAccessedAt: now,
@@ -30,16 +26,49 @@ class _GraphCacheEntry {
   }
 }
 
-typedef WordGraphCacheData = ({
-  GraphViewData viewData,
+class _ExpansionGraphCacheEntry {
+  final String centerWordId;
+  final String sourceWordId;
+  final List<Word> connectedWords;
+  final List<WordRelationEdgeInfo> relationEdges;
+  final DateTime lastAccessedAt;
+
+  const _ExpansionGraphCacheEntry({
+    required this.centerWordId,
+    required this.sourceWordId,
+    required this.connectedWords,
+    required this.relationEdges,
+    required this.lastAccessedAt,
+  });
+
+  _ExpansionGraphCacheEntry touch(DateTime now) {
+    return _ExpansionGraphCacheEntry(
+      centerWordId: centerWordId,
+      sourceWordId: sourceWordId,
+      connectedWords: connectedWords,
+      relationEdges: relationEdges,
+      lastAccessedAt: now,
+    );
+  }
+}
+
+typedef WordGraphBaseCacheData = ({
+  List<Word> connectedWords,
+  List<WordRelationEdgeInfo> relationEdges,
+});
+
+typedef WordGraphExpansionCacheData = ({
   List<Word> connectedWords,
   List<WordRelationEdgeInfo> relationEdges,
 });
 
 class WordGraphDataCache {
-  static const int _maxEntries = 8;
-  static final LinkedHashMap<String, _GraphCacheEntry> _entries =
-      LinkedHashMap<String, _GraphCacheEntry>();
+  static const int _maxBaseEntries = 8;
+  static const int _maxExpansionEntries = 24;
+  static final LinkedHashMap<String, _BaseGraphCacheEntry> _baseEntries =
+      LinkedHashMap<String, _BaseGraphCacheEntry>();
+  static final LinkedHashMap<String, _ExpansionGraphCacheEntry>
+  _expansionEntries = LinkedHashMap<String, _ExpansionGraphCacheEntry>();
 
   static String _normalizeGraphExpandMode(String? graphExpandMode) {
     switch ((graphExpandMode ?? '').trim().toLowerCase()) {
@@ -54,29 +83,37 @@ class WordGraphDataCache {
     }
   }
 
-  static String _cacheKey({
+  static String _baseCacheKey({
     required String centerWordId,
     required String? graphExpandMode,
   }) {
     return '$centerWordId::${_normalizeGraphExpandMode(graphExpandMode)}';
   }
 
-  static WordGraphCacheData? get({
+  static String _expansionCacheKey({
+    required String centerWordId,
+    required String? graphExpandMode,
+    required String sourceWordId,
+  }) {
+    return '$centerWordId::${_normalizeGraphExpandMode(graphExpandMode)}::$sourceWordId';
+  }
+
+  static WordGraphBaseCacheData? getBaseGraph({
     required String centerWordId,
     required String? graphExpandMode,
   }) {
-    final cacheKey = _cacheKey(
+    final cacheKey = _baseCacheKey(
       centerWordId: centerWordId,
       graphExpandMode: graphExpandMode,
     );
-    final entry = _entries.remove(cacheKey);
-    if (entry == null) return null;
+    final entry = _baseEntries.remove(cacheKey);
+    if (entry == null) {
+      return null;
+    }
 
     final touchedEntry = entry.touch(DateTime.now());
-    _entries[cacheKey] = touchedEntry;
-
+    _baseEntries[cacheKey] = touchedEntry;
     return (
-      viewData: touchedEntry.viewData,
       connectedWords: List<Word>.from(touchedEntry.connectedWords),
       relationEdges: List<WordRelationEdgeInfo>.from(
         touchedEntry.relationEdges,
@@ -84,41 +121,107 @@ class WordGraphDataCache {
     );
   }
 
-  static void put({
+  static void putBaseGraph({
     required String centerWordId,
     required String? graphExpandMode,
-    required GraphViewData viewData,
     required List<Word> connectedWords,
     required List<WordRelationEdgeInfo> relationEdges,
   }) {
-    final cacheKey = _cacheKey(
+    final cacheKey = _baseCacheKey(
       centerWordId: centerWordId,
       graphExpandMode: graphExpandMode,
     );
-    _entries.remove(cacheKey);
-    _entries[cacheKey] = _GraphCacheEntry(
+    _baseEntries.remove(cacheKey);
+    _baseEntries[cacheKey] = _BaseGraphCacheEntry(
       centerWordId: centerWordId,
-      viewData: viewData,
       connectedWords: List<Word>.unmodifiable(connectedWords),
       relationEdges: List<WordRelationEdgeInfo>.unmodifiable(relationEdges),
       lastAccessedAt: DateTime.now(),
     );
+    _trimEntries(_baseEntries, _maxBaseEntries);
+  }
 
-    while (_entries.length > _maxEntries) {
-      _entries.remove(_entries.keys.first);
+  static WordGraphExpansionCacheData? getExpansion({
+    required String centerWordId,
+    required String? graphExpandMode,
+    required String sourceWordId,
+  }) {
+    final cacheKey = _expansionCacheKey(
+      centerWordId: centerWordId,
+      graphExpandMode: graphExpandMode,
+      sourceWordId: sourceWordId,
+    );
+    final entry = _expansionEntries.remove(cacheKey);
+    if (entry == null) {
+      return null;
     }
+
+    final touchedEntry = entry.touch(DateTime.now());
+    _expansionEntries[cacheKey] = touchedEntry;
+    return (
+      connectedWords: List<Word>.from(touchedEntry.connectedWords),
+      relationEdges: List<WordRelationEdgeInfo>.from(
+        touchedEntry.relationEdges,
+      ),
+    );
+  }
+
+  static void putExpansion({
+    required String centerWordId,
+    required String? graphExpandMode,
+    required String sourceWordId,
+    required List<Word> connectedWords,
+    required List<WordRelationEdgeInfo> relationEdges,
+  }) {
+    final cacheKey = _expansionCacheKey(
+      centerWordId: centerWordId,
+      graphExpandMode: graphExpandMode,
+      sourceWordId: sourceWordId,
+    );
+    _expansionEntries.remove(cacheKey);
+    _expansionEntries[cacheKey] = _ExpansionGraphCacheEntry(
+      centerWordId: centerWordId,
+      sourceWordId: sourceWordId,
+      connectedWords: List<Word>.unmodifiable(connectedWords),
+      relationEdges: List<WordRelationEdgeInfo>.unmodifiable(relationEdges),
+      lastAccessedAt: DateTime.now(),
+    );
+    _trimEntries(_expansionEntries, _maxExpansionEntries);
+  }
+
+  static void clearExpansionsForCenter(String centerWordId) {
+    _expansionEntries.removeWhere(
+      (_, entry) => entry.centerWordId == centerWordId,
+    );
   }
 
   static void invalidate(String centerWordId) {
-    _entries.removeWhere((_, entry) => entry.centerWordId == centerWordId);
+    _baseEntries.removeWhere((_, entry) => entry.centerWordId == centerWordId);
+    _expansionEntries.removeWhere(
+      (_, entry) =>
+          entry.centerWordId == centerWordId ||
+          entry.sourceWordId == centerWordId,
+    );
   }
 
   static void invalidateMany(Iterable<String> centerWordIds) {
     final idSet = centerWordIds.toSet();
-    _entries.removeWhere((_, entry) => idSet.contains(entry.centerWordId));
+    _baseEntries.removeWhere((_, entry) => idSet.contains(entry.centerWordId));
+    _expansionEntries.removeWhere(
+      (_, entry) =>
+          idSet.contains(entry.centerWordId) ||
+          idSet.contains(entry.sourceWordId),
+    );
   }
 
   static void clear() {
-    _entries.clear();
+    _baseEntries.clear();
+    _expansionEntries.clear();
+  }
+
+  static void _trimEntries<K, V>(LinkedHashMap<K, V> entries, int maxEntries) {
+    while (entries.length > maxEntries) {
+      entries.remove(entries.keys.first);
+    }
   }
 }

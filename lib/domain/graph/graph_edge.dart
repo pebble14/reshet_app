@@ -26,10 +26,26 @@ class GraphEdge {
     this.description,
     this.weight = 1.0,
     this.isHighlighted = false,
-  }) : id = relationId?.toString() ?? _fallbackId(sourceId, targetId);
+  }) : id =
+           relationId?.toString() ??
+           _fallbackId(
+             sourceId,
+             targetId,
+             relationType: relationType,
+             categoryCode: categoryCode,
+           );
 
-  static String _fallbackId(String sourceId, String targetId) {
-    return '$sourceId::$targetId';
+  static String _fallbackId(
+    String sourceId,
+    String targetId, {
+    String? relationType,
+    String? categoryCode,
+  }) {
+    final minWordId = sourceId.compareTo(targetId) <= 0 ? sourceId : targetId;
+    final maxWordId = sourceId.compareTo(targetId) <= 0 ? targetId : sourceId;
+    final normalizedRelationType = (relationType ?? '').trim();
+    final normalizedCategoryCode = (categoryCode ?? '').trim();
+    return '$minWordId::$maxWordId::$normalizedRelationType::$normalizedCategoryCode';
   }
 
   GraphEdge copyWith({

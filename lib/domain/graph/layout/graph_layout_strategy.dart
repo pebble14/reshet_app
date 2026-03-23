@@ -12,5 +12,6 @@ abstract interface class GraphLayoutStrategy {
     GraphViewData viewData,
     Size viewportSize, {
     int? layoutSeed,
+    Map<String, Offset> seedPositions = const <String, Offset>{},
   });
 }

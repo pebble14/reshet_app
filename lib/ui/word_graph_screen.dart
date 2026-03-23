@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
@@ -6,6 +7,8 @@ import '../data/models/word.dart';
 import '../data/repositories/word_repository.dart';
 import '../domain/graph/graph_build_options.dart';
 import '../domain/graph/graph_builder.dart';
+import '../domain/graph/graph_edge.dart';
+import '../domain/graph/graph_layout_result.dart';
 import '../domain/graph/graph_view_data.dart';
 import '../domain/graph/layout/graph_layout_strategy_resolver.dart';
 import 'word_graph_cache.dart';
@@ -111,6 +114,7 @@ _GraphEdgeSemanticStyle _edgeSemanticStyleForRelationType(
 }
 
 class _GraphNodeLayout {
+  final String nodeId;
   final int index;
   final Offset center;
   final Rect nodeBounds;
@@ -121,6 +125,7 @@ class _GraphNodeLayout {
   final int ringIndex;
 
   const _GraphNodeLayout({
+    required this.nodeId,
     required this.index,
     required this.center,
     required this.nodeBounds,
@@ -141,20 +146,61 @@ class _GraphNodeLayout {
   }
 }
 
+class _GraphEdgeLayout {
+  final String edgeId;
+  final String sourceId;
+  final String targetId;
+  final Offset start;
+  final Offset end;
+  final Offset midpoint;
+  final Offset labelNormal;
+  final Color color;
+  final String? relationType;
+  final _GraphEdgeDirectionSummary directionSummary;
+
+  const _GraphEdgeLayout({
+    required this.edgeId,
+    required this.sourceId,
+    required this.targetId,
+    required this.start,
+    required this.end,
+    required this.midpoint,
+    required this.labelNormal,
+    required this.color,
+    required this.relationType,
+    required this.directionSummary,
+  });
+
+  Offset labelCenter(double sceneScale) {
+    final scale = sceneScale <= 0 ? 1.0 : sceneScale;
+    final offset = (_baseLabelOffset / scale).clamp(6.0, 14.0);
+    return Offset(
+      midpoint.dx + labelNormal.dx * offset,
+      midpoint.dy + labelNormal.dy * offset,
+    );
+  }
+}
+
 class _GraphLayoutData {
   final Size canvasSize;
+  final String centerNodeId;
   final Offset center;
   final Rect centerBounds;
   final List<_GraphNodeLayout> nodeLayouts;
+  final Map<String, _GraphNodeLayout> nodeLayoutById;
+  final List<_GraphEdgeLayout> edgeLayouts;
   final Rect contentBounds;
   final Rect fitBounds;
   final List<double> ringRadii;
 
   const _GraphLayoutData({
     required this.canvasSize,
+    required this.centerNodeId,
     required this.center,
     required this.centerBounds,
     required this.nodeLayouts,
+    required this.nodeLayoutById,
+    required this.edgeLayouts,
     required this.contentBounds,
     required this.fitBounds,
     required this.ringRadii,
@@ -261,9 +307,15 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   bool _isLoading = true;
   String? _errorMessage;
   GraphViewData? _graphViewData;
+  WordGraphBaseCacheData? _baseGraphData;
 
   /// 중심 단어와 연결된 단어 목록
   List<Word> _connectedWords = [];
+  final Map<String, Word> _graphWordsById = {};
+  final Map<String, WordGraphExpansionCacheData> _expansionDataBySourceId = {};
+  final Set<String> _expandedDepthOneWordIds = <String>{};
+  final Set<String> _expansionRequestsInFlight = <String>{};
+  final Map<String, Offset> _seedNodePositions = <String, Offset>{};
 
   /// 사용자가 클릭(선택)한 주변 노드 id
   /// - 같은 노드를 다시 클릭하면 이동(push)하는 트리거로 사용
@@ -271,8 +323,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
   /// 상대 단어 id 기준으로 관계(엣지) 메타를 보관한다.
   /// - 여러 관계가 있을 수 있으나, 현재는 “표시용 1개”만 선택(마지막으로 덮어씀)
-  final Map<String, List<WordRelationEdgeInfo>> _edgeInfosByOtherId = {};
-  final Map<String, WordRelationEdgeInfo> _primaryEdgeInfoByOtherId = {};
+  final Map<String, List<WordRelationEdgeInfo>> _edgeInfosByEdgeId = {};
+  final Map<String, Set<String>> _adjacentNodeIdsByNodeId = {};
   bool _pendingCenterFocusAfterCenterChange = false;
   bool _didSchedulePendingCenterFocus = false;
   String? _pendingCenterFocusWordId;
@@ -303,16 +355,13 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     super.initState();
     _centerWord = widget.centerWord;
     _selectedWordId = widget.selectedWordId;
-    final cachedGraph = WordGraphDataCache.get(
+    final cachedBaseGraph = WordGraphDataCache.getBaseGraph(
       centerWordId: _centerWord.id,
       graphExpandMode: _centerWord.graphExpandMode,
     );
-    if (cachedGraph != null) {
-      _applyGraphData(
-        viewData: cachedGraph.viewData,
-        words: cachedGraph.connectedWords,
-        edges: cachedGraph.relationEdges,
-      );
+    if (cachedBaseGraph != null) {
+      _baseGraphData = cachedBaseGraph;
+      _rebuildGraphData();
       return;
     }
 
@@ -330,11 +379,16 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
             _normalizedGraphExpandMode(oldWidget.centerWord.graphExpandMode);
 
     if (didCenterWordChange) {
+      WordGraphDataCache.clearExpansionsForCenter(oldWidget.centerWord.id);
+      _resetExpansionState(clearSeedPositions: true);
       setState(() {
         _centerWord = widget.centerWord;
         _selectedWordId = widget.selectedWordId;
         _isLoading = true;
         _errorMessage = null;
+        _graphViewData = null;
+        _baseGraphData = null;
+        _connectedWords = const <Word>[];
         _pendingCenterFocusAfterCenterChange = true;
         _pendingCenterFocusWordId = widget.centerWord.id;
       });
@@ -343,11 +397,16 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     }
 
     if (didGraphExpandModeChange) {
+      WordGraphDataCache.clearExpansionsForCenter(widget.centerWord.id);
+      _resetExpansionState(clearSeedPositions: true);
       setState(() {
         _centerWord = widget.centerWord;
         _selectedWordId = widget.selectedWordId;
         _isLoading = true;
         _errorMessage = null;
+        _graphViewData = null;
+        _baseGraphData = null;
+        _connectedWords = const <Word>[];
       });
       _loadConnectedWords();
       return;
@@ -377,9 +436,15 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     required List<Word> words,
     required List<WordRelationEdgeInfo> edges,
   }) {
-    final wordsById = <String, Word>{for (final word in words) word.id: word};
+    final wordsById = <String, Word>{
+      _centerWord.id: _centerWord,
+      for (final word in words) word.id: word,
+    };
 
     _graphViewData = viewData;
+    _graphWordsById
+      ..clear()
+      ..addAll(wordsById);
     _connectedWords = viewData.nodes
         .where((node) => node.id != viewData.centerNodeId)
         .map((node) => wordsById[node.wordId])
@@ -387,18 +452,22 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         .toList(growable: false);
     _selectedWordId = _resolvedSelectedWordIdForViewData(viewData);
 
-    _edgeInfosByOtherId.clear();
-    _primaryEdgeInfoByOtherId.clear();
-    for (final e in edges) {
-      _edgeInfosByOtherId
-          .putIfAbsent(e.otherWordId, () => <WordRelationEdgeInfo>[])
-          .add(e);
+    _edgeInfosByEdgeId.clear();
+    _adjacentNodeIdsByNodeId.clear();
+    for (final node in viewData.nodes) {
+      _adjacentNodeIdsByNodeId.putIfAbsent(node.id, () => <String>{});
     }
-
-    for (final entry in _edgeInfosByOtherId.entries) {
-      if (entry.value.isNotEmpty) {
-        _primaryEdgeInfoByOtherId[entry.key] = entry.value.first;
-      }
+    for (final edgeInfo in edges) {
+      final edgeId = _edgeIdForRelationInfo(edgeInfo);
+      _edgeInfosByEdgeId
+          .putIfAbsent(edgeId, () => <WordRelationEdgeInfo>[])
+          .add(edgeInfo);
+      _adjacentNodeIdsByNodeId
+          .putIfAbsent(edgeInfo.wordId1, () => <String>{})
+          .add(edgeInfo.wordId2);
+      _adjacentNodeIdsByNodeId
+          .putIfAbsent(edgeInfo.wordId2, () => <String>{})
+          .add(edgeInfo.wordId1);
     }
 
     _errorMessage = null;
@@ -441,37 +510,59 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   GraphBuildOptions _graphBuildOptions() {
     return GraphBuildOptions(
       centerWordId: _centerWord.id,
-      maxDepth: 1,
+      maxDepth: 2,
       maxNodes: 30,
       layoutMode: _graphLayoutMode,
     );
   }
 
-  GraphViewData _buildGraphViewData({
-    required List<Word> words,
-    required List<WordRelationEdgeInfo> edges,
-  }) {
-    return _graphBuilder.buildFromVisibleGraphData(
+  GraphVisibleDataBuildResult _buildGraphData() {
+    final baseGraphData = _baseGraphData;
+    if (baseGraphData == null) {
+      throw StateError('Base graph data is not loaded for ${_centerWord.id}.');
+    }
+
+    return _graphBuilder.buildMergedVisibleGraphData(
       options: _graphBuildOptions(),
       centerWord: _centerWord,
-      connectedWords: words,
-      relationEdges: edges,
+      baseWords: baseGraphData.connectedWords,
+      baseRelationEdges: baseGraphData.relationEdges,
+      expansionDataBySourceId: _expansionDataBySourceId,
     );
   }
 
+  void _rebuildGraphData() {
+    final buildResult = _buildGraphData();
+    _applyGraphData(
+      viewData: buildResult.viewData,
+      words: buildResult.connectedWords,
+      edges: buildResult.relationEdges,
+    );
+  }
+
+  void _resetExpansionState({bool clearSeedPositions = false}) {
+    _expansionDataBySourceId.clear();
+    _expandedDepthOneWordIds.clear();
+    _expansionRequestsInFlight.clear();
+    if (clearSeedPositions) {
+      _seedNodePositions.clear();
+    }
+  }
+
   Future<void> _loadConnectedWords() async {
-    final cachedGraph = WordGraphDataCache.get(
+    final requestedCenterWordId = _centerWord.id;
+    final requestedGraphExpandMode = _centerWord.graphExpandMode;
+    _resetExpansionState(clearSeedPositions: true);
+
+    final cachedBaseGraph = WordGraphDataCache.getBaseGraph(
       centerWordId: _centerWord.id,
       graphExpandMode: _centerWord.graphExpandMode,
     );
-    if (cachedGraph != null) {
+    if (cachedBaseGraph != null) {
       if (!mounted) return;
       setState(() {
-        _applyGraphData(
-          viewData: cachedGraph.viewData,
-          words: cachedGraph.connectedWords,
-          edges: cachedGraph.relationEdges,
-        );
+        _baseGraphData = cachedBaseGraph;
+        _rebuildGraphData();
       });
       return;
     }
@@ -483,18 +574,26 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       );
       final words = visibleGraphData.connectedWords;
       final edges = visibleGraphData.relationEdges;
-      final viewData = _buildGraphViewData(words: words, edges: edges);
-      WordGraphDataCache.put(
+      final baseGraphData = (
+        connectedWords: List<Word>.unmodifiable(words),
+        relationEdges: List<WordRelationEdgeInfo>.unmodifiable(edges),
+      );
+      WordGraphDataCache.putBaseGraph(
         centerWordId: _centerWord.id,
         graphExpandMode: _centerWord.graphExpandMode,
-        viewData: viewData,
         connectedWords: words,
         relationEdges: edges,
       );
 
       if (!mounted) return;
+      if (_centerWord.id != requestedCenterWordId ||
+          _normalizedGraphExpandMode(_centerWord.graphExpandMode) !=
+              _normalizedGraphExpandMode(requestedGraphExpandMode)) {
+        return;
+      }
       setState(() {
-        _applyGraphData(viewData: viewData, words: words, edges: edges);
+        _baseGraphData = baseGraphData;
+        _rebuildGraphData();
       });
     } catch (e) {
       if (!mounted) return;
@@ -545,34 +644,11 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         final nodes = _connectedWords;
         final layout = _computeGraphLayout(canvasSize, viewData);
         _scheduleConditionalCenterFocus(layout);
+        final selectedEdgeIds = _selectedEdgeIds(_selectedWordId);
 
         // 노드 배치 순서와 동일한 순서로 엣지 색상/라벨 생성
-        final edgeInfoGroups = nodes
-            .map((word) => _edgeInfosForOtherWord(word.id))
-            .toList(growable: false);
-        final edgeInfos = nodes
-            .map((word) => _primaryEdgeInfoForOtherWord(word.id))
-            .toList(growable: false);
-        final edgeColors = edgeInfos
-            .map((info) => _colorForCategory(info?.categoryCode))
-            .toList(growable: false);
-        final edgeLabels = edgeInfoGroups
-            .map((infos) => _labelForEdgeGroup(infos))
-            .toList(growable: false);
-        final edgeRelationTypes = edgeInfos
-            .map((info) => info?.relationType)
-            .toList(growable: false);
-        final edgeDirectionSummaries = edgeInfoGroups
-            .map((infos) => _directionSummaryForEdges(infos))
-            .toList(growable: false);
 
         // 선택된 노드가 연결 노드 목록에서 몇 번째인지(없으면 null)
-        final int selectedIndexRaw = nodes.indexWhere(
-          (w) => w.id == _selectedWordId,
-        );
-        final int? selectedIndex = (selectedIndexRaw >= 0)
-            ? selectedIndexRaw
-            : null;
         final centerVisualState = _centerVisualState();
 
         return Scaffold(
@@ -648,20 +724,19 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                           switchInCurve: Curves.easeOutCubic,
                           switchOutCurve: Curves.easeOutCubic,
                           child: SizedBox(
-                            key: ValueKey<int?>(selectedIndex),
+                            key: ValueKey<String>(
+                              '${_selectedWordId ?? ''}:${viewData.nodes.length}:${viewData.edges.length}',
+                            ),
                             width: canvasSize.width,
                             height: canvasSize.height,
                             child: CustomPaint(
                               size: canvasSize,
                               painter: _GraphLinePainter(
                                 layout: layout,
-                                edgeColors: edgeColors,
-                                edgeLabels: edgeLabels,
-                                edgeRelationTypes: edgeRelationTypes,
-                                edgeDirectionSummaries: edgeDirectionSummaries,
+                                selectedWordId: _selectedWordId,
+                                selectedEdgeIds: selectedEdgeIds,
                                 showLabels: false,
                                 sceneScale: _currentScale,
-                                selectedIndex: selectedIndex,
                               ),
                             ),
                           ),
@@ -679,17 +754,13 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                       ),
                       ..._buildEdgeLabelWidgets(
                         layout,
-                        nodes,
-                        edgeInfoGroups,
-                        edgeLabels,
-                        edgeColors,
-                        selectedIndex: selectedIndex,
+                        selectedEdgeIds: selectedEdgeIds,
                       ),
 
                       ..._buildWordNodes(
                         layout,
                         nodes,
-                        selectedIndex: selectedIndex,
+                        selectedWordId: _selectedWordId,
                       ),
                       if (nodes.isEmpty)
                         Center(
@@ -772,9 +843,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   }
 
   _GraphVisualState _centerVisualState() {
-    return _selectedWordId == _centerWord.id
-        ? _GraphVisualState.selected
-        : _GraphVisualState.connected;
+    return _visualStateForNodeId(_centerWord.id);
   }
 
   bool _hasActivePeripheralSelection() {
@@ -785,17 +854,22 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     return selectedWordId != _centerWord.id;
   }
 
-  _GraphVisualState _connectedNodeVisualState({
-    required int nodeIndex,
-    required int? selectedIndex,
-  }) {
-    if (selectedIndex == null) {
+  _GraphVisualState _visualStateForNodeId(String nodeId) {
+    final selectedWordId = _selectedWordId;
+    if (selectedWordId == null) {
       return _GraphVisualState.connected;
     }
 
-    return selectedIndex == nodeIndex
-        ? _GraphVisualState.selected
-        : _GraphVisualState.dimmed;
+    if (selectedWordId == nodeId) {
+      return _GraphVisualState.selected;
+    }
+
+    final adjacentNodeIds = _adjacentNodeIdsByNodeId[selectedWordId];
+    if (adjacentNodeIds != null && adjacentNodeIds.contains(nodeId)) {
+      return _GraphVisualState.connected;
+    }
+
+    return _GraphVisualState.dimmed;
   }
 
   double _nodeOpacityForState(
@@ -838,6 +912,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     if (!isSameTap) {
       setState(() => _selectedWordId = word.id);
       widget.onSelectWord?.call(word);
+      unawaited(_expandDepthTwoForSelection(word));
       return;
     }
 
@@ -855,6 +930,75 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       context,
       MaterialPageRoute(builder: (_) => WordGraphScreen(centerWord: word)),
     );
+  }
+
+  Future<void> _expandDepthTwoForSelection(Word word) async {
+    final viewData = _graphViewData;
+    final selectedNode = viewData?.nodeById(word.id);
+    if (selectedNode == null ||
+        selectedNode.isCenter ||
+        selectedNode.depth != 1) {
+      return;
+    }
+    if (_expandedDepthOneWordIds.contains(word.id) ||
+        _expansionRequestsInFlight.contains(word.id)) {
+      return;
+    }
+
+    final requestedCenterWordId = _centerWord.id;
+    final requestedGraphExpandMode = _centerWord.graphExpandMode;
+    _expansionRequestsInFlight.add(word.id);
+
+    try {
+      final cachedExpansion = WordGraphDataCache.getExpansion(
+        centerWordId: _centerWord.id,
+        graphExpandMode: _centerWord.graphExpandMode,
+        sourceWordId: word.id,
+      );
+      final expansionData =
+          cachedExpansion ??
+          await (() async {
+            final visibleGraphData = await _repository.getVisibleGraphData(
+              word.id,
+              outgoingLimit: _graphOutgoingLimit,
+            );
+            WordGraphDataCache.putExpansion(
+              centerWordId: _centerWord.id,
+              graphExpandMode: _centerWord.graphExpandMode,
+              sourceWordId: word.id,
+              connectedWords: visibleGraphData.connectedWords,
+              relationEdges: visibleGraphData.relationEdges,
+            );
+            return (
+              connectedWords: List<Word>.unmodifiable(
+                visibleGraphData.connectedWords,
+              ),
+              relationEdges: List<WordRelationEdgeInfo>.unmodifiable(
+                visibleGraphData.relationEdges,
+              ),
+            );
+          })();
+
+      if (!mounted) return;
+      if (_centerWord.id != requestedCenterWordId ||
+          _normalizedGraphExpandMode(_centerWord.graphExpandMode) !=
+              _normalizedGraphExpandMode(requestedGraphExpandMode)) {
+        return;
+      }
+
+      setState(() {
+        _expansionDataBySourceId[word.id] = expansionData;
+        _expandedDepthOneWordIds.add(word.id);
+        _rebuildGraphData();
+      });
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('depth 2 확장 로드 실패: $e')));
+    } finally {
+      _expansionRequestsInFlight.remove(word.id);
+    }
   }
 
   Widget _buildCenterNode(Word word, {required _GraphVisualState visualState}) {
@@ -1289,7 +1433,11 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       viewData: viewData,
       viewportSize: canvasSize,
       layoutSeed: _graphLayoutSeed(viewData),
+      seedPositions: _seedNodePositions,
     );
+    _seedNodePositions
+      ..clear()
+      ..addAll(layoutResult.positionedNodes);
     final center =
         layoutResult.positionFor(viewData.centerNodeId) ??
         Offset(canvasSize.width / 2, canvasSize.height / 2);
@@ -1322,6 +1470,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
       nodeLayouts.add(
         _buildNodeLayout(
+          nodeId: word.id,
           index: index,
           center: center,
           nodeCenter: nodeCenter,
@@ -1329,10 +1478,22 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         ),
       );
     }
+    final nodeLayoutById = <String, _GraphNodeLayout>{
+      for (final nodeLayout in nodeLayouts) nodeLayout.nodeId: nodeLayout,
+    };
+    final edgeLayouts = _buildEdgeLayouts(
+      viewData: viewData,
+      layoutResult: layoutResult,
+    );
 
     Rect contentBounds = centerBounds;
     for (final nodeLayout in nodeLayouts) {
       contentBounds = contentBounds.expandToInclude(nodeLayout.nodeBounds);
+    }
+    for (final edgeLayout in edgeLayouts) {
+      contentBounds = contentBounds.expandToInclude(
+        Rect.fromPoints(edgeLayout.start, edgeLayout.end),
+      );
     }
 
     if (!layoutResult.bounds.isEmpty) {
@@ -1349,9 +1510,14 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
     return _GraphLayoutData(
       canvasSize: canvasSize,
+      centerNodeId: viewData.centerNodeId,
       center: center,
       centerBounds: centerBounds,
       nodeLayouts: nodeLayouts,
+      nodeLayoutById: Map<String, _GraphNodeLayout>.unmodifiable(
+        nodeLayoutById,
+      ),
+      edgeLayouts: List<_GraphEdgeLayout>.unmodifiable(edgeLayouts),
       contentBounds: contentBounds,
       fitBounds: contentBounds.inflate(fitPadding),
       ringRadii: List<double>.unmodifiable(ringRadii),
@@ -1389,6 +1555,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   }
 
   _GraphNodeLayout _buildNodeLayout({
+    required String nodeId,
     required int index,
     required Offset center,
     required Offset nodeCenter,
@@ -1400,6 +1567,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     final safeLength = radius <= 0.001 ? 1.0 : radius;
 
     return _GraphNodeLayout(
+      nodeId: nodeId,
       index: index,
       center: nodeCenter,
       nodeBounds: Rect.fromCenter(
@@ -1418,10 +1586,75 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     );
   }
 
+  List<_GraphEdgeLayout> _buildEdgeLayouts({
+    required GraphViewData viewData,
+    required GraphLayoutResult layoutResult,
+  }) {
+    final groupedEdges = <String, List<GraphEdge>>{};
+    for (final edge in viewData.edges) {
+      groupedEdges
+          .putIfAbsent(
+            _edgePairKey(edge.sourceId, edge.targetId),
+            () => <GraphEdge>[],
+          )
+          .add(edge);
+    }
+
+    final edgeLayouts = <_GraphEdgeLayout>[];
+    for (final group in groupedEdges.values) {
+      final orderedGroup = List<GraphEdge>.from(group)
+        ..sort((left, right) => left.id.compareTo(right.id));
+      final centerOffset = (orderedGroup.length - 1) / 2;
+
+      for (var index = 0; index < orderedGroup.length; index++) {
+        final edge = orderedGroup[index];
+        final start = layoutResult.positionFor(edge.sourceId);
+        final end = layoutResult.positionFor(edge.targetId);
+        if (start == null || end == null) {
+          continue;
+        }
+        final primaryEdgeInfo = _primaryEdgeInfoForEdge(edge.id);
+        final directionSummary = _directionSummaryForEdges(
+          _edgeInfosForEdge(edge.id),
+        );
+
+        final delta = end - start;
+        final distance = max(delta.distance, 0.001);
+        final direction = Offset(delta.dx / distance, delta.dy / distance);
+        final normal = Offset(-direction.dy, direction.dx);
+        final parallelOffset = (index - centerOffset) * 14.0;
+        final shift = normal * parallelOffset;
+        final shiftedStart = start + shift;
+        final shiftedEnd = end + shift;
+        final midpoint = Offset(
+          (shiftedStart.dx + shiftedEnd.dx) / 2,
+          (shiftedStart.dy + shiftedEnd.dy) / 2,
+        );
+
+        edgeLayouts.add(
+          _GraphEdgeLayout(
+            edgeId: edge.id,
+            sourceId: edge.sourceId,
+            targetId: edge.targetId,
+            start: shiftedStart,
+            end: shiftedEnd,
+            midpoint: midpoint,
+            labelNormal: normal,
+            color: _colorForCategory(primaryEdgeInfo?.categoryCode),
+            relationType: primaryEdgeInfo?.relationType ?? edge.relationType,
+            directionSummary: directionSummary,
+          ),
+        );
+      }
+    }
+
+    return edgeLayouts;
+  }
+
   List<Widget> _buildWordNodes(
     _GraphLayoutData layout,
     List<Word> words, {
-    required int? selectedIndex,
+    required String? selectedWordId,
   }) {
     if (words.isEmpty) return [];
 
@@ -1436,12 +1669,11 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
           child: _buildWordNode(
             words[index],
             _colorForCategory(
-              _primaryEdgeInfoByOtherId[words[index].id]?.categoryCode,
+              _primaryEdgeInfoForNode(words[index].id)?.categoryCode,
             ),
-            visualState: _connectedNodeVisualState(
-              nodeIndex: index,
-              selectedIndex: selectedIndex,
-            ),
+            visualState: selectedWordId == null
+                ? _GraphVisualState.connected
+                : _visualStateForNodeId(words[index].id),
           ),
         ),
       );
@@ -1453,16 +1685,12 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   /// 엣지 태그(라벨)를 "클릭 가능한 위젯"으로 렌더링한다.
   /// - Painter는 선만 그리고, 태그는 위젯으로 올려서 클릭 이벤트를 처리한다.
   List<Widget> _buildEdgeLabelWidgets(
-    _GraphLayoutData layout,
-    List<Word> nodes,
-    List<List<WordRelationEdgeInfo>> edgeInfoGroups,
-    List<String> edgeLabels,
-    List<Color> edgeColors, {
-    required int? selectedIndex,
+    _GraphLayoutData layout, {
+    required Set<String> selectedEdgeIds,
   }) {
     // 줌이 작으면 태그 숨김(기존 정책 유지)
     if (_currentScale < _labelVisibleScaleThreshold) return [];
-    if (nodes.isEmpty) return [];
+    if (layout.edgeLayouts.isEmpty) return [];
 
     // 태그가 선 위에 겹치지 않도록 약간 수직 방향 오프셋(줌 역보정)
 
@@ -1474,9 +1702,9 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         nodeLayout.nodeBounds.inflate(_labelCollisionPadding),
     ];
 
-    for (final nodeLayout in layout.nodeLayouts) {
-      final index = nodeLayout.index;
-      final label = edgeLabels[index].trim();
+    for (final edgeLayout in layout.edgeLayouts) {
+      final edgeInfos = _edgeInfosForEdge(edgeLayout.edgeId);
+      final label = _labelForEdgeGroup(edgeInfos).trim();
       if (label.isEmpty) continue;
 
       // 중심 -> 주변 방향 벡터
@@ -1487,7 +1715,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
       final placement = _resolveEdgeLabelPlacement(
         layout: layout,
-        nodeLayout: nodeLayout,
+        edgeLayout: edgeLayout,
         label: label,
         nodeObstacles: nodeObstacles,
         placedLabelBounds: placedLabelBounds,
@@ -1495,10 +1723,9 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       final pos = placement.center;
       placedLabelBounds.add(placement.bounds);
 
-      final otherWord = nodes[index];
-      final edgeInfos = edgeInfoGroups[index];
-      final bool hasFocusedNode = selectedIndex != null;
-      final bool isFocusedEdge = selectedIndex == index;
+      final edgeColor = edgeLayout.color;
+      final bool hasFocusedEdge = selectedEdgeIds.isNotEmpty;
+      final bool isFocusedEdge = selectedEdgeIds.contains(edgeLayout.edgeId);
       final Color labelBorderColor;
       final Color labelBackgroundColor;
       final double labelBorderWidth;
@@ -1506,31 +1733,31 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       final FontWeight labelFontWeight;
 
       if (isFocusedEdge) {
-        labelBorderColor = _blendColor(edgeColors[index], Colors.black, 0.08);
+        labelBorderColor = _blendColor(edgeColor, Colors.black, 0.08);
         labelBackgroundColor = Color.alphaBlend(
-          edgeColors[index].withValues(alpha: _selectedEdgeLabelTintAlpha),
+          edgeColor.withValues(alpha: _selectedEdgeLabelTintAlpha),
           Colors.white,
         );
         labelBorderWidth = _selectedEdgeLabelBorderWidth;
         labelOpacity = 1.0;
         labelFontWeight = FontWeight.bold;
-      } else if (hasFocusedNode) {
-        labelBorderColor = edgeColors[index].withValues(
+      } else if (hasFocusedEdge) {
+        labelBorderColor = edgeColor.withValues(
           alpha: _mutedEdgeLabelBorderOpacity,
         );
         labelBackgroundColor = Color.alphaBlend(
-          edgeColors[index].withValues(alpha: _dimmedEdgeLabelTintAlpha),
+          edgeColor.withValues(alpha: _dimmedEdgeLabelTintAlpha),
           Colors.white,
         );
         labelBorderWidth = _defaultEdgeLabelBorderWidth;
         labelOpacity = _dimmedEdgeLabelOpacity;
         labelFontWeight = FontWeight.w500;
       } else {
-        labelBorderColor = edgeColors[index].withValues(
+        labelBorderColor = edgeColor.withValues(
           alpha: _defaultEdgeLabelBorderOpacity,
         );
         labelBackgroundColor = Color.alphaBlend(
-          edgeColors[index].withValues(alpha: _connectedEdgeLabelTintAlpha),
+          edgeColor.withValues(alpha: _connectedEdgeLabelTintAlpha),
           Colors.white,
         );
         labelBorderWidth = _defaultEdgeLabelBorderWidth;
@@ -1548,7 +1775,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
               onTap: () {
                 _temporarilySuppressBackgroundTapClear();
                 if (edgeInfos.isEmpty) return;
-                _showEdgeDetailDialog(otherWord, edgeInfos);
+                _showEdgeDetailDialog(edgeInfos);
               },
               child: AnimatedOpacity(
                 duration: _visualStateAnimationDuration,
@@ -1592,16 +1819,16 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   /// - [편집] 버튼을 눌러야 입력 컨트롤이 활성화된다(실수 방지)
   ({Offset center, Rect bounds}) _resolveEdgeLabelPlacement({
     required _GraphLayoutData layout,
-    required _GraphNodeLayout nodeLayout,
+    required _GraphEdgeLayout edgeLayout,
     required String label,
     required List<Rect> nodeObstacles,
     required List<Rect> placedLabelBounds,
   }) {
-    final baseCenter = nodeLayout.labelCenter(_currentScale);
+    final baseCenter = edgeLayout.labelCenter(_currentScale);
     final radial = _unitVector(
       Offset(
-        nodeLayout.center.dx - layout.center.dx,
-        nodeLayout.center.dy - layout.center.dy,
+        edgeLayout.midpoint.dx - layout.center.dx,
+        edgeLayout.midpoint.dy - layout.center.dy,
       ),
     );
 
@@ -1612,7 +1839,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     for (int attempt = 0; attempt < _labelPlacementMaxAttempts; attempt++) {
       final candidateCenter = _candidateEdgeLabelCenter(
         baseCenter: baseCenter,
-        normal: nodeLayout.labelNormal,
+        normal: edgeLayout.labelNormal,
         radial: radial,
         attempt: attempt,
       );
@@ -1726,34 +1953,118 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     return Offset(vector.dx / length, vector.dy / length);
   }
 
-  List<WordRelationEdgeInfo> _edgeInfosForOtherWord(String otherWordId) {
+  String _edgeIdForRelationInfo(WordRelationEdgeInfo info) {
+    if (info.relationId > 0) {
+      return info.relationId.toString();
+    }
+
+    final minWordId = info.wordId1.compareTo(info.wordId2) <= 0
+        ? info.wordId1
+        : info.wordId2;
+    final maxWordId = info.wordId1.compareTo(info.wordId2) <= 0
+        ? info.wordId2
+        : info.wordId1;
+    final relationType = (info.relationType ?? '').trim();
+    final categoryCode = (info.categoryCode ?? '').trim();
+    return '$minWordId::$maxWordId::$relationType::$categoryCode';
+  }
+
+  String _edgePairKey(String leftNodeId, String rightNodeId) {
+    return leftNodeId.compareTo(rightNodeId) <= 0
+        ? '$leftNodeId::$rightNodeId'
+        : '$rightNodeId::$leftNodeId';
+  }
+
+  List<WordRelationEdgeInfo> _edgeInfosForEdge(String edgeId) {
     return List<WordRelationEdgeInfo>.unmodifiable(
-      _edgeInfosByOtherId[otherWordId] ?? const <WordRelationEdgeInfo>[],
+      _edgeInfosByEdgeId[edgeId] ?? const <WordRelationEdgeInfo>[],
     );
   }
 
-  WordRelationEdgeInfo? _primaryEdgeInfoForOtherWord(String otherWordId) {
-    return _primaryEdgeInfoByOtherId[otherWordId];
+  WordRelationEdgeInfo? _primaryEdgeInfoForEdge(String edgeId) {
+    final edgeInfos = _edgeInfosByEdgeId[edgeId];
+    if (edgeInfos == null || edgeInfos.isEmpty) {
+      return null;
+    }
+    return edgeInfos.first;
   }
 
-  _GraphEdgeDirectionSummary _directionSummaryForEdges(
-    List<WordRelationEdgeInfo> infos,
-  ) {
-    if (infos.isEmpty) return _GraphEdgeDirectionSummary.unknown;
-
-    final directions = infos
-        .map((info) => info.centerRelativeDirection.trim())
-        .where((direction) => direction.isNotEmpty)
-        .toSet();
-
-    if (directions.length != 1) {
-      return _GraphEdgeDirectionSummary.mixed;
+  WordRelationEdgeInfo? _primaryEdgeInfoForNode(String nodeId) {
+    for (final edgeInfos in _edgeInfosByEdgeId.values) {
+      if (edgeInfos.isEmpty) {
+        continue;
+      }
+      final info = edgeInfos.first;
+      if (info.wordId1 == nodeId || info.wordId2 == nodeId) {
+        return info;
+      }
     }
 
-    switch (directions.first) {
-      case 'outgoing':
+    return null;
+  }
+
+  Set<String> _selectedEdgeIds(String? selectedWordId) {
+    final normalizedWordId = (selectedWordId ?? '').trim();
+    if (normalizedWordId.isEmpty) {
+      return const <String>{};
+    }
+
+    final edgeIds = <String>{};
+    for (final entry in _edgeInfosByEdgeId.entries) {
+      final edgeInfos = entry.value;
+      if (edgeInfos.isEmpty) {
+        continue;
+      }
+
+      if (edgeInfos.any(
+        (info) =>
+            info.wordId1 == normalizedWordId ||
+            info.wordId2 == normalizedWordId,
+      )) {
+        edgeIds.add(entry.key);
+      }
+    }
+
+    return edgeIds;
+  }
+
+  Word? _wordForNodeId(String nodeId) {
+    if (nodeId == _centerWord.id) {
+      return _centerWord;
+    }
+
+    return _graphWordsById[nodeId];
+  }
+
+  String _wordDisplayName(String nodeId) {
+    final word = _wordForNodeId(nodeId);
+    final spelling = (word?.spelling1 ?? '').trim();
+    if (spelling.isNotEmpty) {
+      return spelling;
+    }
+
+    return nodeId;
+  }
+
+  String _edgeDisplayTitle(WordRelationEdgeInfo info) {
+    return '${_wordDisplayName(info.wordId1)} ↔ ${_wordDisplayName(info.wordId2)}';
+  }
+
+  String _directionReferenceWordId(WordRelationEdgeInfo info) {
+    if (info.wordId1 == _centerWord.id || info.wordId2 == _centerWord.id) {
+      return _centerWord.id;
+    }
+
+    return info.wordId1;
+  }
+
+  _GraphEdgeDirectionSummary _directionSummaryForDirectionCode(
+    String? directionCode,
+  ) {
+    switch ((directionCode ?? '').trim()) {
+      case 'w1_to_w2':
         return _GraphEdgeDirectionSummary.outgoing;
-      case 'incoming':
+      case 'w2_to_w1':
         return _GraphEdgeDirectionSummary.incoming;
       case 'undirected':
         return _GraphEdgeDirectionSummary.undirected;
@@ -1762,12 +2073,28 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     }
   }
 
+  _GraphEdgeDirectionSummary _directionSummaryForEdges(
+    List<WordRelationEdgeInfo> infos,
+  ) {
+    if (infos.isEmpty) return _GraphEdgeDirectionSummary.unknown;
+
+    final directions = infos
+        .map((info) => _directionSummaryForDirectionCode(info.directionCode))
+        .toSet();
+
+    if (directions.length != 1) {
+      return _GraphEdgeDirectionSummary.mixed;
+    }
+
+    return directions.first;
+  }
+
   String _directionTagForSummary(_GraphEdgeDirectionSummary summary) {
     switch (summary) {
       case _GraphEdgeDirectionSummary.outgoing:
-        return 'OUT';
+        return '->';
       case _GraphEdgeDirectionSummary.incoming:
-        return 'IN';
+        return '<-';
       case _GraphEdgeDirectionSummary.undirected:
         return 'UNDIR';
       case _GraphEdgeDirectionSummary.mixed:
@@ -1850,13 +2177,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         .toList(growable: false);
   }
 
-  Future<void> _showEdgeDetailDialog(
-    Word otherWord,
-    List<WordRelationEdgeInfo> infos,
-  ) async {
+  Future<void> _showEdgeDetailDialog(List<WordRelationEdgeInfo> infos) async {
     if (infos.isEmpty) return;
     if (infos.length == 1) {
-      await _showSingleEdgeDetailDialog(otherWord, infos.first);
+      await _showSingleEdgeDetailDialog(infos.first);
       return;
     }
 
@@ -1864,7 +2188,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('관계 목록 ${otherWord.spelling1 ?? otherWord.id}'),
+          title: Text('관계 목록 ${_edgeDisplayTitle(infos.first)}'),
           content: SizedBox(
             width: 460,
             child: SingleChildScrollView(
@@ -1937,13 +2261,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     );
 
     if (!mounted || selectedInfo == null) return;
-    await _showSingleEdgeDetailDialog(otherWord, selectedInfo);
+    await _showSingleEdgeDetailDialog(selectedInfo);
   }
 
-  Future<void> _showSingleEdgeDetailDialog(
-    Word otherWord,
-    WordRelationEdgeInfo info,
-  ) async {
+  Future<void> _showSingleEdgeDetailDialog(WordRelationEdgeInfo info) async {
     await showDialog(
       context: context,
       builder: (context) {
@@ -2052,7 +2373,11 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
             );
 
             // 그래프 갱신(색/라벨/팝업 내용 반영)
-            WordGraphDataCache.invalidateMany([_centerWord.id, otherWord.id]);
+            WordGraphDataCache.invalidateMany([
+              _centerWord.id,
+              info.wordId1,
+              info.wordId2,
+            ]);
             await _loadConnectedWords();
 
             if (!mounted) return;
@@ -2076,7 +2401,11 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
             await _repository.deleteRelation(info.relationId);
 
             // 그래프 갱신(엣지/라벨/색 반영)
-            WordGraphDataCache.invalidateMany([_centerWord.id, otherWord.id]);
+            WordGraphDataCache.invalidateMany([
+              _centerWord.id,
+              info.wordId1,
+              info.wordId2,
+            ]);
             await _loadConnectedWords();
 
             if (!mounted) return;
@@ -2110,7 +2439,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                 : '(없음)';
             final directionText = _directionTextForRawCode(
               directionCode: selectedDirectionCode,
-              centerWordId: _centerWord.id,
+              centerWordId: _directionReferenceWordId(info),
               wordId1: info.wordId1,
               wordId2: info.wordId2,
             );
@@ -2122,7 +2451,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
             final canSave = isEditing && !isSaving && hasChanges();
 
             return AlertDialog(
-              title: Text('관계: ${otherWord.spelling1 ?? otherWord.id}'),
+              title: Text('관계: ${_edgeDisplayTitle(info)}'),
               content: SizedBox(
                 width: 420,
                 child: SingleChildScrollView(
@@ -2228,7 +2557,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                             border: OutlineInputBorder(),
                           ),
                           items: _directionDropdownItems(
-                            centerWordId: _centerWord.id,
+                            centerWordId: _directionReferenceWordId(info),
                             wordId1: info.wordId1,
                             wordId2: info.wordId2,
                           ),
@@ -3342,49 +3671,39 @@ class LegacyGraphLinePainter extends CustomPainter {
 
 class _GraphLinePainter extends CustomPainter {
   final _GraphLayoutData layout;
-  final List<Color> edgeColors;
-  final List<String> edgeLabels;
-  final List<String?> edgeRelationTypes;
-  final List<_GraphEdgeDirectionSummary> edgeDirectionSummaries;
+  final String? selectedWordId;
+  final Set<String> selectedEdgeIds;
   final bool showLabels;
   final double sceneScale;
-  final int? selectedIndex;
 
   _GraphLinePainter({
     required this.layout,
-    required this.edgeColors,
-    required this.edgeLabels,
-    required this.edgeRelationTypes,
-    required this.edgeDirectionSummaries,
+    required this.selectedWordId,
+    required this.selectedEdgeIds,
     required this.showLabels,
     required this.sceneScale,
-    required this.selectedIndex,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
-    if (layout.nodeLayouts.isEmpty) return;
+    if (layout.edgeLayouts.isEmpty) return;
 
-    for (final nodeLayout in layout.nodeLayouts) {
-      final index = nodeLayout.index;
-      final bool hasFocusedNode = selectedIndex != null;
-      final bool isFocusedEdge = selectedIndex == index;
-      final edgeStyle = (index < edgeRelationTypes.length)
-          ? _edgeSemanticStyleForRelationType(edgeRelationTypes[index])
-          : _GraphEdgeSemanticStyle.solid;
-      final directionSummary = (index < edgeDirectionSummaries.length)
-          ? edgeDirectionSummaries[index]
-          : _GraphEdgeDirectionSummary.unknown;
-      final double strokeWidth = hasFocusedNode
+    final hasFocusedEdge = selectedWordId != null;
+    for (final edgeLayout in layout.edgeLayouts) {
+      final bool isFocusedEdge = selectedEdgeIds.contains(edgeLayout.edgeId);
+      final edgeStyle = _edgeSemanticStyleForRelationType(
+        edgeLayout.relationType,
+      );
+      final double strokeWidth = hasFocusedEdge
           ? isFocusedEdge
                 ? _selectedEdgeStrokeWidth
                 : _mutedEdgeStrokeWidth
           : _defaultEdgeStrokeWidth;
-      final Color strokeColor = hasFocusedNode
-          ? edgeColors[index].withValues(
+      final Color strokeColor = hasFocusedEdge
+          ? edgeLayout.color.withValues(
               alpha: isFocusedEdge ? 1.0 : _mutedEdgeOpacity,
             )
-          : edgeColors[index].withValues(alpha: _connectedEdgeOpacity);
+          : edgeLayout.color.withValues(alpha: _connectedEdgeOpacity);
 
       final paint = Paint()
         ..color = strokeColor
@@ -3394,70 +3713,21 @@ class _GraphLinePainter extends CustomPainter {
 
       _drawStyledEdge(
         canvas,
-        layout.center,
-        nodeLayout.center,
+        edgeLayout.start,
+        edgeLayout.end,
         paint,
         edgeStyle,
       );
       _drawDirectionIndicator(
         canvas,
-        layout.center,
-        nodeLayout.center,
+        edgeLayout.start,
+        edgeLayout.end,
+        edgeLayout.sourceId,
+        edgeLayout.targetId,
         paint,
-        directionSummary,
+        edgeLayout.directionSummary,
       );
-
-      final label = (index < edgeLabels.length) ? edgeLabels[index] : '';
-      if (showLabels && label.isNotEmpty) {
-        _drawEdgeLabel(
-          canvas,
-          nodeLayout.labelCenter(sceneScale),
-          label,
-          edgeColors[index],
-        );
-      }
     }
-  }
-
-  void _drawEdgeLabel(Canvas canvas, Offset pos, String text, Color edgeColor) {
-    final scale = sceneScale <= 0 ? 1.0 : sceneScale;
-    final fontSize = (11.0 / scale).clamp(9.0, 12.0);
-    final padX = (6.0 / scale).clamp(4.0, 7.0);
-    final padY = (3.0 / scale).clamp(2.0, 4.0);
-
-    final textPainter = TextPainter(
-      text: TextSpan(
-        text: text,
-        style: TextStyle(
-          fontSize: fontSize,
-          fontWeight: FontWeight.w600,
-          color: Colors.black87,
-        ),
-      ),
-      textDirection: TextDirection.ltr,
-      maxLines: 1,
-      ellipsis: '...',
-    )..layout();
-
-    final rect = Rect.fromCenter(
-      center: pos,
-      width: textPainter.width + padX * 2,
-      height: textPainter.height + padY * 2,
-    );
-
-    final rrect = RRect.fromRectAndRadius(rect, const Radius.circular(10));
-
-    final bgPaint = Paint()..color = Colors.white.withOpacity(0.92);
-    final borderPaint = Paint()
-      ..color = edgeColor.withOpacity(0.75)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1;
-
-    canvas.drawRRect(rrect, bgPaint);
-    canvas.drawRRect(rrect, borderPaint);
-
-    final textOffset = Offset(rect.left + padX, rect.top + padY);
-    textPainter.paint(canvas, textOffset);
   }
 
   void _drawStyledEdge(
@@ -3520,12 +3790,14 @@ class _GraphLinePainter extends CustomPainter {
 
   void _drawDirectionIndicator(
     Canvas canvas,
-    Offset center,
-    Offset nodeCenter,
+    Offset start,
+    Offset end,
+    String sourceId,
+    String targetId,
     Paint paint,
     _GraphEdgeDirectionSummary directionSummary,
   ) {
-    final delta = nodeCenter - center;
+    final delta = end - start;
     final totalLength = delta.distance;
     if (totalLength <= 0.001) return;
 
@@ -3535,12 +3807,12 @@ class _GraphLinePainter extends CustomPainter {
 
     switch (directionSummary) {
       case _GraphEdgeDirectionSummary.outgoing:
-        final tip = nodeCenter - direction * (_connectedNodeHalf + edgeInset);
+        final tip = end - direction * (_nodeHalfFor(targetId) + edgeInset);
         final tailReference = tip - direction * arrowLength;
         _drawArrowHead(canvas, tip, tailReference, paint);
         return;
       case _GraphEdgeDirectionSummary.incoming:
-        final tip = center + direction * (_centerNodeHalf + edgeInset);
+        final tip = start + direction * (_nodeHalfFor(sourceId) + edgeInset);
         final tailReference = tip + direction * arrowLength;
         _drawArrowHead(canvas, tip, tailReference, paint);
         return;
@@ -3549,6 +3821,10 @@ class _GraphLinePainter extends CustomPainter {
       case _GraphEdgeDirectionSummary.mixed:
         return;
     }
+  }
+
+  double _nodeHalfFor(String nodeId) {
+    return nodeId == layout.centerNodeId ? _centerNodeHalf : _connectedNodeHalf;
   }
 
   void _drawArrowHead(
@@ -3582,17 +3858,12 @@ class _GraphLinePainter extends CustomPainter {
   bool shouldRepaint(covariant _GraphLinePainter oldDelegate) {
     return oldDelegate.layout.contentBounds != layout.contentBounds ||
         oldDelegate.layout.ringRadii.length != layout.ringRadii.length ||
-        oldDelegate.edgeColors.length != edgeColors.length ||
-        oldDelegate.edgeColors != edgeColors ||
-        oldDelegate.edgeLabels.length != edgeLabels.length ||
-        oldDelegate.edgeLabels != edgeLabels ||
-        oldDelegate.edgeRelationTypes.length != edgeRelationTypes.length ||
-        oldDelegate.edgeRelationTypes != edgeRelationTypes ||
-        oldDelegate.edgeDirectionSummaries.length !=
-            edgeDirectionSummaries.length ||
-        oldDelegate.edgeDirectionSummaries != edgeDirectionSummaries ||
+        oldDelegate.layout.edgeLayouts.length != layout.edgeLayouts.length ||
+        oldDelegate.layout.edgeLayouts != layout.edgeLayouts ||
+        oldDelegate.selectedWordId != selectedWordId ||
+        oldDelegate.selectedEdgeIds.length != selectedEdgeIds.length ||
+        oldDelegate.selectedEdgeIds.difference(selectedEdgeIds).isNotEmpty ||
         oldDelegate.showLabels != showLabels ||
-        oldDelegate.sceneScale != sceneScale ||
-        oldDelegate.selectedIndex != selectedIndex;
+        oldDelegate.sceneScale != sceneScale;
   }
 }

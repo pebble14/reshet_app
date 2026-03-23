@@ -8,6 +8,7 @@ class GraphNode {
   final String label;
   final int depth;
   final bool isCenter;
+  final String? expansionSourceId;
   final String? languageCode;
   final double weight;
   final bool isPinned;
@@ -17,6 +18,7 @@ class GraphNode {
     required this.label,
     required this.depth,
     required this.isCenter,
+    this.expansionSourceId,
     this.languageCode,
     this.weight = 1.0,
     this.isPinned = false,
@@ -28,6 +30,8 @@ class GraphNode {
     String? label,
     int? depth,
     bool? isCenter,
+    String? expansionSourceId,
+    bool clearExpansionSourceId = false,
     String? languageCode,
     double? weight,
     bool? isPinned,
@@ -37,6 +41,9 @@ class GraphNode {
       label: label ?? this.label,
       depth: depth ?? this.depth,
       isCenter: isCenter ?? this.isCenter,
+      expansionSourceId: clearExpansionSourceId
+          ? null
+          : (expansionSourceId ?? this.expansionSourceId),
       languageCode: languageCode ?? this.languageCode,
       weight: weight ?? this.weight,
       isPinned: isPinned ?? this.isPinned,
@@ -52,6 +59,7 @@ class GraphNode {
         other.label == label &&
         other.depth == depth &&
         other.isCenter == isCenter &&
+        other.expansionSourceId == expansionSourceId &&
         other.languageCode == languageCode &&
         other.weight == weight &&
         other.isPinned == isPinned;
@@ -64,6 +72,7 @@ class GraphNode {
     label,
     depth,
     isCenter,
+    expansionSourceId,
     languageCode,
     weight,
     isPinned,
@@ -75,7 +84,8 @@ class GraphNode {
         'id: $id, '
         'label: $label, '
         'depth: $depth, '
-        'isCenter: $isCenter'
+        'isCenter: $isCenter, '
+        'expansionSourceId: $expansionSourceId'
         ')';
   }
 }

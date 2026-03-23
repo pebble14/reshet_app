@@ -11,12 +11,16 @@ class _ForceNodePlacement {
   final int index;
   final GraphNode node;
   final double targetRadius;
+  final Offset? seedPosition;
+  final double seedAnchorStrength;
   Offset position;
 
   _ForceNodePlacement({
     required this.index,
     required this.node,
     required this.targetRadius,
+    required this.seedPosition,
+    required this.seedAnchorStrength,
     required this.position,
   });
 }
@@ -37,6 +41,7 @@ class ForceDirectedLayoutStrategy implements GraphLayoutStrategy {
   final double centerBiasStrength;
   final double boundaryStrength;
   final double maxStepDistance;
+  final double seedAnchorStrength;
 
   const ForceDirectedLayoutStrategy({
     this.centerNodeDiameter = 180.0,
@@ -54,6 +59,7 @@ class ForceDirectedLayoutStrategy implements GraphLayoutStrategy {
     this.centerBiasStrength = 0.085,
     this.boundaryStrength = 0.2,
     this.maxStepDistance = 15.0,
+    this.seedAnchorStrength = 0.16,
   });
 
   @override
@@ -61,6 +67,7 @@ class ForceDirectedLayoutStrategy implements GraphLayoutStrategy {
     GraphViewData viewData,
     Size viewportSize, {
     int? layoutSeed,
+    Map<String, Offset> seedPositions = const <String, Offset>{},
   }) {
     final center = Offset(viewportSize.width / 2, viewportSize.height / 2);
     final positionedNodes = <String, Offset>{viewData.centerNodeId: center};
@@ -97,26 +104,53 @@ class ForceDirectedLayoutStrategy implements GraphLayoutStrategy {
       ),
     );
     final placements = <_ForceNodePlacement>[];
+    final depthCounts = <int, int>{};
 
     for (var index = 0; index < peripheralNodes.length; index++) {
-      final targetRadius = _targetRadiusForIndex(
-        index: index,
+      final node = peripheralNodes[index];
+      final depthOrderIndex = depthCounts.update(
+        node.depth,
+        (count) => count + 1,
+        ifAbsent: () => 0,
+      );
+      final targetRadius = _targetRadiusForNode(
+        node: node,
+        depthOrderIndex: depthOrderIndex,
         shellCapacity: shellCapacity,
         minCenterDistance: minCenterDistance,
         maxCenterDistance: maxCenterDistance,
       );
+      final seedPosition = seedPositions[node.id];
       placements.add(
         _ForceNodePlacement(
           index: index,
-          node: peripheralNodes[index],
+          node: node,
           targetRadius: targetRadius,
-          position: _initialPositionForIndex(
+          seedPosition: seedPosition,
+          seedAnchorStrength: seedPosition == null
+              ? 0.0
+              : (node.depth <= 1
+                    ? seedAnchorStrength
+                    : seedAnchorStrength * 0.72),
+          position: _stabilizePosition(
             center: center,
-            targetRadius: targetRadius,
-            index: index,
-            totalNodeCount: peripheralNodes.length,
-            shellCapacity: shellCapacity,
+            candidate: _initialPositionForNode(
+              center: center,
+              targetRadius: targetRadius,
+              node: node,
+              index: index,
+              depthOrderIndex: depthOrderIndex,
+              totalNodeCount: peripheralNodes.length,
+              shellCapacity: shellCapacity,
+              layoutSeed: layoutSeed,
+              seedPositions: seedPositions,
+            ),
+            minCenterDistance: minCenterDistance,
+            maxCenterDistance: maxCenterDistance,
+            viewportSize: viewportSize,
+            nodeHalf: nodeHalf,
             layoutSeed: layoutSeed,
+            index: index,
           ),
         ),
       );
@@ -140,6 +174,7 @@ class ForceDirectedLayoutStrategy implements GraphLayoutStrategy {
         maxCenterDistance: maxCenterDistance,
         layoutSeed: layoutSeed,
       );
+      _applySeedBias(placements: placements, deltas: deltas);
       _applyNodeRepulsion(placements: placements, deltas: deltas);
       _applyEdgeForces(
         center: center,
@@ -183,6 +218,22 @@ class ForceDirectedLayoutStrategy implements GraphLayoutStrategy {
       edges: viewData.edges,
       bounds: _computeBounds(positionedNodes.values),
     );
+  }
+
+  void _applySeedBias({
+    required List<_ForceNodePlacement> placements,
+    required List<Offset> deltas,
+  }) {
+    for (var index = 0; index < placements.length; index++) {
+      final placement = placements[index];
+      final seedPosition = placement.seedPosition;
+      if (seedPosition == null || placement.seedAnchorStrength <= 0) {
+        continue;
+      }
+
+      final vector = seedPosition - placement.position;
+      deltas[index] += vector * placement.seedAnchorStrength;
+    }
   }
 
   void _applyCenterBias({
@@ -350,14 +401,54 @@ class ForceDirectedLayoutStrategy implements GraphLayoutStrategy {
     return stabilized;
   }
 
-  Offset _initialPositionForIndex({
+  Offset _initialPositionForNode({
     required Offset center,
     required double targetRadius,
+    required GraphNode node,
     required int index,
+    required int depthOrderIndex,
     required int totalNodeCount,
     required int shellCapacity,
     required int? layoutSeed,
+    required Map<String, Offset> seedPositions,
   }) {
+    final seededPosition = seedPositions[node.id];
+    if (seededPosition != null) {
+      return seededPosition;
+    }
+
+    if (node.depth >= 2) {
+      final sourceId = node.expansionSourceId;
+      final sourcePosition = sourceId == null ? null : seedPositions[sourceId];
+      if (sourcePosition != null) {
+        final sourceVector = sourcePosition - center;
+        final sourceDistance = sourceVector.distance;
+        final radialDirection = sourceDistance <= 0.001
+            ? _seedDirection(layoutSeed: layoutSeed, index: index)
+            : Offset(
+                sourceVector.dx / sourceDistance,
+                sourceVector.dy / sourceDistance,
+              );
+        final tangentialDirection = Offset(
+          -radialDirection.dy,
+          radialDirection.dx,
+        );
+        final orbitDistance = max(
+          nodeDiameter + minimumNodeGap + 18.0,
+          shellSpacing * 0.92,
+        );
+        final lateralTier = (depthOrderIndex / 2).floor();
+        final lateralDistance = min(
+          nodeDiameter * 1.15,
+          lateralTier * (nodeDiameter * 0.55),
+        );
+        final lateralSign = depthOrderIndex.isEven ? 1.0 : -1.0;
+        return sourcePosition +
+            radialDirection * orbitDistance +
+            tangentialDirection * lateralDistance * lateralSign;
+      }
+    }
+
     final shellIndex = index ~/ shellCapacity;
     final orderOnShell = index % shellCapacity;
     final countOnShell = min(
@@ -376,14 +467,17 @@ class ForceDirectedLayoutStrategy implements GraphLayoutStrategy {
     );
   }
 
-  double _targetRadiusForIndex({
-    required int index,
+  double _targetRadiusForNode({
+    required GraphNode node,
+    required int depthOrderIndex,
     required int shellCapacity,
     required double minCenterDistance,
     required double maxCenterDistance,
   }) {
-    final shellIndex = index ~/ shellCapacity;
-    final targetRadius = baseCenterDistance + shellSpacing * shellIndex;
+    final baseShellIndex = max(0, node.depth - 1);
+    final shellIndex = depthOrderIndex ~/ shellCapacity;
+    final targetRadius =
+        baseCenterDistance + shellSpacing * (baseShellIndex + shellIndex);
     return targetRadius.clamp(minCenterDistance, maxCenterDistance).toDouble();
   }
 
@@ -456,6 +550,11 @@ class ForceDirectedLayoutStrategy implements GraphLayoutStrategy {
   }
 
   int _compareNodes(GraphNode left, GraphNode right) {
+    final byDepth = left.depth.compareTo(right.depth);
+    if (byDepth != 0) {
+      return byDepth;
+    }
+
     final byWeight = right.weight.compareTo(left.weight);
     if (byWeight != 0) {
       return byWeight;

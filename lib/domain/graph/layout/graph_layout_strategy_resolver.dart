@@ -31,15 +31,22 @@ class GraphLayoutStrategyResolver {
     required GraphViewData viewData,
     required Size viewportSize,
     int? layoutSeed,
+    Map<String, Offset> seedPositions = const <String, Offset>{},
   }) {
     return GraphLayoutCache.getOrCompute(
       layoutMode: layoutMode,
       viewData: viewData,
       viewportSize: viewportSize,
       layoutSeed: layoutSeed,
+      seedPositions: seedPositions,
       compute: () {
         final strategy = resolve(layoutMode);
-        return strategy.layout(viewData, viewportSize, layoutSeed: layoutSeed);
+        return strategy.layout(
+          viewData,
+          viewportSize,
+          layoutSeed: layoutSeed,
+          seedPositions: seedPositions,
+        );
       },
     );
   }
@@ -59,19 +66,26 @@ class _FallbackGraphLayoutStrategy implements GraphLayoutStrategy {
     GraphViewData viewData,
     Size viewportSize, {
     int? layoutSeed,
+    Map<String, Offset> seedPositions = const <String, Offset>{},
   }) {
     try {
       final result = primary.layout(
         viewData,
         viewportSize,
         layoutSeed: layoutSeed,
+        seedPositions: seedPositions,
       );
       if (_isUsable(result, viewData)) {
         return result;
       }
     } catch (_) {}
 
-    return fallback.layout(viewData, viewportSize, layoutSeed: layoutSeed);
+    return fallback.layout(
+      viewData,
+      viewportSize,
+      layoutSeed: layoutSeed,
+      seedPositions: seedPositions,
+    );
   }
 
   bool _isUsable(GraphLayoutResult result, GraphViewData viewData) {
