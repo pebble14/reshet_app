@@ -9,6 +9,9 @@ class GraphNode {
   final int depth;
   final bool isCenter;
   final String? expansionSourceId;
+  final bool isPlaceholderMoreNode;
+  final int hiddenCount;
+  final String? placeholderSourceWordId;
   final String? languageCode;
   final double weight;
   final bool isPinned;
@@ -19,10 +22,14 @@ class GraphNode {
     required this.depth,
     required this.isCenter,
     this.expansionSourceId,
+    this.isPlaceholderMoreNode = false,
+    this.hiddenCount = 0,
+    this.placeholderSourceWordId,
     this.languageCode,
     this.weight = 1.0,
     this.isPinned = false,
   }) : assert(depth >= 0),
+       assert(hiddenCount >= 0),
        id = wordId;
 
   GraphNode copyWith({
@@ -32,6 +39,10 @@ class GraphNode {
     bool? isCenter,
     String? expansionSourceId,
     bool clearExpansionSourceId = false,
+    bool? isPlaceholderMoreNode,
+    int? hiddenCount,
+    String? placeholderSourceWordId,
+    bool clearPlaceholderSourceWordId = false,
     String? languageCode,
     double? weight,
     bool? isPinned,
@@ -44,6 +55,12 @@ class GraphNode {
       expansionSourceId: clearExpansionSourceId
           ? null
           : (expansionSourceId ?? this.expansionSourceId),
+      isPlaceholderMoreNode:
+          isPlaceholderMoreNode ?? this.isPlaceholderMoreNode,
+      hiddenCount: hiddenCount ?? this.hiddenCount,
+      placeholderSourceWordId: clearPlaceholderSourceWordId
+          ? null
+          : (placeholderSourceWordId ?? this.placeholderSourceWordId),
       languageCode: languageCode ?? this.languageCode,
       weight: weight ?? this.weight,
       isPinned: isPinned ?? this.isPinned,
@@ -60,6 +77,9 @@ class GraphNode {
         other.depth == depth &&
         other.isCenter == isCenter &&
         other.expansionSourceId == expansionSourceId &&
+        other.isPlaceholderMoreNode == isPlaceholderMoreNode &&
+        other.hiddenCount == hiddenCount &&
+        other.placeholderSourceWordId == placeholderSourceWordId &&
         other.languageCode == languageCode &&
         other.weight == weight &&
         other.isPinned == isPinned;
@@ -73,6 +93,9 @@ class GraphNode {
     depth,
     isCenter,
     expansionSourceId,
+    isPlaceholderMoreNode,
+    hiddenCount,
+    placeholderSourceWordId,
     languageCode,
     weight,
     isPinned,
@@ -85,7 +108,10 @@ class GraphNode {
         'label: $label, '
         'depth: $depth, '
         'isCenter: $isCenter, '
-        'expansionSourceId: $expansionSourceId'
+        'expansionSourceId: $expansionSourceId, '
+        'isPlaceholderMoreNode: $isPlaceholderMoreNode, '
+        'hiddenCount: $hiddenCount, '
+        'placeholderSourceWordId: $placeholderSourceWordId'
         ')';
   }
 }

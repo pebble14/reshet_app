@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import '../../data/models/word.dart';
 import '../../data/repositories/word_repository.dart';
 import 'graph_build_options.dart';
@@ -17,6 +19,8 @@ typedef GraphVisibleDataBuildResult = ({
 /// 이번 단계에서는 1-hop 그래프와 기본 필터링만 구현한다.
 class GraphBuilder {
   static const int _defaultOutgoingLimit = 12;
+  static const int _defaultDepthTwoSoftLimitPerSource = 6;
+  static const String _morePlaceholderNodePrefix = '__graph_more__';
 
   const GraphBuilder();
 
@@ -41,14 +45,21 @@ class GraphBuilder {
     required Iterable<WordRelationEdgeInfo> baseRelationEdges,
     Map<String, VisibleWordGraphData> expansionDataBySourceId =
         const <String, VisibleWordGraphData>{},
+    Set<String> fullyRevealedExpansionSourceIds = const <String>{},
   }) {
     final wordsById = <String, Word>{centerWord.id: centerWord};
     final depthByWordId = <String, int>{centerWord.id: 0};
     final expansionSourceIdByWordId = <String, String?>{};
     final relationCountsByWordId = <String, int>{};
     final mergedRelationEdges = <WordRelationEdgeInfo>[];
+    final placeholderNodes = <GraphNode>[];
+    final syntheticEdges = <GraphEdge>[];
     final edgeKeys = <String>{};
     final baseWordIds = <String>{};
+    final normalizedRevealedSourceIds = fullyRevealedExpansionSourceIds
+        .map((sourceWordId) => sourceWordId.trim())
+        .where((sourceWordId) => sourceWordId.isNotEmpty)
+        .toSet();
 
     void registerWord(
       Word word, {
@@ -99,24 +110,72 @@ class GraphBuilder {
     }
 
     for (final entry in expansionDataBySourceId.entries) {
-      final sourceWordId = entry.key;
+      final sourceWordId = entry.key.trim();
       final sourceDepth = depthByWordId[sourceWordId];
-      if (sourceDepth == null || sourceDepth != 1) {
+      if (sourceWordId.isEmpty || sourceDepth == null || sourceDepth != 1) {
         continue;
       }
+
+      final ownedDepthTwoWords = <Word>[];
+      final visibleNeighborIds = <String>{
+        centerWord.id,
+        sourceWordId,
+        ...baseWordIds,
+      };
 
       for (final word in entry.value.connectedWords) {
         final depth = word.id == centerWord.id
             ? 0
             : (baseWordIds.contains(word.id) ? 1 : 2);
-        registerWord(
-          word,
-          depth: depth,
-          expansionSourceId: depth >= 2 ? sourceWordId : null,
+        if (depth <= 1) {
+          registerWord(word, depth: depth, expansionSourceId: null);
+          visibleNeighborIds.add(word.id);
+          continue;
+        }
+
+        final existingDepth = depthByWordId[word.id];
+        if (existingDepth != null ||
+            expansionSourceIdByWordId[word.id] != null) {
+          continue;
+        }
+
+        expansionSourceIdByWordId[word.id] = sourceWordId;
+        ownedDepthTwoWords.add(word);
+      }
+
+      final revealAll = normalizedRevealedSourceIds.contains(sourceWordId);
+      final visibleDepthTwoCount = revealAll
+          ? ownedDepthTwoWords.length
+          : min(ownedDepthTwoWords.length, _defaultDepthTwoSoftLimitPerSource);
+      final visibleDepthTwoWords = ownedDepthTwoWords
+          .take(visibleDepthTwoCount)
+          .toList(growable: false);
+
+      for (final word in visibleDepthTwoWords) {
+        registerWord(word, depth: 2, expansionSourceId: sourceWordId);
+        visibleNeighborIds.add(word.id);
+      }
+
+      final hiddenCount = ownedDepthTwoWords.length - visibleDepthTwoCount;
+      if (hiddenCount > 0) {
+        final placeholderNode = _buildPlaceholderMoreNode(
+          sourceWordId: sourceWordId,
+          hiddenCount: hiddenCount,
+        );
+        placeholderNodes.add(placeholderNode);
+        syntheticEdges.add(
+          _buildPlaceholderEdge(
+            sourceWordId: sourceWordId,
+            placeholderNodeId: placeholderNode.id,
+          ),
         );
       }
 
       for (final edgeInfo in entry.value.relationEdges) {
+        if (!visibleNeighborIds.contains(edgeInfo.wordId1) ||
+            !visibleNeighborIds.contains(edgeInfo.wordId2)) {
+          continue;
+        }
         registerEdgeInfo(edgeInfo);
       }
     }
@@ -139,9 +198,11 @@ class GraphBuilder {
             weight: relationCountsByWordId[word.id]?.toDouble() ?? 1.0,
           ),
         )
+        .followedBy(placeholderNodes)
         .toList(growable: false);
     final edges = mergedRelationEdges
         .map(_buildGraphEdgeFromEdgeInfo)
+        .followedBy(syntheticEdges)
         .toList(growable: false);
 
     final viewData = build(
@@ -289,6 +350,10 @@ class GraphBuilder {
       final normalizedNode = node.copyWith(
         isCenter: false,
         clearExpansionSourceId: node.depth <= 1,
+        hiddenCount: node.hiddenCount,
+        placeholderSourceWordId: node.placeholderSourceWordId,
+        clearPlaceholderSourceWordId:
+            !node.isPlaceholderMoreNode && node.placeholderSourceWordId == null,
       );
       final existingNode = nodesById[node.id];
       if (existingNode == null) {
@@ -310,6 +375,18 @@ class GraphBuilder {
             : (existingNode.expansionSourceId ??
                   normalizedNode.expansionSourceId),
         clearExpansionSourceId: mergedDepth <= 1,
+        isPlaceholderMoreNode:
+            existingNode.isPlaceholderMoreNode ||
+            normalizedNode.isPlaceholderMoreNode,
+        hiddenCount: existingNode.hiddenCount >= normalizedNode.hiddenCount
+            ? existingNode.hiddenCount
+            : normalizedNode.hiddenCount,
+        placeholderSourceWordId:
+            existingNode.placeholderSourceWordId ??
+            normalizedNode.placeholderSourceWordId,
+        clearPlaceholderSourceWordId:
+            existingNode.placeholderSourceWordId == null &&
+            normalizedNode.placeholderSourceWordId == null,
         languageCode: existingNode.languageCode ?? normalizedNode.languageCode,
         weight: existingNode.weight >= normalizedNode.weight
             ? existingNode.weight
@@ -461,10 +538,55 @@ class GraphBuilder {
       depth: depth,
       isCenter: isCenter,
       expansionSourceId: depth <= 1 ? null : expansionSourceId,
+      isPlaceholderMoreNode: false,
+      hiddenCount: 0,
+      placeholderSourceWordId: null,
       languageCode: _languageCodeForWord(word),
       weight: weight,
       isPinned: false,
     );
+  }
+
+  GraphNode _buildPlaceholderMoreNode({
+    required String sourceWordId,
+    required int hiddenCount,
+  }) {
+    final nodeId = _placeholderNodeIdForSource(sourceWordId);
+    return GraphNode(
+      wordId: nodeId,
+      label: '+$hiddenCount more',
+      depth: 2,
+      isCenter: false,
+      expansionSourceId: sourceWordId,
+      isPlaceholderMoreNode: true,
+      hiddenCount: hiddenCount,
+      placeholderSourceWordId: sourceWordId,
+      languageCode: null,
+      weight: 1000.0 + hiddenCount,
+      isPinned: false,
+    );
+  }
+
+  GraphEdge _buildPlaceholderEdge({
+    required String sourceWordId,
+    required String placeholderNodeId,
+  }) {
+    return GraphEdge(
+      sourceId: sourceWordId,
+      targetId: placeholderNodeId,
+      relationId: null,
+      relationType: null,
+      categoryCode: null,
+      statusCode: null,
+      directionCode: 'unknown',
+      description: null,
+      weight: 1.0,
+      isHighlighted: false,
+    );
+  }
+
+  String _placeholderNodeIdForSource(String sourceWordId) {
+    return '$_morePlaceholderNodePrefix::$sourceWordId';
   }
 
   GraphEdge _buildGraphEdgeFromRow(Map<String, dynamic> row) {
@@ -623,6 +745,17 @@ class GraphBuilder {
     final byDepth = left.depth.compareTo(right.depth);
     if (byDepth != 0) {
       return byDepth;
+    }
+
+    if (left.isPlaceholderMoreNode != right.isPlaceholderMoreNode) {
+      return left.isPlaceholderMoreNode ? -1 : 1;
+    }
+
+    if (left.isPlaceholderMoreNode && right.isPlaceholderMoreNode) {
+      final byHiddenCount = right.hiddenCount.compareTo(left.hiddenCount);
+      if (byHiddenCount != 0) {
+        return byHiddenCount;
+      }
     }
 
     final byWeight = right.weight.compareTo(left.weight);

@@ -8,7 +8,7 @@ import '../data/repositories/word_repository.dart';
 import '../domain/graph/graph_build_options.dart';
 import '../domain/graph/graph_builder.dart';
 import '../domain/graph/graph_edge.dart';
-import '../domain/graph/graph_layout_result.dart';
+import '../domain/graph/graph_node.dart';
 import '../domain/graph/graph_view_data.dart';
 import '../domain/graph/layout/graph_layout_strategy_resolver.dart';
 import 'word_graph_cache.dart';
@@ -18,8 +18,11 @@ const double _centerNodeHalf = _centerNodeSize / 2;
 const double _connectedNodeSize = 80.0;
 const double _connectedNodeHalf = _connectedNodeSize / 2;
 const double _depthOneNodeSize = 84.0;
-const double _depthOneNodeHalf = _depthOneNodeSize / 2;
 const double _depthTwoNodeSize = 76.0;
+const double _placeholderAnchorGap = 16.0;
+const double _placeholderTangentOffset = 30.0;
+const double _placeholderFallbackOutwardStep = 18.0;
+const double _placeholderCollisionPadding = 10.0;
 const double _labelAnchorFactor = 0.68;
 const double _fitBoundsPadding = 72.0;
 const double _baseLabelOffset = 12.0;
@@ -355,11 +358,11 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   WordGraphBaseCacheData? _baseGraphData;
 
   /// 중심 단어와 연결된 단어 목록
-  List<Word> _connectedWords = [];
   final Map<String, Word> _graphWordsById = {};
   final Map<String, WordGraphExpansionCacheData> _expansionDataBySourceId = {};
   final Set<String> _expandedDepthOneWordIds = <String>{};
   final Set<String> _expansionRequestsInFlight = <String>{};
+  final Set<String> _fullyRevealedExpansionSourceIds = <String>{};
   final Map<String, Offset> _seedNodePositions = <String, Offset>{};
 
   /// 사용자가 클릭(선택)한 주변 노드 id
@@ -433,7 +436,6 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         _errorMessage = null;
         _graphViewData = null;
         _baseGraphData = null;
-        _connectedWords = const <Word>[];
         _pendingCenterFocusAfterCenterChange = true;
         _pendingCenterFocusWordId = widget.centerWord.id;
       });
@@ -451,7 +453,6 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         _errorMessage = null;
         _graphViewData = null;
         _baseGraphData = null;
-        _connectedWords = const <Word>[];
       });
       _loadConnectedWords();
       return;
@@ -490,11 +491,6 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     _graphWordsById
       ..clear()
       ..addAll(wordsById);
-    _connectedWords = viewData.nodes
-        .where((node) => node.id != viewData.centerNodeId)
-        .map((node) => wordsById[node.wordId])
-        .whereType<Word>()
-        .toList(growable: false);
     _selectedWordId = _resolvedSelectedWordIdForViewData(viewData);
 
     _edgeInfosByEdgeId.clear();
@@ -502,17 +498,19 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     for (final node in viewData.nodes) {
       _adjacentNodeIdsByNodeId.putIfAbsent(node.id, () => <String>{});
     }
+    for (final edge in viewData.edges) {
+      _adjacentNodeIdsByNodeId
+          .putIfAbsent(edge.sourceId, () => <String>{})
+          .add(edge.targetId);
+      _adjacentNodeIdsByNodeId
+          .putIfAbsent(edge.targetId, () => <String>{})
+          .add(edge.sourceId);
+    }
     for (final edgeInfo in edges) {
       final edgeId = _edgeIdForRelationInfo(edgeInfo);
       _edgeInfosByEdgeId
           .putIfAbsent(edgeId, () => <WordRelationEdgeInfo>[])
           .add(edgeInfo);
-      _adjacentNodeIdsByNodeId
-          .putIfAbsent(edgeInfo.wordId1, () => <String>{})
-          .add(edgeInfo.wordId2);
-      _adjacentNodeIdsByNodeId
-          .putIfAbsent(edgeInfo.wordId2, () => <String>{})
-          .add(edgeInfo.wordId1);
     }
 
     _errorMessage = null;
@@ -552,6 +550,12 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     );
   }
 
+  List<GraphNode> _peripheralNodesForViewData(GraphViewData viewData) {
+    return viewData.nodes
+        .where((node) => node.id != viewData.centerNodeId)
+        .toList(growable: false);
+  }
+
   GraphBuildOptions _graphBuildOptions() {
     return GraphBuildOptions(
       centerWordId: _centerWord.id,
@@ -573,6 +577,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       baseWords: baseGraphData.connectedWords,
       baseRelationEdges: baseGraphData.relationEdges,
       expansionDataBySourceId: _expansionDataBySourceId,
+      fullyRevealedExpansionSourceIds: _fullyRevealedExpansionSourceIds,
     );
   }
 
@@ -589,6 +594,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     _expansionDataBySourceId.clear();
     _expandedDepthOneWordIds.clear();
     _expansionRequestsInFlight.clear();
+    _fullyRevealedExpansionSourceIds.clear();
     if (clearSeedPositions) {
       _seedNodePositions.clear();
     }
@@ -686,7 +692,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
           );
         }
 
-        final nodes = _connectedWords;
+        final peripheralNodes = _peripheralNodesForViewData(viewData);
         final layout = _computeGraphLayout(canvasSize, viewData);
         _scheduleConditionalCenterFocus(layout);
         final selectedEdgeIds = _selectedEdgeIds(_selectedWordId);
@@ -763,7 +769,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                   child: Stack(
                     clipBehavior: Clip.none,
                     children: [
-                      if (nodes.isNotEmpty)
+                      if (peripheralNodes.isNotEmpty)
                         AnimatedSwitcher(
                           duration: _visualStateAnimationDuration,
                           switchInCurve: Curves.easeOutCubic,
@@ -804,10 +810,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
                       ..._buildWordNodes(
                         layout,
-                        nodes,
+                        viewData,
                         selectedWordId: _selectedWordId,
                       ),
-                      if (nodes.isEmpty)
+                      if (peripheralNodes.isEmpty)
                         Center(
                           child: Text(
                             '연결된 단어가 없습니다.',
@@ -985,6 +991,20 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       context,
       MaterialPageRoute(builder: (_) => WordGraphScreen(centerWord: word)),
     );
+  }
+
+  void _handlePlaceholderMoreNodeTap(GraphNode node) {
+    _temporarilySuppressBackgroundTapClear();
+    final sourceWordId = _placeholderSourceWordId(node);
+    if (sourceWordId == null ||
+        _fullyRevealedExpansionSourceIds.contains(sourceWordId)) {
+      return;
+    }
+
+    setState(() {
+      _fullyRevealedExpansionSourceIds.add(sourceWordId);
+      _rebuildGraphData();
+    });
   }
 
   Future<void> _expandDepthTwoForSelection(Word word) async {
@@ -1474,6 +1494,115 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   }
 
   /// 연결 단어들을 원형으로 자동 배치
+  String? _placeholderSourceWordId(GraphNode node) {
+    final placeholderSourceWordId = (node.placeholderSourceWordId ?? '').trim();
+    if (placeholderSourceWordId.isNotEmpty) {
+      return placeholderSourceWordId;
+    }
+
+    final expansionSourceId = (node.expansionSourceId ?? '').trim();
+    return expansionSourceId.isEmpty ? null : expansionSourceId;
+  }
+
+  Color _placeholderAccentColor(GraphNode node) {
+    final sourceWordId = _placeholderSourceWordId(node);
+    if (sourceWordId == null) {
+      return Colors.grey;
+    }
+
+    return _colorForCategory(
+      _primaryEdgeInfoForNode(sourceWordId)?.categoryCode,
+    );
+  }
+
+  String _placeholderLabelForNode(GraphNode node) {
+    final hiddenCount = node.hiddenCount;
+    if (hiddenCount > 0) {
+      return '+$hiddenCount more';
+    }
+
+    final label = node.label.trim();
+    return label.isEmpty ? '+more' : label;
+  }
+
+  Widget _buildPlaceholderMoreNode(
+    GraphNode node,
+    Color accentColor, {
+    required _GraphNodeLayout nodeLayout,
+    required _GraphVisualState visualState,
+  }) {
+    final isDimmed = visualState == _GraphVisualState.dimmed;
+    final nodeSize = nodeLayout.nodeSize;
+    final backgroundOpacity =
+        _nodeOpacityForState(visualState, isCenter: false) * 0.96;
+    final textOpacity = _nodeTextOpacityForState(visualState);
+    final fillColor = Color.alphaBlend(
+      accentColor.withValues(alpha: isDimmed ? 0.08 : 0.15),
+      Colors.white,
+    );
+    final innerFillColor = Color.alphaBlend(
+      accentColor.withValues(alpha: isDimmed ? 0.04 : 0.08),
+      Colors.white,
+    );
+    final borderColor = isDimmed
+        ? _blendColor(accentColor, Colors.grey.shade500, 0.42)
+        : _blendColor(accentColor, Colors.black, 0.10);
+
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () => _handlePlaceholderMoreNodeTap(node),
+      child: SizedBox(
+        width: nodeSize,
+        height: nodeSize,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            AnimatedOpacity(
+              duration: _visualStateAnimationDuration,
+              curve: Curves.easeOutCubic,
+              opacity: backgroundOpacity,
+              child: AnimatedContainer(
+                duration: _visualStateAnimationDuration,
+                curve: Curves.easeOutCubic,
+                width: nodeSize,
+                height: nodeSize,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [innerFillColor, fillColor],
+                    stops: const [0.0, 1.0],
+                  ),
+                  border: Border.all(
+                    color: borderColor,
+                    width: _depthTwoNodeBorderWidth,
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: AnimatedOpacity(
+                duration: _visualStateAnimationDuration,
+                curve: Curves.easeOutCubic,
+                opacity: textOpacity,
+                child: Text(
+                  _placeholderLabelForNode(node),
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 10.5,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   void _clearSelectedWord() {
     if (_selectedWordId == null) return;
     setState(() => _selectedWordId = null);
@@ -1572,31 +1701,84 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       layoutSeed: _graphLayoutSeed(viewData),
       seedPositions: _seedNodePositions,
     );
-    _seedNodePositions
-      ..clear()
-      ..addAll(layoutResult.positionedNodes);
+    final resolvedPositions = Map<String, Offset>.from(
+      layoutResult.positionedNodes,
+    );
+    final peripheralNodes = _peripheralNodesForViewData(viewData);
     final center =
-        layoutResult.positionFor(viewData.centerNodeId) ??
+        resolvedPositions[viewData.centerNodeId] ??
         Offset(canvasSize.width / 2, canvasSize.height / 2);
     final centerBounds = Rect.fromCenter(
       center: center,
       width: _centerNodeSize,
       height: _centerNodeSize,
     );
+    final occupiedBounds = <Rect>[centerBounds];
+    for (final graphNode in peripheralNodes) {
+      if (graphNode.isPlaceholderMoreNode) {
+        continue;
+      }
+
+      final nodeCenter = resolvedPositions[graphNode.id];
+      if (nodeCenter == null) {
+        continue;
+      }
+
+      occupiedBounds.add(
+        _nodeBoundsForCenter(
+          center: nodeCenter,
+          nodeSize: _nodeSizeForDepth(graphNode.depth),
+        ),
+      );
+    }
+    for (final placeholderNode in peripheralNodes.where(
+      (node) => node.isPlaceholderMoreNode,
+    )) {
+      final sourceWordId = _placeholderSourceWordId(placeholderNode);
+      if (sourceWordId == null) {
+        continue;
+      }
+
+      final sourceNode = viewData.nodeById(sourceWordId);
+      final sourceCenter = resolvedPositions[sourceWordId];
+      if (sourceCenter == null) {
+        continue;
+      }
+
+      final sourceNodeSize = sourceNode == null
+          ? _depthOneNodeSize
+          : _nodeSizeForDepth(sourceNode.depth);
+      final placeholderNodeSize = _nodeSizeForDepth(placeholderNode.depth);
+      final resolvedPlaceholderCenter = _resolvePlaceholderNodeCenter(
+        placeholderNode: placeholderNode,
+        sourceCenter: sourceCenter,
+        centerPosition: center,
+        sourceRadius: sourceNodeSize / 2,
+        placeholderRadius: placeholderNodeSize / 2,
+        positionedNodes: resolvedPositions,
+        occupiedBounds: occupiedBounds,
+      );
+      resolvedPositions[placeholderNode.id] = resolvedPlaceholderCenter;
+      occupiedBounds.add(
+        _nodeBoundsForCenter(
+          center: resolvedPlaceholderCenter,
+          nodeSize: placeholderNodeSize,
+        ),
+      );
+    }
     final expansionSourceIds = viewData.nodes
         .where((node) => node.depth >= 2 && node.expansionSourceId != null)
         .map((node) => node.expansionSourceId!)
         .toSet();
+    _seedNodePositions
+      ..clear()
+      ..addAll(resolvedPositions);
     final ringRadii = <double>[];
     final nodeLayouts = <_GraphNodeLayout>[];
 
-    for (var index = 0; index < _connectedWords.length; index++) {
-      final word = _connectedWords[index];
-      final graphNode = viewData.nodeById(word.id);
-      if (graphNode == null) {
-        continue;
-      }
-      final nodeCenter = layoutResult.positionFor(word.id);
+    for (var index = 0; index < peripheralNodes.length; index++) {
+      final graphNode = peripheralNodes[index];
+      final nodeCenter = resolvedPositions[graphNode.id];
       if (nodeCenter == null) {
         continue;
       }
@@ -1615,14 +1797,14 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
       nodeLayouts.add(
         _buildNodeLayout(
-          nodeId: word.id,
+          nodeId: graphNode.id,
           index: index,
           center: center,
           nodeCenter: nodeCenter,
           ringIndex: max(ringIndex, 0),
           depth: graphNode.depth,
           nodeSize: _nodeSizeForDepth(graphNode.depth),
-          isExpansionSource: expansionSourceIds.contains(word.id),
+          isExpansionSource: expansionSourceIds.contains(graphNode.id),
         ),
       );
     }
@@ -1631,7 +1813,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     };
     final edgeLayouts = _buildEdgeLayouts(
       viewData: viewData,
-      layoutResult: layoutResult,
+      positionedNodes: resolvedPositions,
     );
 
     Rect contentBounds = centerBounds;
@@ -1644,14 +1826,12 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       );
     }
 
-    if (!layoutResult.bounds.isEmpty) {
-      final positionedBounds = Rect.fromLTRB(
-        layoutResult.bounds.left - _depthOneNodeHalf,
-        layoutResult.bounds.top - _depthOneNodeHalf,
-        layoutResult.bounds.right + _depthOneNodeHalf,
-        layoutResult.bounds.bottom + _depthOneNodeHalf,
-      );
-      contentBounds = contentBounds.expandToInclude(positionedBounds);
+    final resolvedBounds = _boundsForResolvedNodePositions(
+      viewData: viewData,
+      positionedNodes: resolvedPositions,
+    );
+    if (resolvedBounds != null && !resolvedBounds.isEmpty) {
+      contentBounds = contentBounds.expandToInclude(resolvedBounds);
     }
 
     final fitPadding = _fitBoundsPadding + (ringRadii.length > 1 ? 12.0 : 0.0);
@@ -1740,9 +1920,146 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     );
   }
 
+  Offset _resolvePlaceholderNodeCenter({
+    required GraphNode placeholderNode,
+    required Offset sourceCenter,
+    required Offset centerPosition,
+    required double sourceRadius,
+    required double placeholderRadius,
+    required Map<String, Offset> positionedNodes,
+    required List<Rect> occupiedBounds,
+  }) {
+    final outward = _unitVector(sourceCenter - centerPosition);
+    final tangent = Offset(-outward.dy, outward.dx);
+    final baseDistance =
+        sourceRadius + placeholderRadius + _placeholderAnchorGap;
+    final tangentDistance = max(
+      _placeholderTangentOffset,
+      placeholderRadius * 0.78,
+    );
+    final desiredCenter = sourceCenter + outward * baseDistance;
+    final sourceBounds = _nodeBoundsForCenter(
+      center: sourceCenter,
+      nodeSize: sourceRadius * 2,
+    ).inflate(_placeholderCollisionPadding);
+
+    Offset bestCenter = desiredCenter;
+    double bestScore = double.infinity;
+
+    for (final candidateCenter in _candidatePlaceholderCenters(
+      placeholderNode: placeholderNode,
+      sourceCenter: sourceCenter,
+      desiredCenter: desiredCenter,
+      outward: outward,
+      tangent: tangent,
+      baseDistance: baseDistance,
+      tangentDistance: tangentDistance,
+      positionedNodes: positionedNodes,
+    )) {
+      final candidateBounds = _nodeBoundsForCenter(
+        center: candidateCenter,
+        nodeSize: placeholderRadius * 2,
+      ).inflate(_placeholderCollisionPadding);
+      final collisionScore = _placeholderCollisionScore(
+        candidateBounds: candidateBounds,
+        occupiedBounds: occupiedBounds,
+      );
+      final score =
+          collisionScore +
+          _intersectionArea(candidateBounds, sourceBounds) * 8.0 +
+          (candidateCenter - desiredCenter).distance * 0.35;
+      if (score < bestScore) {
+        bestScore = score;
+        bestCenter = candidateCenter;
+      }
+      if (score <= 0.001) {
+        break;
+      }
+    }
+
+    return bestCenter;
+  }
+
+  Iterable<Offset> _candidatePlaceholderCenters({
+    required GraphNode placeholderNode,
+    required Offset sourceCenter,
+    required Offset desiredCenter,
+    required Offset outward,
+    required Offset tangent,
+    required double baseDistance,
+    required double tangentDistance,
+    required Map<String, Offset> positionedNodes,
+  }) sync* {
+    yield desiredCenter;
+    yield desiredCenter + tangent * tangentDistance;
+    yield desiredCenter - tangent * tangentDistance;
+
+    final fartherCenter =
+        sourceCenter +
+        outward * (baseDistance + _placeholderFallbackOutwardStep);
+    yield fartherCenter;
+    yield fartherCenter + tangent * tangentDistance;
+    yield fartherCenter - tangent * tangentDistance;
+
+    final autoLayoutCenter = positionedNodes[placeholderNode.id];
+    if (autoLayoutCenter != null) {
+      yield autoLayoutCenter;
+    }
+  }
+
+  double _placeholderCollisionScore({
+    required Rect candidateBounds,
+    required List<Rect> occupiedBounds,
+  }) {
+    double score = 0.0;
+    for (final obstacleBounds in occupiedBounds) {
+      score += _intersectionArea(
+        candidateBounds,
+        obstacleBounds.inflate(_placeholderCollisionPadding),
+      );
+    }
+    return score;
+  }
+
+  Rect _nodeBoundsForCenter({
+    required Offset center,
+    required double nodeSize,
+  }) {
+    return Rect.fromCenter(center: center, width: nodeSize, height: nodeSize);
+  }
+
+  Rect? _boundsForResolvedNodePositions({
+    required GraphViewData viewData,
+    required Map<String, Offset> positionedNodes,
+  }) {
+    Rect? bounds;
+
+    void includeNode(String nodeId, double nodeSize) {
+      final nodeCenter = positionedNodes[nodeId];
+      if (nodeCenter == null) {
+        return;
+      }
+
+      final nodeBounds = _nodeBoundsForCenter(
+        center: nodeCenter,
+        nodeSize: nodeSize,
+      );
+      bounds = bounds == null
+          ? nodeBounds
+          : bounds!.expandToInclude(nodeBounds);
+    }
+
+    includeNode(viewData.centerNodeId, _centerNodeSize);
+    for (final graphNode in viewData.nodes) {
+      includeNode(graphNode.id, _nodeSizeForDepth(graphNode.depth));
+    }
+
+    return bounds;
+  }
+
   List<_GraphEdgeLayout> _buildEdgeLayouts({
     required GraphViewData viewData,
-    required GraphLayoutResult layoutResult,
+    required Map<String, Offset> positionedNodes,
   }) {
     final groupedEdges = <String, List<GraphEdge>>{};
     for (final edge in viewData.edges) {
@@ -1762,8 +2079,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
       for (var index = 0; index < orderedGroup.length; index++) {
         final edge = orderedGroup[index];
-        final start = layoutResult.positionFor(edge.sourceId);
-        final end = layoutResult.positionFor(edge.targetId);
+        final start = positionedNodes[edge.sourceId];
+        final end = positionedNodes[edge.targetId];
         if (start == null || end == null) {
           continue;
         }
@@ -1811,29 +2128,65 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
   List<Widget> _buildWordNodes(
     _GraphLayoutData layout,
-    List<Word> words, {
+    GraphViewData viewData, {
     required String? selectedWordId,
   }) {
-    if (words.isEmpty) return [];
+    if (layout.nodeLayouts.isEmpty) return [];
 
     final List<Widget> widgets = [];
+    final regularNodes = <(_GraphNodeLayout, GraphNode)>[];
+    final placeholderNodes = <(_GraphNodeLayout, GraphNode)>[];
 
     for (final nodeLayout in layout.nodeLayouts) {
-      final index = nodeLayout.index;
+      final graphNode = viewData.nodeById(nodeLayout.nodeId);
+      if (graphNode == null) {
+        continue;
+      }
+
+      if (graphNode.isPlaceholderMoreNode) {
+        placeholderNodes.add((nodeLayout, graphNode));
+      } else {
+        regularNodes.add((nodeLayout, graphNode));
+      }
+    }
+
+    for (final entry in [...regularNodes, ...placeholderNodes]) {
+      final nodeLayout = entry.$1;
+      final graphNode = entry.$2;
+      final visualState = selectedWordId == null
+          ? _GraphVisualState.connected
+          : _visualStateForNodeId(graphNode.id);
+      final accentColor = graphNode.isPlaceholderMoreNode
+          ? _placeholderAccentColor(graphNode)
+          : _colorForCategory(
+              _primaryEdgeInfoForNode(graphNode.id)?.categoryCode,
+            );
+
+      final child = graphNode.isPlaceholderMoreNode
+          ? _buildPlaceholderMoreNode(
+              graphNode,
+              accentColor,
+              nodeLayout: nodeLayout,
+              visualState: visualState,
+            )
+          : () {
+              final word = _wordForNodeId(graphNode.wordId);
+              if (word == null) {
+                return const SizedBox.shrink();
+              }
+
+              return _buildWordNode(
+                word,
+                accentColor,
+                nodeLayout: nodeLayout,
+                visualState: visualState,
+              );
+            }();
       widgets.add(
         Positioned(
           left: nodeLayout.nodeBounds.left,
           top: nodeLayout.nodeBounds.top,
-          child: _buildWordNode(
-            words[index],
-            _colorForCategory(
-              _primaryEdgeInfoForNode(words[index].id)?.categoryCode,
-            ),
-            nodeLayout: nodeLayout,
-            visualState: selectedWordId == null
-                ? _GraphVisualState.connected
-                : _visualStateForNodeId(words[index].id),
-          ),
+          child: child,
         ),
       );
     }
