@@ -73,6 +73,7 @@ class RadialLayoutStrategy implements GraphLayoutStrategy {
     GraphViewData viewData,
     Size viewportSize, {
     int? layoutSeed,
+    Map<String, Offset> seedPositions = const <String, Offset>{},
   }) {
     final center = Offset(viewportSize.width / 2, viewportSize.height / 2);
     final positionedNodes = <String, Offset>{viewData.centerNodeId: center};

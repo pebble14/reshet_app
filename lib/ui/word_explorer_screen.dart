@@ -96,10 +96,17 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
       setState(() {
         _selectedWordMap = selectedWordMap;
         _isDetailLoading = false;
-        _pushHistoryEntry(
-          centerWord: _centerWord,
-          selectedWordMap: selectedWordMap,
-        );
+        if (changeCenterWord) {
+          _pushHistoryEntry(
+            centerWord: _centerWord,
+            selectedWordMap: selectedWordMap,
+          );
+        } else {
+          _replaceCurrentHistoryEntry(
+            centerWord: _centerWord,
+            selectedWordMap: selectedWordMap,
+          );
+        }
       });
     } catch (e) {
       if (!mounted) return;
@@ -243,6 +250,10 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
       _selectedWordMap = null;
       _isDetailLoading = false;
       _detailError = null;
+      _replaceCurrentHistoryEntry(
+        centerWord: _centerWord,
+        selectedWordMap: null,
+      );
     });
   }
 

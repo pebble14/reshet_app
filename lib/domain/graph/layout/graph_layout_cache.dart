@@ -11,6 +11,7 @@ class _GraphLayoutCacheKey {
   final double viewportHeight;
   final int? layoutSeed;
   final int viewDataSignature;
+  final int seedPositionsSignature;
 
   const _GraphLayoutCacheKey({
     required this.layoutMode,
@@ -18,6 +19,7 @@ class _GraphLayoutCacheKey {
     required this.viewportHeight,
     required this.layoutSeed,
     required this.viewDataSignature,
+    required this.seedPositionsSignature,
   });
 
   @override
@@ -28,7 +30,8 @@ class _GraphLayoutCacheKey {
         other.viewportWidth == viewportWidth &&
         other.viewportHeight == viewportHeight &&
         other.layoutSeed == layoutSeed &&
-        other.viewDataSignature == viewDataSignature;
+        other.viewDataSignature == viewDataSignature &&
+        other.seedPositionsSignature == seedPositionsSignature;
   }
 
   @override
@@ -38,6 +41,7 @@ class _GraphLayoutCacheKey {
     viewportHeight,
     layoutSeed,
     viewDataSignature,
+    seedPositionsSignature,
   );
 }
 
@@ -57,6 +61,7 @@ class GraphLayoutCache {
     required GraphViewData viewData,
     required Size viewportSize,
     required int? layoutSeed,
+    required Map<String, Offset> seedPositions,
     required GraphLayoutResult Function() compute,
   }) {
     final cacheKey = _GraphLayoutCacheKey(
@@ -65,6 +70,7 @@ class GraphLayoutCache {
       viewportHeight: viewportSize.height,
       layoutSeed: layoutSeed,
       viewDataSignature: _viewDataSignature(viewData),
+      seedPositionsSignature: _seedPositionsSignature(viewData, seedPositions),
     );
     final cachedEntry = _entries.remove(cacheKey);
     if (cachedEntry != null) {
@@ -118,9 +124,49 @@ class GraphLayoutCache {
     }
 
     for (final edge in viewData.edges) {
+      mixString(edge.id);
       mixString(edge.sourceId);
       mixString(edge.targetId);
       mixDouble(edge.weight);
+    }
+
+    signature = 0x1fffffff & (signature + ((0x03ffffff & signature) << 3));
+    signature ^= (signature >> 11);
+    signature = 0x1fffffff & (signature + ((0x00003fff & signature) << 15));
+
+    return signature & 0x7fffffff;
+  }
+
+  static int _seedPositionsSignature(
+    GraphViewData viewData,
+    Map<String, Offset> seedPositions,
+  ) {
+    var signature = 0x4c11db7;
+
+    void mixInt(int value) {
+      signature = 0x1fffffff & (signature + value);
+      signature = 0x1fffffff & (signature + ((0x0007ffff & signature) << 10));
+      signature ^= (signature >> 6);
+    }
+
+    void mixString(String value) {
+      for (final unit in value.codeUnits) {
+        mixInt(unit);
+      }
+    }
+
+    void mixDouble(double value) {
+      mixString(value.toStringAsFixed(4));
+    }
+
+    for (final node in viewData.nodes) {
+      final seedPosition = seedPositions[node.id];
+      if (seedPosition == null) {
+        continue;
+      }
+      mixString(node.id);
+      mixDouble(seedPosition.dx);
+      mixDouble(seedPosition.dy);
     }
 
     signature = 0x1fffffff & (signature + ((0x03ffffff & signature) << 3));

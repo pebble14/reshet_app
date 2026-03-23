@@ -5,6 +5,12 @@ import 'graph_edge.dart';
 import 'graph_node.dart';
 import 'graph_view_data.dart';
 
+typedef GraphVisibleDataBuildResult = ({
+  GraphViewData viewData,
+  List<Word> connectedWords,
+  List<WordRelationEdgeInfo> relationEdges,
+});
+
 /// graph_builder.dart
 ///
 /// Repository가 조회한 단어/관계 데이터를 그래프 도메인 모델로 조립한다.
@@ -20,55 +26,155 @@ class GraphBuilder {
     required Iterable<Word> connectedWords,
     required Iterable<WordRelationEdgeInfo> relationEdges,
   }) {
-    final visibleEdges = List<WordRelationEdgeInfo>.unmodifiable(relationEdges);
-    final wordsById = <String, Word>{
-      for (final word in connectedWords) word.id: word,
-    };
-    final orderedWordIds = <String>[];
-    final seenWordIds = <String>{};
+    return buildMergedVisibleGraphData(
+      options: options,
+      centerWord: centerWord,
+      baseWords: connectedWords,
+      baseRelationEdges: relationEdges,
+    ).viewData;
+  }
 
-    for (final edge in visibleEdges) {
-      if (seenWordIds.add(edge.otherWordId)) {
-        orderedWordIds.add(edge.otherWordId);
+  GraphVisibleDataBuildResult buildMergedVisibleGraphData({
+    required GraphBuildOptions options,
+    required Word centerWord,
+    required Iterable<Word> baseWords,
+    required Iterable<WordRelationEdgeInfo> baseRelationEdges,
+    Map<String, VisibleWordGraphData> expansionDataBySourceId =
+        const <String, VisibleWordGraphData>{},
+  }) {
+    final wordsById = <String, Word>{centerWord.id: centerWord};
+    final depthByWordId = <String, int>{centerWord.id: 0};
+    final expansionSourceIdByWordId = <String, String?>{};
+    final relationCountsByWordId = <String, int>{};
+    final mergedRelationEdges = <WordRelationEdgeInfo>[];
+    final edgeKeys = <String>{};
+    final baseWordIds = <String>{};
+
+    void registerWord(
+      Word word, {
+      required int depth,
+      String? expansionSourceId,
+    }) {
+      wordsById[word.id] ??= word;
+      final nextDepth = depth.clamp(0, options.maxDepth).toInt();
+      final existingDepth = depthByWordId[word.id];
+      if (existingDepth == null || nextDepth < existingDepth) {
+        depthByWordId[word.id] = nextDepth;
       }
+
+      if (word.id == centerWord.id || nextDepth <= 1) {
+        expansionSourceIdByWordId[word.id] = null;
+        return;
+      }
+
+      expansionSourceIdByWordId[word.id] ??= expansionSourceId;
     }
 
-    final relationCountsByWordId = <String, int>{};
-    for (final edge in visibleEdges) {
+    void registerEdgeInfo(WordRelationEdgeInfo edgeInfo) {
+      final edgeKey = _edgeDedupeKeyForRelationInfo(edgeInfo);
+      if (!edgeKeys.add(edgeKey)) {
+        return;
+      }
+
+      mergedRelationEdges.add(edgeInfo);
       relationCountsByWordId.update(
-        edge.otherWordId,
+        edgeInfo.wordId1,
         (count) => count + 1,
         ifAbsent: () => 1,
       );
+      relationCountsByWordId.update(
+        edgeInfo.wordId2,
+        (count) => count + 1,
+        ifAbsent: () => 1,
+      );
+    }
+
+    for (final word in baseWords) {
+      baseWordIds.add(word.id);
+      registerWord(word, depth: 1);
+    }
+
+    for (final edgeInfo in baseRelationEdges) {
+      registerEdgeInfo(edgeInfo);
+    }
+
+    for (final entry in expansionDataBySourceId.entries) {
+      final sourceWordId = entry.key;
+      final sourceDepth = depthByWordId[sourceWordId];
+      if (sourceDepth == null || sourceDepth != 1) {
+        continue;
+      }
+
+      for (final word in entry.value.connectedWords) {
+        final depth = word.id == centerWord.id
+            ? 0
+            : (baseWordIds.contains(word.id) ? 1 : 2);
+        registerWord(
+          word,
+          depth: depth,
+          expansionSourceId: depth >= 2 ? sourceWordId : null,
+        );
+      }
+
+      for (final edgeInfo in entry.value.relationEdges) {
+        registerEdgeInfo(edgeInfo);
+      }
     }
 
     final centerNode = _buildGraphNode(
       word: centerWord,
       depth: 0,
       isCenter: true,
-      weight: visibleEdges.isEmpty ? 1.0 : visibleEdges.length.toDouble(),
+      expansionSourceId: null,
+      weight: relationCountsByWordId[centerWord.id]?.toDouble() ?? 1.0,
     );
-    final nodes = orderedWordIds
-        .map((wordId) => wordsById[wordId])
-        .whereType<Word>()
+    final nodes = wordsById.values
+        .where((word) => word.id != centerWord.id)
         .map(
           (word) => _buildGraphNode(
             word: word,
-            depth: 1,
+            depth: depthByWordId[word.id] ?? 2,
             isCenter: false,
+            expansionSourceId: expansionSourceIdByWordId[word.id],
             weight: relationCountsByWordId[word.id]?.toDouble() ?? 1.0,
           ),
         )
         .toList(growable: false);
-    final edges = visibleEdges
+    final edges = mergedRelationEdges
         .map(_buildGraphEdgeFromEdgeInfo)
         .toList(growable: false);
 
-    return build(
+    final viewData = build(
       options: options,
       centerNode: centerNode,
       nodes: nodes,
       edges: edges,
+    );
+    final visibleWordIds = viewData.nodes
+        .map((node) => node.id)
+        .where((nodeId) => nodeId != viewData.centerNodeId)
+        .toList(growable: false);
+    final visibleEdgeIds = viewData.edges.map((edge) => edge.id).toSet();
+    final normalizedRelationEdges =
+        mergedRelationEdges
+            .where(
+              (edgeInfo) => visibleEdgeIds.contains(
+                _edgeDedupeKeyForRelationInfo(edgeInfo),
+              ),
+            )
+            .toList(growable: false)
+          ..sort(_compareRelationEdgeInfos);
+    final normalizedWords = visibleWordIds
+        .map((wordId) => wordsById[wordId])
+        .whereType<Word>()
+        .toList(growable: false);
+
+    return (
+      viewData: viewData,
+      connectedWords: List<Word>.unmodifiable(normalizedWords),
+      relationEdges: List<WordRelationEdgeInfo>.unmodifiable(
+        normalizedRelationEdges,
+      ),
     );
   }
 
@@ -112,6 +218,7 @@ class GraphBuilder {
       word: centerWord,
       depth: 0,
       isCenter: true,
+      expansionSourceId: null,
       weight: visibleRelationRows.isEmpty
           ? 1.0
           : visibleRelationRows.length.toDouble(),
@@ -122,6 +229,7 @@ class GraphBuilder {
             word: word,
             depth: 1,
             isCenter: false,
+            expansionSourceId: null,
             weight: relationCountsByWordId[word.id]?.toDouble() ?? 1.0,
           ),
         )
@@ -178,7 +286,36 @@ class GraphBuilder {
       if (node.depth > options.maxDepth) {
         continue;
       }
-      nodesById[node.id] = node.copyWith(isCenter: false);
+      final normalizedNode = node.copyWith(
+        isCenter: false,
+        clearExpansionSourceId: node.depth <= 1,
+      );
+      final existingNode = nodesById[node.id];
+      if (existingNode == null) {
+        nodesById[node.id] = normalizedNode;
+        continue;
+      }
+
+      final mergedDepth = existingNode.depth <= normalizedNode.depth
+          ? existingNode.depth
+          : normalizedNode.depth;
+      nodesById[node.id] = existingNode.copyWith(
+        label: existingNode.label.trim().isNotEmpty
+            ? existingNode.label
+            : normalizedNode.label,
+        depth: mergedDepth,
+        isCenter: false,
+        expansionSourceId: mergedDepth <= 1
+            ? null
+            : (existingNode.expansionSourceId ??
+                  normalizedNode.expansionSourceId),
+        clearExpansionSourceId: mergedDepth <= 1,
+        languageCode: existingNode.languageCode ?? normalizedNode.languageCode,
+        weight: existingNode.weight >= normalizedNode.weight
+            ? existingNode.weight
+            : normalizedNode.weight,
+        isPinned: existingNode.isPinned || normalizedNode.isPinned,
+      );
     }
 
     final peripheralNodes =
@@ -315,6 +452,7 @@ class GraphBuilder {
     required Word word,
     required int depth,
     required bool isCenter,
+    required String? expansionSourceId,
     required double weight,
   }) {
     return GraphNode(
@@ -322,6 +460,7 @@ class GraphBuilder {
       label: _labelForWord(word),
       depth: depth,
       isCenter: isCenter,
+      expansionSourceId: depth <= 1 ? null : expansionSourceId,
       languageCode: _languageCodeForWord(word),
       weight: weight,
       isPinned: false,
@@ -356,6 +495,23 @@ class GraphBuilder {
       weight: 1.0,
       isHighlighted: false,
     );
+  }
+
+  String _edgeDedupeKeyForRelationInfo(WordRelationEdgeInfo info) {
+    final relationId = info.relationId;
+    if (relationId > 0) {
+      return relationId.toString();
+    }
+
+    final minWordId = info.wordId1.compareTo(info.wordId2) <= 0
+        ? info.wordId1
+        : info.wordId2;
+    final maxWordId = info.wordId1.compareTo(info.wordId2) <= 0
+        ? info.wordId2
+        : info.wordId1;
+    final relationType = (info.relationType ?? '').trim();
+    final categoryCode = (info.categoryCode ?? '').trim();
+    return '$minWordId::$maxWordId::$relationType::$categoryCode';
   }
 
   String _labelForWord(Word word) {
@@ -508,5 +664,34 @@ class GraphBuilder {
     }
 
     return left.id.compareTo(right.id);
+  }
+
+  int _compareRelationEdgeInfos(
+    WordRelationEdgeInfo left,
+    WordRelationEdgeInfo right,
+  ) {
+    final byRelationId = left.relationId.compareTo(right.relationId);
+    if (byRelationId != 0) {
+      return byRelationId;
+    }
+
+    final byWord1 = left.wordId1.compareTo(right.wordId1);
+    if (byWord1 != 0) {
+      return byWord1;
+    }
+
+    final byWord2 = left.wordId2.compareTo(right.wordId2);
+    if (byWord2 != 0) {
+      return byWord2;
+    }
+
+    final byRelationType = (left.relationType ?? '').compareTo(
+      right.relationType ?? '',
+    );
+    if (byRelationType != 0) {
+      return byRelationType;
+    }
+
+    return (left.categoryCode ?? '').compareTo(right.categoryCode ?? '');
   }
 }
