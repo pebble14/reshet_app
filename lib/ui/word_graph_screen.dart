@@ -339,6 +339,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   final WordRepository _repository = WordRepository();
   final GraphBuilder _graphBuilder = const GraphBuilder();
   static const GraphLayoutMode _graphLayoutMode = GraphLayoutMode.forceDirected;
+  static const int _defaultGraphMaxNodes = 30;
 
   /// 그래프 줌/팬 상태를 관리하는 컨트롤러
   final TransformationController _transformController =
@@ -556,11 +557,46 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         .toList(growable: false);
   }
 
+  int _effectiveGraphMaxNodes() {
+    if (_fullyRevealedExpansionSourceIds.isEmpty) {
+      return _defaultGraphMaxNodes;
+    }
+
+    final potentialNodeIds = <String>{_centerWord.id};
+    final baseGraphData = _baseGraphData;
+    if (baseGraphData != null) {
+      for (final word in baseGraphData.connectedWords) {
+        potentialNodeIds.add(word.id);
+      }
+    }
+
+    var potentialPlaceholderCount = 0;
+    for (final entry in _expansionDataBySourceId.entries) {
+      final sourceWordId = entry.key.trim();
+      if (sourceWordId.isEmpty) {
+        continue;
+      }
+
+      for (final word in entry.value.connectedWords) {
+        potentialNodeIds.add(word.id);
+      }
+
+      if (!_fullyRevealedExpansionSourceIds.contains(sourceWordId)) {
+        potentialPlaceholderCount++;
+      }
+    }
+
+    return max(
+      _defaultGraphMaxNodes,
+      potentialNodeIds.length + potentialPlaceholderCount,
+    );
+  }
+
   GraphBuildOptions _graphBuildOptions() {
     return GraphBuildOptions(
       centerWordId: _centerWord.id,
       maxDepth: 2,
-      maxNodes: 30,
+      maxNodes: _effectiveGraphMaxNodes(),
       layoutMode: _graphLayoutMode,
     );
   }

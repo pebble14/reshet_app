@@ -144,10 +144,19 @@ class GraphBuilder {
       }
 
       final revealAll = normalizedRevealedSourceIds.contains(sourceWordId);
+      final prioritizedDepthTwoWords = _prioritizeOwnedDepthTwoWords(
+        sourceWordId: sourceWordId,
+        ownedDepthTwoWords: ownedDepthTwoWords,
+        relationEdges: entry.value.relationEdges,
+        visibleNeighborIds: visibleNeighborIds,
+      );
       final visibleDepthTwoCount = revealAll
-          ? ownedDepthTwoWords.length
-          : min(ownedDepthTwoWords.length, _defaultDepthTwoSoftLimitPerSource);
-      final visibleDepthTwoWords = ownedDepthTwoWords
+          ? prioritizedDepthTwoWords.length
+          : min(
+              prioritizedDepthTwoWords.length,
+              _defaultDepthTwoSoftLimitPerSource,
+            );
+      final visibleDepthTwoWords = prioritizedDepthTwoWords
           .take(visibleDepthTwoCount)
           .toList(growable: false);
 
@@ -523,6 +532,71 @@ class GraphBuilder {
     }
 
     return counts;
+  }
+
+  List<Word> _prioritizeOwnedDepthTwoWords({
+    required String sourceWordId,
+    required Iterable<Word> ownedDepthTwoWords,
+    required Iterable<WordRelationEdgeInfo> relationEdges,
+    required Set<String> visibleNeighborIds,
+  }) {
+    final prioritizedWords = ownedDepthTwoWords.toList(growable: false);
+    if (prioritizedWords.length < 2) {
+      return List<Word>.unmodifiable(prioritizedWords);
+    }
+
+    final sourceContextNeighborIds = <String>{
+      sourceWordId,
+      ...visibleNeighborIds,
+    };
+    final proxyScoresByWordId = <String, int>{
+      for (final word in prioritizedWords) word.id: 0,
+    };
+    final labelsByWordId = <String, String>{
+      for (final word in prioritizedWords) word.id: _labelForWord(word),
+    };
+
+    for (final edgeInfo in relationEdges) {
+      String? candidateWordId;
+      String? contextWordId;
+
+      if (proxyScoresByWordId.containsKey(edgeInfo.wordId1)) {
+        candidateWordId = edgeInfo.wordId1;
+        contextWordId = edgeInfo.wordId2;
+      } else if (proxyScoresByWordId.containsKey(edgeInfo.wordId2)) {
+        candidateWordId = edgeInfo.wordId2;
+        contextWordId = edgeInfo.wordId1;
+      }
+
+      if (candidateWordId == null || contextWordId == null) {
+        continue;
+      }
+      if (!sourceContextNeighborIds.contains(contextWordId)) {
+        continue;
+      }
+
+      proxyScoresByWordId.update(candidateWordId, (score) => score + 1);
+    }
+
+    prioritizedWords.sort((left, right) {
+      final byProxyScore = (proxyScoresByWordId[right.id] ?? 0).compareTo(
+        proxyScoresByWordId[left.id] ?? 0,
+      );
+      if (byProxyScore != 0) {
+        return byProxyScore;
+      }
+
+      final byLabel = (labelsByWordId[left.id] ?? left.id).compareTo(
+        labelsByWordId[right.id] ?? right.id,
+      );
+      if (byLabel != 0) {
+        return byLabel;
+      }
+
+      return left.id.compareTo(right.id);
+    });
+
+    return List<Word>.unmodifiable(prioritizedWords);
   }
 
   GraphNode _buildGraphNode({

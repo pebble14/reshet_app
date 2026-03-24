@@ -76,6 +76,7 @@ class ForceDirectedLayoutStrategy implements GraphLayoutStrategy {
             .where((node) => node.id != viewData.centerNodeId)
             .toList(growable: false)
           ..sort(_compareNodes);
+    final peripheralNodeCount = peripheralNodes.length;
 
     if (peripheralNodes.isEmpty) {
       return GraphLayoutResult(
@@ -92,17 +93,58 @@ class ForceDirectedLayoutStrategy implements GraphLayoutStrategy {
       viewportSize: viewportSize,
       nodeHalf: nodeHalf,
     );
-    final maxCenterDistance = max(
+    final baseMaxCenterDistance = max(
       minCenterDistance,
       min(maximumCenterDistance, maxViewportRadius),
     );
-    final shellCapacity = max(
+    final crowdingFactor = _crowdingFactor(peripheralNodeCount);
+    final effectiveBaseCenterDistance =
+        baseCenterDistance * (1.0 + crowdingFactor * 0.45);
+    final effectiveShellSpacing = shellSpacing * (1.0 + crowdingFactor * 0.85);
+    final baseShellCapacity = max(
       6,
       _ringCapacity(
-        radius: min(baseCenterDistance, maxCenterDistance),
+        radius: min(effectiveBaseCenterDistance, baseMaxCenterDistance),
         spacingPerNode: nodeDiameter + minimumNodeGap,
       ),
     );
+    final additionalRadius = crowdingFactor <= 0
+        ? 0.0
+        : min(
+            maxViewportRadius * crowdingFactor * 1.8,
+            effectiveShellSpacing *
+                (2.0 + peripheralNodeCount / max(baseShellCapacity, 1)),
+          );
+    final maxCenterDistance = baseMaxCenterDistance + additionalRadius;
+    final shellCapacityRadius = crowdingFactor <= 0
+        ? min(baseCenterDistance, maxCenterDistance)
+        : min(
+            maxCenterDistance,
+            effectiveBaseCenterDistance + effectiveShellSpacing * 3.0,
+          );
+    final shellCapacity = max(
+      6,
+      _ringCapacity(
+        radius: shellCapacityRadius,
+        spacingPerNode: nodeDiameter + minimumNodeGap,
+      ),
+    );
+    final effectiveViewportOverflow = maxViewportRadius * crowdingFactor * 1.8;
+    final effectiveIterationCount =
+        iterationCount + (crowdingFactor * 120).round();
+    final effectiveRepulsionStrength =
+        repulsionStrength * (1.0 + crowdingFactor * 1.4);
+    final effectiveOverlapRepulsionStrength =
+        overlapRepulsionStrength * (1.0 + crowdingFactor * 2.0);
+    final effectiveEdgeSpringStrength =
+        edgeSpringStrength * (1.0 - crowdingFactor * 0.25);
+    final effectiveNonCenterDesiredDistance =
+        nodeDiameter + minimumNodeGap + 36.0 + effectiveShellSpacing * 0.28;
+    final effectiveMaxStepDistance =
+        maxStepDistance * (1.0 + crowdingFactor * 0.45);
+    final effectiveMinimumSeparation =
+        (nodeDiameter + minimumNodeGap) * (1.0 + crowdingFactor * 0.16);
+    final deOverlapPassCount = 1 + (crowdingFactor * 4).round();
     final placements = <_ForceNodePlacement>[];
     final depthCounts = <int, int>{};
 
@@ -119,6 +161,8 @@ class ForceDirectedLayoutStrategy implements GraphLayoutStrategy {
         shellCapacity: shellCapacity,
         minCenterDistance: minCenterDistance,
         maxCenterDistance: maxCenterDistance,
+        baseCenterDistance: effectiveBaseCenterDistance,
+        shellSpacing: effectiveShellSpacing,
       );
       final seedPosition = seedPositions[node.id];
       placements.add(
@@ -144,6 +188,8 @@ class ForceDirectedLayoutStrategy implements GraphLayoutStrategy {
               shellCapacity: shellCapacity,
               layoutSeed: layoutSeed,
               seedPositions: seedPositions,
+              shellSpacing: effectiveShellSpacing,
+              crowdingFactor: crowdingFactor,
             ),
             minCenterDistance: minCenterDistance,
             maxCenterDistance: maxCenterDistance,
@@ -151,6 +197,7 @@ class ForceDirectedLayoutStrategy implements GraphLayoutStrategy {
             nodeHalf: nodeHalf,
             layoutSeed: layoutSeed,
             index: index,
+            viewportOverflow: effectiveViewportOverflow,
           ),
         ),
       );
@@ -161,10 +208,13 @@ class ForceDirectedLayoutStrategy implements GraphLayoutStrategy {
         placements[index].node.id: index,
     };
 
-    for (var iteration = 0; iteration < iterationCount; iteration++) {
+    for (var iteration = 0; iteration < effectiveIterationCount; iteration++) {
       final deltas = List<Offset>.filled(placements.length, Offset.zero);
-      final cooling = 1.0 - (iteration / max(iterationCount, 1));
-      final stepLimit = max(1.2, maxStepDistance * (0.38 + cooling * 0.62));
+      final cooling = 1.0 - (iteration / max(effectiveIterationCount, 1));
+      final stepLimit = max(
+        1.2,
+        effectiveMaxStepDistance * (0.38 + cooling * 0.62),
+      );
 
       _applyCenterBias(
         center: center,
@@ -175,7 +225,14 @@ class ForceDirectedLayoutStrategy implements GraphLayoutStrategy {
         layoutSeed: layoutSeed,
       );
       _applySeedBias(placements: placements, deltas: deltas);
-      _applyNodeRepulsion(placements: placements, deltas: deltas);
+      _applyNodeRepulsion(
+        placements: placements,
+        deltas: deltas,
+        minimumSeparation: effectiveMinimumSeparation,
+        repulsionStrength: effectiveRepulsionStrength,
+        overlapRepulsionStrength: effectiveOverlapRepulsionStrength,
+        layoutSeed: layoutSeed,
+      );
       _applyEdgeForces(
         center: center,
         centerNodeId: viewData.centerNodeId,
@@ -183,6 +240,8 @@ class ForceDirectedLayoutStrategy implements GraphLayoutStrategy {
         placements: placements,
         placementIndexByNodeId: placementIndexByNodeId,
         deltas: deltas,
+        nonCenterDesiredDistance: effectiveNonCenterDesiredDistance,
+        edgeSpringStrength: effectiveEdgeSpringStrength,
       );
 
       var moved = false;
@@ -201,6 +260,7 @@ class ForceDirectedLayoutStrategy implements GraphLayoutStrategy {
           nodeHalf: nodeHalf,
           layoutSeed: layoutSeed,
           index: placements[index].index,
+          viewportOverflow: effectiveViewportOverflow,
         );
       }
 
@@ -208,6 +268,20 @@ class ForceDirectedLayoutStrategy implements GraphLayoutStrategy {
         break;
       }
     }
+
+    _applyPostLayoutDeOverlap(
+      center: center,
+      placements: placements,
+      minimumSeparation: effectiveMinimumSeparation,
+      passCount: deOverlapPassCount,
+      minCenterDistance: minCenterDistance,
+      maxCenterDistance: maxCenterDistance,
+      viewportSize: viewportSize,
+      nodeHalf: nodeHalf,
+      layoutSeed: layoutSeed,
+      viewportOverflow: effectiveViewportOverflow,
+      stepLimit: max(4.0, effectiveMaxStepDistance * 0.82),
+    );
 
     for (final placement in placements) {
       positionedNodes[placement.node.id] = placement.position;
@@ -273,8 +347,11 @@ class ForceDirectedLayoutStrategy implements GraphLayoutStrategy {
   void _applyNodeRepulsion({
     required List<_ForceNodePlacement> placements,
     required List<Offset> deltas,
+    required double minimumSeparation,
+    required double repulsionStrength,
+    required double overlapRepulsionStrength,
+    required int? layoutSeed,
   }) {
-    final minimumSeparation = nodeDiameter + minimumNodeGap;
     final interactionRange = minimumSeparation * 2.3;
 
     for (var leftIndex = 0; leftIndex < placements.length; leftIndex++) {
@@ -292,7 +369,13 @@ class ForceDirectedLayoutStrategy implements GraphLayoutStrategy {
           continue;
         }
 
-        final direction = Offset(delta.dx / distance, delta.dy / distance);
+        final direction = distance <= 0.001
+            ? _pairDirection(
+                leftPlacement: leftPlacement,
+                rightPlacement: rightPlacement,
+                layoutSeed: layoutSeed,
+              )
+            : Offset(delta.dx / distance, delta.dy / distance);
         var strength = repulsionStrength / (distance * distance);
         if (distance < minimumSeparation) {
           strength += (minimumSeparation - distance) * overlapRepulsionStrength;
@@ -312,6 +395,8 @@ class ForceDirectedLayoutStrategy implements GraphLayoutStrategy {
     required List<_ForceNodePlacement> placements,
     required Map<String, int> placementIndexByNodeId,
     required List<Offset> deltas,
+    required double nonCenterDesiredDistance,
+    required double edgeSpringStrength,
   }) {
     for (final edge in edges) {
       final sourceIndex = placementIndexByNodeId[edge.sourceId];
@@ -349,9 +434,9 @@ class ForceDirectedLayoutStrategy implements GraphLayoutStrategy {
       final delta = targetPlacement.position - sourcePlacement.position;
       final distance = max(delta.distance, 0.001);
       final direction = Offset(delta.dx / distance, delta.dy / distance);
-      final desiredDistance = nodeDiameter + minimumNodeGap + 36.0;
       final adjustment =
-          direction * ((distance - desiredDistance) * edgeSpringStrength * 0.5);
+          direction *
+          ((distance - nonCenterDesiredDistance) * edgeSpringStrength * 0.5);
 
       deltas[sourceIndex] += adjustment;
       deltas[targetIndex] -= adjustment;
@@ -367,11 +452,18 @@ class ForceDirectedLayoutStrategy implements GraphLayoutStrategy {
     required double nodeHalf,
     required int? layoutSeed,
     required int index,
+    required double viewportOverflow,
   }) {
-    final minX = nodeHalf + viewportPadding;
-    final maxX = max(minX, viewportSize.width - nodeHalf - viewportPadding);
-    final minY = nodeHalf + viewportPadding;
-    final maxY = max(minY, viewportSize.height - nodeHalf - viewportPadding);
+    final minX = nodeHalf + viewportPadding - viewportOverflow;
+    final maxX = max(
+      minX,
+      viewportSize.width - nodeHalf - viewportPadding + viewportOverflow,
+    );
+    final minY = nodeHalf + viewportPadding - viewportOverflow;
+    final maxY = max(
+      minY,
+      viewportSize.height - nodeHalf - viewportPadding + viewportOverflow,
+    );
     var stabilized = Offset(
       candidate.dx.clamp(minX, maxX).toDouble(),
       candidate.dy.clamp(minY, maxY).toDouble(),
@@ -411,6 +503,8 @@ class ForceDirectedLayoutStrategy implements GraphLayoutStrategy {
     required int shellCapacity,
     required int? layoutSeed,
     required Map<String, Offset> seedPositions,
+    required double shellSpacing,
+    required double crowdingFactor,
   }) {
     final seededPosition = seedPositions[node.id];
     if (seededPosition != null) {
@@ -433,6 +527,28 @@ class ForceDirectedLayoutStrategy implements GraphLayoutStrategy {
           -radialDirection.dy,
           radialDirection.dx,
         );
+        final crowdedOrbitLayout =
+            crowdingFactor > 0.18 ||
+            totalNodeCount > max(shellCapacity, 24) ||
+            depthOrderIndex >= 6;
+        if (crowdedOrbitLayout) {
+          final orbitCapacity = max(8, min(shellCapacity, 18));
+          final orbitShellIndex = depthOrderIndex ~/ orbitCapacity;
+          final orbitSlotIndex = depthOrderIndex % orbitCapacity;
+          final orbitDistance =
+              max(nodeDiameter + minimumNodeGap + 18.0, shellSpacing * 0.92) +
+              orbitShellIndex * max(nodeDiameter * 0.9, shellSpacing * 0.74);
+          final orbitAngle =
+              atan2(radialDirection.dy, radialDirection.dx) +
+              _seedAngleOffset(
+                layoutSeed: layoutSeed,
+                shellIndex: orbitShellIndex,
+              ) +
+              (2 * pi / orbitCapacity) * orbitSlotIndex;
+          return sourcePosition +
+              Offset(cos(orbitAngle), sin(orbitAngle)) * orbitDistance;
+        }
+
         final orbitDistance = max(
           nodeDiameter + minimumNodeGap + 18.0,
           shellSpacing * 0.92,
@@ -473,6 +589,8 @@ class ForceDirectedLayoutStrategy implements GraphLayoutStrategy {
     required int shellCapacity,
     required double minCenterDistance,
     required double maxCenterDistance,
+    required double baseCenterDistance,
+    required double shellSpacing,
   }) {
     final baseShellIndex = max(0, node.depth - 1);
     final shellIndex = depthOrderIndex ~/ shellCapacity;
@@ -513,6 +631,88 @@ class ForceDirectedLayoutStrategy implements GraphLayoutStrategy {
     return Offset(cos(angle), sin(angle));
   }
 
+  Offset _pairDirection({
+    required _ForceNodePlacement leftPlacement,
+    required _ForceNodePlacement rightPlacement,
+    required int? layoutSeed,
+  }) {
+    final mixedIndex =
+        leftPlacement.index * 131 + rightPlacement.index * 17 + 0x9e3779;
+    return _seedDirection(layoutSeed: layoutSeed, index: mixedIndex);
+  }
+
+  void _applyPostLayoutDeOverlap({
+    required Offset center,
+    required List<_ForceNodePlacement> placements,
+    required double minimumSeparation,
+    required int passCount,
+    required double minCenterDistance,
+    required double maxCenterDistance,
+    required Size viewportSize,
+    required double nodeHalf,
+    required int? layoutSeed,
+    required double viewportOverflow,
+    required double stepLimit,
+  }) {
+    if (placements.length < 2 || passCount <= 0) {
+      return;
+    }
+
+    for (var pass = 0; pass < passCount; pass++) {
+      final deltas = List<Offset>.filled(placements.length, Offset.zero);
+      var moved = false;
+
+      for (var leftIndex = 0; leftIndex < placements.length; leftIndex++) {
+        final leftPlacement = placements[leftIndex];
+        for (
+          var rightIndex = leftIndex + 1;
+          rightIndex < placements.length;
+          rightIndex++
+        ) {
+          final rightPlacement = placements[rightIndex];
+          final delta = rightPlacement.position - leftPlacement.position;
+          final distance = delta.distance;
+          if (distance >= minimumSeparation) {
+            continue;
+          }
+
+          final direction = distance <= 0.001
+              ? _pairDirection(
+                  leftPlacement: leftPlacement,
+                  rightPlacement: rightPlacement,
+                  layoutSeed: layoutSeed,
+                )
+              : Offset(delta.dx / distance, delta.dy / distance);
+          final pushDistance = (minimumSeparation - distance) * 0.52;
+          final adjustment = direction * pushDistance;
+          deltas[leftIndex] -= adjustment;
+          deltas[rightIndex] += adjustment;
+          moved = true;
+        }
+      }
+
+      if (!moved) {
+        break;
+      }
+
+      for (var index = 0; index < placements.length; index++) {
+        placements[index].position = _stabilizePosition(
+          center: center,
+          candidate:
+              placements[index].position +
+              _clampOffset(deltas[index], stepLimit),
+          minCenterDistance: minCenterDistance,
+          maxCenterDistance: maxCenterDistance,
+          viewportSize: viewportSize,
+          nodeHalf: nodeHalf,
+          layoutSeed: layoutSeed,
+          index: placements[index].index,
+          viewportOverflow: viewportOverflow,
+        );
+      }
+    }
+  }
+
   double _seedAngleOffset({required int? layoutSeed, required int shellIndex}) {
     if (layoutSeed == null) {
       return 0.0;
@@ -547,6 +747,14 @@ class ForceDirectedLayoutStrategy implements GraphLayoutStrategy {
     }
 
     return Rect.fromLTRB(minX, minY, maxX, maxY);
+  }
+
+  double _crowdingFactor(int peripheralNodeCount) {
+    if (peripheralNodeCount <= 18) {
+      return 0.0;
+    }
+
+    return ((peripheralNodeCount - 18) / 96).clamp(0.0, 1.0);
   }
 
   int _compareNodes(GraphNode left, GraphNode right) {
