@@ -15,7 +15,7 @@ Reshet은 Flutter 기반 단어 관계 탐색 도구이다.
 
 # 디렉터리 구조
 
-
+```text
 lib/
 main.dart
 
@@ -34,6 +34,7 @@ ui/
 home_screen.dart
 word_detail_screen.dart
 word_graph_screen.dart
+```
 
 
 ---
@@ -41,6 +42,7 @@ word_graph_screen.dart
 # 주요 파일 역할
 
 ## main.dart
+
 앱 시작점.
 
 Flutter 애플리케이션을 초기화한다.

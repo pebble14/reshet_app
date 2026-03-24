@@ -50,9 +50,10 @@ Reshet은 단어를 단순한 사전 항목이 아니라
 
 주요 테이블:
 
-
+```text
 WORD_TABLE
 WORD_RELATION
+```
 
 
 ---
@@ -98,22 +99,23 @@ WORD_RELATION
 
 즉 항상 하나의 중심 단어가 존재한다.
 
+```text
   word
    │
 
 ─── center ───
 │ │ │
 word word word
+```
 
 
 중심 단어와 직접 연결된 단어들이 주변 노드로 표시된다.
 
 그래프 구조 규칙은 다음 문서에 정의되어 있다.
 
-
+```text
 GRAPH_ENGINE_RULES.md
-
-
+```
 
 ---
 
@@ -121,8 +123,9 @@ GRAPH_ENGINE_RULES.md
 
 그래프 기능의 핵심 화면은 다음 파일이다.
 
-
+```text
 lib/ui/word_graph_screen.dart
+```
 
 
 이 화면은 다음 기능을 담당한다.
@@ -140,7 +143,7 @@ lib/ui/word_graph_screen.dart
 
 데이터 접근은 다음 구조를 따른다.
 
-
+```text
 UI
 ↓
 Repository
@@ -148,6 +151,7 @@ Repository
 DatabaseService
 ↓
 SQLite
+```
 
 
 즉 UI 코드에서 SQL을 직접 작성하지 않는다.
@@ -161,11 +165,10 @@ SQLite
 
 주요 데이터 모델:
 
-
+```text
 Word
 WordRelation
-
-
+```
 
 ---
 
@@ -173,7 +176,7 @@ WordRelation
 
 그래프 탐색은 다음 방식으로 이루어진다.
 
-
+```text
 노드 클릭
 ↓
 선택 노드가 새로운 중심 단어
@@ -181,6 +184,7 @@ WordRelation
 WORD_RELATION 조회
 ↓
 그래프 재구성
+```
 
 
 이 방식으로 단어 관계 네트워크를 탐색할 수 있다.
@@ -200,14 +204,13 @@ WORD_RELATION 조회
 
 현재 그래프는 **1단계 관계(Level 1)** 를 표시한다.
 
-
+```text
 center word
 │
 ├── connected word
 ├── connected word
 └── connected word
-
-
+```
 
 ---
 

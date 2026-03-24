@@ -61,20 +61,20 @@ graph_expand_mode는 중심 단어가 그래프의 기준이 될 때,
 
 값은 다음과 같이 정의한다.
 
-- default  
-  incoming, outgoing, undirected, unknown 관계를 모두 표시 대상으로 포함한다.  
+- default
+  incoming, outgoing, undirected, unknown 관계를 모두 표시 대상으로 포함한다.
   다만 그래프 엔진의 일반 표시 규칙(예: 화면 가독성 보조 규칙, 대표 edge 선택 등)은 적용될 수 있다.
 
-- incoming_only  
-  incoming, undirected, unknown 관계를 표시 대상으로 포함하고,  
+- incoming_only
+  incoming, undirected, unknown 관계를 표시 대상으로 포함하고,
   outgoing 관계는 표시 대상에서 제외한다.
 
-- outgoing_limited  
-  incoming, undirected, unknown 관계는 모두 포함한다.  
+- outgoing_limited
+  incoming, undirected, unknown 관계는 모두 포함한다.
   outgoing 관계는 제한된 개수만 포함한다.
 
-- full  
-  incoming, outgoing, undirected, unknown 관계를 모두 포함하며,  
+- full
+  incoming, outgoing, undirected, unknown 관계를 모두 포함하며,
   허브 단어에 대한 일반적인 제한 정책도 적용하지 않는 예외 모드로 본다.
 
 unknown 관계는 방향이 아직 결정되지 않은 관계이므로,
@@ -83,7 +83,7 @@ unknown 관계는 방향이 아직 결정되지 않은 관계이므로,
 즉, unknown은 정보 부족 때문에 숨기지 않고,
 사용자 검토 대상이 되도록 기본적으로 노출하는 방향을 우선한다.
 
-  ---
+---
 
 ## outgoing_limited의 제한 방식
 

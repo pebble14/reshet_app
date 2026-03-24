@@ -60,19 +60,18 @@
 
 예:
 
-
+```text
 feature/word-graph-v1
 feature/word-graph-navigation
 feature/word-graph-ui
-
+```
 
 브랜치 생성:
 
-
+```bash
 git checkout -b feature/branch-name
 git push -u origin feature/branch-name
-
-
+```
 
 ---
 
@@ -118,14 +117,13 @@ git push -u origin feature/branch-name
 
 예:
 
-
+```text
 feat: 그래프 중심 노드 렌더링 구현
 feat: 연결 단어 원형 배치 구현
 feat: WORD_RELATION 기반 그래프 데이터 로딩 추가
 refactor: Word 모델 및 Repository 계층 도입
 fix: 그래프 노드 배치 계산 오류 수정
-
-
+```
 
 ---
 
@@ -155,10 +153,9 @@ Codex는 다음 방식으로 사용한다.
 
 예:
 
-
+```bash
 git reset --hard <commit-id>
-
-
+```
 
 ---
 
@@ -181,8 +178,9 @@ git reset --hard <commit-id>
 
 기본 테스트:
 
-
+```bash
 flutter run -d windows
+```
 
 
 확인 항목:

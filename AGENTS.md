@@ -86,9 +86,11 @@ Codex는 파일을 확인하지 않고 수정안을 만들지 않는다.
 
 예:
 
-feature/word-graph-v1  
-feature/word-graph-data-binding  
-feature/word-graph-navigation  
+```text
+feature/word-graph-v1
+feature/word-graph-data-binding
+feature/word-graph-navigation
+```
 
 
 ## 커밋 메시지
@@ -97,9 +99,11 @@ feature/word-graph-navigation
 
 예:
 
-feat: 그래프 노드 자동 원형 배치 구현  
-feat: WORD_RELATION 기반 그래프 데이터 로딩 추가  
+```text
+feat: 그래프 노드 자동 원형 배치 구현
+feat: WORD_RELATION 기반 그래프 데이터 로딩 추가
 refactor: Word 모델 및 Repository 계층 도입
+```
 
 
 ---
@@ -148,8 +152,8 @@ Map<String, dynamic> 직접 사용은 최소화한다.
 
 장기적으로 다음 구조를 목표로 한다.
 
-좌측: 관계 그래프  
-우측: 단어 상세 정보
+- 좌측: 관계 그래프
+- 우측: 단어 상세 정보
 
 
 ---

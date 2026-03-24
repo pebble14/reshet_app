@@ -61,18 +61,18 @@ graph_expand_mode는 중심 단어가 그래프의 기준이 될 때,
 
 값은 다음과 같이 정의한다.
 
-- default  
+- default
   incoming, outgoing, undirected, unknown 관계를 모두 표시 대상으로 포함한다.
 
-- incoming_only  
+- incoming_only
   incoming, undirected, unknown 관계를 표시 대상으로 포함하고,
   outgoing 관계는 표시 대상에서 제외한다.
 
-- outgoing_limited  
+- outgoing_limited
   incoming, undirected, unknown 관계는 모두 포함한다.
   outgoing 관계는 제한적으로만 포함한다.
 
-- full  
+- full
   incoming, outgoing, undirected, unknown 관계를 모두 제한 없이 표시 대상으로 포함한다.
 
 ---

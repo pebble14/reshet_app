@@ -4,12 +4,13 @@
 
 Reshet 프로젝트는 다음 구조를 따른다.
 
-
+```text
 UI Layer
 ↓
 Repository Layer
 ↓
 Database Layer
+```
 
 
 ---
@@ -20,8 +21,9 @@ Flutter 화면.
 
 파일 위치:
 
-
+```text
 lib/ui/
+```
 
 
 주요 화면:
@@ -39,8 +41,9 @@ lib/ui/
 
 파일 위치:
 
-
+```text
 lib/data/repositories
+```
 
 
 역할:
@@ -57,8 +60,9 @@ lib/data/repositories
 
 파일 위치:
 
-
+```text
 lib/data/models
+```
 
 
 예:
@@ -75,8 +79,9 @@ SQLite 연결 및 관리.
 
 파일 위치:
 
-
+```text
 lib/database
+```
 
 
 DatabaseService가 DB 연결을 담당한다.
@@ -104,9 +109,8 @@ DatabaseService가 DB 연결을 담당한다.
 
 장기 목표:
 
-
-좌측: 단어 관계 그래프
-우측: 단어 상세 정보
+- 좌측: 단어 관계 그래프
+- 우측: 단어 상세 정보
 
 
 Split View 구조를 고려한다.

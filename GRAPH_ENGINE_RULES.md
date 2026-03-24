@@ -25,12 +25,13 @@ Reshet 그래프는 다음 개념으로 구성된다.
 
 즉, Reshet 그래프는 **Ego Network 형태**이다.
 
-
+```text
 center word
 │
 ├── connected word
 ├── connected word
 └── connected word
+```
 
 
 ---
@@ -87,7 +88,7 @@ center word
 
 다음 컬럼을 사용한다.
 
-
+```text
 WORD_RELATION
 
 id
@@ -100,15 +101,17 @@ note
 source
 created_at
 updated_at
+```
 
 
 그래프 연결은 다음 규칙으로 계산한다.
 
-
+```text
 if word_id_1 == centerWord
 connectedWord = word_id_2
 else
 connectedWord = word_id_1
+```
 
 
 즉, 관계는 **양방향 관계**로 처리한다.
@@ -121,7 +124,7 @@ connectedWord = word_id_1
 
 그래프는 다음 흐름으로 데이터를 가져온다.
 
-
+```text
 centerWordId
 ↓
 WORD_RELATION 조회
@@ -131,13 +134,14 @@ connected word ids 수집
 WORD_TABLE 조회
 ↓
 노드 렌더링
+```
 
 
 주의:
 
 WORD_TABLE의 다음 컬럼은 **그래프 관계 계산에 사용하지 않는다.**
 
-
+```text
 관련1
 관련2
 관련3
@@ -145,6 +149,7 @@ WORD_TABLE의 다음 컬럼은 **그래프 관계 계산에 사용하지 않는�
 관련5
 관련6
 관련7
+```
 
 
 그래프 관계는 반드시 **WORD_RELATION** 기반이어야 한다.
@@ -155,12 +160,14 @@ WORD_TABLE의 다음 컬럼은 **그래프 관계 계산에 사용하지 않는�
 
 현재 그래프 배치는 **원형 레이아웃 (Circular Layout)** 을 사용한다.
 
+```text
     node
       │
 
 node ─ center ─ node
 │
 node
+```
 
 
 배치 규칙:
@@ -171,8 +178,9 @@ node
 
 예:
 
-
+```text
 angle = 360 / nodeCount
+```
 
 
 ---
@@ -181,9 +189,10 @@ angle = 360 / nodeCount
 
 연결 노드 위치는 다음 방식으로 계산한다.
 
-
+```text
 x = centerX + radius * cos(angle)
 y = centerY + radius * sin(angle)
+```
 
 
 radius는 그래프 크기에 따라 조정할 수 있다.
@@ -206,7 +215,7 @@ radius는 그래프 크기에 따라 조정할 수 있다.
 
 그래프 탐색은 다음 방식으로 이루어진다.
 
-
+```text
 노드 클릭
 ↓
 선택 노드가 새로운 중심 노드
@@ -214,6 +223,7 @@ radius는 그래프 크기에 따라 조정할 수 있다.
 그래프 재조회
 ↓
 새로운 관계 렌더링
+```
 
 
 즉, 그래프는 **탐색 가능한 네트워크**이다.
@@ -224,9 +234,10 @@ radius는 그래프 크기에 따라 조정할 수 있다.
 
 그래프 상태는 다음 두 가지가 핵심이다.
 
-
+```text
 currentCenterWord
 connectedWords
+```
 
 
 그래프 렌더링은 항상 이 두 상태를 기반으로 한다.
@@ -257,17 +268,18 @@ connectedWords
 
 향후 UI는 다음 구조로 확장될 수 있다.
 
-
+```text
 ┌──────────────┬──────────────┐
 │ │ │
 │ Graph │ Word Info │
 │ │ │
 │ │ │
 └──────────────┴──────────────┘
+```
 
 
-왼쪽: 그래프  
-오른쪽: 단어 상세 정보
+- 왼쪽: 그래프
+- 오른쪽: 단어 상세 정보
 
 그래프 탐색 시 오른쪽 정보가 업데이트된다.
 

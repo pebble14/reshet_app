@@ -6,8 +6,9 @@ Reshet 프로젝트는 SQLite 데이터베이스를 사용한다.
 
 주요 데이터베이스 파일:
 
-
+```text
 data/bbwdb_20260106.db
+```
 
 
 핵심 테이블:
@@ -24,23 +25,23 @@ data/bbwdb_20260106.db
 
 Primary Key:
 
-
+```text
 id TEXT
+```
 
 
 예:
 
-
+```text
 H0001_0000
-
-
+```
 
 ---
 
 ## 주요 컬럼
 
 | 컬럼 | 설명 |
-|-----|-----|
+| --- | --- |
 | id | 단어 ID |
 | 언어 | 언어 |
 | 스트롱넘버 | Strong Number |
@@ -67,7 +68,7 @@ H0001_0000
 ## 컬럼
 
 | 컬럼 | 설명 |
-|-----|-----|
+| --- | --- |
 | id | 관계 ID |
 | word_id_1 | 첫 번째 단어 |
 | word_id_2 | 두 번째 단어 |
@@ -86,7 +87,7 @@ H0001_0000
 
 특정 단어와 연결된 단어는 다음 로직으로 조회한다.
 
-
+```sql
 SELECT * FROM WORD_TABLE
 WHERE id IN (
 SELECT CASE
@@ -98,6 +99,7 @@ FROM WORD_RELATION
 WHERE word_id_1 = ?
 OR word_id_2 = ?
 )
+```
 
 
 이 쿼리는 **양방향 관계**를 처리한다.
