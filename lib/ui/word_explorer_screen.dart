@@ -350,21 +350,17 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
     required Word centerWord,
     required Map<String, dynamic>? selectedWordMap,
   }) {
+    final centerWordId = centerWord.id.trim();
     final fallbackSpelling = (centerWord.spelling1 ?? '').trim();
-    final representativeSpelling = selectedWordMap == null
-        ? (fallbackSpelling.isNotEmpty ? fallbackSpelling : centerWord.id)
-        : buildWordRepresentativeSpelling(
-            selectedWordMap,
-            fallback: fallbackSpelling.isNotEmpty
-                ? fallbackSpelling
-                : centerWord.id,
-          );
-    final strongNumber = selectedWordMap == null
-        ? formatWordDisplayStrong((centerWord.strongNumber ?? '').trim())
-        : buildWordDisplayStrong(selectedWordMap);
+    final representativeSpelling = fallbackSpelling.isNotEmpty
+        ? fallbackSpelling
+        : centerWordId;
+    final strongNumber = formatWordDisplayStrong(
+      (centerWord.strongNumber ?? '').trim(),
+    );
 
     return WordNavigationHistoryEntry<_ExplorerHistorySnapshot>(
-      wordId: (selectedWordMap?['id'] ?? centerWord.id).toString(),
+      wordId: centerWordId,
       representativeSpelling: representativeSpelling,
       strongNumber: strongNumber,
       payload: _ExplorerHistorySnapshot(
@@ -410,7 +406,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
       if (entry.wordId.trim().isNotEmpty) entry.wordId,
     ];
 
-    return '$label: ${parts.join(' / ')}';
+    return '$label: 중심 ${parts.join(' / ')}';
   }
 
   bool _wordMapsEqual(Map<String, dynamic>? left, Map<String, dynamic>? right) {
