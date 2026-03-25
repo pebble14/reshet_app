@@ -291,7 +291,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
 
     setState(() {
       _centerWord = snapshot.centerWord;
-      _selectedWordMap = _cloneWordMap(snapshot.selectedWordMap);
+      _selectedWordMap = null;
       _detailError = null;
       _isDetailLoading = false;
     });
