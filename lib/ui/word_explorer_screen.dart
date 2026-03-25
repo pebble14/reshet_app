@@ -33,6 +33,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
   int _graphRevision = 0;
   bool _isDetailLoading = false;
   String? _detailError;
+  String? _detailUnavailableMessage;
 
   final WordNavigationHistoryController<_ExplorerHistorySnapshot> _history =
       WordNavigationHistoryController<_ExplorerHistorySnapshot>();
@@ -86,6 +87,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
       }
       _isDetailLoading = true;
       _detailError = null;
+      _detailUnavailableMessage = null;
     });
 
     try {
@@ -96,6 +98,9 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
       setState(() {
         _selectedWordMap = selectedWordMap;
         _isDetailLoading = false;
+        _detailUnavailableMessage = selectedWordMap == null
+            ? '선택한 단어의 상세 정보를 찾을 수 없습니다.'
+            : null;
         if (changeCenterWord) {
           _pushHistoryEntry(
             centerWord: _centerWord,
@@ -114,6 +119,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
       setState(() {
         _detailError = '상세 정보를 불러오지 못했습니다: $e';
         _isDetailLoading = false;
+        _detailUnavailableMessage = null;
       });
     }
   }
@@ -146,6 +152,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
     setState(() {
       _isDetailLoading = true;
       _detailError = null;
+      _detailUnavailableMessage = null;
     });
 
     try {
@@ -156,6 +163,9 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
 
       setState(() {
         _selectedWordMap = refreshedWordMap;
+        _detailUnavailableMessage = refreshedWordMap == null
+            ? '선택한 단어의 상세 정보를 찾을 수 없습니다.'
+            : null;
         if (syncCenterWord && refreshedWordMap != null) {
           _centerWord = Word.fromMap(refreshedWordMap);
         }
@@ -174,6 +184,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
       setState(() {
         _detailError = '상세 정보를 불러오지 못했습니다: $e';
         _isDetailLoading = false;
+        _detailUnavailableMessage = null;
       });
     }
   }
@@ -191,6 +202,8 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
 
     setState(() {
       _selectedWordMap = Map<String, dynamic>.from(result);
+      _detailError = null;
+      _detailUnavailableMessage = null;
 
       if (_centerWord.id == result['id'].toString()) {
         _centerWord = Word.fromMap(result);
@@ -242,7 +255,10 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
   }
 
   void _clearSelectedWordPanel() {
-    if (_selectedWordMap == null && !_isDetailLoading && _detailError == null) {
+    if (_selectedWordMap == null &&
+        !_isDetailLoading &&
+        _detailError == null &&
+        _detailUnavailableMessage == null) {
       return;
     }
 
@@ -250,6 +266,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
       _selectedWordMap = null;
       _isDetailLoading = false;
       _detailError = null;
+      _detailUnavailableMessage = null;
       _replaceCurrentHistoryEntry(
         centerWord: _centerWord,
         selectedWordMap: null,
@@ -294,6 +311,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
       _selectedWordMap = null;
       _detailError = null;
       _isDetailLoading = false;
+      _detailUnavailableMessage = null;
     });
   }
 
@@ -428,13 +446,51 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
 
     final wordMap = _selectedWordMap;
     if (wordMap == null) {
-      return const Center(child: Text('상세 정보가 없습니다.'));
+      final detailUnavailableMessage = _detailUnavailableMessage;
+      if (detailUnavailableMessage != null) {
+        return Center(child: Text(detailUnavailableMessage));
+      }
+      return _buildNoSelectionDetailPanel();
     }
 
     return WordInfoPanel(
       wordMap: wordMap,
       onEdit: _openEditSelectedWord,
       onOpenDetail: _openSelectedWordDetail,
+    );
+  }
+
+  Widget _buildNoSelectionDetailPanel() {
+    final textTheme = Theme.of(context).textTheme;
+
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.touch_app_outlined,
+              size: 34,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              '단어를 선택하세요',
+              style: textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '그래프에서 노드를 탭하면 상세 정보를 볼 수 있습니다',
+              style: textTheme.bodyMedium,
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
