@@ -107,6 +107,7 @@ const double _dashedEdgeGapLength = 9.0;
 const double _dottedEdgeDotLength = 1.0;
 const double _dottedEdgeGapLength = 7.0;
 const int _graphOutgoingLimit = 12;
+const int _centerDepthOneSoftLimit = 12;
 
 enum _GraphVisualState { selected, connected, dimmed }
 
@@ -365,6 +366,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   final Set<String> _expansionRequestsInFlight = <String>{};
   final Set<String> _fullyRevealedExpansionSourceIds = <String>{};
   final Map<String, Offset> _seedNodePositions = <String, Offset>{};
+  bool _isCenterDepthOneFullyRevealed = false;
 
   /// 사용자가 클릭(선택)한 주변 노드 id
   /// - 같은 노드를 다시 클릭하면 이동(push)하는 트리거로 사용
@@ -557,8 +559,20 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         .toList(growable: false);
   }
 
+  bool _shouldUseCenterDepthOneMore() {
+    final baseGraphData = _baseGraphData;
+    if (baseGraphData == null) {
+      return false;
+    }
+
+    return baseGraphData.connectedWords.length > _centerDepthOneSoftLimit;
+  }
+
   int _effectiveGraphMaxNodes() {
-    if (_fullyRevealedExpansionSourceIds.isEmpty) {
+    final shouldExpandMaxNodes =
+        _isCenterDepthOneFullyRevealed ||
+        _fullyRevealedExpansionSourceIds.isNotEmpty;
+    if (!shouldExpandMaxNodes) {
       return _defaultGraphMaxNodes;
     }
 
@@ -571,6 +585,9 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     }
 
     var potentialPlaceholderCount = 0;
+    if (!_isCenterDepthOneFullyRevealed && _shouldUseCenterDepthOneMore()) {
+      potentialPlaceholderCount++;
+    }
     for (final entry in _expansionDataBySourceId.entries) {
       final sourceWordId = entry.key.trim();
       if (sourceWordId.isEmpty) {
@@ -614,6 +631,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       baseRelationEdges: baseGraphData.relationEdges,
       expansionDataBySourceId: _expansionDataBySourceId,
       fullyRevealedExpansionSourceIds: _fullyRevealedExpansionSourceIds,
+      centerDepthOneSoftLimit: _centerDepthOneSoftLimit,
+      fullyRevealCenterDepthOne: _isCenterDepthOneFullyRevealed,
     );
   }
 
@@ -631,6 +650,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     _expandedDepthOneWordIds.clear();
     _expansionRequestsInFlight.clear();
     _fullyRevealedExpansionSourceIds.clear();
+    _isCenterDepthOneFullyRevealed = false;
     if (clearSeedPositions) {
       _seedNodePositions.clear();
     }
@@ -1031,6 +1051,18 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
   void _handlePlaceholderMoreNodeTap(GraphNode node) {
     _temporarilySuppressBackgroundTapClear();
+    if (_isCenterDepthOnePlaceholderNode(node)) {
+      if (_isCenterDepthOneFullyRevealed) {
+        return;
+      }
+
+      setState(() {
+        _isCenterDepthOneFullyRevealed = true;
+        _rebuildGraphData();
+      });
+      return;
+    }
+
     final sourceWordId = _placeholderSourceWordId(node);
     if (sourceWordId == null ||
         _fullyRevealedExpansionSourceIds.contains(sourceWordId)) {
@@ -1540,6 +1572,20 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     return expansionSourceId.isEmpty ? null : expansionSourceId;
   }
 
+  bool _isCenterDepthOnePlaceholderNode(GraphNode node) {
+    return node.isPlaceholderMoreNode &&
+        node.depth <= 1 &&
+        _placeholderSourceWordId(node) == _centerWord.id;
+  }
+
+  Color _centerDepthOnePlaceholderAccentColor() {
+    return _blendColor(
+      _colorForWordLanguageGroup(_centerWord.id),
+      Colors.black,
+      0.18,
+    );
+  }
+
   Color _placeholderAccentColor(GraphNode node) {
     final sourceWordId = _placeholderSourceWordId(node);
     if (sourceWordId == null) {
@@ -1559,6 +1605,84 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
     final label = node.label.trim();
     return label.isEmpty ? '+more' : label;
+  }
+
+  Widget _buildCenterDepthOneMoreNode(
+    GraphNode node,
+    Color accentColor, {
+    required _GraphNodeLayout nodeLayout,
+    required _GraphVisualState visualState,
+  }) {
+    final isDimmed = visualState == _GraphVisualState.dimmed;
+    final nodeSize = nodeLayout.nodeSize;
+    final backgroundOpacity =
+        _nodeOpacityForState(visualState, isCenter: false) * 0.97;
+    final textOpacity = _nodeTextOpacityForState(visualState);
+    final fillColor = Color.alphaBlend(
+      accentColor.withValues(alpha: isDimmed ? 0.10 : 0.18),
+      Colors.white,
+    );
+    final innerFillColor = Color.alphaBlend(
+      accentColor.withValues(alpha: isDimmed ? 0.05 : 0.10),
+      Colors.white,
+    );
+    final borderColor = isDimmed
+        ? _blendColor(accentColor, Colors.grey.shade500, 0.36)
+        : _blendColor(accentColor, Colors.black, 0.14);
+
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () => _handlePlaceholderMoreNodeTap(node),
+      child: SizedBox(
+        width: nodeSize,
+        height: nodeSize,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            AnimatedOpacity(
+              duration: _visualStateAnimationDuration,
+              curve: Curves.easeOutCubic,
+              opacity: backgroundOpacity,
+              child: AnimatedContainer(
+                duration: _visualStateAnimationDuration,
+                curve: Curves.easeOutCubic,
+                width: nodeSize,
+                height: nodeSize,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [innerFillColor, fillColor],
+                    stops: const [0.0, 1.0],
+                  ),
+                  border: Border.all(
+                    color: borderColor,
+                    width: _depthOneNodeBorderWidth,
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: AnimatedOpacity(
+                duration: _visualStateAnimationDuration,
+                curve: Curves.easeOutCubic,
+                opacity: textOpacity,
+                child: Text(
+                  _placeholderLabelForNode(node),
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 10.8,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildPlaceholderMoreNode(
@@ -1775,25 +1899,36 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         continue;
       }
 
-      final sourceNode = viewData.nodeById(sourceWordId);
       final sourceCenter = resolvedPositions[sourceWordId];
       if (sourceCenter == null) {
         continue;
       }
 
-      final sourceNodeSize = sourceNode == null
-          ? _depthOneNodeSize
-          : _nodeSizeForDepth(sourceNode.depth);
       final placeholderNodeSize = _nodeSizeForDepth(placeholderNode.depth);
-      final resolvedPlaceholderCenter = _resolvePlaceholderNodeCenter(
-        placeholderNode: placeholderNode,
-        sourceCenter: sourceCenter,
-        centerPosition: center,
-        sourceRadius: sourceNodeSize / 2,
-        placeholderRadius: placeholderNodeSize / 2,
-        positionedNodes: resolvedPositions,
-        occupiedBounds: occupiedBounds,
-      );
+      final resolvedPlaceholderCenter =
+          _isCenterDepthOnePlaceholderNode(placeholderNode)
+          ? _resolveCenterDepthOnePlaceholderNodeCenter(
+              placeholderNode: placeholderNode,
+              centerPosition: center,
+              placeholderRadius: placeholderNodeSize / 2,
+              positionedNodes: resolvedPositions,
+              occupiedBounds: occupiedBounds,
+            )
+          : () {
+              final sourceNode = viewData.nodeById(sourceWordId);
+              final sourceNodeSize = sourceNode == null
+                  ? _depthOneNodeSize
+                  : _nodeSizeForDepth(sourceNode.depth);
+              return _resolvePlaceholderNodeCenter(
+                placeholderNode: placeholderNode,
+                sourceCenter: sourceCenter,
+                centerPosition: center,
+                sourceRadius: sourceNodeSize / 2,
+                placeholderRadius: placeholderNodeSize / 2,
+                positionedNodes: resolvedPositions,
+                occupiedBounds: occupiedBounds,
+              );
+            }();
       resolvedPositions[placeholderNode.id] = resolvedPlaceholderCenter;
       occupiedBounds.add(
         _nodeBoundsForCenter(
@@ -2016,6 +2151,24 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     return bestCenter;
   }
 
+  Offset _resolveCenterDepthOnePlaceholderNodeCenter({
+    required GraphNode placeholderNode,
+    required Offset centerPosition,
+    required double placeholderRadius,
+    required Map<String, Offset> positionedNodes,
+    required List<Rect> occupiedBounds,
+  }) {
+    return _resolvePlaceholderNodeCenter(
+      placeholderNode: placeholderNode,
+      sourceCenter: centerPosition,
+      centerPosition: centerPosition,
+      sourceRadius: _centerNodeHalf,
+      placeholderRadius: placeholderRadius,
+      positionedNodes: positionedNodes,
+      occupiedBounds: occupiedBounds,
+    );
+  }
+
   Iterable<Offset> _candidatePlaceholderCenters({
     required GraphNode placeholderNode,
     required Offset sourceCenter,
@@ -2189,16 +2342,28 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     for (final entry in [...regularNodes, ...placeholderNodes]) {
       final nodeLayout = entry.$1;
       final graphNode = entry.$2;
+      final isCenterDepthOnePlaceholder = _isCenterDepthOnePlaceholderNode(
+        graphNode,
+      );
       final visualState = selectedWordId == null
           ? _GraphVisualState.connected
           : _visualStateForNodeId(graphNode.id);
-      final accentColor = graphNode.isPlaceholderMoreNode
+      final accentColor = isCenterDepthOnePlaceholder
+          ? _centerDepthOnePlaceholderAccentColor()
+          : graphNode.isPlaceholderMoreNode
           ? _placeholderAccentColor(graphNode)
           : _colorForCategory(
               _primaryEdgeInfoForNode(graphNode.id)?.categoryCode,
             );
 
-      final child = graphNode.isPlaceholderMoreNode
+      final child = isCenterDepthOnePlaceholder
+          ? _buildCenterDepthOneMoreNode(
+              graphNode,
+              accentColor,
+              nodeLayout: nodeLayout,
+              visualState: visualState,
+            )
+          : graphNode.isPlaceholderMoreNode
           ? _buildPlaceholderMoreNode(
               graphNode,
               accentColor,

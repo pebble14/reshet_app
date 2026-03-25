@@ -29,12 +29,16 @@ class GraphBuilder {
     required Word centerWord,
     required Iterable<Word> connectedWords,
     required Iterable<WordRelationEdgeInfo> relationEdges,
+    int? centerDepthOneSoftLimit,
+    bool fullyRevealCenterDepthOne = false,
   }) {
     return buildMergedVisibleGraphData(
       options: options,
       centerWord: centerWord,
       baseWords: connectedWords,
       baseRelationEdges: relationEdges,
+      centerDepthOneSoftLimit: centerDepthOneSoftLimit,
+      fullyRevealCenterDepthOne: fullyRevealCenterDepthOne,
     ).viewData;
   }
 
@@ -46,6 +50,8 @@ class GraphBuilder {
     Map<String, VisibleWordGraphData> expansionDataBySourceId =
         const <String, VisibleWordGraphData>{},
     Set<String> fullyRevealedExpansionSourceIds = const <String>{},
+    int? centerDepthOneSoftLimit,
+    bool fullyRevealCenterDepthOne = false,
   }) {
     final wordsById = <String, Word>{centerWord.id: centerWord};
     final depthByWordId = <String, int>{centerWord.id: 0};
@@ -55,7 +61,8 @@ class GraphBuilder {
     final placeholderNodes = <GraphNode>[];
     final syntheticEdges = <GraphEdge>[];
     final edgeKeys = <String>{};
-    final baseWordIds = <String>{};
+    final allBaseWordIds = <String>{};
+    final visibleBaseWordIds = <String>{};
     final normalizedRevealedSourceIds = fullyRevealedExpansionSourceIds
         .map((sourceWordId) => sourceWordId.trim())
         .where((sourceWordId) => sourceWordId.isNotEmpty)
@@ -100,13 +107,58 @@ class GraphBuilder {
       );
     }
 
-    for (final word in baseWords) {
-      baseWordIds.add(word.id);
+    for (final edgeInfo in baseRelationEdges) {
+      registerEdgeInfo(edgeInfo);
+    }
+
+    final prioritizedBaseWords = _prioritizeCenterDepthOneWords(
+      baseWords: baseWords,
+      relationCountsByWordId: relationCountsByWordId,
+    );
+    final normalizedCenterDepthOneSoftLimit = centerDepthOneSoftLimit == null
+        ? null
+        : max(0, centerDepthOneSoftLimit);
+    final effectiveCenterDepthOneSoftLimit =
+        normalizedCenterDepthOneSoftLimit ?? 0;
+    final shouldLimitCenterDepthOne =
+        !fullyRevealCenterDepthOne &&
+        normalizedCenterDepthOneSoftLimit != null &&
+        prioritizedBaseWords.length > normalizedCenterDepthOneSoftLimit;
+    final visibleBaseWords = shouldLimitCenterDepthOne
+        ? prioritizedBaseWords
+              .take(effectiveCenterDepthOneSoftLimit)
+              .toList(growable: false)
+        : prioritizedBaseWords;
+    final hiddenCenterDepthOneWords = shouldLimitCenterDepthOne
+        ? prioritizedBaseWords
+              .skip(effectiveCenterDepthOneSoftLimit)
+              .toList(growable: false)
+        : const <Word>[];
+    final hiddenCenterDepthOneWordIds = hiddenCenterDepthOneWords
+        .map((word) => word.id)
+        .toSet();
+
+    for (final word in prioritizedBaseWords) {
+      allBaseWordIds.add(word.id);
+    }
+    for (final word in visibleBaseWords) {
+      visibleBaseWordIds.add(word.id);
       registerWord(word, depth: 1);
     }
 
-    for (final edgeInfo in baseRelationEdges) {
-      registerEdgeInfo(edgeInfo);
+    final hiddenCenterDepthOneCount = hiddenCenterDepthOneWords.length;
+    if (hiddenCenterDepthOneCount > 0) {
+      final placeholderNode = _buildCenterDepthOnePlaceholderMoreNode(
+        centerWordId: centerWord.id,
+        hiddenCount: hiddenCenterDepthOneCount,
+      );
+      placeholderNodes.add(placeholderNode);
+      syntheticEdges.add(
+        _buildPlaceholderEdge(
+          sourceWordId: centerWord.id,
+          placeholderNodeId: placeholderNode.id,
+        ),
+      );
     }
 
     for (final entry in expansionDataBySourceId.entries) {
@@ -120,14 +172,17 @@ class GraphBuilder {
       final visibleNeighborIds = <String>{
         centerWord.id,
         sourceWordId,
-        ...baseWordIds,
+        ...visibleBaseWordIds,
       };
 
       for (final word in entry.value.connectedWords) {
         final depth = word.id == centerWord.id
             ? 0
-            : (baseWordIds.contains(word.id) ? 1 : 2);
+            : (allBaseWordIds.contains(word.id) ? 1 : 2);
         if (depth <= 1) {
+          if (depth == 1 && hiddenCenterDepthOneWordIds.contains(word.id)) {
+            continue;
+          }
           registerWord(word, depth: depth, expansionSourceId: null);
           visibleNeighborIds.add(word.id);
           continue;
@@ -534,6 +589,39 @@ class GraphBuilder {
     return counts;
   }
 
+  List<Word> _prioritizeCenterDepthOneWords({
+    required Iterable<Word> baseWords,
+    required Map<String, int> relationCountsByWordId,
+  }) {
+    final prioritizedWords = baseWords.toList(growable: false);
+    if (prioritizedWords.length < 2) {
+      return List<Word>.unmodifiable(prioritizedWords);
+    }
+
+    final labelsByWordId = <String, String>{
+      for (final word in prioritizedWords) word.id: _labelForWord(word),
+    };
+    prioritizedWords.sort((left, right) {
+      final byRelationCount = (relationCountsByWordId[right.id] ?? 0).compareTo(
+        relationCountsByWordId[left.id] ?? 0,
+      );
+      if (byRelationCount != 0) {
+        return byRelationCount;
+      }
+
+      final byLabel = (labelsByWordId[left.id] ?? left.id).compareTo(
+        labelsByWordId[right.id] ?? right.id,
+      );
+      if (byLabel != 0) {
+        return byLabel;
+      }
+
+      return left.id.compareTo(right.id);
+    });
+
+    return List<Word>.unmodifiable(prioritizedWords);
+  }
+
   List<Word> _prioritizeOwnedDepthTwoWords({
     required String sourceWordId,
     required Iterable<Word> ownedDepthTwoWords,
@@ -641,6 +729,26 @@ class GraphBuilder {
     );
   }
 
+  GraphNode _buildCenterDepthOnePlaceholderMoreNode({
+    required String centerWordId,
+    required int hiddenCount,
+  }) {
+    final nodeId = _centerDepthOnePlaceholderNodeId(centerWordId);
+    return GraphNode(
+      wordId: nodeId,
+      label: '+$hiddenCount more',
+      depth: 1,
+      isCenter: false,
+      expansionSourceId: null,
+      isPlaceholderMoreNode: true,
+      hiddenCount: hiddenCount,
+      placeholderSourceWordId: centerWordId,
+      languageCode: null,
+      weight: 1000.0 + hiddenCount,
+      isPinned: false,
+    );
+  }
+
   GraphEdge _buildPlaceholderEdge({
     required String sourceWordId,
     required String placeholderNodeId,
@@ -661,6 +769,10 @@ class GraphBuilder {
 
   String _placeholderNodeIdForSource(String sourceWordId) {
     return '$_morePlaceholderNodePrefix::$sourceWordId';
+  }
+
+  String _centerDepthOnePlaceholderNodeId(String centerWordId) {
+    return '$_morePlaceholderNodePrefix::center::$centerWordId';
   }
 
   GraphEdge _buildGraphEdgeFromRow(Map<String, dynamic> row) {
