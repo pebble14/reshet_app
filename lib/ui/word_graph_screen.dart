@@ -106,7 +106,6 @@ const double _dashedEdgeDashLength = 14.0;
 const double _dashedEdgeGapLength = 9.0;
 const double _dottedEdgeDotLength = 1.0;
 const double _dottedEdgeGapLength = 7.0;
-const int _graphOutgoingLimit = 12;
 const int _centerDepthOneSoftLimit = 12;
 
 enum _GraphVisualState { selected, connected, dimmed }
@@ -383,19 +382,6 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   bool _isViewportInteracting = false;
   DateTime? _lastViewportInteractionAt;
 
-  String _normalizedGraphExpandMode(String? graphExpandMode) {
-    switch ((graphExpandMode ?? '').trim().toLowerCase()) {
-      case 'incoming_only':
-        return 'incoming_only';
-      case 'outgoing_limited':
-        return 'outgoing_limited';
-      case 'full':
-        return 'full';
-      default:
-        return 'default';
-    }
-  }
-
   String? _nullIfBlank(String? value) {
     final trimmed = (value ?? '').trim();
     return trimmed.isEmpty ? null : trimmed;
@@ -408,7 +394,6 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     _selectedWordId = widget.selectedWordId;
     final cachedBaseGraph = WordGraphDataCache.getBaseGraph(
       centerWordId: _centerWord.id,
-      graphExpandMode: _centerWord.graphExpandMode,
     );
     if (cachedBaseGraph != null) {
       _baseGraphData = cachedBaseGraph;
@@ -424,10 +409,6 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     super.didUpdateWidget(oldWidget);
 
     final didCenterWordChange = widget.centerWord.id != oldWidget.centerWord.id;
-    final didGraphExpandModeChange =
-        widget.centerWord.id == oldWidget.centerWord.id &&
-        _normalizedGraphExpandMode(widget.centerWord.graphExpandMode) !=
-            _normalizedGraphExpandMode(oldWidget.centerWord.graphExpandMode);
 
     if (didCenterWordChange) {
       WordGraphDataCache.clearExpansionsForCenter(oldWidget.centerWord.id);
@@ -441,21 +422,6 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         _baseGraphData = null;
         _pendingCenterFocusAfterCenterChange = true;
         _pendingCenterFocusWordId = widget.centerWord.id;
-      });
-      _loadConnectedWords();
-      return;
-    }
-
-    if (didGraphExpandModeChange) {
-      WordGraphDataCache.clearExpansionsForCenter(widget.centerWord.id);
-      _resetExpansionState(clearSeedPositions: true);
-      setState(() {
-        _centerWord = widget.centerWord;
-        _selectedWordId = widget.selectedWordId;
-        _isLoading = true;
-        _errorMessage = null;
-        _graphViewData = null;
-        _baseGraphData = null;
       });
       _loadConnectedWords();
       return;
@@ -658,12 +624,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
   Future<void> _loadConnectedWords() async {
     final requestedCenterWordId = _centerWord.id;
-    final requestedGraphExpandMode = _centerWord.graphExpandMode;
     _resetExpansionState(clearSeedPositions: true);
 
     final cachedBaseGraph = WordGraphDataCache.getBaseGraph(
       centerWordId: _centerWord.id,
-      graphExpandMode: _centerWord.graphExpandMode,
     );
     if (cachedBaseGraph != null) {
       if (!mounted) return;
@@ -677,7 +641,6 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     try {
       final visibleGraphData = await _repository.getVisibleGraphData(
         _centerWord.id,
-        outgoingLimit: _graphOutgoingLimit,
       );
       final words = visibleGraphData.connectedWords;
       final edges = visibleGraphData.relationEdges;
@@ -687,15 +650,12 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       );
       WordGraphDataCache.putBaseGraph(
         centerWordId: _centerWord.id,
-        graphExpandMode: _centerWord.graphExpandMode,
         connectedWords: words,
         relationEdges: edges,
       );
 
       if (!mounted) return;
-      if (_centerWord.id != requestedCenterWordId ||
-          _normalizedGraphExpandMode(_centerWord.graphExpandMode) !=
-              _normalizedGraphExpandMode(requestedGraphExpandMode)) {
+      if (_centerWord.id != requestedCenterWordId) {
         return;
       }
       setState(() {
@@ -1089,13 +1049,11 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     }
 
     final requestedCenterWordId = _centerWord.id;
-    final requestedGraphExpandMode = _centerWord.graphExpandMode;
     _expansionRequestsInFlight.add(word.id);
 
     try {
       final cachedExpansion = WordGraphDataCache.getExpansion(
         centerWordId: _centerWord.id,
-        graphExpandMode: _centerWord.graphExpandMode,
         sourceWordId: word.id,
       );
       final expansionData =
@@ -1103,11 +1061,9 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
           await (() async {
             final visibleGraphData = await _repository.getVisibleGraphData(
               word.id,
-              outgoingLimit: _graphOutgoingLimit,
             );
             WordGraphDataCache.putExpansion(
               centerWordId: _centerWord.id,
-              graphExpandMode: _centerWord.graphExpandMode,
               sourceWordId: word.id,
               connectedWords: visibleGraphData.connectedWords,
               relationEdges: visibleGraphData.relationEdges,
@@ -1123,9 +1079,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
           })();
 
       if (!mounted) return;
-      if (_centerWord.id != requestedCenterWordId ||
-          _normalizedGraphExpandMode(_centerWord.graphExpandMode) !=
-              _normalizedGraphExpandMode(requestedGraphExpandMode)) {
+      if (_centerWord.id != requestedCenterWordId) {
         return;
       }
 

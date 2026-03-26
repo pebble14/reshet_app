@@ -182,25 +182,6 @@ class WordRepository {
     }
   }
 
-  bool _shouldIncludeByGraphExpandMode({
-    required String graphExpandMode,
-    required String centerRelativeDirection,
-    required int outgoingLimit,
-    required int currentOutgoingCount,
-  }) {
-    switch (graphExpandMode) {
-      case 'incoming_only':
-        return centerRelativeDirection != 'outgoing';
-      case 'outgoing_limited':
-        if (centerRelativeDirection != 'outgoing') return true;
-        return currentOutgoingCount < outgoingLimit;
-      case 'full':
-      case 'default':
-      default:
-        return true;
-    }
-  }
-
   /// id로 단어 1건 조회
   Future<Map<String, dynamic>?> getWordMapById(String id) async {
     final normalizedId = id.trim();
@@ -291,8 +272,6 @@ class WordRepository {
   }
 
   /// 특정 단어와 연결된 모든 단어 목록 조회 (WORD_RELATION 기반)
-  /// - graph_expand_mode는 적용하지 않는다.
-  /// - 그래프 표시용 필터링은 getVisibleConnectedWordsForGraph()에서 처리한다.
   Future<List<Word>> getConnectedWords(String wordId) async {
     final db = await DatabaseService.openDatabaseFile();
 
@@ -368,46 +347,18 @@ class WordRepository {
         .toList(growable: false);
   }
 
-  /// graph_expand_mode를 반영한 그래프 표시용 엣지 조회
+  /// 그래프 표시용 엣지 조회
+  /// - graph_expand_mode에 따른 선행 축약은 적용하지 않는다.
   Future<List<WordRelationEdgeInfo>> getVisibleRelationEdgesForGraph(
-    String centerWordId, {
-    required int outgoingLimit,
-  }) async {
-    final centerWord = await getWordById(centerWordId);
-    final graphExpandMode = _normalizeGraphExpandMode(
-      centerWord?.graphExpandMode,
-    );
-    final edges = await getRelationEdges(centerWordId);
-    final visibleEdges = <WordRelationEdgeInfo>[];
-    var outgoingCount = 0;
-
-    for (final edge in edges) {
-      final include = _shouldIncludeByGraphExpandMode(
-        graphExpandMode: graphExpandMode,
-        centerRelativeDirection: edge.centerRelativeDirection,
-        outgoingLimit: outgoingLimit,
-        currentOutgoingCount: outgoingCount,
-      );
-      if (!include) continue;
-
-      visibleEdges.add(edge);
-      if (edge.centerRelativeDirection == 'outgoing') {
-        outgoingCount++;
-      }
-    }
-
-    return visibleEdges;
+    String centerWordId,
+  ) async {
+    return await getRelationEdges(centerWordId);
   }
 
-  /// graph_expand_mode를 반영한 그래프 표시용 연결 단어 조회
-  Future<VisibleWordGraphData> getVisibleGraphData(
-    String centerWordId, {
-    required int outgoingLimit,
-  }) async {
-    final visibleEdges = await getVisibleRelationEdgesForGraph(
-      centerWordId,
-      outgoingLimit: outgoingLimit,
-    );
+  /// 그래프 표시용 연결 단어 조회
+  /// - 숨김 정책은 builder/UI의 +N more와 maxNodes가 담당한다.
+  Future<VisibleWordGraphData> getVisibleGraphData(String centerWordId) async {
+    final visibleEdges = await getVisibleRelationEdgesForGraph(centerWordId);
     if (visibleEdges.isEmpty) {
       return (connectedWords: const <Word>[], relationEdges: visibleEdges);
     }
@@ -433,13 +384,9 @@ class WordRepository {
   }
 
   Future<List<Word>> getVisibleConnectedWordsForGraph(
-    String centerWordId, {
-    required int outgoingLimit,
-  }) async {
-    final visibleGraphData = await getVisibleGraphData(
-      centerWordId,
-      outgoingLimit: outgoingLimit,
-    );
+    String centerWordId,
+  ) async {
+    final visibleGraphData = await getVisibleGraphData(centerWordId);
     return visibleGraphData.connectedWords;
   }
 

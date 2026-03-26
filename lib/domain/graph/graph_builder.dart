@@ -18,7 +18,6 @@ typedef GraphVisibleDataBuildResult = ({
 /// Repository가 조회한 단어/관계 데이터를 그래프 도메인 모델로 조립한다.
 /// 이번 단계에서는 1-hop 그래프와 기본 필터링만 구현한다.
 class GraphBuilder {
-  static const int _defaultOutgoingLimit = 12;
   static const int _defaultDepthTwoSoftLimitPerSource = 6;
   static const String _morePlaceholderNodePrefix = '__graph_more__';
 
@@ -319,8 +318,6 @@ class GraphBuilder {
       options.centerWordId,
     );
     final visibleRelationRows = _selectVisibleRelationRows(
-      centerWord: centerWord,
-      centerWordId: options.centerWordId,
       relationRows: allRelationRows,
       options: options,
     );
@@ -498,8 +495,6 @@ class GraphBuilder {
   }
 
   List<Map<String, dynamic>> _selectVisibleRelationRows({
-    required Word centerWord,
-    required String centerWordId,
     required List<Map<String, dynamic>> relationRows,
     required GraphBuildOptions options,
   }) {
@@ -507,11 +502,7 @@ class GraphBuilder {
       return const [];
     }
 
-    final graphExpandMode = _normalizeGraphExpandMode(
-      centerWord.graphExpandMode,
-    );
     final visibleRows = <Map<String, dynamic>>[];
-    var outgoingCount = 0;
 
     for (final row in relationRows) {
       final relationType = _stringOrNull(row['relation_type']);
@@ -524,27 +515,7 @@ class GraphBuilder {
         continue;
       }
 
-      final centerRelativeDirection = _resolveCenterRelativeDirection(
-        centerWordId: centerWordId,
-        wordId1: row['word_id_1'] as String,
-        wordId2: row['word_id_2'] as String,
-        directionCode: row['direction_code'] as String?,
-      );
-
-      final include = _shouldIncludeByGraphExpandMode(
-        graphExpandMode: graphExpandMode,
-        centerRelativeDirection: centerRelativeDirection,
-        outgoingLimit: _defaultOutgoingLimit,
-        currentOutgoingCount: outgoingCount,
-      );
-      if (!include) {
-        continue;
-      }
-
       visibleRows.add(row);
-      if (centerRelativeDirection == 'outgoing') {
-        outgoingCount++;
-      }
     }
 
     return List.unmodifiable(visibleRows);
@@ -862,69 +833,6 @@ class GraphBuilder {
     if (value is int) return value;
     if (value is num) return value.toInt();
     return int.tryParse((value ?? '').toString().trim());
-  }
-
-  String _normalizeGraphExpandMode(String? value) {
-    switch ((value ?? '').trim()) {
-      case 'incoming_only':
-      case 'outgoing_limited':
-      case 'full':
-        return (value ?? '').trim();
-      case 'default':
-      default:
-        return 'default';
-    }
-  }
-
-  String _normalizeDirectionCode(String? value) {
-    switch ((value ?? '').trim()) {
-      case 'w1_to_w2':
-      case 'w2_to_w1':
-      case 'undirected':
-      case 'unknown':
-        return (value ?? '').trim();
-      default:
-        return 'unknown';
-    }
-  }
-
-  String _resolveCenterRelativeDirection({
-    required String centerWordId,
-    required String wordId1,
-    required String wordId2,
-    required String? directionCode,
-  }) {
-    final normalizedDirectionCode = _normalizeDirectionCode(directionCode);
-
-    switch (normalizedDirectionCode) {
-      case 'w1_to_w2':
-        return centerWordId == wordId1 ? 'outgoing' : 'incoming';
-      case 'w2_to_w1':
-        return centerWordId == wordId1 ? 'incoming' : 'outgoing';
-      case 'undirected':
-        return 'undirected';
-      default:
-        return 'unknown';
-    }
-  }
-
-  bool _shouldIncludeByGraphExpandMode({
-    required String graphExpandMode,
-    required String centerRelativeDirection,
-    required int outgoingLimit,
-    required int currentOutgoingCount,
-  }) {
-    switch (graphExpandMode) {
-      case 'incoming_only':
-        return centerRelativeDirection != 'outgoing';
-      case 'outgoing_limited':
-        if (centerRelativeDirection != 'outgoing') return true;
-        return currentOutgoingCount < outgoingLimit;
-      case 'full':
-      case 'default':
-      default:
-        return true;
-    }
   }
 
   int _compareNodes(GraphNode left, GraphNode right) {

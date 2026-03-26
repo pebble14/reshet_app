@@ -70,42 +70,19 @@ class WordGraphDataCache {
   static final LinkedHashMap<String, _ExpansionGraphCacheEntry>
   _expansionEntries = LinkedHashMap<String, _ExpansionGraphCacheEntry>();
 
-  static String _normalizeGraphExpandMode(String? graphExpandMode) {
-    switch ((graphExpandMode ?? '').trim().toLowerCase()) {
-      case 'incoming_only':
-        return 'incoming_only';
-      case 'outgoing_limited':
-        return 'outgoing_limited';
-      case 'full':
-        return 'full';
-      default:
-        return 'default';
-    }
-  }
-
-  static String _baseCacheKey({
-    required String centerWordId,
-    required String? graphExpandMode,
-  }) {
-    return '$centerWordId::${_normalizeGraphExpandMode(graphExpandMode)}';
+  static String _baseCacheKey({required String centerWordId}) {
+    return centerWordId;
   }
 
   static String _expansionCacheKey({
     required String centerWordId,
-    required String? graphExpandMode,
     required String sourceWordId,
   }) {
-    return '$centerWordId::${_normalizeGraphExpandMode(graphExpandMode)}::$sourceWordId';
+    return '$centerWordId::$sourceWordId';
   }
 
-  static WordGraphBaseCacheData? getBaseGraph({
-    required String centerWordId,
-    required String? graphExpandMode,
-  }) {
-    final cacheKey = _baseCacheKey(
-      centerWordId: centerWordId,
-      graphExpandMode: graphExpandMode,
-    );
+  static WordGraphBaseCacheData? getBaseGraph({required String centerWordId}) {
+    final cacheKey = _baseCacheKey(centerWordId: centerWordId);
     final entry = _baseEntries.remove(cacheKey);
     if (entry == null) {
       return null;
@@ -123,14 +100,10 @@ class WordGraphDataCache {
 
   static void putBaseGraph({
     required String centerWordId,
-    required String? graphExpandMode,
     required List<Word> connectedWords,
     required List<WordRelationEdgeInfo> relationEdges,
   }) {
-    final cacheKey = _baseCacheKey(
-      centerWordId: centerWordId,
-      graphExpandMode: graphExpandMode,
-    );
+    final cacheKey = _baseCacheKey(centerWordId: centerWordId);
     _baseEntries.remove(cacheKey);
     _baseEntries[cacheKey] = _BaseGraphCacheEntry(
       centerWordId: centerWordId,
@@ -143,12 +116,10 @@ class WordGraphDataCache {
 
   static WordGraphExpansionCacheData? getExpansion({
     required String centerWordId,
-    required String? graphExpandMode,
     required String sourceWordId,
   }) {
     final cacheKey = _expansionCacheKey(
       centerWordId: centerWordId,
-      graphExpandMode: graphExpandMode,
       sourceWordId: sourceWordId,
     );
     final entry = _expansionEntries.remove(cacheKey);
@@ -168,14 +139,12 @@ class WordGraphDataCache {
 
   static void putExpansion({
     required String centerWordId,
-    required String? graphExpandMode,
     required String sourceWordId,
     required List<Word> connectedWords,
     required List<WordRelationEdgeInfo> relationEdges,
   }) {
     final cacheKey = _expansionCacheKey(
       centerWordId: centerWordId,
-      graphExpandMode: graphExpandMode,
       sourceWordId: sourceWordId,
     );
     _expansionEntries.remove(cacheKey);
