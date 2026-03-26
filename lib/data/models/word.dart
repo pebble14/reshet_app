@@ -9,8 +9,6 @@ class Word {
   final String? transliteration1;
   final String? pronunciation1;
   final String? meaning1;
-  final String graphExpandMode;
-
   Word({
     required this.id,
     this.language,
@@ -19,7 +17,6 @@ class Word {
     this.transliteration1,
     this.pronunciation1,
     this.meaning1,
-    this.graphExpandMode = 'default',
   });
 
   factory Word.fromMap(Map<String, dynamic> map) {
@@ -31,7 +28,6 @@ class Word {
       transliteration1: map['음역1'] as String?,
       pronunciation1: map['발음1'] as String?,
       meaning1: map['의미1'] as String?,
-      graphExpandMode: (map['graph_expand_mode'] as String?) ?? 'default',
     );
   }
 }

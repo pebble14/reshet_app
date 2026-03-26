@@ -88,7 +88,6 @@ class DatabaseService {
     _database = await databaseFactory.openDatabase(workPath);
 
     await _ensureWordRelationV2Columns(_database!);
-    await _ensureWordTableV2Columns(_database!);
     await _ensureWordRelationIndexes(_database!);
     await _ensureHistoryTable(_database!);
 
@@ -175,7 +174,6 @@ class DatabaseService {
     _database = await databaseFactory.openDatabase(workPath);
 
     await _ensureWordRelationV2Columns(_database!);
-    await _ensureWordTableV2Columns(_database!);
     await _ensureWordRelationIndexes(_database!);
     await _ensureHistoryTable(_database!);
   }
@@ -203,19 +201,6 @@ class DatabaseService {
       await db.execute('''
         ALTER TABLE WORD_RELATION
         ADD COLUMN relation_group_id TEXT
-      ''');
-    }
-  }
-
-  /// WORD_TABLE v2 컬럼 보장
-  static Future<void> _ensureWordTableV2Columns(Database db) async {
-    final columns = await db.rawQuery("PRAGMA table_info('WORD_TABLE')");
-    final names = columns.map((row) => row['name'] as String).toSet();
-
-    if (!names.contains('graph_expand_mode')) {
-      await db.execute('''
-        ALTER TABLE WORD_TABLE
-        ADD COLUMN graph_expand_mode TEXT NOT NULL DEFAULT 'default'
       ''');
     }
   }

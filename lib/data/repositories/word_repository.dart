@@ -87,6 +87,23 @@ class WordRepository {
     ..._homeSearchTransliterationColumns,
     ..._homeSearchMeaningColumns,
   ]);
+  static final List<String> _wordPronunciationColumns = List.unmodifiable(
+    List.generate(6, (index) => '발음${index + 1}'),
+  );
+  static final List<String> _wordRelatedColumns = List.unmodifiable(
+    List.generate(7, (index) => '관련${index + 1}'),
+  );
+  static final Set<String> _wordHistoryAllowedColumns = Set.unmodifiable({
+    'id',
+    '언어',
+    '스트롱넘버',
+    ..._homeSearchSpellingColumns,
+    ..._homeSearchTransliterationColumns,
+    ..._wordPronunciationColumns,
+    ..._wordRelatedColumns,
+    ..._homeSearchMeaningColumns,
+    '비고',
+  });
   static final RegExp _hebrewMarkPattern = RegExp(r'[\u0591-\u05C7]');
   static final RegExp _hebrewScriptPattern = RegExp(r'[\u0590-\u05FF]');
   static final RegExp _greekScriptPattern = RegExp(
@@ -104,16 +121,14 @@ class WordRepository {
     'ρ': 'ῤῥ',
   };
 
-  String _normalizeGraphExpandMode(String? value) {
-    switch ((value ?? '').trim()) {
-      case 'incoming_only':
-      case 'outgoing_limited':
-      case 'full':
-        return (value ?? '').trim();
-      case 'default':
-      default:
-        return 'default';
+  Map<String, dynamic> _sanitizeWordHistorySnapshot(Map<String, dynamic> row) {
+    final sanitized = <String, dynamic>{};
+    for (final entry in row.entries) {
+      if (_wordHistoryAllowedColumns.contains(entry.key)) {
+        sanitized[entry.key] = entry.value;
+      }
     }
+    return sanitized;
   }
 
   String _normalizeDirectionCode(String? value) {
@@ -348,7 +363,6 @@ class WordRepository {
   }
 
   /// 그래프 표시용 엣지 조회
-  /// - graph_expand_mode에 따른 선행 축약은 적용하지 않는다.
   Future<List<WordRelationEdgeInfo>> getVisibleRelationEdgesForGraph(
     String centerWordId,
   ) async {
@@ -1350,7 +1364,6 @@ class WordRepository {
     String? pronunciation1,
     String? meaning1,
     String? note,
-    String? graphExpandMode,
   }) async {
     final db = await DatabaseService.openDatabaseFile();
     final groupId = _newHistoryGroupId();
@@ -1368,7 +1381,6 @@ class WordRepository {
             : pronunciation1!.trim(),
         '의미1': (meaning1 ?? '').trim().isEmpty ? null : meaning1!.trim(),
         '비고': (note ?? '').trim().isEmpty ? null : note!.trim(),
-        'graph_expand_mode': _normalizeGraphExpandMode(graphExpandMode),
       };
 
       await txn.insert('WORD_TABLE', row);
@@ -1421,7 +1433,9 @@ class WordRepository {
         throw Exception('삭제할 단어를 찾을 수 없습니다: $wordId');
       }
 
-      final wordBefore = Map<String, dynamic>.from(wordRows.first);
+      final wordBefore = _sanitizeWordHistorySnapshot(
+        Map<String, dynamic>.from(wordRows.first),
+      );
 
       final relationRows = await txn.query(
         'WORD_RELATION',
@@ -1472,17 +1486,17 @@ class WordRepository {
     String? pronunciation1,
     String? meaning1,
     String? note,
-    String? graphExpandMode,
   }) async {
     final db = await DatabaseService.openDatabaseFile();
     final groupId = _newHistoryGroupId();
 
     await db.transaction((txn) async {
-      final before = await _getWordRowById(txn, id);
-      if (before == null) {
+      final beforeRaw = await _getWordRowById(txn, id);
+      if (beforeRaw == null) {
         throw Exception('수정할 단어를 찾을 수 없습니다: $id');
       }
 
+      final before = _sanitizeWordHistorySnapshot(beforeRaw);
       final after = Map<String, dynamic>.from(before);
       after['언어'] = language;
       after['스트롱넘버'] = (strongNumber ?? '').trim().isEmpty
@@ -1497,7 +1511,6 @@ class WordRepository {
       after['음역1'] = (transliteration1 ?? '').trim().isEmpty
           ? null
           : transliteration1!.trim();
-      after['graph_expand_mode'] = _normalizeGraphExpandMode(graphExpandMode);
 
       await txn.update(
         'WORD_TABLE',
@@ -1509,7 +1522,6 @@ class WordRepository {
           '의미1': after['의미1'],
           '비고': after['비고'],
           '음역1': after['음역1'],
-          'graph_expand_mode': after['graph_expand_mode'],
         },
         where: 'id = ?',
         whereArgs: [id],
