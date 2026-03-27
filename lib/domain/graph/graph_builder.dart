@@ -13,6 +13,21 @@ typedef GraphVisibleDataBuildResult = ({
   List<WordRelationEdgeInfo> relationEdges,
 });
 
+enum _BranchPriorityBucket {
+  coreMust,
+  protectedMust,
+  preferred,
+  semiPreferred,
+  fallback,
+}
+
+typedef _BranchPriorityCounts = ({
+  int coreMustCount,
+  int protectedMustCount,
+  int preferredCount,
+  int semiPreferredCount,
+});
+
 /// graph_builder.dart
 ///
 /// Repository가 조회한 단어/관계 데이터를 그래프 도메인 모델로 조립한다.
@@ -20,6 +35,27 @@ typedef GraphVisibleDataBuildResult = ({
 class GraphBuilder {
   static const int _defaultDepthTwoSoftLimitPerSource = 6;
   static const String _morePlaceholderNodePrefix = '__graph_more__';
+  static const Set<String> _preferredCategoryCodes = {
+    'translation',
+    'transliteration',
+  };
+  static const Set<String> _preferredRelationTypes = {
+    'translation',
+    'literal_translation',
+    'semantic_translation',
+    'interpretive_translation',
+    'loan_translation',
+    'transliteration',
+    'direct_transliteration',
+    'conventional_transliteration',
+    'approx_transliteration',
+    'inflected',
+    'variant',
+  };
+  static const Set<String> _semiPreferredRelationTypes = {
+    'derived',
+    'derived_from',
+  };
 
   const GraphBuilder();
 
@@ -66,6 +102,7 @@ class GraphBuilder {
         .map((sourceWordId) => sourceWordId.trim())
         .where((sourceWordId) => sourceWordId.isNotEmpty)
         .toSet();
+    final baseRelationEdgeList = baseRelationEdges.toList(growable: false);
 
     void registerWord(
       Word word, {
@@ -106,12 +143,14 @@ class GraphBuilder {
       );
     }
 
-    for (final edgeInfo in baseRelationEdges) {
+    for (final edgeInfo in baseRelationEdgeList) {
       registerEdgeInfo(edgeInfo);
     }
 
     final prioritizedBaseWords = _prioritizeCenterDepthOneWords(
+      centerWordId: centerWord.id,
       baseWords: baseWords,
+      relationEdges: baseRelationEdgeList,
       relationCountsByWordId: relationCountsByWordId,
     );
     final normalizedCenterDepthOneSoftLimit = centerDepthOneSoftLimit == null
@@ -560,8 +599,150 @@ class GraphBuilder {
     return counts;
   }
 
+  bool _isCoreMust(WordRelationEdgeInfo edgeInfo) {
+    switch (edgeInfo.centerRelativeDirection.trim()) {
+      case 'incoming':
+      case 'undirected':
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  bool _isProtectedMust(WordRelationEdgeInfo edgeInfo) {
+    return edgeInfo.centerRelativeDirection.trim() == 'unknown';
+  }
+
+  bool _isPreferred(WordRelationEdgeInfo edgeInfo) {
+    final relationType = (edgeInfo.relationType ?? '').trim().toLowerCase();
+    final categoryCode = (edgeInfo.categoryCode ?? '').trim().toLowerCase();
+    return _preferredCategoryCodes.contains(categoryCode) ||
+        _preferredRelationTypes.contains(relationType);
+  }
+
+  bool _isSemiPreferred(WordRelationEdgeInfo edgeInfo) {
+    final relationType = (edgeInfo.relationType ?? '').trim().toLowerCase();
+    return _semiPreferredRelationTypes.contains(relationType);
+  }
+
+  _BranchPriorityCounts _computeBranchPriorityCounts({
+    required String candidateWordId,
+    required Iterable<WordRelationEdgeInfo> relationEdges,
+    required Set<String> contextWordIds,
+  }) {
+    var coreMustCount = 0;
+    var protectedMustCount = 0;
+    var preferredCount = 0;
+    var semiPreferredCount = 0;
+
+    for (final edgeInfo in relationEdges) {
+      final isCandidateToContextEdge =
+          (edgeInfo.wordId1 == candidateWordId &&
+              contextWordIds.contains(edgeInfo.wordId2)) ||
+          (edgeInfo.wordId2 == candidateWordId &&
+              contextWordIds.contains(edgeInfo.wordId1));
+      if (!isCandidateToContextEdge) {
+        continue;
+      }
+
+      // A branch edge contributes to exactly one highest-priority bucket.
+      switch (_priorityBucketForEdge(edgeInfo)) {
+        case _BranchPriorityBucket.coreMust:
+          coreMustCount++;
+          break;
+        case _BranchPriorityBucket.protectedMust:
+          protectedMustCount++;
+          break;
+        case _BranchPriorityBucket.preferred:
+          preferredCount++;
+          break;
+        case _BranchPriorityBucket.semiPreferred:
+          semiPreferredCount++;
+          break;
+        case _BranchPriorityBucket.fallback:
+          break;
+      }
+    }
+
+    return (
+      coreMustCount: coreMustCount,
+      protectedMustCount: protectedMustCount,
+      preferredCount: preferredCount,
+      semiPreferredCount: semiPreferredCount,
+    );
+  }
+
+  int _compareBranchPriority({
+    required _BranchPriorityCounts leftCounts,
+    required _BranchPriorityCounts rightCounts,
+    required int leftExistingScore,
+    required int rightExistingScore,
+    required String leftLabel,
+    required String rightLabel,
+    required String leftId,
+    required String rightId,
+  }) {
+    final byCoreMust = rightCounts.coreMustCount.compareTo(
+      leftCounts.coreMustCount,
+    );
+    if (byCoreMust != 0) {
+      return byCoreMust;
+    }
+
+    final byProtectedMust = rightCounts.protectedMustCount.compareTo(
+      leftCounts.protectedMustCount,
+    );
+    if (byProtectedMust != 0) {
+      return byProtectedMust;
+    }
+
+    final byPreferred = rightCounts.preferredCount.compareTo(
+      leftCounts.preferredCount,
+    );
+    if (byPreferred != 0) {
+      return byPreferred;
+    }
+
+    final bySemiPreferred = rightCounts.semiPreferredCount.compareTo(
+      leftCounts.semiPreferredCount,
+    );
+    if (bySemiPreferred != 0) {
+      return bySemiPreferred;
+    }
+
+    final byExistingScore = rightExistingScore.compareTo(leftExistingScore);
+    if (byExistingScore != 0) {
+      return byExistingScore;
+    }
+
+    final byLabel = leftLabel.compareTo(rightLabel);
+    if (byLabel != 0) {
+      return byLabel;
+    }
+
+    return leftId.compareTo(rightId);
+  }
+
+  _BranchPriorityBucket _priorityBucketForEdge(WordRelationEdgeInfo edgeInfo) {
+    if (_isCoreMust(edgeInfo)) {
+      return _BranchPriorityBucket.coreMust;
+    }
+    if (_isProtectedMust(edgeInfo)) {
+      return _BranchPriorityBucket.protectedMust;
+    }
+    if (_isPreferred(edgeInfo)) {
+      return _BranchPriorityBucket.preferred;
+    }
+    if (_isSemiPreferred(edgeInfo)) {
+      return _BranchPriorityBucket.semiPreferred;
+    }
+    return _BranchPriorityBucket.fallback;
+  }
+
   List<Word> _prioritizeCenterDepthOneWords({
+    required String centerWordId,
     required Iterable<Word> baseWords,
+    required Iterable<WordRelationEdgeInfo> relationEdges,
     required Map<String, int> relationCountsByWordId,
   }) {
     final prioritizedWords = baseWords.toList(growable: false);
@@ -569,25 +750,43 @@ class GraphBuilder {
       return List<Word>.unmodifiable(prioritizedWords);
     }
 
+    final relationEdgeList = relationEdges.toList(growable: false);
     final labelsByWordId = <String, String>{
       for (final word in prioritizedWords) word.id: _labelForWord(word),
     };
+    final priorityCountsByWordId = <String, _BranchPriorityCounts>{
+      for (final word in prioritizedWords)
+        word.id: _computeBranchPriorityCounts(
+          candidateWordId: word.id,
+          relationEdges: relationEdgeList,
+          contextWordIds: {centerWordId},
+        ),
+    };
     prioritizedWords.sort((left, right) {
-      final byRelationCount = (relationCountsByWordId[right.id] ?? 0).compareTo(
-        relationCountsByWordId[left.id] ?? 0,
+      return _compareBranchPriority(
+        leftCounts:
+            priorityCountsByWordId[left.id] ??
+            (
+              coreMustCount: 0,
+              protectedMustCount: 0,
+              preferredCount: 0,
+              semiPreferredCount: 0,
+            ),
+        rightCounts:
+            priorityCountsByWordId[right.id] ??
+            (
+              coreMustCount: 0,
+              protectedMustCount: 0,
+              preferredCount: 0,
+              semiPreferredCount: 0,
+            ),
+        leftExistingScore: relationCountsByWordId[left.id] ?? 0,
+        rightExistingScore: relationCountsByWordId[right.id] ?? 0,
+        leftLabel: labelsByWordId[left.id] ?? left.id,
+        rightLabel: labelsByWordId[right.id] ?? right.id,
+        leftId: left.id,
+        rightId: right.id,
       );
-      if (byRelationCount != 0) {
-        return byRelationCount;
-      }
-
-      final byLabel = (labelsByWordId[left.id] ?? left.id).compareTo(
-        labelsByWordId[right.id] ?? right.id,
-      );
-      if (byLabel != 0) {
-        return byLabel;
-      }
-
-      return left.id.compareTo(right.id);
     });
 
     return List<Word>.unmodifiable(prioritizedWords);
@@ -608,14 +807,23 @@ class GraphBuilder {
       sourceWordId,
       ...visibleNeighborIds,
     };
+    final relationEdgeList = relationEdges.toList(growable: false);
     final proxyScoresByWordId = <String, int>{
       for (final word in prioritizedWords) word.id: 0,
     };
     final labelsByWordId = <String, String>{
       for (final word in prioritizedWords) word.id: _labelForWord(word),
     };
+    final priorityCountsByWordId = <String, _BranchPriorityCounts>{
+      for (final word in prioritizedWords)
+        word.id: _computeBranchPriorityCounts(
+          candidateWordId: word.id,
+          relationEdges: relationEdgeList,
+          contextWordIds: sourceContextNeighborIds,
+        ),
+    };
 
-    for (final edgeInfo in relationEdges) {
+    for (final edgeInfo in relationEdgeList) {
       String? candidateWordId;
       String? contextWordId;
 
@@ -638,21 +846,30 @@ class GraphBuilder {
     }
 
     prioritizedWords.sort((left, right) {
-      final byProxyScore = (proxyScoresByWordId[right.id] ?? 0).compareTo(
-        proxyScoresByWordId[left.id] ?? 0,
+      return _compareBranchPriority(
+        leftCounts:
+            priorityCountsByWordId[left.id] ??
+            (
+              coreMustCount: 0,
+              protectedMustCount: 0,
+              preferredCount: 0,
+              semiPreferredCount: 0,
+            ),
+        rightCounts:
+            priorityCountsByWordId[right.id] ??
+            (
+              coreMustCount: 0,
+              protectedMustCount: 0,
+              preferredCount: 0,
+              semiPreferredCount: 0,
+            ),
+        leftExistingScore: proxyScoresByWordId[left.id] ?? 0,
+        rightExistingScore: proxyScoresByWordId[right.id] ?? 0,
+        leftLabel: labelsByWordId[left.id] ?? left.id,
+        rightLabel: labelsByWordId[right.id] ?? right.id,
+        leftId: left.id,
+        rightId: right.id,
       );
-      if (byProxyScore != 0) {
-        return byProxyScore;
-      }
-
-      final byLabel = (labelsByWordId[left.id] ?? left.id).compareTo(
-        labelsByWordId[right.id] ?? right.id,
-      );
-      if (byLabel != 0) {
-        return byLabel;
-      }
-
-      return left.id.compareTo(right.id);
     });
 
     return List<Word>.unmodifiable(prioritizedWords);
