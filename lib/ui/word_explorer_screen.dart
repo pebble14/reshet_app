@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../data/repositories/word_repository.dart';
 import '../database/database_service.dart';
 import '../data/models/word.dart';
 import 'word_detail_screen.dart';
@@ -28,12 +29,19 @@ class WordExplorerScreen extends StatefulWidget {
 }
 
 class _WordExplorerScreenState extends State<WordExplorerScreen> {
+  final WordRepository _repository = WordRepository();
+
   late Word _centerWord;
   Map<String, dynamic>? _selectedWordMap;
   int _graphRevision = 0;
   bool _isDetailLoading = false;
   String? _detailError;
   String? _detailUnavailableMessage;
+  WordNavigationHistoryEntry<_ExplorerHistorySnapshot>?
+  _availablePreviousHistoryEntry;
+  WordNavigationHistoryEntry<_ExplorerHistorySnapshot>?
+  _availableNextHistoryEntry;
+  int _historyNavigationValidationToken = 0;
 
   final WordNavigationHistoryController<_ExplorerHistorySnapshot> _history =
       WordNavigationHistoryController<_ExplorerHistorySnapshot>();
@@ -49,6 +57,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
         selectedWordMap: _selectedWordMap,
       ),
     );
+    _refreshHistoryNavigationAvailability();
   }
 
   @override
@@ -277,27 +286,51 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
   List<Widget> _buildHistoryActions() {
     return [
       IconButton(
-        tooltip: _buildHistoryTooltip('뒤로', _history.previousEntry),
-        onPressed: _history.canGoBack ? _goBackInHistory : null,
+        tooltip: _buildHistoryTooltip('뒤로', _availablePreviousHistoryEntry),
+        onPressed: _availablePreviousHistoryEntry != null
+            ? _goBackInHistory
+            : null,
         icon: const Icon(Icons.arrow_back),
       ),
       IconButton(
-        tooltip: _buildHistoryTooltip('앞으로', _history.nextEntry),
-        onPressed: _history.canGoForward ? _goForwardInHistory : null,
+        tooltip: _buildHistoryTooltip('앞으로', _availableNextHistoryEntry),
+        onPressed: _availableNextHistoryEntry != null
+            ? _goForwardInHistory
+            : null,
         icon: const Icon(Icons.arrow_forward),
       ),
     ];
   }
 
-  void _goBackInHistory() {
+  Future<void> _goBackInHistory() async {
+    final previousEntry = _history.previousEntry;
+    if (!await _isHistoryEntryAvailable(previousEntry)) {
+      await _refreshHistoryNavigationAvailability();
+      return;
+    }
+
     final entry = _history.goBack();
-    if (entry == null) return;
+    if (entry == null) {
+      await _refreshHistoryNavigationAvailability();
+      return;
+    }
+
     _applyHistoryEntry(entry);
   }
 
-  void _goForwardInHistory() {
+  Future<void> _goForwardInHistory() async {
+    final nextEntry = _history.nextEntry;
+    if (!await _isHistoryEntryAvailable(nextEntry)) {
+      await _refreshHistoryNavigationAvailability();
+      return;
+    }
+
     final entry = _history.goForward();
-    if (entry == null) return;
+    if (entry == null) {
+      await _refreshHistoryNavigationAvailability();
+      return;
+    }
+
     _applyHistoryEntry(entry);
   }
 
@@ -313,6 +346,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
       _isDetailLoading = false;
       _detailUnavailableMessage = null;
     });
+    _refreshHistoryNavigationAvailability();
   }
 
   void _pushHistoryEntry({
@@ -328,10 +362,12 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
     if (currentEntry != null &&
         _isSameHistoryLocation(currentEntry.payload, entry.payload)) {
       _history.replaceCurrent(entry);
+      _refreshHistoryNavigationAvailability();
       return;
     }
 
     _history.push(entry);
+    _refreshHistoryNavigationAvailability();
   }
 
   void _replaceCurrentHistoryEntry({
@@ -344,6 +380,106 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
         selectedWordMap: selectedWordMap,
       ),
     );
+    _refreshHistoryNavigationAvailability();
+  }
+
+  Future<void> _refreshHistoryNavigationAvailability() async {
+    final previousEntry = _history.previousEntry;
+    final nextEntry = _history.nextEntry;
+    final validationToken = ++_historyNavigationValidationToken;
+
+    try {
+      final existingWordIds = await _loadExistingHistoryWordIds([
+        previousEntry,
+        nextEntry,
+      ]);
+
+      if (!mounted || validationToken != _historyNavigationValidationToken) {
+        return;
+      }
+
+      final resolvedPreviousEntry = _resolveAvailableHistoryEntry(
+        previousEntry,
+        existingWordIds,
+      );
+      final resolvedNextEntry = _resolveAvailableHistoryEntry(
+        nextEntry,
+        existingWordIds,
+      );
+
+      if (_availablePreviousHistoryEntry == resolvedPreviousEntry &&
+          _availableNextHistoryEntry == resolvedNextEntry) {
+        return;
+      }
+
+      setState(() {
+        _availablePreviousHistoryEntry = resolvedPreviousEntry;
+        _availableNextHistoryEntry = resolvedNextEntry;
+      });
+    } catch (_) {
+      if (!mounted || validationToken != _historyNavigationValidationToken) {
+        return;
+      }
+
+      setState(() {
+        _availablePreviousHistoryEntry = null;
+        _availableNextHistoryEntry = null;
+      });
+    }
+  }
+
+  Future<Set<String>> _loadExistingHistoryWordIds(
+    Iterable<WordNavigationHistoryEntry<_ExplorerHistorySnapshot>?> entries,
+  ) async {
+    final candidateIds = <String>[];
+    final seenIds = <String>{};
+
+    for (final entry in entries) {
+      final wordId = entry?.wordId.trim() ?? '';
+      if (wordId.isEmpty || !seenIds.add(wordId)) {
+        continue;
+      }
+      candidateIds.add(wordId);
+    }
+
+    if (candidateIds.isEmpty) {
+      return const <String>{};
+    }
+
+    final rows = await _repository.getWordsByIds(candidateIds);
+    return rows
+        .map((row) => (row['id'] ?? '').toString().trim())
+        .where((wordId) => wordId.isNotEmpty)
+        .toSet();
+  }
+
+  WordNavigationHistoryEntry<_ExplorerHistorySnapshot>?
+  _resolveAvailableHistoryEntry(
+    WordNavigationHistoryEntry<_ExplorerHistorySnapshot>? entry,
+    Set<String> existingWordIds,
+  ) {
+    if (entry == null) {
+      return null;
+    }
+
+    final wordId = entry.wordId.trim();
+    if (wordId.isEmpty || !existingWordIds.contains(wordId)) {
+      return null;
+    }
+
+    return entry;
+  }
+
+  Future<bool> _isHistoryEntryAvailable(
+    WordNavigationHistoryEntry<_ExplorerHistorySnapshot>? entry,
+  ) async {
+    final wordId = entry?.wordId.trim() ?? '';
+    if (wordId.isEmpty) {
+      return false;
+    }
+
+    final wordMap = await _repository.getWordMapById(wordId);
+    return wordMap != null;
   }
 
   WordNavigationHistoryEntry<_ExplorerHistorySnapshot> _createHistoryEntry({
