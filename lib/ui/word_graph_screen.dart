@@ -263,6 +263,7 @@ class CreateWordPayload {
   final String language;
   final String? strongNumber;
   final String spelling1;
+  final String? transliteration1;
   final String? pronunciation1;
   final String? meaning1;
   final String? note;
@@ -274,6 +275,7 @@ class CreateWordPayload {
     required this.language,
     required this.strongNumber,
     required this.spelling1,
+    required this.transliteration1,
     required this.pronunciation1,
     required this.meaning1,
     required this.note,
@@ -3753,6 +3755,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       language: payload.language,
       strongNumber: payload.strongNumber,
       spelling1: payload.spelling1,
+      transliteration1: payload.transliteration1,
       pronunciation1: payload.pronunciation1,
       meaning1: payload.meaning1,
       note: payload.note,
@@ -3839,6 +3842,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   Future<CreateWordPayload?> _showCreateWordDialog() async {
     final strongController = TextEditingController();
     final spellingController = TextEditingController();
+    final transliterationController = TextEditingController();
     final pronunciationController = TextEditingController();
     final meaningController = TextEditingController();
     final noteController = TextEditingController();
@@ -3911,6 +3915,11 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                       ),
                       const SizedBox(height: 12),
                       TextField(
+                        controller: transliterationController,
+                        decoration: const InputDecoration(labelText: '음역1'),
+                      ),
+                      const SizedBox(height: 12),
+                      TextField(
                         controller: pronunciationController,
                         decoration: const InputDecoration(labelText: '발음1'),
                       ),
@@ -3976,6 +3985,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                             ? null
                             : strongController.text.trim().toUpperCase(),
                         spelling1: spelling,
+                        transliteration1:
+                            transliterationController.text.trim().isEmpty
+                            ? null
+                            : transliterationController.text.trim(),
                         pronunciation1:
                             pronunciationController.text.trim().isEmpty
                             ? null

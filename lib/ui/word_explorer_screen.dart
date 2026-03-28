@@ -399,14 +399,20 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
       return '$label: 기록 없음';
     }
 
+    final transliteration = (entry.payload.centerWord.transliteration1 ?? '')
+        .trim();
     final parts = <String>[
       if (entry.representativeSpelling.trim().isNotEmpty)
-        entry.representativeSpelling,
-      if (entry.strongNumber.trim().isNotEmpty) entry.strongNumber,
-      if (entry.wordId.trim().isNotEmpty) entry.wordId,
+        entry.representativeSpelling.trim(),
+      if (transliteration.isNotEmpty) transliteration,
+      if (entry.strongNumber.trim().isNotEmpty) entry.strongNumber.trim(),
     ];
 
-    return '$label: 중심 ${parts.join(' / ')}';
+    if (parts.isEmpty) {
+      return '$label: 중심';
+    }
+
+    return '$label: 중심\n${parts.join('\n')}';
   }
 
   bool _wordMapsEqual(Map<String, dynamic>? left, Map<String, dynamic>? right) {

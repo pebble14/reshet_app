@@ -1450,6 +1450,9 @@ class WordRepository {
             ? null
             : strongNumber!.trim(),
         '표기1': spelling1.trim(),
+        '음역1': (transliteration1 ?? '').trim().isEmpty
+            ? null
+            : transliteration1!.trim(),
         '발음1': (pronunciation1 ?? '').trim().isEmpty
             ? null
             : pronunciation1!.trim(),
