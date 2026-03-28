@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:sqflite_common/sqlite_api.dart';
 import '../../database/database_service.dart';
+import '../models/relation_category_lookup.dart';
+import '../models/relation_type_lookup.dart';
 import '../models/word.dart';
 
 /// 단어(WORD_TABLE) 및 관계(WORD_RELATION) 조회 전용 Repository
@@ -152,6 +154,11 @@ class WordRepository {
       default:
         return directionCode;
     }
+  }
+
+  String? _normalizeNullableCode(String? value) {
+    final normalized = (value ?? '').trim();
+    return normalized.isEmpty ? null : normalized;
   }
 
   ({String wordId1, String wordId2, String directionCode})
@@ -326,17 +333,17 @@ class WordRepository {
         wr.direction_code AS direction_code,
         wr.description AS description,
         wr.relation_group_id AS relation_group_id,
-        wr.category_code AS category_code,
+        COALESCE(rt.category_code, wr.category_code) AS category_code,
         rc.label AS category_label,
         wr.relation_type AS relation_type,
         rt.label AS relation_type_label,
         wr.note AS note,
         wr.source AS source
       FROM WORD_RELATION wr
-      LEFT JOIN RELATION_CATEGORY rc
-        ON rc.code = wr.category_code
       LEFT JOIN RELATION_TYPE rt
         ON rt.code = wr.relation_type
+      LEFT JOIN RELATION_CATEGORY rc
+        ON rc.code = COALESCE(rt.category_code, wr.category_code)
       WHERE wr.word_id_1 = ?
          OR wr.word_id_2 = ?
       ORDER BY wr.id ASC
@@ -928,24 +935,77 @@ class WordRepository {
     });
   }
 
-  /// RELATION_CATEGORY 코드/라벨 목록
-  Future<List<Map<String, dynamic>>> getRelationCategories() async {
+  /// RELATION_CATEGORY lookup 목록
+  Future<List<RelationCategoryLookup>> getRelationCategories() async {
     final db = await DatabaseService.openDatabaseFile();
-    return await db.query(
+    final rows = await db.query(
       'RELATION_CATEGORY',
-      columns: ['code', 'label'],
-      orderBy: 'code',
+      columns: ['code', 'label', 'description', 'sort_order'],
+      orderBy: 'sort_order ASC, label ASC, code ASC',
     );
+
+    return rows
+        .map(
+          (row) =>
+              RelationCategoryLookup.fromMap(Map<String, dynamic>.from(row)),
+        )
+        .toList(growable: false);
   }
 
-  /// RELATION_TYPE 코드/라벨 목록
-  Future<List<Map<String, dynamic>>> getRelationTypes() async {
+  /// RELATION_TYPE lookup 목록
+  Future<List<RelationTypeLookup>> getRelationTypes() async {
     final db = await DatabaseService.openDatabaseFile();
-    return await db.query(
+    final rows = await db.query(
       'RELATION_TYPE',
-      columns: ['code', 'label'],
-      orderBy: 'code',
+      columns: ['code', 'category_code', 'label', 'description', 'sort_order'],
+      orderBy: 'category_code ASC, sort_order ASC, label ASC, code ASC',
     );
+
+    return rows
+        .map(
+          (row) => RelationTypeLookup.fromMap(Map<String, dynamic>.from(row)),
+        )
+        .toList(growable: false);
+  }
+
+  Future<RelationTypeLookup?> _getRelationTypeLookupByCodeOnExecutor(
+    DatabaseExecutor db,
+    String? relationTypeCode,
+  ) async {
+    final normalizedRelationTypeCode = _normalizeNullableCode(relationTypeCode);
+    if (normalizedRelationTypeCode == null) {
+      return null;
+    }
+
+    final rows = await db.query(
+      'RELATION_TYPE',
+      columns: ['code', 'category_code', 'label', 'description', 'sort_order'],
+      where: 'code = ?',
+      whereArgs: [normalizedRelationTypeCode],
+      limit: 1,
+    );
+
+    if (rows.isEmpty) {
+      return null;
+    }
+
+    return RelationTypeLookup.fromMap(Map<String, dynamic>.from(rows.first));
+  }
+
+  Future<String?> _resolveStoredCategoryCode({
+    required DatabaseExecutor db,
+    required String? requestedCategoryCode,
+    required String? relationTypeCode,
+  }) async {
+    final relationTypeLookup = await _getRelationTypeLookupByCodeOnExecutor(
+      db,
+      relationTypeCode,
+    );
+    if (relationTypeLookup != null) {
+      return relationTypeLookup.categoryCode;
+    }
+
+    return _normalizeNullableCode(requestedCategoryCode);
   }
 
   /// WORD_RELATION 1건 수정(트랜잭션)
@@ -977,11 +1037,18 @@ class WordRepository {
         throw Exception('수정할 관계를 찾을 수 없습니다: $relationId');
       }
 
+      final normalizedRelationType = _normalizeNullableCode(relationType);
+      final effectiveCategoryCode = await _resolveStoredCategoryCode(
+        db: txn,
+        requestedCategoryCode: categoryCode,
+        relationTypeCode: normalizedRelationType,
+      );
+
       final existingId = await _findExistingRelationIdBySignatureOnExecutor(
         txn,
         wordIdA: before['word_id_1'] as String,
         wordIdB: before['word_id_2'] as String,
-        relationType: relationType,
+        relationType: normalizedRelationType,
         directionCode: normalizedDirectionCode,
         excludeRelationId: relationId,
       );
@@ -990,8 +1057,8 @@ class WordRepository {
       }
 
       final after = Map<String, dynamic>.from(before);
-      after['category_code'] = categoryCode;
-      after['relation_type'] = relationType;
+      after['category_code'] = effectiveCategoryCode;
+      after['relation_type'] = normalizedRelationType;
       after['direction_code'] = normalizedDirectionCode;
       after['description'] = descriptionValue;
       after['relation_group_id'] = relationGroupIdValue;
@@ -1002,8 +1069,8 @@ class WordRepository {
       await txn.update(
         'WORD_RELATION',
         {
-          'category_code': categoryCode,
-          'relation_type': relationType,
+          'category_code': effectiveCategoryCode,
+          'relation_type': normalizedRelationType,
           'direction_code': normalizedDirectionCode,
           'description': descriptionValue,
           'relation_group_id': relationGroupIdValue,
@@ -1162,11 +1229,18 @@ class WordRepository {
         : trimmedRelationGroupId;
 
     return await db.transaction((txn) async {
+      final normalizedRelationType = _normalizeNullableCode(relationType);
+      final effectiveCategoryCode = await _resolveStoredCategoryCode(
+        db: txn,
+        requestedCategoryCode: categoryCode,
+        relationTypeCode: normalizedRelationType,
+      );
+
       final existingId = await _findExistingRelationIdBySignatureOnExecutor(
         txn,
         wordIdA: normalized.wordId1,
         wordIdB: normalized.wordId2,
-        relationType: relationType,
+        relationType: normalizedRelationType,
         directionCode: normalized.directionCode,
       );
       if (existingId != null) {
@@ -1176,8 +1250,8 @@ class WordRepository {
       final row = {
         'word_id_1': normalized.wordId1,
         'word_id_2': normalized.wordId2,
-        'category_code': categoryCode,
-        'relation_type': relationType,
+        'category_code': effectiveCategoryCode,
+        'relation_type': normalizedRelationType,
         'direction_code': normalized.directionCode,
         'description': descriptionValue,
         'relation_group_id': relationGroupIdValue,

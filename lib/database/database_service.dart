@@ -90,6 +90,7 @@ class DatabaseService {
     await _ensureWordRelationV2Columns(_database!);
     await _ensureWordRelationIndexes(_database!);
     await _ensureHistoryTable(_database!);
+    await _ensureLegacyRelationLookupCompatibility(_database!);
 
     return _database!;
   }
@@ -176,6 +177,7 @@ class DatabaseService {
     await _ensureWordRelationV2Columns(_database!);
     await _ensureWordRelationIndexes(_database!);
     await _ensureHistoryTable(_database!);
+    await _ensureLegacyRelationLookupCompatibility(_database!);
   }
 
   /// WORD_RELATION v2 컬럼 보장
@@ -305,5 +307,58 @@ class DatabaseService {
       CREATE INDEX IF NOT EXISTS idx_change_history_undone
       ON CHANGE_HISTORY(undone_at, created_at)
     ''');
+  }
+
+  /// 레거시 relation lookup compatibility 보정
+  /// - 스키마 변경 없이 lookup row만 보강한다.
+  /// - 기존 row가 있으면 유지하고, 누락된 호환 row만 추가한다.
+  static Future<void> _ensureLegacyRelationLookupCompatibility(
+    Database db,
+  ) async {
+    await db.transaction((txn) async {
+      await txn.rawInsert(
+        '''
+        INSERT OR IGNORE INTO RELATION_CATEGORY (
+          code,
+          label,
+          description,
+          sort_order
+        ) VALUES (?, ?, ?, ?)
+        ''',
+        ['unspecified', '미분류', '레거시 관계 데이터와의 호환을 위한 기본 카테고리', 999],
+      );
+
+      await txn.rawInsert(
+        '''
+        INSERT OR IGNORE INTO RELATION_TYPE (
+          code,
+          category_code,
+          label,
+          description,
+          sort_order
+        ) VALUES (?, ?, ?, ?, ?)
+        ''',
+        ['related', 'unspecified', '관련', '레거시 관계 데이터와의 호환을 위한 기본 관계 타입', 1],
+      );
+
+      await txn.rawInsert(
+        '''
+        INSERT OR IGNORE INTO RELATION_TYPE (
+          code,
+          category_code,
+          label,
+          description,
+          sort_order
+        ) VALUES (?, ?, ?, ?, ?)
+        ''',
+        [
+          'root-related',
+          'etymological',
+          '어근 관련',
+          '레거시 관계 데이터와의 호환을 위한 어원 관계 타입',
+          999,
+        ],
+      );
+    });
   }
 }

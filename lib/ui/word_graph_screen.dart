@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 
+import '../data/models/relation_category_lookup.dart';
+import '../data/models/relation_type_lookup.dart';
 import '../data/models/word.dart';
 import '../data/repositories/word_repository.dart';
 import '../domain/graph/graph_build_options.dart';
@@ -2868,33 +2870,35 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         .toList(growable: false);
   }
 
-  List<Map<String, dynamic>> _sanitizeDropdownCodeItems(
-    Iterable<Map<String, dynamic>> items,
-  ) {
-    final sanitized = <Map<String, dynamic>>[];
+  List<T> _sanitizeLookupItemsByCode<T>(
+    Iterable<T> items, {
+    required String Function(T item) codeOf,
+  }) {
+    final sanitized = <T>[];
     final seenCodes = <String>{};
 
     for (final item in items) {
-      final code = ((item['code'] as String?) ?? '').trim();
+      final code = codeOf(item).trim();
       if (code.isEmpty || !seenCodes.add(code)) {
         continue;
       }
       sanitized.add(item);
     }
 
-    return List<Map<String, dynamic>>.unmodifiable(sanitized);
+    return List<T>.unmodifiable(sanitized);
   }
 
-  int _countMatchingDropdownCodeItems({
+  int _countMatchingLookupItemsByCode<T>({
     required String? rawValue,
-    required Iterable<Map<String, dynamic>> items,
+    required Iterable<T> items,
+    required String Function(T item) codeOf,
   }) {
     final value = (rawValue ?? '').trim();
     if (value.isEmpty) return 0;
 
     var count = 0;
     for (final item in items) {
-      final code = ((item['code'] as String?) ?? '').trim();
+      final code = codeOf(item).trim();
       if (code == value) {
         count++;
       }
@@ -2902,39 +2906,53 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     return count;
   }
 
-  String? _normalizeDropdownCodeForEditor({
+  String? _normalizeDropdownCodeForEditor<T>({
     required String? rawValue,
-    required Iterable<Map<String, dynamic>> items,
+    required Iterable<T> items,
+    required String Function(T item) codeOf,
   }) {
     final value = (rawValue ?? '').trim();
     if (value.isEmpty) return null;
 
-    return _countMatchingDropdownCodeItems(rawValue: value, items: items) == 1
+    return _countMatchingLookupItemsByCode(
+              rawValue: value,
+              items: items,
+              codeOf: codeOf,
+            ) ==
+            1
         ? value
         : null;
   }
 
   String? normalizeCategoryCodeForEditor({
     required String? rawValue,
-    required Iterable<Map<String, dynamic>> categoryItems,
+    required Iterable<RelationCategoryLookup> categoryItems,
   }) {
     return _normalizeDropdownCodeForEditor(
       rawValue: rawValue,
       items: categoryItems,
+      codeOf: (item) => item.code,
     );
   }
 
-  List<Map<String, dynamic>> _relationTypeItemsForEditor({
+  List<RelationTypeLookup> _relationTypeItemsForEditor({
     required String? categoryCode,
-    required List<Map<String, dynamic>> allTypes,
+    required List<RelationTypeLookup> allTypes,
   }) {
-    return allTypes;
+    final normalizedCategoryCode = (categoryCode ?? '').trim();
+    if (normalizedCategoryCode.isEmpty) {
+      return const [];
+    }
+
+    return allTypes
+        .where((item) => item.belongsToCategory(normalizedCategoryCode))
+        .toList(growable: false);
   }
 
   String? normalizeRelationTypeForEditor({
     required String? rawValue,
     required String? categoryCode,
-    required List<Map<String, dynamic>> allRelationTypeItems,
+    required List<RelationTypeLookup> allRelationTypeItems,
   }) {
     return _normalizeDropdownCodeForEditor(
       rawValue: rawValue,
@@ -2942,6 +2960,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         categoryCode: categoryCode,
         allTypes: allRelationTypeItems,
       ),
+      codeOf: (item) => item.code,
     );
   }
 
@@ -3090,8 +3109,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         final sourceController = TextEditingController(text: info.source ?? '');
 
         // 드롭다운 옵션(편집 눌렀을 때 로딩)
-        List<Map<String, dynamic>> categories = [];
-        List<Map<String, dynamic>> types = [];
+        List<RelationCategoryLookup> categories = [];
+        List<RelationTypeLookup> types = [];
         bool isOptionsLoading = false;
 
         String? normalizedOriginalCategoryCode() {
@@ -3175,8 +3194,14 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
             final c = await _repository.getRelationCategories();
             final t = await _repository.getRelationTypes();
             setState(() {
-              categories = _sanitizeDropdownCodeItems(c);
-              types = _sanitizeDropdownCodeItems(t);
+              categories = _sanitizeLookupItemsByCode(
+                c,
+                codeOf: (item) => item.code,
+              );
+              types = _sanitizeLookupItemsByCode(
+                t,
+                codeOf: (item) => item.code,
+              );
               isOptionsLoading = false;
 
               // 현재 선택값이 실제 items에 없으면 null로 보정(드롭다운 assert 방지)
@@ -3322,14 +3347,9 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                               child: Text('(없음)'),
                             ),
                             ...categories.map((m) {
-                              final code = (m['code'] as String?) ?? '';
-                              final label = (m['label'] as String?) ?? '';
-                              final text = label.isNotEmpty
-                                  ? '$label ($code)'
-                                  : code;
                               return DropdownMenuItem<String>(
-                                value: code,
-                                child: Text(text),
+                                value: m.code,
+                                child: Text(m.displayLabel),
                               );
                             }),
                           ],
@@ -3371,14 +3391,9 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                               child: Text('(없음)'),
                             ),
                             ...availableRelationTypes.map((m) {
-                              final code = (m['code'] as String?) ?? '';
-                              final label = (m['label'] as String?) ?? '';
-                              final text = label.isNotEmpty
-                                  ? '$label ($code)'
-                                  : code;
                               return DropdownMenuItem<String>(
-                                value: code,
-                                child: Text(text),
+                                value: m.code,
+                                child: Text(m.displayLabel),
                               );
                             }),
                           ],
@@ -4044,11 +4059,13 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
   /// 새로 만든 단어와 현재 중심 단어 사이의 관계 생성 정보 입력
   Future<CreateRelationPayload?> _showCreateRelationDialog(Word other) async {
-    final categories = _sanitizeDropdownCodeItems(
+    final categories = _sanitizeLookupItemsByCode(
       await _repository.getRelationCategories(),
+      codeOf: (item) => item.code,
     );
-    final types = _sanitizeDropdownCodeItems(
+    final types = _sanitizeLookupItemsByCode(
       await _repository.getRelationTypes(),
+      codeOf: (item) => item.code,
     );
     if (!mounted) return null;
 
@@ -4095,11 +4112,9 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                             child: Text('없음'),
                           ),
                           ...categories.map((c) {
-                            final code = c['code'] as String;
-                            final label = (c['label'] as String?) ?? code;
                             return DropdownMenuItem<String>(
-                              value: code,
-                              child: Text('$label ($code)'),
+                              value: c.code,
+                              child: Text(c.displayLabel),
                             );
                           }),
                         ],
@@ -4126,11 +4141,9 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                             child: Text('없음'),
                           ),
                           ...availableRelationTypes.map((t) {
-                            final code = t['code'] as String;
-                            final label = (t['label'] as String?) ?? code;
                             return DropdownMenuItem<String>(
-                              value: code,
-                              child: Text('$label ($code)'),
+                              value: t.code,
+                              child: Text(t.displayLabel),
                             );
                           }),
                         ],
