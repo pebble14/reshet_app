@@ -13,6 +13,7 @@ import '../domain/graph/graph_edge.dart';
 import '../domain/graph/graph_node.dart';
 import '../domain/graph/graph_view_data.dart';
 import '../domain/graph/layout/graph_layout_strategy_resolver.dart';
+import '../domain/relation/relation_formatter.dart';
 import 'word_graph_cache.dart';
 
 const double _centerNodeSize = 180.0;
@@ -2751,6 +2752,32 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     return info.wordId1;
   }
 
+  String _targetWordIdForRelationInfo(
+    WordRelationEdgeInfo info, {
+    String? centerWordId,
+  }) {
+    final referenceWordId = centerWordId ?? _directionReferenceWordId(info);
+    return referenceWordId == info.wordId1 ? info.wordId2 : info.wordId1;
+  }
+
+  RelationText _relationTextForInfo(WordRelationEdgeInfo info) {
+    final centerWordId = _directionReferenceWordId(info);
+    final targetWordId = _targetWordIdForRelationInfo(
+      info,
+      centerWordId: centerWordId,
+    );
+
+    return RelationFormatter.formatForPair(
+      relationType: info.relationType,
+      directionCode: info.directionCode,
+      wordId1: info.wordId1,
+      wordId2: info.wordId2,
+      centerWordId: centerWordId,
+      centerWord: _wordDisplayName(centerWordId),
+      targetWord: _wordDisplayName(targetWordId),
+    );
+  }
+
   _GraphEdgeDirectionSummary _directionSummaryForDirectionCode(
     String? directionCode,
   ) {
@@ -2797,30 +2824,28 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     }
   }
 
-  String _relationLabelForDetails(WordRelationEdgeInfo info) {
-    final raw = (info.relationTypeLabel?.trim().isNotEmpty ?? false)
-        ? info.relationTypeLabel!.trim()
-        : (info.relationType?.trim().isNotEmpty ?? false)
-        ? info.relationType!.trim()
-        : 'unspecified';
-
-    return _normalizeRelationLabel(raw);
+  String _relationPhraseForDetails(WordRelationEdgeInfo info) {
+    return _relationTextForInfo(info).phrase;
   }
 
   String _labelForEdgeGroup(List<WordRelationEdgeInfo> infos) {
     if (infos.isEmpty) return '';
 
-    final directionTag = _directionTagForSummary(
-      _directionSummaryForEdges(infos),
-    );
-    final relationLabel = _labelForEdge(infos.first);
+    final relationLabels = infos
+        .map((info) => _relationTextForInfo(info).shortLabel.trim())
+        .where((label) => label.isNotEmpty)
+        .toSet();
     final countSuffix = infos.length > 1 ? ' x${infos.length}' : '';
 
-    if (relationLabel.isEmpty) {
-      return '$directionTag$countSuffix';
+    if (relationLabels.isEmpty) {
+      return '';
     }
 
-    return '$directionTag $relationLabel$countSuffix';
+    if (relationLabels.length == 1) {
+      return '${relationLabels.first}$countSuffix';
+    }
+
+    return '관계$countSuffix';
   }
 
   String _directionTextForRawCode({
@@ -3012,7 +3037,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                       final directionTag = _directionTagForSummary(
                         _directionSummaryForEdges([info]),
                       );
-                      final relationLabel = _relationLabelForDetails(info);
+                      final relationLabel = _relationPhraseForDetails(info);
                       final metaParts = <String>[
                         directionTag,
                         if ((info.categoryLabel?.trim().isNotEmpty ?? false))
@@ -3296,6 +3321,20 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                 : (info.relationType?.trim().isNotEmpty ?? false)
                 ? info.relationType!.trim()
                 : '(없음)';
+            final relationCenterWordId = _directionReferenceWordId(info);
+            final relationTargetWordId = _targetWordIdForRelationInfo(
+              info,
+              centerWordId: relationCenterWordId,
+            );
+            final relationText = RelationFormatter.formatForPair(
+              relationType: selectedRelationType ?? info.relationType,
+              directionCode: selectedDirectionCode,
+              wordId1: info.wordId1,
+              wordId2: info.wordId2,
+              centerWordId: relationCenterWordId,
+              centerWord: _wordDisplayName(relationCenterWordId),
+              targetWord: _wordDisplayName(relationTargetWordId),
+            );
             final directionText = _directionTextForRawCode(
               directionCode: selectedDirectionCode,
               centerWordId: _directionReferenceWordId(info),
@@ -3321,6 +3360,23 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade50,
+                          border: Border.all(color: Colors.grey.shade300),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          relationText.sentence,
+                          style: TextStyle(
+                            color: Colors.grey.shade900,
+                            height: 1.35,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 14),
                       // --- 카테고리 ---
                       const Text(
                         '카테고리',
@@ -3622,93 +3678,6 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
       default:
         return Colors.grey;
-    }
-  }
-
-  /// 엣지(관계) 라벨 텍스트 생성
-  /// - 우선순위: relationTypeLabel(코드 테이블 라벨) > relationType(코드) > 빈 문자열
-  /// - 내부적으로 코드/영문 라벨을 사람이 읽기 좋은 짧은 라벨로 정리한다.
-  String _labelForEdge(WordRelationEdgeInfo? info) {
-    final raw = (info?.relationTypeLabel?.trim().isNotEmpty ?? false)
-        ? info!.relationTypeLabel!.trim()
-        : (info?.relationType ?? '').trim();
-
-    if (raw.isEmpty) return '';
-
-    final normalized = _normalizeRelationLabel(raw);
-
-    // 너무 길면 잘라서 표시(가독성)
-    const maxLen = 10; // 태그가 잘린다고 했으니 여기서 조금 더 짧게
-    if (normalized.length <= maxLen) return normalized;
-    return '${normalized.substring(0, maxLen)}…';
-  }
-
-  /// 관계 라벨 정리
-  /// - lookup이 없거나 레거시 코드가 남아 있어도 짧은 한국어 라벨로 보이도록 한다.
-  /// - 그래프 태그는 짧고 명확해야 하므로 사용자 친화 라벨로 바꾼다.
-  String _normalizeRelationLabel(String raw) {
-    final v = raw.trim();
-
-    // 이미 한글이면 그대로 사용(불필요 변환 방지)
-    final hasKorean = RegExp(r'[가-힣]').hasMatch(v);
-    if (hasKorean) return v;
-
-    switch (v) {
-      case 'unspecified':
-        return '미분류';
-      case 'related':
-        return '일반 관련';
-      case 'root-related':
-        return '어근 관련';
-      case 'similar':
-        return '의미 유사';
-      case 'contrast':
-        return '의미 대조';
-      case 'broader':
-        return '상위 개념';
-      case 'narrower':
-        return '하위 개념';
-      case 'synonym':
-        return '동의어';
-      case 'antonym':
-        return '반의어';
-      case 'hypernym':
-        return '상위어';
-      case 'hyponym':
-        return '하위어';
-      case 'derived':
-        return '파생어';
-      case 'inflected':
-        return '굴절형';
-      case 'variant':
-        return '형태 변이';
-      case 'compound':
-        return '합성';
-      case 'root_shared':
-        return '공통 어근';
-      case 'borrowed_from':
-        return '차용어 관계';
-      case 'loan_translation':
-        return '번역 차용';
-      case 'sound_similar':
-        return '발음 유사';
-      case 'sound_shift':
-        return '음운 변화';
-      case 'direct_transliteration':
-        return '직접 음역';
-      case 'approx_transliteration':
-        return '근사 음역';
-      case 'conventional_transliteration':
-        return '관용 음역';
-      case 'literal_translation':
-        return '직역';
-      case 'semantic_translation':
-        return '의역';
-      case 'interpretive_translation':
-        return '풀이 번역';
-      default:
-        // 기타 영문 라벨/코드는 보기 좋게 정리
-        return v.replaceAll('-', ' ');
     }
   }
 
