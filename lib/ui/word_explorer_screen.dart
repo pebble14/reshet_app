@@ -243,8 +243,8 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
 
     if (!mounted || selectedWordId.isEmpty) return;
 
-    if (wasDeleted == true && wasCenterWord) {
-      Navigator.pop(context, true);
+    if (wasDeleted == true) {
+      await _handleDeletedSelectedWord(wasCenterWord: wasCenterWord);
       return;
     }
 
@@ -263,11 +263,40 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
     return wordId;
   }
 
-  void _clearSelectedWordPanel() {
+  Future<void> _handleDeletedSelectedWord({required bool wasCenterWord}) async {
+    if (!wasCenterWord) {
+      _clearSelectedWordPanel(refreshGraph: true);
+      return;
+    }
+
+    final previousEntry = _history.previousEntry;
+    if (await _isHistoryEntryAvailable(previousEntry)) {
+      final entry = _history.goBack();
+      if (entry != null) {
+        _applyHistoryEntry(entry);
+        return;
+      }
+    }
+
+    final nextEntry = _history.nextEntry;
+    if (await _isHistoryEntryAvailable(nextEntry)) {
+      final entry = _history.goForward();
+      if (entry != null) {
+        _applyHistoryEntry(entry);
+        return;
+      }
+    }
+
+    if (!mounted) return;
+    Navigator.pop(context, true);
+  }
+
+  void _clearSelectedWordPanel({bool refreshGraph = false}) {
     if (_selectedWordMap == null &&
         !_isDetailLoading &&
         _detailError == null &&
-        _detailUnavailableMessage == null) {
+        _detailUnavailableMessage == null &&
+        !refreshGraph) {
       return;
     }
 
@@ -276,6 +305,9 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
       _isDetailLoading = false;
       _detailError = null;
       _detailUnavailableMessage = null;
+      if (refreshGraph) {
+        _graphRevision++;
+      }
       _replaceCurrentHistoryEntry(
         centerWord: _centerWord,
         selectedWordMap: null,
