@@ -28,6 +28,247 @@ class DatabaseService {
   /// 과거 파일명 호환(기존 사용 중인 DB)
   static const String _legacySeedFileName = 'bbwdb_20260106.db';
 
+  static const List<
+    ({String code, String label, String description, int sortOrder})
+  >
+  _relationCategoryDefinitions = [
+    (
+      code: 'semantic',
+      label: '개념 관계',
+      description: '의미상의 유사, 대조, 포함 관계를 나타내는 상위 분류',
+      sortOrder: 1,
+    ),
+    (
+      code: 'lexical',
+      label: '어휘 관계',
+      description: '단어 간 어휘 대응 관계를 나타내는 상위 분류',
+      sortOrder: 2,
+    ),
+    (
+      code: 'morphological',
+      label: '형태 관계',
+      description: '형태 변화와 단어 형성 관계를 나타내는 상위 분류',
+      sortOrder: 3,
+    ),
+    (
+      code: 'etymological',
+      label: '어원 관계',
+      description: '기원, 어근, 차용 관계를 나타내는 상위 분류',
+      sortOrder: 4,
+    ),
+    (
+      code: 'phonological',
+      label: '음운 관계',
+      description: '발음과 음운 변동 관계를 나타내는 상위 분류',
+      sortOrder: 5,
+    ),
+    (
+      code: 'transliteration',
+      label: '음역 관계',
+      description: '문자 체계 사이의 음역 관계를 나타내는 상위 분류',
+      sortOrder: 6,
+    ),
+    (
+      code: 'translation',
+      label: '번역 관계',
+      description: '의미 전달을 위한 번역 관계를 나타내는 상위 분류',
+      sortOrder: 7,
+    ),
+    (
+      code: 'unspecified',
+      label: '미분류 관계',
+      description: '기존 데이터 호환을 위해 유지하는 분류되지 않은 관계',
+      sortOrder: 999,
+    ),
+  ];
+
+  static const List<
+    ({
+      String code,
+      String categoryCode,
+      String label,
+      String description,
+      int sortOrder,
+    })
+  >
+  _relationTypeDefinitions = [
+    (
+      code: 'similar',
+      categoryCode: 'semantic',
+      label: '의미 유사',
+      description: '의미가 비슷하게 대응되는 관계',
+      sortOrder: 1,
+    ),
+    (
+      code: 'contrast',
+      categoryCode: 'semantic',
+      label: '의미 대조',
+      description: '의미가 서로 대조되는 관계',
+      sortOrder: 2,
+    ),
+    (
+      code: 'broader',
+      categoryCode: 'semantic',
+      label: '상위 개념',
+      description: '더 넓은 범주의 의미를 가리키는 관계',
+      sortOrder: 3,
+    ),
+    (
+      code: 'narrower',
+      categoryCode: 'semantic',
+      label: '하위 개념',
+      description: '더 좁은 범주의 의미를 가리키는 관계',
+      sortOrder: 4,
+    ),
+    (
+      code: 'synonym',
+      categoryCode: 'lexical',
+      label: '동의어',
+      description: '서로 바꾸어 쓸 수 있을 정도로 뜻이 가까운 관계',
+      sortOrder: 1,
+    ),
+    (
+      code: 'antonym',
+      categoryCode: 'lexical',
+      label: '반의어',
+      description: '뜻이 서로 반대되는 관계',
+      sortOrder: 2,
+    ),
+    (
+      code: 'hypernym',
+      categoryCode: 'lexical',
+      label: '상위어',
+      description: '더 넓은 어휘 범주에 속하는 관계',
+      sortOrder: 3,
+    ),
+    (
+      code: 'hyponym',
+      categoryCode: 'lexical',
+      label: '하위어',
+      description: '더 구체적인 어휘 범주에 속하는 관계',
+      sortOrder: 4,
+    ),
+    (
+      code: 'derived',
+      categoryCode: 'morphological',
+      label: '파생어',
+      description: '파생에 의해 연결되는 단어 형성 관계',
+      sortOrder: 1,
+    ),
+    (
+      code: 'inflected',
+      categoryCode: 'morphological',
+      label: '굴절형',
+      description: '활용이나 굴절에 의해 연결되는 형태 관계',
+      sortOrder: 2,
+    ),
+    (
+      code: 'variant',
+      categoryCode: 'morphological',
+      label: '형태 변이',
+      description: '철자나 형태가 달라진 이형 관계',
+      sortOrder: 3,
+    ),
+    (
+      code: 'compound',
+      categoryCode: 'morphological',
+      label: '합성',
+      description: '둘 이상의 어휘 요소가 결합해 이루어진 단어 형성 관계',
+      sortOrder: 4,
+    ),
+    (
+      code: 'root_shared',
+      categoryCode: 'etymological',
+      label: '공통 어근',
+      description: '공통된 어근을 공유하는 관계',
+      sortOrder: 1,
+    ),
+    (
+      code: 'borrowed_from',
+      categoryCode: 'etymological',
+      label: '차용어 관계',
+      description: '언어 간 차용으로 연결되는 관계',
+      sortOrder: 2,
+    ),
+    (
+      code: 'loan_translation',
+      categoryCode: 'etymological',
+      label: '번역 차용',
+      description: '표현 요소를 번역해 받아들인 차용 관계',
+      sortOrder: 3,
+    ),
+    (
+      code: 'root-related',
+      categoryCode: 'etymological',
+      label: '어근 관련',
+      description: '레거시 데이터 호환을 위해 유지하는 어근 관련 관계',
+      sortOrder: 999,
+    ),
+    (
+      code: 'sound_similar',
+      categoryCode: 'phonological',
+      label: '발음 유사',
+      description: '발음이 서로 유사하게 들리는 관계',
+      sortOrder: 1,
+    ),
+    (
+      code: 'sound_shift',
+      categoryCode: 'phonological',
+      label: '음운 변화',
+      description: '음운 변동으로 이어지는 관계',
+      sortOrder: 2,
+    ),
+    (
+      code: 'direct_transliteration',
+      categoryCode: 'transliteration',
+      label: '직접 음역',
+      description: '원어의 음을 직접 대응해 옮긴 관계',
+      sortOrder: 1,
+    ),
+    (
+      code: 'approx_transliteration',
+      categoryCode: 'transliteration',
+      label: '근사 음역',
+      description: '음운 차이를 반영해 가깝게 옮긴 관계',
+      sortOrder: 2,
+    ),
+    (
+      code: 'conventional_transliteration',
+      categoryCode: 'transliteration',
+      label: '관용 음역',
+      description: '관용적으로 굳어진 음역 관계',
+      sortOrder: 3,
+    ),
+    (
+      code: 'literal_translation',
+      categoryCode: 'translation',
+      label: '직역',
+      description: '표현을 가능한 한 문자 그대로 옮긴 번역 관계',
+      sortOrder: 1,
+    ),
+    (
+      code: 'semantic_translation',
+      categoryCode: 'translation',
+      label: '의역',
+      description: '의미 대응을 중심으로 옮긴 번역 관계',
+      sortOrder: 2,
+    ),
+    (
+      code: 'interpretive_translation',
+      categoryCode: 'translation',
+      label: '풀이 번역',
+      description: '의미 풀이를 보완해 옮긴 번역 관계',
+      sortOrder: 3,
+    ),
+    (
+      code: 'related',
+      categoryCode: 'unspecified',
+      label: '일반 관련',
+      description: '레거시 데이터 호환을 위해 유지하는 일반 관련 관계',
+      sortOrder: 1,
+    ),
+  ];
+
   /// data 폴더 경로 (현재는 Windows/데스크탑 기준)
   static String _dataDirPath() {
     final currentPath = Directory.current.path;
@@ -90,7 +331,7 @@ class DatabaseService {
     await _ensureWordRelationV2Columns(_database!);
     await _ensureWordRelationIndexes(_database!);
     await _ensureHistoryTable(_database!);
-    await _ensureLegacyRelationLookupCompatibility(_database!);
+    await _ensureRelationLookupMetadata(_database!);
 
     return _database!;
   }
@@ -177,7 +418,7 @@ class DatabaseService {
     await _ensureWordRelationV2Columns(_database!);
     await _ensureWordRelationIndexes(_database!);
     await _ensureHistoryTable(_database!);
-    await _ensureLegacyRelationLookupCompatibility(_database!);
+    await _ensureRelationLookupMetadata(_database!);
   }
 
   /// WORD_RELATION v2 컬럼 보장
@@ -309,56 +550,85 @@ class DatabaseService {
     ''');
   }
 
-  /// 레거시 relation lookup compatibility 보정
-  /// - 스키마 변경 없이 lookup row만 보강한다.
-  /// - 기존 row가 있으면 유지하고, 누락된 호환 row만 추가한다.
-  static Future<void> _ensureLegacyRelationLookupCompatibility(
-    Database db,
-  ) async {
+  /// relation lookup 메타데이터 보정
+  /// - 스키마 변경 없이 code 기준으로 label/description/category/sort_order를 정합화한다.
+  /// - 기존 work DB와 seed에서 새로 복사한 work DB를 같은 메타데이터 체계로 맞춘다.
+  static Future<void> _ensureRelationLookupMetadata(Database db) async {
     await db.transaction((txn) async {
-      await txn.rawInsert(
-        '''
-        INSERT OR IGNORE INTO RELATION_CATEGORY (
-          code,
-          label,
-          description,
-          sort_order
-        ) VALUES (?, ?, ?, ?)
-        ''',
-        ['unspecified', '미분류', '레거시 관계 데이터와의 호환을 위한 기본 카테고리', 999],
-      );
+      for (final category in _relationCategoryDefinitions) {
+        await _upsertRelationCategory(
+          txn,
+          code: category.code,
+          label: category.label,
+          description: category.description,
+          sortOrder: category.sortOrder,
+        );
+      }
 
-      await txn.rawInsert(
-        '''
-        INSERT OR IGNORE INTO RELATION_TYPE (
-          code,
-          category_code,
-          label,
-          description,
-          sort_order
-        ) VALUES (?, ?, ?, ?, ?)
-        ''',
-        ['related', 'unspecified', '관련', '레거시 관계 데이터와의 호환을 위한 기본 관계 타입', 1],
-      );
-
-      await txn.rawInsert(
-        '''
-        INSERT OR IGNORE INTO RELATION_TYPE (
-          code,
-          category_code,
-          label,
-          description,
-          sort_order
-        ) VALUES (?, ?, ?, ?, ?)
-        ''',
-        [
-          'root-related',
-          'etymological',
-          '어근 관련',
-          '레거시 관계 데이터와의 호환을 위한 어원 관계 타입',
-          999,
-        ],
-      );
+      for (final relationType in _relationTypeDefinitions) {
+        await _upsertRelationType(
+          txn,
+          code: relationType.code,
+          categoryCode: relationType.categoryCode,
+          label: relationType.label,
+          description: relationType.description,
+          sortOrder: relationType.sortOrder,
+        );
+      }
     });
+  }
+
+  static Future<void> _upsertRelationCategory(
+    DatabaseExecutor db, {
+    required String code,
+    required String label,
+    required String description,
+    required int sortOrder,
+  }) async {
+    final row = {
+      'label': label,
+      'description': description,
+      'sort_order': sortOrder,
+    };
+
+    final updated = await db.update(
+      'RELATION_CATEGORY',
+      row,
+      where: 'code = ?',
+      whereArgs: [code],
+    );
+    if (updated > 0) {
+      return;
+    }
+
+    await db.insert('RELATION_CATEGORY', {'code': code, ...row});
+  }
+
+  static Future<void> _upsertRelationType(
+    DatabaseExecutor db, {
+    required String code,
+    required String categoryCode,
+    required String label,
+    required String description,
+    required int sortOrder,
+  }) async {
+    final row = {
+      'category_code': categoryCode,
+      'label': label,
+      'description': description,
+      'sort_order': sortOrder,
+    };
+
+    final updated = await db.update(
+      'RELATION_TYPE',
+      row,
+      where: 'code = ?',
+      whereArgs: [code],
+    );
+    if (updated > 0) {
+      return;
+    }
+
+    await db.insert('RELATION_TYPE', {'code': code, ...row});
   }
 }

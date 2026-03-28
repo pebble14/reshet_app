@@ -2,170 +2,166 @@
 
 ## 목적
 
-기존 WORD_RELATION 구조를 확장하여
-의미 형성과 영향 흐름을 표현한다.
+`WORD_RELATION` v2 구조와 관계 lookup 메타데이터의 현재 기준을 정리한다.
+
+이번 기준의 핵심은 다음과 같다.
+
+- `direction_code`, `description`, `relation_group_id`를 포함한 관계 구조를 사용한다.
+- 관계 분류는 `RELATION_CATEGORY` 와 `RELATION_TYPE` lookup으로 관리한다.
+- 앱은 `seed DB -> work DB 복사 -> lookup metadata upsert` 순서로 정합화를 수행한다.
+- 기존 `code` 값과 DB schema는 유지한다.
 
 ---
 
-## WORD_RELATION 확장
+## 데이터베이스 파일
 
-- direction_code TEXT (기본값: 'unknown')
-- description TEXT
-- relation_group_id TEXT (optional)
+| 경로 | 역할 |
+| --- | --- |
+| `data/reshet_seed.db` | 기준 seed DB |
+| `data/reshet_work.db` | 앱이 실제로 읽고 쓰는 작업 DB |
+| `data/bbwdb_20260106.db` | `reshet_seed.db`가 없을 때 사용하는 legacy seed fallback |
+
+정리:
+
+1. 앱이 처음 실행되면 seed DB를 work DB로 복사한다.
+2. work DB를 연 뒤 relation lookup metadata를 code 기준으로 upsert 한다.
+3. reset 후에도 같은 upsert가 다시 적용된다.
+
+---
+
+## WORD_RELATION v2
+
+| 컬럼 | 설명 |
+| --- | --- |
+| `id` | 관계 ID |
+| `word_id_1` | 정렬 저장 기준 첫 번째 단어 |
+| `word_id_2` | 정렬 저장 기준 두 번째 단어 |
+| `category_code` | 관계의 상위 분류 |
+| `relation_type` | 관계의 직접 의미를 나타내는 코드 |
+| `status_code` | 관계 상태 |
+| `direction_code` | 방향 해석 코드 |
+| `description` | 개별 관계 설명 |
+| `relation_group_id` | 관련 관계 묶음 식별자 |
+| `note` | 메모 |
+| `source` | 출처 |
+| `created_at` | 생성 시각 |
+| `updated_at` | 수정 시각 |
 
 ---
 
 ## direction_code
 
-- w1_to_w2
-- w2_to_w1
-- undirected
-- unknown
+| code | 의미 |
+| --- | --- |
+| `w1_to_w2` | `word_id_1`에서 `word_id_2`로 향함 |
+| `w2_to_w1` | `word_id_2`에서 `word_id_1`로 향함 |
+| `undirected` | 무방향 관계 |
+| `unknown` | 방향 미확정 관계 |
+
+원칙:
+
+- type은 방향성을 가지지 않는다.
+- 방향 해석은 `direction_code`로만 처리한다.
+- `unknown`과 `undirected`는 반드시 구분한다.
 
 ---
 
-## relation_type 확장
+## lookup 테이블
 
-- component_of_meaning
-- derived_from
-- compound_component
-- prefix_component
-- suffix_component
-- semantic_association
-- name_change
+### RELATION_CATEGORY
 
----
+```sql
+CREATE TABLE RELATION_CATEGORY (
+  code TEXT PRIMARY KEY,
+  label TEXT NOT NULL,
+  description TEXT,
+  sort_order INTEGER DEFAULT 0
+)
+```
 
-## WORD_TABLE 확장
+### RELATION_TYPE
 
-추가 컬럼:
-
-- graph_expand_mode TEXT
-graph_expand_mode의 기본값은 'default'로 둔다.
-
----
-
-## 그래프 정책
-
-- default
-- incoming_only
-- outgoing_limited
-- full
+```sql
+CREATE TABLE RELATION_TYPE (
+  code TEXT PRIMARY KEY,
+  category_code TEXT NOT NULL,
+  label TEXT NOT NULL,
+  description TEXT,
+  sort_order INTEGER DEFAULT 0,
+  FOREIGN KEY (category_code) REFERENCES RELATION_CATEGORY(code)
+)
+```
 
 ---
 
-## graph_expand_mode 정의
+## 현재 RELATION_CATEGORY 카탈로그
 
-graph_expand_mode는 중심 단어가 그래프의 기준이 될 때,
-어떤 관계를 표시 대상으로 포함할지 결정하는 정책이다.
-
-값은 다음과 같이 정의한다.
-
-- default
-  incoming, outgoing, undirected, unknown 관계를 모두 표시 대상으로 포함한다.
-
-- incoming_only
-  incoming, undirected, unknown 관계를 표시 대상으로 포함하고,
-  outgoing 관계는 표시 대상에서 제외한다.
-
-- outgoing_limited
-  incoming, undirected, unknown 관계는 모두 포함한다.
-  outgoing 관계는 제한적으로만 포함한다.
-
-- full
-  incoming, outgoing, undirected, unknown 관계를 모두 제한 없이 표시 대상으로 포함한다.
+| code | label | description |
+| --- | --- | --- |
+| `semantic` | 개념 관계 | 의미상의 유사, 대조, 포함 관계를 나타내는 상위 분류 |
+| `lexical` | 어휘 관계 | 단어 간 어휘 대응 관계를 나타내는 상위 분류 |
+| `morphological` | 형태 관계 | 형태 변화와 단어 형성 관계를 나타내는 상위 분류 |
+| `etymological` | 어원 관계 | 기원, 어근, 차용 관계를 나타내는 상위 분류 |
+| `phonological` | 음운 관계 | 발음과 음운 변동 관계를 나타내는 상위 분류 |
+| `transliteration` | 음역 관계 | 문자 체계 사이의 음역 관계를 나타내는 상위 분류 |
+| `translation` | 번역 관계 | 의미 전달을 위한 번역 관계를 나타내는 상위 분류 |
+| `unspecified` | 미분류 관계 | 기존 데이터 호환을 위해 유지하는 분류되지 않은 관계 |
 
 ---
 
-## outgoing_limited의 제한 방식
+## 현재 RELATION_TYPE 카탈로그
 
-outgoing_limited의 "limited"는 1차 구현에서는 개수 제한을 의미한다.
-
-즉, outgoing 관계는 정해진 최대 개수까지만 표시한다.
-
-초기 구현에서는 outgoing 관계의 표시 상한을 고정 개수로 적용한다.
-구체적인 상한값은 앱 구현 단계에서 상수로 관리할 수 있다.
-
-향후 필요 시 다음 방식으로 확장할 수 있다.
-
-- relation_type 우선순위 기반 제한
-- 중요도 기반 제한
-- 깊이 기반 제한
-
----
-
-## direction_code 기본값
-
-기존 데이터에는 방향 정보가 없으므로,
-v2 이행 시 direction_code의 기본값은 undirected가 아니라 unknown으로 둔다.
-
-의미는 다음과 같다.
-
-- unknown: 방향이 있을 수 있으나 아직 결정되지 않음
-- undirected: 본질적으로 무방향 관계
-
-이 둘은 반드시 구분한다.
-
----
-
-## word_id_1 / word_id_2 저장 원칙
-
-word_id_1 / word_id_2는 정렬 저장을 조건부로 유지할 수 있다.
-
-조건은 다음과 같다.
-
-- 저장 시 단어 순서를 정렬했다면,
-  direction_code도 정렬된 저장 순서 기준으로 함께 보정해야 한다.
-- 입력 순서와 저장 순서가 달라져
-  word_id_1 / word_id_2가 뒤바뀌는 경우,
-  direction_code는 w1_to_w2 와 w2_to_w1 사이에서 함께 변환되어야 한다.
-- undirected 와 unknown은 방향 보정 없이 그대로 유지한다.
+| category_code | code | label | description | 비고 |
+| --- | --- | --- | --- | --- |
+| `semantic` | `similar` | 의미 유사 | 의미가 비슷하게 대응되는 관계 | - |
+| `semantic` | `contrast` | 의미 대조 | 의미가 서로 대조되는 관계 | - |
+| `semantic` | `broader` | 상위 개념 | 더 넓은 범주의 의미를 가리키는 관계 | - |
+| `semantic` | `narrower` | 하위 개념 | 더 좁은 범주의 의미를 가리키는 관계 | - |
+| `lexical` | `synonym` | 동의어 | 서로 바꾸어 쓸 수 있을 정도로 뜻이 가까운 관계 | - |
+| `lexical` | `antonym` | 반의어 | 뜻이 서로 반대되는 관계 | - |
+| `lexical` | `hypernym` | 상위어 | 더 넓은 어휘 범주에 속하는 관계 | - |
+| `lexical` | `hyponym` | 하위어 | 더 구체적인 어휘 범주에 속하는 관계 | - |
+| `morphological` | `derived` | 파생어 | 파생에 의해 연결되는 단어 형성 관계 | - |
+| `morphological` | `inflected` | 굴절형 | 활용이나 굴절에 의해 연결되는 형태 관계 | - |
+| `morphological` | `variant` | 형태 변이 | 철자나 형태가 달라진 이형 관계 | - |
+| `morphological` | `compound` | 합성 | 둘 이상의 어휘 요소가 결합해 이루어진 단어 형성 관계 | 신규 |
+| `etymological` | `root_shared` | 공통 어근 | 공통된 어근을 공유하는 관계 | - |
+| `etymological` | `borrowed_from` | 차용어 관계 | 언어 간 차용으로 연결되는 관계 | - |
+| `etymological` | `loan_translation` | 번역 차용 | 표현 요소를 번역해 받아들인 차용 관계 | - |
+| `etymological` | `root-related` | 어근 관련 | 레거시 데이터 호환을 위해 유지하는 어근 관련 관계 | legacy |
+| `phonological` | `sound_similar` | 발음 유사 | 발음이 서로 유사하게 들리는 관계 | - |
+| `phonological` | `sound_shift` | 음운 변화 | 음운 변동으로 이어지는 관계 | - |
+| `transliteration` | `direct_transliteration` | 직접 음역 | 원어의 음을 직접 대응해 옮긴 관계 | - |
+| `transliteration` | `approx_transliteration` | 근사 음역 | 음운 차이를 반영해 가깝게 옮긴 관계 | - |
+| `transliteration` | `conventional_transliteration` | 관용 음역 | 관용적으로 굳어진 음역 관계 | - |
+| `translation` | `literal_translation` | 직역 | 표현을 가능한 한 문자 그대로 옮긴 번역 관계 | - |
+| `translation` | `semantic_translation` | 의역 | 의미 대응을 중심으로 옮긴 번역 관계 | - |
+| `translation` | `interpretive_translation` | 풀이 번역 | 의미 풀이를 보완해 옮긴 번역 관계 | - |
+| `unspecified` | `related` | 일반 관련 | 레거시 데이터 호환을 위해 유지하는 일반 관련 관계 | legacy |
 
 ---
 
-## WORD_RELATION UNIQUE 기준
+## lookup 정합화 방식
 
-1차 v2 구현에서 WORD_RELATION의 UNIQUE 기준은
-다음 조합을 사용한다.
+앱은 `database_service.dart`에서 다음 원칙으로 lookup을 맞춘다.
 
-- word_id_1
-- word_id_2
-- relation_type
-- direction_code
-
-초기 단계에서는 category_code를 UNIQUE 기준에 포함하지 않는다.
-category_code는 상위 분류이며,
-실제 관계 의미의 직접 구분은 relation_type 중심으로 처리한다.
-
-relation_group_id는 1차 UNIQUE 기준에 포함하지 않는다.
-relation_group_id는 초기 단계에서는 메타데이터로 취급한다.
-
-SQLite 인덱스 구현에서는 NULL 비교 문제를 피하기 위해
-다음과 같은 정규화 기준을 사용할 수 있다.
-
-- word_id_1
-- word_id_2
-- COALESCE(relation_type, '')
-- COALESCE(direction_code, 'unknown')
-
-즉, 문서상 UNIQUE 기준은 relation_type / direction_code 기준이지만,
-실제 SQLite 인덱스 구현에서는 COALESCE를 사용할 수 있다.
+1. `RELATION_CATEGORY.code` 기준으로 label, description, sort_order를 upsert 한다.
+2. `RELATION_TYPE.code` 기준으로 category_code, label, description, sort_order를 upsert 한다.
+3. seed DB 파일을 직접 수정하지 않아도 기존 work DB와 reset 후 work DB가 같은 metadata를 갖게 된다.
+4. 레거시 코드 `unspecified`, `related`, `root-related`도 함께 정비한다.
 
 ---
 
-## 기존 필드의 역할
+## UNIQUE 기준
 
-- category_code: 관계의 상위 분류를 나타낸다.
-- relation_type: 관계의 직접 의미를 나타낸다.
-- status_code: 관계의 확정도 또는 편집 상태를 나타낸다.
+v2의 관계 중복 판정 기준은 다음 조합을 사용한다.
 
-v2에서도 이 세 필드는 유지되며,
-direction_code / description / relation_group_id는 이를 보완하는 확장 필드로 본다.
+- `word_id_1`
+- `word_id_2`
+- `relation_type`
+- `direction_code`
 
----
+SQLite 인덱스 구현에서는 `NULL` 비교를 안정화하기 위해 다음 형태를 사용한다.
 
-## 핵심 규칙
-
-- 관계와 그래프 정책 분리
-- unknown 과 undirected 구분
-- 기존 데이터 보존
+- `COALESCE(relation_type, '')`
+- `COALESCE(direction_code, 'unknown')`

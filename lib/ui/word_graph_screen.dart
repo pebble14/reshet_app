@@ -3600,7 +3600,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
   /// 관계 카테고리 코드에 따른 색상 매핑
   /// - RELATION_CATEGORY.code 값 기준
-  /// - WORD_RELATION에 code 테이블에 없는 값(예: unspecified)이 있을 수 있으므로 기본값을 둔다.
+  /// - 레거시/null 데이터가 남아 있을 수 있으므로 기본값을 둔다.
   Color _colorForCategory(String? categoryCode) {
     switch (categoryCode) {
       case 'semantic':
@@ -3617,8 +3617,6 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         return Colors.brown;
       case 'translation':
         return Colors.indigo;
-
-      // DB에 'unspecified'가 존재하지만 RELATION_CATEGORY엔 없어서 fallback 필요
       case 'unspecified':
         return Colors.grey;
 
@@ -3646,7 +3644,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   }
 
   /// 관계 라벨 정리
-  /// - DB에 코드 테이블에 없는 값이 들어올 수 있어(예: unspecified, related, root-related)
+  /// - lookup이 없거나 레거시 코드가 남아 있어도 짧은 한국어 라벨로 보이도록 한다.
   /// - 그래프 태그는 짧고 명확해야 하므로 사용자 친화 라벨로 바꾼다.
   String _normalizeRelationLabel(String raw) {
     final v = raw.trim();
@@ -3659,13 +3657,55 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       case 'unspecified':
         return '미분류';
       case 'related':
-        return '관련';
+        return '일반 관련';
       case 'root-related':
-        return '어근관련';
+        return '어근 관련';
+      case 'similar':
+        return '의미 유사';
+      case 'contrast':
+        return '의미 대조';
+      case 'broader':
+        return '상위 개념';
+      case 'narrower':
+        return '하위 개념';
       case 'synonym':
         return '동의어';
       case 'antonym':
         return '반의어';
+      case 'hypernym':
+        return '상위어';
+      case 'hyponym':
+        return '하위어';
+      case 'derived':
+        return '파생어';
+      case 'inflected':
+        return '굴절형';
+      case 'variant':
+        return '형태 변이';
+      case 'compound':
+        return '합성';
+      case 'root_shared':
+        return '공통 어근';
+      case 'borrowed_from':
+        return '차용어 관계';
+      case 'loan_translation':
+        return '번역 차용';
+      case 'sound_similar':
+        return '발음 유사';
+      case 'sound_shift':
+        return '음운 변화';
+      case 'direct_transliteration':
+        return '직접 음역';
+      case 'approx_transliteration':
+        return '근사 음역';
+      case 'conventional_transliteration':
+        return '관용 음역';
+      case 'literal_translation':
+        return '직역';
+      case 'semantic_translation':
+        return '의역';
+      case 'interpretive_translation':
+        return '풀이 번역';
       default:
         // 기타 영문 라벨/코드는 보기 좋게 정리
         return v.replaceAll('-', ' ');

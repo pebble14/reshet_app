@@ -2,156 +2,199 @@
 
 ## 목적
 
-Reshet의 관계 모델은 다음 질문에 답하기 위해 존재한다.
+Reshet의 관계 모델은 단어 사이의 연결을 단순 나열하는 것이 아니라,
+의미 형성, 어휘 대응, 형태 변화, 어원적 연결을 일관된 체계로 다루기 위해 존재한다.
 
-- 이 단어는 왜 이런 의미를 갖게 되었는가
-- 이 단어는 다른 단어의 의미 형성에 어떤 영향을 주었는가
+이번 기준 문서는 다음을 명확히 맞춘다.
 
-관계는 단순 연결이 아니라
-**의미 형성의 원인과 영향 흐름**을 표현해야 한다.
+- 관계 구조는 `category (1) : relation type (N)` 이다.
+- `code`는 내부 식별용이며 변경하지 않는다.
+- UI는 `label`을 표시용으로 사용한다.
+- `relation type`은 방향성을 포함하지 않는다.
+- 방향 해석은 `direction_code`로 처리한다.
+- 레거시 호환 코드는 유지하되 label과 description은 현재 용어 체계에 맞춘다.
 
 ---
 
 ## 핵심 원칙
 
-1. 관계는 방향성을 가질 수 있다
-2. 그래프는 incoming / outgoing을 모두 다룬다
-3. 표시 정책은 단어 기준으로 제어한다
-4. 관계는 설명과 근거를 가질 수 있다
+1. 관계 분류는 `category_code`와 `relation_type`으로 구성한다.
+2. `category_code`는 상위 분류이고, 직접 의미 구분은 `relation_type`이 담당한다.
+3. `relation_type` 자체에는 방향성을 넣지 않는다.
+4. 관계의 방향은 `direction_code`로만 해석한다.
+5. `label`과 `description`은 문서, DB, UI에서 같은 의미로 유지한다.
+6. 기존 `code` 값과 DB schema는 변경하지 않는다.
 
 ---
 
-## 방향성 정의
+## direction_code
 
-direction_code:
+| code | 의미 | UI 해석 기준 |
+| --- | --- | --- |
+| `w1_to_w2` | `word_id_1`에서 `word_id_2`로 향하는 방향 | 중심 단어가 `word_id_1`이면 outgoing, `word_id_2`이면 incoming |
+| `w2_to_w1` | `word_id_2`에서 `word_id_1`로 향하는 방향 | 중심 단어가 `word_id_2`이면 outgoing, `word_id_1`이면 incoming |
+| `undirected` | 본질적으로 무방향인 관계 | 양방향 또는 무방향 관계로 해석 |
+| `unknown` | 방향을 아직 확정하지 않은 관계 | 방향 미확정 상태로 해석 |
 
-- w1_to_w2
-- w2_to_w1
-- undirected
-- unknown
+정리:
+
+- type은 방향을 가지지 않는다.
+- 같은 type이라도 `direction_code`에 따라 incoming / outgoing / undirected / unknown으로 달라진다.
+- UI는 type label과 direction 해석을 결합해 관계를 표시한다.
 
 ---
 
 ## 관계 구성 요소
 
-- category_code
-- relation_type
-- direction_code
-- description
-- status_code
-- relation_group_id (동일 조합 사건 또는 관련 관계 묶음 식별용)
+| 필드 | 역할 |
+| --- | --- |
+| `category_code` | 관계의 상위 분류 |
+| `relation_type` | 관계의 직접 의미를 구분하는 코드 |
+| `direction_code` | 관계 방향 해석 |
+| `description` | 개별 관계 행에 대한 보충 설명 |
+| `status_code` | 관계 상태 |
+| `relation_group_id` | 동일 조합 사건 또는 관련 관계 묶음 식별용 |
+
+참고:
+
+- lookup 테이블의 `description`은 type 정의 설명이다.
+- `WORD_RELATION.description`은 실제 관계 행에 대한 개별 설명이다.
+
+---
+
+## RELATION_CATEGORY
+
+| code | label | description |
+| --- | --- | --- |
+| `semantic` | 개념 관계 | 의미상의 유사, 대조, 포함 관계를 나타내는 상위 분류 |
+| `lexical` | 어휘 관계 | 단어 간 어휘 대응 관계를 나타내는 상위 분류 |
+| `morphological` | 형태 관계 | 형태 변화와 단어 형성 관계를 나타내는 상위 분류 |
+| `etymological` | 어원 관계 | 기원, 어근, 차용 관계를 나타내는 상위 분류 |
+| `phonological` | 음운 관계 | 발음과 음운 변동 관계를 나타내는 상위 분류 |
+| `transliteration` | 음역 관계 | 문자 체계 사이의 음역 관계를 나타내는 상위 분류 |
+| `translation` | 번역 관계 | 의미 전달을 위한 번역 관계를 나타내는 상위 분류 |
+| `unspecified` | 미분류 관계 | 기존 데이터 호환을 위해 유지하는 분류되지 않은 관계 |
+
+---
+
+## RELATION_TYPE
+
+### 개념 관계
+
+| code | label | description |
+| --- | --- | --- |
+| `similar` | 의미 유사 | 의미가 비슷하게 대응되는 관계 |
+| `contrast` | 의미 대조 | 의미가 서로 대조되는 관계 |
+| `broader` | 상위 개념 | 더 넓은 범주의 의미를 가리키는 관계 |
+| `narrower` | 하위 개념 | 더 좁은 범주의 의미를 가리키는 관계 |
+
+### 어휘 관계
+
+| code | label | description |
+| --- | --- | --- |
+| `synonym` | 동의어 | 서로 바꾸어 쓸 수 있을 정도로 뜻이 가까운 관계 |
+| `antonym` | 반의어 | 뜻이 서로 반대되는 관계 |
+| `hypernym` | 상위어 | 더 넓은 어휘 범주에 속하는 관계 |
+| `hyponym` | 하위어 | 더 구체적인 어휘 범주에 속하는 관계 |
+
+### 형태 관계
+
+| code | label | description |
+| --- | --- | --- |
+| `derived` | 파생어 | 파생에 의해 연결되는 단어 형성 관계 |
+| `inflected` | 굴절형 | 활용이나 굴절에 의해 연결되는 형태 관계 |
+| `variant` | 형태 변이 | 철자나 형태가 달라진 이형 관계 |
+| `compound` | 합성 | 둘 이상의 어휘 요소가 결합해 이루어진 단어 형성 관계 |
+
+### 어원 관계
+
+| code | label | description | 비고 |
+| --- | --- | --- | --- |
+| `root_shared` | 공통 어근 | 공통된 어근을 공유하는 관계 | - |
+| `borrowed_from` | 차용어 관계 | 언어 간 차용으로 연결되는 관계 | - |
+| `loan_translation` | 번역 차용 | 표현 요소를 번역해 받아들인 차용 관계 | - |
+| `root-related` | 어근 관련 | 레거시 데이터 호환을 위해 유지하는 어근 관련 관계 | legacy |
+
+### 음운 관계
+
+| code | label | description |
+| --- | --- | --- |
+| `sound_similar` | 발음 유사 | 발음이 서로 유사하게 들리는 관계 |
+| `sound_shift` | 음운 변화 | 음운 변동으로 이어지는 관계 |
+
+### 음역 관계
+
+| code | label | description |
+| --- | --- | --- |
+| `direct_transliteration` | 직접 음역 | 원어의 음을 직접 대응해 옮긴 관계 |
+| `approx_transliteration` | 근사 음역 | 음운 차이를 반영해 가깝게 옮긴 관계 |
+| `conventional_transliteration` | 관용 음역 | 관용적으로 굳어진 음역 관계 |
+
+### 번역 관계
+
+| code | label | description |
+| --- | --- | --- |
+| `literal_translation` | 직역 | 표현을 가능한 한 문자 그대로 옮긴 번역 관계 |
+| `semantic_translation` | 의역 | 의미 대응을 중심으로 옮긴 번역 관계 |
+| `interpretive_translation` | 풀이 번역 | 의미 풀이를 보완해 옮긴 번역 관계 |
+
+### 미분류 관계
+
+| code | label | description | 비고 |
+| --- | --- | --- | --- |
+| `related` | 일반 관련 | 레거시 데이터 호환을 위해 유지하는 일반 관련 관계 | legacy |
+
+---
+
+## 레거시 호환
+
+다음 항목은 기존 데이터를 보존하기 위해 유지한다.
+
+| code | 유지 이유 |
+| --- | --- |
+| `unspecified` | category 정보가 정교하게 분류되지 않은 기존 관계를 수용하기 위함 |
+| `related` | 기존 다수의 관계 데이터가 이 type을 사용하고 있기 때문 |
+| `root-related` | 기존 어원 관계 데이터와의 호환을 유지하기 위함 |
+
+레거시 항목도 현재 UI에서는 새 label과 description으로 표시한다.
+
+---
+
+## UI 해석 원칙
+
+1. 드롭다운과 상세 화면은 `label`을 보여 준다.
+2. 저장과 비교는 `code`로 처리한다.
+3. type label에는 방향 표현을 넣지 않는다.
+4. 방향 안내는 `direction_code` 해석 결과를 별도로 보여 준다.
+5. `description`은 짧고 명확하게 유지한다.
 
 ---
 
 ## 그래프 정책
 
-graph_expand_mode:
+`graph_expand_mode`는 중심 단어 기준으로 어떤 관계를 그래프에 포함할지 정하는 정책이다.
 
-- default
-- incoming_only
-- outgoing_limited
-- full
+- `default`
+- `incoming_only`
+- `outgoing_limited`
+- `full`
 
----
-
-## graph_expand_mode 정의
-
-graph_expand_mode는 중심 단어가 그래프의 기준이 될 때,
-어떤 관계를 표시 대상으로 포함할지 결정하는 정책이다.
-
-값은 다음과 같이 정의한다.
-
-- default
-  incoming, outgoing, undirected, unknown 관계를 모두 표시 대상으로 포함한다.
-  다만 그래프 엔진의 일반 표시 규칙(예: 화면 가독성 보조 규칙, 대표 edge 선택 등)은 적용될 수 있다.
-
-- incoming_only
-  incoming, undirected, unknown 관계를 표시 대상으로 포함하고,
-  outgoing 관계는 표시 대상에서 제외한다.
-
-- outgoing_limited
-  incoming, undirected, unknown 관계는 모두 포함한다.
-  outgoing 관계는 제한된 개수만 포함한다.
-
-- full
-  incoming, outgoing, undirected, unknown 관계를 모두 포함하며,
-  허브 단어에 대한 일반적인 제한 정책도 적용하지 않는 예외 모드로 본다.
-
-unknown 관계는 방향이 아직 결정되지 않은 관계이므로,
-초기 구현에서는 보수적으로 표시 대상에 포함한다.
-
-즉, unknown은 정보 부족 때문에 숨기지 않고,
-사용자 검토 대상이 되도록 기본적으로 노출하는 방향을 우선한다.
-
----
-
-## outgoing_limited의 제한 방식
-
-outgoing_limited의 "limited"는 1차 구현에서는 개수 제한을 의미한다.
-
-즉, outgoing 관계는 정해진 최대 개수까지만 표시한다.
-
-초기 구현에서는 outgoing 관계의 표시 상한을 고정 개수로 적용한다.
-구체적인 상한값은 앱 구현 단계에서 상수로 관리할 수 있다.
-
-향후 필요 시 다음 방식으로 확장할 수 있다.
-
-- relation_type 우선순위 기반 제한
-- 중요도 기반 제한
-- 깊이 기반 제한
-
----
-
-## direction_code 기본값
-
-기존 데이터에는 방향 정보가 없으므로,
-v2 이행 시 direction_code의 기본값은 undirected가 아니라 unknown으로 둔다.
-
-의미는 다음과 같다.
-
-- unknown: 방향이 있을 수 있으나 아직 결정되지 않음
-- undirected: 본질적으로 무방향 관계
-
-이 둘은 반드시 구분한다.
-
----
-
-## word_id_1 / word_id_2 저장 원칙
-
-word_id_1 / word_id_2는 정렬 저장을 조건부로 유지할 수 있다.
-
-조건은 다음과 같다.
-
-- 저장 시 단어 순서를 정렬했다면,
-  direction_code도 정렬된 저장 순서 기준으로 함께 보정해야 한다.
-- 입력 순서와 저장 순서가 달라져
-  word_id_1 / word_id_2가 뒤바뀌는 경우,
-  direction_code는 w1_to_w2 와 w2_to_w1 사이에서 함께 변환되어야 한다.
-- undirected 와 unknown은 방향 보정 없이 그대로 유지한다.
+이 정책은 표시 범위를 정하는 용도이며,
+관계 type 정의 자체와 혼합하지 않는다.
 
 ---
 
 ## WORD_RELATION UNIQUE 기준
 
-1차 v2 구현에서 WORD_RELATION의 UNIQUE 기준은
-다음 조합을 사용한다.
+1차 v2 구현의 UNIQUE 기준은 다음 조합을 사용한다.
 
-- word_id_1
-- word_id_2
-- relation_type
-- direction_code
+- `word_id_1`
+- `word_id_2`
+- `relation_type`
+- `direction_code`
 
-초기 단계에서는 category_code를 UNIQUE 기준에 포함하지 않는다.
-category_code는 상위 분류이며,
-실제 관계 의미의 직접 구분은 relation_type 중심으로 처리한다.
+정리:
 
-relation_group_id는 1차 UNIQUE 기준에 포함하지 않는다.
-relation_group_id는 초기 단계에서는 메타데이터로 취급한다.
-
----
-
-## 핵심 규칙
-
-- 관계와 표시 정책을 혼합하지 않는다
-- unknown 과 undirected 는 구분한다
-- 관계는 설명 가능해야 한다
+- `category_code`는 상위 분류이므로 UNIQUE 기준에 포함하지 않는다.
+- `relation_group_id`는 메타데이터로 취급하며 UNIQUE 기준에 포함하지 않는다.
+- `unknown`과 `undirected`는 반드시 구분한다.
