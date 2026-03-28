@@ -2868,6 +2868,108 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         .toList(growable: false);
   }
 
+  List<Map<String, dynamic>> _sanitizeDropdownCodeItems(
+    Iterable<Map<String, dynamic>> items,
+  ) {
+    final sanitized = <Map<String, dynamic>>[];
+    final seenCodes = <String>{};
+
+    for (final item in items) {
+      final code = ((item['code'] as String?) ?? '').trim();
+      if (code.isEmpty || !seenCodes.add(code)) {
+        continue;
+      }
+      sanitized.add(item);
+    }
+
+    return List<Map<String, dynamic>>.unmodifiable(sanitized);
+  }
+
+  int _countMatchingDropdownCodeItems({
+    required String? rawValue,
+    required Iterable<Map<String, dynamic>> items,
+  }) {
+    final value = (rawValue ?? '').trim();
+    if (value.isEmpty) return 0;
+
+    var count = 0;
+    for (final item in items) {
+      final code = ((item['code'] as String?) ?? '').trim();
+      if (code == value) {
+        count++;
+      }
+    }
+    return count;
+  }
+
+  String? _normalizeDropdownCodeForEditor({
+    required String? rawValue,
+    required Iterable<Map<String, dynamic>> items,
+  }) {
+    final value = (rawValue ?? '').trim();
+    if (value.isEmpty) return null;
+
+    return _countMatchingDropdownCodeItems(rawValue: value, items: items) == 1
+        ? value
+        : null;
+  }
+
+  String? normalizeCategoryCodeForEditor({
+    required String? rawValue,
+    required Iterable<Map<String, dynamic>> categoryItems,
+  }) {
+    return _normalizeDropdownCodeForEditor(
+      rawValue: rawValue,
+      items: categoryItems,
+    );
+  }
+
+  List<Map<String, dynamic>> _relationTypeItemsForEditor({
+    required String? categoryCode,
+    required List<Map<String, dynamic>> allTypes,
+  }) {
+    return allTypes;
+  }
+
+  String? normalizeRelationTypeForEditor({
+    required String? rawValue,
+    required String? categoryCode,
+    required List<Map<String, dynamic>> allRelationTypeItems,
+  }) {
+    return _normalizeDropdownCodeForEditor(
+      rawValue: rawValue,
+      items: _relationTypeItemsForEditor(
+        categoryCode: categoryCode,
+        allTypes: allRelationTypeItems,
+      ),
+    );
+  }
+
+  String _normalizeDropdownValueWithFallback({
+    required String? rawValue,
+    required Iterable<String> allowedValues,
+    required String fallback,
+  }) {
+    final value = (rawValue ?? '').trim();
+    if (value.isNotEmpty &&
+        allowedValues.where((allowed) => allowed.trim() == value).length == 1) {
+      return value;
+    }
+
+    return fallback;
+  }
+
+  String _normalizeDirectionCodeForEditor({
+    required String? rawValue,
+    required Iterable<DropdownMenuItem<String>> items,
+  }) {
+    return _normalizeDropdownValueWithFallback(
+      rawValue: rawValue,
+      allowedValues: items.map((item) => item.value).whereType<String>(),
+      fallback: 'unknown',
+    );
+  }
+
   Future<void> _showEdgeDetailDialog(List<WordRelationEdgeInfo> infos) async {
     if (infos.isEmpty) return;
     if (infos.length == 1) {
@@ -2963,17 +3065,21 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         bool isSaving = false;
 
         // 초기값(읽기용)
-        String? selectedCategoryCode = info.categoryCode;
-        String? selectedRelationType = info.relationType;
-        String selectedDirectionCode = info.directionCode;
-        // 'unspecified' 같은 표시용 값이 들어오면 드롭다운 value 규칙 위반이므로 null 처리
-        if ((selectedCategoryCode ?? '').toLowerCase() == 'unspecified') {
-          selectedCategoryCode = null;
-        }
-        if ((selectedRelationType ?? '').toLowerCase() == 'unspecified') {
-          selectedRelationType = null;
-        }
+        final originalCategoryCode = info.categoryCode;
+        final originalRelationType = info.relationType;
+        final directionItems = _directionDropdownItems(
+          centerWordId: _directionReferenceWordId(info),
+          wordId1: info.wordId1,
+          wordId2: info.wordId2,
+        );
 
+        String? selectedCategoryCode;
+        String? selectedRelationType;
+        String selectedDirectionCode = _normalizeDirectionCodeForEditor(
+          rawValue: info.directionCode,
+          items: directionItems,
+        );
+        // 'unspecified' 같은 표시용 값이 들어오면 드롭다운 value 규칙 위반이므로 null 처리
         final descriptionController = TextEditingController(
           text: info.description ?? '',
         );
@@ -2988,6 +3094,55 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         List<Map<String, dynamic>> types = [];
         bool isOptionsLoading = false;
 
+        String? normalizedOriginalCategoryCode() {
+          return normalizeCategoryCodeForEditor(
+            rawValue: originalCategoryCode,
+            categoryItems: categories,
+          );
+        }
+
+        String? normalizedOriginalRelationType() {
+          final originalCategoryCodeForEditor =
+              normalizedOriginalCategoryCode();
+          return normalizeRelationTypeForEditor(
+            rawValue: originalRelationType,
+            categoryCode: originalCategoryCodeForEditor,
+            allRelationTypeItems: types,
+          );
+        }
+
+        void normalizeCurrentEditorDropdownState() {
+          selectedCategoryCode = normalizeCategoryCodeForEditor(
+            rawValue: selectedCategoryCode,
+            categoryItems: categories,
+          );
+          selectedRelationType = normalizeRelationTypeForEditor(
+            rawValue: selectedRelationType,
+            categoryCode: selectedCategoryCode,
+            allRelationTypeItems: types,
+          );
+          selectedDirectionCode = _normalizeDirectionCodeForEditor(
+            rawValue: selectedDirectionCode,
+            items: directionItems,
+          );
+        }
+
+        void restoreEditorDropdownStateFromOriginal() {
+          selectedCategoryCode = normalizeCategoryCodeForEditor(
+            rawValue: originalCategoryCode,
+            categoryItems: categories,
+          );
+          selectedRelationType = normalizeRelationTypeForEditor(
+            rawValue: originalRelationType,
+            categoryCode: selectedCategoryCode,
+            allRelationTypeItems: types,
+          );
+          selectedDirectionCode = _normalizeDirectionCodeForEditor(
+            rawValue: info.directionCode,
+            items: directionItems,
+          );
+        }
+
         bool hasChanges() {
           final description = descriptionController.text.trim();
           final relationGroupId = relationGroupIdController.text.trim();
@@ -2999,9 +3154,13 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
           final originalNote = (info.note ?? '').trim();
           final originalSrc = (info.source ?? '').trim();
 
-          return selectedCategoryCode != info.categoryCode ||
-              selectedRelationType != info.relationType ||
-              selectedDirectionCode != info.directionCode ||
+          return selectedCategoryCode != normalizedOriginalCategoryCode() ||
+              selectedRelationType != normalizedOriginalRelationType() ||
+              selectedDirectionCode !=
+                  _normalizeDirectionCodeForEditor(
+                    rawValue: info.directionCode,
+                    items: directionItems,
+                  ) ||
               description != originalDescription ||
               relationGroupId != originalRelationGroupId ||
               note != originalNote ||
@@ -3016,28 +3175,12 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
             final c = await _repository.getRelationCategories();
             final t = await _repository.getRelationTypes();
             setState(() {
-              categories = c;
-              types = t;
+              categories = _sanitizeDropdownCodeItems(c);
+              types = _sanitizeDropdownCodeItems(t);
               isOptionsLoading = false;
 
               // 현재 선택값이 실제 items에 없으면 null로 보정(드롭다운 assert 방지)
-              final categoryCodes = categories
-                  .map((m) => (m['code'] as String?) ?? '')
-                  .where((s) => s.isNotEmpty)
-                  .toSet();
-              final typeCodes = types
-                  .map((m) => (m['code'] as String?) ?? '')
-                  .where((s) => s.isNotEmpty)
-                  .toSet();
-
-              if (selectedCategoryCode != null &&
-                  !categoryCodes.contains(selectedCategoryCode)) {
-                selectedCategoryCode = null;
-              }
-              if (selectedRelationType != null &&
-                  !typeCodes.contains(selectedRelationType)) {
-                selectedRelationType = null;
-              }
+              restoreEditorDropdownStateFromOriginal();
             });
           } catch (e) {
             setState(() => isOptionsLoading = false);
@@ -3138,6 +3281,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
             final relationGroupIdText = _nullIfBlank(
               relationGroupIdController.text,
             );
+            final availableRelationTypes = _relationTypeItemsForEditor(
+              categoryCode: selectedCategoryCode,
+              allTypes: types,
+            );
 
             final canSave = isEditing && !isSaving && hasChanges();
 
@@ -3184,10 +3331,16 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                                 value: code,
                                 child: Text(text),
                               );
-                            }).toList(),
+                            }),
                           ],
-                          onChanged: (v) =>
-                              setState(() => selectedCategoryCode = v),
+                          onChanged: (v) => setState(() {
+                            selectedCategoryCode =
+                                normalizeCategoryCodeForEditor(
+                                  rawValue: v,
+                                  categoryItems: categories,
+                                );
+                            normalizeCurrentEditorDropdownState();
+                          }),
                         ),
 
                       const SizedBox(height: 14),
@@ -3217,7 +3370,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                               value: null,
                               child: Text('(없음)'),
                             ),
-                            ...types.map((m) {
+                            ...availableRelationTypes.map((m) {
                               final code = (m['code'] as String?) ?? '';
                               final label = (m['label'] as String?) ?? '';
                               final text = label.isNotEmpty
@@ -3227,10 +3380,16 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                                 value: code,
                                 child: Text(text),
                               );
-                            }).toList(),
+                            }),
                           ],
-                          onChanged: (v) =>
-                              setState(() => selectedRelationType = v),
+                          onChanged: (v) => setState(() {
+                            selectedRelationType =
+                                normalizeRelationTypeForEditor(
+                                  rawValue: v,
+                                  categoryCode: selectedCategoryCode,
+                                  allRelationTypeItems: types,
+                                );
+                          }),
                         ),
                       const SizedBox(height: 14),
                       const Text(
@@ -3247,14 +3406,16 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                           decoration: const InputDecoration(
                             border: OutlineInputBorder(),
                           ),
-                          items: _directionDropdownItems(
-                            centerWordId: _directionReferenceWordId(info),
-                            wordId1: info.wordId1,
-                            wordId2: info.wordId2,
-                          ),
+                          items: directionItems,
                           onChanged: (value) {
                             if (value == null) return;
-                            setState(() => selectedDirectionCode = value);
+                            setState(() {
+                              selectedDirectionCode =
+                                  _normalizeDirectionCodeForEditor(
+                                    rawValue: value,
+                                    items: directionItems,
+                                  );
+                            });
                           },
                         ),
 
@@ -3357,9 +3518,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                             setState(() {
                               isEditing = false;
                               // 편집 취소 시 값을 원래대로 되돌리기
-                              selectedCategoryCode = info.categoryCode;
-                              selectedRelationType = info.relationType;
-                              selectedDirectionCode = info.directionCode;
+                              restoreEditorDropdownStateFromOriginal();
                               descriptionController.text =
                                   info.description ?? '';
                               relationGroupIdController.text =
@@ -3885,13 +4044,25 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
   /// 새로 만든 단어와 현재 중심 단어 사이의 관계 생성 정보 입력
   Future<CreateRelationPayload?> _showCreateRelationDialog(Word other) async {
-    final categories = await _repository.getRelationCategories();
-    final types = await _repository.getRelationTypes();
+    final categories = _sanitizeDropdownCodeItems(
+      await _repository.getRelationCategories(),
+    );
+    final types = _sanitizeDropdownCodeItems(
+      await _repository.getRelationTypes(),
+    );
     if (!mounted) return null;
 
     String? selectedCategoryCode;
     String? selectedRelationType;
-    String selectedDirectionCode = 'unknown';
+    final directionItems = _directionDropdownItems(
+      centerWordId: _centerWord.id,
+      wordId1: _centerWord.id,
+      wordId2: other.id,
+    );
+    String selectedDirectionCode = _normalizeDirectionCodeForEditor(
+      rawValue: 'unknown',
+      items: directionItems,
+    );
     final descriptionController = TextEditingController();
     final relationGroupIdController = TextEditingController();
     final noteController = TextEditingController();
@@ -3902,6 +4073,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setState) {
+            final availableRelationTypes = _relationTypeItemsForEditor(
+              categoryCode: selectedCategoryCode,
+              allTypes: types,
+            );
             return AlertDialog(
               title: Text('관계 추가: ${other.spelling1 ?? other.id}'),
               content: SizedBox(
@@ -3928,8 +4103,17 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                             );
                           }),
                         ],
-                        onChanged: (v) =>
-                            setState(() => selectedCategoryCode = v),
+                        onChanged: (v) => setState(() {
+                          selectedCategoryCode = normalizeCategoryCodeForEditor(
+                            rawValue: v,
+                            categoryItems: categories,
+                          );
+                          selectedRelationType = normalizeRelationTypeForEditor(
+                            rawValue: selectedRelationType,
+                            categoryCode: selectedCategoryCode,
+                            allRelationTypeItems: types,
+                          );
+                        }),
                       ),
                       const SizedBox(height: 12),
                       DropdownButtonFormField<String>(
@@ -3941,7 +4125,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                             value: null,
                             child: Text('없음'),
                           ),
-                          ...types.map((t) {
+                          ...availableRelationTypes.map((t) {
                             final code = t['code'] as String;
                             final label = (t['label'] as String?) ?? code;
                             return DropdownMenuItem<String>(
@@ -3950,22 +4134,29 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                             );
                           }),
                         ],
-                        onChanged: (v) =>
-                            setState(() => selectedRelationType = v),
+                        onChanged: (v) => setState(() {
+                          selectedRelationType = normalizeRelationTypeForEditor(
+                            rawValue: v,
+                            categoryCode: selectedCategoryCode,
+                            allRelationTypeItems: types,
+                          );
+                        }),
                       ),
                       const SizedBox(height: 12),
                       DropdownButtonFormField<String>(
                         value: selectedDirectionCode,
                         isExpanded: true,
                         decoration: const InputDecoration(labelText: '방향'),
-                        items: _directionDropdownItems(
-                          centerWordId: _centerWord.id,
-                          wordId1: _centerWord.id,
-                          wordId2: other.id,
-                        ),
+                        items: directionItems,
                         onChanged: (value) {
                           if (value == null) return;
-                          setState(() => selectedDirectionCode = value);
+                          setState(() {
+                            selectedDirectionCode =
+                                _normalizeDirectionCodeForEditor(
+                                  rawValue: value,
+                                  items: directionItems,
+                                );
+                          });
                         },
                       ),
                       const SizedBox(height: 12),
