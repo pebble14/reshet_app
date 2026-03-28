@@ -835,11 +835,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                         selectedWordId: _selectedWordId,
                       ),
                       if (peripheralNodes.isEmpty)
-                        Center(
-                          child: Text(
-                            '연결된 단어가 없습니다.',
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
+                        _buildEmptyStateBanner(
+                          context,
+                          layout: layout,
+                          canvasSize: canvasSize,
                         ),
                     ],
                   ),
@@ -859,6 +858,72 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     return AppBar(
       title: title ?? const Text('단어 그래프'),
       actions: mergedActions.isEmpty ? null : mergedActions,
+    );
+  }
+
+  Widget _buildEmptyStateBanner(
+    BuildContext context, {
+    required _GraphLayoutData layout,
+    required Size canvasSize,
+  }) {
+    const double verticalInset = 20.0;
+    const double horizontalInset = 16.0;
+    const double gapFromCenterNode = 12.0;
+    const double minBannerHeight = 44.0;
+
+    final availableTopSpace =
+        layout.centerBounds.top - verticalInset - gapFromCenterNode;
+    final availableBottomSpace =
+        canvasSize.height -
+        layout.centerBounds.bottom -
+        verticalInset -
+        gapFromCenterNode;
+
+    Alignment alignment;
+    EdgeInsets padding;
+
+    if (availableTopSpace >= minBannerHeight) {
+      alignment = Alignment.topCenter;
+      padding = const EdgeInsets.only(
+        top: verticalInset,
+        left: horizontalInset,
+        right: horizontalInset,
+      );
+    } else if (availableBottomSpace >= minBannerHeight) {
+      alignment = Alignment.bottomCenter;
+      padding = const EdgeInsets.only(
+        left: horizontalInset,
+        right: horizontalInset,
+        bottom: verticalInset,
+      );
+    } else {
+      return const SizedBox.shrink();
+    }
+
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return IgnorePointer(
+      child: Align(
+        alignment: alignment,
+        child: Padding(
+          padding: padding,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: colorScheme.surfaceContainerHighest,
+              borderRadius: BorderRadius.circular(999),
+              border: Border.all(color: colorScheme.outlineVariant),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              child: Text(
+                '연결된 단어가 없습니다.',
+                style: Theme.of(context).textTheme.bodyMedium,
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 
