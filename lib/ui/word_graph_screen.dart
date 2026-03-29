@@ -98,6 +98,7 @@ const double _mutedExpansionEdgeLabelOpacity = _dimmedEdgeLabelOpacity + 0.04;
 const double _selectedEdgeLabelTintAlpha = 0.18;
 const double _connectedEdgeLabelTintAlpha = 0.06;
 const double _dimmedEdgeLabelTintAlpha = 0.03;
+const int _edgeLabelVisibleCountThreshold = 6;
 const double _centerNodeAccentRingInset = 12.0;
 const double _centerNodeSelectedAccentRingInset = 8.0;
 const double _centerNodeAccentRingWidth = 1.8;
@@ -105,6 +106,8 @@ const double _centerNodeSelectedAccentRingWidth = 2.6;
 const double _centerChangeFocusDistanceThreshold = 72.0;
 const double _centerChangeFocusShiftFactor = 0.38;
 const double _centerChangeFocusMaxShift = 112.0;
+const double _selectedNodeRelationOverlayInset = 16.0;
+const double _selectedNodeRelationOverlayMinHeight = 40.0;
 const double _dashedEdgeDashLength = 14.0;
 const double _dashedEdgeGapLength = 9.0;
 const double _dottedEdgeDotLength = 1.0;
@@ -255,6 +258,18 @@ class _GraphLayoutData {
     required this.contentBounds,
     required this.fitBounds,
     required this.ringRadii,
+  });
+}
+
+class _SelectedNodeRelationEntry {
+  final String edgeId;
+  final String otherWordId;
+  final List<WordRelationEdgeInfo> infos;
+
+  const _SelectedNodeRelationEntry({
+    required this.edgeId,
+    required this.otherWordId,
+    required this.infos,
   });
 }
 
@@ -717,6 +732,11 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         final layout = _computeGraphLayout(canvasSize, viewData);
         _scheduleConditionalCenterFocus(layout);
         final selectedEdgeIds = _selectedEdgeIds(_selectedWordId);
+        final selectedRelationEntries = _selectedNodeRelationEntries(
+          layout,
+          selectedEdgeIds: selectedEdgeIds,
+          selectedWordId: _selectedWordId,
+        );
 
         // 노드 배치 순서와 동일한 순서로 엣지 색상/라벨 생성
 
@@ -753,98 +773,108 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
               ),
             ],
           ),
-          body: Listener(
-            onPointerSignal: (event) {
-              if (event is PointerScrollEvent) {
-                _markViewportInteraction();
-                _handlePointerScroll(event);
-              }
-            },
-            child: InteractiveViewer(
-              transformationController: _transformController,
-              minScale: 0.6,
-              maxScale: 3.5,
-              boundaryMargin: const EdgeInsets.all(2000),
-              panEnabled: true,
-              scaleEnabled: true,
-              onInteractionStart: (_) {
-                _isViewportInteracting = true;
-                _markViewportInteraction();
-              },
-              onInteractionUpdate: (_) {
-                final newScale = _transformController.value.getMaxScaleOnAxis();
-                if (newScale != _currentScale) {
-                  setState(() => _currentScale = newScale);
-                }
-              },
-              onInteractionEnd: (_) {
-                _isViewportInteracting = false;
-                _markViewportInteraction();
-              },
-              child: GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: _handleBackgroundTap,
-                child: SizedBox(
-                  width: canvasSize.width,
-                  height: canvasSize.height,
-                  child: Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      if (peripheralNodes.isNotEmpty)
-                        AnimatedSwitcher(
-                          duration: _visualStateAnimationDuration,
-                          switchInCurve: Curves.easeOutCubic,
-                          switchOutCurve: Curves.easeOutCubic,
-                          child: SizedBox(
-                            key: ValueKey<String>(
-                              '${_selectedWordId ?? ''}:${viewData.nodes.length}:${viewData.edges.length}',
+          body: Stack(
+            fit: StackFit.expand,
+            children: [
+              Listener(
+                onPointerSignal: (event) {
+                  if (event is PointerScrollEvent) {
+                    _markViewportInteraction();
+                    _handlePointerScroll(event);
+                  }
+                },
+                child: InteractiveViewer(
+                  transformationController: _transformController,
+                  minScale: 0.6,
+                  maxScale: 3.5,
+                  boundaryMargin: const EdgeInsets.all(2000),
+                  panEnabled: true,
+                  scaleEnabled: true,
+                  onInteractionStart: (_) {
+                    _isViewportInteracting = true;
+                    _markViewportInteraction();
+                  },
+                  onInteractionUpdate: (_) {
+                    final newScale = _transformController.value
+                        .getMaxScaleOnAxis();
+                    if (newScale != _currentScale) {
+                      setState(() => _currentScale = newScale);
+                    }
+                  },
+                  onInteractionEnd: (_) {
+                    _isViewportInteracting = false;
+                    _markViewportInteraction();
+                  },
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: _handleBackgroundTap,
+                    child: SizedBox(
+                      width: canvasSize.width,
+                      height: canvasSize.height,
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          if (peripheralNodes.isNotEmpty)
+                            AnimatedSwitcher(
+                              duration: _visualStateAnimationDuration,
+                              switchInCurve: Curves.easeOutCubic,
+                              switchOutCurve: Curves.easeOutCubic,
+                              child: SizedBox(
+                                key: ValueKey<String>(
+                                  '${_selectedWordId ?? ''}:${viewData.nodes.length}:${viewData.edges.length}',
+                                ),
+                                width: canvasSize.width,
+                                height: canvasSize.height,
+                                child: CustomPaint(
+                                  size: canvasSize,
+                                  painter: _GraphLinePainter(
+                                    layout: layout,
+                                    selectedWordId: _selectedWordId,
+                                    selectedEdgeIds: selectedEdgeIds,
+                                    showLabels: false,
+                                    sceneScale: _currentScale,
+                                  ),
+                                ),
+                              ),
                             ),
-                            width: canvasSize.width,
-                            height: canvasSize.height,
-                            child: CustomPaint(
-                              size: canvasSize,
-                              painter: _GraphLinePainter(
-                                layout: layout,
-                                selectedWordId: _selectedWordId,
-                                selectedEdgeIds: selectedEdgeIds,
-                                showLabels: false,
-                                sceneScale: _currentScale,
+                          Positioned(
+                            left: layout.centerBounds.left,
+                            top: layout.centerBounds.top,
+                            child: GestureDetector(
+                              onTap: _handleCenterNodeTap,
+                              child: _buildCenterNode(
+                                _centerWord,
+                                visualState: centerVisualState,
                               ),
                             ),
                           ),
-                        ),
-                      Positioned(
-                        left: layout.centerBounds.left,
-                        top: layout.centerBounds.top,
-                        child: GestureDetector(
-                          onTap: _handleCenterNodeTap,
-                          child: _buildCenterNode(
-                            _centerWord,
-                            visualState: centerVisualState,
+                          ..._buildEdgeLabelWidgets(
+                            layout,
+                            selectedEdgeIds: selectedEdgeIds,
+                            selectedWordId: _selectedWordId,
                           ),
-                        ),
+                          ..._buildWordNodes(
+                            layout,
+                            viewData,
+                            selectedWordId: _selectedWordId,
+                          ),
+                          if (peripheralNodes.isEmpty)
+                            _buildEmptyStateBanner(
+                              context,
+                              layout: layout,
+                              canvasSize: canvasSize,
+                            ),
+                        ],
                       ),
-                      ..._buildEdgeLabelWidgets(
-                        layout,
-                        selectedEdgeIds: selectedEdgeIds,
-                      ),
-
-                      ..._buildWordNodes(
-                        layout,
-                        viewData,
-                        selectedWordId: _selectedWordId,
-                      ),
-                      if (peripheralNodes.isEmpty)
-                        _buildEmptyStateBanner(
-                          context,
-                          layout: layout,
-                          canvasSize: canvasSize,
-                        ),
-                    ],
+                    ),
                   ),
                 ),
               ),
-            ),
+              _buildSelectedNodeRelationOverlay(
+                context,
+                relationEntries: selectedRelationEntries,
+              ),
+            ],
           ),
         );
       },
@@ -858,6 +888,150 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     return AppBar(
       title: title ?? const Text('단어 그래프'),
       actions: mergedActions.isEmpty ? null : mergedActions,
+    );
+  }
+
+  Widget _buildSelectedNodeRelationOverlay(
+    BuildContext context, {
+    required List<_SelectedNodeRelationEntry> relationEntries,
+  }) {
+    if (relationEntries.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    final launcher = relationEntries.length == 1
+        ? Material(
+            color: Colors.transparent,
+            child: InkWell(
+              customBorder: const StadiumBorder(),
+              onTap: () {
+                unawaited(_openSelectedNodeRelationEntry(relationEntries.first));
+              },
+              child: _buildSelectedNodeRelationLauncher(
+                context,
+                relationCount: relationEntries.length,
+                showMenuIndicator: false,
+              ),
+            ),
+          )
+        : PopupMenuButton<int>(
+            tooltip: '관계 보기',
+            onOpened: _temporarilySuppressBackgroundTapClear,
+            onSelected: (index) {
+              unawaited(_openSelectedNodeRelationEntry(relationEntries[index]));
+            },
+            itemBuilder: (context) {
+              return List<PopupMenuEntry<int>>.generate(relationEntries.length, (
+                index,
+              ) {
+                final entry = relationEntries[index];
+                return PopupMenuItem<int>(
+                  value: index,
+                  child: SizedBox(
+                    width: 240,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          _selectedNodeRelationEntryTitle(entry),
+                          style: const TextStyle(fontWeight: FontWeight.w600),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          _selectedNodeRelationEntrySubtitle(entry),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              });
+            },
+            child: _buildSelectedNodeRelationLauncher(
+              context,
+              relationCount: relationEntries.length,
+              showMenuIndicator: true,
+            ),
+          );
+
+    final edgeSignature = relationEntries.map((entry) => entry.edgeId).join(':');
+
+    return SafeArea(
+      minimum: const EdgeInsets.all(_selectedNodeRelationOverlayInset),
+      child: Align(
+        alignment: Alignment.bottomRight,
+        child: AnimatedSwitcher(
+          duration: _visualStateAnimationDuration,
+          switchInCurve: Curves.easeOutCubic,
+          switchOutCurve: Curves.easeOutCubic,
+          child: KeyedSubtree(
+            key: ValueKey<String>(edgeSignature),
+            child: launcher,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSelectedNodeRelationLauncher(
+    BuildContext context, {
+    required int relationCount,
+    required bool showMenuIndicator,
+  }) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final label = relationCount > 1 ? '관계 보기 ($relationCount)' : '관계 보기';
+
+    return Ink(
+      decoration: ShapeDecoration(
+        color: colorScheme.surfaceContainerHigh,
+        shape: StadiumBorder(
+          side: BorderSide(color: colorScheme.outlineVariant),
+        ),
+        shadows: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.12),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(
+          minHeight: _selectedNodeRelationOverlayMinHeight,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.add_link,
+                size: 18,
+                color: colorScheme.primary,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                label,
+                style: TextStyle(
+                  color: colorScheme.onSurface,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              if (showMenuIndicator) ...[
+                const SizedBox(width: 4),
+                Icon(
+                  Icons.arrow_drop_down,
+                  size: 18,
+                  color: colorScheme.onSurfaceVariant,
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -2424,10 +2598,17 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   List<Widget> _buildEdgeLabelWidgets(
     _GraphLayoutData layout, {
     required Set<String> selectedEdgeIds,
+    required String? selectedWordId,
   }) {
     // 줌이 작으면 태그 숨김(기존 정책 유지)
     if (_currentScale < _labelVisibleScaleThreshold) return [];
     if (layout.edgeLayouts.isEmpty) return [];
+    final visibleEdgeLabelIds = _visibleEdgeLabelIds(
+      layout,
+      selectedEdgeIds: selectedEdgeIds,
+      selectedWordId: selectedWordId,
+    );
+    if (visibleEdgeLabelIds.isEmpty) return [];
 
     // 태그가 선 위에 겹치지 않도록 약간 수직 방향 오프셋(줌 역보정)
 
@@ -2440,6 +2621,9 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     ];
 
     for (final edgeLayout in layout.edgeLayouts) {
+      if (!visibleEdgeLabelIds.contains(edgeLayout.edgeId)) {
+        continue;
+      }
       final edgeInfos = _edgeInfosForEdge(edgeLayout.edgeId);
       final label = _labelForEdgeGroup(edgeInfos).trim();
       if (label.isEmpty) continue;
@@ -2789,6 +2973,90 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     return edgeIds;
   }
 
+  Set<String> _visibleEdgeLabelIds(
+    _GraphLayoutData layout, {
+    required Set<String> selectedEdgeIds,
+    required String? selectedWordId,
+  }) {
+    final normalizedSelectedWordId = (selectedWordId ?? '').trim();
+    final renderedEdgeIds = layout.edgeLayouts
+        .map((edgeLayout) => edgeLayout.edgeId)
+        .toSet();
+
+    if (normalizedSelectedWordId.isNotEmpty) {
+      return selectedEdgeIds
+          .where((edgeId) => renderedEdgeIds.contains(edgeId))
+          .toSet();
+    }
+
+    if (layout.edgeLayouts.length > _edgeLabelVisibleCountThreshold) {
+      return const <String>{};
+    }
+
+    final edgeIds = <String>{};
+    for (final edgeLayout in layout.edgeLayouts) {
+      if (!edgeLayout.touchesCenter) {
+        continue;
+      }
+      if (_edgeInfosForEdge(edgeLayout.edgeId).isEmpty) {
+        continue;
+      }
+      edgeIds.add(edgeLayout.edgeId);
+    }
+    return edgeIds;
+  }
+
+  List<_SelectedNodeRelationEntry> _selectedNodeRelationEntries(
+    _GraphLayoutData layout, {
+    required Set<String> selectedEdgeIds,
+    required String? selectedWordId,
+  }) {
+    final normalizedSelectedWordId = (selectedWordId ?? '').trim();
+    if (normalizedSelectedWordId.isEmpty || selectedEdgeIds.isEmpty) {
+      return const <_SelectedNodeRelationEntry>[];
+    }
+
+    final edgeLayoutsById = <String, _GraphEdgeLayout>{
+      for (final edgeLayout in layout.edgeLayouts) edgeLayout.edgeId: edgeLayout,
+    };
+    final entries = <_SelectedNodeRelationEntry>[];
+
+    for (final edgeId in selectedEdgeIds) {
+      final edgeLayout = edgeLayoutsById[edgeId];
+      if (edgeLayout == null) {
+        continue;
+      }
+
+      final infos = _edgeInfosForEdge(edgeId);
+      if (infos.isEmpty) {
+        continue;
+      }
+
+      final otherWordId = edgeLayout.sourceId == normalizedSelectedWordId
+          ? edgeLayout.targetId
+          : edgeLayout.sourceId;
+      entries.add(
+        _SelectedNodeRelationEntry(
+          edgeId: edgeId,
+          otherWordId: otherWordId,
+          infos: List<WordRelationEdgeInfo>.unmodifiable(infos),
+        ),
+      );
+    }
+
+    entries.sort((left, right) {
+      final wordComparison = _wordDisplayName(
+        left.otherWordId,
+      ).compareTo(_wordDisplayName(right.otherWordId));
+      if (wordComparison != 0) {
+        return wordComparison;
+      }
+      return left.edgeId.compareTo(right.edgeId);
+    });
+
+    return List<_SelectedNodeRelationEntry>.unmodifiable(entries);
+  }
+
   Word? _wordForNodeId(String nodeId) {
     if (nodeId == _centerWord.id) {
       return _centerWord;
@@ -2893,6 +3161,38 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
   String _relationPhraseForDetails(WordRelationEdgeInfo info) {
     return _relationTextForInfo(info).phrase;
+  }
+
+  String _selectedNodeRelationEntryTitle(_SelectedNodeRelationEntry entry) {
+    return _wordDisplayName(entry.otherWordId);
+  }
+
+  String _selectedNodeRelationEntrySubtitle(_SelectedNodeRelationEntry entry) {
+    final primaryInfo = entry.infos.first;
+    final phrase = _relationPhraseForDetails(primaryInfo).trim();
+    final fallbackLabel = _labelForEdgeGroup(entry.infos).trim();
+    final baseText = phrase.isNotEmpty
+        ? phrase
+        : fallbackLabel.isNotEmpty
+        ? fallbackLabel
+        : '관계 상세 보기';
+
+    if (entry.infos.length <= 1) {
+      return baseText;
+    }
+
+    return '$baseText 외 ${entry.infos.length - 1}건';
+  }
+
+  Future<void> _openSelectedNodeRelationEntry(
+    _SelectedNodeRelationEntry entry,
+  ) async {
+    _temporarilySuppressBackgroundTapClear();
+    if (entry.infos.isEmpty) {
+      return;
+    }
+
+    await _showEdgeDetailDialog(entry.infos);
   }
 
   String _labelForEdgeGroup(List<WordRelationEdgeInfo> infos) {
