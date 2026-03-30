@@ -1561,6 +1561,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         ? word.spelling1!.trim()
         : word.id;
     final transliteration = (word.transliteration1 ?? '').trim();
+    final strongNumber = (word.strongNumber ?? '').trim();
+    final secondaryLabel = transliteration.isNotEmpty
+        ? transliteration
+        : strongNumber;
     final bool isDepthTwo = nodeLayout.depth >= 2;
     final bool isSelected = visualState == _GraphVisualState.selected;
     final bool isDimmed = visualState == _GraphVisualState.dimmed;
@@ -1628,11 +1632,11 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         : isDepthTwo
         ? FontWeight.w500
         : FontWeight.w600;
-    final FontWeight transliterationFontWeight = isDepthTwo
+    final FontWeight secondaryLabelFontWeight = isDepthTwo
         ? FontWeight.w400
         : FontWeight.w500;
     final double labelFontSize = isDepthTwo ? 11.0 : 12.0;
-    final double transliterationFontSize = isDepthTwo ? 9.0 : 10.0;
+    final double secondaryLabelFontSize = isDepthTwo ? 9.0 : 10.0;
     final double nodeSize = nodeLayout.nodeSize;
 
     return GestureDetector(
@@ -1736,16 +1740,16 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                         fontWeight: labelFontWeight,
                       ),
                     ),
-                    if (transliteration.isNotEmpty) ...[
+                    if (secondaryLabel.isNotEmpty) ...[
                       const SizedBox(height: 2),
                       Text(
-                        transliteration,
+                        secondaryLabel,
                         textAlign: TextAlign.center,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontSize: transliterationFontSize,
-                          fontWeight: transliterationFontWeight,
+                          fontSize: secondaryLabelFontSize,
+                          fontWeight: secondaryLabelFontWeight,
                         ),
                       ),
                     ],
