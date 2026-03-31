@@ -19,9 +19,9 @@ class _WordEditScreenState extends State<WordEditScreen> {
   late final TextEditingController _spellingController;
   late final TextEditingController _transliterationController;
   late final TextEditingController _pronunciationController;
-  late final TextEditingController _meaningController;
   late final TextEditingController _noteController;
   late final TextEditingController _customLanguageController;
+  final List<TextEditingController> _meaningControllers = [];
 
   late String _selectedLanguageGroup;
   bool _isSaving = false;
@@ -58,9 +58,14 @@ class _WordEditScreenState extends State<WordEditScreen> {
     _pronunciationController = TextEditingController(
       text: (widget.word['발음1'] ?? '').toString(),
     );
-    _meaningController = TextEditingController(
-      text: (widget.word['의미1'] ?? '').toString(),
-    );
+    final meaningValues = _loadMeaningValues(widget.word);
+    if (meaningValues.isEmpty) {
+      _meaningControllers.add(TextEditingController());
+    } else {
+      _meaningControllers.addAll(
+        meaningValues.map((value) => TextEditingController(text: value)),
+      );
+    }
     _transliterationController = TextEditingController(
       text: (widget.word['음역1'] ?? '').toString(),
     );
@@ -75,7 +80,9 @@ class _WordEditScreenState extends State<WordEditScreen> {
     _spellingController.dispose();
     _transliterationController.dispose();
     _pronunciationController.dispose();
-    _meaningController.dispose();
+    for (final controller in _meaningControllers) {
+      controller.dispose();
+    }
     _noteController.dispose();
     _customLanguageController.dispose();
     super.dispose();
@@ -99,6 +106,126 @@ class _WordEditScreenState extends State<WordEditScreen> {
       return v;
     }
     return _selectedLanguageGroup;
+  }
+
+  List<String> _loadMeaningValues(Map<String, dynamic> word) {
+    final values = <String>[];
+
+    for (var index = 1; index <= 7; index++) {
+      final value = (word['의미$index'] ?? '').toString().trim();
+      if (value.isEmpty) {
+        continue;
+      }
+      values.add(value);
+    }
+
+    return values;
+  }
+
+  List<String> _collectMeaningValues() {
+    return _meaningControllers
+        .map((controller) => controller.text.trim())
+        .where((value) => value.isNotEmpty)
+        .take(7)
+        .toList(growable: false);
+  }
+
+  Map<String, String?> _buildMeaningColumns(List<String> values) {
+    final columns = <String, String?>{};
+
+    for (var index = 1; index <= 7; index++) {
+      columns['의미$index'] = index <= values.length ? values[index - 1] : null;
+    }
+
+    return columns;
+  }
+
+  void _addMeaningField() {
+    if (_meaningControllers.length >= 7) {
+      return;
+    }
+
+    setState(() {
+      _meaningControllers.add(TextEditingController());
+    });
+  }
+
+  void _removeMeaningField(int index) {
+    final controller = _meaningControllers.removeAt(index);
+    controller.dispose();
+  }
+
+  Widget _buildMeaningSection(BuildContext context) {
+    final theme = Theme.of(context);
+    final canAddMeaning = !_isSaving && _meaningControllers.length < 7;
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        border: Border.all(color: theme.colorScheme.outlineVariant),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '의미',
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text('최대 7개까지 저장됩니다.', style: theme.textTheme.bodySmall),
+          const SizedBox(height: 12),
+          if (_meaningControllers.isEmpty)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Text(
+                '등록된 의미가 없습니다. 아래 버튼으로 추가하세요.',
+                style: theme.textTheme.bodyMedium,
+              ),
+            ),
+          for (var index = 0; index < _meaningControllers.length; index++) ...[
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _meaningControllers[index],
+                    enabled: !_isSaving,
+                    maxLines: 2,
+                    decoration: InputDecoration(labelText: '의미 ${index + 1}'),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                IconButton(
+                  onPressed: _isSaving
+                      ? null
+                      : () {
+                          setState(() {
+                            _removeMeaningField(index);
+                          });
+                        },
+                  tooltip: '의미 삭제',
+                  icon: const Icon(Icons.remove_circle_outline),
+                ),
+              ],
+            ),
+            if (index < _meaningControllers.length - 1)
+              const SizedBox(height: 12),
+          ],
+          const SizedBox(height: 4),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton.icon(
+              onPressed: canAddMeaning ? _addMeaningField : null,
+              icon: const Icon(Icons.add),
+              label: const Text('+ 의미 추가'),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _save() async {
@@ -143,6 +270,8 @@ class _WordEditScreenState extends State<WordEditScreen> {
     setState(() => _isSaving = true);
 
     try {
+      final meaningColumns = _buildMeaningColumns(_collectMeaningValues());
+
       await _repository.updateWord(
         id: widget.word['id'].toString(),
         language: resolvedLanguage,
@@ -154,9 +283,13 @@ class _WordEditScreenState extends State<WordEditScreen> {
         pronunciation1: _pronunciationController.text.trim().isEmpty
             ? null
             : _pronunciationController.text.trim(),
-        meaning1: _meaningController.text.trim().isEmpty
-            ? null
-            : _meaningController.text.trim(),
+        meaning1: meaningColumns['의미1'],
+        meaning2: meaningColumns['의미2'],
+        meaning3: meaningColumns['의미3'],
+        meaning4: meaningColumns['의미4'],
+        meaning5: meaningColumns['의미5'],
+        meaning6: meaningColumns['의미6'],
+        meaning7: meaningColumns['의미7'],
         note: _noteController.text.trim().isEmpty
             ? null
             : _noteController.text.trim(),
@@ -175,9 +308,9 @@ class _WordEditScreenState extends State<WordEditScreen> {
       updatedWord['발음1'] = _pronunciationController.text.trim().isEmpty
           ? null
           : _pronunciationController.text.trim();
-      updatedWord['의미1'] = _meaningController.text.trim().isEmpty
-          ? null
-          : _meaningController.text.trim();
+      for (final entry in meaningColumns.entries) {
+        updatedWord[entry.key] = entry.value;
+      }
       updatedWord['비고'] = _noteController.text.trim().isEmpty
           ? null
           : _noteController.text.trim();
@@ -276,7 +409,7 @@ class _WordEditScreenState extends State<WordEditScreen> {
           ),
           const SizedBox(height: 12),
           DropdownButtonFormField<String>(
-            value: _selectedLanguageGroup,
+            initialValue: _selectedLanguageGroup,
             isExpanded: true,
             decoration: const InputDecoration(labelText: '언어 그룹'),
             items: _languageGroups
@@ -335,12 +468,7 @@ class _WordEditScreenState extends State<WordEditScreen> {
             decoration: const InputDecoration(labelText: '발음1'),
           ),
           const SizedBox(height: 12),
-          TextField(
-            controller: _meaningController,
-            enabled: !_isSaving,
-            maxLines: 2,
-            decoration: const InputDecoration(labelText: '의미1'),
-          ),
+          _buildMeaningSection(context),
           const SizedBox(height: 12),
           TextField(
             controller: _noteController,

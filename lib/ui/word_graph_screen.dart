@@ -15,6 +15,7 @@ import '../domain/graph/graph_view_data.dart';
 import '../domain/graph/layout/graph_layout_strategy_resolver.dart';
 import '../domain/relation/relation_formatter.dart';
 import 'word_graph_cache.dart';
+import 'word_edit_screen.dart';
 
 const double _centerNodeSize = 180.0;
 const double _centerNodeHalf = _centerNodeSize / 2;
@@ -4218,7 +4219,36 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       note: payload.note,
     );
 
-    final createdWord = await _repository.getWordById(newId);
+    final createdWordMap = await _repository.getWordMapById(newId);
+    Map<String, dynamic>? currentWordMap = createdWordMap == null
+        ? null
+        : Map<String, dynamic>.from(createdWordMap);
+
+    if (!mounted) return;
+
+    if (currentWordMap != null) {
+      final editedWordMap = await Navigator.push<Map<String, dynamic>>(
+        context,
+        MaterialPageRoute(
+          builder: (_) => WordEditScreen(word: currentWordMap!),
+        ),
+      );
+
+      if (!mounted) return;
+
+      if (editedWordMap != null) {
+        currentWordMap = Map<String, dynamic>.from(editedWordMap);
+      } else {
+        final reloadedWordMap = await _repository.getWordMapById(newId);
+        if (reloadedWordMap != null) {
+          currentWordMap = Map<String, dynamic>.from(reloadedWordMap);
+        }
+      }
+    }
+
+    final createdWord = currentWordMap == null
+        ? await _repository.getWordById(newId)
+        : Word.fromMap(currentWordMap);
     bool didCreateRelation = false;
 
     // 저장 후 관계 추가 옵션

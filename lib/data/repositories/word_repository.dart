@@ -1627,6 +1627,12 @@ class WordRepository {
     String? transliteration1,
     String? pronunciation1,
     String? meaning1,
+    String? meaning2,
+    String? meaning3,
+    String? meaning4,
+    String? meaning5,
+    String? meaning6,
+    String? meaning7,
     String? note,
   }) async {
     final db = await DatabaseService.openDatabaseFile();
@@ -1640,6 +1646,14 @@ class WordRepository {
 
       final before = _sanitizeWordHistorySnapshot(beforeRaw);
       final after = Map<String, dynamic>.from(before);
+      final normalizedMeanings =
+          [meaning1, meaning2, meaning3, meaning4, meaning5, meaning6, meaning7]
+              .map((value) {
+                final trimmed = (value ?? '').trim();
+                return trimmed.isEmpty ? null : trimmed;
+              })
+              .toList(growable: false);
+
       after['언어'] = language;
       after['스트롱넘버'] = (strongNumber ?? '').trim().isEmpty
           ? null
@@ -1648,11 +1662,13 @@ class WordRepository {
       after['발음1'] = (pronunciation1 ?? '').trim().isEmpty
           ? null
           : pronunciation1!.trim();
-      after['의미1'] = (meaning1 ?? '').trim().isEmpty ? null : meaning1!.trim();
       after['비고'] = (note ?? '').trim().isEmpty ? null : note!.trim();
       after['음역1'] = (transliteration1 ?? '').trim().isEmpty
           ? null
           : transliteration1!.trim();
+      for (var index = 0; index < normalizedMeanings.length; index++) {
+        after['의미${index + 1}'] = normalizedMeanings[index];
+      }
 
       await txn.update(
         'WORD_TABLE',
@@ -1661,7 +1677,8 @@ class WordRepository {
           '스트롱넘버': after['스트롱넘버'],
           '표기1': after['표기1'],
           '발음1': after['발음1'],
-          '의미1': after['의미1'],
+          for (var index = 1; index <= 7; index++)
+            '의미$index': after['의미$index'],
           '비고': after['비고'],
           '음역1': after['음역1'],
         },
