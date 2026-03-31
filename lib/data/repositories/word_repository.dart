@@ -411,6 +411,71 @@ class WordRepository {
     return visibleGraphData.connectedWords;
   }
 
+  /// 주어진 단어 ID들 중에서
+  /// DB 전체 기준 `(언어, 표기1, 음역1)` 충돌군에 속한 ID 집합을 반환한다.
+  /// - trim 기준으로 빈값을 정리한다.
+  /// - 음역1이 비어 있는 항목은 기존 strong fallback 대상이므로 제외한다.
+  Future<Set<String>>
+  findWordIdsInDbWideLanguageSpellingTransliterationCollisionGroups(
+    Iterable<String> wordIds,
+  ) async {
+    final normalizedWordIds = <String>[];
+    final seenWordIds = <String>{};
+
+    for (final wordId in wordIds) {
+      final normalizedWordId = wordId.trim();
+      if (normalizedWordId.isEmpty) continue;
+      if (seenWordIds.add(normalizedWordId)) {
+        normalizedWordIds.add(normalizedWordId);
+      }
+    }
+
+    if (normalizedWordIds.isEmpty) {
+      return const <String>{};
+    }
+
+    final db = await DatabaseService.openDatabaseFile();
+    final placeholders = List.filled(normalizedWordIds.length, '?').join(', ');
+    final rows = await db.rawQuery('''
+      WITH selected_words AS (
+        SELECT
+          id,
+          TRIM(COALESCE(언어, '')) AS language_key,
+          TRIM(COALESCE(표기1, '')) AS spelling_key,
+          TRIM(COALESCE(음역1, '')) AS transliteration_key
+        FROM WORD_TABLE
+        WHERE id IN ($placeholders)
+      ),
+      db_collision_groups AS (
+        SELECT
+          TRIM(COALESCE(언어, '')) AS language_key,
+          TRIM(COALESCE(표기1, '')) AS spelling_key,
+          TRIM(COALESCE(음역1, '')) AS transliteration_key
+        FROM WORD_TABLE
+        WHERE TRIM(COALESCE(표기1, '')) <> ''
+          AND TRIM(COALESCE(음역1, '')) <> ''
+        GROUP BY
+          TRIM(COALESCE(언어, '')),
+          TRIM(COALESCE(표기1, '')),
+          TRIM(COALESCE(음역1, ''))
+        HAVING COUNT(*) > 1
+      )
+      SELECT sw.id
+      FROM selected_words sw
+      INNER JOIN db_collision_groups dcg
+        ON sw.language_key = dcg.language_key
+       AND sw.spelling_key = dcg.spelling_key
+       AND sw.transliteration_key = dcg.transliteration_key
+      WHERE sw.spelling_key <> ''
+        AND sw.transliteration_key <> ''
+      ''', normalizedWordIds);
+
+    return rows
+        .map((row) => (row['id'] ?? '').toString().trim())
+        .where((wordId) => wordId.isNotEmpty)
+        .toSet();
+  }
+
   /// WORD_TABLE에서 단어 목록을 일부 조회한다 (홈 화면 기본 리스트용)
   /// - 상세 화면에서 모든 컬럼을 보여주기 위해 Map 그대로 반환한다.
   Future<List<Map<String, dynamic>>> getWordsMap({int limit = 50}) async {

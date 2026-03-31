@@ -384,8 +384,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   final Set<String> _expandedDepthOneWordIds = <String>{};
   final Set<String> _expansionRequestsInFlight = <String>{};
   final Set<String> _fullyRevealedExpansionSourceIds = <String>{};
+  final Set<String> _dbWideCollisionWordIdsForVisibleGraph = <String>{};
   final Map<String, Offset> _seedNodePositions = <String, Offset>{};
   bool _isCenterDepthOneFullyRevealed = false;
+  int _collisionWordIdsRefreshSerial = 0;
 
   /// 사용자가 클릭(선택)한 주변 노드 id
   /// - 같은 노드를 다시 클릭하면 이동(push)하는 트리거로 사용
@@ -504,6 +506,94 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
     _errorMessage = null;
     _isLoading = false;
+    _scheduleVisibleCollisionWordIdRefresh();
+  }
+
+  void _scheduleVisibleCollisionWordIdRefresh() {
+    final viewData = _graphViewData;
+    if (viewData == null) {
+      _collisionWordIdsRefreshSerial++;
+      _dbWideCollisionWordIdsForVisibleGraph.clear();
+      return;
+    }
+
+    final visibleWordIds = viewData.nodes
+        .map((node) => node.id.trim())
+        .where(
+          (nodeId) => nodeId.isNotEmpty && _graphWordsById.containsKey(nodeId),
+        )
+        .toSet()
+        .toList(growable: false);
+    final requestSerial = ++_collisionWordIdsRefreshSerial;
+
+    if (visibleWordIds.isEmpty) {
+      _dbWideCollisionWordIdsForVisibleGraph.clear();
+      return;
+    }
+
+    unawaited(
+      _refreshVisibleCollisionWordIds(
+        expectedCenterWordId: _centerWord.id,
+        visibleWordIds: visibleWordIds,
+        requestSerial: requestSerial,
+      ),
+    );
+  }
+
+  Future<void> _refreshVisibleCollisionWordIds({
+    required String expectedCenterWordId,
+    required List<String> visibleWordIds,
+    required int requestSerial,
+  }) async {
+    final collisionWordIds = await _repository
+        .findWordIdsInDbWideLanguageSpellingTransliterationCollisionGroups(
+          visibleWordIds,
+        );
+
+    if (!mounted) return;
+    if (_centerWord.id != expectedCenterWordId) return;
+    if (requestSerial != _collisionWordIdsRefreshSerial) return;
+    if (_sameStringSets(
+      _dbWideCollisionWordIdsForVisibleGraph,
+      collisionWordIds,
+    )) {
+      return;
+    }
+
+    setState(() {
+      _dbWideCollisionWordIdsForVisibleGraph
+        ..clear()
+        ..addAll(collisionWordIds);
+    });
+  }
+
+  bool _sameStringSets(Set<String> left, Set<String> right) {
+    if (identical(left, right)) {
+      return true;
+    }
+    if (left.length != right.length) {
+      return false;
+    }
+    return left.containsAll(right);
+  }
+
+  String _secondaryLabelForPeripheralWord(Word word) {
+    final transliteration = (word.transliteration1 ?? '').trim();
+    final strongNumber = (word.strongNumber ?? '').trim();
+
+    if (transliteration.isEmpty) {
+      return strongNumber;
+    }
+
+    if (!_dbWideCollisionWordIdsForVisibleGraph.contains(word.id)) {
+      return transliteration;
+    }
+
+    if (strongNumber.isEmpty) {
+      return transliteration;
+    }
+
+    return '$transliteration · $strongNumber';
   }
 
   String? _normalizedSelectedWordIdForViewData(
@@ -636,6 +726,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     _expandedDepthOneWordIds.clear();
     _expansionRequestsInFlight.clear();
     _fullyRevealedExpansionSourceIds.clear();
+    _collisionWordIdsRefreshSerial++;
+    _dbWideCollisionWordIdsForVisibleGraph.clear();
     _isCenterDepthOneFullyRevealed = false;
     if (clearSeedPositions) {
       _seedNodePositions.clear();
@@ -1560,11 +1652,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     final label = (word.spelling1 != null && word.spelling1!.trim().isNotEmpty)
         ? word.spelling1!.trim()
         : word.id;
-    final transliteration = (word.transliteration1 ?? '').trim();
-    final strongNumber = (word.strongNumber ?? '').trim();
-    final secondaryLabel = transliteration.isNotEmpty
-        ? transliteration
-        : strongNumber;
+    final secondaryLabel = _secondaryLabelForPeripheralWord(word);
     final bool isDepthTwo = nodeLayout.depth >= 2;
     final bool isSelected = visualState == _GraphVisualState.selected;
     final bool isDimmed = visualState == _GraphVisualState.dimmed;
