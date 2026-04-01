@@ -25,6 +25,9 @@ class _WordEditScreenState extends State<WordEditScreen> {
 
   late String _selectedLanguageGroup;
   bool _isSaving = false;
+  bool _didAttemptExpressionSetSave = false;
+  bool _isClosingExpressionSetUi = false;
+  final Set<int> _blurredExpressionSetIndexes = <int>{};
 
   static const List<String> _languageGroups = [
     '히브리어/아람어',
@@ -157,11 +160,14 @@ class _WordEditScreenState extends State<WordEditScreen> {
     final controllerGroup = WordExpressionSetControllerGroup();
 
     setState(() {
+      _blurredExpressionSetIndexes.clear();
       _expressionSetControllerGroups.add(controllerGroup);
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) {
+      if (!mounted ||
+          _isClosingExpressionSetUi ||
+          !_expressionSetControllerGroups.contains(controllerGroup)) {
         return;
       }
       controllerGroup.spellingFocusNode.requestFocus();
@@ -173,8 +179,31 @@ class _WordEditScreenState extends State<WordEditScreen> {
       return;
     }
 
+    FocusManager.instance.primaryFocus?.unfocus();
+    _blurredExpressionSetIndexes.clear();
     final controllerGroup = _expressionSetControllerGroups.removeAt(index);
-    controllerGroup.dispose();
+    disposeExpressionSetControllerGroupAfterFrame(controllerGroup);
+  }
+
+  WordExpressionSetValidationResult _buildExpressionSetValidationResult() {
+    return validateExpressionSetDrafts(
+      collectExpressionSetDrafts(_expressionSetControllerGroups),
+    );
+  }
+
+  Set<int> _visibleExpressionSetIssueIndexes() {
+    if (_didAttemptExpressionSetSave) {
+      return {
+        for (
+          var index = 1;
+          index <= _expressionSetControllerGroups.length;
+          index++
+        )
+          index,
+      };
+    }
+
+    return Set<int>.from(_blurredExpressionSetIndexes);
   }
 
   Widget _buildMeaningSection(BuildContext context) {
@@ -251,10 +280,32 @@ class _WordEditScreenState extends State<WordEditScreen> {
   }
 
   Widget _buildExpressionSetSection() {
+    final validationResult = _buildExpressionSetValidationResult();
+
     return WordExpressionSetSection(
       controllerGroups: _expressionSetControllerGroups,
       enabled: !_isSaving,
+      validationResult: validationResult,
+      visibleIssueSetIndexes: _visibleExpressionSetIssueIndexes(),
       onAddSet: _addExpressionSet,
+      onChanged: () {
+        if (!mounted || _isClosingExpressionSetUi) {
+          return;
+        }
+        setState(() {});
+      },
+      onSetFocusLost: (setIndex) {
+        if (!mounted ||
+            _isClosingExpressionSetUi ||
+            _didAttemptExpressionSetSave ||
+            _blurredExpressionSetIndexes.contains(setIndex)) {
+          return;
+        }
+
+        setState(() {
+          _blurredExpressionSetIndexes.add(setIndex);
+        });
+      },
       onRemoveSet: (index) {
         setState(() {
           _removeExpressionSet(index);
@@ -264,17 +315,21 @@ class _WordEditScreenState extends State<WordEditScreen> {
   }
 
   Future<void> _save() async {
-    final expressionColumns = fromExpressionSetList(
-      collectExpressionSetDrafts(_expressionSetControllerGroups),
+    final expressionSetDrafts = collectExpressionSetDrafts(
+      _expressionSetControllerGroups,
     );
-    final spelling = expressionColumns['표기1'];
+    final validationResult = validateExpressionSetDrafts(expressionSetDrafts);
 
-    if (spelling == null || spelling.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('첫 번째 표현 세트의 표기는 필수입니다.')));
+    setState(() {
+      _didAttemptExpressionSetSave = true;
+    });
+
+    if (validationResult.hasErrors) {
       return;
     }
+
+    final expressionColumns = fromExpressionSetList(expressionSetDrafts);
+    final spelling = expressionColumns['표기1']!;
 
     final resolvedLanguage = _resolveLanguageValue();
     if (resolvedLanguage == null || resolvedLanguage.isEmpty) {
@@ -345,6 +400,8 @@ class _WordEditScreenState extends State<WordEditScreen> {
           ? null
           : _noteController.text.trim();
 
+      _isClosingExpressionSetUi = true;
+      FocusManager.instance.primaryFocus?.unfocus();
       Navigator.pop(context, updatedWord);
     } catch (e) {
       if (!mounted) return;
@@ -424,84 +481,93 @@ class _WordEditScreenState extends State<WordEditScreen> {
   Widget build(BuildContext context) {
     final idText = (widget.word['id'] ?? '').toString();
 
-    return Scaffold(
-      appBar: AppBar(title: const Text('단어 편집')),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          TextFormField(
-            initialValue: idText,
-            enabled: false,
-            decoration: const InputDecoration(
-              labelText: '단어 ID',
-              helperText: '현재 단계에서는 id를 수정하지 않습니다.',
-            ),
-          ),
-          const SizedBox(height: 12),
-          DropdownButtonFormField<String>(
-            initialValue: _selectedLanguageGroup,
-            isExpanded: true,
-            decoration: const InputDecoration(labelText: '언어 그룹'),
-            items: _languageGroups
-                .map(
-                  (lang) =>
-                      DropdownMenuItem<String>(value: lang, child: Text(lang)),
-                )
-                .toList(),
-            onChanged: _isSaving
-                ? null
-                : (v) {
-                    if (v == null) return;
-                    setState(() {
-                      _selectedLanguageGroup = v;
-                      if (v != '히브리어/아람어' && v != '기타') {
-                        _customLanguageController.clear();
-                      }
-                    });
-                  },
-          ),
-          const SizedBox(height: 12),
-          if (_selectedLanguageGroup == '히브리어/아람어' ||
-              _selectedLanguageGroup == '기타') ...[
-            TextField(
-              controller: _customLanguageController,
-              enabled: !_isSaving,
-              decoration: InputDecoration(
-                labelText: _selectedLanguageGroup == '히브리어/아람어'
-                    ? '실제 언어명 (예: 히브리어, 아람어)'
-                    : '실제 언어명 입력',
+    return WillPopScope(
+      onWillPop: () async {
+        _isClosingExpressionSetUi = true;
+        FocusManager.instance.primaryFocus?.unfocus();
+        return true;
+      },
+      child: Scaffold(
+        appBar: AppBar(title: const Text('단어 편집')),
+        body: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            TextFormField(
+              initialValue: idText,
+              enabled: false,
+              decoration: const InputDecoration(
+                labelText: '단어 ID',
+                helperText: '현재 단계에서는 id를 수정하지 않습니다.',
               ),
             ),
             const SizedBox(height: 12),
-          ],
-          TextField(
-            controller: _strongController,
-            enabled: !_isSaving,
-            decoration: const InputDecoration(labelText: '스트롱넘버 (없으면 비워둠)'),
-          ),
-          const SizedBox(height: 12),
-          _buildExpressionSetSection(),
-          const SizedBox(height: 12),
-          _buildMeaningSection(context),
-          const SizedBox(height: 12),
-          TextField(
-            controller: _noteController,
-            enabled: !_isSaving,
-            maxLines: 2,
-            decoration: const InputDecoration(labelText: '비고'),
-          ),
-          const SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: _isSaving ? null : _save,
-            child: _isSaving
-                ? const SizedBox(
-                    width: 18,
-                    height: 18,
-                    child: CircularProgressIndicator(strokeWidth: 2),
+            DropdownButtonFormField<String>(
+              initialValue: _selectedLanguageGroup,
+              isExpanded: true,
+              decoration: const InputDecoration(labelText: '언어 그룹'),
+              items: _languageGroups
+                  .map(
+                    (lang) => DropdownMenuItem<String>(
+                      value: lang,
+                      child: Text(lang),
+                    ),
                   )
-                : const Text('저장'),
-          ),
-        ],
+                  .toList(),
+              onChanged: _isSaving
+                  ? null
+                  : (v) {
+                      if (v == null) return;
+                      setState(() {
+                        _selectedLanguageGroup = v;
+                        if (v != '히브리어/아람어' && v != '기타') {
+                          _customLanguageController.clear();
+                        }
+                      });
+                    },
+            ),
+            const SizedBox(height: 12),
+            if (_selectedLanguageGroup == '히브리어/아람어' ||
+                _selectedLanguageGroup == '기타') ...[
+              TextField(
+                controller: _customLanguageController,
+                enabled: !_isSaving,
+                decoration: InputDecoration(
+                  labelText: _selectedLanguageGroup == '히브리어/아람어'
+                      ? '실제 언어명 (예: 히브리어, 아람어)'
+                      : '실제 언어명 입력',
+                ),
+              ),
+              const SizedBox(height: 12),
+            ],
+            TextField(
+              controller: _strongController,
+              enabled: !_isSaving,
+              decoration: const InputDecoration(labelText: '스트롱넘버 (없으면 비워둠)'),
+            ),
+            const SizedBox(height: 12),
+            _buildExpressionSetSection(),
+            const SizedBox(height: 12),
+            _buildMeaningSection(context),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _noteController,
+              enabled: !_isSaving,
+              maxLines: 2,
+              decoration: const InputDecoration(labelText: '비고'),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _isSaving ? null : _save,
+              child: _isSaving
+                  ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Text('저장'),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -303,6 +303,295 @@ class CreateWordPayload {
   String? get pronunciation1 => expressionColumns['발음1'];
 }
 
+class _CreateWordDialog extends StatefulWidget {
+  const _CreateWordDialog();
+
+  @override
+  State<_CreateWordDialog> createState() => _CreateWordDialogState();
+}
+
+class _CreateWordDialogState extends State<_CreateWordDialog> {
+  static const List<String> _languageGroups = [
+    '히브리어/아람어',
+    '헬라어',
+    '라틴어',
+    '영어',
+    '기타',
+  ];
+
+  final TextEditingController _strongController = TextEditingController();
+  final TextEditingController _meaningController = TextEditingController();
+  final TextEditingController _noteController = TextEditingController();
+  final TextEditingController _customLanguageController =
+      TextEditingController();
+  final List<WordExpressionSetControllerGroup> _expressionSetControllerGroups =
+      createExpressionSetControllerGroups(const <String, dynamic>{});
+  final Set<int> _blurredExpressionSetIndexes = <int>{};
+
+  String _selectedLanguageGroup = '헬라어';
+  bool _createRelationAfterSave = false;
+  bool _didAttemptExpressionSetSave = false;
+  bool _isClosing = false;
+
+  @override
+  void dispose() {
+    _strongController.dispose();
+    _meaningController.dispose();
+    _noteController.dispose();
+    _customLanguageController.dispose();
+    for (final controllerGroup in _expressionSetControllerGroups) {
+      controllerGroup.dispose();
+    }
+    super.dispose();
+  }
+
+  WordExpressionSetValidationResult _buildExpressionSetValidationResult() {
+    return validateExpressionSetDrafts(
+      collectExpressionSetDrafts(_expressionSetControllerGroups),
+    );
+  }
+
+  Set<int> _visibleExpressionSetIssueIndexes() {
+    if (_didAttemptExpressionSetSave) {
+      return {
+        for (
+          var index = 1;
+          index <= _expressionSetControllerGroups.length;
+          index++
+        )
+          index,
+      };
+    }
+
+    return Set<int>.from(_blurredExpressionSetIndexes);
+  }
+
+  void _closeDialog([CreateWordPayload? payload]) {
+    if (_isClosing) {
+      return;
+    }
+
+    _isClosing = true;
+    FocusManager.instance.primaryFocus?.unfocus();
+    Navigator.pop(context, payload);
+  }
+
+  void _addExpressionSet() {
+    if (_expressionSetControllerGroups.length >= 6) {
+      return;
+    }
+
+    final controllerGroup = WordExpressionSetControllerGroup();
+
+    setState(() {
+      _blurredExpressionSetIndexes.clear();
+      _expressionSetControllerGroups.add(controllerGroup);
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted ||
+          _isClosing ||
+          !_expressionSetControllerGroups.contains(controllerGroup)) {
+        return;
+      }
+      controllerGroup.spellingFocusNode.requestFocus();
+    });
+  }
+
+  void _removeExpressionSet(int index) {
+    if (_expressionSetControllerGroups.length <= 1) {
+      return;
+    }
+
+    FocusManager.instance.primaryFocus?.unfocus();
+    setState(() {
+      _blurredExpressionSetIndexes.clear();
+      final controllerGroup = _expressionSetControllerGroups.removeAt(index);
+      disposeExpressionSetControllerGroupAfterFrame(controllerGroup);
+    });
+  }
+
+  void _handleExpressionSetChanged() {
+    if (!mounted || _isClosing) {
+      return;
+    }
+
+    setState(() {});
+  }
+
+  void _handleExpressionSetFocusLost(int setIndex) {
+    if (!mounted ||
+        _isClosing ||
+        _didAttemptExpressionSetSave ||
+        _blurredExpressionSetIndexes.contains(setIndex)) {
+      return;
+    }
+
+    setState(() {
+      _blurredExpressionSetIndexes.add(setIndex);
+    });
+  }
+
+  void _save() {
+    final expressionSetDrafts = collectExpressionSetDrafts(
+      _expressionSetControllerGroups,
+    );
+    final validationResult = validateExpressionSetDrafts(expressionSetDrafts);
+
+    setState(() {
+      _didAttemptExpressionSetSave = true;
+    });
+
+    if (validationResult.hasErrors) {
+      return;
+    }
+
+    String resolvedLanguage;
+    if (_selectedLanguageGroup == '히브리어/아람어' ||
+        _selectedLanguageGroup == '기타') {
+      resolvedLanguage = _customLanguageController.text.trim();
+      if (resolvedLanguage.isEmpty) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('실제 언어명을 입력해주세요.')));
+        return;
+      }
+    } else {
+      resolvedLanguage = _selectedLanguageGroup;
+    }
+
+    final expressionColumns = fromExpressionSetList(expressionSetDrafts);
+    _closeDialog(
+      CreateWordPayload(
+        language: resolvedLanguage,
+        strongNumber: _strongController.text.trim().isEmpty
+            ? null
+            : _strongController.text.trim().toUpperCase(),
+        expressionColumns: expressionColumns,
+        meaning1: _meaningController.text.trim().isEmpty
+            ? null
+            : _meaningController.text.trim(),
+        note: _noteController.text.trim().isEmpty
+            ? null
+            : _noteController.text.trim(),
+        createRelationAfterSave: _createRelationAfterSave,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final validationResult = _buildExpressionSetValidationResult();
+
+    return WillPopScope(
+      onWillPop: () async {
+        _isClosing = true;
+        FocusManager.instance.primaryFocus?.unfocus();
+        return true;
+      },
+      child: AlertDialog(
+        title: const Text('신규 단어 생성'),
+        content: SizedBox(
+          width: 520,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                DropdownButtonFormField<String>(
+                  initialValue: _selectedLanguageGroup,
+                  isExpanded: true,
+                  decoration: const InputDecoration(labelText: '언어 그룹'),
+                  items: _languageGroups
+                      .map(
+                        (lang) => DropdownMenuItem<String>(
+                          value: lang,
+                          child: Text(lang),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (value) {
+                    if (value == null || _isClosing) {
+                      return;
+                    }
+
+                    setState(() {
+                      _selectedLanguageGroup = value;
+                      if (value != '히브리어/아람어' && value != '기타') {
+                        _customLanguageController.clear();
+                      }
+                    });
+                  },
+                ),
+                const SizedBox(height: 12),
+                if (_selectedLanguageGroup == '히브리어/아람어' ||
+                    _selectedLanguageGroup == '기타') ...[
+                  TextField(
+                    controller: _customLanguageController,
+                    decoration: InputDecoration(
+                      labelText: _selectedLanguageGroup == '히브리어/아람어'
+                          ? '실제 언어명 (예: 히브리어, 아람어)'
+                          : '실제 언어명 입력',
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                ],
+                TextField(
+                  controller: _strongController,
+                  decoration: const InputDecoration(
+                    labelText: '스트롱 번호 (없으면 비워둠)',
+                  ),
+                ),
+                const SizedBox(height: 12),
+                WordExpressionSetSection(
+                  controllerGroups: _expressionSetControllerGroups,
+                  enabled: true,
+                  validationResult: validationResult,
+                  visibleIssueSetIndexes: _visibleExpressionSetIssueIndexes(),
+                  onAddSet: _addExpressionSet,
+                  onChanged: _handleExpressionSetChanged,
+                  onSetFocusLost: _handleExpressionSetFocusLost,
+                  onRemoveSet: _removeExpressionSet,
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: _meaningController,
+                  maxLines: 2,
+                  decoration: const InputDecoration(labelText: '의미1'),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: _noteController,
+                  maxLines: 2,
+                  decoration: const InputDecoration(labelText: '비고'),
+                ),
+                const SizedBox(height: 12),
+                CheckboxListTile(
+                  contentPadding: EdgeInsets.zero,
+                  value: _createRelationAfterSave,
+                  onChanged: (value) {
+                    if (_isClosing) {
+                      return;
+                    }
+
+                    setState(() {
+                      _createRelationAfterSave = value ?? false;
+                    });
+                  },
+                  title: const Text('저장 후 현재 중심 단어와 관계 추가'),
+                ),
+              ],
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(onPressed: _closeDialog, child: const Text('취소')),
+          ElevatedButton(onPressed: _save, child: const Text('저장')),
+        ],
+      ),
+    );
+  }
+}
+
 /// CreateRelationPayload
 /// - "관계 추가" 다이얼로그에서 사용자가 입력한 값을 담는 DTO(전달용 객체)
 /// - WordGraphScreen 내부 로직에서만 쓰지만, Dart의 스코프 제약 때문에
@@ -4338,212 +4627,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
   /// 신규 단어 생성 다이얼로그
   Future<CreateWordPayload?> _showCreateWordDialog() async {
-    final strongController = TextEditingController();
-    final meaningController = TextEditingController();
-    final noteController = TextEditingController();
-    final expressionSetControllerGroups = createExpressionSetControllerGroups(
-      const <String, dynamic>{},
+    return await showDialog<CreateWordPayload?>(
+      context: context,
+      builder: (context) => const _CreateWordDialog(),
     );
-
-    String selectedLanguageGroup = '헬라어';
-    final customLanguageController = TextEditingController();
-    bool createRelationAfterSave = false;
-
-    const languages = ['히브리어/아람어', '헬라어', '라틴어', '영어', '기타'];
-
-    try {
-      return await showDialog<CreateWordPayload?>(
-        context: context,
-        builder: (context) {
-          return StatefulBuilder(
-            builder: (context, setState) {
-              void addExpressionSet() {
-                if (expressionSetControllerGroups.length >= 6) {
-                  return;
-                }
-
-                final controllerGroup = WordExpressionSetControllerGroup();
-                setState(() {
-                  expressionSetControllerGroups.add(controllerGroup);
-                });
-
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  if (!context.mounted) {
-                    return;
-                  }
-                  controllerGroup.spellingFocusNode.requestFocus();
-                });
-              }
-
-              void removeExpressionSet(int index) {
-                if (expressionSetControllerGroups.length <= 1) {
-                  return;
-                }
-
-                final controllerGroup = expressionSetControllerGroups.removeAt(
-                  index,
-                );
-                controllerGroup.dispose();
-              }
-
-              return AlertDialog(
-                title: const Text('신규 단어 생성'),
-                content: SizedBox(
-                  width: 520,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        DropdownButtonFormField<String>(
-                          initialValue: selectedLanguageGroup,
-                          isExpanded: true,
-                          decoration: const InputDecoration(labelText: '언어 그룹'),
-                          items: languages
-                              .map(
-                                (lang) => DropdownMenuItem<String>(
-                                  value: lang,
-                                  child: Text(lang),
-                                ),
-                              )
-                              .toList(),
-                          onChanged: (v) {
-                            if (v != null) {
-                              setState(() {
-                                selectedLanguageGroup = v;
-                                if (v != '히브리어/아람어' && v != '기타') {
-                                  customLanguageController.clear();
-                                }
-                              });
-                            }
-                          },
-                        ),
-                        const SizedBox(height: 12),
-                        if (selectedLanguageGroup == '히브리어/아람어' ||
-                            selectedLanguageGroup == '기타') ...[
-                          TextField(
-                            controller: customLanguageController,
-                            decoration: InputDecoration(
-                              labelText: selectedLanguageGroup == '히브리어/아람어'
-                                  ? '실제 언어명 (예: 히브리어, 아람어)'
-                                  : '실제 언어명 입력',
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                        ],
-                        TextField(
-                          controller: strongController,
-                          decoration: const InputDecoration(
-                            labelText: '스트롱 번호 (없으면 비워둠)',
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        WordExpressionSetSection(
-                          controllerGroups: expressionSetControllerGroups,
-                          enabled: true,
-                          onAddSet: addExpressionSet,
-                          onRemoveSet: (index) {
-                            setState(() {
-                              removeExpressionSet(index);
-                            });
-                          },
-                        ),
-                        const SizedBox(height: 12),
-                        TextField(
-                          controller: meaningController,
-                          maxLines: 2,
-                          decoration: const InputDecoration(labelText: '의미1'),
-                        ),
-                        const SizedBox(height: 12),
-                        TextField(
-                          controller: noteController,
-                          maxLines: 2,
-                          decoration: const InputDecoration(labelText: '비고'),
-                        ),
-                        const SizedBox(height: 12),
-                        CheckboxListTile(
-                          contentPadding: EdgeInsets.zero,
-                          value: createRelationAfterSave,
-                          onChanged: (v) => setState(
-                            () => createRelationAfterSave = v ?? false,
-                          ),
-                          title: const Text('저장 후 현재 중심 단어와 관계 추가'),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text('취소'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      final expressionColumns = fromExpressionSetList(
-                        collectExpressionSetDrafts(
-                          expressionSetControllerGroups,
-                        ),
-                      );
-                      final spelling = expressionColumns['표기1'];
-
-                      if (spelling == null || spelling.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('첫 번째 표현 세트의 표기는 필수입니다.'),
-                          ),
-                        );
-                        return;
-                      }
-
-                      String resolvedLanguage;
-                      if (selectedLanguageGroup == '히브리어/아람어' ||
-                          selectedLanguageGroup == '기타') {
-                        resolvedLanguage = customLanguageController.text.trim();
-                        if (resolvedLanguage.isEmpty) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('실제 언어명을 입력해주세요.')),
-                          );
-                          return;
-                        }
-                      } else {
-                        resolvedLanguage = selectedLanguageGroup;
-                      }
-
-                      Navigator.pop(
-                        context,
-                        CreateWordPayload(
-                          language: resolvedLanguage,
-                          strongNumber: strongController.text.trim().isEmpty
-                              ? null
-                              : strongController.text.trim().toUpperCase(),
-                          expressionColumns: expressionColumns,
-                          meaning1: meaningController.text.trim().isEmpty
-                              ? null
-                              : meaningController.text.trim(),
-                          note: noteController.text.trim().isEmpty
-                              ? null
-                              : noteController.text.trim(),
-                          createRelationAfterSave: createRelationAfterSave,
-                        ),
-                      );
-                    },
-                    child: const Text('저장'),
-                  ),
-                ],
-              );
-            },
-          );
-        },
-      );
-    } finally {
-      strongController.dispose();
-      meaningController.dispose();
-      noteController.dispose();
-      customLanguageController.dispose();
-      for (final controllerGroup in expressionSetControllerGroups) {
-        controllerGroup.dispose();
-      }
-    }
   }
 
   /// 중복 후보 경고 다이얼로그
