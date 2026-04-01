@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../data/repositories/word_repository.dart';
 import 'word_graph_cache.dart';
+import 'word_expression_set.dart';
 
 class WordEditScreen extends StatefulWidget {
   final Map<String, dynamic> word;
@@ -16,11 +17,10 @@ class _WordEditScreenState extends State<WordEditScreen> {
   final WordRepository _repository = WordRepository();
 
   late final TextEditingController _strongController;
-  late final TextEditingController _spellingController;
-  late final TextEditingController _transliterationController;
-  late final TextEditingController _pronunciationController;
   late final TextEditingController _noteController;
   late final TextEditingController _customLanguageController;
+  final List<WordExpressionSetControllerGroup> _expressionSetControllerGroups =
+      [];
   final List<TextEditingController> _meaningControllers = [];
 
   late String _selectedLanguageGroup;
@@ -52,11 +52,8 @@ class _WordEditScreenState extends State<WordEditScreen> {
     _strongController = TextEditingController(
       text: (widget.word['스트롱넘버'] ?? '').toString(),
     );
-    _spellingController = TextEditingController(
-      text: (widget.word['표기1'] ?? '').toString(),
-    );
-    _pronunciationController = TextEditingController(
-      text: (widget.word['발음1'] ?? '').toString(),
+    _expressionSetControllerGroups.addAll(
+      createExpressionSetControllerGroups(widget.word),
     );
     final meaningValues = _loadMeaningValues(widget.word);
     if (meaningValues.isEmpty) {
@@ -66,9 +63,6 @@ class _WordEditScreenState extends State<WordEditScreen> {
         meaningValues.map((value) => TextEditingController(text: value)),
       );
     }
-    _transliterationController = TextEditingController(
-      text: (widget.word['음역1'] ?? '').toString(),
-    );
     _noteController = TextEditingController(
       text: (widget.word['비고'] ?? '').toString(),
     );
@@ -77,9 +71,9 @@ class _WordEditScreenState extends State<WordEditScreen> {
   @override
   void dispose() {
     _strongController.dispose();
-    _spellingController.dispose();
-    _transliterationController.dispose();
-    _pronunciationController.dispose();
+    for (final controllerGroup in _expressionSetControllerGroups) {
+      controllerGroup.dispose();
+    }
     for (final controller in _meaningControllers) {
       controller.dispose();
     }
@@ -155,6 +149,34 @@ class _WordEditScreenState extends State<WordEditScreen> {
     controller.dispose();
   }
 
+  void _addExpressionSet() {
+    if (_expressionSetControllerGroups.length >= 6) {
+      return;
+    }
+
+    final controllerGroup = WordExpressionSetControllerGroup();
+
+    setState(() {
+      _expressionSetControllerGroups.add(controllerGroup);
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      controllerGroup.spellingFocusNode.requestFocus();
+    });
+  }
+
+  void _removeExpressionSet(int index) {
+    if (_expressionSetControllerGroups.length <= 1) {
+      return;
+    }
+
+    final controllerGroup = _expressionSetControllerGroups.removeAt(index);
+    controllerGroup.dispose();
+  }
+
   Widget _buildMeaningSection(BuildContext context) {
     final theme = Theme.of(context);
     final canAddMeaning = !_isSaving && _meaningControllers.length < 7;
@@ -228,12 +250,29 @@ class _WordEditScreenState extends State<WordEditScreen> {
     );
   }
 
+  Widget _buildExpressionSetSection() {
+    return WordExpressionSetSection(
+      controllerGroups: _expressionSetControllerGroups,
+      enabled: !_isSaving,
+      onAddSet: _addExpressionSet,
+      onRemoveSet: (index) {
+        setState(() {
+          _removeExpressionSet(index);
+        });
+      },
+    );
+  }
+
   Future<void> _save() async {
-    final spelling = _spellingController.text.trim();
-    if (spelling.isEmpty) {
+    final expressionColumns = fromExpressionSetList(
+      collectExpressionSetDrafts(_expressionSetControllerGroups),
+    );
+    final spelling = expressionColumns['표기1'];
+
+    if (spelling == null || spelling.isEmpty) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('표기1은 필수입니다.')));
+      ).showSnackBar(const SnackBar(content: Text('첫 번째 표현 세트의 표기는 필수입니다.')));
       return;
     }
 
@@ -277,12 +316,9 @@ class _WordEditScreenState extends State<WordEditScreen> {
         language: resolvedLanguage,
         strongNumber: strong,
         spelling1: spelling,
-        transliteration1: _transliterationController.text.trim().isEmpty
-            ? null
-            : _transliterationController.text.trim(),
-        pronunciation1: _pronunciationController.text.trim().isEmpty
-            ? null
-            : _pronunciationController.text.trim(),
+        transliteration1: expressionColumns['음역1'],
+        pronunciation1: expressionColumns['발음1'],
+        expressionColumns: expressionColumns,
         meaning1: meaningColumns['의미1'],
         meaning2: meaningColumns['의미2'],
         meaning3: meaningColumns['의미3'],
@@ -301,13 +337,7 @@ class _WordEditScreenState extends State<WordEditScreen> {
       final updatedWord = Map<String, dynamic>.from(widget.word);
       updatedWord['언어'] = resolvedLanguage;
       updatedWord['스트롱넘버'] = strong;
-      updatedWord['표기1'] = spelling;
-      updatedWord['음역1'] = _transliterationController.text.trim().isEmpty
-          ? null
-          : _transliterationController.text.trim();
-      updatedWord['발음1'] = _pronunciationController.text.trim().isEmpty
-          ? null
-          : _pronunciationController.text.trim();
+      updatedWord.addAll(expressionColumns);
       for (final entry in meaningColumns.entries) {
         updatedWord[entry.key] = entry.value;
       }
@@ -450,23 +480,7 @@ class _WordEditScreenState extends State<WordEditScreen> {
             decoration: const InputDecoration(labelText: '스트롱넘버 (없으면 비워둠)'),
           ),
           const SizedBox(height: 12),
-          TextField(
-            controller: _spellingController,
-            enabled: !_isSaving,
-            decoration: const InputDecoration(labelText: '표기1'),
-          ),
-          const SizedBox(height: 12),
-          TextField(
-            controller: _transliterationController,
-            enabled: !_isSaving,
-            decoration: const InputDecoration(labelText: '음역1'),
-          ),
-          const SizedBox(height: 12),
-          TextField(
-            controller: _pronunciationController,
-            enabled: !_isSaving,
-            decoration: const InputDecoration(labelText: '발음1'),
-          ),
+          _buildExpressionSetSection(),
           const SizedBox(height: 12),
           _buildMeaningSection(context),
           const SizedBox(height: 12),

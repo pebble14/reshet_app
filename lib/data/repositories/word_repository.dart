@@ -1501,11 +1501,18 @@ class WordRepository {
     required String spelling1,
     String? transliteration1,
     String? pronunciation1,
+    Map<String, String?>? expressionColumns,
     String? meaning1,
     String? note,
   }) async {
     final db = await DatabaseService.openDatabaseFile();
     final groupId = _newHistoryGroupId();
+    final normalizedExpressionColumns = _normalizeExpressionColumns(
+      spelling1: spelling1,
+      transliteration1: transliteration1,
+      pronunciation1: pronunciation1,
+      expressionColumns: expressionColumns,
+    );
 
     await db.transaction((txn) async {
       final row = {
@@ -1514,15 +1521,9 @@ class WordRepository {
         '스트롱넘버': (strongNumber ?? '').trim().isEmpty
             ? null
             : strongNumber!.trim(),
-        '표기1': spelling1.trim(),
-        '음역1': (transliteration1 ?? '').trim().isEmpty
-            ? null
-            : transliteration1!.trim(),
-        '발음1': (pronunciation1 ?? '').trim().isEmpty
-            ? null
-            : pronunciation1!.trim(),
         '의미1': (meaning1 ?? '').trim().isEmpty ? null : meaning1!.trim(),
         '비고': (note ?? '').trim().isEmpty ? null : note!.trim(),
+        ...normalizedExpressionColumns,
       };
 
       await txn.insert('WORD_TABLE', row);
@@ -1626,6 +1627,7 @@ class WordRepository {
     required String spelling1,
     String? transliteration1,
     String? pronunciation1,
+    Map<String, String?>? expressionColumns,
     String? meaning1,
     String? meaning2,
     String? meaning3,
@@ -1646,6 +1648,12 @@ class WordRepository {
 
       final before = _sanitizeWordHistorySnapshot(beforeRaw);
       final after = Map<String, dynamic>.from(before);
+      final normalizedExpressionColumns = _normalizeExpressionColumns(
+        spelling1: spelling1,
+        transliteration1: transliteration1,
+        pronunciation1: pronunciation1,
+        expressionColumns: expressionColumns,
+      );
       final normalizedMeanings =
           [meaning1, meaning2, meaning3, meaning4, meaning5, meaning6, meaning7]
               .map((value) {
@@ -1658,14 +1666,8 @@ class WordRepository {
       after['스트롱넘버'] = (strongNumber ?? '').trim().isEmpty
           ? null
           : strongNumber!.trim();
-      after['표기1'] = spelling1.trim();
-      after['발음1'] = (pronunciation1 ?? '').trim().isEmpty
-          ? null
-          : pronunciation1!.trim();
       after['비고'] = (note ?? '').trim().isEmpty ? null : note!.trim();
-      after['음역1'] = (transliteration1 ?? '').trim().isEmpty
-          ? null
-          : transliteration1!.trim();
+      after.addAll(normalizedExpressionColumns);
       for (var index = 0; index < normalizedMeanings.length; index++) {
         after['의미${index + 1}'] = normalizedMeanings[index];
       }
@@ -1675,12 +1677,15 @@ class WordRepository {
         {
           '언어': after['언어'],
           '스트롱넘버': after['스트롱넘버'],
-          '표기1': after['표기1'],
-          '발음1': after['발음1'],
+          for (var index = 1; index <= 6; index++)
+            '표기$index': after['표기$index'],
+          for (var index = 1; index <= 6; index++)
+            '음역$index': after['음역$index'],
+          for (var index = 1; index <= 6; index++)
+            '발음$index': after['발음$index'],
           for (var index = 1; index <= 7; index++)
             '의미$index': after['의미$index'],
           '비고': after['비고'],
-          '음역1': after['음역1'],
         },
         where: 'id = ?',
         whereArgs: [id],
@@ -1700,6 +1705,41 @@ class WordRepository {
 
   String _newHistoryGroupId() {
     return DateTime.now().microsecondsSinceEpoch.toString();
+  }
+
+  Map<String, String?> _normalizeExpressionColumns({
+    required String spelling1,
+    String? transliteration1,
+    String? pronunciation1,
+    Map<String, String?>? expressionColumns,
+  }) {
+    final normalizedColumns = <String, String?>{};
+
+    for (var index = 1; index <= 6; index++) {
+      final fallbackSpelling = index == 1 ? spelling1 : null;
+      final fallbackTransliteration = index == 1 ? transliteration1 : null;
+      final fallbackPronunciation = index == 1 ? pronunciation1 : null;
+
+      normalizedColumns['표기$index'] = _trimToNull(
+        expressionColumns?['표기$index'] ?? fallbackSpelling,
+      );
+      normalizedColumns['음역$index'] = _trimToNull(
+        expressionColumns?['음역$index'] ?? fallbackTransliteration,
+      );
+      normalizedColumns['발음$index'] = _trimToNull(
+        expressionColumns?['발음$index'] ?? fallbackPronunciation,
+      );
+    }
+
+    return normalizedColumns;
+  }
+
+  String? _trimToNull(String? value) {
+    final trimmed = (value ?? '').trim();
+    if (trimmed.isEmpty) {
+      return null;
+    }
+    return trimmed;
   }
 
   Future<void> _insertHistory(
