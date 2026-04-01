@@ -17,6 +17,7 @@ import '../domain/relation/relation_formatter.dart';
 import 'word_expression_set.dart';
 import 'word_graph_cache.dart';
 import 'word_edit_screen.dart';
+import 'word_info_panel.dart';
 
 const double _centerNodeSize = 180.0;
 const double _centerNodeHalf = _centerNodeSize / 2;
@@ -583,7 +584,9 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
   String _secondaryLabelForPeripheralWord(Word word) {
     final transliteration = (word.transliteration1 ?? '').trim();
-    final strongNumber = (word.strongNumber ?? '').trim();
+    final strongNumber = formatWordDisplayStrong(
+      (word.strongNumber ?? '').trim(),
+    );
 
     if (transliteration.isEmpty) {
       return strongNumber;
@@ -1441,7 +1444,9 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
   Widget _buildCenterNode(Word word, {required _GraphVisualState visualState}) {
     final language = (word.language ?? '').trim();
-    final strongNumber = (word.strongNumber ?? '').trim();
+    final strongNumber = formatWordDisplayStrong(
+      (word.strongNumber ?? '').trim(),
+    );
     final spelling = (word.spelling1 ?? '').trim();
     final pronunciation = (word.pronunciation1 ?? '').trim();
     final transliteration = (word.transliteration1 ?? '').trim();
