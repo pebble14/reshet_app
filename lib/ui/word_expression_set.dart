@@ -269,6 +269,7 @@ class WordExpressionSetSection extends StatelessWidget {
   final List<WordExpressionSetControllerGroup> controllerGroups;
   final bool enabled;
   final VoidCallback? onAddSet;
+  final ValueChanged<int>? onMakeRepresentative;
   final ValueChanged<int>? onRemoveSet;
   final VoidCallback? onChanged;
   final ValueChanged<int>? onSetFocusLost;
@@ -281,6 +282,7 @@ class WordExpressionSetSection extends StatelessWidget {
     required this.controllerGroups,
     required this.enabled,
     required this.onAddSet,
+    required this.onMakeRepresentative,
     required this.onRemoveSet,
     required this.onChanged,
     required this.onSetFocusLost,
@@ -347,6 +349,9 @@ class WordExpressionSetSection extends StatelessWidget {
     final theme = Theme.of(context);
     final group = controllerGroups[index];
     final setIndex = index + 1;
+    final hasSpelling = group.spellingController.text.trim().isNotEmpty;
+    final canMakeRepresentative =
+        enabled && index > 0 && hasSpelling && onMakeRepresentative != null;
     final canRemove =
         enabled && controllerGroups.length > 1 && onRemoveSet != null;
     final showIssues = visibleIssueSetIndexes.contains(setIndex);
@@ -384,6 +389,11 @@ class WordExpressionSetSection extends StatelessWidget {
                   ),
                 ),
                 const Spacer(),
+                if (canMakeRepresentative)
+                  TextButton(
+                    onPressed: () => onMakeRepresentative!(index),
+                    child: const Text('대표로 설정'),
+                  ),
                 IconButton(
                   onPressed: canRemove ? () => onRemoveSet!(index) : null,
                   tooltip: '세트 삭제',

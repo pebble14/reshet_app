@@ -332,6 +332,7 @@ class _CreateWordDialogState extends State<_CreateWordDialog> {
   bool _createRelationAfterSave = false;
   bool _didAttemptExpressionSetSave = false;
   bool _isClosing = false;
+  bool _isChangingExpressionSetRepresentative = false;
 
   @override
   void dispose() {
@@ -411,6 +412,31 @@ class _CreateWordDialogState extends State<_CreateWordDialog> {
     });
   }
 
+  void _makeExpressionSetRepresentative(int index) {
+    if (index <= 0 || index >= _expressionSetControllerGroups.length) {
+      return;
+    }
+
+    final controllerGroup = _expressionSetControllerGroups[index];
+    if (controllerGroup.spellingController.text.trim().isEmpty) {
+      return;
+    }
+
+    _isChangingExpressionSetRepresentative = true;
+    FocusManager.instance.primaryFocus?.unfocus();
+
+    setState(() {
+      _blurredExpressionSetIndexes.clear();
+      final representativeGroup = _expressionSetControllerGroups[0];
+      _expressionSetControllerGroups[0] = controllerGroup;
+      _expressionSetControllerGroups[index] = representativeGroup;
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _isChangingExpressionSetRepresentative = false;
+    });
+  }
+
   void _handleExpressionSetChanged() {
     if (!mounted || _isClosing) {
       return;
@@ -422,6 +448,7 @@ class _CreateWordDialogState extends State<_CreateWordDialog> {
   void _handleExpressionSetFocusLost(int setIndex) {
     if (!mounted ||
         _isClosing ||
+        _isChangingExpressionSetRepresentative ||
         _didAttemptExpressionSetSave ||
         _blurredExpressionSetIndexes.contains(setIndex)) {
       return;
@@ -548,6 +575,7 @@ class _CreateWordDialogState extends State<_CreateWordDialog> {
                   validationResult: validationResult,
                   visibleIssueSetIndexes: _visibleExpressionSetIssueIndexes(),
                   onAddSet: _addExpressionSet,
+                  onMakeRepresentative: _makeExpressionSetRepresentative,
                   onChanged: _handleExpressionSetChanged,
                   onSetFocusLost: _handleExpressionSetFocusLost,
                   onRemoveSet: _removeExpressionSet,

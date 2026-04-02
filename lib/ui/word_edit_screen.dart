@@ -27,6 +27,7 @@ class _WordEditScreenState extends State<WordEditScreen> {
   bool _isSaving = false;
   bool _didAttemptExpressionSetSave = false;
   bool _isClosingExpressionSetUi = false;
+  bool _isChangingExpressionSetRepresentative = false;
   final Set<int> _blurredExpressionSetIndexes = <int>{};
 
   static const List<String> _languageGroups = [
@@ -185,6 +186,31 @@ class _WordEditScreenState extends State<WordEditScreen> {
     disposeExpressionSetControllerGroupAfterFrame(controllerGroup);
   }
 
+  void _makeExpressionSetRepresentative(int index) {
+    if (index <= 0 || index >= _expressionSetControllerGroups.length) {
+      return;
+    }
+
+    final controllerGroup = _expressionSetControllerGroups[index];
+    if (controllerGroup.spellingController.text.trim().isEmpty) {
+      return;
+    }
+
+    _isChangingExpressionSetRepresentative = true;
+    FocusManager.instance.primaryFocus?.unfocus();
+
+    setState(() {
+      _blurredExpressionSetIndexes.clear();
+      final representativeGroup = _expressionSetControllerGroups[0];
+      _expressionSetControllerGroups[0] = controllerGroup;
+      _expressionSetControllerGroups[index] = representativeGroup;
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _isChangingExpressionSetRepresentative = false;
+    });
+  }
+
   WordExpressionSetValidationResult _buildExpressionSetValidationResult() {
     return validateExpressionSetDrafts(
       collectExpressionSetDrafts(_expressionSetControllerGroups),
@@ -297,6 +323,7 @@ class _WordEditScreenState extends State<WordEditScreen> {
       onSetFocusLost: (setIndex) {
         if (!mounted ||
             _isClosingExpressionSetUi ||
+            _isChangingExpressionSetRepresentative ||
             _didAttemptExpressionSetSave ||
             _blurredExpressionSetIndexes.contains(setIndex)) {
           return;
@@ -310,6 +337,9 @@ class _WordEditScreenState extends State<WordEditScreen> {
         setState(() {
           _removeExpressionSet(index);
         });
+      },
+      onMakeRepresentative: (index) {
+        _makeExpressionSetRepresentative(index);
       },
     );
   }
