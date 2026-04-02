@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
+import '../data/adapters/legacy_word_expression_read_adapter.dart';
+import '../domain/expression/expression_read_models.dart';
+
 String buildWordRepresentativeSpelling(
   Map<String, dynamic> wordMap, {
   String fallback = '',
 }) {
-  for (var index = 1; index <= 6; index++) {
-    final value = (wordMap['표기$index'] ?? '').toString().trim();
-    if (value.isNotEmpty) {
-      return value;
-    }
-  }
-
-  return fallback;
+  final readResult = readLegacyWordExpressionRow(wordMap);
+  return _buildRepresentativeSpellingFromReadResult(
+    readResult,
+    fallback: fallback,
+  );
 }
 
 String buildWordDisplayStrong(Map<String, dynamic> wordMap) {
@@ -55,12 +55,15 @@ class WordInfoPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final representativeSpelling = buildWordRepresentativeSpelling(wordMap);
+    final expressionReadResult = readLegacyWordExpressionRow(wordMap);
+    final representativeSpelling = _buildRepresentativeSpellingFromReadResult(
+      expressionReadResult,
+    );
+    final expressionSectionValues = _buildExpressionSectionValues(
+      expressionReadResult,
+    );
     final strong = buildWordDisplayStrong(wordMap);
     final language = _readValue('언어');
-    final spellings = _collectSeries('표기', 6);
-    final transliterations = _collectSeries('음역', 6);
-    final pronunciations = _collectSeries('발음', 6);
     final meanings = _collectSeries('의미', 7);
     final note = _readValue('비고');
     final sections = <_WordInfoSection>[
@@ -68,12 +71,23 @@ class WordInfoPanel extends StatelessWidget {
         _WordInfoSection(label: '대표 표기', values: [representativeSpelling]),
       if (strong.isNotEmpty)
         _WordInfoSection(label: '스트롱 번호', values: [strong]),
-      if (language.isNotEmpty) _WordInfoSection(label: '언어', values: [language]),
-      if (spellings.isNotEmpty) _WordInfoSection(label: '표기', values: spellings),
-      if (transliterations.isNotEmpty)
-        _WordInfoSection(label: '음역', values: transliterations),
-      if (pronunciations.isNotEmpty)
-        _WordInfoSection(label: '발음', values: pronunciations),
+      if (language.isNotEmpty)
+        _WordInfoSection(label: '언어', values: [language]),
+      if (expressionSectionValues.spellings.isNotEmpty)
+        _WordInfoSection(
+          label: '표기',
+          values: expressionSectionValues.spellings,
+        ),
+      if (expressionSectionValues.transliterations.isNotEmpty)
+        _WordInfoSection(
+          label: '음역',
+          values: expressionSectionValues.transliterations,
+        ),
+      if (expressionSectionValues.pronunciations.isNotEmpty)
+        _WordInfoSection(
+          label: '발음',
+          values: expressionSectionValues.pronunciations,
+        ),
       if (meanings.isNotEmpty) _WordInfoSection(label: '의미', values: meanings),
       if (note.isNotEmpty) _WordInfoSection(label: '비고', values: [note]),
     ];
@@ -160,6 +174,59 @@ class WordInfoPanel extends StatelessWidget {
   }
 }
 
+String _buildRepresentativeSpellingFromReadResult(
+  CanonicalExpressionReadResult readResult, {
+  String fallback = '',
+}) {
+  if (readResult.sets.isEmpty) {
+    return fallback;
+  }
+
+  return readResult.sets.first.spelling;
+}
+
+_ExpressionSectionValues _buildExpressionSectionValues(
+  CanonicalExpressionReadResult readResult,
+) {
+  return _ExpressionSectionValues(
+    spellings: _collectUniqueNonEmptyValues(
+      readResult.sets.map((set) => set.spelling),
+    ),
+    transliterations: _collectUniqueNonEmptyValues(
+      readResult.sets.map((set) => set.transliteration ?? ''),
+    ),
+    pronunciations: _collectUniqueNonEmptyValues(
+      readResult.sets.map((set) => set.pronunciation ?? ''),
+    ),
+  );
+}
+
+List<String> _collectUniqueNonEmptyValues(Iterable<String> values) {
+  final collectedValues = <String>[];
+
+  for (final value in values) {
+    final trimmed = value.trim();
+    if (trimmed.isEmpty || collectedValues.contains(trimmed)) {
+      continue;
+    }
+    collectedValues.add(trimmed);
+  }
+
+  return collectedValues;
+}
+
+class _ExpressionSectionValues {
+  final List<String> spellings;
+  final List<String> transliterations;
+  final List<String> pronunciations;
+
+  const _ExpressionSectionValues({
+    required this.spellings,
+    required this.transliterations,
+    required this.pronunciations,
+  });
+}
+
 class _WordInfoSection {
   final String label;
   final List<String> values;
@@ -198,12 +265,7 @@ class _WordInfoRow extends StatelessWidget {
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
-          Expanded(
-            child: Text(
-              values.join('\n'),
-              style: valueStyle,
-            ),
-          ),
+          Expanded(child: Text(values.join('\n'), style: valueStyle)),
         ],
       ),
     );
