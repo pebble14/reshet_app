@@ -17,6 +17,9 @@
 
 import 'package:flutter/material.dart';
 
+import '../data/adapters/legacy_word_expression_read_adapter.dart';
+import '../domain/expression/expression_read_models.dart';
+
 /// 표현 세트 1건을 UI에서 다루기 위한 초안 모델이다.
 class WordExpressionSetDraft {
   final String spelling;
@@ -142,23 +145,8 @@ class WordExpressionSetControllerGroup {
 
 /// DB의 표현 컬럼을 UI 리스트 구조로 변환한다.
 List<WordExpressionSetDraft> toExpressionSetList(Map<String, dynamic> word) {
-  final expressionSets = <WordExpressionSetDraft>[];
-
-  for (var index = 1; index <= 6; index++) {
-    final draft = WordExpressionSetDraft(
-      spelling: (word['표기$index'] ?? '').toString().trim(),
-      transliteration: (word['음역$index'] ?? '').toString().trim(),
-      pronunciation: (word['발음$index'] ?? '').toString().trim(),
-    );
-
-    if (!draft.hasAnyValue) {
-      continue;
-    }
-
-    expressionSets.add(draft.normalized());
-  }
-
-  return expressionSets;
+  final readResult = readLegacyWordExpressionRow(word);
+  return _expressionSetDraftsFromReadResult(readResult);
 }
 
 /// UI 리스트 구조를 기존 WORD_TABLE 컬럼 맵으로 역변환한다.
@@ -188,7 +176,9 @@ Map<String, String?> fromExpressionSetList(List<WordExpressionSetDraft> sets) {
 List<WordExpressionSetControllerGroup> createExpressionSetControllerGroups(
   Map<String, dynamic> word,
 ) {
-  final drafts = toExpressionSetList(word);
+  final readResult = readLegacyWordExpressionRow(word);
+  _logExpressionSetReadIssues(word, readResult);
+  final drafts = _expressionSetDraftsFromReadResult(readResult);
   final seededDrafts = drafts.isEmpty
       ? const [WordExpressionSetDraft.empty()]
       : drafts;
@@ -196,6 +186,41 @@ List<WordExpressionSetControllerGroup> createExpressionSetControllerGroups(
   return seededDrafts
       .map(WordExpressionSetControllerGroup.fromDraft)
       .toList(growable: true);
+}
+
+List<WordExpressionSetDraft> _expressionSetDraftsFromReadResult(
+  CanonicalExpressionReadResult readResult,
+) {
+  return readResult.sets
+      .map(
+        (set) => WordExpressionSetDraft(
+          spelling: set.spelling,
+          transliteration: set.transliteration ?? '',
+          pronunciation: set.pronunciation ?? '',
+        ).normalized(),
+      )
+      .toList(growable: false);
+}
+
+void _logExpressionSetReadIssues(
+  Map<String, dynamic> word,
+  CanonicalExpressionReadResult readResult,
+) {
+  if (readResult.issues.isEmpty) {
+    return;
+  }
+
+  final wordId = (word['id'] ?? '').toString().trim();
+  final sourceSlots = readResult.issues
+      .map((issue) => issue.sourceSlot.toString())
+      .join(',');
+
+  debugPrint(
+    '[ExpressionReadIssue] '
+    'wordId=$wordId '
+    'issueCount=${readResult.issues.length} '
+    'sourceSlots=$sourceSlots',
+  );
 }
 
 /// 현재 입력 중인 컨트롤러 값을 UI 모델 리스트로 수집한다.
