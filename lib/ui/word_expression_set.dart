@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 
 import '../data/adapters/legacy_word_expression_read_adapter.dart';
 import '../domain/expression/expression_read_models.dart';
+import '../domain/word/word_write_models.dart';
 
 /// 표현 세트 1건을 UI에서 다루기 위한 초안 모델이다.
 class WordExpressionSetDraft {
@@ -149,27 +150,82 @@ List<WordExpressionSetDraft> toExpressionSetList(Map<String, dynamic> word) {
   return _expressionSetDraftsFromReadResult(readResult);
 }
 
-/// UI 리스트 구조를 기존 WORD_TABLE 컬럼 맵으로 역변환한다.
-Map<String, String?> fromExpressionSetList(List<WordExpressionSetDraft> sets) {
-  final normalizedSets = sets
-      .map((set) => set.normalized())
-      .where((set) => set.hasAnyValue)
-      .take(6)
-      .toList(growable: false);
+/// draft를 canonical write 세트로 정리한다.
+/// - 표기가 있는 세트만 저장 후보로 유지한다.
+/// - representative는 compacting 이후 항상 seq=1 세트로 재배치된다.
+CanonicalizedExpressionSetWriteResult canonicalizeExpressionSetDrafts(
+  List<WordExpressionSetDraft> drafts, {
+  List<WordWriteExclusionIssue> legacyHiddenSlotIssues = const [],
+}) {
+  final expressionSets = <CanonicalExpressionWriteSet>[];
+  final exclusionIssues = <WordWriteExclusionIssue>[...legacyHiddenSlotIssues];
 
-  final columns = <String, String?>{};
+  for (var index = 0; index < drafts.length && index < 6; index++) {
+    final draft = drafts[index].normalized();
+    final hasSupplementalValue =
+        draft.transliteration.isNotEmpty || draft.pronunciation.isNotEmpty;
 
-  for (var index = 1; index <= 6; index++) {
-    final draft = index <= normalizedSets.length
-        ? normalizedSets[index - 1]
-        : const WordExpressionSetDraft.empty();
+    if (draft.spelling.isNotEmpty) {
+      final seq = expressionSets.length + 1;
+      expressionSets.add(
+        CanonicalExpressionWriteSet(
+          spelling: draft.spelling,
+          transliteration: _nullIfEmpty(draft.transliteration),
+          pronunciation: _nullIfEmpty(draft.pronunciation),
+          seq: seq,
+          isRepresentative: seq == 1,
+        ),
+      );
+      continue;
+    }
 
-    columns['표기$index'] = _nullIfEmpty(draft.spelling);
-    columns['음역$index'] = _nullIfEmpty(draft.transliteration);
-    columns['발음$index'] = _nullIfEmpty(draft.pronunciation);
+    if (!hasSupplementalValue) {
+      continue;
+    }
+
+    exclusionIssues.add(
+      WordWriteExclusionIssue(
+        issueCode: supplementalWithoutSpellingWriteIssueCode,
+        sourceKind: WordWriteExclusionSourceKind.draft,
+        sourceIndex: index + 1,
+        rawSpelling: _nullIfEmpty(draft.spelling),
+        rawTransliteration: _nullIfEmpty(draft.transliteration),
+        rawPronunciation: _nullIfEmpty(draft.pronunciation),
+        resolution: excludedFromWriteResolution,
+      ),
+    );
   }
 
-  return columns;
+  return CanonicalizedExpressionSetWriteResult(
+    expressionSets: expressionSets,
+    exclusionIssues: exclusionIssues,
+  );
+}
+
+List<WordWriteExclusionIssue> buildLegacyHiddenSlotWriteExclusionIssues(
+  Map<String, dynamic> word,
+) {
+  final readResult = readLegacyWordExpressionRow(word);
+  return buildLegacyHiddenSlotWriteExclusionIssuesFromReadResult(readResult);
+}
+
+List<WordWriteExclusionIssue>
+buildLegacyHiddenSlotWriteExclusionIssuesFromReadResult(
+  CanonicalExpressionReadResult readResult,
+) {
+  return readResult.issues
+      .map(
+        (issue) => WordWriteExclusionIssue(
+          issueCode: issue.issueCode,
+          sourceKind: WordWriteExclusionSourceKind.legacyHiddenSlot,
+          sourceIndex: issue.sourceSlot,
+          rawSpelling: issue.rawSpelling,
+          rawTransliteration: issue.rawTransliteration,
+          rawPronunciation: issue.rawPronunciation,
+          resolution: excludedFromWriteResolution,
+        ),
+      )
+      .toList(growable: false);
 }
 
 /// 기존 단어 맵을 컨트롤러 리스트로 변환하되 최소 1세트를 보장한다.
@@ -262,7 +318,7 @@ WordExpressionSetValidationResult validateExpressionSetDrafts(
       warnings.add(
         WordExpressionSetValidationIssue(
           severity: WordExpressionSetIssueSeverity.warning,
-          message: '표기가 없는 세트는 나중에 식별이 어려울 수 있습니다.',
+          message: '표기 없는 보조 입력은 저장 시 제외됩니다.',
           setIndex: index + 1,
         ),
       );
@@ -287,6 +343,87 @@ String? _nullIfEmpty(String value) {
     return null;
   }
   return trimmed;
+}
+
+Future<bool?> showWordWriteExclusionDialog(
+  BuildContext context,
+  List<WordWriteExclusionIssue> issues,
+) {
+  final draftIssues = issues
+      .where((issue) => issue.sourceKind == WordWriteExclusionSourceKind.draft)
+      .toList(growable: false);
+  final legacyIssues = issues
+      .where(
+        (issue) =>
+            issue.sourceKind == WordWriteExclusionSourceKind.legacyHiddenSlot,
+      )
+      .toList(growable: false);
+  final theme = Theme.of(context);
+
+  return showDialog<bool>(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: const Text('저장 제외 항목 확인'),
+        content: SizedBox(
+          width: 560,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text('다음 입력은 표기가 없어 저장되지 않고 제외됩니다.'),
+                if (draftIssues.isNotEmpty) ...[
+                  const SizedBox(height: 16),
+                  Text(
+                    '이번 입력에서 제외될 세트',
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  ...draftIssues.map(
+                    (issue) => Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: _WordWriteExclusionIssueCard(issue: issue),
+                    ),
+                  ),
+                ],
+                if (legacyIssues.isNotEmpty) ...[
+                  const SizedBox(height: 16),
+                  Text(
+                    '기존 데이터에서 함께 정리될 숨김 슬롯',
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text('기존 DB에 남아 있던 표기 없는 보조 입력도 이번 저장에서 정리됩니다.'),
+                  const SizedBox(height: 8),
+                  ...legacyIssues.map(
+                    (issue) => Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: _WordWriteExclusionIssueCard(issue: issue),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('취소'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('제외하고 저장'),
+          ),
+        ],
+      );
+    },
+  );
 }
 
 /// 표현 세트 리스트를 카드 형태로 표시하는 공통 섹션 위젯이다.
@@ -495,6 +632,52 @@ class WordExpressionSetSection extends StatelessWidget {
             ],
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _WordWriteExclusionIssueCard extends StatelessWidget {
+  final WordWriteExclusionIssue issue;
+
+  const _WordWriteExclusionIssueCard({required this.issue});
+
+  @override
+  Widget build(BuildContext context) {
+    final values = <String>[
+      if ((issue.rawSpelling ?? '').trim().isNotEmpty)
+        '표기: ${issue.rawSpelling!.trim()}',
+      if ((issue.rawTransliteration ?? '').trim().isNotEmpty)
+        '음역: ${issue.rawTransliteration!.trim()}',
+      if ((issue.rawPronunciation ?? '').trim().isNotEmpty)
+        '발음: ${issue.rawPronunciation!.trim()}',
+    ];
+
+    final title = issue.sourceKind == WordWriteExclusionSourceKind.draft
+        ? '세트 ${issue.sourceIndex}'
+        : '숨김 슬롯 ${issue.sourceIndex}';
+
+    return Container(
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(height: 6),
+          if (values.isEmpty)
+            const Text('저장 제외 대상 입력이 있습니다.')
+          else
+            Text(values.join('\n')),
+        ],
       ),
     );
   }

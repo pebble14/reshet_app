@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'package:sqflite_common/sqlite_api.dart';
 import '../../database/database_service.dart';
+import '../adapters/legacy_word_expression_write_adapter.dart';
 import '../models/relation_category_lookup.dart';
 import '../models/relation_type_lookup.dart';
 import '../models/word.dart';
+import '../../domain/word/word_write_models.dart';
 
 /// 단어(WORD_TABLE) 및 관계(WORD_RELATION) 조회 전용 Repository
 /// 그래프 엣지(관계선) 표시를 위한 관계 메타 정보
@@ -1496,33 +1498,31 @@ class WordRepository {
   /// - 현재 단계에서는 핵심 컬럼만 입력하고, 나머지는 null로 둔다.
   Future<void> createWord({
     required String id,
-    required String language,
-    String? strongNumber,
-    required String spelling1,
-    String? transliteration1,
-    String? pronunciation1,
-    Map<String, String?>? expressionColumns,
-    String? meaning1,
-    String? note,
+    required CanonicalWordWritePayload payload,
   }) async {
     final db = await DatabaseService.openDatabaseFile();
     final groupId = _newHistoryGroupId();
-    final normalizedExpressionColumns = _normalizeExpressionColumns(
-      spelling1: spelling1,
-      transliteration1: transliteration1,
-      pronunciation1: pronunciation1,
-      expressionColumns: expressionColumns,
+    final normalizedExpressionColumns = toLegacyWordExpressionColumns(
+      payload.expressionSets,
     );
+    final normalizedMeanings = payload.meanings
+        .take(7)
+        .map((value) => value.trim())
+        .where((value) => value.isNotEmpty)
+        .toList(growable: false);
 
     await db.transaction((txn) async {
       final row = {
         'id': id,
-        '언어': language,
-        '스트롱넘버': (strongNumber ?? '').trim().isEmpty
+        '언어': payload.language,
+        '스트롱넘버': (payload.strongNumber ?? '').trim().isEmpty
             ? null
-            : strongNumber!.trim(),
-        '의미1': (meaning1 ?? '').trim().isEmpty ? null : meaning1!.trim(),
-        '비고': (note ?? '').trim().isEmpty ? null : note!.trim(),
+            : payload.strongNumber!.trim(),
+        for (var index = 1; index <= 7; index++)
+          '의미$index': index <= normalizedMeanings.length
+              ? normalizedMeanings[index - 1]
+              : null,
+        '비고': (payload.note ?? '').trim().isEmpty ? null : payload.note!.trim(),
         ...normalizedExpressionColumns,
       };
 
@@ -1622,20 +1622,7 @@ class WordRepository {
   /// - id는 수정하지 않는다.
   Future<void> updateWord({
     required String id,
-    required String language,
-    String? strongNumber,
-    required String spelling1,
-    String? transliteration1,
-    String? pronunciation1,
-    Map<String, String?>? expressionColumns,
-    String? meaning1,
-    String? meaning2,
-    String? meaning3,
-    String? meaning4,
-    String? meaning5,
-    String? meaning6,
-    String? meaning7,
-    String? note,
+    required CanonicalWordWritePayload payload,
   }) async {
     final db = await DatabaseService.openDatabaseFile();
     final groupId = _newHistoryGroupId();
@@ -1648,28 +1635,29 @@ class WordRepository {
 
       final before = _sanitizeWordHistorySnapshot(beforeRaw);
       final after = Map<String, dynamic>.from(before);
-      final normalizedExpressionColumns = _normalizeExpressionColumns(
-        spelling1: spelling1,
-        transliteration1: transliteration1,
-        pronunciation1: pronunciation1,
-        expressionColumns: expressionColumns,
+      final normalizedExpressionColumns = toLegacyWordExpressionColumns(
+        payload.expressionSets,
       );
-      final normalizedMeanings =
-          [meaning1, meaning2, meaning3, meaning4, meaning5, meaning6, meaning7]
-              .map((value) {
-                final trimmed = (value ?? '').trim();
-                return trimmed.isEmpty ? null : trimmed;
-              })
-              .toList(growable: false);
+      final normalizedMeanings = payload.meanings
+          .take(7)
+          .map((value) {
+            final trimmed = value.trim();
+            return trimmed.isEmpty ? null : trimmed;
+          })
+          .toList(growable: false);
 
-      after['언어'] = language;
-      after['스트롱넘버'] = (strongNumber ?? '').trim().isEmpty
+      after['언어'] = payload.language;
+      after['스트롱넘버'] = (payload.strongNumber ?? '').trim().isEmpty
           ? null
-          : strongNumber!.trim();
-      after['비고'] = (note ?? '').trim().isEmpty ? null : note!.trim();
+          : payload.strongNumber!.trim();
+      after['비고'] = (payload.note ?? '').trim().isEmpty
+          ? null
+          : payload.note!.trim();
       after.addAll(normalizedExpressionColumns);
-      for (var index = 0; index < normalizedMeanings.length; index++) {
-        after['의미${index + 1}'] = normalizedMeanings[index];
+      for (var index = 1; index <= 7; index++) {
+        after['의미$index'] = index <= normalizedMeanings.length
+            ? normalizedMeanings[index - 1]
+            : null;
       }
 
       await txn.update(
@@ -1705,41 +1693,6 @@ class WordRepository {
 
   String _newHistoryGroupId() {
     return DateTime.now().microsecondsSinceEpoch.toString();
-  }
-
-  Map<String, String?> _normalizeExpressionColumns({
-    required String spelling1,
-    String? transliteration1,
-    String? pronunciation1,
-    Map<String, String?>? expressionColumns,
-  }) {
-    final normalizedColumns = <String, String?>{};
-
-    for (var index = 1; index <= 6; index++) {
-      final fallbackSpelling = index == 1 ? spelling1 : null;
-      final fallbackTransliteration = index == 1 ? transliteration1 : null;
-      final fallbackPronunciation = index == 1 ? pronunciation1 : null;
-
-      normalizedColumns['표기$index'] = _trimToNull(
-        expressionColumns?['표기$index'] ?? fallbackSpelling,
-      );
-      normalizedColumns['음역$index'] = _trimToNull(
-        expressionColumns?['음역$index'] ?? fallbackTransliteration,
-      );
-      normalizedColumns['발음$index'] = _trimToNull(
-        expressionColumns?['발음$index'] ?? fallbackPronunciation,
-      );
-    }
-
-    return normalizedColumns;
-  }
-
-  String? _trimToNull(String? value) {
-    final trimmed = (value ?? '').trim();
-    if (trimmed.isEmpty) {
-      return null;
-    }
-    return trimmed;
   }
 
   Future<void> _insertHistory(

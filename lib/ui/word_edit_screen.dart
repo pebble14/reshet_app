@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../data/repositories/word_repository.dart';
+import '../domain/word/word_write_models.dart';
+import '../domain/word/word_write_service.dart';
 import 'word_graph_cache.dart';
 import 'word_expression_set.dart';
 
@@ -15,10 +17,12 @@ class WordEditScreen extends StatefulWidget {
 
 class _WordEditScreenState extends State<WordEditScreen> {
   final WordRepository _repository = WordRepository();
+  final WordWriteService _wordWriteService = WordWriteService();
 
   late final TextEditingController _strongController;
   late final TextEditingController _noteController;
   late final TextEditingController _customLanguageController;
+  late final List<WordWriteExclusionIssue> _legacyHiddenSlotIssues;
   final List<WordExpressionSetControllerGroup> _expressionSetControllerGroups =
       [];
   final List<TextEditingController> _meaningControllers = [];
@@ -55,6 +59,9 @@ class _WordEditScreenState extends State<WordEditScreen> {
 
     _strongController = TextEditingController(
       text: (widget.word['스트롱넘버'] ?? '').toString(),
+    );
+    _legacyHiddenSlotIssues = buildLegacyHiddenSlotWriteExclusionIssues(
+      widget.word,
     );
     _expressionSetControllerGroups.addAll(
       createExpressionSetControllerGroups(widget.word),
@@ -126,16 +133,6 @@ class _WordEditScreenState extends State<WordEditScreen> {
         .where((value) => value.isNotEmpty)
         .take(7)
         .toList(growable: false);
-  }
-
-  Map<String, String?> _buildMeaningColumns(List<String> values) {
-    final columns = <String, String?>{};
-
-    for (var index = 1; index <= 7; index++) {
-      columns['의미$index'] = index <= values.length ? values[index - 1] : null;
-    }
-
-    return columns;
   }
 
   void _addMeaningField() {
@@ -358,9 +355,6 @@ class _WordEditScreenState extends State<WordEditScreen> {
       return;
     }
 
-    final expressionColumns = fromExpressionSetList(expressionSetDrafts);
-    final spelling = expressionColumns['표기1']!;
-
     final resolvedLanguage = _resolveLanguageValue();
     if (resolvedLanguage == null || resolvedLanguage.isEmpty) {
       ScaffoldMessenger.of(
@@ -369,22 +363,46 @@ class _WordEditScreenState extends State<WordEditScreen> {
       return;
     }
 
+    final canonicalizationResult = canonicalizeExpressionSetDrafts(
+      expressionSetDrafts,
+      legacyHiddenSlotIssues: _legacyHiddenSlotIssues,
+    );
     final strong = _strongController.text.trim().isEmpty
         ? null
         : _strongController.text.trim().toUpperCase();
-
-    final duplicates = await _repository.findDuplicateCandidates(
+    final note = _noteController.text.trim().isEmpty
+        ? null
+        : _noteController.text.trim();
+    final payload = CanonicalWordWritePayload(
       language: resolvedLanguage,
       strongNumber: strong,
-      spelling1: spelling,
+      expressionSets: canonicalizationResult.expressionSets,
+      meanings: _collectMeaningValues(),
+      note: note,
+    );
+
+    if (canonicalizationResult.exclusionIssues.isNotEmpty) {
+      final shouldContinue = await showWordWriteExclusionDialog(
+        context,
+        canonicalizationResult.exclusionIssues,
+      );
+      if (shouldContinue != true) {
+        return;
+      }
+    }
+
+    final duplicates = await _repository.findDuplicateCandidates(
+      language: payload.language,
+      strongNumber: payload.strongNumber,
+      spelling1: payload.representativeSpelling,
       excludeId: widget.word['id'].toString(),
     );
 
     if (duplicates.isNotEmpty) {
       final shouldContinue = await _showDuplicateWarningDialog(
-        language: resolvedLanguage,
-        strongNumber: strong,
-        spelling1: spelling,
+        language: payload.language,
+        strongNumber: payload.strongNumber,
+        spelling1: payload.representativeSpelling,
         candidates: duplicates,
       );
 
@@ -394,41 +412,23 @@ class _WordEditScreenState extends State<WordEditScreen> {
     setState(() => _isSaving = true);
 
     try {
-      final meaningColumns = _buildMeaningColumns(_collectMeaningValues());
-
-      await _repository.updateWord(
-        id: widget.word['id'].toString(),
-        language: resolvedLanguage,
-        strongNumber: strong,
-        spelling1: spelling,
-        transliteration1: expressionColumns['음역1'],
-        pronunciation1: expressionColumns['발음1'],
-        expressionColumns: expressionColumns,
-        meaning1: meaningColumns['의미1'],
-        meaning2: meaningColumns['의미2'],
-        meaning3: meaningColumns['의미3'],
-        meaning4: meaningColumns['의미4'],
-        meaning5: meaningColumns['의미5'],
-        meaning6: meaningColumns['의미6'],
-        meaning7: meaningColumns['의미7'],
-        note: _noteController.text.trim().isEmpty
-            ? null
-            : _noteController.text.trim(),
+      await _wordWriteService.execute(
+        UpdateWordCommand(
+          wordId: widget.word['id'].toString(),
+          payload: payload,
+        ),
       );
       WordGraphDataCache.clear();
 
       if (!mounted) return;
 
-      final updatedWord = Map<String, dynamic>.from(widget.word);
-      updatedWord['언어'] = resolvedLanguage;
-      updatedWord['스트롱넘버'] = strong;
-      updatedWord.addAll(expressionColumns);
-      for (final entry in meaningColumns.entries) {
-        updatedWord[entry.key] = entry.value;
+      final updatedWord = await _repository.getWordMapById(
+        widget.word['id'].toString(),
+      );
+      if (!mounted) return;
+      if (updatedWord == null) {
+        throw Exception('저장 후 단어를 다시 불러오지 못했습니다.');
       }
-      updatedWord['비고'] = _noteController.text.trim().isEmpty
-          ? null
-          : _noteController.text.trim();
 
       _isClosingExpressionSetUi = true;
       FocusManager.instance.primaryFocus?.unfocus();
