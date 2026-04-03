@@ -14,6 +14,8 @@ import '../domain/graph/graph_node.dart';
 import '../domain/graph/graph_view_data.dart';
 import '../domain/graph/layout/graph_layout_strategy_resolver.dart';
 import '../domain/relation/relation_formatter.dart';
+import '../domain/word/word_write_models.dart';
+import '../domain/word/word_write_service.dart';
 import 'word_expression_set.dart';
 import 'word_graph_cache.dart';
 import 'word_edit_screen.dart';
@@ -278,29 +280,15 @@ class _SelectedNodeRelationEntry {
 
 /// 신규 단어 생성 다이얼로그의 결과를 담는 DTO
 class CreateWordPayload {
-  final String language;
-  final String? strongNumber;
-  final Map<String, String?> expressionColumns;
-  final String? meaning1;
-  final String? note;
+  final CanonicalWordWritePayload wordPayload;
 
   /// true면 단어 저장 후 현재 중심 단어와 관계 추가를 이어서 진행
   final bool createRelationAfterSave;
 
   CreateWordPayload({
-    required this.language,
-    required this.strongNumber,
-    required this.expressionColumns,
-    required this.meaning1,
-    required this.note,
+    required this.wordPayload,
     required this.createRelationAfterSave,
   });
-
-  String get spelling1 => expressionColumns['표기1'] ?? '';
-
-  String? get transliteration1 => expressionColumns['음역1'];
-
-  String? get pronunciation1 => expressionColumns['발음1'];
 }
 
 class _CreateWordDialog extends StatefulWidget {
@@ -459,7 +447,7 @@ class _CreateWordDialogState extends State<_CreateWordDialog> {
     });
   }
 
-  void _save() {
+  Future<void> _save() async {
     final expressionSetDrafts = collectExpressionSetDrafts(
       _expressionSetControllerGroups,
     );
@@ -487,20 +475,36 @@ class _CreateWordDialogState extends State<_CreateWordDialog> {
       resolvedLanguage = _selectedLanguageGroup;
     }
 
-    final expressionColumns = fromExpressionSetList(expressionSetDrafts);
+    final canonicalizationResult = canonicalizeExpressionSetDrafts(
+      expressionSetDrafts,
+    );
+    final payload = CanonicalWordWritePayload(
+      language: resolvedLanguage,
+      strongNumber: _strongController.text.trim().isEmpty
+          ? null
+          : _strongController.text.trim().toUpperCase(),
+      expressionSets: canonicalizationResult.expressionSets,
+      meanings: _meaningController.text.trim().isEmpty
+          ? const <String>[]
+          : <String>[_meaningController.text.trim()],
+      note: _noteController.text.trim().isEmpty
+          ? null
+          : _noteController.text.trim(),
+    );
+
+    if (canonicalizationResult.exclusionIssues.isNotEmpty) {
+      final shouldContinue = await showWordWriteExclusionDialog(
+        context,
+        canonicalizationResult.exclusionIssues,
+      );
+      if (shouldContinue != true) {
+        return;
+      }
+    }
+
     _closeDialog(
       CreateWordPayload(
-        language: resolvedLanguage,
-        strongNumber: _strongController.text.trim().isEmpty
-            ? null
-            : _strongController.text.trim().toUpperCase(),
-        expressionColumns: expressionColumns,
-        meaning1: _meaningController.text.trim().isEmpty
-            ? null
-            : _meaningController.text.trim(),
-        note: _noteController.text.trim().isEmpty
-            ? null
-            : _noteController.text.trim(),
+        wordPayload: payload,
         createRelationAfterSave: _createRelationAfterSave,
       ),
     );
@@ -679,6 +683,7 @@ class WordGraphScreen extends StatefulWidget {
 
 class _WordGraphScreenState extends State<WordGraphScreen> {
   final WordRepository _repository = WordRepository();
+  final WordWriteService _wordWriteService = WordWriteService();
   final GraphBuilder _graphBuilder = const GraphBuilder();
   static const GraphLayoutMode _graphLayoutMode = GraphLayoutMode.forceDirected;
   static const int _defaultGraphMaxNodes = 30;
@@ -4514,38 +4519,29 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     if (payload == null) return;
 
     final duplicates = await _repository.findDuplicateCandidates(
-      language: payload.language,
-      strongNumber: payload.strongNumber,
-      spelling1: payload.spelling1,
+      language: payload.wordPayload.language,
+      strongNumber: payload.wordPayload.strongNumber,
+      spelling1: payload.wordPayload.representativeSpelling,
     );
 
     if (duplicates.isNotEmpty) {
       final shouldContinue = await _showDuplicateWarningDialog(
-        language: payload.language,
-        strongNumber: payload.strongNumber,
-        spelling1: payload.spelling1,
+        language: payload.wordPayload.language,
+        strongNumber: payload.wordPayload.strongNumber,
+        spelling1: payload.wordPayload.representativeSpelling,
         candidates: duplicates,
       );
 
       if (shouldContinue != true) return;
     }
 
-    final newId = await _repository.generateNextWordId(
-      language: payload.language,
-      strongNumber: payload.strongNumber,
+    final writeResult = await _wordWriteService.execute(
+      CreateWordCommand(payload: payload.wordPayload),
     );
-
-    await _repository.createWord(
-      id: newId,
-      language: payload.language,
-      strongNumber: payload.strongNumber,
-      spelling1: payload.spelling1,
-      transliteration1: payload.transliteration1,
-      pronunciation1: payload.pronunciation1,
-      expressionColumns: payload.expressionColumns,
-      meaning1: payload.meaning1,
-      note: payload.note,
-    );
+    final newId = writeResult.wordId;
+    if (newId == null || newId.isEmpty) {
+      throw Exception('신규 단어 ID를 생성하지 못했습니다.');
+    }
 
     final createdWordMap = await _repository.getWordMapById(newId);
     Map<String, dynamic>? currentWordMap = createdWordMap == null

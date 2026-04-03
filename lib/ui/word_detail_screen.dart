@@ -5,6 +5,8 @@ import 'word_edit_screen.dart';
 import 'word_info_panel.dart';
 import '../data/models/word.dart';
 import '../data/repositories/word_repository.dart';
+import '../domain/word/word_write_models.dart';
+import '../domain/word/word_write_service.dart';
 
 class WordDetailScreen extends StatefulWidget {
   final Map<String, dynamic> word;
@@ -17,6 +19,7 @@ class WordDetailScreen extends StatefulWidget {
 
 class _WordDetailScreenState extends State<WordDetailScreen> {
   final WordRepository _repository = WordRepository();
+  final WordWriteService _wordWriteService = WordWriteService();
 
   late Map<String, dynamic> _word;
   bool _isDeleting = false;
@@ -90,7 +93,7 @@ class _WordDetailScreenState extends State<WordDetailScreen> {
     setState(() => _isDeleting = true);
 
     try {
-      await _repository.deleteWord(wordId);
+      await _wordWriteService.execute(DeleteWordCommand(wordId: wordId));
       WordGraphDataCache.clear();
 
       if (!mounted) return;
