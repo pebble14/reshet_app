@@ -10,6 +10,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../domain/expression/home_word_display_summary.dart';
 import '../database/database_service.dart';
 import 'word_detail_screen.dart';
 import '../data/models/word.dart';
@@ -104,18 +105,6 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     }
     return '';
-  }
-
-  String _joinNonEmptyValues(Iterable<String> values, String separator) {
-    return values.where((value) => value.isNotEmpty).join(separator);
-  }
-
-  String _buildDisplaySpelling(Map<String, dynamic> wordMap) {
-    final spelling1 = (wordMap['표기1'] ?? '').toString().trim();
-    if (spelling1.isNotEmpty) {
-      return spelling1;
-    }
-    return (wordMap['표기2'] ?? '').toString().trim();
   }
 
   String _formatDisplayStrong(String strong) {
@@ -272,25 +261,19 @@ class _HomeScreenState extends State<HomeScreen> {
     _scrollToDefaultStrongIndex(targetIndex);
   }
 
-  String _buildDefaultStrongListTitle(Map<String, dynamic> wordMap) {
-    final strong = _formatDisplayStrong((wordMap['스트롱넘버'] ?? '').toString());
-    final displaySpelling = _buildDisplaySpelling(wordMap);
-    return _joinNonEmptyValues([strong, displaySpelling], ' · ');
+  String _buildDefaultStrongListTitle({
+    required String strong,
+    required HomeWordDisplaySummary summary,
+  }) {
+    return buildStrongListTitle(strong: strong, summary: summary);
   }
 
-  InlineSpan _buildWordTitle(Map<String, dynamic> wordMap) {
-    final strong = _formatDisplayStrong((wordMap['스트롱넘버'] ?? '').toString());
-    final displaySpelling = _buildDisplaySpelling(wordMap);
-    final transliteration = _readFirstNonEmptyValue(wordMap, ['음역1', '음역']);
-    final pronunciation = _readFirstNonEmptyValue(wordMap, ['발음1', '발음']);
-
+  InlineSpan _buildWordTitle({
+    required String strong,
+    required HomeWordDisplaySummary summary,
+  }) {
     return TextSpan(
-      text: _joinNonEmptyValues([
-        strong,
-        displaySpelling,
-        transliteration,
-        pronunciation,
-      ], ' · '),
+      text: buildSearchResultTitle(strong: strong, summary: summary),
     );
   }
 
@@ -727,6 +710,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
                       Widget buildWordTile(BuildContext context, int index) {
                         final wordMap = words[index];
+                        final displayStrong = _formatDisplayStrong(
+                          (wordMap['스트롱넘버'] ?? '').toString(),
+                        );
+                        final displaySummary = buildHomeWordDisplaySummary(
+                          wordMap,
+                        );
                         final subtitleText = isDefaultStrongList
                             ? ''
                             : _buildWordSubtitle(wordMap);
@@ -734,12 +723,18 @@ class _HomeScreenState extends State<HomeScreen> {
                         return ListTile(
                           title: isDefaultStrongList
                               ? Text(
-                                  _buildDefaultStrongListTitle(wordMap),
+                                  _buildDefaultStrongListTitle(
+                                    strong: displayStrong,
+                                    summary: displaySummary,
+                                  ),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 )
                               : Text.rich(
-                                  _buildWordTitle(wordMap),
+                                  _buildWordTitle(
+                                    strong: displayStrong,
+                                    summary: displaySummary,
+                                  ),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
