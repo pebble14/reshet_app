@@ -1,4 +1,4 @@
-# TASKS.md
+# FEATURE_STATUS
 
 ## 프로젝트 목표
 
@@ -145,7 +145,7 @@ Reshet은 단순한 단어 사전이 아니라
 
 # Codex 작업 규칙
 
-Codex는 TASKS.md를 참고하여 다음을 수행한다.
+Codex는 FEATURE_STATUS.md를 참고하여 다음을 수행한다.
 
 1. 이미 완료된 작업을 반복하지 않는다
 2. 다음 단계 작업을 우선 제안한다

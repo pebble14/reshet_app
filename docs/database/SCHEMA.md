@@ -1,4 +1,7 @@
-# DATABASE_SCHEMA.md
+# SCHEMA
+
+이 문서는 현재 기준 데이터베이스 스키마를 설명한다.  
+SCHEMA_v2.md는 차기 구조 설계 문서이다.
 
 ## 데이터베이스 개요
 
@@ -150,7 +153,7 @@ H0001_0000
 | `morphological` | `compound` | 합성 |
 | `unspecified` | `related` | 일반 관련 |
 
-전체 카탈로그와 description은 [RELATION_MODEL_v1.md](/c:/Users/kkiih/Documents/Workspace/FlutterWorkspace/reshet_app/RELATION_MODEL_v1.md) 및 [DATABASE_SCHEMA_v2.md](/c:/Users/kkiih/Documents/Workspace/FlutterWorkspace/reshet_app/DATABASE_SCHEMA_v2.md) 기준을 따른다.
+전체 카탈로그와 description은 [RELATION_MODEL_v1.md](./RELATION_MODEL_v1.md) 및 [SCHEMA_v2.md](./SCHEMA_v2.md) 기준을 따른다.
 
 ---
 
