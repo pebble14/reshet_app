@@ -2,11 +2,14 @@ import 'dart:convert';
 import 'package:sqflite_common/sqlite_api.dart';
 import '../../database/database_service.dart';
 import '../adapters/legacy_word_expression_read_adapter.dart';
+import '../adapters/normalized_word_expression_read_adapter.dart';
 import '../adapters/legacy_word_expression_write_adapter.dart';
 import '../adapters/normalized_word_expression_write_adapter.dart';
 import '../models/relation_category_lookup.dart';
 import '../models/relation_type_lookup.dart';
 import '../models/word.dart';
+import '../../domain/expression/expression_read_models.dart';
+import '../../domain/expression/read_source_policy.dart';
 import '../../domain/word/word_write_models.dart';
 
 /// 단어(WORD_TABLE) 및 관계(WORD_RELATION) 조회 전용 Repository
@@ -79,6 +82,9 @@ typedef VisibleWordGraphData = ({
 });
 
 class WordRepository {
+  static const ReadSourcePolicy _defaultReadSourcePolicy =
+      ReadSourcePolicy.legacy;
+  static ReadSourcePolicy? _debugReadSourcePolicyOverride;
   static final List<String> _homeSearchSpellingColumns = List.unmodifiable(
     List.generate(6, (index) => '표기${index + 1}'),
   );
@@ -126,6 +132,54 @@ class WordRepository {
     'ω': 'ώὼὠὡὢὣὤὥὦὧῲῳῴῶῷ',
     'ρ': 'ῤῥ',
   };
+  final Map<String, WordExpressionReadSnapshot>
+  _lastWordExpressionReadSnapshots = {};
+
+  static ReadSourcePolicy get debugCurrentReadSourcePolicy =>
+      _debugReadSourcePolicyOverride ?? _defaultReadSourcePolicy;
+
+  static void debugSetReadSourcePolicyOverride(ReadSourcePolicy? policy) {
+    _debugReadSourcePolicyOverride = policy;
+  }
+
+  Map<String, WordExpressionReadSnapshot>
+  get debugLastWordExpressionReadSnapshots =>
+      Map.unmodifiable(_lastWordExpressionReadSnapshots);
+
+  WordExpressionReadSnapshot? debugLastWordExpressionReadSnapshotFor(
+    String wordId,
+  ) {
+    return _lastWordExpressionReadSnapshots[wordId.trim()];
+  }
+
+  Future<WordExpressionReadSnapshot?> debugInspectWordExpressionReadByWordId(
+    String wordId, {
+    String context = 'debugInspectWordExpressionReadByWordId',
+  }) async {
+    final normalizedId = wordId.trim();
+    if (normalizedId.isEmpty) {
+      return null;
+    }
+
+    final db = await DatabaseService.openDatabaseFile();
+    final rows = await db.query(
+      'WORD_TABLE',
+      where: 'id = ?',
+      whereArgs: [normalizedId],
+      limit: 1,
+    );
+    if (rows.isEmpty) {
+      return null;
+    }
+
+    final snapshots = await _resolveWordExpressionReadSnapshots(
+      db,
+      rows.map((row) => Map<String, dynamic>.from(row)),
+      context: context,
+    );
+    _lastWordExpressionReadSnapshots.addAll(snapshots);
+    return snapshots[normalizedId];
+  }
 
   Map<String, dynamic> _sanitizeWordHistorySnapshot(Map<String, dynamic> row) {
     final sanitized = <String, dynamic>{};
@@ -163,6 +217,228 @@ class WordRepository {
   String? _normalizeNullableCode(String? value) {
     final normalized = (value ?? '').trim();
     return normalized.isEmpty ? null : normalized;
+  }
+
+  ReadFallbackObservation _buildFallbackObservation({
+    required String wordId,
+    required ReadSourcePolicy policy,
+    required ReadFallbackReason reason,
+    required String context,
+    String? detail,
+  }) {
+    return ReadFallbackObservation(
+      wordId: wordId,
+      policy: policy,
+      reason: reason,
+      context: context,
+      detail: detail,
+    );
+  }
+
+  Future<void> _captureWordExpressionReadSnapshots(
+    Database db,
+    Iterable<Map<String, dynamic>> rows, {
+    required String context,
+  }) async {
+    final snapshots = await _resolveWordExpressionReadSnapshots(
+      db,
+      rows,
+      context: context,
+    );
+    _lastWordExpressionReadSnapshots.addAll(snapshots);
+  }
+
+  Future<Map<String, WordExpressionReadSnapshot>>
+  _resolveWordExpressionReadSnapshots(
+    Database db,
+    Iterable<Map<String, dynamic>> rows, {
+    required String context,
+  }) async {
+    final rowsByWordId = <String, Map<String, dynamic>>{};
+    final legacyResultsByWordId = <String, CanonicalExpressionReadResult>{};
+
+    for (final rawRow in rows) {
+      final row = Map<String, dynamic>.from(rawRow);
+      final wordId = (row['id'] ?? '').toString().trim();
+      if (wordId.isEmpty) {
+        continue;
+      }
+      rowsByWordId[wordId] = row;
+      legacyResultsByWordId[wordId] = readLegacyWordExpressionRow(row);
+    }
+
+    if (rowsByWordId.isEmpty) {
+      return const {};
+    }
+
+    final policy = debugCurrentReadSourcePolicy;
+    if (policy == ReadSourcePolicy.legacy) {
+      return {
+        for (final entry in rowsByWordId.entries)
+          entry.key: WordExpressionReadSnapshot(
+            wordId: entry.key,
+            context: context,
+            requestedPolicy: policy,
+            resolvedSource: ResolvedReadSource.legacy,
+            readResult: legacyResultsByWordId[entry.key]!,
+          ),
+      };
+    }
+
+    late final Map<String, List<Map<String, dynamic>>> normalizedRowsByWordId;
+    try {
+      normalizedRowsByWordId = await _loadNormalizedExpressionRowsByWordIds(
+        db,
+        rowsByWordId.keys,
+      );
+    } catch (error) {
+      return {
+        for (final entry in rowsByWordId.entries)
+          entry.key: _snapshotForNormalizedQueryFailure(
+            wordId: entry.key,
+            context: context,
+            policy: policy,
+            legacyResult: legacyResultsByWordId[entry.key]!,
+            error: error,
+          ),
+      };
+    }
+
+    return {
+      for (final entry in rowsByWordId.entries)
+        entry.key: _resolveSnapshotFromPolicy(
+          wordId: entry.key,
+          context: context,
+          policy: policy,
+          legacyResult: legacyResultsByWordId[entry.key]!,
+          normalizedRows: normalizedRowsByWordId[entry.key] ?? const [],
+        ),
+    };
+  }
+
+  Future<Map<String, List<Map<String, dynamic>>>>
+  _loadNormalizedExpressionRowsByWordIds(
+    Database db,
+    Iterable<String> wordIds,
+  ) async {
+    final orderedWordIds = <String>[];
+    final seenWordIds = <String>{};
+
+    for (final wordId in wordIds) {
+      final normalizedWordId = wordId.trim();
+      if (normalizedWordId.isEmpty || !seenWordIds.add(normalizedWordId)) {
+        continue;
+      }
+      orderedWordIds.add(normalizedWordId);
+    }
+
+    if (orderedWordIds.isEmpty) {
+      return const {};
+    }
+
+    final placeholders = List.filled(orderedWordIds.length, '?').join(', ');
+    final rows = await db.rawQuery('''
+      SELECT id, word_id, seq, is_representative, spelling, transliteration, pronunciation
+      FROM word_expression_set
+      WHERE word_id IN ($placeholders)
+      ORDER BY word_id ASC, seq ASC, id ASC
+      ''', orderedWordIds);
+
+    final rowsByWordId = <String, List<Map<String, dynamic>>>{};
+    for (final rawRow in rows) {
+      final row = Map<String, dynamic>.from(rawRow);
+      final wordId = (row['word_id'] ?? '').toString().trim();
+      if (wordId.isEmpty) {
+        continue;
+      }
+      rowsByWordId.putIfAbsent(wordId, () => <Map<String, dynamic>>[]).add(row);
+    }
+
+    return rowsByWordId;
+  }
+
+  WordExpressionReadSnapshot _snapshotForNormalizedQueryFailure({
+    required String wordId,
+    required String context,
+    required ReadSourcePolicy policy,
+    required CanonicalExpressionReadResult legacyResult,
+    required Object error,
+  }) {
+    final fallbackObservation = _buildFallbackObservation(
+      wordId: wordId,
+      policy: policy,
+      reason: ReadFallbackReason.queryFailed,
+      context: context,
+      detail: error.toString(),
+    );
+
+    if (policy == ReadSourcePolicy.normalizedWithFallback) {
+      return WordExpressionReadSnapshot(
+        wordId: wordId,
+        context: context,
+        requestedPolicy: policy,
+        resolvedSource: ResolvedReadSource.legacy,
+        readResult: legacyResult,
+        fallbackObservation: fallbackObservation,
+      );
+    }
+
+    return WordExpressionReadSnapshot(
+      wordId: wordId,
+      context: context,
+      requestedPolicy: policy,
+      resolvedSource: ResolvedReadSource.normalized,
+      readResult: const CanonicalExpressionReadResult(),
+      fallbackObservation: fallbackObservation,
+    );
+  }
+
+  WordExpressionReadSnapshot _resolveSnapshotFromPolicy({
+    required String wordId,
+    required String context,
+    required ReadSourcePolicy policy,
+    required CanonicalExpressionReadResult legacyResult,
+    required List<Map<String, dynamic>> normalizedRows,
+  }) {
+    final normalizedOutcome = readNormalizedWordExpressionRows(normalizedRows);
+    if (normalizedOutcome.isSuccess) {
+      return WordExpressionReadSnapshot(
+        wordId: wordId,
+        context: context,
+        requestedPolicy: policy,
+        resolvedSource: ResolvedReadSource.normalized,
+        readResult: normalizedOutcome.readResult!,
+      );
+    }
+
+    final fallbackObservation = _buildFallbackObservation(
+      wordId: wordId,
+      policy: policy,
+      reason:
+          normalizedOutcome.failureReason ?? ReadFallbackReason.mappingInvalid,
+      context: context,
+      detail: normalizedOutcome.detail,
+    );
+
+    if (policy == ReadSourcePolicy.normalizedWithFallback) {
+      return WordExpressionReadSnapshot(
+        wordId: wordId,
+        context: context,
+        requestedPolicy: policy,
+        resolvedSource: ResolvedReadSource.legacy,
+        readResult: legacyResult,
+        fallbackObservation: fallbackObservation,
+      );
+    }
+
+    return WordExpressionReadSnapshot(
+      wordId: wordId,
+      context: context,
+      requestedPolicy: policy,
+      resolvedSource: ResolvedReadSource.normalized,
+      readResult: const CanonicalExpressionReadResult(),
+      fallbackObservation: fallbackObservation,
+    );
   }
 
   ({String wordId1, String wordId2, String directionCode})
@@ -222,7 +498,11 @@ class WordRepository {
     );
 
     if (rows.isEmpty) return null;
-    return Map<String, dynamic>.from(rows.first);
+    final wordRow = Map<String, dynamic>.from(rows.first);
+    await _captureWordExpressionReadSnapshots(db, [
+      wordRow,
+    ], context: 'getWordMapById');
+    return wordRow;
   }
 
   Future<List<Map<String, dynamic>>> getWordsByIds(List<String> wordIds) async {
@@ -241,9 +521,17 @@ class WordRepository {
 
     final db = await DatabaseService.openDatabaseFile();
     final placeholders = List.filled(orderedIds.length, '?').join(', ');
-    final rows = await db.rawQuery(
+    final rawRows = await db.rawQuery(
       'SELECT * FROM WORD_TABLE WHERE id IN ($placeholders)',
       orderedIds,
+    );
+    final rows = rawRows
+        .map((row) => Map<String, dynamic>.from(row))
+        .toList(growable: false);
+    await _captureWordExpressionReadSnapshots(
+      db,
+      rows,
+      context: 'getWordsByIds',
     );
 
     final rowsById = <String, Map<String, dynamic>>{
@@ -484,7 +772,16 @@ class WordRepository {
   /// - 상세 화면에서 모든 컬럼을 보여주기 위해 Map 그대로 반환한다.
   Future<List<Map<String, dynamic>>> getWordsMap({int limit = 50}) async {
     final db = await DatabaseService.openDatabaseFile();
-    return await db.query('WORD_TABLE', limit: limit);
+    final rows = await db.query('WORD_TABLE', limit: limit);
+    final normalizedRows = rows
+        .map((row) => Map<String, dynamic>.from(row))
+        .toList(growable: false);
+    await _captureWordExpressionReadSnapshots(
+      db,
+      normalizedRows,
+      context: 'getWordsMap',
+    );
+    return normalizedRows;
   }
 
   /// 홈 화면 기본 리스트용 Strong 사전형 목록 조회
@@ -514,7 +811,16 @@ class WordRepository {
       args.add(limit);
     }
 
-    return await db.rawQuery(sql.toString(), args);
+    final rows = await db.rawQuery(sql.toString(), args);
+    final normalizedRows = rows
+        .map((row) => Map<String, dynamic>.from(row))
+        .toList(growable: false);
+    await _captureWordExpressionReadSnapshots(
+      db,
+      normalizedRows,
+      context: 'getStrongWordsMap',
+    );
+    return normalizedRows;
   }
 
   String _normalizeStrongValue(String strong) {
@@ -887,15 +1193,21 @@ class WordRepository {
       ''',
       [prefix, numericPart],
     );
-
-    return rows
+    final filteredRows = rows
         .where(
           (row) =>
               _normalizeStrongValue((row['스트롱넘버'] ?? '').toString()) ==
               normalizedStrong,
         )
         .take(limit)
-        .toList();
+        .map((row) => Map<String, dynamic>.from(row))
+        .toList(growable: false);
+    await _captureWordExpressionReadSnapshots(
+      db,
+      filteredRows,
+      context: 'searchStrongExactMap',
+    );
+    return filteredRows;
   }
 
   /// 키워드로 단어 검색 (홈 검색용)
@@ -973,7 +1285,16 @@ class WordRepository {
       return left.id.compareTo(right.id);
     });
 
-    return scoredRows.take(limit).map((entry) => entry.row).toList();
+    final resultRows = scoredRows
+        .take(limit)
+        .map((entry) => Map<String, dynamic>.from(entry.row))
+        .toList(growable: false);
+    await _captureWordExpressionReadSnapshots(
+      db,
+      resultRows,
+      context: 'searchWordsMap',
+    );
+    return resultRows;
   }
 
   /// WORD_RELATION 1건 삭제(트랜잭션)
