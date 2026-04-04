@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'word_graph_screen.dart';
 import 'word_graph_cache.dart';
@@ -22,12 +24,41 @@ class _WordDetailScreenState extends State<WordDetailScreen> {
   final WordWriteService _wordWriteService = WordWriteService();
 
   late Map<String, dynamic> _word;
+  late Map<String, dynamic> _displayWord;
   bool _isDeleting = false;
+  int _detailReloadToken = 0;
 
   @override
   void initState() {
     super.initState();
     _word = Map<String, dynamic>.from(widget.word);
+    _displayWord = Map<String, dynamic>.from(widget.word);
+    unawaited(_refreshWordDetailForReadSourcePhase2Only());
+  }
+
+  Future<void> _refreshWordDetailForReadSourcePhase2Only() async {
+    final wordId = (_word['id'] ?? '').toString().trim();
+    if (wordId.isEmpty) {
+      return;
+    }
+
+    final requestToken = ++_detailReloadToken;
+
+    try {
+      final reloadedWord = await _repository
+          .getWordDetailMapByIdForReadSourcePhase2Only(wordId);
+      if (!mounted ||
+          requestToken != _detailReloadToken ||
+          reloadedWord == null) {
+        return;
+      }
+
+      setState(() {
+        _displayWord = Map<String, dynamic>.from(reloadedWord);
+      });
+    } catch (_) {
+      // Keep the initial widget.word visible so fallback and reload errors stay silent.
+    }
   }
 
   Future<void> _openEdit() async {
@@ -37,7 +68,11 @@ class _WordDetailScreenState extends State<WordDetailScreen> {
     );
 
     if (result != null) {
-      setState(() => _word = result);
+      setState(() {
+        _word = Map<String, dynamic>.from(result);
+        _displayWord = Map<String, dynamic>.from(result);
+      });
+      unawaited(_refreshWordDetailForReadSourcePhase2Only());
       if (!mounted) return;
       ScaffoldMessenger.of(
         context,
@@ -117,10 +152,12 @@ class _WordDetailScreenState extends State<WordDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(buildWordRepresentativeSpelling(_word, fallback: '상세 정보')),
+        title: Text(
+          buildWordRepresentativeSpelling(_displayWord, fallback: '상세 정보'),
+        ),
       ),
       body: WordInfoPanel(
-        wordMap: _word,
+        wordMap: _displayWord,
         onEdit: _openEdit,
         onShowGraph: _openGraph,
         onDelete: _confirmDelete,

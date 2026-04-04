@@ -128,6 +128,7 @@ Reshet은 단어 사이의 관계를 탐색하기 위한 도구이다.
 - [x] word_expression_set read source policy 기반 도입
 - [x] word_expression_set normalized read adapter 연결
 - [x] word_expression_set fallback 판정/관측 구조 도입
+- [x] word_expression_set detail-only phase 2 read path 적용
 - [ ] word_expression_set read source 전환
 - [ ] 확장 가능한 관계 구조 설계
 

@@ -84,6 +84,8 @@ typedef VisibleWordGraphData = ({
 class WordRepository {
   static const ReadSourcePolicy _defaultReadSourcePolicy =
       ReadSourcePolicy.legacy;
+  static const String _detailReadPhase2OnlyContext =
+      'getWordDetailMapByIdForReadSourcePhase2Only';
   static ReadSourcePolicy? _debugReadSourcePolicyOverride;
   static final List<String> _homeSearchSpellingColumns = List.unmodifiable(
     List.generate(6, (index) => '표기${index + 1}'),
@@ -134,6 +136,7 @@ class WordRepository {
   };
   final Map<String, WordExpressionReadSnapshot>
   _lastWordExpressionReadSnapshots = {};
+  final List<WordExpressionReadSnapshot> _wordExpressionReadObservationLog = [];
 
   static ReadSourcePolicy get debugCurrentReadSourcePolicy =>
       _debugReadSourcePolicyOverride ?? _defaultReadSourcePolicy;
@@ -146,10 +149,41 @@ class WordRepository {
   get debugLastWordExpressionReadSnapshots =>
       Map.unmodifiable(_lastWordExpressionReadSnapshots);
 
+  List<WordExpressionReadSnapshot> get debugWordExpressionReadObservationLog =>
+      List.unmodifiable(_wordExpressionReadObservationLog);
+
+  void debugClearWordExpressionReadObservations() {
+    _lastWordExpressionReadSnapshots.clear();
+    _wordExpressionReadObservationLog.clear();
+  }
+
   WordExpressionReadSnapshot? debugLastWordExpressionReadSnapshotFor(
     String wordId,
   ) {
     return _lastWordExpressionReadSnapshots[wordId.trim()];
+  }
+
+  ReadSourcePolicy _resolveReadSourcePolicyForContext(String context) {
+    final override = _debugReadSourcePolicyOverride;
+    if (override != null) {
+      return override;
+    }
+
+    if (context == _detailReadPhase2OnlyContext) {
+      return ReadSourcePolicy.normalizedWithFallback;
+    }
+
+    return _defaultReadSourcePolicy;
+  }
+
+  void _recordWordExpressionReadSnapshots(
+    Iterable<WordExpressionReadSnapshot> snapshots,
+  ) {
+    final normalizedSnapshots = snapshots.toList(growable: false);
+    for (final snapshot in normalizedSnapshots) {
+      _lastWordExpressionReadSnapshots[snapshot.wordId] = snapshot;
+    }
+    _wordExpressionReadObservationLog.addAll(normalizedSnapshots);
   }
 
   Future<WordExpressionReadSnapshot?> debugInspectWordExpressionReadByWordId(
@@ -177,7 +211,7 @@ class WordRepository {
       rows.map((row) => Map<String, dynamic>.from(row)),
       context: context,
     );
-    _lastWordExpressionReadSnapshots.addAll(snapshots);
+    _recordWordExpressionReadSnapshots(snapshots.values);
     return snapshots[normalizedId];
   }
 
@@ -245,7 +279,7 @@ class WordRepository {
       rows,
       context: context,
     );
-    _lastWordExpressionReadSnapshots.addAll(snapshots);
+    _recordWordExpressionReadSnapshots(snapshots.values);
   }
 
   Future<Map<String, WordExpressionReadSnapshot>>
@@ -271,7 +305,7 @@ class WordRepository {
       return const {};
     }
 
-    final policy = debugCurrentReadSourcePolicy;
+    final policy = _resolveReadSourcePolicyForContext(context);
     if (policy == ReadSourcePolicy.legacy) {
       return {
         for (final entry in rowsByWordId.entries)
@@ -280,7 +314,9 @@ class WordRepository {
             context: context,
             requestedPolicy: policy,
             resolvedSource: ResolvedReadSource.legacy,
+            finalResultSource: FinalReadResultSource.legacy,
             readResult: legacyResultsByWordId[entry.key]!,
+            legacyReadResult: legacyResultsByWordId[entry.key]!,
           ),
       };
     }
@@ -378,7 +414,9 @@ class WordRepository {
         context: context,
         requestedPolicy: policy,
         resolvedSource: ResolvedReadSource.legacy,
+        finalResultSource: FinalReadResultSource.legacyFallback,
         readResult: legacyResult,
+        legacyReadResult: legacyResult,
         fallbackObservation: fallbackObservation,
       );
     }
@@ -388,7 +426,9 @@ class WordRepository {
       context: context,
       requestedPolicy: policy,
       resolvedSource: ResolvedReadSource.normalized,
+      finalResultSource: FinalReadResultSource.normalizedFailure,
       readResult: const CanonicalExpressionReadResult(),
+      legacyReadResult: legacyResult,
       fallbackObservation: fallbackObservation,
     );
   }
@@ -407,7 +447,10 @@ class WordRepository {
         context: context,
         requestedPolicy: policy,
         resolvedSource: ResolvedReadSource.normalized,
+        finalResultSource: FinalReadResultSource.normalized,
         readResult: normalizedOutcome.readResult!,
+        legacyReadResult: legacyResult,
+        normalizedReadResult: normalizedOutcome.readResult!,
       );
     }
 
@@ -426,7 +469,9 @@ class WordRepository {
         context: context,
         requestedPolicy: policy,
         resolvedSource: ResolvedReadSource.legacy,
+        finalResultSource: FinalReadResultSource.legacyFallback,
         readResult: legacyResult,
+        legacyReadResult: legacyResult,
         fallbackObservation: fallbackObservation,
       );
     }
@@ -436,7 +481,9 @@ class WordRepository {
       context: context,
       requestedPolicy: policy,
       resolvedSource: ResolvedReadSource.normalized,
+      finalResultSource: FinalReadResultSource.normalizedFailure,
       readResult: const CanonicalExpressionReadResult(),
+      legacyReadResult: legacyResult,
       fallbackObservation: fallbackObservation,
     );
   }
@@ -485,6 +532,314 @@ class WordRepository {
   }
 
   /// id로 단어 1건 조회
+  List<ExpressionSet> _orderExpressionSetsForDetailDisplay(
+    List<ExpressionSet> sets,
+  ) {
+    if (sets.isEmpty) {
+      return const [];
+    }
+
+    ExpressionSet? representativeSet;
+    for (final set in sets) {
+      if (set.isRepresentative) {
+        representativeSet = set;
+        break;
+      }
+    }
+
+    if (representativeSet == null) {
+      return List<ExpressionSet>.unmodifiable(sets);
+    }
+
+    final resolvedRepresentativeSet = representativeSet;
+    final orderedSets = <ExpressionSet>[resolvedRepresentativeSet];
+    orderedSets.addAll(
+      sets.where(
+        (set) =>
+            !identical(set, resolvedRepresentativeSet) &&
+            (set.seq != resolvedRepresentativeSet.seq ||
+                set.spelling != resolvedRepresentativeSet.spelling ||
+                set.transliteration !=
+                    resolvedRepresentativeSet.transliteration ||
+                set.pronunciation != resolvedRepresentativeSet.pronunciation),
+      ),
+    );
+
+    return List<ExpressionSet>.unmodifiable(orderedSets);
+  }
+
+  Map<String, dynamic> _materializeWordDetailRowForPhase2(
+    Map<String, dynamic> legacyWordRow,
+    CanonicalExpressionReadResult readResult,
+  ) {
+    final orderedSets = _orderExpressionSetsForDetailDisplay(readResult.sets);
+    final materializedRow = Map<String, dynamic>.from(legacyWordRow);
+    final legacyExpressionColumns = toLegacyWordExpressionColumns(
+      orderedSets
+          .map(
+            (set) => CanonicalExpressionWriteSet(
+              spelling: set.spelling,
+              transliteration: set.transliteration,
+              pronunciation: set.pronunciation,
+              seq: set.seq,
+              isRepresentative: set.isRepresentative,
+            ),
+          )
+          .toList(growable: false),
+    );
+
+    materializedRow.addAll(legacyExpressionColumns);
+    return materializedRow;
+  }
+
+  String _readTrimmedWordValue(Map<String, dynamic> wordRow, String key) {
+    return (wordRow[key] ?? '').toString().trim();
+  }
+
+  List<String> _collectWordSeries(
+    Map<String, dynamic> wordRow,
+    String prefix,
+    int count,
+  ) {
+    final values = <String>[];
+    for (var index = 1; index <= count; index++) {
+      final value = _readTrimmedWordValue(wordRow, '$prefix$index');
+      if (value.isEmpty || values.contains(value)) {
+        continue;
+      }
+      values.add(value);
+    }
+    return List<String>.unmodifiable(values);
+  }
+
+  List<String> _collectUniqueNonEmptyWordValues(Iterable<String?> values) {
+    final normalizedValues = <String>[];
+    for (final value in values) {
+      final trimmed = (value ?? '').trim();
+      if (trimmed.isEmpty || normalizedValues.contains(trimmed)) {
+        continue;
+      }
+      normalizedValues.add(trimmed);
+    }
+    return List<String>.unmodifiable(normalizedValues);
+  }
+
+  ({
+    String representativeSpelling,
+    List<String> spellings,
+    List<String> transliterations,
+    List<String> pronunciations,
+    List<String> meanings,
+    String language,
+    String strongNumber,
+    String note,
+  })
+  _buildWordDetailDisplaySignature(Map<String, dynamic> wordRow) {
+    final readResult = readLegacyWordExpressionRow(wordRow);
+    final representativeSpelling = readResult.sets.isEmpty
+        ? ''
+        : readResult.sets
+              .firstWhere(
+                (set) => set.isRepresentative,
+                orElse: () => readResult.sets.first,
+              )
+              .spelling
+              .trim();
+
+    return (
+      representativeSpelling: representativeSpelling,
+      spellings: _collectUniqueNonEmptyWordValues(
+        readResult.sets.map((set) => set.spelling),
+      ),
+      transliterations: _collectUniqueNonEmptyWordValues(
+        readResult.sets.map((set) => set.transliteration),
+      ),
+      pronunciations: _collectUniqueNonEmptyWordValues(
+        readResult.sets.map((set) => set.pronunciation),
+      ),
+      meanings: _collectWordSeries(wordRow, '의미', 7),
+      language: _readTrimmedWordValue(wordRow, '언어'),
+      strongNumber: _readTrimmedWordValue(wordRow, '스트롱넘버'),
+      note: _readTrimmedWordValue(wordRow, '비고'),
+    );
+  }
+
+  bool _sameTrimmedStringLists(List<String> left, List<String> right) {
+    if (left.length != right.length) {
+      return false;
+    }
+
+    for (var index = 0; index < left.length; index++) {
+      if (left[index] != right[index]) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  bool _sameWordDetailDisplaySignature(
+    ({
+      String representativeSpelling,
+      List<String> spellings,
+      List<String> transliterations,
+      List<String> pronunciations,
+      List<String> meanings,
+      String language,
+      String strongNumber,
+      String note,
+    })
+    left,
+    ({
+      String representativeSpelling,
+      List<String> spellings,
+      List<String> transliterations,
+      List<String> pronunciations,
+      List<String> meanings,
+      String language,
+      String strongNumber,
+      String note,
+    })
+    right,
+  ) {
+    return left.representativeSpelling == right.representativeSpelling &&
+        _sameTrimmedStringLists(left.spellings, right.spellings) &&
+        _sameTrimmedStringLists(
+          left.transliterations,
+          right.transliterations,
+        ) &&
+        _sameTrimmedStringLists(left.pronunciations, right.pronunciations) &&
+        _sameTrimmedStringLists(left.meanings, right.meanings) &&
+        left.language == right.language &&
+        left.strongNumber == right.strongNumber &&
+        left.note == right.note;
+  }
+
+  String _describeWordDetailDisplayMismatch(
+    ({
+      String representativeSpelling,
+      List<String> spellings,
+      List<String> transliterations,
+      List<String> pronunciations,
+      List<String> meanings,
+      String language,
+      String strongNumber,
+      String note,
+    })
+    legacyDisplay,
+    ({
+      String representativeSpelling,
+      List<String> spellings,
+      List<String> transliterations,
+      List<String> pronunciations,
+      List<String> meanings,
+      String language,
+      String strongNumber,
+      String note,
+    })
+    normalizedDisplay,
+  ) {
+    final mismatchedFields = <String>[];
+
+    if (legacyDisplay.representativeSpelling !=
+        normalizedDisplay.representativeSpelling) {
+      mismatchedFields.add('representative_spelling');
+    }
+    if (!_sameTrimmedStringLists(
+      legacyDisplay.spellings,
+      normalizedDisplay.spellings,
+    )) {
+      mismatchedFields.add('spelling_list');
+    }
+    if (!_sameTrimmedStringLists(
+      legacyDisplay.transliterations,
+      normalizedDisplay.transliterations,
+    )) {
+      mismatchedFields.add('transliteration_list');
+    }
+    if (!_sameTrimmedStringLists(
+      legacyDisplay.pronunciations,
+      normalizedDisplay.pronunciations,
+    )) {
+      mismatchedFields.add('pronunciation_list');
+    }
+    if (!_sameTrimmedStringLists(
+      legacyDisplay.meanings,
+      normalizedDisplay.meanings,
+    )) {
+      mismatchedFields.add('meaning_list');
+    }
+    if (legacyDisplay.language != normalizedDisplay.language) {
+      mismatchedFields.add('language');
+    }
+    if (legacyDisplay.strongNumber != normalizedDisplay.strongNumber) {
+      mismatchedFields.add('strong_number');
+    }
+    if (legacyDisplay.note != normalizedDisplay.note) {
+      mismatchedFields.add('note');
+    }
+
+    if (mismatchedFields.isEmpty) {
+      return 'display signature mismatch';
+    }
+
+    return 'display fields mismatch: ${mismatchedFields.join(', ')}';
+  }
+
+  ({Map<String, dynamic> wordRow, WordExpressionReadSnapshot snapshot})
+  _resolveWordDetailReadResultForPhase2Only({
+    required Map<String, dynamic> legacyWordRow,
+    required WordExpressionReadSnapshot snapshot,
+  }) {
+    if (snapshot.finalResultSource != FinalReadResultSource.normalized ||
+        snapshot.normalizedReadResult == null) {
+      return (
+        wordRow: Map<String, dynamic>.from(legacyWordRow),
+        snapshot: snapshot,
+      );
+    }
+
+    final normalizedWordRow = _materializeWordDetailRowForPhase2(
+      legacyWordRow,
+      snapshot.normalizedReadResult!,
+    );
+
+    if (snapshot.requestedPolicy != ReadSourcePolicy.normalizedWithFallback) {
+      return (wordRow: normalizedWordRow, snapshot: snapshot);
+    }
+
+    final legacyDisplay = _buildWordDetailDisplaySignature(legacyWordRow);
+    final normalizedDisplay = _buildWordDetailDisplaySignature(
+      normalizedWordRow,
+    );
+
+    if (_sameWordDetailDisplaySignature(legacyDisplay, normalizedDisplay)) {
+      return (wordRow: normalizedWordRow, snapshot: snapshot);
+    }
+
+    final fallbackObservation = _buildFallbackObservation(
+      wordId: snapshot.wordId,
+      policy: snapshot.requestedPolicy,
+      reason: ReadFallbackReason.userVisibleDisplayMismatch,
+      context: snapshot.context,
+      detail: _describeWordDetailDisplayMismatch(
+        legacyDisplay,
+        normalizedDisplay,
+      ),
+    );
+
+    return (
+      wordRow: Map<String, dynamic>.from(legacyWordRow),
+      snapshot: snapshot.copyWith(
+        resolvedSource: ResolvedReadSource.legacy,
+        finalResultSource: FinalReadResultSource.legacyFallback,
+        readResult:
+            snapshot.legacyReadResult ?? const CanonicalExpressionReadResult(),
+        fallbackObservation: fallbackObservation,
+      ),
+    );
+  }
+
   Future<Map<String, dynamic>?> getWordMapById(String id) async {
     final normalizedId = id.trim();
     if (normalizedId.isEmpty) return null;
@@ -503,6 +858,40 @@ class WordRepository {
       wordRow,
     ], context: 'getWordMapById');
     return wordRow;
+  }
+
+  /// Read source phase 2 limited path.
+  /// WordDetailScreen에서만 사용하고 다른 화면에서는 재사용하지 않는다.
+  Future<Map<String, dynamic>?> getWordDetailMapByIdForReadSourcePhase2Only(
+    String id,
+  ) async {
+    final normalizedId = id.trim();
+    if (normalizedId.isEmpty) return null;
+
+    final db = await DatabaseService.openDatabaseFile();
+    final rows = await db.query(
+      'WORD_TABLE',
+      where: 'id = ?',
+      whereArgs: [normalizedId],
+      limit: 1,
+    );
+
+    if (rows.isEmpty) return null;
+    final legacyWordRow = Map<String, dynamic>.from(rows.first);
+    final snapshots = await _resolveWordExpressionReadSnapshots(db, [
+      legacyWordRow,
+    ], context: _detailReadPhase2OnlyContext);
+    final snapshot = snapshots[normalizedId];
+    if (snapshot == null) {
+      return legacyWordRow;
+    }
+
+    final resolvedResult = _resolveWordDetailReadResultForPhase2Only(
+      legacyWordRow: legacyWordRow,
+      snapshot: snapshot,
+    );
+    _recordWordExpressionReadSnapshots([resolvedResult.snapshot]);
+    return resolvedResult.wordRow;
   }
 
   Future<List<Map<String, dynamic>>> getWordsByIds(List<String> wordIds) async {

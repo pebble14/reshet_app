@@ -1,5 +1,72 @@
 # Read Source Migration
 
+## 2026-04-04 Phase 2 제한 적용
+
+### 이번 단계 적용 범위
+
+- 기본 global policy는 계속 `LEGACY`다.
+- 실제 `NORMALIZED_WITH_FALLBACK` 적용 범위는 `WordRepository.getWordDetailMapByIdForReadSourcePhase2Only` 한 곳으로 제한한다.
+- 이 경로는 `WordDetailScreen`에서만 호출한다.
+- `widget.word`는 상세 화면의 초기 표시값으로 그대로 유지한다.
+- 상세 화면은 백그라운드 재조회만 수행하고, 로딩 indicator나 별도 fallback UI는 추가하지 않는다.
+
+### 전체 적용을 하지 않은 이유
+
+- 목록 조회, 검색, 그래프, edit/undo 이후 refresh 경로는 다수 단어 조합 read 또는 후속 write 흐름과 강하게 연결되어 있다.
+- 이번 단계 목표는 전면 전환이 아니라 제한된 실제 사용자 read 경로에서만 normalized path를 검증하는 것이다.
+- 상세 화면 단일 재조회는 단일 `word_id` 기반 read-only 경로라서 rollback과 관측 범위를 가장 작게 유지할 수 있다.
+
+### fallback 처리 흐름
+
+1. legacy `WORD_TABLE` row를 먼저 조회한다.
+2. 상세 전용 제한 경로에서만 `NORMALIZED_WITH_FALLBACK` policy로 normalized read를 시도한다.
+3. normalized adapter가 성공하면 상세 화면 사용자 표시 기준으로 materialized row를 만든다.
+4. materialized row와 legacy row의 사용자 표시 기준이 같으면 normalized 결과를 최종 반환한다.
+5. adapter 실패, normalized row 없음, query 실패, 사용자 표시 기준 mismatch가 있으면 legacy row로 fallback 한다.
+6. fallback이면 해당 호출의 최종 반환값은 legacy 단일 기준이다.
+
+### 사용자 표시 기준 비교 항목
+
+- 대표 표기
+- 표기 리스트
+- 음역 리스트
+- 발음 리스트
+- 의미 리스트
+- 언어
+- 스트롱 번호
+- 비고
+
+canonical semantic 동일성만으로 통과시키지 않는다. 현재 상세 화면에서 실제로 보이는 기준이 같을 때만 normalized 결과를 통과시킨다.
+
+### 관측 항목
+
+상세 전용 제한 경로와 기존 snapshot 관측 모델에서 다음 항목을 in-memory로 유지한다.
+
+- `word_id`
+- `context`
+- `requestedPolicy`
+- `fallbackObservation` 여부와 reason
+- `legacyResultAvailable`
+- `normalizedResultAvailable`
+- `finalResultSource`
+- `legacyReadResult`
+- `normalizedReadResult`
+
+`fallbackObservation.reason`에는 기존 reason 외에 `user_visible_display_mismatch`를 추가해 상세 화면 표시 차이 가능성을 별도로 관측한다.
+
+### rollback 방식
+
+- 상세 전용 제한 경로를 호출하지 않으면 사용자 read는 즉시 기존 `LEGACY` 경로만 사용한다.
+- 문제가 발생하면 `WordDetailScreen`에서 이 API 호출을 제거하거나 debug override로 `LEGACY`를 강제해 바로 복구할 수 있다.
+- DB schema 변경은 없으므로 rollback은 코드 경로 차단만으로 가능하다.
+
+### 다음 단계 진입 조건
+
+- 상세 전용 제한 경로에서 `user_visible_display_mismatch` fallback이 반복되지 않을 것
+- empty/query failure fallback 대상이 정리될 것
+- 수동 테스트에서 상세 화면 표시 차이, edit 후 재조회 이상, 기존 기능 회귀가 없을 것
+- 관측 결과를 바탕으로 다음 적용 후보 API를 별도 설계 후 승인받을 것
+
 ## 1. 개요
 
 이 문서는 현재 legacy `WORD_TABLE` 기반인 read source를 normalized `word_expression_set` 기준으로 안전하게 전환하기 위한 정책을 정의한다.
