@@ -4543,7 +4543,9 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       throw Exception('신규 단어 ID를 생성하지 못했습니다.');
     }
 
-    final createdWordMap = await _repository.getWordMapById(newId);
+    final createdWordMap = await _repository.getWordMapByIdForGraphSingleWord(
+      newId,
+    );
     Map<String, dynamic>? currentWordMap = createdWordMap == null
         ? null
         : Map<String, dynamic>.from(createdWordMap);
@@ -4563,7 +4565,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       if (editedWordMap != null) {
         currentWordMap = Map<String, dynamic>.from(editedWordMap);
       } else {
-        final reloadedWordMap = await _repository.getWordMapById(newId);
+        final reloadedWordMap = await _repository
+            .getWordMapByIdForGraphSingleWord(newId);
         if (reloadedWordMap != null) {
           currentWordMap = Map<String, dynamic>.from(reloadedWordMap);
         }
@@ -4571,7 +4574,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     }
 
     final createdWord = currentWordMap == null
-        ? await _repository.getWordById(newId)
+        ? await _repository.getWordByIdForGraphSingleWord(newId)
         : Word.fromMap(currentWordMap);
     bool didCreateRelation = false;
 

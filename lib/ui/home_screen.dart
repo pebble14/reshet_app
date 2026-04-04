@@ -403,15 +403,25 @@ class _HomeScreenState extends State<HomeScreen> {
 
     try {
       final repository = WordRepository();
-      final undone = await repository.undoLastChange();
-      if (undone) {
+      final undoResult = await repository.undoLastChange();
+      if (undoResult.didUndo) {
         WordGraphDataCache.clear();
+        final primaryWordId = undoResult.primaryWordId;
+        if (primaryWordId != null) {
+          await repository.getWordMapByIdForReadAfterUndoSingleWord(
+            primaryWordId,
+          );
+        }
       }
 
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(undone ? '최근 변경을 되돌렸습니다.' : '되돌릴 변경이 없습니다.')),
+        SnackBar(
+          content: Text(
+            undoResult.didUndo ? '최근 변경을 되돌렸습니다.' : '되돌릴 변경이 없습니다.',
+          ),
+        ),
       );
 
       // Home 리스트 즉시 갱신

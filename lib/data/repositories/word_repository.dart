@@ -82,15 +82,35 @@ typedef VisibleWordGraphData = ({
   List<WordRelationEdgeInfo> relationEdges,
 });
 
+class UndoLastChangeResult {
+  final bool didUndo;
+  final String? primaryWordId;
+
+  const UndoLastChangeResult({required this.didUndo, this.primaryWordId});
+}
+
 class WordRepository {
   static const ReadSourcePolicy _defaultReadSourcePolicy =
       ReadSourcePolicy.legacy;
   static const String _detailReadPhase2OnlyContext =
       'getWordDetailMapByIdForReadSourcePhase2Only';
+  static const String _readAfterSaveSingleWordContext =
+      'readAfterSaveSingleWord';
+  static const String _readAfterUndoSingleWordContext =
+      'readAfterUndoSingleWord';
+  static const String _readForGraphSingleWordContext = 'readForGraphSingleWord';
+  static const String _readForExplorerSingleWordContext =
+      'readForExplorerSingleWord';
   static const Set<String> _phase32HomeDisplayContexts = {
     'getStrongWordsMap',
     'searchStrongExactMap',
     'searchWordsMap',
+  };
+  static const Set<String> _phase33SaveSingleWordContexts = {
+    _readAfterSaveSingleWordContext,
+  };
+  static const Set<String> _phase33UndoSingleWordContexts = {
+    _readAfterUndoSingleWordContext,
   };
   static ReadSourcePolicy? _debugReadSourcePolicyOverride;
   static final List<String> _homeSearchSpellingColumns = List.unmodifiable(
@@ -175,7 +195,9 @@ class WordRepository {
     }
 
     if (context == _detailReadPhase2OnlyContext ||
-        _phase32HomeDisplayContexts.contains(context)) {
+        _phase32HomeDisplayContexts.contains(context) ||
+        _phase33SaveSingleWordContexts.contains(context) ||
+        _phase33UndoSingleWordContexts.contains(context)) {
       return ReadSourcePolicy.normalizedWithFallback;
     }
 
@@ -952,7 +974,7 @@ class WordRepository {
   }
 
   ({Map<String, dynamic> wordRow, WordExpressionReadSnapshot snapshot})
-  _resolveWordDetailReadResultForPhase2Only({
+  _resolveWordRowForDetailLikeDisplay({
     required Map<String, dynamic> legacyWordRow,
     required WordExpressionReadSnapshot snapshot,
   }) {
@@ -1002,6 +1024,28 @@ class WordRepository {
             snapshot.legacyReadResult ?? const CanonicalExpressionReadResult(),
         fallbackObservation: fallbackObservation,
       ),
+    );
+  }
+
+  ({Map<String, dynamic> wordRow, WordExpressionReadSnapshot snapshot})
+  _resolveWordDetailReadResultForPhase2Only({
+    required Map<String, dynamic> legacyWordRow,
+    required WordExpressionReadSnapshot snapshot,
+  }) {
+    return _resolveWordRowForDetailLikeDisplay(
+      legacyWordRow: legacyWordRow,
+      snapshot: snapshot,
+    );
+  }
+
+  ({Map<String, dynamic> wordRow, WordExpressionReadSnapshot snapshot})
+  _resolveWordRowForPhase33SingleWordReread({
+    required Map<String, dynamic> legacyWordRow,
+    required WordExpressionReadSnapshot snapshot,
+  }) {
+    return _resolveWordRowForDetailLikeDisplay(
+      legacyWordRow: legacyWordRow,
+      snapshot: snapshot,
     );
   }
 
@@ -1130,7 +1174,10 @@ class WordRepository {
     return List<Map<String, dynamic>>.unmodifiable(resolvedRows);
   }
 
-  Future<Map<String, dynamic>?> getWordMapById(String id) async {
+  Future<Map<String, dynamic>?> _getWordMapByIdWithContext(
+    String id, {
+    required String context,
+  }) async {
     final normalizedId = id.trim();
     if (normalizedId.isEmpty) return null;
 
@@ -1144,10 +1191,81 @@ class WordRepository {
 
     if (rows.isEmpty) return null;
     final wordRow = Map<String, dynamic>.from(rows.first);
-    await _captureWordExpressionReadSnapshots(db, [
-      wordRow,
-    ], context: 'getWordMapById');
+    await _captureWordExpressionReadSnapshots(db, [wordRow], context: context);
     return wordRow;
+  }
+
+  Future<Map<String, dynamic>?> getWordMapById(String id) async {
+    return _getWordMapByIdWithContext(id, context: 'getWordMapById');
+  }
+
+  Future<Map<String, dynamic>?> _getWordMapByIdForPhase33SingleWordReread(
+    String id, {
+    required String context,
+  }) async {
+    final normalizedId = id.trim();
+    if (normalizedId.isEmpty) return null;
+
+    final db = await DatabaseService.openDatabaseFile();
+    final rows = await db.query(
+      'WORD_TABLE',
+      where: 'id = ?',
+      whereArgs: [normalizedId],
+      limit: 1,
+    );
+
+    if (rows.isEmpty) return null;
+    final legacyWordRow = Map<String, dynamic>.from(rows.first);
+    final snapshots = await _resolveWordExpressionReadSnapshots(db, [
+      legacyWordRow,
+    ], context: context);
+    final snapshot = snapshots[normalizedId];
+    if (snapshot == null) {
+      return legacyWordRow;
+    }
+
+    final resolvedResult = _resolveWordRowForPhase33SingleWordReread(
+      legacyWordRow: legacyWordRow,
+      snapshot: snapshot,
+    );
+    _recordWordExpressionReadSnapshots([resolvedResult.snapshot]);
+    return resolvedResult.wordRow;
+  }
+
+  Future<Map<String, dynamic>?> getWordMapByIdForReadAfterSaveSingleWord(
+    String id,
+  ) async {
+    return _getWordMapByIdForPhase33SingleWordReread(
+      id,
+      context: _readAfterSaveSingleWordContext,
+    );
+  }
+
+  Future<Map<String, dynamic>?> getWordMapByIdForReadAfterUndoSingleWord(
+    String id,
+  ) async {
+    return _getWordMapByIdForPhase33SingleWordReread(
+      id,
+      context: _readAfterUndoSingleWordContext,
+    );
+  }
+
+  Future<Map<String, dynamic>?> getWordMapByIdForGraphSingleWord(
+    String id,
+  ) async {
+    return _getWordMapByIdWithContext(
+      id,
+      context: _readForGraphSingleWordContext,
+    );
+  }
+
+  Future<Map<String, dynamic>?> getWordMapByIdForExplorerSingleWord(
+    String id,
+  ) async {
+    return _getWordMapByIdWithContext(
+      id,
+      context: _readForExplorerSingleWordContext,
+    );
   }
 
   /// Read source phase 2 limited path.
@@ -1260,6 +1378,12 @@ class WordRepository {
 
   Future<Word?> getWordById(String id) async {
     final row = await getWordMapById(id);
+    if (row == null) return null;
+    return Word.fromMap(row);
+  }
+
+  Future<Word?> getWordByIdForGraphSingleWord(String id) async {
+    final row = await getWordMapByIdForGraphSingleWord(id);
     if (row == null) return null;
     return Word.fromMap(row);
   }
@@ -2858,7 +2982,57 @@ class WordRepository {
   }
 
   /// 최근 1회 변경 실행 취소
-  Future<bool> undoLastChange() async {
+  String? _deriveUndoPrimaryWordIdCandidate(
+    Iterable<Map<String, dynamic>> rows,
+  ) {
+    final uniqueWordIds = <String>{};
+    for (final row in rows) {
+      if ((row['entity_type'] ?? '').toString() != 'word') {
+        continue;
+      }
+
+      final entityId = (row['entity_id'] ?? '').toString().trim();
+      if (entityId.isEmpty) {
+        continue;
+      }
+
+      uniqueWordIds.add(entityId);
+      if (uniqueWordIds.length > 1) {
+        return null;
+      }
+    }
+
+    if (uniqueWordIds.length != 1) {
+      return null;
+    }
+
+    return uniqueWordIds.first;
+  }
+
+  Future<String?> _resolveExistingUndoPrimaryWordId(
+    DatabaseExecutor txn,
+    String? candidateWordId,
+  ) async {
+    final normalizedId = (candidateWordId ?? '').trim();
+    if (normalizedId.isEmpty) {
+      return null;
+    }
+
+    final rows = await txn.query(
+      'WORD_TABLE',
+      columns: ['id'],
+      where: 'id = ?',
+      whereArgs: [normalizedId],
+      limit: 1,
+    );
+    if (rows.isEmpty) {
+      return null;
+    }
+
+    return normalizedId;
+  }
+
+  Future<UndoLastChangeResult> undoLastChange() async {
     final db = await DatabaseService.openDatabaseFile();
 
     return await db.transaction((txn) async {
@@ -2870,7 +3044,9 @@ class WordRepository {
         LIMIT 1
         ''');
 
-      if (latestRows.isEmpty) return false;
+      if (latestRows.isEmpty) {
+        return const UndoLastChangeResult(didUndo: false);
+      }
 
       final groupId = latestRows.first['group_id'] as String;
 
@@ -2881,10 +3057,18 @@ class WordRepository {
         orderBy: 'id DESC',
       );
 
-      if (rows.isEmpty) return false;
+      if (rows.isEmpty) {
+        return const UndoLastChangeResult(didUndo: false);
+      }
 
-      for (final raw in rows) {
-        final row = Map<String, dynamic>.from(raw);
+      final undoRows = rows
+          .map((raw) => Map<String, dynamic>.from(raw))
+          .toList(growable: false);
+      final primaryWordIdCandidate = _deriveUndoPrimaryWordIdCandidate(
+        undoRows,
+      );
+
+      for (final row in undoRows) {
         final actionType = row['action_type'].toString();
         final entityType = row['entity_type'].toString();
         final beforeJsonText = row['before_json'] as String?;
@@ -2950,7 +3134,15 @@ class WordRepository {
         );
       }
 
-      return true;
+      final primaryWordId = await _resolveExistingUndoPrimaryWordId(
+        txn,
+        primaryWordIdCandidate,
+      );
+
+      return UndoLastChangeResult(
+        didUndo: true,
+        primaryWordId: primaryWordId,
+      );
     });
   }
 }

@@ -1,5 +1,335 @@
 # Read Source Migration
 
+## 2026-04-04 Phase 3.3 undo path 적용
+
+### 이번 단계 성격
+
+- 이번 단계는 Phase 3.3 전체 완료가 아니다.
+- 이번 단계는 `undo` 직후 single-word reread를 Home owner 기준으로 safe zone에 편입하는 작업이다.
+- 적용 context는 `readAfterUndoSingleWord` 하나뿐이다.
+
+### 이번 단계 적용 범위
+
+- `HomeScreen._undoLastChange`
+- `WordRepository.undoLastChange`
+- `WordRepository.getWordMapByIdForReadAfterUndoSingleWord`
+- 관련 collector / fallback / command 검증 기록
+
+### 이번 단계 제외 범위
+
+- split view direct DB read 수정
+- graph single-word read policy 변경
+- explorer single-word read policy 변경
+- generic `getWordMapById` 정책 변경
+- detail phase 2 context 정책 변경
+- `normalizedOnly` 전환
+
+### primaryWordId 산정 규칙
+
+- undo group 안의 `entity_type == 'word'` 기준 unique word id가 정확히 1개일 때만 후보를 만든다.
+- 후보 word id가 undo 완료 후 `WORD_TABLE`에 실제로 존재할 때만 `primaryWordId`로 확정한다.
+- `primaryWordId != null`일 때만 Home이 `readAfterUndoSingleWord` single-word reread를 정확히 1회 수행한다.
+- 이후 기존 `_createWordsFuture()` multi-read refresh는 그대로 유지한다.
+
+### 구현 방식
+
+- `readAfterUndoSingleWord` context만 `NORMALIZED_WITH_FALLBACK` 적용 대상으로 추가한다.
+- undo single-word reread는 save path와 같은 detail-like display guard를 재사용한다.
+- mismatch 또는 adapter/query 문제는 기존 fallback reason 체계를 그대로 사용한다.
+
+## 2026-04-04 Phase 3.3 save path 적용
+
+### 이번 단계 성격
+
+- 이번 단계는 Phase 3.3 전체 완료가 아니다.
+- 이번 단계는 edit 저장 직후 single-word reread save path만 safe zone으로 확장한다.
+- 적용 context는 `readAfterSaveSingleWord` 하나뿐이다.
+
+### 이번 단계 적용 범위
+
+- `WordEditScreen._save` 저장 직후 reread
+- `WordRepository.getWordMapByIdForReadAfterSaveSingleWord`
+- 관련 collector / fallback / command 검증 기록
+
+### 이번 단계 제외 범위
+
+- undo single-word reread 구현
+- split view direct DB read 수정
+- graph single-word read policy 변경
+- explorer single-word read policy 변경
+- generic `getWordMapById` 전체 정책 변경
+- detail phase 2 context 정책 변경
+- `normalizedOnly` 전환
+
+### 구현 방식
+
+- `readAfterSaveSingleWord` context만 `NORMALIZED_WITH_FALLBACK` 적용 대상으로 추가한다.
+- save reread는 normalized read를 시도한 뒤 legacy-shaped row로 materialize한다.
+- 사용자 가시 필드가 detail display 기준으로 일치하면 normalized 결과를 사용한다.
+- mismatch 또는 adapter/query 문제는 기존 fallback reason 체계를 그대로 사용한다.
+
+### display guard 기준
+
+save path reread는 detail 화면이 최초로 받는 row이므로 detail display 기준을 재사용한다.
+
+- representative spelling
+- spelling list
+- transliteration list
+- pronunciation list
+- meaning list
+- language
+- strong number
+- note
+
+### 실제 command 테스트 대상
+
+선정 SQL:
+
+```sql
+SELECT id,
+       TRIM("스트롱넘버") AS strong_number,
+       TRIM("표기1") AS spelling,
+       TRIM("발음1") AS pronunciation
+FROM WORD_TABLE
+WHERE "스트롱넘버" IS NOT NULL
+  AND TRIM("스트롱넘버") <> ''
+  AND "표기1" IS NOT NULL
+  AND TRIM("표기1") <> ''
+ORDER BY
+  CASE UPPER(SUBSTR(TRIM("스트롱넘버"), 1, 1))
+    WHEN 'H' THEN 0
+    WHEN 'G' THEN 1
+    ELSE 2
+  END,
+  CAST(SUBSTR(TRIM("스트롱넘버"), 2) AS INTEGER),
+  id
+LIMIT 1;
+```
+
+실제 대상:
+
+- `id = H0001_0000`
+- strong number = `H0001`
+- original spelling = `אָב`
+- original pronunciation = `awb`
+- test spelling = `אָב__SAVE33`
+
+### command 테스트 결과
+
+save 직후 immediate reread:
+
+- context = `readAfterSaveSingleWord`
+- policy = `NORMALIZED_WITH_FALLBACK`
+- final result source = `normalized`
+- fallback = `false`
+- DB value = `אָב__SAVE33`
+- reread value = `אָב__SAVE33`
+
+교차 read:
+
+- detail reread = `אָב__SAVE33`
+- strong exact search = `אָב__SAVE33`
+- strong list = `אָב__SAVE33`
+- cross read consistent = `true`
+
+context 확인:
+
+- full contexts = `getStrongWordsMap`, `getWordDetailMapByIdForReadSourcePhase2Only`, `readAfterSaveSingleWord`, `searchStrongExactMap`
+- unexpected context = 없음
+- fallback reason summary = 없음
+
+원복 확인:
+
+- restore context = `readAfterSaveSingleWord`
+- restore final result source = `normalized`
+- restore fallback = `false`
+- restore DB value = `אָב`
+- restore reread value = `אָב`
+- restore cross read consistent = `true`
+
+### UI 확인 방법
+
+UI 시나리오 1:
+
+- 특정 단어 편집 화면 진입
+- spelling 또는 pronunciation 수정
+- 저장
+- 저장 직후 상세 화면 값 확인
+
+기대 결과:
+
+- 방금 저장한 값이 즉시 보인다.
+- 잠시 후 값이 다시 바뀌지 않는다.
+
+실패 관찰 포인트:
+
+- 처음에는 예전 값이 보였다가 잠시 후 새 값으로 바뀌는지
+- 일부 필드만 늦게 갱신되는지
+
+UI 시나리오 2:
+
+- 저장 직후 뒤로 이동
+- 홈에서 strong exact 또는 strong list로 같은 단어 재조회
+- 다시 상세 진입
+
+기대 결과:
+
+- 상세 / 검색 / 목록 값이 동일하다.
+
+실패 관찰 포인트:
+
+- 화면마다 값이 다르게 보이는지
+- 상세만 다르거나 목록만 다른지
+
+### 남은 범위
+
+- undo single-word reread는 아직 설계 후보 단계다.
+- split view direct DB read는 여전히 별도 위험 경로다.
+- graph / explorer single-word read는 context 분리만 완료했고 정책은 그대로 유지한다.
+
+## 2026-04-04 Phase 3.3 진입 조건 확보 작업
+
+### 이번 단계 성격
+
+- 이번 단계는 Phase 3.3 완료 단계가 아니다.
+- 이번 단계 목적은 single-word read를 의도 단위로 관측 가능하게 만드는 것이다.
+- read policy 변경, normalized 확장, undo single-word reread 구현, split view direct DB read 수정은 포함하지 않는다.
+
+### context 분리 결과
+
+기존 method:
+
+- `WordRepository.getWordMapById`
+
+추가 context:
+
+- `readAfterSaveSingleWord`
+- `readForGraphSingleWord`
+- `readForExplorerSingleWord`
+
+구현 방식:
+
+- `getWordMapById`는 그대로 유지한다.
+- repository 내부에 context 전달용 공용 helper를 두고 wrapper만 추가한다.
+- wrapper에서만 collector context를 다르게 전달한다.
+
+연결된 UI 경로:
+
+- `readAfterSaveSingleWord`
+  - `WordEditScreen._save`
+- `readForGraphSingleWord`
+  - `WordGraphScreen` 신규 단어 생성 후 단건 reread
+  - `GraphBuilder.buildFromRepository` center word 단건 read
+- `readForExplorerSingleWord`
+  - `WordExplorerScreen._isHistoryEntryAvailable`
+
+이번 단계 제외:
+
+- `WordExplorerScreen._loadWordMap`
+- `WordExplorerScreen._refreshSelectedWord`
+- 그 외 기존 `getWordMapById` generic 호출
+
+### undo single-word reread 설계 후보
+
+후보 1:
+
+- UI 위치: detail 화면이 열린 상태에서 global undo 수행 직후
+- 호출 method: `getWordMapByIdForReadAfterUndoSingleWord` 또는 detail 전용 wrapper
+- 장점: 사용자가 undo 결과를 가장 직접적으로 확인할 수 있다.
+- 리스크: 현재 undo 진입점이 home 화면이라 active detail surface와 상태 연결 방식이 추가로 필요하다.
+
+후보 2:
+
+- UI 위치: explorer에서 현재 선택된 단어가 있을 때 undo 직후
+- 호출 method: explorer 전용 single-word wrapper + selected word id 기준 reread
+- 장점: split view 우측 패널과 실제 복원 결과를 바로 비교할 수 있다.
+- 리스크: 현재 explorer detail panel은 direct DB read라 repository 경유 설계 정리가 먼저 필요하다.
+
+후보 3:
+
+- UI 위치: 마지막 변경 word id를 undo 결과로 반환한 뒤 home/detail/explorer가 공통 후처리
+- 호출 method: `readAfterUndoSingleWord` 전용 wrapper
+- 장점: UI surface와 collector context를 같은 의미 단위로 맞출 수 있다.
+- 리스크: undo API 반환 구조가 바뀌므로 이번 단계 범위를 넘는다.
+
+### direct DB read 경로
+
+- 경로: `WordExplorerScreen._loadWordMap`
+  - 사용 위치: split view 선택 단어 detail panel 로드
+  - read 데이터 종류: `WORD_TABLE` 단건 row
+  - repository 전환 필요성: 높음
+
+- 경로: `WordExplorerScreen._refreshSelectedWord`
+  - 사용 위치: detail 화면 복귀 후 selected word refresh
+  - read 데이터 종류: `_loadWordMap`을 통한 `WORD_TABLE` 단건 row
+  - repository 전환 필요성: 높음
+
+현재 Phase 3.3 범위에서 추가로 확인된 UI single-word direct DB read는 위 2개다.
+
+### command 테스트 결과
+
+테스트 대상 SQL:
+
+```sql
+SELECT id,
+       TRIM("스트롱넘버") AS strong_number,
+       TRIM("표기1") AS spelling
+FROM WORD_TABLE
+WHERE "스트롱넘버" IS NOT NULL
+  AND TRIM("스트롱넘버") <> ''
+  AND "표기1" IS NOT NULL
+  AND TRIM("표기1") <> ''
+ORDER BY
+  CASE UPPER(SUBSTR(TRIM("스트롱넘버"), 1, 1))
+    WHEN 'H' THEN 0
+    WHEN 'G' THEN 1
+    ELSE 2
+  END,
+  CAST(SUBSTR(TRIM("스트롱넘버"), 2) AS INTEGER),
+  id
+LIMIT 1;
+```
+
+실제 테스트 대상:
+
+- `id = H0001_0000`
+- original spelling = `אָב`
+
+context 테스트 결과:
+
+- save reread
+  - last context: `readAfterSaveSingleWord`
+  - summary contexts: `readAfterSaveSingleWord`
+  - fallback: 0
+- graph read
+  - last context: `readForGraphSingleWord`
+  - summary contexts: `readForGraphSingleWord`
+  - fallback: 0
+- explorer read
+  - last context: `readForExplorerSingleWord`
+  - summary contexts: `readForExplorerSingleWord`
+  - fallback: 0
+
+보조 확인:
+
+- 테스트 중 save/undo 원복은 정상 동작했고 최종 spelling은 원래 값으로 복원되었다.
+- command 기준으로 context가 generic `getWordMapById`에 남지 않고 분리된 wrapper context로 기록되었다.
+
+### 이번 단계 판단
+
+- `readAfterSaveSingleWord` 분리: 완료
+- `readForGraphSingleWord` 분리: 완료
+- `readForExplorerSingleWord` 분리: 완료
+- direct DB read 경로 식별: 완료
+- undo single-word reread 구현: 미포함
+- Phase 3.3 진입 가능 여부: 조건부 가능
+
+조건부 가능으로 보는 이유:
+
+- save 기준 single-word reread는 이제 독립 context로 관측된다.
+- direct DB blind spot은 식별되었지만 아직 수정되지 않았다.
+- undo single-word reread는 설계 후보만 있고 실제 경로는 아직 없다.
+
 ## 2026-04-04 Phase 3.2 홈 목록/검색 결과 표시 read 확장
 
 ### 이번 단계 적용 범위

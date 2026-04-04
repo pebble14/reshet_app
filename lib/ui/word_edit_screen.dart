@@ -422,9 +422,10 @@ class _WordEditScreenState extends State<WordEditScreen> {
 
       if (!mounted) return;
 
-      final updatedWord = await _repository.getWordMapById(
-        widget.word['id'].toString(),
-      );
+      final updatedWord = await _repository
+          .getWordMapByIdForReadAfterSaveSingleWord(
+            widget.word['id'].toString(),
+          );
       if (!mounted) return;
       if (updatedWord == null) {
         throw Exception('저장 후 단어를 다시 불러오지 못했습니다.');

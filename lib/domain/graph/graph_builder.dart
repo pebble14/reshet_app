@@ -345,7 +345,9 @@ class GraphBuilder {
     required WordRepository repository,
     required GraphBuildOptions options,
   }) async {
-    final centerWordRow = await repository.getWordMapById(options.centerWordId);
+    final centerWordRow = await repository.getWordMapByIdForGraphSingleWord(
+      options.centerWordId,
+    );
     if (centerWordRow == null) {
       throw StateError(
         'GraphBuilder center word not found: ${options.centerWordId}',

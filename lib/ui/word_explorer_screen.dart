@@ -510,7 +510,9 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
       return false;
     }
 
-    final wordMap = await _repository.getWordMapById(wordId);
+    final wordMap = await _repository.getWordMapByIdForExplorerSingleWord(
+      wordId,
+    );
     return wordMap != null;
   }
 
