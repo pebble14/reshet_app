@@ -31,6 +31,7 @@ void main() {
   setUp(() async {
     await DatabaseService.closeDatabase();
     WordRepository.debugSetReadSourcePolicyOverride(null);
+    WordRepository.debugReadSourceCollector.debugReset();
     isolatedRoot = await _createIsolatedWorkspace(
       repoRootPath,
       sourceWorkDbPath,
@@ -41,6 +42,7 @@ void main() {
   tearDown(() async {
     await DatabaseService.closeDatabase();
     WordRepository.debugSetReadSourcePolicyOverride(null);
+    WordRepository.debugReadSourceCollector.debugReset();
     Directory.current = repoRootPath;
 
     if (isolatedRoot != null && isolatedRoot!.existsSync()) {
@@ -57,9 +59,8 @@ void main() {
 
       final repository = WordRepository();
       final row = await repository.getWordMapById('E0000_0010');
-      final snapshot = repository.debugLastWordExpressionReadSnapshotFor(
-        'E0000_0010',
-      );
+      final snapshot = WordRepository.debugReadSourceCollector
+          .debugLastSnapshotForWord('E0000_0010');
 
       expect(row, isNotNull);
       expect(snapshot, isNotNull);
@@ -81,9 +82,8 @@ void main() {
         final repository = WordRepository();
 
         final row = await repository.getWordMapById('E0000_0010');
-        final snapshot = repository.debugLastWordExpressionReadSnapshotFor(
-          'E0000_0010',
-        );
+        final snapshot = WordRepository.debugReadSourceCollector
+            .debugLastSnapshotForWord('E0000_0010');
 
         expect(row, isNotNull);
         expect(row!['표기1'], 'Eva');
@@ -119,9 +119,8 @@ void main() {
       });
 
       final row = await repository.getWordMapById('T9000_RS_EMPTY');
-      final snapshot = repository.debugLastWordExpressionReadSnapshotFor(
-        'T9000_RS_EMPTY',
-      );
+      final snapshot = WordRepository.debugReadSourceCollector
+          .debugLastSnapshotForWord('T9000_RS_EMPTY');
 
       expect(row, isNotNull);
       expect(snapshot, isNotNull);
@@ -152,9 +151,8 @@ void main() {
         await db.execute('DROP TABLE word_expression_set');
 
         final row = await repository.getWordMapById('E0000_0001');
-        final snapshot = repository.debugLastWordExpressionReadSnapshotFor(
-          'E0000_0001',
-        );
+        final snapshot = WordRepository.debugReadSourceCollector
+            .debugLastSnapshotForWord('E0000_0001');
 
         expect(row, isNotNull);
         expect(snapshot, isNotNull);
@@ -169,6 +167,118 @@ void main() {
           ReadFallbackReason.queryFailed,
         );
         expect(snapshot.fallbackObservation!.detail, isNotEmpty);
+      },
+    );
+
+    test(
+      'records minimum-expression-not-met fallback observation when normalized rows have no valid spelling',
+      () async {
+        WordRepository.debugSetReadSourcePolicyOverride(
+          ReadSourcePolicy.normalizedWithFallback,
+        );
+        final repository = WordRepository();
+        final db = await DatabaseService.openDatabaseFile();
+
+        await db.execute('PRAGMA ignore_check_constraints = ON');
+        await db.insert('WORD_TABLE', {
+          'id': 'T9000_RS_MIN_EXPR',
+          '언어': '테스트',
+          '표기1': 'legacy-valid',
+          '음역1': '레거시',
+          '발음1': 'legacy-valid',
+        });
+        await db.insert('word_expression_set', {
+          'word_id': 'T9000_RS_MIN_EXPR',
+          'seq': 1,
+          'is_representative': 1,
+          'spelling': '   ',
+          'transliteration': 'issue-only',
+          'pronunciation': 'issue-only',
+        });
+        await db.execute('PRAGMA ignore_check_constraints = OFF');
+
+        final row = await repository.getWordMapById('T9000_RS_MIN_EXPR');
+        final snapshot = WordRepository.debugReadSourceCollector
+            .debugLastSnapshotForWord('T9000_RS_MIN_EXPR');
+
+        expect(row, isNotNull);
+        expect(snapshot, isNotNull);
+        expect(snapshot!.resolvedSource, ResolvedReadSource.legacy);
+        expect(
+          snapshot.finalResultSource,
+          FinalReadResultSource.legacyFallback,
+        );
+        expect(snapshot.didFallback, isTrue);
+        expect(
+          snapshot.fallbackObservation!.reason,
+          ReadFallbackReason.minimumExpressionNotMet,
+        );
+        expect(
+          snapshot.fallbackObservation!.detail,
+          contains('valid spelling'),
+        );
+      },
+    );
+
+    test(
+      'records mapping-invalid fallback observation when normalized rows violate canonical ordering rules',
+      () async {
+        WordRepository.debugSetReadSourcePolicyOverride(
+          ReadSourcePolicy.normalizedWithFallback,
+        );
+        final repository = WordRepository();
+        final db = await DatabaseService.openDatabaseFile();
+
+        await db.execute('DROP TABLE word_expression_set');
+        await db.execute('''
+          CREATE TABLE word_expression_set (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            word_id TEXT NOT NULL,
+            seq INTEGER,
+            is_representative INTEGER,
+            spelling TEXT,
+            transliteration TEXT,
+            pronunciation TEXT
+          )
+          ''');
+
+        await db.insert('WORD_TABLE', {
+          'id': 'T9000_RS_MAPPING',
+          '언어': '테스트',
+          '표기1': 'legacy-alpha',
+          '음역1': '레거시 알파',
+          '발음1': 'legacy-alpha',
+        });
+        await db.insert('word_expression_set', {
+          'word_id': 'T9000_RS_MAPPING',
+          'seq': 1,
+          'is_representative': 1,
+          'spelling': 'alpha',
+        });
+        await db.insert('word_expression_set', {
+          'word_id': 'T9000_RS_MAPPING',
+          'seq': 1,
+          'is_representative': 0,
+          'spelling': 'aleph',
+        });
+
+        final row = await repository.getWordMapById('T9000_RS_MAPPING');
+        final snapshot = WordRepository.debugReadSourceCollector
+            .debugLastSnapshotForWord('T9000_RS_MAPPING');
+
+        expect(row, isNotNull);
+        expect(snapshot, isNotNull);
+        expect(snapshot!.resolvedSource, ResolvedReadSource.legacy);
+        expect(
+          snapshot.finalResultSource,
+          FinalReadResultSource.legacyFallback,
+        );
+        expect(snapshot.didFallback, isTrue);
+        expect(
+          snapshot.fallbackObservation!.reason,
+          ReadFallbackReason.mappingInvalid,
+        );
+        expect(snapshot.fallbackObservation!.detail, contains('duplicate seq'));
       },
     );
 
@@ -188,9 +298,8 @@ void main() {
         });
 
         final row = await repository.getWordMapById('T9000_RS_STRICT');
-        final snapshot = repository.debugLastWordExpressionReadSnapshotFor(
-          'T9000_RS_STRICT',
-        );
+        final snapshot = WordRepository.debugReadSourceCollector
+            .debugLastSnapshotForWord('T9000_RS_STRICT');
 
         expect(row, isNotNull);
         expect(snapshot, isNotNull);
@@ -216,11 +325,12 @@ void main() {
         final repository = WordRepository();
 
         final legacyRow = await repository.getWordMapById('E0000_0010');
-        final legacySnapshot = repository
-            .debugLastWordExpressionReadSnapshotFor('E0000_0010');
+        final legacySnapshot = WordRepository.debugReadSourceCollector
+            .debugLastSnapshotForWord('E0000_0010');
         final detailRow = await repository
             .getWordDetailMapByIdForReadSourcePhase2Only('E0000_0010');
-        final detailSnapshot = repository.debugWordExpressionReadObservationLog
+        final detailSnapshot = WordRepository.debugReadSourceCollector
+            .debugRecentSnapshots()
             .lastWhere(
               (snapshot) =>
                   snapshot.wordId == 'E0000_0010' &&
@@ -267,7 +377,8 @@ void main() {
             .getWordDetailMapByIdForReadSourcePhase2Only(
               'T9000_RS_DETAIL_EMPTY',
             );
-        final snapshot = repository.debugWordExpressionReadObservationLog
+        final snapshot = WordRepository.debugReadSourceCollector
+            .debugRecentSnapshots()
             .lastWhere(
               (entry) =>
                   entry.wordId == 'T9000_RS_DETAIL_EMPTY' &&
@@ -335,7 +446,8 @@ void main() {
             .getWordDetailMapByIdForReadSourcePhase2Only(
               'T9000_RS_DETAIL_MISMATCH',
             );
-        final snapshot = repository.debugWordExpressionReadObservationLog
+        final snapshot = WordRepository.debugReadSourceCollector
+            .debugRecentSnapshots()
             .lastWhere(
               (entry) =>
                   entry.wordId == 'T9000_RS_DETAIL_MISMATCH' &&
@@ -364,6 +476,61 @@ void main() {
           contains('representative_spelling'),
         );
         _expectSameDetailDisplay(legacyWordRow, detailRow!);
+      },
+    );
+  });
+
+  group('ReadSourceDebugCollector wrapper output', () {
+    test(
+      'provides summary-by-word, summary-by-reason, and recent raw event lines',
+      () async {
+        final repository = WordRepository();
+        final db = await DatabaseService.openDatabaseFile();
+
+        await repository.getWordMapById('E0000_0010');
+
+        await db.insert('WORD_TABLE', {
+          'id': 'T9000_RS_SUMMARY',
+          '언어': '테스트',
+          '표기1': 'summary-word',
+          '음역1': '서머리',
+          '발음1': 'summary',
+        });
+
+        await repository.getWordDetailMapByIdForReadSourcePhase2Only(
+          'T9000_RS_SUMMARY',
+        );
+
+        final wordSummary = WordRepository.debugReadSourceCollector
+            .summaryForWord('T9000_RS_SUMMARY');
+        final reasonSummaries = WordRepository.debugReadSourceCollector
+            .summariesByReason();
+        final recentEvents = WordRepository.debugReadSourceCollector
+            .recentEvents(limit: 5);
+        final wordSummaryLines = WordRepository.debugReadSourceCollector
+            .formatWordSummaryLines(wordId: 'T9000_RS_SUMMARY');
+        final reasonSummaryLines = WordRepository.debugReadSourceCollector
+            .formatReasonSummaryLines();
+        final recentEventLines = WordRepository.debugReadSourceCollector
+            .formatRecentEventLines(limit: 5);
+
+        expect(wordSummary, isNotNull);
+        expect(wordSummary!.fallbackEvents, 1);
+        expect(wordSummary.reasonCounts[ReadFallbackReason.emptyResult], 1);
+        expect(reasonSummaries, isNotEmpty);
+        expect(
+          reasonSummaries.any(
+            (summary) => summary.reason == ReadFallbackReason.emptyResult,
+          ),
+          isTrue,
+        );
+        expect(recentEvents, isNotEmpty);
+        expect(recentEvents.first.wordId, 'T9000_RS_SUMMARY');
+        expect(wordSummaryLines.single, contains('[read-summary:word]'));
+        expect(wordSummaryLines.single, contains('wordId=T9000_RS_SUMMARY'));
+        expect(reasonSummaryLines.join('\n'), contains('reason=empty_result'));
+        expect(recentEventLines.first, contains('[read-event]'));
+        expect(recentEventLines.first, contains('reason=empty_result'));
       },
     );
   });

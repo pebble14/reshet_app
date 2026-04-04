@@ -67,6 +67,130 @@ canonical semantic 동일성만으로 통과시키지 않는다. 현재 상세 �
 - 수동 테스트에서 상세 화면 표시 차이, edit 후 재조회 이상, 기존 기능 회귀가 없을 것
 - 관측 결과를 바탕으로 다음 적용 후보 API를 별도 설계 후 승인받을 것
 
+## 2026-04-04 Phase 2.5 fallback 관측/분석 강화
+
+### 목적
+
+- 이번 단계 목적은 fallback을 줄이거나 제거하는 것이 아니라, fallback을 신뢰 가능하게 관측하고 해석할 수 있도록 만드는 것이다.
+- read policy, 적용 범위, UI, DB schema는 유지한다.
+- 사용자 기능으로 보이는 화면이나 영속 로그는 추가하지 않는다.
+
+### collector 도입 이유
+
+- 기존 관측은 `WordRepository` 인스턴스 내부 snapshot 기록 중심이라서 앱 세션 전체 fallback 경향을 집계하기에 한계가 있다.
+- Phase 2.5에서는 debug 전용 shared in-memory collector를 도입해 동일 앱 프로세스 안에서 fallback/raw event/summary를 함께 본다.
+- 공식 외부 접근 경로는 `WordRepository.debugReadSourceCollector` wrapper로 제한한다.
+
+### collector 구조
+
+- collector 파일 위치: `lib/domain/expression/read_source_debug_collector.dart`
+- 생명주기: lazy init + app process in-memory
+- reset: debug API로 수동 초기화 가능
+- 앱 재시작 시 collector 데이터는 모두 초기화된다.
+- raw event는 최근 200개만 유지한다.
+- aggregate summary는 reset 전까지 누적 유지한다.
+
+### 관측 범위
+
+- 현재 관측 대상은 read source phase 2 상세 전용 경로와 repository debug inspection 경로다.
+- 기본 관측 단위는 event 1건이며, 집계 단위는 `word_id`와 `reason` 두 축을 사용한다.
+- summary는 반드시 `event count`와 `unique word count`를 분리해서 해석한다.
+
+### collector 제공 데이터
+
+1. summary by word
+2. summary by reason
+3. recent raw events
+
+summary by word 기본 항목:
+
+- `wordId`
+- `totalEvents`
+- `fallbackEvents`
+- `normalizedSuccessEvents`
+- `legacyOnlyEvents`
+- `legacyFallbackEvents`
+- `normalizedFailureEvents`
+- `reasonCounts`
+- `contexts`
+- `firstSeenAt`
+- `lastSeenAt`
+- `lastFallbackDetail`
+
+summary by reason 기본 항목:
+
+- `reason`
+- `eventCount`
+- `uniqueWordCount`
+- `contexts`
+- `firstSeenAt`
+- `lastSeenAt`
+- `sampleWordIds`
+
+recent raw event 기본 항목:
+
+- `sequence`
+- `observedAt`
+- `wordId`
+- `context`
+- `requestedPolicy`
+- `resolvedSource`
+- `finalResultSource`
+- `didFallback`
+- `fallbackReason`
+- `fallbackDetail`
+- `legacyResultAvailable`
+- `normalizedResultAvailable`
+- `legacySetCount`
+- `normalizedSetCount`
+- `finalSetCount`
+
+### fallback reason 분류 유지
+
+Phase 2.5에서는 fallback reason 자체를 변경하지 않는다.
+
+- `query_failed`
+- `empty_result`
+- `mapping_invalid`
+- `minimum_expression_not_met`
+- `user_visible_display_mismatch`
+
+해석 기준:
+
+- `query_failed`: normalized query 자체 실패. 1건이라도 위험 신호로 본다.
+- `empty_result`: normalized usable row 부재. sparse data 여부를 함께 해석한다.
+- `mapping_invalid`: row 구조 해석 불가. 즉시 위험 신호로 본다.
+- `minimum_expression_not_met`: 최소 spelling 조건 미충족. 데이터 품질 또는 migration 이상 후보로 본다.
+- `user_visible_display_mismatch`: 상세 화면 표시 차이. Phase 3 진입 차단 신호로 본다.
+
+### 해석 기준
+
+- `event fallback rate`와 `unique word fallback rate`를 함께 본다.
+- 동일 단어 반복 조회만으로 통계가 왜곡되지 않도록 unique word 기준을 반드시 같이 확인한다.
+- UI가 조용히 유지되더라도 collector에 fallback이 누적되면 안정 상태로 보지 않는다.
+- fallback reason이 관측되지 않으면 안정성 판단도 불가능하다고 본다.
+
+### Phase 3 진입 판단 기준
+
+즉시 Phase 3 가능:
+
+- real DB unique word 20개 이상 관측
+- `query_failed = 0`
+- `mapping_invalid = 0`
+- `user_visible_display_mismatch = 0`
+- 일반 단어군에서 설명 불가능한 `empty_result` / `minimum_expression_not_met`가 없음
+
+추가 관측 필요:
+
+- 샘플 수가 부족하거나
+- `empty_result`, `minimum_expression_not_met`가 sparse cohort에 한해 제한적으로 관측되지만 원인 설명이 가능한 경우
+
+진입 금지:
+
+- 위험 reason이 1건이라도 재현되거나
+- unique fallback이 일반 단어군으로 확산되거나
+- collector 누락/중복 때문에 관측 신뢰도를 설명할 수 없는 경우
+
 ## 1. 개요
 
 이 문서는 현재 legacy `WORD_TABLE` 기반인 read source를 normalized `word_expression_set` 기준으로 안전하게 전환하기 위한 정책을 정의한다.

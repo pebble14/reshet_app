@@ -9,6 +9,7 @@ import '../models/relation_category_lookup.dart';
 import '../models/relation_type_lookup.dart';
 import '../models/word.dart';
 import '../../domain/expression/expression_read_models.dart';
+import '../../domain/expression/read_source_debug_collector.dart';
 import '../../domain/expression/read_source_policy.dart';
 import '../../domain/word/word_write_models.dart';
 
@@ -134,12 +135,12 @@ class WordRepository {
     'ω': 'ώὼὠὡὢὣὤὥὦὧῲῳῴῶῷ',
     'ρ': 'ῤῥ',
   };
-  final Map<String, WordExpressionReadSnapshot>
-  _lastWordExpressionReadSnapshots = {};
-  final List<WordExpressionReadSnapshot> _wordExpressionReadObservationLog = [];
 
   static ReadSourcePolicy get debugCurrentReadSourcePolicy =>
       _debugReadSourcePolicyOverride ?? _defaultReadSourcePolicy;
+
+  static ReadSourceDebugCollector get debugReadSourceCollector =>
+      ReadSourceDebugCollector.instance;
 
   static void debugSetReadSourcePolicyOverride(ReadSourcePolicy? policy) {
     _debugReadSourcePolicyOverride = policy;
@@ -147,20 +148,19 @@ class WordRepository {
 
   Map<String, WordExpressionReadSnapshot>
   get debugLastWordExpressionReadSnapshots =>
-      Map.unmodifiable(_lastWordExpressionReadSnapshots);
+      debugReadSourceCollector.debugLastSnapshotsByWord();
 
   List<WordExpressionReadSnapshot> get debugWordExpressionReadObservationLog =>
-      List.unmodifiable(_wordExpressionReadObservationLog);
+      debugReadSourceCollector.debugRecentSnapshots();
 
   void debugClearWordExpressionReadObservations() {
-    _lastWordExpressionReadSnapshots.clear();
-    _wordExpressionReadObservationLog.clear();
+    debugReadSourceCollector.debugReset();
   }
 
   WordExpressionReadSnapshot? debugLastWordExpressionReadSnapshotFor(
     String wordId,
   ) {
-    return _lastWordExpressionReadSnapshots[wordId.trim()];
+    return debugReadSourceCollector.debugLastSnapshotForWord(wordId);
   }
 
   ReadSourcePolicy _resolveReadSourcePolicyForContext(String context) {
@@ -179,11 +179,7 @@ class WordRepository {
   void _recordWordExpressionReadSnapshots(
     Iterable<WordExpressionReadSnapshot> snapshots,
   ) {
-    final normalizedSnapshots = snapshots.toList(growable: false);
-    for (final snapshot in normalizedSnapshots) {
-      _lastWordExpressionReadSnapshots[snapshot.wordId] = snapshot;
-    }
-    _wordExpressionReadObservationLog.addAll(normalizedSnapshots);
+    debugReadSourceCollector.recordAll(snapshots);
   }
 
   Future<WordExpressionReadSnapshot?> debugInspectWordExpressionReadByWordId(
