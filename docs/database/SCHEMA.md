@@ -112,8 +112,16 @@ H0001_0000
 
 - `reshet_work.db`에 migration으로 생성한다.
 - 현재 앱 read source는 아직 legacy `WORD_TABLE` 표현 컬럼이다.
+- 현재 앱 write path는 legacy `WORD_TABLE`와 `word_expression_set`를 함께 유지하는 dual-sync 구조를 사용한다.
 - `word_expression_set.id`는 surrogate key이다.
 - 의미 비교와 정합성 검증은 `(word_id, seq)`를 natural identity로 본다.
+
+운영 원칙:
+
+- authoritative source는 계속 legacy `WORD_TABLE`이다.
+- create 시 `word_id`는 service에서 먼저 확보하고, repository transaction 안에서 같은 `word_id`로 `WORD_TABLE` insert를 먼저 수행한 뒤 `word_expression_set` sync를 수행한다.
+- normalized row는 write payload에서 직접 만들지 않고, 실제 legacy snapshot에 canonical read 규칙을 다시 적용해 생성한다.
+- dual-sync 구현 검증은 create/update/delete/undo 수동 시나리오를 모두 수행한 뒤 마지막에 `sql/word_expression_set/004_verify_word_expression_set.sql`을 다시 실행해 semantic diff 0건인지 확인한다.
 
 ## 실제 컬럼 구조
 

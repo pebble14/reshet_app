@@ -124,6 +124,7 @@ Reshet은 단어 사이의 관계를 탐색하기 위한 도구이다.
 - [x] 표현 세트 정규화 가능성 검토
 - [x] word_expression_set migration SQL 작성
 - [x] word_expression_set semantic compare 기준 확정
+- [x] word_expression_set dual-sync write path 구현
 - [ ] word_expression_set read source 전환
 - [ ] 확장 가능한 관계 구조 설계
 

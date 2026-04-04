@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'package:sqflite_common/sqlite_api.dart';
 import '../../database/database_service.dart';
+import '../adapters/legacy_word_expression_read_adapter.dart';
 import '../adapters/legacy_word_expression_write_adapter.dart';
+import '../adapters/normalized_word_expression_write_adapter.dart';
 import '../models/relation_category_lookup.dart';
 import '../models/relation_type_lookup.dart';
 import '../models/word.dart';
@@ -1525,8 +1527,12 @@ class WordRepository {
         '비고': (payload.note ?? '').trim().isEmpty ? null : payload.note!.trim(),
         ...normalizedExpressionColumns,
       };
+      final historyAfter = _sanitizeWordHistorySnapshot(
+        Map<String, dynamic>.from(row),
+      );
 
       await txn.insert('WORD_TABLE', row);
+      await _syncWordExpressionSetFromLegacySnapshot(txn, historyAfter);
 
       await _insertHistory(
         txn,
@@ -1534,7 +1540,7 @@ class WordRepository {
         actionType: 'create',
         entityType: 'word',
         entityId: id,
-        afterJson: row,
+        afterJson: historyAfter,
       );
     });
   }
@@ -1586,6 +1592,14 @@ class WordRepository {
         whereArgs: [wordId, wordId],
       );
 
+      await txn.delete(
+        'WORD_RELATION',
+        where: 'word_id_1 = ? OR word_id_2 = ?',
+        whereArgs: [wordId, wordId],
+      );
+      await _deleteWordExpressionSetRows(txn, wordId);
+      await txn.delete('WORD_TABLE', where: 'id = ?', whereArgs: [wordId]);
+
       for (final rel in relationRows) {
         final relMap = Map<String, dynamic>.from(rel);
         await _insertHistory(
@@ -1606,14 +1620,6 @@ class WordRepository {
         entityId: wordId,
         beforeJson: wordBefore,
       );
-
-      await txn.delete(
-        'WORD_RELATION',
-        where: 'word_id_1 = ? OR word_id_2 = ?',
-        whereArgs: [wordId, wordId],
-      );
-
-      await txn.delete('WORD_TABLE', where: 'id = ?', whereArgs: [wordId]);
     });
   }
 
@@ -1678,6 +1684,7 @@ class WordRepository {
         where: 'id = ?',
         whereArgs: [id],
       );
+      await _syncWordExpressionSetFromLegacySnapshot(txn, after);
 
       await _insertHistory(
         txn,
@@ -1689,6 +1696,44 @@ class WordRepository {
         afterJson: after,
       );
     });
+  }
+
+  Future<void> _syncWordExpressionSetFromLegacySnapshot(
+    DatabaseExecutor txn,
+    Map<String, dynamic> legacyWordRow,
+  ) async {
+    final wordId = (legacyWordRow['id'] ?? '').toString().trim();
+    if (wordId.isEmpty) {
+      throw Exception('word_expression_set 동기화 실패: word id가 비어 있습니다.');
+    }
+
+    final readResult = readLegacyWordExpressionRow(legacyWordRow);
+    final rows = toWordExpressionSetRows(wordId, readResult.sets);
+
+    await _replaceWordExpressionSetRows(txn, wordId, rows);
+  }
+
+  Future<void> _replaceWordExpressionSetRows(
+    DatabaseExecutor txn,
+    String wordId,
+    List<Map<String, Object?>> rows,
+  ) async {
+    await _deleteWordExpressionSetRows(txn, wordId);
+
+    for (final row in rows) {
+      await txn.insert('word_expression_set', row);
+    }
+  }
+
+  Future<void> _deleteWordExpressionSetRows(
+    DatabaseExecutor txn,
+    String wordId,
+  ) async {
+    await txn.delete(
+      'word_expression_set',
+      where: 'word_id = ?',
+      whereArgs: [wordId],
+    );
   }
 
   String _newHistoryGroupId() {
@@ -1858,10 +1903,12 @@ class WordRepository {
         if (actionType == 'create') {
           // 생성 취소 => 삭제
           if (entityType == 'word') {
+            final createdWordId = after!['id'].toString();
+            await _deleteWordExpressionSetRows(txn, createdWordId);
             await txn.delete(
               'WORD_TABLE',
               where: 'id = ?',
-              whereArgs: [after!['id']],
+              whereArgs: [createdWordId],
             );
           } else if (entityType == 'relation') {
             await txn.delete(
@@ -1879,6 +1926,7 @@ class WordRepository {
               where: 'id = ?',
               whereArgs: [before['id']],
             );
+            await _syncWordExpressionSetFromLegacySnapshot(txn, before);
           } else if (entityType == 'relation') {
             await txn.update(
               'WORD_RELATION',
@@ -1891,6 +1939,7 @@ class WordRepository {
           // 삭제 취소 => before 복원
           if (entityType == 'word') {
             await txn.insert('WORD_TABLE', before!);
+            await _syncWordExpressionSetFromLegacySnapshot(txn, before);
           } else if (entityType == 'relation') {
             await _restoreDeletedRelation(txn, before!);
           }
