@@ -104,6 +104,56 @@ H0001_0000
 
 ---
 
+# word_expression_set
+
+표현 세트 정규화 테이블.
+
+현재 상태:
+
+- `reshet_work.db`에 migration으로 생성한다.
+- 현재 앱 read source는 아직 legacy `WORD_TABLE` 표현 컬럼이다.
+- `word_expression_set.id`는 surrogate key이다.
+- 의미 비교와 정합성 검증은 `(word_id, seq)`를 natural identity로 본다.
+
+## 실제 컬럼 구조
+
+| 컬럼 | 타입 | PK | NOT NULL | 기본값 | 설명 |
+| --- | --- | --- | --- | --- | --- |
+| `id` | `INTEGER` | Y | N | - | surrogate key |
+| `word_id` | `TEXT` | N | Y | - | `WORD_TABLE.id` 참조 |
+| `seq` | `INTEGER` | N | Y | - | canonical compacting 순서 |
+| `is_representative` | `INTEGER` | N | Y | - | 대표 세트 여부 (`0/1`) |
+| `spelling` | `TEXT` | N | Y | - | 표기 |
+| `transliteration` | `TEXT` | N | N | - | 음역 |
+| `pronunciation` | `TEXT` | N | N | - | 발음 |
+
+제약:
+
+- `FOREIGN KEY(word_id) REFERENCES WORD_TABLE(id) ON DELETE CASCADE`
+- `CHECK(seq >= 1)`
+- `CHECK(is_representative IN (0, 1))`
+- `CHECK(LENGTH(TRIM(spelling)) > 0)`
+- `CHECK(transliteration IS NULL OR LENGTH(TRIM(transliteration)) > 0)`
+- `CHECK(pronunciation IS NULL OR LENGTH(TRIM(pronunciation)) > 0)`
+
+인덱스:
+
+- `ux_word_expression_set_word_seq`
+  - `UNIQUE(word_id, seq)`
+- `ux_word_expression_set_one_representative`
+  - `UNIQUE(word_id) WHERE is_representative = 1`
+
+정합성 원칙:
+
+- 대표 세트는 항상 `seq = 1`
+- `spelling`이 있는 slot만 row로 승격한다.
+- `spelling` 없이 `transliteration` 또는 `pronunciation`만 있는 slot은 row로 저장하지 않고 migration exception으로 분리한다.
+- semantic compare에서는 `id`를 제외하고
+  `word_id, seq, is_representative, spelling, transliteration, pronunciation`
+  집합만 비교한다.
+
+---
+
 # WORD_RELATION
 
 단어 간 관계 테이블.
