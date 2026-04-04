@@ -1,5 +1,155 @@
 # Read Source Migration
 
+## 2026-04-04 Phase 3.2 홈 목록/검색 결과 표시 read 확장
+
+### 이번 단계 적용 범위
+
+- `WordRepository.getStrongWordsMap`
+- `WordRepository.searchStrongExactMap`
+- `WordRepository.searchWordsMap`
+
+대상 surface:
+
+- 홈 기본 Strong 목록 결과 표시
+- 홈 Strong exact 검색 결과 표시
+- 홈 일반 검색 결과 표시
+- 상세 복귀 후 동일 home surface 재조회
+- undo 후 동일 home surface 재조회
+
+이번 단계 비대상:
+
+- 검색 후보 산출 로직 자체
+- split view direct DB read
+- graph 관련 read
+- edit 전용 single-word reread
+
+### 구현 방식
+
+- 대상 context 3개만 `NORMALIZED_WITH_FALLBACK`으로 승격한다.
+- fallback reason, collector 구조, direct DB read 구조는 변경하지 않는다.
+- normalized read가 성공하면 legacy-shaped row를 다시 materialize해서 홈 표시용 row로 반환한다.
+- 표시용 signature가 legacy row와 다르면 `user_visible_display_mismatch`로 기존 fallback을 유지한다.
+
+helper 정리:
+
+- 기존 detail 전용 이름이던 materialize helper를 공용 display materialize helper로 일반화했다.
+- detail 비교는 기존 Phase 2 전용 비교 규칙을 유지한다.
+- home 목록/검색 결과 표시는 Phase 3.2 전용 resolver에서 별도 signature 비교를 수행한다.
+
+### 홈 표시용 비교 기준
+
+`getStrongWordsMap`
+
+- strong number
+- representative spelling
+
+`searchStrongExactMap`, `searchWordsMap`
+
+- strong number
+- representative spelling
+- representative transliteration
+- representative pronunciation
+- subtitle meaning(`의미1` 우선, 없으면 `의미`)
+
+canonical semantic equality만으로 통과시키지 않고, 실제 홈 화면 표시 필드가 같을 때만 normalized 결과를 통과시킨다.
+
+### 실제 keyword 고정
+
+선정 SQL:
+
+```sql
+SELECT TRIM("스트롱넘버") AS keyword
+FROM WORD_TABLE
+WHERE "스트롱넘버" IS NOT NULL
+  AND TRIM("스트롱넘버") <> ''
+  AND UPPER(SUBSTR(TRIM("스트롱넘버"), 1, 1)) IN ('H', 'G')
+ORDER BY
+  CASE UPPER(SUBSTR(TRIM("스트롱넘버"), 1, 1))
+    WHEN 'H' THEN 0
+    WHEN 'G' THEN 1
+    ELSE 2
+  END,
+  CAST(SUBSTR(TRIM("스트롱넘버"), 2) AS INTEGER),
+  id
+LIMIT 1;
+```
+
+```sql
+SELECT id, TRIM("표기1") AS spelling
+FROM WORD_TABLE
+WHERE "표기1" IS NOT NULL
+  AND TRIM("표기1") <> ''
+ORDER BY id
+LIMIT 1;
+```
+
+고정값:
+
+- exact keyword: `H0001`
+- general keyword: `-fer`
+
+route 확인:
+
+- `H0001`
+  - strong jump regex 일치
+  - `searchStrongExactMap` 결과 1건
+  - UI에서는 exact search path로 진입 가능
+- `-fer`
+  - strong jump regex 불일치
+  - `searchStrongExactMap` 결과 0건
+  - `searchWordsMap` 결과 2건
+  - UI에서는 general search path로만 진입
+
+### command 세션 결과
+
+세션 규칙:
+
+- app/process fresh start
+- collector reset 1회
+- `getStrongWordsMap` 1회
+- `searchStrongExactMap('H0001')` 1회
+- `searchWordsMap('-fer')` 1회
+
+실측 결과:
+
+- observed contexts: `getStrongWordsMap`, `searchStrongExactMap`, `searchWordsMap`
+- target context 3개 모두 observed
+- unexpected context: 0
+- fallback reason summary: 0건
+- recent event 기준 final result source: 전부 `normalized`
+
+건수:
+
+- `getStrongWordsMap`: 6231건
+- `searchStrongExactMap('H0001')`: 1건
+- `searchWordsMap('-fer')`: 2건
+
+### coverage 판정
+
+command coverage:
+
+- target context completeness: pass
+- unexpected context absence: pass
+- direct DB blind spot absence: pass
+  - Phase 3.2 대상 surface는 home screen에서 repository context 3개로만 진입함을 코드 기준으로 재확인했다.
+
+UI coverage:
+
+- 상세 복귀 후 동일 context 재관측: client manual session 필요
+- undo 후 동일 context 재관측: client manual session 필요
+
+현재 판정:
+
+- Phase 3.2 command 세션 기준 진입 조건 충족
+- 최종 UI coverage pass 여부는 클라이언트 수동 확인 전까지 보류
+
+### 한계 범위
+
+- split view direct DB read는 이번 단계에 포함하지 않는다.
+- graph cache hit / graph search 경로는 이번 단계에 포함하지 않는다.
+- edit 저장 직후 single-word reread는 이번 단계에 포함하지 않는다.
+- `getWordsMap`은 현재 홈 UI target surface가 아니라서 이번 단계에 포함하지 않는다.
+
 ## 2026-04-04 Phase 2 제한 적용
 
 ### 이번 단계 적용 범위
