@@ -698,6 +698,9 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   /// 이 배율보다 작아지면 엣지 태그를 숨긴다(가독성/겹침 감소)
   static const double _labelVisibleScaleThreshold = 1.15;
 
+  /// External input boundary for Phase 4-D.
+  /// The center word display remains caller-supplied and is not reread by
+  /// graph-owned read paths in this step.
   late Word _centerWord;
 
   bool _isLoading = true;
@@ -739,6 +742,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   @override
   void initState() {
     super.initState();
+    // Keep the caller-supplied center word as-is. This phase only separates
+    // graph-owned batch reads around the center.
     _centerWord = widget.centerWord;
     _selectedWordId = widget.selectedWordId;
     final cachedBaseGraph = WordGraphDataCache.getBaseGraph(
@@ -1080,7 +1085,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     }
 
     try {
-      final visibleGraphData = await _repository.getVisibleGraphData(
+      final visibleGraphData = await _repository.getVisibleGraphDataForGraph(
         _centerWord.id,
       );
       final words = visibleGraphData.connectedWords;
@@ -1725,9 +1730,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       final expansionData =
           cachedExpansion ??
           await (() async {
-            final visibleGraphData = await _repository.getVisibleGraphData(
-              word.id,
-            );
+            final visibleGraphData = await _repository
+                .getVisibleGraphDataForGraph(word.id);
             WordGraphDataCache.putExpansion(
               centerWordId: _centerWord.id,
               sourceWordId: word.id,
@@ -4543,6 +4547,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       throw Exception('신규 단어 ID를 생성하지 못했습니다.');
     }
 
+    // Graph single-word reread stays create-flow-only in this phase.
     final createdWordMap = await _repository.getWordMapByIdForGraphSingleWord(
       newId,
     );

@@ -368,7 +368,7 @@ class GraphBuilder {
     );
     final relatedWordRows = relatedWordIds.isEmpty
         ? const <Map<String, dynamic>>[]
-        : await repository.getWordsByIds(relatedWordIds);
+        : await repository.getWordsByIdsForGraphBatch(relatedWordIds);
     final relatedWords = relatedWordRows
         .map(Word.fromMap)
         .toList(growable: false);

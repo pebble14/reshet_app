@@ -99,6 +99,7 @@ class WordRepository {
   static const String _readAfterUndoSingleWordContext =
       'readAfterUndoSingleWord';
   static const String _readForGraphSingleWordContext = 'readForGraphSingleWord';
+  static const String _readForGraphBatchContext = 'readForGraphBatch';
   static const String _readForSplitViewSingleWordContext =
       'readForSplitViewSingleWord';
   static const String _readForExplorerSingleWordContext =
@@ -1241,6 +1242,9 @@ class WordRepository {
     );
   }
 
+  /// Graph single-word boundary stays limited to create-flow follow-up reads in
+  /// this phase. Do not widen this surface until graph-owned single-word reread
+  /// is explicitly designed.
   Future<Map<String, dynamic>?> getWordMapByIdForGraphSingleWord(
     String id,
   ) async {
@@ -1280,6 +1284,22 @@ class WordRepository {
   }
 
   Future<List<Map<String, dynamic>>> getWordsByIds(List<String> wordIds) async {
+    return _getWordsByIdsWithContext(wordIds, context: 'getWordsByIds');
+  }
+
+  Future<List<Map<String, dynamic>>> getWordsByIdsForGraphBatch(
+    List<String> wordIds,
+  ) async {
+    return _getWordsByIdsWithContext(
+      wordIds,
+      context: _readForGraphBatchContext,
+    );
+  }
+
+  Future<List<Map<String, dynamic>>> _getWordsByIdsWithContext(
+    List<String> wordIds, {
+    required String context,
+  }) async {
     final orderedIds = <String>[];
     final seenIds = <String>{};
 
@@ -1302,11 +1322,7 @@ class WordRepository {
     final rows = rawRows
         .map((row) => Map<String, dynamic>.from(row))
         .toList(growable: false);
-    await _captureWordExpressionReadSnapshots(
-      db,
-      rows,
-      context: 'getWordsByIds',
-    );
+    await _captureWordExpressionReadSnapshots(db, rows, context: context);
 
     final rowsById = <String, Map<String, dynamic>>{
       for (final row in rows)
@@ -1451,6 +1467,26 @@ class WordRepository {
   /// 그래프 표시용 연결 단어 조회
   /// - 숨김 정책은 builder/UI의 +N more와 maxNodes가 담당한다.
   Future<VisibleWordGraphData> getVisibleGraphData(String centerWordId) async {
+    return _getVisibleGraphDataWithBatchLoader(
+      centerWordId,
+      loadWordRows: getWordsByIds,
+    );
+  }
+
+  Future<VisibleWordGraphData> getVisibleGraphDataForGraph(
+    String centerWordId,
+  ) async {
+    return _getVisibleGraphDataWithBatchLoader(
+      centerWordId,
+      loadWordRows: getWordsByIdsForGraphBatch,
+    );
+  }
+
+  Future<VisibleWordGraphData> _getVisibleGraphDataWithBatchLoader(
+    String centerWordId, {
+    required Future<List<Map<String, dynamic>>> Function(List<String>)
+    loadWordRows,
+  }) async {
     final visibleEdges = await getVisibleRelationEdgesForGraph(centerWordId);
     if (visibleEdges.isEmpty) {
       return (connectedWords: const <Word>[], relationEdges: visibleEdges);
@@ -1464,7 +1500,7 @@ class WordRepository {
       }
     }
 
-    final rows = await getWordsByIds(orderedIds);
+    final rows = await loadWordRows(orderedIds);
     final wordsById = <String, Word>{
       for (final row in rows) (row['id'] as String): Word.fromMap(row),
     };
@@ -1479,7 +1515,7 @@ class WordRepository {
   Future<List<Word>> getVisibleConnectedWordsForGraph(
     String centerWordId,
   ) async {
-    final visibleGraphData = await getVisibleGraphData(centerWordId);
+    final visibleGraphData = await getVisibleGraphDataForGraph(centerWordId);
     return visibleGraphData.connectedWords;
   }
 

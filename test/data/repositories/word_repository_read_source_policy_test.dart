@@ -440,6 +440,74 @@ void main() {
     );
   });
 
+  group('WordRepository graph batch path', () {
+    test(
+      'graph batch uses a dedicated LEGACY collector context while explorer history keeps the shared batch context',
+      () async {
+        final repository = WordRepository();
+        final db = await DatabaseService.openDatabaseFile();
+        const centerWordId = 'T9000_RS_GRAPH_CENTER';
+        const childWordId = 'T9000_RS_GRAPH_CHILD';
+
+        await db.insert('WORD_TABLE', {
+          'id': centerWordId,
+          '\uC5B8\uC5B4': '\uD14C\uC2A4\uD2B8',
+          '\uD45C\uAE301': 'graph-center',
+          '\uC74C\uC5ED1': 'graph-center',
+          '\uBC1C\uC74C1': 'graph-center',
+          '\uC758\uBBF81': 'graph center',
+        });
+        await db.insert('WORD_TABLE', {
+          'id': childWordId,
+          '\uC5B8\uC5B4': '\uD14C\uC2A4\uD2B8',
+          '\uD45C\uAE301': 'graph-child',
+          '\uC74C\uC5ED1': 'graph-child',
+          '\uBC1C\uC74C1': 'graph-child',
+          '\uC758\uBBF81': 'graph child',
+        });
+        await db.insert('WORD_RELATION', {
+          'word_id_1': centerWordId,
+          'word_id_2': childWordId,
+          'direction_code': 'unknown',
+          'updated_at': DateTime.now().toIso8601String(),
+        });
+
+        final graphData = await repository.getVisibleGraphDataForGraph(
+          centerWordId,
+        );
+        final genericRows = await repository.getWordsByIds([childWordId]);
+        final graphSnapshot = WordRepository.debugReadSourceCollector
+            .debugRecentSnapshots()
+            .lastWhere(
+              (snapshot) =>
+                  snapshot.wordId == childWordId &&
+                  snapshot.context == 'readForGraphBatch',
+            );
+        final genericSnapshot = WordRepository.debugReadSourceCollector
+            .debugRecentSnapshots()
+            .lastWhere(
+              (snapshot) =>
+                  snapshot.wordId == childWordId &&
+                  snapshot.context == 'getWordsByIds',
+            );
+
+        expect(graphData.connectedWords, hasLength(1));
+        expect(graphData.connectedWords.single.id, childWordId);
+        expect(graphData.relationEdges, hasLength(1));
+        expect(genericRows, hasLength(1));
+        expect(genericRows.single['id'], childWordId);
+
+        expect(graphSnapshot.requestedPolicy, ReadSourcePolicy.legacy);
+        expect(graphSnapshot.finalResultSource, FinalReadResultSource.legacy);
+        expect(graphSnapshot.didFallback, isFalse);
+
+        expect(genericSnapshot.requestedPolicy, ReadSourcePolicy.legacy);
+        expect(genericSnapshot.finalResultSource, FinalReadResultSource.legacy);
+        expect(genericSnapshot.didFallback, isFalse);
+      },
+    );
+  });
+
   group('WordRepository detail-only phase2 path', () {
     test(
       'keeps the global default as LEGACY while the detail-only API uses NORMALIZED_WITH_FALLBACK',
