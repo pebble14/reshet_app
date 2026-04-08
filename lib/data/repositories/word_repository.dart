@@ -99,6 +99,8 @@ class WordRepository {
   static const String _readAfterUndoSingleWordContext =
       'readAfterUndoSingleWord';
   static const String _readForGraphSingleWordContext = 'readForGraphSingleWord';
+  static const String _readForSplitViewSingleWordContext =
+      'readForSplitViewSingleWord';
   static const String _readForExplorerSingleWordContext =
       'readForExplorerSingleWord';
   static const Set<String> _phase32HomeDisplayContexts = {
@@ -1256,6 +1258,15 @@ class WordRepository {
     return _getWordMapByIdWithContext(
       id,
       context: _readForGraphSingleWordContext,
+    );
+  }
+
+  Future<Map<String, dynamic>?> getWordMapByIdForSplitViewSingleWord(
+    String id,
+  ) async {
+    return _getWordMapByIdWithContext(
+      id,
+      context: _readForSplitViewSingleWordContext,
     );
   }
 

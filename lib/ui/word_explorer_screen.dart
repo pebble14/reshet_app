@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../data/repositories/word_repository.dart';
-import '../database/database_service.dart';
 import '../data/models/word.dart';
 import 'word_detail_screen.dart';
 import 'word_edit_screen.dart';
@@ -100,7 +99,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
     });
 
     try {
-      final selectedWordMap = await _loadWordMap(word.id);
+      final selectedWordMap = await _loadSplitViewWordMap(word.id);
 
       if (!mounted) return;
 
@@ -133,20 +132,8 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
     }
   }
 
-  Future<Map<String, dynamic>?> _loadWordMap(String wordId) async {
-    final db = await DatabaseService.openDatabaseFile();
-    final rows = await db.query(
-      'WORD_TABLE',
-      where: 'id = ?',
-      whereArgs: [wordId],
-      limit: 1,
-    );
-
-    if (rows.isEmpty) {
-      return null;
-    }
-
-    return Map<String, dynamic>.from(rows.first);
+  Future<Map<String, dynamic>?> _loadSplitViewWordMap(String wordId) async {
+    return _repository.getWordMapByIdForSplitViewSingleWord(wordId);
   }
 
   Future<void> _refreshSelectedWord({
@@ -165,7 +152,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
     });
 
     try {
-      final refreshedWordMap = await _loadWordMap(wordId);
+      final refreshedWordMap = await _loadSplitViewWordMap(wordId);
       final hasChanged = !_wordMapsEqual(previousWordMap, refreshedWordMap);
 
       if (!mounted) return;
