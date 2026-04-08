@@ -114,6 +114,9 @@ class WordRepository {
   static const Set<String> _phase33UndoSingleWordContexts = {
     _readAfterUndoSingleWordContext,
   };
+  static const Set<String> _phase4SplitViewSingleWordContexts = {
+    _readForSplitViewSingleWordContext,
+  };
   static ReadSourcePolicy? _debugReadSourcePolicyOverride;
   static final List<String> _homeSearchSpellingColumns = List.unmodifiable(
     List.generate(6, (index) => '표기${index + 1}'),
@@ -199,7 +202,8 @@ class WordRepository {
     if (context == _detailReadPhase2OnlyContext ||
         _phase32HomeDisplayContexts.contains(context) ||
         _phase33SaveSingleWordContexts.contains(context) ||
-        _phase33UndoSingleWordContexts.contains(context)) {
+        _phase33UndoSingleWordContexts.contains(context) ||
+        _phase4SplitViewSingleWordContexts.contains(context)) {
       return ReadSourcePolicy.normalizedWithFallback;
     }
 
@@ -1030,28 +1034,6 @@ class WordRepository {
   }
 
   ({Map<String, dynamic> wordRow, WordExpressionReadSnapshot snapshot})
-  _resolveWordDetailReadResultForPhase2Only({
-    required Map<String, dynamic> legacyWordRow,
-    required WordExpressionReadSnapshot snapshot,
-  }) {
-    return _resolveWordRowForDetailLikeDisplay(
-      legacyWordRow: legacyWordRow,
-      snapshot: snapshot,
-    );
-  }
-
-  ({Map<String, dynamic> wordRow, WordExpressionReadSnapshot snapshot})
-  _resolveWordRowForPhase33SingleWordReread({
-    required Map<String, dynamic> legacyWordRow,
-    required WordExpressionReadSnapshot snapshot,
-  }) {
-    return _resolveWordRowForDetailLikeDisplay(
-      legacyWordRow: legacyWordRow,
-      snapshot: snapshot,
-    );
-  }
-
-  ({Map<String, dynamic> wordRow, WordExpressionReadSnapshot snapshot})
   _resolveWordRowForHomeDisplayPhase32({
     required Map<String, dynamic> legacyWordRow,
     required WordExpressionReadSnapshot snapshot,
@@ -1205,6 +1187,13 @@ class WordRepository {
     String id, {
     required String context,
   }) async {
+    return _getWordMapByIdForDetailLikeSingleWordRead(id, context: context);
+  }
+
+  Future<Map<String, dynamic>?> _getWordMapByIdForDetailLikeSingleWordRead(
+    String id, {
+    required String context,
+  }) async {
     final normalizedId = id.trim();
     if (normalizedId.isEmpty) return null;
 
@@ -1226,7 +1215,7 @@ class WordRepository {
       return legacyWordRow;
     }
 
-    final resolvedResult = _resolveWordRowForPhase33SingleWordReread(
+    final resolvedResult = _resolveWordRowForDetailLikeDisplay(
       legacyWordRow: legacyWordRow,
       snapshot: snapshot,
     );
@@ -1264,7 +1253,7 @@ class WordRepository {
   Future<Map<String, dynamic>?> getWordMapByIdForSplitViewSingleWord(
     String id,
   ) async {
-    return _getWordMapByIdWithContext(
+    return _getWordMapByIdForDetailLikeSingleWordRead(
       id,
       context: _readForSplitViewSingleWordContext,
     );
@@ -1284,33 +1273,10 @@ class WordRepository {
   Future<Map<String, dynamic>?> getWordDetailMapByIdForReadSourcePhase2Only(
     String id,
   ) async {
-    final normalizedId = id.trim();
-    if (normalizedId.isEmpty) return null;
-
-    final db = await DatabaseService.openDatabaseFile();
-    final rows = await db.query(
-      'WORD_TABLE',
-      where: 'id = ?',
-      whereArgs: [normalizedId],
-      limit: 1,
+    return _getWordMapByIdForDetailLikeSingleWordRead(
+      id,
+      context: _detailReadPhase2OnlyContext,
     );
-
-    if (rows.isEmpty) return null;
-    final legacyWordRow = Map<String, dynamic>.from(rows.first);
-    final snapshots = await _resolveWordExpressionReadSnapshots(db, [
-      legacyWordRow,
-    ], context: _detailReadPhase2OnlyContext);
-    final snapshot = snapshots[normalizedId];
-    if (snapshot == null) {
-      return legacyWordRow;
-    }
-
-    final resolvedResult = _resolveWordDetailReadResultForPhase2Only(
-      legacyWordRow: legacyWordRow,
-      snapshot: snapshot,
-    );
-    _recordWordExpressionReadSnapshots([resolvedResult.snapshot]);
-    return resolvedResult.wordRow;
   }
 
   Future<List<Map<String, dynamic>>> getWordsByIds(List<String> wordIds) async {
@@ -3150,10 +3116,7 @@ class WordRepository {
         primaryWordIdCandidate,
       );
 
-      return UndoLastChangeResult(
-        didUndo: true,
-        primaryWordId: primaryWordId,
-      );
+      return UndoLastChangeResult(didUndo: true, primaryWordId: primaryWordId);
     });
   }
 }

@@ -318,6 +318,128 @@ void main() {
     );
   });
 
+  group('WordRepository split view single-word path', () {
+    test(
+      'split view uses NORMALIZED_WITH_FALLBACK while explorer history probe stays LEGACY',
+      () async {
+        final repository = WordRepository();
+
+        final splitViewRow = await repository
+            .getWordMapByIdForSplitViewSingleWord('E0000_0010');
+        final detailRow = await repository
+            .getWordDetailMapByIdForReadSourcePhase2Only('E0000_0010');
+        final explorerRow = await repository
+            .getWordMapByIdForExplorerSingleWord('E0000_0010');
+        final splitViewSnapshot = WordRepository.debugReadSourceCollector
+            .debugRecentSnapshots()
+            .lastWhere(
+              (snapshot) =>
+                  snapshot.wordId == 'E0000_0010' &&
+                  snapshot.context == 'readForSplitViewSingleWord',
+            );
+        final explorerSnapshot = WordRepository.debugReadSourceCollector
+            .debugRecentSnapshots()
+            .lastWhere(
+              (snapshot) =>
+                  snapshot.wordId == 'E0000_0010' &&
+                  snapshot.context == 'readForExplorerSingleWord',
+            );
+
+        expect(splitViewRow, isNotNull);
+        expect(detailRow, isNotNull);
+        expect(explorerRow, isNotNull);
+        expect(
+          splitViewSnapshot.requestedPolicy,
+          ReadSourcePolicy.normalizedWithFallback,
+        );
+        expect(
+          splitViewSnapshot.finalResultSource,
+          FinalReadResultSource.normalized,
+        );
+        expect(splitViewSnapshot.didFallback, isFalse);
+        expect(splitViewSnapshot.legacyResultAvailable, isTrue);
+        expect(splitViewSnapshot.normalizedResultAvailable, isTrue);
+        expect(explorerSnapshot.requestedPolicy, ReadSourcePolicy.legacy);
+        expect(
+          explorerSnapshot.finalResultSource,
+          FinalReadResultSource.legacy,
+        );
+        expect(explorerSnapshot.didFallback, isFalse);
+        _expectSameDetailDisplay(detailRow!, splitViewRow!);
+      },
+    );
+
+    test(
+      'split view falls back to legacy when normalized success would change the visible detail display',
+      () async {
+        final repository = WordRepository();
+        final db = await DatabaseService.openDatabaseFile();
+        final legacyWordRow = {
+          'id': 'T9000_RS_SPLIT_MISMATCH',
+          '\uC5B8\uC5B4': '\uD14C\uC2A4\uD2B8',
+          '\uD45C\uAE301': 'alpha',
+          '\uC74C\uC5ED1': '\uC54C\uD30C',
+          '\uBC1C\uC74C1': 'alpha',
+          '\uD45C\uAE302': 'aleph',
+          '\uC74C\uC5ED2': '\uC54C\uB808\uD504',
+          '\uBC1C\uC74C2': 'aleph',
+          '\uC758\uBBF81': 'split mismatch',
+        };
+
+        await db.insert('WORD_TABLE', legacyWordRow);
+        await db.insert('word_expression_set', {
+          'word_id': 'T9000_RS_SPLIT_MISMATCH',
+          'seq': 1,
+          'is_representative': 0,
+          'spelling': 'alpha',
+          'transliteration': '\uC54C\uD30C',
+          'pronunciation': 'alpha',
+        });
+        await db.insert('word_expression_set', {
+          'word_id': 'T9000_RS_SPLIT_MISMATCH',
+          'seq': 2,
+          'is_representative': 1,
+          'spelling': 'aleph',
+          'transliteration': '\uC54C\uB808\uD504',
+          'pronunciation': 'aleph',
+        });
+
+        final splitViewRow = await repository
+            .getWordMapByIdForSplitViewSingleWord('T9000_RS_SPLIT_MISMATCH');
+        final snapshot = WordRepository.debugReadSourceCollector
+            .debugRecentSnapshots()
+            .lastWhere(
+              (entry) =>
+                  entry.wordId == 'T9000_RS_SPLIT_MISMATCH' &&
+                  entry.context == 'readForSplitViewSingleWord',
+            );
+
+        expect(splitViewRow, isNotNull);
+        expect(
+          snapshot.requestedPolicy,
+          ReadSourcePolicy.normalizedWithFallback,
+        );
+        expect(
+          snapshot.finalResultSource,
+          FinalReadResultSource.legacyFallback,
+        );
+        expect(snapshot.didFallback, isTrue);
+        expect(snapshot.legacyResultAvailable, isTrue);
+        expect(snapshot.normalizedResultAvailable, isTrue);
+        expect(snapshot.fallbackObservation, isNotNull);
+        expect(
+          snapshot.fallbackObservation!.reason,
+          ReadFallbackReason.userVisibleDisplayMismatch,
+        );
+        expect(
+          snapshot.fallbackObservation!.detail,
+          contains('representative_spelling'),
+        );
+        _expectSameDetailDisplay(legacyWordRow, splitViewRow!);
+      },
+    );
+  });
+
   group('WordRepository detail-only phase2 path', () {
     test(
       'keeps the global default as LEGACY while the detail-only API uses NORMALIZED_WITH_FALLBACK',

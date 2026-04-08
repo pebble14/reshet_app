@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2026-04-08
+
+### 변경
+- split view 표시 read를 detail-like `normalizedWithFallback` 경로로 상향했다.
+- `readForSplitViewSingleWord` context를 `NORMALIZED_WITH_FALLBACK` 대상에 편입했다.
+- split view wrapper와 explorer history probe wrapper를 분리 유지했다.
+- repository 정책 테스트에 split view normalized success / display-mismatch fallback 검증을 추가했다.
+- `docs/database/read_source_migration.md`에 Phase 4-B 기준 상태를 반영했다.
+
 ## 2026-04-04
 
 ### 변경

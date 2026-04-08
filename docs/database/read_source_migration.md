@@ -1,5 +1,17 @@
 # Read Source Migration
 
+## 2026-04-08 Phase 4-B split view normalized path 적용
+
+### 현재 기준
+
+- split view 우측 패널 표시 read는 더 이상 direct DB read가 아니다.
+- UI 경로는 `WordExplorerScreen._loadSplitViewWordMap -> WordRepository.getWordMapByIdForSplitViewSingleWord` 이다.
+- `readForSplitViewSingleWord` context 는 `NORMALIZED_WITH_FALLBACK` 대상이다.
+- split view wrapper 는 detail-like single-word resolver 를 재사용하고, 반환값은 기존 `WordInfoPanel` 계약을 유지하는 legacy-shaped row 다.
+- collector 에서는 context=`readForSplitViewSingleWord` 기준으로 success=`normalized`, fallback=`legacy_fallback` 을 해석한다.
+- history availability probe 는 계속 `getWordMapByIdForExplorerSingleWord` / `readForExplorerSingleWord` 로 분리 유지한다.
+- 이 섹션은 문서 안의 예전 “split view direct DB read 위험 경로” 메모보다 최신 상태를 우선한다.
+
 ## 2026-04-04 Phase 3.3 undo path 적용
 
 ### 이번 단계 성격
