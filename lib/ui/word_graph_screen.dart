@@ -698,9 +698,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   /// 이 배율보다 작아지면 엣지 태그를 숨긴다(가독성/겹침 감소)
   static const double _labelVisibleScaleThreshold = 1.15;
 
-  /// External input boundary for Phase 4-D.
-  /// The center word display remains caller-supplied and is not reread by
-  /// graph-owned read paths in this step.
+  /// The graph owns the steady-state center word display through a dedicated
+  /// single-word reread. Caller input is only the bootstrap payload.
   late Word _centerWord;
 
   bool _isLoading = true;
@@ -742,19 +741,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   @override
   void initState() {
     super.initState();
-    // Keep the caller-supplied center word as-is. This phase only separates
-    // graph-owned batch reads around the center.
     _centerWord = widget.centerWord;
     _selectedWordId = widget.selectedWordId;
-    final cachedBaseGraph = WordGraphDataCache.getBaseGraph(
-      centerWordId: _centerWord.id,
-    );
-    if (cachedBaseGraph != null) {
-      _baseGraphData = cachedBaseGraph;
-      _rebuildGraphData();
-      return;
-    }
-
     _loadConnectedWords();
   }
 
@@ -1068,43 +1056,53 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     }
   }
 
+  Future<Word> _loadResolvedCenterWord(String centerWordId) async {
+    final centerWordMap = await _repository
+        .getWordMapByIdForGraphCenterSingleWord(centerWordId);
+    if (centerWordMap == null) {
+      throw StateError('Graph center word not found: $centerWordId');
+    }
+
+    return Word.fromMap(centerWordMap);
+  }
+
   Future<void> _loadConnectedWords() async {
     final requestedCenterWordId = _centerWord.id;
     _resetExpansionState(clearSeedPositions: true);
 
     final cachedBaseGraph = WordGraphDataCache.getBaseGraph(
-      centerWordId: _centerWord.id,
+      centerWordId: requestedCenterWordId,
     );
-    if (cachedBaseGraph != null) {
-      if (!mounted) return;
-      setState(() {
-        _baseGraphData = cachedBaseGraph;
-        _rebuildGraphData();
-      });
-      return;
-    }
 
     try {
-      final visibleGraphData = await _repository.getVisibleGraphDataForGraph(
-        _centerWord.id,
+      final resolvedCenterWord = await _loadResolvedCenterWord(
+        requestedCenterWordId,
       );
-      final words = visibleGraphData.connectedWords;
-      final edges = visibleGraphData.relationEdges;
-      final baseGraphData = (
-        connectedWords: List<Word>.unmodifiable(words),
-        relationEdges: List<WordRelationEdgeInfo>.unmodifiable(edges),
-      );
-      WordGraphDataCache.putBaseGraph(
-        centerWordId: _centerWord.id,
-        connectedWords: words,
-        relationEdges: edges,
-      );
+      final baseGraphData =
+          cachedBaseGraph ??
+          await (() async {
+            final visibleGraphData = await _repository
+                .getVisibleGraphDataForGraph(requestedCenterWordId);
+            final words = visibleGraphData.connectedWords;
+            final edges = visibleGraphData.relationEdges;
+            final loadedBaseGraphData = (
+              connectedWords: List<Word>.unmodifiable(words),
+              relationEdges: List<WordRelationEdgeInfo>.unmodifiable(edges),
+            );
+            WordGraphDataCache.putBaseGraph(
+              centerWordId: requestedCenterWordId,
+              connectedWords: words,
+              relationEdges: edges,
+            );
+            return loadedBaseGraphData;
+          })();
 
       if (!mounted) return;
       if (_centerWord.id != requestedCenterWordId) {
         return;
       }
       setState(() {
+        _centerWord = resolvedCenterWord;
         _baseGraphData = baseGraphData;
         _rebuildGraphData();
       });

@@ -99,6 +99,8 @@ class WordRepository {
   static const String _readAfterUndoSingleWordContext =
       'readAfterUndoSingleWord';
   static const String _readForGraphSingleWordContext = 'readForGraphSingleWord';
+  static const String _readForGraphCenterSingleWordContext =
+      'readForGraphCenterSingleWord';
   static const String _readForGraphBatchContext = 'readForGraphBatch';
   static const String _readForSplitViewSingleWordContext =
       'readForSplitViewSingleWord';
@@ -117,6 +119,9 @@ class WordRepository {
   };
   static const Set<String> _phase4SplitViewSingleWordContexts = {
     _readForSplitViewSingleWordContext,
+  };
+  static const Set<String> _phase4GraphCenterSingleWordContexts = {
+    _readForGraphCenterSingleWordContext,
   };
   static const Set<String> _phase4GraphBatchContexts = {
     _readForGraphBatchContext,
@@ -208,6 +213,7 @@ class WordRepository {
         _phase33SaveSingleWordContexts.contains(context) ||
         _phase33UndoSingleWordContexts.contains(context) ||
         _phase4SplitViewSingleWordContexts.contains(context) ||
+        _phase4GraphCenterSingleWordContexts.contains(context) ||
         _phase4GraphBatchContexts.contains(context)) {
       return ReadSourcePolicy.normalizedWithFallback;
     }
@@ -1255,6 +1261,17 @@ class WordRepository {
     return _getWordMapByIdWithContext(
       id,
       context: _readForGraphSingleWordContext,
+    );
+  }
+
+  /// Graph center display is graph-owned and stays separate from both the
+  /// graph batch zone and the create-follow-up single-word path.
+  Future<Map<String, dynamic>?> getWordMapByIdForGraphCenterSingleWord(
+    String id,
+  ) async {
+    return _getWordMapByIdForDetailLikeSingleWordRead(
+      id,
+      context: _readForGraphCenterSingleWordContext,
     );
   }
 
