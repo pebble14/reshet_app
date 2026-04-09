@@ -442,7 +442,7 @@ void main() {
 
   group('WordRepository graph batch path', () {
     test(
-      'graph batch uses a dedicated LEGACY collector context while explorer history keeps the shared batch context',
+      'graph batch uses NORMALIZED_WITH_FALLBACK while generic batch keeps LEGACY and collector contexts stay separated',
       () async {
         final repository = WordRepository();
         final db = await DatabaseService.openDatabaseFile();
@@ -464,6 +464,14 @@ void main() {
           '\uC74C\uC5ED1': 'graph-child',
           '\uBC1C\uC74C1': 'graph-child',
           '\uC758\uBBF81': 'graph child',
+        });
+        await db.insert('word_expression_set', {
+          'word_id': childWordId,
+          'seq': 1,
+          'is_representative': 1,
+          'spelling': 'graph-child',
+          'transliteration': 'graph-child',
+          'pronunciation': 'graph-child',
         });
         await db.insert('WORD_RELATION', {
           'word_id_1': centerWordId,
@@ -493,17 +501,117 @@ void main() {
 
         expect(graphData.connectedWords, hasLength(1));
         expect(graphData.connectedWords.single.id, childWordId);
+        expect(graphData.connectedWords.single.spelling1, 'graph-child');
+        expect(graphData.connectedWords.single.meaning1, 'graph child');
         expect(graphData.relationEdges, hasLength(1));
         expect(genericRows, hasLength(1));
         expect(genericRows.single['id'], childWordId);
 
-        expect(graphSnapshot.requestedPolicy, ReadSourcePolicy.legacy);
-        expect(graphSnapshot.finalResultSource, FinalReadResultSource.legacy);
+        expect(
+          graphSnapshot.requestedPolicy,
+          ReadSourcePolicy.normalizedWithFallback,
+        );
+        expect(
+          graphSnapshot.finalResultSource,
+          FinalReadResultSource.normalized,
+        );
         expect(graphSnapshot.didFallback, isFalse);
+        expect(graphSnapshot.legacyResultAvailable, isTrue);
+        expect(graphSnapshot.normalizedResultAvailable, isTrue);
 
         expect(genericSnapshot.requestedPolicy, ReadSourcePolicy.legacy);
         expect(genericSnapshot.finalResultSource, FinalReadResultSource.legacy);
         expect(genericSnapshot.didFallback, isFalse);
+        expect(graphSnapshot.context, 'readForGraphBatch');
+        expect(genericSnapshot.context, 'getWordsByIds');
+        expect(graphSnapshot.context, isNot(genericSnapshot.context));
+      },
+    );
+
+    test(
+      'graph batch falls back to legacy when normalized success would change the visible graph row display',
+      () async {
+        final repository = WordRepository();
+        final db = await DatabaseService.openDatabaseFile();
+        const centerWordId = 'T9000_RS_GRAPH_CENTER_MISMATCH';
+        const childWordId = 'T9000_RS_GRAPH_CHILD_MISMATCH';
+
+        await db.insert('WORD_TABLE', {
+          'id': centerWordId,
+          '\uC5B8\uC5B4': '\uD14C\uC2A4\uD2B8',
+          '\uD45C\uAE301': 'graph-center',
+          '\uC74C\uC5ED1': 'graph-center',
+          '\uBC1C\uC74C1': 'graph-center',
+          '\uC758\uBBF81': 'graph center',
+        });
+        await db.insert('WORD_TABLE', {
+          'id': childWordId,
+          '\uC5B8\uC5B4': '\uD14C\uC2A4\uD2B8',
+          '\uD45C\uAE301': 'alpha',
+          '\uC74C\uC5ED1': '\uC54C\uD30C',
+          '\uBC1C\uC74C1': 'alpha',
+          '\uD45C\uAE302': 'aleph',
+          '\uC74C\uC5ED2': '\uC54C\uB808\uD504',
+          '\uBC1C\uC74C2': 'aleph',
+          '\uC758\uBBF81': 'graph mismatch',
+        });
+        await db.insert('word_expression_set', {
+          'word_id': childWordId,
+          'seq': 1,
+          'is_representative': 0,
+          'spelling': 'alpha',
+          'transliteration': '\uC54C\uD30C',
+          'pronunciation': 'alpha',
+        });
+        await db.insert('word_expression_set', {
+          'word_id': childWordId,
+          'seq': 2,
+          'is_representative': 1,
+          'spelling': 'aleph',
+          'transliteration': '\uC54C\uB808\uD504',
+          'pronunciation': 'aleph',
+        });
+        await db.insert('WORD_RELATION', {
+          'word_id_1': centerWordId,
+          'word_id_2': childWordId,
+          'direction_code': 'unknown',
+          'updated_at': DateTime.now().toIso8601String(),
+        });
+
+        final graphData = await repository.getVisibleGraphDataForGraph(
+          centerWordId,
+        );
+        final snapshot = WordRepository.debugReadSourceCollector
+            .debugRecentSnapshots()
+            .lastWhere(
+              (entry) =>
+                  entry.wordId == childWordId &&
+                  entry.context == 'readForGraphBatch',
+            );
+
+        expect(graphData.connectedWords, hasLength(1));
+        expect(graphData.connectedWords.single.id, childWordId);
+        expect(graphData.connectedWords.single.spelling1, 'alpha');
+        expect(graphData.connectedWords.single.meaning1, 'graph mismatch');
+        expect(
+          snapshot.requestedPolicy,
+          ReadSourcePolicy.normalizedWithFallback,
+        );
+        expect(
+          snapshot.finalResultSource,
+          FinalReadResultSource.legacyFallback,
+        );
+        expect(snapshot.didFallback, isTrue);
+        expect(snapshot.legacyResultAvailable, isTrue);
+        expect(snapshot.normalizedResultAvailable, isTrue);
+        expect(
+          snapshot.fallbackObservation?.reason,
+          ReadFallbackReason.userVisibleDisplayMismatch,
+        );
+        expect(
+          snapshot.fallbackObservation?.detail,
+          contains('representative_spelling'),
+        );
       },
     );
   });

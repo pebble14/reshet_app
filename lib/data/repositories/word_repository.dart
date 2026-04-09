@@ -118,6 +118,9 @@ class WordRepository {
   static const Set<String> _phase4SplitViewSingleWordContexts = {
     _readForSplitViewSingleWordContext,
   };
+  static const Set<String> _phase4GraphBatchContexts = {
+    _readForGraphBatchContext,
+  };
   static ReadSourcePolicy? _debugReadSourcePolicyOverride;
   static final List<String> _homeSearchSpellingColumns = List.unmodifiable(
     List.generate(6, (index) => '표기${index + 1}'),
@@ -204,7 +207,8 @@ class WordRepository {
         _phase32HomeDisplayContexts.contains(context) ||
         _phase33SaveSingleWordContexts.contains(context) ||
         _phase33UndoSingleWordContexts.contains(context) ||
-        _phase4SplitViewSingleWordContexts.contains(context)) {
+        _phase4SplitViewSingleWordContexts.contains(context) ||
+        _phase4GraphBatchContexts.contains(context)) {
       return ReadSourcePolicy.normalizedWithFallback;
     }
 
@@ -1290,10 +1294,74 @@ class WordRepository {
   Future<List<Map<String, dynamic>>> getWordsByIdsForGraphBatch(
     List<String> wordIds,
   ) async {
-    return _getWordsByIdsWithContext(
+    return _getWordsByIdsForGraphBatchAdapter(
       wordIds,
       context: _readForGraphBatchContext,
     );
+  }
+
+  Future<List<Map<String, dynamic>>> _getWordsByIdsForGraphBatchAdapter(
+    List<String> wordIds, {
+    required String context,
+  }) async {
+    final orderedIds = <String>[];
+    final seenIds = <String>{};
+
+    for (final wordId in wordIds) {
+      final normalizedId = wordId.trim();
+      if (normalizedId.isEmpty) continue;
+      if (seenIds.add(normalizedId)) {
+        orderedIds.add(normalizedId);
+      }
+    }
+
+    if (orderedIds.isEmpty) return const [];
+
+    final db = await DatabaseService.openDatabaseFile();
+    final placeholders = List.filled(orderedIds.length, '?').join(', ');
+    final rawRows = await db.rawQuery(
+      'SELECT * FROM WORD_TABLE WHERE id IN ($placeholders)',
+      orderedIds,
+    );
+    final legacyRows = rawRows
+        .map((row) => Map<String, dynamic>.from(row))
+        .toList(growable: false);
+    final legacyRowsById = <String, Map<String, dynamic>>{
+      for (final row in legacyRows)
+        (row['id'] as String): Map<String, dynamic>.from(row),
+    };
+    final snapshots = await _resolveWordExpressionReadSnapshots(
+      db,
+      legacyRows,
+      context: context,
+    );
+    final resolvedRows = <Map<String, dynamic>>[];
+    final resolvedSnapshots = <WordExpressionReadSnapshot>[];
+
+    // Phase 4-E graph batch stays in its own adapter so the shared safe zone
+    // can be reused without leaking detail/split collector context.
+    for (final wordId in orderedIds) {
+      final legacyWordRow = legacyRowsById[wordId];
+      if (legacyWordRow == null) {
+        continue;
+      }
+
+      final snapshot = snapshots[wordId];
+      if (snapshot == null) {
+        resolvedRows.add(Map<String, dynamic>.from(legacyWordRow));
+        continue;
+      }
+
+      final resolved = _resolveWordRowForDetailLikeDisplay(
+        legacyWordRow: legacyWordRow,
+        snapshot: snapshot,
+      );
+      resolvedRows.add(resolved.wordRow);
+      resolvedSnapshots.add(resolved.snapshot);
+    }
+
+    _recordWordExpressionReadSnapshots(resolvedSnapshots);
+    return List<Map<String, dynamic>>.unmodifiable(resolvedRows);
   }
 
   Future<List<Map<String, dynamic>>> _getWordsByIdsWithContext(

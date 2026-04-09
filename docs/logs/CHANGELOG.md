@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 2026-04-09
+
+### 변경
+- graph batch read 를 `readForGraphBatch` 단일 policy zone 으로 승격했다.
+- `getWordsByIdsForGraphBatch` 에 graph batch 전용 adapter 를 도입하고 detail/split safe zone 의 detail-like display guard 를 재사용했다.
+- generic `getWordsByIds` 는 그대로 `LEGACY` 로 유지하고 collector context 분리를 보존했다.
+- repository 테스트에 graph batch normalized success / display-mismatch fallback 검증을 추가했다.
+- `tool/verify_graph_batch_context.dart` 를 Phase 4-E 기준 command 검증 스크립트로 갱신했다.
+- `docs/database/read_source_migration.md` 에 Phase 4-E 범위와 검증 결과를 반영했다.
+
 ## 2026-04-08
 
 ### 변경

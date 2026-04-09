@@ -1,5 +1,48 @@
 # Read Source Migration
 
+## 2026-04-09 Phase 4-E graph batch policy zone 적용
+
+### 이번 단계 핵심
+
+- 이번 단계 대상은 graph 전체가 아니라 `readForGraphBatch` 하나뿐이다.
+- center node, `readForGraphSingleWord`, graph↔split 연결은 이번 단계에서 수정하지 않는다.
+- graph batch는 독립된 policy zone 으로 유지하고, shared safe zone 은 wrapper 를 통해서만 재사용한다.
+
+### 적용 범위
+
+- `WordRepository.getWordsByIdsForGraphBatch`
+- `readForGraphBatch` collector context
+- graph batch 전용 command 검증 / repository 테스트
+
+### 제외 범위
+
+- center node external input boundary
+- `readForGraphSingleWord`
+- generic `getWordsByIds`
+- graph↔split 연결 재설계
+
+### 구현 방식
+
+- `readForGraphBatch` context 만 `NORMALIZED_WITH_FALLBACK` 대상으로 승격한다.
+- graph batch 전용 adapter 가 batch 입력 정리, collector context 유지, shared resolver 호출 통제를 담당한다.
+- adapter 내부에서는 detail/split safe zone 이 이미 사용 중인 detail-like display guard 를 재사용한다.
+- 반환 데이터는 기존 graph UI 계약을 유지하는 legacy-shaped row 이고, source policy 만 승격한다.
+- fallback 규칙은 detail/split safe zone 보다 넓히지 않는다.
+
+### collector 기대 상태
+
+- graph batch normalized success 는 `context=readForGraphBatch`, `final=normalized` 로 남는다.
+- graph batch display mismatch 는 `context=readForGraphBatch`, `final=legacyFallback` 로 남는다.
+- 같은 word 를 generic batch 로 다시 읽으면 summary contexts 에 `getWordsByIds|readForGraphBatch` 가 함께 남아 문맥 분리가 가능해야 한다.
+
+### command 검증
+
+- `flutter test --no-pub test/data/repositories/word_repository_read_source_policy_test.dart --plain-name "WordRepository graph batch path"`
+  - 결과: 2개 테스트 통과
+- `dart run tool/verify_graph_batch_context.dart`
+  - 결과: graph batch normalized success / display-mismatch fallback / generic batch legacy / summary contexts 분리 확인
+  - 주의: 로컬 sqlite native hook 실행 권한이 필요할 수 있다.
+
 ## 2026-04-08 Phase 4-B split view normalized path 적용
 
 ### 현재 기준
