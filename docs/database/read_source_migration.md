@@ -1,5 +1,52 @@
 # Read Source Migration
 
+## 2026-04-10 Phase 5 graph single-word controlled zone 적용
+
+### 이번 단계 요약
+
+- 이번 단계의 단일 승격 대상은 `readForGraphSingleWord` 하나뿐이다.
+- graph-owned single follow-up read를 `LEGACY` 에서 `NORMALIZED_WITH_FALLBACK` controlled zone으로 올린다.
+- `getWordsByIds` 는 generic batch contract를 유지하기 위해 그대로 legacy zone에 둔다.
+- split/detail/save/undo safe zone과 기존 graph batch / graph center controlled zone은 변경하지 않는다.
+
+### 적용 범위
+
+- `WordRepository.getWordMapByIdForGraphSingleWord`
+- `readForGraphSingleWord` collector context
+- graph single-word 전용 repository test / command verify
+
+### 제외 범위
+
+- `readForGraphBatch`
+- `readForGraphCenterSingleWord`
+- generic `getWordsByIds`
+- split/detail/save/undo safe zone
+- create/update/delete/write 경로
+
+### 구현 방식
+
+- `readForGraphSingleWord` context 자체는 그대로 유지한다.
+- graph single-word read는 detail-like single-word resolver를 재사용하되 collector context는 `readForGraphSingleWord` 로 고정한다.
+- stable case는 `final=normalized` 로 남기고, user-visible display mismatch는 `final=legacyFallback` 으로 되돌린다.
+- fallback reason과 collector summary 구조는 기존 controlled/safe zone과 같은 체계를 재사용한다.
+
+### collector 기대 상태
+
+- stable case: `context=readForGraphSingleWord`, `policy=normalizedWithFallback`, `final=normalized`
+- mismatch case: `context=readForGraphSingleWord`, `policy=normalizedWithFallback`, `final=legacyFallback`, `reason=userVisibleDisplayMismatch`
+- summary contexts 는 `readForGraphSingleWord` 하나만 남아 graph batch / graph center / safe zone 과 섞이지 않아야 한다.
+
+### command 검증
+
+- `flutter test --no-pub test/data/repositories/word_repository_read_source_policy_test.dart`
+  - 결과: graph single-word path 포함 전체 테스트 통과
+- `dart run tool/verify_graph_single_word_context.dart`
+  - 결과: stable normalized / mismatch fallback / isolated collector context 확인
+- `dart run tool/verify_graph_batch_context.dart`
+  - 결과: 기존 graph batch controlled zone 회귀 없음
+- `dart run tool/verify_graph_center_context.dart`
+  - 결과: 기존 graph center controlled zone 회귀 없음
+
 ## 2026-04-09 Phase 4-E graph batch policy zone 적용
 
 ### 이번 단계 핵심

@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2026-04-10
+
+### 변경
+- `readForGraphSingleWord` 를 legacy single read 에서 controlled `normalizedWithFallback` 경로로 승격했다.
+- `getWordMapByIdForGraphSingleWord` 는 public API contract 와 기존 `readForGraphSingleWord` context 를 유지한 채 graph single-word 전용 controlled read 로 전환했다.
+- graph single-word stable / display-mismatch fallback 을 닫는 repository 테스트와 `tool/verify_graph_single_word_context.dart` 검증 스크립트를 추가했다.
+- `getWordsByIds` 는 generic legacy zone 으로 그대로 유지했고 split/detail/save/undo safe zone 은 변경하지 않았다.
+- `docs/database/read_source_migration.md` 에 Phase 5 범위와 검증 결과를 반영했다.
+
 ## 2026-04-09
 
 ### 변경

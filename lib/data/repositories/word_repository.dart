@@ -126,6 +126,9 @@ class WordRepository {
   static const Set<String> _phase4GraphBatchContexts = {
     _readForGraphBatchContext,
   };
+  static const Set<String> _phase5GraphSingleWordContexts = {
+    _readForGraphSingleWordContext,
+  };
   static ReadSourcePolicy? _debugReadSourcePolicyOverride;
   static final List<String> _homeSearchSpellingColumns = List.unmodifiable(
     List.generate(6, (index) => '표기${index + 1}'),
@@ -214,7 +217,8 @@ class WordRepository {
         _phase33UndoSingleWordContexts.contains(context) ||
         _phase4SplitViewSingleWordContexts.contains(context) ||
         _phase4GraphCenterSingleWordContexts.contains(context) ||
-        _phase4GraphBatchContexts.contains(context)) {
+        _phase4GraphBatchContexts.contains(context) ||
+        _phase5GraphSingleWordContexts.contains(context)) {
       return ReadSourcePolicy.normalizedWithFallback;
     }
 
@@ -1253,12 +1257,12 @@ class WordRepository {
   }
 
   /// Graph single-word boundary stays limited to create-flow follow-up reads in
-  /// this phase. Do not widen this surface until graph-owned single-word reread
-  /// is explicitly designed.
+  /// this phase. Keep its controlled policy isolated from graph center, graph
+  /// batch, and safe-zone single-word reads.
   Future<Map<String, dynamic>?> getWordMapByIdForGraphSingleWord(
     String id,
   ) async {
-    return _getWordMapByIdWithContext(
+    return _getWordMapByIdForDetailLikeSingleWordRead(
       id,
       context: _readForGraphSingleWordContext,
     );
