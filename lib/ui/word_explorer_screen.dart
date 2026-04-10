@@ -465,11 +465,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
       return const <String>{};
     }
 
-    final rows = await _repository.getWordsByIds(candidateIds);
-    return rows
-        .map((row) => (row['id'] ?? '').toString().trim())
-        .where((wordId) => wordId.isNotEmpty)
-        .toSet();
+    return _repository.probeExistingWordIdsForExplorerHistory(candidateIds);
   }
 
   WordNavigationHistoryEntry<_ExplorerHistorySnapshot>?

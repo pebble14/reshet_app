@@ -1308,6 +1308,38 @@ class WordRepository {
     );
   }
 
+  Future<Set<String>> probeExistingWordIdsForExplorerHistory(
+    Iterable<String> candidateWordIds,
+  ) async {
+    final orderedIds = <String>[];
+    final seenIds = <String>{};
+
+    for (final candidateWordId in candidateWordIds) {
+      final normalizedId = candidateWordId.trim();
+      if (normalizedId.isEmpty || !seenIds.add(normalizedId)) {
+        continue;
+      }
+      orderedIds.add(normalizedId);
+    }
+
+    if (orderedIds.isEmpty) {
+      return const <String>{};
+    }
+
+    final db = await DatabaseService.openDatabaseFile();
+    final placeholders = List.filled(orderedIds.length, '?').join(', ');
+    // TODO: probe context 전용 collector event 필요
+    final rows = await db.rawQuery(
+      'SELECT id FROM WORD_TABLE WHERE id IN ($placeholders)',
+      orderedIds,
+    );
+
+    return rows
+        .map((row) => (row['id'] ?? '').toString().trim())
+        .where((wordId) => wordId.isNotEmpty)
+        .toSet();
+  }
+
   Future<List<Map<String, dynamic>>> getWordsByIds(List<String> wordIds) async {
     return _getWordsByIdsWithContext(wordIds, context: 'getWordsByIds');
   }

@@ -1,5 +1,34 @@
 # Read Source Migration
 
+## 2026-04-11 Phase 5 explorer history probe context 분리
+
+### 이번 단계 요약
+
+- 이번 단계는 controlled 승격이 아니라 explorer history existence probe 분리 단계다.
+- history navigation availability 판단은 더 이상 generic `getWordsByIds` full row read를 사용하지 않는다.
+- explorer history owner 전용 probe API를 추가하고 반환값을 `Set<String>` 으로 최소화한다.
+- `getWordsByIds` 는 그대로 generic legacy helper로 유지한다.
+- 기존 controlled zone, safe zone, write 경로는 변경하지 않는다.
+
+### 적용 범위
+
+- `WordRepository.probeExistingWordIdsForExplorerHistory`
+- `WordExplorerScreen._loadExistingHistoryWordIds`
+- history probe 전용 repository test
+
+### 구현 방식
+
+- probe API 는 `SELECT id FROM WORD_TABLE WHERE id IN (...)` 만 수행한다.
+- probe API 는 내부적으로 `getWordsByIds` 를 호출하지 않는다.
+- full row 반환, display 해석, read source collector 연결을 모두 피한다.
+- query 실행부 근처에 probe 전용 collector TODO 만 남기고 이번 단계에서는 실제 collector event 를 추가하지 않는다.
+
+### 구조적 의미
+
+- explorer history caller는 존재 여부 판단만 필요하므로 full row overfetch 가 제거된다.
+- generic batch read 는 남아 있지만 history probe owner 는 별도 API 와 반환 계약으로 분리된다.
+- 이번 단계의 목적은 generic helper 제거가 아니라 owner-specific probe context 분리다.
+
 ## 2026-04-10 Phase 5 graph single-word controlled zone 적용
 
 ### 이번 단계 요약

@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2026-04-11
+
+### 변경
+- explorer history existence probe 전용 API `probeExistingWordIdsForExplorerHistory` 를 추가했다.
+- explorer history availability 판단은 더 이상 generic `getWordsByIds` full row read를 사용하지 않고 `Set<String>` probe 결과를 직접 사용한다.
+- history probe 구현은 `SELECT id FROM WORD_TABLE WHERE id IN (...)` 로 최소화했고 `getWordsByIds` 자체는 그대로 유지했다.
+- probe는 display/read-source 해석 대상이 아니므로 기존 `ReadSourceDebugCollector` 를 재사용하지 않고 query 실행부 근처에 전용 collector TODO 만 남겼다.
+- history probe 전용 repository 테스트를 추가하고 구조 검증 명령으로 explorer caller의 generic batch 의존 제거를 확인했다.
+
 ## 2026-04-10
 
 ### 변경
