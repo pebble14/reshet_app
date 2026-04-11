@@ -11,6 +11,7 @@ import '../models/word.dart';
 import '../../domain/expression/expression_read_models.dart';
 import '../../domain/expression/read_source_debug_collector.dart';
 import '../../domain/expression/read_source_policy.dart';
+import '../../domain/home/home_default_strong_list_item.dart';
 import '../../domain/word/word_write_models.dart';
 
 /// 단어(WORD_TABLE) 및 관계(WORD_RELATION) 조회 전용 Repository
@@ -1173,6 +1174,20 @@ class WordRepository {
     return List<Map<String, dynamic>>.unmodifiable(resolvedRows);
   }
 
+  HomeDefaultStrongListItem _buildHomeDefaultStrongListItem(
+    Map<String, dynamic> wordRow,
+  ) {
+    final displaySignature = _buildStrongListDisplaySignature(wordRow);
+    final wordId = (wordRow['id'] ?? '').toString().trim();
+
+    return HomeDefaultStrongListItem(
+      wordId: wordId,
+      strongNumber: _normalizeStrongValue(displaySignature.strongNumber),
+      title: displaySignature.representativeSpelling,
+      subtitle: '',
+    );
+  }
+
   Future<Map<String, dynamic>?> _getWordMapByIdWithContext(
     String id, {
     required String context,
@@ -1724,7 +1739,9 @@ class WordRepository {
   /// 홈 화면 기본 리스트용 Strong 사전형 목록 조회
   /// - 스트롱넘버가 있고 prefix가 H/G인 항목만 반환한다.
   /// - 정렬은 H -> G -> 숫자 오름차순 -> id 순서로 고정한다.
-  Future<List<Map<String, dynamic>>> getStrongWordsMap({int? limit}) async {
+  Future<List<HomeDefaultStrongListItem>> getStrongWordsMap({
+    int? limit,
+  }) async {
     final db = await DatabaseService.openDatabaseFile();
     final sql = StringBuffer('''
       SELECT *
@@ -1752,10 +1769,13 @@ class WordRepository {
     final legacyRows = rows
         .map((row) => Map<String, dynamic>.from(row))
         .toList(growable: false);
-    return await _resolveHomeDisplayRowsForPhase32(
+    final displayRows = await _resolveHomeDisplayRowsForPhase32(
       db,
       legacyRows,
       context: 'getStrongWordsMap',
+    );
+    return List<HomeDefaultStrongListItem>.unmodifiable(
+      displayRows.map(_buildHomeDefaultStrongListItem),
     );
   }
 
