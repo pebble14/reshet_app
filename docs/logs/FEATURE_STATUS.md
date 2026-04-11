@@ -15,6 +15,8 @@ Reshet은 단어 사이의 관계를 탐색하기 위한 도구이다.
 
 # 현재 구현 상태
 
+- 기준 완료 단계: Phase 7-12
+
 ## 데이터베이스 연결
 
 - [x] SQLite 데이터베이스 연결
@@ -29,6 +31,8 @@ Reshet은 단어 사이의 관계를 탐색하기 위한 도구이다.
 
 - [x] HomeScreen에서 단어 목록 표시
 - [x] WORD_TABLE 주요 컬럼 표시
+- [x] 단어 검색
+- [x] Strong Number 검색
 
 
 ---
@@ -36,7 +40,16 @@ Reshet은 단어 사이의 관계를 탐색하기 위한 도구이다.
 ## 단어 상세 화면
 
 - [x] WordDetailScreen 구현
-- [x] 선택한 단어의 모든 컬럼 표시
+- [x] 공통 상세 표시 계약 기반 정보 표시
+
+
+---
+
+## Explorer / Split View
+
+- [x] Explorer 화면 구현
+- [x] 좌측 그래프 / 우측 상세 패널 split view 적용
+- [x] 상세 화면과 탐색 화면 우측 패널의 공통 표시 계약 적용
 
 
 ---
@@ -97,22 +110,8 @@ Reshet은 단어 사이의 관계를 탐색하기 위한 도구이다.
 
 ---
 
-## UI 구조 개선
+## 검색 기능 고도화
 
-- [ ] Split View 구조 설계
-
-목표 UI:
-
-- 왼쪽: 단어 관계 그래프
-- 오른쪽: 단어 상세 정보
-
-
----
-
-## 검색 기능
-
-- [ ] 단어 검색
-- [ ] Strong Number 검색
 - [ ] 언어별 필터
 
 
@@ -129,6 +128,10 @@ Reshet은 단어 사이의 관계를 탐색하기 위한 도구이다.
 - [x] word_expression_set normalized read adapter 연결
 - [x] word_expression_set fallback 판정/관측 구조 도입
 - [x] word_expression_set detail-only phase 2 read path 적용
+- [x] controlled read boundary 정리
+- [x] 공개 읽기 경계의 typed contract 적용
+- [x] detail-like 공통 표시 계약 적용
+- [x] detail-like 공개 API naming 안정화
 - [ ] word_expression_set read source 전환
 - [ ] 확장 가능한 관계 구조 설계
 
