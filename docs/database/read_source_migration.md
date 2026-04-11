@@ -5,7 +5,7 @@
 ### 이번 단계 요약
 
 - 이번 단계의 목표는 WordDetailScreen 본문과 Explorer split-view 우측 패널이 공유하는 detail-like display boundary를 raw row에서 typed shared contract로 고정하는 것이다.
-- `WordRepository.getWordDetailMapByIdForReadSourcePhase2Only`, `WordRepository.getWordMapByIdForSplitViewSingleWord`의 public 반환형은 이제 `WordDetailLikeDisplayItem`이다.
+- `WordRepository.getWordDetailLikeDisplayItemByIdForDetailScreen`, `WordRepository.getWordDetailLikeDisplayItemByIdForSplitView`의 public 반환형은 이제 `WordDetailLikeDisplayItem`이다.
 - fallback/source 선택 책임은 기존처럼 repository 내부 `_resolveWordRowForDetailLikeDisplay`에 두고, contract 생성은 detail-like single-word read 경계에서 수행한다.
 - `WordInfoPanel`은 더 이상 raw `Map<String, dynamic>`를 해석하지 않고 `WordDetailLikeDisplayItem`만 렌더링하는 typed display renderer가 된다.
 - `WordDetailScreen`, `WordExplorerScreen`은 같은 본문 contract를 공유하고, 화면별 액션/로딩/empty/error 책임만 유지한다.
@@ -13,9 +13,9 @@
 ### 적용 범위
 
 - `lib/domain/word/word_detail_like_display_item.dart`
-- `WordRepository._getWordMapByIdForDetailLikeSingleWordRead`
-- `WordRepository.getWordDetailMapByIdForReadSourcePhase2Only`
-- `WordRepository.getWordMapByIdForSplitViewSingleWord`
+- `WordRepository._getWordDetailLikeDisplayItemByIdWithContext`
+- `WordRepository.getWordDetailLikeDisplayItemByIdForDetailScreen`
+- `WordRepository.getWordDetailLikeDisplayItemByIdForSplitView`
 - `WordInfoPanel`
 - `WordDetailScreen`
 - `WordExplorerScreen`
@@ -89,14 +89,14 @@
 - search branch는 더 이상 `searchWordsMap` / `searchStrongExactMap` 결과 row 전체를 navigation payload로 직접 넘기지 않는다.
 - Home search -> detail:
   - payload = `wordId`
-  - owner read = `getWordDetailMapByIdForReadSourcePhase2Only`
+  - owner read = `getWordDetailLikeDisplayItemByIdForDetailScreen`
 - Home search -> graph:
   - payload = `wordId`
   - owner read = `getWordMapByIdForGraphCenterSingleWord`
 - Home search -> explorer:
   - payload = `wordId`
   - center bootstrap = `getWordMapByIdForGraphCenterSingleWord`
-  - selected panel bootstrap = `getWordMapByIdForSplitViewSingleWord`
+  - selected panel bootstrap = `getWordDetailLikeDisplayItemByIdForSplitView`
 
 ### explorer 초기 구조 정리
 
@@ -316,9 +316,9 @@ generic
 ### 현재 기준
 
 - split view 우측 패널 표시 read는 더 이상 direct DB read가 아니다.
-- UI 경로는 `WordExplorerScreen._loadSplitViewWordMap -> WordRepository.getWordMapByIdForSplitViewSingleWord` 이다.
+- UI 경로는 `WordExplorerScreen._loadSplitViewDisplayItem -> WordRepository.getWordDetailLikeDisplayItemByIdForSplitView` 이다.
 - `readForSplitViewSingleWord` context 는 `NORMALIZED_WITH_FALLBACK` 대상이다.
-- split view wrapper 는 detail-like single-word resolver 를 재사용하고, 반환값은 기존 `WordInfoPanel` 계약을 유지하는 legacy-shaped row 다.
+- split view wrapper 는 detail-like single-word resolver 를 재사용하고, 반환값은 기존 `WordInfoPanel` 계약을 유지하는 `WordDetailLikeDisplayItem` 이다.
 - collector 에서는 context=`readForSplitViewSingleWord` 기준으로 success=`normalized`, fallback=`legacy_fallback` 을 해석한다.
 - history availability probe 는 계속 `getWordMapByIdForExplorerSingleWord` / `readForExplorerSingleWord` 로 분리 유지한다.
 - 이 섹션은 문서 안의 예전 “split view direct DB read 위험 경로” 메모보다 최신 상태를 우선한다.
@@ -457,7 +457,7 @@ save 직후 immediate reread:
 
 context 확인:
 
-- full contexts = `getStrongWordsMap`, `getWordDetailMapByIdForReadSourcePhase2Only`, `readAfterSaveSingleWord`, `searchStrongExactMap`
+- full contexts = `getStrongWordsMap`, `getWordDetailLikeDisplayItemByIdForDetailScreen`, `readAfterSaveSingleWord`, `searchStrongExactMap`
 - unexpected context = 없음
 - fallback reason summary = 없음
 
@@ -808,7 +808,7 @@ UI coverage:
 ### 이번 단계 적용 범위
 
 - 기본 global policy는 계속 `LEGACY`다.
-- 실제 `NORMALIZED_WITH_FALLBACK` 적용 범위는 `WordRepository.getWordDetailMapByIdForReadSourcePhase2Only` 한 곳으로 제한한다.
+- 실제 `NORMALIZED_WITH_FALLBACK` 적용 범위는 `WordRepository.getWordDetailLikeDisplayItemByIdForDetailScreen` 한 곳으로 제한한다.
 - 이 경로는 `WordDetailScreen`에서만 호출한다.
 - `widget.word`는 상세 화면의 초기 표시값으로 그대로 유지한다.
 - 상세 화면은 백그라운드 재조회만 수행하고, 로딩 indicator나 별도 fallback UI는 추가하지 않는다.

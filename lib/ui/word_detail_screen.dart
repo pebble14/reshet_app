@@ -40,10 +40,10 @@ class _WordDetailScreenState extends State<WordDetailScreen> {
     super.initState();
     _wordId = widget.wordId.trim();
     _displayItem = widget.initialDisplayItem;
-    unawaited(_refreshWordDetailForReadSourcePhase2Only());
+    unawaited(_refreshDetailScreenDisplayItem());
   }
 
-  Future<void> _refreshWordDetailForReadSourcePhase2Only() async {
+  Future<void> _refreshDetailScreenDisplayItem() async {
     if (_wordId.isEmpty) {
       return;
     }
@@ -52,7 +52,7 @@ class _WordDetailScreenState extends State<WordDetailScreen> {
 
     try {
       final reloadedWord = await _repository
-          .getWordDetailMapByIdForReadSourcePhase2Only(_wordId);
+          .getWordDetailLikeDisplayItemByIdForDetailScreen(_wordId);
       if (!mounted ||
           requestToken != _detailReloadToken ||
           reloadedWord == null) {
@@ -81,7 +81,7 @@ class _WordDetailScreenState extends State<WordDetailScreen> {
     );
 
     if (result != null) {
-      unawaited(_refreshWordDetailForReadSourcePhase2Only());
+      unawaited(_refreshDetailScreenDisplayItem());
       if (!mounted) return;
       ScaffoldMessenger.of(
         context,

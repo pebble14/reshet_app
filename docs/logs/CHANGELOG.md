@@ -3,7 +3,7 @@
 ## 2026-04-11 Phase 7-11
 
 - detail-like display shared contract `WordDetailLikeDisplayItem`를 추가했다.
-- `getWordDetailMapByIdForReadSourcePhase2Only`, `getWordMapByIdForSplitViewSingleWord`의 public 반환형을 raw `Map<String, dynamic>`에서 shared contract로 전환했다.
+- `getWordDetailLikeDisplayItemByIdForDetailScreen`, `getWordDetailLikeDisplayItemByIdForSplitView`의 public 반환형을 raw `Map<String, dynamic>`에서 shared contract로 전환했다.
 - repository 내부에 `raw row -> fallback 반영 -> detail-like display contract` 경계를 추가하고, graph/safe-zone raw single-word read는 기존 raw 경계를 유지했다.
 - `WordInfoPanel`이 raw map 기반 helper와 직접 key 해석을 제거하고 typed display renderer로 전환됐다.
 - `WordDetailScreen`과 `WordExplorerScreen`이 공통 detail-like contract를 panel에 전달하도록 정리됐고, 편집/이동 같은 화면별 동작은 on-demand raw reread로 분리했다.
@@ -22,7 +22,7 @@
 ## 2026-04-11 Phase 7-4
 
 - Home search branch가 detail / explorer / graph navigation에 search row 전체를 직접 넘기지 않도록 `wordId` 기준 helper로 정리했다.
-- search result navigation은 detail `getWordDetailMapByIdForReadSourcePhase2Only`, graph `getWordMapByIdForGraphCenterSingleWord`, explorer `initialWordId` bootstrap 구조로 분리했다.
+- search result navigation은 detail `getWordDetailLikeDisplayItemByIdForDetailScreen`, graph `getWordMapByIdForGraphCenterSingleWord`, explorer `initialWordId` bootstrap 구조로 분리했다.
 - `WordExplorerScreen` route payload를 `initialWordId`로 줄이고 init bootstrap에서 graph center read + split-view read를 사용하도록 바꿨다.
 - explorer history snapshot은 full selected row 대신 selected word id만 보관하도록 정리했다.
 
@@ -74,7 +74,7 @@
 - 기본 read source policy는 아직 `LEGACY`로 유지한다.
 - normalized read adapter와 fallback 판정/관측 모델을 연결했다.
 - 실제 normalized read 활성 전환은 아직 수행하지 않았다.
-- `WordDetailScreen` 전용 제한 경로 `getWordDetailMapByIdForReadSourcePhase2Only`를 추가했다.
+- `WordDetailScreen` 전용 제한 경로 `getWordDetailLikeDisplayItemByIdForDetailScreen`를 추가했다.
 - 상세 화면은 `widget.word` 초기 표시를 유지한 채 백그라운드에서만 phase 2 read를 시도한다.
 - fallback reason에 `user_visible_display_mismatch`를 추가하고 in-memory observation 항목을 확장했다.
 - repository 테스트에 detail-only success / empty fallback / display-mismatch fallback 검증을 추가했다.

@@ -95,8 +95,8 @@ class UndoLastChangeResult {
 class WordRepository {
   static const ReadSourcePolicy _defaultReadSourcePolicy =
       ReadSourcePolicy.legacy;
-  static const String _detailReadPhase2OnlyContext =
-      'getWordDetailMapByIdForReadSourcePhase2Only';
+  static const String _detailScreenDisplayItemReadContext =
+      'getWordDetailLikeDisplayItemByIdForDetailScreen';
   static const String _readAfterSaveSingleWordContext =
       'readAfterSaveSingleWord';
   static const String _readAfterUndoSingleWordContext =
@@ -214,7 +214,7 @@ class WordRepository {
       return override;
     }
 
-    if (context == _detailReadPhase2OnlyContext ||
+    if (context == _detailScreenDisplayItemReadContext ||
         _phase32HomeDisplayContexts.contains(context) ||
         _phase33SaveSingleWordContexts.contains(context) ||
         _phase33UndoSingleWordContexts.contains(context) ||
@@ -1331,7 +1331,8 @@ class WordRepository {
     return resolvedResult.wordRow;
   }
 
-  Future<WordDetailLikeDisplayItem?> _getWordMapByIdForDetailLikeSingleWordRead(
+  Future<WordDetailLikeDisplayItem?>
+  _getWordDetailLikeDisplayItemByIdWithContext(
     String id, {
     required String context,
   }) async {
@@ -1387,10 +1388,10 @@ class WordRepository {
     );
   }
 
-  Future<WordDetailLikeDisplayItem?> getWordMapByIdForSplitViewSingleWord(
+  Future<WordDetailLikeDisplayItem?> getWordDetailLikeDisplayItemByIdForSplitView(
     String id,
   ) async {
-    return _getWordMapByIdForDetailLikeSingleWordRead(
+    return _getWordDetailLikeDisplayItemByIdWithContext(
       id,
       context: _readForSplitViewSingleWordContext,
     );
@@ -1405,13 +1406,13 @@ class WordRepository {
     );
   }
 
-  /// Read source phase 2 limited path.
+  /// Detail screen-owned detail-like display read path.
   /// WordDetailScreen에서만 사용하고 다른 화면에서는 재사용하지 않는다.
   Future<WordDetailLikeDisplayItem?>
-  getWordDetailMapByIdForReadSourcePhase2Only(String id) async {
-    return _getWordMapByIdForDetailLikeSingleWordRead(
+  getWordDetailLikeDisplayItemByIdForDetailScreen(String id) async {
+    return _getWordDetailLikeDisplayItemByIdWithContext(
       id,
-      context: _detailReadPhase2OnlyContext,
+      context: _detailScreenDisplayItemReadContext,
     );
   }
 

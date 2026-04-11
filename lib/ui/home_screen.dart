@@ -671,7 +671,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _openDefaultStrongWordDetail(String wordId) async {
     final detailWord = await _repository
-        .getWordDetailMapByIdForReadSourcePhase2Only(wordId);
+        .getWordDetailLikeDisplayItemByIdForDetailScreen(wordId);
     if (!mounted) return;
     if (detailWord == null) {
       _showWordNavigationUnavailableSnackBar();

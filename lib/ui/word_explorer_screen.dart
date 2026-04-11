@@ -141,7 +141,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
   Future<WordDetailLikeDisplayItem?> _loadSplitViewDisplayItem(
     String wordId,
   ) async {
-    return _repository.getWordMapByIdForSplitViewSingleWord(wordId);
+    return _repository.getWordDetailLikeDisplayItemByIdForSplitView(wordId);
   }
 
   Future<void> _initializeExplorerBootstrap() async {
