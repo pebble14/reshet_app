@@ -1,5 +1,85 @@
 # Read Source Migration
 
+## Phase 6-A controlled zone 판정 기준
+
+### 목적
+
+- 이 섹션은 read context 분류 기준을 구조 정책으로 정의한다.
+- 이 섹션의 문장은 이후 read 설계와 승격 판단에 재사용하는 기준 문장으로 사용한다.
+
+### read context 3계층 구조
+
+- `controlled zone`
+- `readForGraphBatch`
+- `readForGraphCenterSingleWord`
+- `readForGraphSingleWord`
+- `owner-specific but not controlled`
+- `probeExistingWordIdsForExplorerHistory`
+- `legacy generic`
+- `getWordsByIds`
+
+### controlled zone 정의
+
+- controlled zone은 단순 owner-specific zone으로 정의하지 않는다.
+- controlled zone은 아래 조건을 모두 만족하는 context만 포함한다.
+- owner-specific display read여야 한다.
+- 반환 의미가 특정 owner display contract에 대해 고정되어야 한다.
+- fallback 결과를 구조적으로 해석할 수 있어야 한다.
+- collector 결과를 구조적으로 해석할 수 있어야 한다.
+- UI display와 직접 연결되어야 한다.
+- 위 조건 중 하나라도 만족하지 못하면 controlled zone으로 분류하지 않는다.
+
+### probe 계층 정의
+
+- owner-specific이라고 해서 자동으로 controlled가 되지 않는다.
+- probe와 display는 구조적으로 분리한다.
+- `probeExistingWordIdsForExplorerHistory`는 흐름 판정용 probe context로 정의한다.
+- `probeExistingWordIdsForExplorerHistory`는 display read가 아니다.
+- `probeExistingWordIdsForExplorerHistory`는 controlled zone에 포함하지 않는다.
+- availability 또는 흐름 판정으로 계약이 제한된 probe context는 owner-specific이어도 controlled가 아니다.
+
+### generic 계층 정의
+
+- generic read는 controlled 후보가 아니다.
+- owner가 없는 context는 controlled로 분류할 수 없다.
+- `getWordsByIds`는 legacy generic context로 정의한다.
+- generic context는 장기 축소 대상이다.
+- controlled 검토는 generic 재사용에서 분리된 이후에만 수행한다.
+
+### 계층 비교
+
+| Tier | Contexts | Owner | Primary purpose | Return contract | Controlled eligibility |
+| --- | --- | --- | --- | --- | --- |
+| Controlled zone | `readForGraphBatch`, `readForGraphCenterSingleWord`, `readForGraphSingleWord` | `graph` | display | graph display contract | eligible and fixed |
+| Owner-specific but not controlled | `probeExistingWordIdsForExplorerHistory` | `explorer history` | probe | existence / flow judgement | not controlled |
+| Legacy generic | `getWordsByIds` | none | generic batch helper | generic full row batch | not eligible |
+
+### controlled 판정 checklist
+
+- 단일 owner가 존재하는가.
+- probe나 internal helper가 아니라 display read인가.
+- 반환 의미가 하나의 owner display contract에 대해 고정되는가.
+- fallback 결과를 구조적으로 해석할 수 있는가.
+- collector 결과를 구조적으로 해석할 수 있는가.
+- UI display와 직접 연결되는가.
+- generic 재사용에서 이미 분리되었는가.
+
+### controlled 승격 절차
+
+- read 승격은 아래 순서를 기준으로 판단한다.
+
+```text
+generic
+-> owner-specific 분리
+-> 반환 계약 고정
+-> 관측/검증 가능성 확보
+-> controlled 판정
+```
+
+- controlled 판정은 generic 분리 이전에 수행하지 않는다.
+- owner-specific 분리만으로 controlled를 인정하지 않는다.
+- probe context는 별도 고정 계약과 재검토 기준이 마련되기 전까지 controlled zone 밖에 둔다.
+
 ## 2026-04-11 Phase 5 explorer history probe context 분리
 
 ### 이번 단계 요약

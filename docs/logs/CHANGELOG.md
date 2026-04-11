@@ -3,6 +3,9 @@
 ## 2026-04-11
 
 ### 변경
+- controlled zone 판정 기준을 `docs/database/read_source_migration.md` 에 정책 문장으로 문서화했다.
+- graph display / history probe / legacy generic read context의 3계층 구조 구분을 확정했다.
+- read 승격 절차를 `generic -> owner-specific 분리 -> 반환 계약 고정 -> 관측/검증 가능성 확보 -> controlled 판정` 기준으로 고정했다.
 - explorer history existence probe 전용 API `probeExistingWordIdsForExplorerHistory` 를 추가했다.
 - explorer history availability 판단은 더 이상 generic `getWordsByIds` full row read를 사용하지 않고 `Set<String>` probe 결과를 직접 사용한다.
 - history probe 구현은 `SELECT id FROM WORD_TABLE WHERE id IN (...)` 로 최소화했고 `getWordsByIds` 자체는 그대로 유지했다.
