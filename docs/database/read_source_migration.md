@@ -1,5 +1,50 @@
 # Read Source Migration
 
+## 2026-04-11 Phase 7-4 home search navigation owner reread 적용
+
+### 이번 단계 요약
+
+- 이번 단계는 search ranking이나 search display 계산을 바꾸는 단계가 아니다.
+- 목적은 Home search 결과가 navigation payload 책임에서 빠지고 display surface 쪽으로 더 순수해지게 만드는 것이다.
+- search branch는 detail / explorer / graph 진입 모두 `wordId` 기준으로 정규화했다.
+- detail / graph는 HomeScreen에서 owner-specific reread 후 navigate 하도록 맞췄다.
+- explorer는 route full row를 제거하고 screen 내부 bootstrap에서 owner reread로 초기 상태를 만든다.
+
+### 적용 범위
+
+- `HomeScreen._openWordDetail`
+- `HomeScreen._openWordExplorer`
+- `HomeScreen._openWordGraph`
+- `WordExplorerScreen` initial bootstrap / history seed
+
+### 구현 방식
+
+- search branch는 더 이상 `searchWordsMap` / `searchStrongExactMap` 결과 row 전체를 navigation payload로 직접 넘기지 않는다.
+- Home search -> detail:
+  - payload = `wordId`
+  - owner read = `getWordDetailMapByIdForReadSourcePhase2Only`
+- Home search -> graph:
+  - payload = `wordId`
+  - owner read = `getWordMapByIdForGraphCenterSingleWord`
+- Home search -> explorer:
+  - payload = `wordId`
+  - center bootstrap = `getWordMapByIdForGraphCenterSingleWord`
+  - selected panel bootstrap = `getWordMapByIdForSplitViewSingleWord`
+
+### explorer 초기 구조 정리
+
+- 기존에는 `initialWordMap` 한 개가 center seed, selected panel 초기값, history seed를 동시에 맡았다.
+- 이번 단계에서는 route payload를 `initialWordId`로 줄였다.
+- explorer는 init bootstrap에서 graph center read와 split-view read를 각각 호출해 초기 상태를 구성한다.
+- history snapshot은 full selected row 대신 selected word id만 보관한다.
+- history availability probe는 기존처럼 `readForExplorerSingleWord` / `probeExistingWordIdsForExplorerHistory` 경로를 유지한다.
+
+### 구조 결과
+
+- search result row는 여전히 display materialization row이지만 Home navigation payload로는 직접 사용되지 않는다.
+- Home search display contract와 navigation contract 경계가 이전보다 선명해졌다.
+- explorer는 여전히 controlled zone은 아니지만 route full row convenience 의존은 제거됐다.
+
 ## Phase 6-A controlled zone 판정 기준
 
 ### 목적

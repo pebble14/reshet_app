@@ -669,7 +669,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _showDefaultStrongNavigationUnavailableSnackBar() {
+  void _showWordNavigationUnavailableSnackBar() {
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(const SnackBar(content: Text('단어 정보를 찾을 수 없습니다.')));
@@ -680,7 +680,7 @@ class _HomeScreenState extends State<HomeScreen> {
         .getWordDetailMapByIdForReadSourcePhase2Only(wordId);
     if (!mounted) return;
     if (detailWord == null) {
-      _showDefaultStrongNavigationUnavailableSnackBar();
+      _showWordNavigationUnavailableSnackBar();
       return;
     }
 
@@ -694,19 +694,16 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _openDefaultStrongWordExplorer(String wordId) async {
-    final explorerWord = await _repository.getWordMapByIdForExplorerSingleWord(
-      wordId,
-    );
-    if (!mounted) return;
-    if (explorerWord == null) {
-      _showDefaultStrongNavigationUnavailableSnackBar();
+    final normalizedWordId = wordId.trim();
+    if (normalizedWordId.isEmpty) {
+      _showWordNavigationUnavailableSnackBar();
       return;
     }
 
     await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => WordExplorerScreen(initialWordMap: explorerWord),
+        builder: (_) => WordExplorerScreen(initialWordId: normalizedWordId),
       ),
     );
 
@@ -719,7 +716,7 @@ class _HomeScreenState extends State<HomeScreen> {
         .getWordMapByIdForGraphCenterSingleWord(wordId);
     if (!mounted) return;
     if (centerWordMap == null) {
-      _showDefaultStrongNavigationUnavailableSnackBar();
+      _showWordNavigationUnavailableSnackBar();
       return;
     }
 
@@ -853,6 +850,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               int index,
                             ) {
                               final wordMap = words[index];
+                              final wordId = (wordMap['id'] ?? '')
+                                  .toString()
+                                  .trim();
                               final displayStrong = _formatDisplayStrong(
                                 Word.fromMap(wordMap).strongNumber ?? '',
                               );
@@ -883,13 +883,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                     IconButton(
                                       icon: const Icon(Icons.article_outlined),
                                       tooltip: '상세',
-                                      onPressed: () => _openWordDetail(wordMap),
+                                      onPressed: () => _openWordDetail(wordId),
                                     ),
                                     // 그래프
                                     IconButton(
                                       icon: const Icon(Icons.hub_outlined),
                                       tooltip: '그래프',
-                                      onPressed: () => _openWordGraph(wordMap),
+                                      onPressed: () => _openWordGraph(wordId),
                                     ),
                                   ],
                                 ),
@@ -901,11 +901,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
                                   // 넓은 화면(데스크탑/태블릿)에서는 스플릿뷰
                                   if (width >= 900) {
-                                    await _openWordExplorer(wordMap);
+                                    await _openWordExplorer(wordId);
                                     return;
                                   }
 
-                                  await _openWordDetail(wordMap);
+                                  await _openWordDetail(wordId);
                                 },
                               );
                             }
@@ -959,40 +959,16 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  Future<void> _openWordDetail(Map<String, dynamic> wordMap) async {
-    await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => WordDetailScreen(word: wordMap)),
-    );
-
-    if (!mounted) return;
-    _refreshWords();
+  Future<void> _openWordDetail(String wordId) {
+    return _openDefaultStrongWordDetail(wordId);
   }
 
-  Future<void> _openWordExplorer(Map<String, dynamic> wordMap) async {
-    await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => WordExplorerScreen(initialWordMap: wordMap),
-      ),
-    );
-
-    if (!mounted) return;
-    _refreshWords();
+  Future<void> _openWordExplorer(String wordId) {
+    return _openDefaultStrongWordExplorer(wordId);
   }
 
-  Future<void> _openWordGraph(Map<String, dynamic> wordMap) async {
-    final centerWord = Word.fromMap(wordMap);
-
-    await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => WordGraphScreen(centerWord: centerWord),
-      ),
-    );
-
-    if (!mounted) return;
-    _refreshWords();
+  Future<void> _openWordGraph(String wordId) {
+    return _openDefaultStrongWordGraph(wordId);
   }
 
   @override

@@ -10,18 +10,18 @@ import 'word_navigation_history.dart';
 
 class _ExplorerHistorySnapshot {
   final Word centerWord;
-  final Map<String, dynamic>? selectedWordMap;
+  final String? selectedWordId;
 
   const _ExplorerHistorySnapshot({
     required this.centerWord,
-    required this.selectedWordMap,
+    required this.selectedWordId,
   });
 }
 
 class WordExplorerScreen extends StatefulWidget {
-  final Map<String, dynamic> initialWordMap;
+  final String initialWordId;
 
-  const WordExplorerScreen({super.key, required this.initialWordMap});
+  const WordExplorerScreen({super.key, required this.initialWordId});
 
   @override
   State<WordExplorerScreen> createState() => _WordExplorerScreenState();
@@ -48,15 +48,14 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
   @override
   void initState() {
     super.initState();
-    _centerWord = Word.fromMap(widget.initialWordMap);
-    _selectedWordMap = Map<String, dynamic>.from(widget.initialWordMap);
+    _centerWord = Word(id: widget.initialWordId.trim());
+    _selectedWordMap = null;
+    _isDetailLoading = true;
     _history.reset(
-      _createHistoryEntry(
-        centerWord: _centerWord,
-        selectedWordMap: _selectedWordMap,
-      ),
+      _createHistoryEntry(centerWord: _centerWord, selectedWordMap: null),
     );
     _refreshHistoryNavigationAvailability();
+    _initializeExplorerBootstrap();
   }
 
   @override
@@ -134,6 +133,70 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
 
   Future<Map<String, dynamic>?> _loadSplitViewWordMap(String wordId) async {
     return _repository.getWordMapByIdForSplitViewSingleWord(wordId);
+  }
+
+  Future<void> _initializeExplorerBootstrap() async {
+    final initialWordId = widget.initialWordId.trim();
+    if (initialWordId.isEmpty) {
+      if (!mounted) return;
+      setState(() {
+        _detailError = '탐색할 단어 ID가 비어 있습니다.';
+        _isDetailLoading = false;
+        _detailUnavailableMessage = null;
+      });
+      return;
+    }
+
+    try {
+      final bootstrapResults = await Future.wait<Map<String, dynamic>?>([
+        _repository.getWordMapByIdForGraphCenterSingleWord(initialWordId),
+        _loadSplitViewWordMap(initialWordId),
+      ]);
+      if (!mounted) return;
+
+      final centerWordMap = bootstrapResults[0];
+      final selectedWordMap = bootstrapResults[1];
+      final resolvedCenterWord = _resolveBootstrapCenterWord(
+        wordId: initialWordId,
+        centerWordMap: centerWordMap,
+        selectedWordMap: selectedWordMap,
+      );
+
+      setState(() {
+        _centerWord = resolvedCenterWord;
+        _selectedWordMap = selectedWordMap;
+        _isDetailLoading = false;
+        _detailError = null;
+        _detailUnavailableMessage = selectedWordMap == null
+            ? '?좏깮???⑥뼱???곸꽭 ?뺣낫瑜?李얠쓣 ???놁뒿?덈떎.'
+            : null;
+      });
+      _replaceCurrentHistoryEntry(
+        centerWord: resolvedCenterWord,
+        selectedWordMap: selectedWordMap,
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        _detailError = '탐색 초기 정보를 불러오지 못했습니다. $e';
+        _isDetailLoading = false;
+        _detailUnavailableMessage = null;
+      });
+    }
+  }
+
+  Word _resolveBootstrapCenterWord({
+    required String wordId,
+    required Map<String, dynamic>? centerWordMap,
+    required Map<String, dynamic>? selectedWordMap,
+  }) {
+    final bootstrapWordMap = centerWordMap ?? selectedWordMap;
+    if (bootstrapWordMap == null) {
+      return Word(id: wordId);
+    }
+
+    return Word.fromMap(bootstrapWordMap);
   }
 
   Future<void> _refreshSelectedWord({
@@ -243,11 +306,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
   }
 
   String? get _selectedWordId {
-    final wordId = (_selectedWordMap?['id'] ?? '').toString().trim();
-    if (wordId.isEmpty) {
-      return null;
-    }
-    return wordId;
+    return _selectedWordIdForWordMap(_selectedWordMap);
   }
 
   Future<void> _handleDeletedSelectedWord({required bool wasCenterWord}) async {
@@ -518,17 +577,18 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
       strongNumber: strongNumber,
       payload: _ExplorerHistorySnapshot(
         centerWord: centerWord,
-        selectedWordMap: _cloneWordMap(selectedWordMap),
+        selectedWordId: _selectedWordIdForWordMap(selectedWordMap),
       ),
     );
   }
 
-  Map<String, dynamic>? _cloneWordMap(Map<String, dynamic>? wordMap) {
-    if (wordMap == null) {
+  String? _selectedWordIdForWordMap(Map<String, dynamic>? wordMap) {
+    final wordId = (wordMap?['id'] ?? '').toString().trim();
+    if (wordId.isEmpty) {
       return null;
     }
 
-    return Map<String, dynamic>.from(wordMap);
+    return wordId;
   }
 
   bool _isSameHistoryLocation(
@@ -536,12 +596,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
     _ExplorerHistorySnapshot right,
   ) {
     return left.centerWord.id == right.centerWord.id &&
-        _historyWordId(left.selectedWordMap) ==
-            _historyWordId(right.selectedWordMap);
-  }
-
-  String _historyWordId(Map<String, dynamic>? wordMap) {
-    return (wordMap?['id'] ?? '').toString().trim();
+        left.selectedWordId == right.selectedWordId;
   }
 
   String _buildHistoryTooltip(

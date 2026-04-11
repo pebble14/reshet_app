@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-04-11 Phase 7-4
+
+- Home search branch가 detail / explorer / graph navigation에 search row 전체를 직접 넘기지 않도록 `wordId` 기준 helper로 정리했다.
+- search result navigation은 detail `getWordDetailMapByIdForReadSourcePhase2Only`, graph `getWordMapByIdForGraphCenterSingleWord`, explorer `initialWordId` bootstrap 구조로 분리했다.
+- `WordExplorerScreen` route payload를 `initialWordId`로 줄이고 init bootstrap에서 graph center read + split-view read를 사용하도록 바꿨다.
+- explorer history snapshot은 full selected row 대신 selected word id만 보관하도록 정리했다.
+
 ## 2026-04-11
 
 ### 변경
