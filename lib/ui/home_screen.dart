@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../domain/expression/home_word_display_summary.dart';
 import '../domain/home/home_default_strong_list_item.dart';
+import '../domain/home/home_search_result_display_item.dart';
 import '../database/database_service.dart';
 import 'word_detail_screen.dart';
 import '../data/models/word.dart';
@@ -66,7 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Timer? _strongJumpDebounceTimer;
 
   Future<List<HomeDefaultStrongListItem>>? _defaultStrongListFuture;
-  Future<List<Map<String, dynamic>>>? _searchWordsFuture;
+  Future<List<HomeSearchResultDisplayItem>>? _searchWordsFuture;
   List<HomeDefaultStrongListItem> _currentDefaultStrongItems = const [];
   bool _isShowingDefaultStrongList = true;
 
@@ -74,7 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return _repository.getStrongWordsMap();
   }
 
-  Future<List<Map<String, dynamic>>> _createSearchWordsFuture() async {
+  Future<List<HomeSearchResultDisplayItem>> _createSearchWordsFuture() async {
     final keyword = _searchController.text.trim();
     if (keyword.isEmpty) {
       return const [];
@@ -91,19 +92,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     return _repository.searchWordsMap(keyword, limit: 200);
-  }
-
-  String _readFirstNonEmptyValue(
-    Map<String, dynamic> wordMap,
-    List<String> keys,
-  ) {
-    for (final key in keys) {
-      final value = (wordMap[key] ?? '').toString().trim();
-      if (value.isNotEmpty) {
-        return value;
-      }
-    }
-    return '';
   }
 
   String _formatDisplayStrong(String strong) {
@@ -273,8 +261,14 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  String _buildWordSubtitle(Map<String, dynamic> wordMap) {
-    return _readFirstNonEmptyValue(wordMap, ['의미1', '의미']);
+  HomeWordDisplaySummary _buildSearchResultSummary(
+    HomeSearchResultDisplayItem item,
+  ) {
+    return HomeWordDisplaySummary(
+      representativeSpelling: item.representativeSpelling ?? '',
+      representativeTransliteration: item.representativeTransliteration ?? '',
+      representativePronunciation: item.representativePronunciation ?? '',
+    );
   }
 
   void _setVisibleWordListFuture() {
@@ -823,7 +817,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Expanded(
                   child: _isShowingDefaultStrongList
                       ? _buildDefaultStrongListView()
-                      : FutureBuilder<List<Map<String, dynamic>>>(
+                      : FutureBuilder<List<HomeSearchResultDisplayItem>>(
                           future: _searchWordsFuture,
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
@@ -849,16 +843,14 @@ class _HomeScreenState extends State<HomeScreen> {
                               BuildContext context,
                               int index,
                             ) {
-                              final wordMap = words[index];
-                              final wordId = (wordMap['id'] ?? '')
-                                  .toString()
-                                  .trim();
-                              final displayStrong = _formatDisplayStrong(
-                                Word.fromMap(wordMap).strongNumber ?? '',
+                              final item = words[index];
+                              final wordId = item.wordId;
+                              final displayStrong =
+                                  item.displayStrongNumber ?? '';
+                              final displaySummary = _buildSearchResultSummary(
+                                item,
                               );
-                              final displaySummary =
-                                  buildHomeWordDisplaySummary(wordMap);
-                              final subtitleText = _buildWordSubtitle(wordMap);
+                              final subtitleText = item.subtitleMeaning ?? '';
 
                               return ListTile(
                                 title: Text.rich(

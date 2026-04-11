@@ -1,5 +1,38 @@
 # Read Source Migration
 
+## 2026-04-11 Phase 7-7 home search result display controlled contract 적용
+
+### 이번 단계 요약
+
+- 이번 단계의 목표는 home search result display의 public boundary를 raw row에서 controlled display contract로 고정하는 것이다.
+- `WordRepository.searchStrongExactMap`, `WordRepository.searchWordsMap`의 public 반환형은 이제 `HomeSearchResultDisplayItem` 목록이다.
+- raw `WORD_TABLE` row, normalized fallback 판단, display field 확정 책임은 repository 내부에만 남긴다.
+- `HomeScreen` search branch는 더 이상 `Map<String, dynamic>`를 직접 해석하지 않고 contract만 소비한다.
+- `searchWordsMap('')`는 더 이상 generic `getWordsMap(limit: limit)` browse path로 내려가지 않고 빈 결과를 반환한다.
+
+### 적용 범위
+
+- `lib/domain/home/home_search_result_display_item.dart`
+- `WordRepository.searchStrongExactMap`
+- `WordRepository.searchWordsMap`
+- `WordRepository._resolveHomeDisplayRowsForPhase32` 이후 home search display contract 변환 경계
+- `HomeScreen` search result branch
+
+### 구현 방식
+
+- repository는 기존 Phase 3.2 fallback / display signature 비교 구조를 유지한다.
+- `searchStrongExactMap`, `searchWordsMap`는 legacy row를 모은 뒤 `_resolveHomeDisplayRowsForPhase32`로 fallback이 반영된 display row를 먼저 확정한다.
+- 확정된 display row는 repository 내부 helper에서 `HomeSearchResultDisplayItem`으로 변환한다.
+- contract field는 `wordId`, `displayStrongNumber`, `representativeSpelling`, `representativeTransliteration`, `representativePronunciation`, `subtitleMeaning`으로 고정한다.
+- empty string display value는 contract에서 nullable로 흡수한다.
+
+### 구조 결과
+
+- home search result display는 owner-specific display contract를 public boundary에 가진다.
+- UI는 title / subtitle / navigation action을 contract 값만으로 구성한다.
+- search branch의 raw row convenience 의존은 제거된다.
+- empty keyword browse path는 search contract 밖으로 밀어냈고, 이번 단계에서는 빈 결과 반환으로 고정했다.
+
 ## 2026-04-11 Phase 7-4 home search navigation owner reread 적용
 
 ### 이번 단계 요약

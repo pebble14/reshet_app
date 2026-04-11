@@ -12,6 +12,7 @@ import '../../domain/expression/expression_read_models.dart';
 import '../../domain/expression/read_source_debug_collector.dart';
 import '../../domain/expression/read_source_policy.dart';
 import '../../domain/home/home_default_strong_list_item.dart';
+import '../../domain/home/home_search_result_display_item.dart';
 import '../../domain/word/word_write_models.dart';
 
 /// 단어(WORD_TABLE) 및 관계(WORD_RELATION) 조회 전용 Repository
@@ -1174,6 +1175,15 @@ class WordRepository {
     return List<Map<String, dynamic>>.unmodifiable(resolvedRows);
   }
 
+  String? _nullIfEmptyDisplayValue(String value) {
+    final trimmed = value.trim();
+    if (trimmed.isEmpty) {
+      return null;
+    }
+
+    return trimmed;
+  }
+
   HomeDefaultStrongListItem _buildHomeDefaultStrongListItem(
     Map<String, dynamic> wordRow,
   ) {
@@ -1185,6 +1195,48 @@ class WordRepository {
       strongNumber: _normalizeStrongValue(displaySignature.strongNumber),
       title: displaySignature.representativeSpelling,
       subtitle: '',
+    );
+  }
+
+  HomeSearchResultDisplayItem _buildHomeSearchResultDisplayItem(
+    Map<String, dynamic> wordRow,
+  ) {
+    final displaySignature = _buildSearchResultDisplaySignature(wordRow);
+
+    return HomeSearchResultDisplayItem(
+      wordId: _readTrimmedWordValue(wordRow, 'id'),
+      displayStrongNumber: _nullIfEmptyDisplayValue(
+        _normalizeStrongValue(displaySignature.strongNumber),
+      ),
+      representativeSpelling: _nullIfEmptyDisplayValue(
+        displaySignature.representativeSpelling,
+      ),
+      representativeTransliteration: _nullIfEmptyDisplayValue(
+        displaySignature.representativeTransliteration,
+      ),
+      representativePronunciation: _nullIfEmptyDisplayValue(
+        displaySignature.representativePronunciation,
+      ),
+      subtitleMeaning: _nullIfEmptyDisplayValue(
+        displaySignature.subtitleMeaning,
+      ),
+    );
+  }
+
+  Future<List<HomeSearchResultDisplayItem>>
+  _resolveHomeSearchDisplayItemsForPhase32(
+    Database db,
+    List<Map<String, dynamic>> legacyRows, {
+    required String context,
+  }) async {
+    final displayRows = await _resolveHomeDisplayRowsForPhase32(
+      db,
+      legacyRows,
+      context: context,
+    );
+
+    return List<HomeSearchResultDisplayItem>.unmodifiable(
+      displayRows.map(_buildHomeSearchResultDisplayItem),
     );
   }
 
@@ -2125,7 +2177,7 @@ class WordRepository {
     return candidatesById.values.toList();
   }
 
-  Future<List<Map<String, dynamic>>> searchStrongExactMap(
+  Future<List<HomeSearchResultDisplayItem>> searchStrongExactMap(
     String keyword, {
     int limit = 200,
   }) async {
@@ -2158,7 +2210,7 @@ class WordRepository {
         .take(limit)
         .map((row) => Map<String, dynamic>.from(row))
         .toList(growable: false);
-    return await _resolveHomeDisplayRowsForPhase32(
+    return await _resolveHomeSearchDisplayItemsForPhase32(
       db,
       filteredRows,
       context: 'searchStrongExactMap',
@@ -2169,7 +2221,7 @@ class WordRepository {
   /// - DB에서 1차 후보를 수집한 뒤 Dart에서 정규화 비교/정렬한다.
   /// - 표기1~6, 음역1~6, 의미1~7, 스트롱넘버를 대상으로 한다.
   /// - 결과는 exact/prefix/partial 우선순위를 적용한 뒤 limit를 건다.
-  Future<List<Map<String, dynamic>>> searchWordsMap(
+  Future<List<HomeSearchResultDisplayItem>> searchWordsMap(
     String keyword, {
     int limit = 200,
   }) async {
@@ -2177,7 +2229,7 @@ class WordRepository {
 
     final q = keyword.trim();
     if (q.isEmpty) {
-      return getWordsMap(limit: limit);
+      return const [];
     }
 
     final normalizedKeyword = _normalizeHomeSearchText(q);
@@ -2244,7 +2296,7 @@ class WordRepository {
         .take(limit)
         .map((entry) => Map<String, dynamic>.from(entry.row))
         .toList(growable: false);
-    return await _resolveHomeDisplayRowsForPhase32(
+    return await _resolveHomeSearchDisplayItemsForPhase32(
       db,
       resultRows,
       context: 'searchWordsMap',

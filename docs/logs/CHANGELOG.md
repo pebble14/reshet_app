@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2026-04-11 Phase 7-7
+
+- home search result display 전용 controlled contract `HomeSearchResultDisplayItem`을 추가했다.
+- `searchStrongExactMap`, `searchWordsMap`의 public 반환형을 raw `Map<String, dynamic>` 목록에서 contract 목록으로 전환했다.
+- repository 내부에서 `raw row -> fallback 반영 -> display contract 생성` 경계를 고정했다.
+- `HomeScreen` search branch가 raw row, `Word.fromMap`, `buildHomeWordDisplaySummary`, raw subtitle 추출 없이 contract만 소비하도록 정리했다.
+- `searchWordsMap('')`는 더 이상 `getWordsMap(limit: limit)` browse path로 내려가지 않고 빈 결과를 반환한다.
+- `docs/database/read_source_migration.md`에 Phase 7-7 contract 적용 범위와 구조 결과를 반영했다.
+
 ## 2026-04-11 Phase 7-4
 
 - Home search branch가 detail / explorer / graph navigation에 search row 전체를 직접 넘기지 않도록 `wordId` 기준 helper로 정리했다.
