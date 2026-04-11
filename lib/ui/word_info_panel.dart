@@ -1,23 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../data/adapters/legacy_word_expression_read_adapter.dart';
-import '../domain/expression/expression_read_models.dart';
-
-String buildWordRepresentativeSpelling(
-  Map<String, dynamic> wordMap, {
-  String fallback = '',
-}) {
-  final readResult = readLegacyWordExpressionRow(wordMap);
-  return _buildRepresentativeSpellingFromReadResult(
-    readResult,
-    fallback: fallback,
-  );
-}
-
-String buildWordDisplayStrong(Map<String, dynamic> wordMap) {
-  final strong = (wordMap['스트롱넘버'] ?? '').toString();
-  return formatWordDisplayStrong(strong);
-}
+import '../domain/word/word_detail_like_display_item.dart';
 
 String formatWordDisplayStrong(String strong) {
   final trimmed = strong.trim();
@@ -36,7 +19,7 @@ String formatWordDisplayStrong(String strong) {
 }
 
 class WordInfoPanel extends StatelessWidget {
-  final Map<String, dynamic> wordMap;
+  final WordDetailLikeDisplayItem displayItem;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
   final VoidCallback? onOpenDetail;
@@ -45,7 +28,7 @@ class WordInfoPanel extends StatelessWidget {
 
   const WordInfoPanel({
     super.key,
-    required this.wordMap,
+    required this.displayItem,
     this.onEdit,
     this.onDelete,
     this.onOpenDetail,
@@ -55,41 +38,29 @@ class WordInfoPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final expressionReadResult = readLegacyWordExpressionRow(wordMap);
-    final representativeSpelling = _buildRepresentativeSpellingFromReadResult(
-      expressionReadResult,
-    );
-    final expressionSectionValues = _buildExpressionSectionValues(
-      expressionReadResult,
-    );
-    final strong = buildWordDisplayStrong(wordMap);
-    final language = _readValue('언어');
-    final meanings = _collectSeries('의미', 7);
-    final note = _readValue('비고');
     final sections = <_WordInfoSection>[
-      if (representativeSpelling.isNotEmpty)
-        _WordInfoSection(label: '대표 표기', values: [representativeSpelling]),
-      if (strong.isNotEmpty)
-        _WordInfoSection(label: '스트롱 번호', values: [strong]),
-      if (language.isNotEmpty)
-        _WordInfoSection(label: '언어', values: [language]),
-      if (expressionSectionValues.spellings.isNotEmpty)
+      if (_hasText(displayItem.representativeSpelling))
         _WordInfoSection(
-          label: '표기',
-          values: expressionSectionValues.spellings,
+          label: '대표 표기',
+          values: [displayItem.representativeSpelling!.trim()],
         ),
-      if (expressionSectionValues.transliterations.isNotEmpty)
+      if (_hasText(displayItem.displayStrongNumber))
         _WordInfoSection(
-          label: '음역',
-          values: expressionSectionValues.transliterations,
+          label: '스트롱 번호',
+          values: [displayItem.displayStrongNumber!.trim()],
         ),
-      if (expressionSectionValues.pronunciations.isNotEmpty)
-        _WordInfoSection(
-          label: '발음',
-          values: expressionSectionValues.pronunciations,
-        ),
-      if (meanings.isNotEmpty) _WordInfoSection(label: '의미', values: meanings),
-      if (note.isNotEmpty) _WordInfoSection(label: '비고', values: [note]),
+      if (_hasText(displayItem.language))
+        _WordInfoSection(label: '언어', values: [displayItem.language!.trim()]),
+      if (displayItem.spellings.isNotEmpty)
+        _WordInfoSection(label: '표기', values: displayItem.spellings),
+      if (displayItem.transliterations.isNotEmpty)
+        _WordInfoSection(label: '음역', values: displayItem.transliterations),
+      if (displayItem.pronunciations.isNotEmpty)
+        _WordInfoSection(label: '발음', values: displayItem.pronunciations),
+      if (displayItem.meanings.isNotEmpty)
+        _WordInfoSection(label: '의미', values: displayItem.meanings),
+      if (_hasText(displayItem.note))
+        _WordInfoSection(label: '비고', values: [displayItem.note!.trim()]),
     ];
     final hasActions =
         onEdit != null ||
@@ -124,7 +95,7 @@ class WordInfoPanel extends StatelessWidget {
                 OutlinedButton.icon(
                   onPressed: onOpenDetail,
                   icon: const Icon(Icons.open_in_new),
-                  label: const Text('상세화면에서 열기'),
+                  label: const Text('상세 화면에서 열기'),
                 ),
               if (onShowGraph != null)
                 ElevatedButton.icon(
@@ -155,76 +126,9 @@ class WordInfoPanel extends StatelessWidget {
     );
   }
 
-  String _readValue(String key) {
-    return (wordMap[key] ?? '').toString().trim();
+  bool _hasText(String? value) {
+    return value != null && value.trim().isNotEmpty;
   }
-
-  List<String> _collectSeries(String prefix, int count) {
-    final values = <String>[];
-
-    for (var index = 1; index <= count; index++) {
-      final value = _readValue('$prefix$index');
-      if (value.isEmpty || values.contains(value)) {
-        continue;
-      }
-      values.add(value);
-    }
-
-    return values;
-  }
-}
-
-String _buildRepresentativeSpellingFromReadResult(
-  CanonicalExpressionReadResult readResult, {
-  String fallback = '',
-}) {
-  if (readResult.sets.isEmpty) {
-    return fallback;
-  }
-
-  return readResult.sets.first.spelling;
-}
-
-_ExpressionSectionValues _buildExpressionSectionValues(
-  CanonicalExpressionReadResult readResult,
-) {
-  return _ExpressionSectionValues(
-    spellings: _collectUniqueNonEmptyValues(
-      readResult.sets.map((set) => set.spelling),
-    ),
-    transliterations: _collectUniqueNonEmptyValues(
-      readResult.sets.map((set) => set.transliteration ?? ''),
-    ),
-    pronunciations: _collectUniqueNonEmptyValues(
-      readResult.sets.map((set) => set.pronunciation ?? ''),
-    ),
-  );
-}
-
-List<String> _collectUniqueNonEmptyValues(Iterable<String> values) {
-  final collectedValues = <String>[];
-
-  for (final value in values) {
-    final trimmed = value.trim();
-    if (trimmed.isEmpty || collectedValues.contains(trimmed)) {
-      continue;
-    }
-    collectedValues.add(trimmed);
-  }
-
-  return collectedValues;
-}
-
-class _ExpressionSectionValues {
-  final List<String> spellings;
-  final List<String> transliterations;
-  final List<String> pronunciations;
-
-  const _ExpressionSectionValues({
-    required this.spellings,
-    required this.transliterations,
-    required this.pronunciations,
-  });
 }
 
 class _WordInfoSection {

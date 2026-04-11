@@ -680,7 +680,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
     await Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => WordDetailScreen(word: detailWord)),
+      MaterialPageRoute(
+        builder: (_) =>
+            WordDetailScreen(wordId: wordId, initialDisplayItem: detailWord),
+      ),
     );
 
     if (!mounted) return;

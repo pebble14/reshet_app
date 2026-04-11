@@ -13,6 +13,7 @@ import '../../domain/expression/read_source_debug_collector.dart';
 import '../../domain/expression/read_source_policy.dart';
 import '../../domain/home/home_default_strong_list_item.dart';
 import '../../domain/home/home_search_result_display_item.dart';
+import '../../domain/word/word_detail_like_display_item.dart';
 import '../../domain/word/word_write_models.dart';
 
 /// 단어(WORD_TABLE) 및 관계(WORD_RELATION) 조회 전용 Repository
@@ -1184,6 +1185,31 @@ class WordRepository {
     return trimmed;
   }
 
+  WordDetailLikeDisplayItem _buildWordDetailLikeDisplayItem(
+    Map<String, dynamic> wordRow,
+  ) {
+    final displaySignature = _buildWordDetailDisplaySignature(wordRow);
+
+    return WordDetailLikeDisplayItem(
+      representativeSpelling: _nullIfEmptyDisplayValue(
+        displaySignature.representativeSpelling,
+      ),
+      displayStrongNumber: _nullIfEmptyDisplayValue(
+        _normalizeStrongValue(displaySignature.strongNumber),
+      ),
+      language: _nullIfEmptyDisplayValue(displaySignature.language),
+      spellings: List<String>.unmodifiable(displaySignature.spellings),
+      transliterations: List<String>.unmodifiable(
+        displaySignature.transliterations,
+      ),
+      pronunciations: List<String>.unmodifiable(
+        displaySignature.pronunciations,
+      ),
+      meanings: List<String>.unmodifiable(displaySignature.meanings),
+      note: _nullIfEmptyDisplayValue(displaySignature.note),
+    );
+  }
+
   HomeDefaultStrongListItem _buildHomeDefaultStrongListItem(
     Map<String, dynamic> wordRow,
   ) {
@@ -1269,10 +1295,10 @@ class WordRepository {
     String id, {
     required String context,
   }) async {
-    return _getWordMapByIdForDetailLikeSingleWordRead(id, context: context);
+    return _getResolvedWordRowForDetailLikeSingleWordRead(id, context: context);
   }
 
-  Future<Map<String, dynamic>?> _getWordMapByIdForDetailLikeSingleWordRead(
+  Future<Map<String, dynamic>?> _getResolvedWordRowForDetailLikeSingleWordRead(
     String id, {
     required String context,
   }) async {
@@ -1305,6 +1331,21 @@ class WordRepository {
     return resolvedResult.wordRow;
   }
 
+  Future<WordDetailLikeDisplayItem?> _getWordMapByIdForDetailLikeSingleWordRead(
+    String id, {
+    required String context,
+  }) async {
+    final wordRow = await _getResolvedWordRowForDetailLikeSingleWordRead(
+      id,
+      context: context,
+    );
+    if (wordRow == null) {
+      return null;
+    }
+
+    return _buildWordDetailLikeDisplayItem(wordRow);
+  }
+
   Future<Map<String, dynamic>?> getWordMapByIdForReadAfterSaveSingleWord(
     String id,
   ) async {
@@ -1329,7 +1370,7 @@ class WordRepository {
   Future<Map<String, dynamic>?> getWordMapByIdForGraphSingleWord(
     String id,
   ) async {
-    return _getWordMapByIdForDetailLikeSingleWordRead(
+    return _getResolvedWordRowForDetailLikeSingleWordRead(
       id,
       context: _readForGraphSingleWordContext,
     );
@@ -1340,13 +1381,13 @@ class WordRepository {
   Future<Map<String, dynamic>?> getWordMapByIdForGraphCenterSingleWord(
     String id,
   ) async {
-    return _getWordMapByIdForDetailLikeSingleWordRead(
+    return _getResolvedWordRowForDetailLikeSingleWordRead(
       id,
       context: _readForGraphCenterSingleWordContext,
     );
   }
 
-  Future<Map<String, dynamic>?> getWordMapByIdForSplitViewSingleWord(
+  Future<WordDetailLikeDisplayItem?> getWordMapByIdForSplitViewSingleWord(
     String id,
   ) async {
     return _getWordMapByIdForDetailLikeSingleWordRead(
@@ -1366,9 +1407,8 @@ class WordRepository {
 
   /// Read source phase 2 limited path.
   /// WordDetailScreen에서만 사용하고 다른 화면에서는 재사용하지 않는다.
-  Future<Map<String, dynamic>?> getWordDetailMapByIdForReadSourcePhase2Only(
-    String id,
-  ) async {
+  Future<WordDetailLikeDisplayItem?>
+  getWordDetailMapByIdForReadSourcePhase2Only(String id) async {
     return _getWordMapByIdForDetailLikeSingleWordRead(
       id,
       context: _detailReadPhase2OnlyContext,

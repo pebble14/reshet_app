@@ -1,19 +1,26 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'word_graph_screen.dart';
-import 'word_graph_cache.dart';
-import 'word_edit_screen.dart';
-import 'word_info_panel.dart';
+
 import '../data/models/word.dart';
 import '../data/repositories/word_repository.dart';
+import '../domain/word/word_detail_like_display_item.dart';
 import '../domain/word/word_write_models.dart';
 import '../domain/word/word_write_service.dart';
+import 'word_edit_screen.dart';
+import 'word_graph_cache.dart';
+import 'word_graph_screen.dart';
+import 'word_info_panel.dart';
 
 class WordDetailScreen extends StatefulWidget {
-  final Map<String, dynamic> word;
+  final String wordId;
+  final WordDetailLikeDisplayItem initialDisplayItem;
 
-  const WordDetailScreen({super.key, required this.word});
+  const WordDetailScreen({
+    super.key,
+    required this.wordId,
+    required this.initialDisplayItem,
+  });
 
   @override
   State<WordDetailScreen> createState() => _WordDetailScreenState();
@@ -23,22 +30,21 @@ class _WordDetailScreenState extends State<WordDetailScreen> {
   final WordRepository _repository = WordRepository();
   final WordWriteService _wordWriteService = WordWriteService();
 
-  late Map<String, dynamic> _word;
-  late Map<String, dynamic> _displayWord;
+  late final String _wordId;
+  late WordDetailLikeDisplayItem _displayItem;
   bool _isDeleting = false;
   int _detailReloadToken = 0;
 
   @override
   void initState() {
     super.initState();
-    _word = Map<String, dynamic>.from(widget.word);
-    _displayWord = Map<String, dynamic>.from(widget.word);
+    _wordId = widget.wordId.trim();
+    _displayItem = widget.initialDisplayItem;
     unawaited(_refreshWordDetailForReadSourcePhase2Only());
   }
 
   Future<void> _refreshWordDetailForReadSourcePhase2Only() async {
-    final wordId = (_word['id'] ?? '').toString().trim();
-    if (wordId.isEmpty) {
+    if (_wordId.isEmpty) {
       return;
     }
 
@@ -46,7 +52,7 @@ class _WordDetailScreenState extends State<WordDetailScreen> {
 
     try {
       final reloadedWord = await _repository
-          .getWordDetailMapByIdForReadSourcePhase2Only(wordId);
+          .getWordDetailMapByIdForReadSourcePhase2Only(_wordId);
       if (!mounted ||
           requestToken != _detailReloadToken ||
           reloadedWord == null) {
@@ -54,24 +60,27 @@ class _WordDetailScreenState extends State<WordDetailScreen> {
       }
 
       setState(() {
-        _displayWord = Map<String, dynamic>.from(reloadedWord);
+        _displayItem = reloadedWord;
       });
     } catch (_) {
-      // Keep the initial widget.word visible so fallback and reload errors stay silent.
+      // Keep the initial display visible so fallback and reload errors stay silent.
     }
   }
 
   Future<void> _openEdit() async {
+    final editableWord = await _repository.getWordMapById(_wordId);
+    if (!mounted) return;
+    if (editableWord == null) {
+      _showWordNavigationUnavailableSnackBar();
+      return;
+    }
+
     final result = await Navigator.push<Map<String, dynamic>>(
       context,
-      MaterialPageRoute(builder: (_) => WordEditScreen(word: _word)),
+      MaterialPageRoute(builder: (_) => WordEditScreen(word: editableWord)),
     );
 
     if (result != null) {
-      setState(() {
-        _word = Map<String, dynamic>.from(result);
-        _displayWord = Map<String, dynamic>.from(result);
-      });
       unawaited(_refreshWordDetailForReadSourcePhase2Only());
       if (!mounted) return;
       ScaffoldMessenger.of(
@@ -80,22 +89,28 @@ class _WordDetailScreenState extends State<WordDetailScreen> {
     }
   }
 
-  void _openGraph() {
-    final centerWord = Word.fromMap(_word);
+  Future<void> _openGraph() async {
+    final centerWordMap = await _repository
+        .getWordMapByIdForGraphCenterSingleWord(_wordId);
+    if (!mounted) return;
+    if (centerWordMap == null) {
+      _showWordNavigationUnavailableSnackBar();
+      return;
+    }
 
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => WordGraphScreen(centerWord: centerWord),
+        builder: (context) =>
+            WordGraphScreen(centerWord: Word.fromMap(centerWordMap)),
       ),
     );
   }
 
   Future<void> _confirmDelete() async {
-    final wordId = (_word['id'] ?? '').toString();
-    if (wordId.isEmpty) return;
+    if (_wordId.isEmpty) return;
 
-    final relationCount = await _repository.countRelationsForWord(wordId);
+    final relationCount = await _repository.countRelationsForWord(_wordId);
 
     if (!mounted) return;
 
@@ -128,7 +143,7 @@ class _WordDetailScreenState extends State<WordDetailScreen> {
     setState(() => _isDeleting = true);
 
     try {
-      await _wordWriteService.execute(DeleteWordCommand(wordId: wordId));
+      await _wordWriteService.execute(DeleteWordCommand(wordId: _wordId));
       WordGraphDataCache.clear();
 
       if (!mounted) return;
@@ -148,16 +163,27 @@ class _WordDetailScreenState extends State<WordDetailScreen> {
     }
   }
 
+  void _showWordNavigationUnavailableSnackBar() {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('단어 정보를 찾을 수 없습니다.')));
+  }
+
+  String _buildTitle() {
+    final title = _displayItem.representativeSpelling?.trim() ?? '';
+    if (title.isEmpty) {
+      return '상세 정보';
+    }
+
+    return title;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          buildWordRepresentativeSpelling(_displayWord, fallback: '상세 정보'),
-        ),
-      ),
+      appBar: AppBar(title: Text(_buildTitle())),
       body: WordInfoPanel(
-        wordMap: _displayWord,
+        displayItem: _displayItem,
         onEdit: _openEdit,
         onShowGraph: _openGraph,
         onDelete: _confirmDelete,

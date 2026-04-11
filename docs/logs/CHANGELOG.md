@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 2026-04-11 Phase 7-11
+
+- detail-like display shared contract `WordDetailLikeDisplayItem`를 추가했다.
+- `getWordDetailMapByIdForReadSourcePhase2Only`, `getWordMapByIdForSplitViewSingleWord`의 public 반환형을 raw `Map<String, dynamic>`에서 shared contract로 전환했다.
+- repository 내부에 `raw row -> fallback 반영 -> detail-like display contract` 경계를 추가하고, graph/safe-zone raw single-word read는 기존 raw 경계를 유지했다.
+- `WordInfoPanel`이 raw map 기반 helper와 직접 key 해석을 제거하고 typed display renderer로 전환됐다.
+- `WordDetailScreen`과 `WordExplorerScreen`이 공통 detail-like contract를 panel에 전달하도록 정리됐고, 편집/이동 같은 화면별 동작은 on-demand raw reread로 분리했다.
+- `HomeScreen` detail navigation은 새 detail contract를 전달하는 최소 caller 적응만 반영했다.
+- `docs/database/read_source_migration.md`에 Phase 7-11 detail-like shared contract 적용 범위와 구조 결과를 반영했다.
+
 ## 2026-04-11 Phase 7-7
 
 - home search result display 전용 controlled contract `HomeSearchResultDisplayItem`을 추가했다.

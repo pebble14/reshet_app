@@ -1,5 +1,39 @@
 # Read Source Migration
 
+## 2026-04-11 Phase 7-11 detail-like display shared contract 적용
+
+### 이번 단계 요약
+
+- 이번 단계의 목표는 WordDetailScreen 본문과 Explorer split-view 우측 패널이 공유하는 detail-like display boundary를 raw row에서 typed shared contract로 고정하는 것이다.
+- `WordRepository.getWordDetailMapByIdForReadSourcePhase2Only`, `WordRepository.getWordMapByIdForSplitViewSingleWord`의 public 반환형은 이제 `WordDetailLikeDisplayItem`이다.
+- fallback/source 선택 책임은 기존처럼 repository 내부 `_resolveWordRowForDetailLikeDisplay`에 두고, contract 생성은 detail-like single-word read 경계에서 수행한다.
+- `WordInfoPanel`은 더 이상 raw `Map<String, dynamic>`를 해석하지 않고 `WordDetailLikeDisplayItem`만 렌더링하는 typed display renderer가 된다.
+- `WordDetailScreen`, `WordExplorerScreen`은 같은 본문 contract를 공유하고, 화면별 액션/로딩/empty/error 책임만 유지한다.
+
+### 적용 범위
+
+- `lib/domain/word/word_detail_like_display_item.dart`
+- `WordRepository._getWordMapByIdForDetailLikeSingleWordRead`
+- `WordRepository.getWordDetailMapByIdForReadSourcePhase2Only`
+- `WordRepository.getWordMapByIdForSplitViewSingleWord`
+- `WordInfoPanel`
+- `WordDetailScreen`
+- `WordExplorerScreen`
+
+### 구현 방식
+
+- repository는 기존 `_buildWordDetailDisplaySignature`를 seed로 사용해 `WordDetailLikeDisplayItem`를 만드는 private builder를 추가한다.
+- detail-like display fallback은 기존처럼 `_resolveWordRowForDetailLikeDisplay`에서 normalized/legacy visible mismatch를 판정한다.
+- display contract 생성은 fallback이 끝난 row를 기준으로 repository 내부에서만 수행한다.
+- `WordInfoPanel`은 contract의 `representativeSpelling`, `displayStrongNumber`, `language`, `spellings`, `transliterations`, `pronunciations`, `meanings`, `note`만으로 본문 섹션을 구성한다.
+- Detail/Explorer의 edit/open-detail/open-graph 같은 화면 동작은 필요 시 on-demand raw reread를 사용하되, 그 raw 값이 다시 panel display boundary로 올라오지는 않게 한다.
+
+### 구조 결과
+
+- detail-like display는 이제 owner-shared display contract를 public boundary로 가진다.
+- UI 본문 display에서 raw map 해석 책임이 제거되고 repository/contract 경계로 내려간다.
+- `WordInfoPanel`은 shared typed display renderer가 되고, Detail과 Explorer의 차이는 본문이 아니라 외곽 상태와 액션에만 남는다.
+
 ## 2026-04-11 Phase 7-7 home search result display controlled contract 적용
 
 ### 이번 단계 요약

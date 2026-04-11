@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../data/repositories/word_repository.dart';
 import '../data/models/word.dart';
+import '../data/repositories/word_repository.dart';
+import '../domain/word/word_detail_like_display_item.dart';
 import 'word_detail_screen.dart';
 import 'word_edit_screen.dart';
 import 'word_graph_screen.dart';
@@ -31,7 +32,8 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
   final WordRepository _repository = WordRepository();
 
   late Word _centerWord;
-  Map<String, dynamic>? _selectedWordMap;
+  String? _selectedWordId;
+  WordDetailLikeDisplayItem? _selectedWordDisplayItem;
   int _graphRevision = 0;
   bool _isDetailLoading = false;
   String? _detailError;
@@ -49,10 +51,11 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
   void initState() {
     super.initState();
     _centerWord = Word(id: widget.initialWordId.trim());
-    _selectedWordMap = null;
+    _selectedWordId = null;
+    _selectedWordDisplayItem = null;
     _isDetailLoading = true;
     _history.reset(
-      _createHistoryEntry(centerWord: _centerWord, selectedWordMap: null),
+      _createHistoryEntry(centerWord: _centerWord, selectedWordId: null),
     );
     _refreshHistoryNavigationAvailability();
     _initializeExplorerBootstrap();
@@ -98,25 +101,29 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
     });
 
     try {
-      final selectedWordMap = await _loadSplitViewWordMap(word.id);
+      final selectedDisplayItem = await _loadSplitViewDisplayItem(word.id);
 
       if (!mounted) return;
 
+      final resolvedSelectedWordId = selectedDisplayItem == null
+          ? null
+          : word.id.trim();
       setState(() {
-        _selectedWordMap = selectedWordMap;
+        _selectedWordId = resolvedSelectedWordId;
+        _selectedWordDisplayItem = selectedDisplayItem;
         _isDetailLoading = false;
-        _detailUnavailableMessage = selectedWordMap == null
+        _detailUnavailableMessage = selectedDisplayItem == null
             ? '선택한 단어의 상세 정보를 찾을 수 없습니다.'
             : null;
         if (changeCenterWord) {
           _pushHistoryEntry(
             centerWord: _centerWord,
-            selectedWordMap: selectedWordMap,
+            selectedWordId: resolvedSelectedWordId,
           );
         } else {
           _replaceCurrentHistoryEntry(
             centerWord: _centerWord,
-            selectedWordMap: selectedWordMap,
+            selectedWordId: resolvedSelectedWordId,
           );
         }
       });
@@ -131,7 +138,9 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
     }
   }
 
-  Future<Map<String, dynamic>?> _loadSplitViewWordMap(String wordId) async {
+  Future<WordDetailLikeDisplayItem?> _loadSplitViewDisplayItem(
+    String wordId,
+  ) async {
     return _repository.getWordMapByIdForSplitViewSingleWord(wordId);
   }
 
@@ -148,32 +157,35 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
     }
 
     try {
-      final bootstrapResults = await Future.wait<Map<String, dynamic>?>([
-        _repository.getWordMapByIdForGraphCenterSingleWord(initialWordId),
-        _loadSplitViewWordMap(initialWordId),
-      ]);
+      final centerWordMap = await _repository
+          .getWordMapByIdForGraphCenterSingleWord(initialWordId);
+      final selectedDisplayItem = await _loadSplitViewDisplayItem(
+        initialWordId,
+      );
       if (!mounted) return;
 
-      final centerWordMap = bootstrapResults[0];
-      final selectedWordMap = bootstrapResults[1];
       final resolvedCenterWord = _resolveBootstrapCenterWord(
         wordId: initialWordId,
         centerWordMap: centerWordMap,
-        selectedWordMap: selectedWordMap,
+        selectedDisplayItem: selectedDisplayItem,
       );
+      final resolvedSelectedWordId = selectedDisplayItem == null
+          ? null
+          : initialWordId;
 
       setState(() {
         _centerWord = resolvedCenterWord;
-        _selectedWordMap = selectedWordMap;
+        _selectedWordId = resolvedSelectedWordId;
+        _selectedWordDisplayItem = selectedDisplayItem;
         _isDetailLoading = false;
         _detailError = null;
-        _detailUnavailableMessage = selectedWordMap == null
+        _detailUnavailableMessage = selectedDisplayItem == null
             ? '?좏깮???⑥뼱???곸꽭 ?뺣낫瑜?李얠쓣 ???놁뒿?덈떎.'
             : null;
       });
       _replaceCurrentHistoryEntry(
         centerWord: resolvedCenterWord,
-        selectedWordMap: selectedWordMap,
+        selectedWordId: resolvedSelectedWordId,
       );
     } catch (e) {
       if (!mounted) return;
@@ -189,14 +201,20 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
   Word _resolveBootstrapCenterWord({
     required String wordId,
     required Map<String, dynamic>? centerWordMap,
-    required Map<String, dynamic>? selectedWordMap,
+    required WordDetailLikeDisplayItem? selectedDisplayItem,
   }) {
-    final bootstrapWordMap = centerWordMap ?? selectedWordMap;
-    if (bootstrapWordMap == null) {
+    if (centerWordMap != null) {
+      return Word.fromMap(centerWordMap);
+    }
+
+    if (selectedDisplayItem == null) {
       return Word(id: wordId);
     }
 
-    return Word.fromMap(bootstrapWordMap);
+    return _buildFallbackWordFromDisplayItem(
+      wordId: wordId,
+      displayItem: selectedDisplayItem,
+    );
   }
 
   Future<void> _refreshSelectedWord({
@@ -204,9 +222,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
     bool syncCenterWord = false,
     bool refreshGraphIfChanged = false,
   }) async {
-    final previousWordMap = _selectedWordMap == null
-        ? null
-        : Map<String, dynamic>.from(_selectedWordMap!);
+    final previousDisplayItem = _selectedWordDisplayItem;
 
     setState(() {
       _isDetailLoading = true;
@@ -215,18 +231,27 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
     });
 
     try {
-      final refreshedWordMap = await _loadSplitViewWordMap(wordId);
-      final hasChanged = !_wordMapsEqual(previousWordMap, refreshedWordMap);
+      final refreshedDisplayItem = await _loadSplitViewDisplayItem(wordId);
+      final resolvedSelectedWordId = refreshedDisplayItem == null
+          ? null
+          : wordId.trim();
+      final hasChanged =
+          previousDisplayItem != refreshedDisplayItem ||
+          _selectedWordId != resolvedSelectedWordId;
 
       if (!mounted) return;
 
       setState(() {
-        _selectedWordMap = refreshedWordMap;
-        _detailUnavailableMessage = refreshedWordMap == null
+        _selectedWordId = resolvedSelectedWordId;
+        _selectedWordDisplayItem = refreshedDisplayItem;
+        _detailUnavailableMessage = refreshedDisplayItem == null
             ? '선택한 단어의 상세 정보를 찾을 수 없습니다.'
             : null;
-        if (syncCenterWord && refreshedWordMap != null) {
-          _centerWord = Word.fromMap(refreshedWordMap);
+        if (syncCenterWord && refreshedDisplayItem != null) {
+          _centerWord = _buildFallbackWordFromDisplayItem(
+            wordId: wordId,
+            displayItem: refreshedDisplayItem,
+          );
         }
         if (refreshGraphIfChanged && hasChanged) {
           _graphRevision++;
@@ -234,7 +259,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
         _isDetailLoading = false;
         _replaceCurrentHistoryEntry(
           centerWord: _centerWord,
-          selectedWordMap: _selectedWordMap,
+          selectedWordId: _selectedWordId,
         );
       });
     } catch (e) {
@@ -249,30 +274,31 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
   }
 
   Future<void> _openEditSelectedWord() async {
-    final wordMap = _selectedWordMap;
-    if (wordMap == null) return;
+    final selectedWordId = _selectedWordId;
+    if (selectedWordId == null) return;
+
+    final editableWord = await _repository.getWordMapByIdForExplorerSingleWord(
+      selectedWordId,
+    );
+    if (!mounted) return;
+    if (editableWord == null) {
+      _showWordNavigationUnavailableSnackBar();
+      return;
+    }
 
     final result = await Navigator.push<Map<String, dynamic>>(
       context,
-      MaterialPageRoute(builder: (_) => WordEditScreen(word: wordMap)),
+      MaterialPageRoute(builder: (_) => WordEditScreen(word: editableWord)),
     );
 
     if (result == null || !mounted) return;
 
-    setState(() {
-      _selectedWordMap = Map<String, dynamic>.from(result);
-      _detailError = null;
-      _detailUnavailableMessage = null;
-
-      if (_centerWord.id == result['id'].toString()) {
-        _centerWord = Word.fromMap(result);
-      }
-      _graphRevision++;
-      _replaceCurrentHistoryEntry(
-        centerWord: _centerWord,
-        selectedWordMap: _selectedWordMap,
-      );
-    });
+    await _refreshSelectedWord(
+      wordId: selectedWordId,
+      syncCenterWord: _centerWord.id == selectedWordId,
+      refreshGraphIfChanged: true,
+    );
+    if (!mounted) return;
 
     ScaffoldMessenger.of(
       context,
@@ -280,15 +306,20 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
   }
 
   Future<void> _openSelectedWordDetail() async {
-    final wordMap = _selectedWordMap;
-    if (wordMap == null) return;
+    final selectedWordId = _selectedWordId;
+    final selectedDisplayItem = _selectedWordDisplayItem;
+    if (selectedWordId == null || selectedDisplayItem == null) return;
 
-    final selectedWordId = (wordMap['id'] ?? '').toString();
     final wasCenterWord = _centerWord.id == selectedWordId;
 
     final wasDeleted = await Navigator.push<bool?>(
       context,
-      MaterialPageRoute(builder: (_) => WordDetailScreen(word: wordMap)),
+      MaterialPageRoute(
+        builder: (_) => WordDetailScreen(
+          wordId: selectedWordId,
+          initialDisplayItem: selectedDisplayItem,
+        ),
+      ),
     );
 
     if (!mounted || selectedWordId.isEmpty) return;
@@ -305,8 +336,10 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
     );
   }
 
-  String? get _selectedWordId {
-    return _selectedWordIdForWordMap(_selectedWordMap);
+  void _showWordNavigationUnavailableSnackBar() {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('단어 정보를 찾을 수 없습니다.')));
   }
 
   Future<void> _handleDeletedSelectedWord({required bool wasCenterWord}) async {
@@ -338,7 +371,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
   }
 
   void _clearSelectedWordPanel({bool refreshGraph = false}) {
-    if (_selectedWordMap == null &&
+    if (_selectedWordDisplayItem == null &&
         !_isDetailLoading &&
         _detailError == null &&
         _detailUnavailableMessage == null &&
@@ -347,7 +380,8 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
     }
 
     setState(() {
-      _selectedWordMap = null;
+      _selectedWordId = null;
+      _selectedWordDisplayItem = null;
       _isDetailLoading = false;
       _detailError = null;
       _detailUnavailableMessage = null;
@@ -356,7 +390,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
       }
       _replaceCurrentHistoryEntry(
         centerWord: _centerWord,
-        selectedWordMap: null,
+        selectedWordId: null,
       );
     });
   }
@@ -419,7 +453,8 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
 
     setState(() {
       _centerWord = snapshot.centerWord;
-      _selectedWordMap = null;
+      _selectedWordId = null;
+      _selectedWordDisplayItem = null;
       _detailError = null;
       _isDetailLoading = false;
       _detailUnavailableMessage = null;
@@ -429,11 +464,11 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
 
   void _pushHistoryEntry({
     required Word centerWord,
-    required Map<String, dynamic>? selectedWordMap,
+    required String? selectedWordId,
   }) {
     final entry = _createHistoryEntry(
       centerWord: centerWord,
-      selectedWordMap: selectedWordMap,
+      selectedWordId: selectedWordId,
     );
     final currentEntry = _history.currentEntry;
 
@@ -450,12 +485,12 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
 
   void _replaceCurrentHistoryEntry({
     required Word centerWord,
-    required Map<String, dynamic>? selectedWordMap,
+    required String? selectedWordId,
   }) {
     _history.replaceCurrent(
       _createHistoryEntry(
         centerWord: centerWord,
-        selectedWordMap: selectedWordMap,
+        selectedWordId: selectedWordId,
       ),
     );
     _refreshHistoryNavigationAvailability();
@@ -560,7 +595,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
 
   WordNavigationHistoryEntry<_ExplorerHistorySnapshot> _createHistoryEntry({
     required Word centerWord,
-    required Map<String, dynamic>? selectedWordMap,
+    required String? selectedWordId,
   }) {
     final centerWordId = centerWord.id.trim();
     final fallbackSpelling = (centerWord.spelling1 ?? '').trim();
@@ -577,18 +612,9 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
       strongNumber: strongNumber,
       payload: _ExplorerHistorySnapshot(
         centerWord: centerWord,
-        selectedWordId: _selectedWordIdForWordMap(selectedWordMap),
+        selectedWordId: selectedWordId,
       ),
     );
-  }
-
-  String? _selectedWordIdForWordMap(Map<String, dynamic>? wordMap) {
-    final wordId = (wordMap?['id'] ?? '').toString().trim();
-    if (wordId.isEmpty) {
-      return null;
-    }
-
-    return wordId;
   }
 
   bool _isSameHistoryLocation(
@@ -623,26 +649,25 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
     return '$label: 중심\n${parts.join('\n')}';
   }
 
-  bool _wordMapsEqual(Map<String, dynamic>? left, Map<String, dynamic>? right) {
-    if (identical(left, right)) {
-      return true;
-    }
-
-    if (left == null || right == null) {
-      return left == right;
-    }
-
-    if (left.length != right.length) {
-      return false;
-    }
-
-    for (final key in left.keys) {
-      if (!right.containsKey(key) || left[key] != right[key]) {
-        return false;
-      }
-    }
-
-    return true;
+  Word _buildFallbackWordFromDisplayItem({
+    required String wordId,
+    required WordDetailLikeDisplayItem displayItem,
+  }) {
+    return Word(
+      id: wordId.trim(),
+      language: displayItem.language,
+      strongNumber: displayItem.displayStrongNumber,
+      spelling1: displayItem.representativeSpelling,
+      transliteration1: displayItem.transliterations.isEmpty
+          ? null
+          : displayItem.transliterations.first,
+      pronunciation1: displayItem.pronunciations.isEmpty
+          ? null
+          : displayItem.pronunciations.first,
+      meaning1: displayItem.meanings.isEmpty
+          ? null
+          : displayItem.meanings.first,
+    );
   }
 
   Widget _buildDetailPanel() {
@@ -654,8 +679,8 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
       return Center(child: Text(_detailError!));
     }
 
-    final wordMap = _selectedWordMap;
-    if (wordMap == null) {
+    final displayItem = _selectedWordDisplayItem;
+    if (displayItem == null) {
       final detailUnavailableMessage = _detailUnavailableMessage;
       if (detailUnavailableMessage != null) {
         return Center(child: Text(detailUnavailableMessage));
@@ -664,7 +689,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
     }
 
     return WordInfoPanel(
-      wordMap: wordMap,
+      displayItem: displayItem,
       onEdit: _openEditSelectedWord,
       onOpenDetail: _openSelectedWordDetail,
     );
