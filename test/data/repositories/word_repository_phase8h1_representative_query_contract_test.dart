@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:reshet_app/data/repositories/word_repository.dart';
 import 'package:reshet_app/database/database_service.dart';
+import 'package:reshet_app/domain/word/duplicate_candidate_display_item.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -207,8 +208,15 @@ void main() {
         );
 
         expect(candidates, hasLength(1));
-        expect(candidates.single['id'], wordId);
-        expect(candidates.single['표기1'], 'representative-strong');
+        expect(candidates.single, isA<DuplicateCandidateDisplayItem>());
+        expect(candidates.single.wordId, wordId);
+        expect(candidates.single.language, '헬라어');
+        expect(candidates.single.strongNumber, strongNumber);
+        expect(
+          candidates.single.representativeSpelling,
+          'representative-strong',
+        );
+        expect(candidates.single.primaryMeaning, 'strong meaning');
       },
     );
 
@@ -242,8 +250,12 @@ void main() {
         );
 
         expect(candidates, hasLength(1));
-        expect(candidates.single['id'], wordId);
-        expect(candidates.single['표기1'], 'כְּפַר');
+        expect(candidates.single, isA<DuplicateCandidateDisplayItem>());
+        expect(candidates.single.wordId, wordId);
+        expect(candidates.single.language, '히브리어');
+        expect(candidates.single.strongNumber, '');
+        expect(candidates.single.representativeSpelling, 'כְּפַר');
+        expect(candidates.single.primaryMeaning, 'non strong meaning');
       },
     );
   });

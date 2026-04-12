@@ -1,5 +1,14 @@
 # FEATURE_STATUS
 
+## 2026-04-13 Phase 8-H-3 진행 상태
+
+- 진행 범위: `findDuplicateCandidates`, edit/graph duplicate warning dialog, duplicate display contract 테스트 보강
+- 현재 상태: duplicate display contract first slice 적용
+- 구조 기준: query semantics와 strong 우선 / non-strong representative spelling 비교 규칙은 유지하고, consumer contract만 최소 typed display contract로 축소
+- 유지 범위: `primaryMeaning`의 기존 표시값, search pipeline, `Word.fromMap`, edit seed, history/undo/fallback 구조
+- 주의: duplicate warning 경로의 raw map 의존 축소 단계이며, slot contract 제거 완료 단계가 아님
+- 보류 범위: graph relation add search, home search, 나머지 slot consumer 후속 절편
+
 ## 2026-04-12 Phase 8-H-1 진행 상태
 
 - 진행 범위: `findWordIdsInDbWideLanguageSpellingTransliterationCollisionGroups`, `findDuplicateCandidates`, duplicate warning dialog 최소 정리

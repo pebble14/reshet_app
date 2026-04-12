@@ -1,5 +1,31 @@
 # Read Source Migration
 
+## 2026-04-13 Phase 8-H-3 duplicate display contract first slice
+
+### 이번 단계 요약
+
+- 이번 단계는 duplicate candidate query semantics 재설계가 아니라 duplicate warning display contract 축소 first slice다.
+- `findDuplicateCandidates`의 strong 우선 규칙과 non-strong representative spelling 비교축은 그대로 유지한다.
+- duplicate warning consumer는 raw `Map<String, dynamic>` 대신 duplicate warning 전용 최소 typed display contract만 소비한다.
+
+### 적용 범위
+
+- `findDuplicateCandidates`
+- `WordEditScreen` duplicate warning dialog
+- `WordGraphScreen` duplicate warning dialog
+
+### 구현 방식
+
+- repository query는 기존 SELECT / filter / exclude 흐름을 유지하고, 결과를 duplicate warning 표시용 typed contract로 projection한다.
+- typed contract 필드는 `wordId`, `language`, `strongNumber`, `representativeSpelling`, `primaryMeaning`으로 제한한다.
+- `primaryMeaning`는 이번 단계에서 기존 표시값 유지 목적만 담당하며 의미 구조 자체는 변경하지 않는다.
+
+### 구조 결과
+
+- duplicate warning 두 consumer가 raw slot display shape와 DB column key를 직접 읽지 않게 됐다.
+- duplicate warning 경로에서 representative query + 좁은 display contract 패턴을 한 단계 더 고정했다.
+- query semantics, duplicate policy, 다른 read/write 경로는 이번 단계 범위에 포함하지 않는다.
+
 ## 2026-04-12 Phase 8-H-1 representative query contract first slice
 
 ### 이번 단계 요약

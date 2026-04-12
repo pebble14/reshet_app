@@ -14,6 +14,7 @@ import '../domain/graph/graph_node.dart';
 import '../domain/graph/graph_view_data.dart';
 import '../domain/graph/layout/graph_layout_strategy_resolver.dart';
 import '../domain/relation/relation_formatter.dart';
+import '../domain/word/duplicate_candidate_display_item.dart';
 import '../domain/word/word_write_models.dart';
 import '../domain/word/word_write_service.dart';
 import 'word_expression_set.dart';
@@ -4668,7 +4669,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     required String language,
     String? strongNumber,
     required String spelling1,
-    required List<Map<String, dynamic>> candidates,
+    required List<DuplicateCandidateDisplayItem> candidates,
   }) async {
     final isStrongCase = (strongNumber ?? '').trim().isNotEmpty;
 
@@ -4690,12 +4691,6 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                   ),
                   const SizedBox(height: 12),
                   ...candidates.map((c) {
-                    final id = (c['id'] ?? '').toString();
-                    final lang = (c['언어'] ?? '').toString();
-                    final strong = (c['스트롱넘버'] ?? '').toString();
-                    final spelling = (c['표기1'] ?? '').toString();
-                    final meaning = (c['의미1'] ?? '').toString();
-
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 10),
                       child: Container(
@@ -4705,7 +4700,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
-                          'ID: $id\n언어: $lang\n스트롱 번호: $strong\n대표 표기: $spelling\n의미1: $meaning',
+                          'ID: ${c.wordId}\n언어: ${c.language}\n스트롱 번호: ${c.strongNumber}\n대표 표기: ${c.representativeSpelling}\n의미1: ${c.primaryMeaning}',
                         ),
                       ),
                     );

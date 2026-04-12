@@ -13,6 +13,7 @@ import '../../domain/expression/read_source_debug_collector.dart';
 import '../../domain/expression/read_source_policy.dart';
 import '../../domain/home/home_default_strong_list_item.dart';
 import '../../domain/home/home_search_result_display_item.dart';
+import '../../domain/word/duplicate_candidate_display_item.dart';
 import '../../domain/word/word_detail_like_display_item.dart';
 import '../../domain/word/word_write_models.dart';
 
@@ -304,7 +305,9 @@ class WordRepository {
   Map<String, dynamic> _extractCompatibilityWordSnapshotFromHistory(
     Map<String, dynamic> historySnapshot,
   ) {
-    return _sanitizeWordHistorySnapshot(Map<String, dynamic>.from(historySnapshot));
+    return _sanitizeWordHistorySnapshot(
+      Map<String, dynamic>.from(historySnapshot),
+    );
   }
 
   List<Map<String, dynamic>> _cloneWordExpressionRowsForHistory(
@@ -1394,6 +1397,18 @@ class WordRepository {
       subtitleMeaning: _nullIfEmptyDisplayValue(
         displaySignature.subtitleMeaning,
       ),
+    );
+  }
+
+  DuplicateCandidateDisplayItem _buildDuplicateCandidateDisplayItem(
+    Map<String, dynamic> row,
+  ) {
+    return DuplicateCandidateDisplayItem(
+      wordId: (row['id'] ?? '').toString(),
+      language: (row['언어'] ?? '').toString(),
+      strongNumber: (row['스트롱넘버'] ?? '').toString(),
+      representativeSpelling: (row['표기1'] ?? '').toString(),
+      primaryMeaning: (row['의미1'] ?? '').toString(),
     );
   }
 
@@ -2987,7 +3002,7 @@ class WordRepository {
   /// 신규 단어 생성 전 중복 후보 검색
   /// - Strong가 있으면: 스트롱넘버 기준(기존 strong 우선 규칙 유지)
   /// - Strong가 없으면: (언어, representative spelling) 기준
-  Future<List<Map<String, dynamic>>> findDuplicateCandidates({
+  Future<List<DuplicateCandidateDisplayItem>> findDuplicateCandidates({
     required String language,
     String? strongNumber,
     required String spelling1,
@@ -3017,10 +3032,11 @@ class WordRepository {
         [strong],
       );
 
-      return rows.where((row) {
-        final id = (row['id'] ?? '').toString();
-        return excludeId == null || id != excludeId;
-      }).toList();
+      return List<DuplicateCandidateDisplayItem>.unmodifiable(
+        rows.map(_buildDuplicateCandidateDisplayItem).where((candidate) {
+          return excludeId == null || candidate.wordId != excludeId;
+        }),
+      );
     }
 
     final rows = await db.rawQuery(
@@ -3043,17 +3059,19 @@ class WordRepository {
 
     final target = _normalizeSpellingForDuplicateCheck(spelling);
 
-    return rows.where((row) {
-      final id = (row['id'] ?? '').toString();
-      if (excludeId != null && id == excludeId) return false;
+    return List<DuplicateCandidateDisplayItem>.unmodifiable(
+      rows.map(_buildDuplicateCandidateDisplayItem).where((candidate) {
+        final id = candidate.wordId;
+        if (excludeId != null && id == excludeId) return false;
 
-      final existingSpelling = (row['표기1'] ?? '').toString();
-      final normalizedExisting = _normalizeSpellingForDuplicateCheck(
-        existingSpelling,
-      );
+        final existingSpelling = candidate.representativeSpelling;
+        final normalizedExisting = _normalizeSpellingForDuplicateCheck(
+          existingSpelling,
+        );
 
-      return normalizedExisting == target;
-    }).toList();
+        return normalizedExisting == target;
+      }),
+    );
   }
 
   /// WORD_TABLE에 신규 단어를 추가한다.
@@ -3071,9 +3089,8 @@ class WordRepository {
       id,
       canonicalExpressionSets,
     );
-    final normalizedExpressionRowsForHistory = _buildNormalizedExpressionHistoryRows(
-      normalizedExpressionRows,
-    );
+    final normalizedExpressionRowsForHistory =
+        _buildNormalizedExpressionHistoryRows(normalizedExpressionRows);
     final normalizedMeanings = payload.meanings
         .take(7)
         .map((value) => value.trim())
@@ -3159,10 +3176,8 @@ class WordRepository {
       final wordBefore = _sanitizeWordHistorySnapshot(
         Map<String, dynamic>.from(wordRows.first),
       );
-      final normalizedExpressionRowsBefore = await _loadWordExpressionSetRowsForHistory(
-        txn,
-        wordId,
-      );
+      final normalizedExpressionRowsBefore =
+          await _loadWordExpressionSetRowsForHistory(txn, wordId);
       final wordBeforeHistory = _buildWordHistorySnapshot(
         compatibilityWordSnapshot: wordBefore,
         normalizedExpressionRows: normalizedExpressionRowsBefore,
@@ -3221,9 +3236,8 @@ class WordRepository {
       id,
       canonicalExpressionSets,
     );
-    final normalizedExpressionRowsForHistory = _buildNormalizedExpressionHistoryRows(
-      normalizedExpressionRows,
-    );
+    final normalizedExpressionRowsForHistory =
+        _buildNormalizedExpressionHistoryRows(normalizedExpressionRows);
     final normalizedMeanings = payload.meanings
         .take(7)
         .map((value) {
@@ -3238,10 +3252,8 @@ class WordRepository {
         throw Exception('수정할 단어를 찾을 수 없습니다: $id');
       }
 
-      final beforeNormalizedExpressionRows = await _loadWordExpressionSetRowsForHistory(
-        txn,
-        id,
-      );
+      final beforeNormalizedExpressionRows =
+          await _loadWordExpressionSetRowsForHistory(txn, id);
       final beforeWordSnapshot = _sanitizeWordHistorySnapshot(beforeRaw);
       final before = _buildWordHistorySnapshot(
         compatibilityWordSnapshot: beforeWordSnapshot,
@@ -3338,16 +3350,16 @@ class WordRepository {
     DatabaseExecutor txn,
     Map<String, dynamic> historySnapshot,
   ) async {
-    final compatibilityWordSnapshot = _extractCompatibilityWordSnapshotFromHistory(
-      historySnapshot,
-    );
+    final compatibilityWordSnapshot =
+        _extractCompatibilityWordSnapshotFromHistory(historySnapshot);
     final wordId = (compatibilityWordSnapshot['id'] ?? '').toString().trim();
     if (wordId.isEmpty) {
       throw Exception('word_expression_set 복원 실패: word id가 비어 있습니다.');
     }
 
-    final normalizedRows =
-        _readNormalizedExpressionRowsFromHistorySnapshot(historySnapshot);
+    final normalizedRows = _readNormalizedExpressionRowsFromHistorySnapshot(
+      historySnapshot,
+    );
     if (normalizedRows != null) {
       final restoredRows = List<Map<String, Object?>>.unmodifiable(
         normalizedRows.map(
@@ -3626,9 +3638,8 @@ class WordRepository {
         } else if (actionType == 'update') {
           // 수정 취소 => before 복원
           if (entityType == 'word') {
-            final beforeWordSnapshot = _extractCompatibilityWordSnapshotFromHistory(
-              before!,
-            );
+            final beforeWordSnapshot =
+                _extractCompatibilityWordSnapshotFromHistory(before!);
             await txn.update(
               'WORD_TABLE',
               beforeWordSnapshot,
@@ -3647,9 +3658,8 @@ class WordRepository {
         } else if (actionType == 'delete') {
           // 삭제 취소 => before 복원
           if (entityType == 'word') {
-            final beforeWordSnapshot = _extractCompatibilityWordSnapshotFromHistory(
-              before!,
-            );
+            final beforeWordSnapshot =
+                _extractCompatibilityWordSnapshotFromHistory(before!);
             await txn.insert('WORD_TABLE', beforeWordSnapshot);
             await _restoreWordExpressionSetRowsFromHistorySnapshot(txn, before);
           } else if (entityType == 'relation') {
