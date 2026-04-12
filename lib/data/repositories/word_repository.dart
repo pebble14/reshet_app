@@ -109,6 +109,7 @@ class WordRepository {
       'readForSplitViewSingleWord';
   static const String _readForExplorerSingleWordContext =
       'readForExplorerSingleWord';
+  static const String _getWordMapByIdContext = 'getWordMapById';
   static const Set<String> _phase32HomeDisplayContexts = {
     'getStrongWordsMap',
     'searchStrongExactMap',
@@ -131,6 +132,10 @@ class WordRepository {
   };
   static const Set<String> _phase5GraphSingleWordContexts = {
     _readForGraphSingleWordContext,
+  };
+  static const Set<String> _phase8ARawSingleWordContexts = {
+    _getWordMapByIdContext,
+    _readForExplorerSingleWordContext,
   };
   static ReadSourcePolicy? _debugReadSourcePolicyOverride;
   static final List<String> _homeSearchSpellingColumns = List.unmodifiable(
@@ -221,7 +226,8 @@ class WordRepository {
         _phase4SplitViewSingleWordContexts.contains(context) ||
         _phase4GraphCenterSingleWordContexts.contains(context) ||
         _phase4GraphBatchContexts.contains(context) ||
-        _phase5GraphSingleWordContexts.contains(context)) {
+        _phase5GraphSingleWordContexts.contains(context) ||
+        _phase8ARawSingleWordContexts.contains(context)) {
       return ReadSourcePolicy.normalizedWithFallback;
     }
 
@@ -1266,29 +1272,11 @@ class WordRepository {
     );
   }
 
-  Future<Map<String, dynamic>?> _getWordMapByIdWithContext(
-    String id, {
-    required String context,
-  }) async {
-    final normalizedId = id.trim();
-    if (normalizedId.isEmpty) return null;
-
-    final db = await DatabaseService.openDatabaseFile();
-    final rows = await db.query(
-      'WORD_TABLE',
-      where: 'id = ?',
-      whereArgs: [normalizedId],
-      limit: 1,
-    );
-
-    if (rows.isEmpty) return null;
-    final wordRow = Map<String, dynamic>.from(rows.first);
-    await _captureWordExpressionReadSnapshots(db, [wordRow], context: context);
-    return wordRow;
-  }
-
   Future<Map<String, dynamic>?> getWordMapById(String id) async {
-    return _getWordMapByIdWithContext(id, context: 'getWordMapById');
+    return _getResolvedWordRowForDetailLikeSingleWordRead(
+      id,
+      context: _getWordMapByIdContext,
+    );
   }
 
   Future<Map<String, dynamic>?> _getWordMapByIdForPhase33SingleWordReread(
@@ -1388,9 +1376,8 @@ class WordRepository {
     );
   }
 
-  Future<WordDetailLikeDisplayItem?> getWordDetailLikeDisplayItemByIdForSplitView(
-    String id,
-  ) async {
+  Future<WordDetailLikeDisplayItem?>
+  getWordDetailLikeDisplayItemByIdForSplitView(String id) async {
     return _getWordDetailLikeDisplayItemByIdWithContext(
       id,
       context: _readForSplitViewSingleWordContext,
@@ -1400,7 +1387,7 @@ class WordRepository {
   Future<Map<String, dynamic>?> getWordMapByIdForExplorerSingleWord(
     String id,
   ) async {
-    return _getWordMapByIdWithContext(
+    return _getResolvedWordRowForDetailLikeSingleWordRead(
       id,
       context: _readForExplorerSingleWordContext,
     );

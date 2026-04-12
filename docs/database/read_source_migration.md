@@ -1,5 +1,34 @@
 # Read Source Migration
 
+## 2026-04-12 Phase 8-A raw single-word first slice
+
+### 이번 단계 요약
+
+- 이번 단계는 expression read completion 전체를 끝내는 단계가 아니다.
+- `WordRepository.getWordMapById`, `WordRepository.getWordMapByIdForExplorerSingleWord` 두 raw single-word public read만 first slice로 전환했다.
+- fallback/source 선택은 새 정책이나 새 resolver를 만들지 않고, 기존 `_getResolvedWordRowForDetailLikeSingleWordRead`, `_resolveWordRowForDetailLikeDisplay` 재사용 범위로만 제한했다.
+- `getWordsByIds`, `getWordsMap`, 기타 generic batch/list read는 이번 단계 대상이 아니며 기존 legacy read 경계를 유지한다.
+
+### 적용 범위
+
+- `WordRepository.getWordMapById`
+- `WordRepository.getWordMapByIdForExplorerSingleWord`
+- `test/data/repositories/word_repository_phase8a_expression_read_slice_test.dart`
+
+### 구현 방식
+
+- 두 public API의 반환 contract는 계속 raw `Map<String, dynamic>`로 유지한다.
+- read source policy는 `getWordMapById`, `readForExplorerSingleWord` context에 한해 `NORMALIZED_WITH_FALLBACK`를 적용한다.
+- 실제 row materialization은 기존 detail-like single-word helper를 그대로 재사용한다.
+- visible display mismatch가 생기면 기존과 동일하게 legacy fallback을 유지한다.
+- `>6 expression` 확장은 하지 않는다. 이번 단계 raw single-word read는 기존 compatibility projection 범위를 넘지 않는다.
+
+### 구조 결과
+
+- read completion이 single-word public raw read부터 실제로 시작되었음을 코드와 테스트로 고정했다.
+- generic batch/list read는 아직 authority transition 이전의 compatibility-only legacy zone으로 남겨 두었다.
+- 다음 단계에서 나머지 read 경로를 다룰 때도 동일한 원칙으로 owner-specific/public 경계를 좁혀서 확장할 수 있다.
+
 ## 2026-04-11 Phase 7-11 detail-like display shared contract 적용
 
 ### 이번 단계 요약

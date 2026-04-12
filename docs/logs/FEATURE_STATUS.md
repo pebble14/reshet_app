@@ -1,5 +1,12 @@
 # FEATURE_STATUS
 
+## 2026-04-12 Phase 8-A 진행 상태
+
+- 진행 범위: `getWordMapById`, `getWordMapByIdForExplorerSingleWord`
+- 현재 상태: raw single-word 2경로 first slice 전환 적용
+- 보류 범위: `getWordsByIds`, `getWordsMap`, 기타 generic batch/list read
+- 주의: expression read completion 전체 완료가 아니라 read 선행 정리의 첫 절편만 반영됨
+
 ## 프로젝트 목표
 
 Reshet은 단어 사이의 관계를 탐색하기 위한 도구이다.
