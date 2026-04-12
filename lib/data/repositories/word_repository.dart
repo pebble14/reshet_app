@@ -1878,9 +1878,11 @@ class WordRepository {
   }
 
   /// 주어진 단어 ID들 중에서
-  /// DB 전체 기준 `(언어, 표기1, 음역1)` 충돌군에 속한 ID 집합을 반환한다.
-  /// - trim 기준으로 빈값을 정리한다.
-  /// - 음역1이 비어 있는 항목은 기존 strong fallback 대상이므로 제외한다.
+  /// DB 전체 기준 `(언어, representative spelling, representative transliteration)`
+  /// 충돌군에 속한 ID 집합을 반환한다.
+  /// - representative row가 있으면 해당 row를 그대로 사용한다.
+  /// - representative row가 없을 때만 seq 우선 normalized row, 마지막으로 legacy slot을 검토한다.
+  /// - representative transliteration이 비어 있는 항목은 기존 strong fallback 대상이므로 제외한다.
   Future<Set<String>>
   findWordIdsInDbWideLanguageSpellingTransliterationCollisionGroups(
     Iterable<String> wordIds,
@@ -1903,27 +1905,28 @@ class WordRepository {
     final db = await DatabaseService.openDatabaseFile();
     final placeholders = List.filled(normalizedWordIds.length, '?').join(', ');
     final rows = await db.rawQuery('''
-      WITH selected_words AS (
+      WITH ${_representativeQueryProjectionCte()},
+      selected_words AS (
         SELECT
-          id,
-          TRIM(COALESCE(언어, '')) AS language_key,
-          TRIM(COALESCE(표기1, '')) AS spelling_key,
-          TRIM(COALESCE(음역1, '')) AS transliteration_key
-        FROM WORD_TABLE
-        WHERE id IN ($placeholders)
+          word_id AS id,
+          language_key,
+          representative_spelling AS spelling_key,
+          representative_transliteration AS transliteration_key
+        FROM representative_query_projection
+        WHERE word_id IN ($placeholders)
       ),
       db_collision_groups AS (
         SELECT
-          TRIM(COALESCE(언어, '')) AS language_key,
-          TRIM(COALESCE(표기1, '')) AS spelling_key,
-          TRIM(COALESCE(음역1, '')) AS transliteration_key
-        FROM WORD_TABLE
-        WHERE TRIM(COALESCE(표기1, '')) <> ''
-          AND TRIM(COALESCE(음역1, '')) <> ''
+          language_key,
+          representative_spelling AS spelling_key,
+          representative_transliteration AS transliteration_key
+        FROM representative_query_projection
+        WHERE representative_spelling <> ''
+          AND representative_transliteration <> ''
         GROUP BY
-          TRIM(COALESCE(언어, '')),
-          TRIM(COALESCE(표기1, '')),
-          TRIM(COALESCE(음역1, ''))
+          language_key,
+          representative_spelling,
+          representative_transliteration
         HAVING COUNT(*) > 1
       )
       SELECT sw.id
@@ -2872,9 +2875,49 @@ class WordRepository {
     return withoutHebrewMarks.replaceAll(RegExp(r'\s+'), ' ');
   }
 
+  String _representativeQueryProjectionCte({
+    String cteName = 'representative_query_projection',
+  }) {
+    return '''
+      $cteName AS (
+        SELECT
+          wt.id AS word_id,
+          TRIM(COALESCE(wt.언어, '')) AS language_key,
+          TRIM(COALESCE(wt.스트롱넘버, '')) AS strong_number_key,
+          CASE
+            WHEN representative_row.word_id IS NOT NULL
+              THEN TRIM(COALESCE(representative_row.spelling, ''))
+            WHEN fallback_row.word_id IS NOT NULL
+              THEN TRIM(COALESCE(fallback_row.spelling, ''))
+            ELSE TRIM(COALESCE(wt.표기1, ''))
+          END AS representative_spelling,
+          CASE
+            WHEN representative_row.word_id IS NOT NULL
+              THEN TRIM(COALESCE(representative_row.transliteration, ''))
+            WHEN fallback_row.word_id IS NOT NULL
+              THEN TRIM(COALESCE(fallback_row.transliteration, ''))
+            ELSE TRIM(COALESCE(wt.음역1, ''))
+          END AS representative_transliteration
+        FROM WORD_TABLE wt
+        LEFT JOIN word_expression_set representative_row
+          ON representative_row.word_id = wt.id
+         AND representative_row.is_representative = 1
+        LEFT JOIN word_expression_set fallback_row
+          ON fallback_row.id = (
+               SELECT wes.id
+               FROM word_expression_set wes
+               WHERE wes.word_id = wt.id
+               ORDER BY wes.seq ASC, wes.id ASC
+               LIMIT 1
+             )
+         AND representative_row.word_id IS NULL
+      )
+    ''';
+  }
+
   /// 다음 WORD_TABLE.id 생성
-  /// - Strong가 있으면: <STRONG>_<SEQ4>
-  /// - Strong가 없으면: <LANGCODE>0000_<SEQ4>
+  /// - Strong가 있으면: `<STRONG>_<SEQ4>`
+  /// - Strong가 없으면: `<LANGCODE>0000_<SEQ4>`
   Future<String> generateNextWordId({
     required String language,
     String? strongNumber,
@@ -2942,8 +2985,8 @@ class WordRepository {
   }
 
   /// 신규 단어 생성 전 중복 후보 검색
-  /// - Strong가 있으면: 스트롱넘버 기준
-  /// - Strong가 없으면: (언어, 표기1) 기준
+  /// - Strong가 있으면: 스트롱넘버 기준(기존 strong 우선 규칙 유지)
+  /// - Strong가 없으면: (언어, representative spelling) 기준
   Future<List<Map<String, dynamic>>> findDuplicateCandidates({
     required String language,
     String? strongNumber,
@@ -2956,12 +2999,22 @@ class WordRepository {
     final spelling = spelling1.trim();
 
     if (strong.isNotEmpty) {
-      final rows = await db.query(
-        'WORD_TABLE',
-        columns: ['id', '언어', '스트롱넘버', '표기1', '의미1'],
-        where: '스트롱넘버 = ?',
-        whereArgs: [strong],
-        limit: 20,
+      final rows = await db.rawQuery(
+        '''
+        WITH ${_representativeQueryProjectionCte()}
+        SELECT
+          wt.id AS id,
+          TRIM(COALESCE(wt.언어, '')) AS 언어,
+          TRIM(COALESCE(wt.스트롱넘버, '')) AS 스트롱넘버,
+          representative_query_projection.representative_spelling AS 표기1,
+          TRIM(COALESCE(wt.의미1, '')) AS 의미1
+        FROM WORD_TABLE wt
+        INNER JOIN representative_query_projection
+          ON representative_query_projection.word_id = wt.id
+        WHERE wt.스트롱넘버 = ?
+        LIMIT 20
+        ''',
+        [strong],
       );
 
       return rows.where((row) {
@@ -2970,12 +3023,22 @@ class WordRepository {
       }).toList();
     }
 
-    final rows = await db.query(
-      'WORD_TABLE',
-      columns: ['id', '언어', '스트롱넘버', '표기1', '의미1'],
-      where: '언어 = ?',
-      whereArgs: [language],
-      limit: 200,
+    final rows = await db.rawQuery(
+      '''
+      WITH ${_representativeQueryProjectionCte()}
+      SELECT
+        wt.id AS id,
+        TRIM(COALESCE(wt.언어, '')) AS 언어,
+        TRIM(COALESCE(wt.스트롱넘버, '')) AS 스트롱넘버,
+        representative_query_projection.representative_spelling AS 표기1,
+        TRIM(COALESCE(wt.의미1, '')) AS 의미1
+      FROM WORD_TABLE wt
+      INNER JOIN representative_query_projection
+        ON representative_query_projection.word_id = wt.id
+      WHERE wt.언어 = ?
+      LIMIT 200
+      ''',
+      [language],
     );
 
     final target = _normalizeSpellingForDuplicateCheck(spelling);

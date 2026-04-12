@@ -465,7 +465,7 @@ class _WordEditScreenState extends State<WordEditScreen> {
                   Text(
                     isStrongCase
                         ? '같은 스트롱넘버를 가진 기존 단어가 있습니다.'
-                        : '같은 언어/표기1을 가진 기존 단어가 있습니다.',
+                        : '같은 언어/대표 표기를 가진 기존 단어가 있습니다.',
                   ),
                   const SizedBox(height: 12),
                   ...candidates.map((c) {
@@ -484,7 +484,7 @@ class _WordEditScreenState extends State<WordEditScreen> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
-                          '단어 ID: $id\n언어: $lang\n스트롱: $strong\n표기1: $spelling\n의미1: $meaning',
+                          '단어 ID: $id\n언어: $lang\n스트롱: $strong\n대표 표기: $spelling\n의미1: $meaning',
                         ),
                       ),
                     );
