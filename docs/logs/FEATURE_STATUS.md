@@ -119,6 +119,8 @@ Reshet은 단어 사이의 관계를 탐색하기 위한 도구이다.
 
 ## 데이터 구조 개선 (장기)
 
+- 데이터 구조 정책 문서: `docs/database/DATA_STRUCTURE_POLICY.md`
+
 - [ ] WORD_TABLE 구조 검토
 - [x] 표현 세트 정규화 가능성 검토
 - [x] word_expression_set migration SQL 작성
