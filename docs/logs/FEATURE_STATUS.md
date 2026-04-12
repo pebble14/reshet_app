@@ -1,5 +1,13 @@
 # FEATURE_STATUS
 
+## 2026-04-12 Phase 8-B 진행 상태
+
+- 진행 범위: `createWord`, `updateWord`, `deleteWord`, `undoLastChange`
+- 현재 상태: repository 내부 expression write authority first switch 적용
+- 구조 기준: canonical write는 `word_expression_set` normalized-first, `WORD_TABLE` slot은 6-slot projection/compatibility 유지
+- 유지 범위: 기존 raw/UI contract, dual-sync, legacy read 경계
+- 보류 범위: read source completion 확대, `>6 expression`, dual-sync 종료
+
 ## 2026-04-12 Phase 8-A 진행 상태
 
 - 진행 범위: `getWordMapById`, `getWordMapByIdForExplorerSingleWord`
@@ -137,6 +145,9 @@ Reshet은 단어 사이의 관계를 탐색하기 위한 도구이다.
 - [x] word_expression_set normalized read adapter 연결
 - [x] word_expression_set fallback 판정/관측 구조 도입
 - [x] word_expression_set detail-only phase 2 read path 적용
+- [x] expression write authority first switch
+- [x] WORD_TABLE expression slot projection / compatibility 유지 구조 반영
+- [x] history / undo용 normalized snapshot 병행 저장
 - [x] controlled read boundary 정리
 - [x] 공개 읽기 경계의 typed contract 적용
 - [x] detail-like 공통 표시 계약 적용

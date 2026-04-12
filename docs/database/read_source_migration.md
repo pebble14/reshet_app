@@ -1,5 +1,27 @@
 # Read Source Migration
 
+## 2026-04-12 Phase 8-B expression write authority first switch
+
+### 이번 단계 요약
+
+- 이번 단계는 expression read completion 확대가 아니라 repository 내부 expression write authority의 first switch다.
+- canonical write authority는 `word_expression_set` 기준으로 먼저 전환했다.
+- `WORD_TABLE` expression slot은 제거하지 않고 계속 6-slot compatibility projection으로 유지한다.
+- `getWordsByIds`, `getWordsMap`, 기타 legacy/dormant read 범위는 이번 단계에서 바꾸지 않았다.
+
+### 구현 방식
+
+- `createWord`, `updateWord`는 canonical expression set -> normalized row 저장 -> `WORD_TABLE` 6-slot projection 생성 순서를 따른다.
+- `deleteWord`, `undoLastChange` history는 기존 `WORD_TABLE` compatibility snapshot을 유지한 채 normalized snapshot을 함께 저장한다.
+- `undoLastChange`는 신규 history row에서 normalized restore를 우선 사용하고, 기존 history row는 legacy compatibility fallback을 유지한다.
+- `>6 expression` 확장, dual-sync 제거, relation / import-export 변경은 이번 단계에 포함하지 않는다.
+
+### 구조 결과
+
+- repository 내부에서 canonical write authority 위치가 `word_expression_set` 기준으로 더 명확해졌다.
+- `WORD_TABLE` slot은 projection/compatibility 역할로 낮아졌지만 아직 제거하지 않는다.
+- dual-sync 종료 판단과 read completion 확대는 다음 단계 조건으로 남겨 둔다.
+
 ## 2026-04-12 Phase 8-A raw single-word first slice
 
 ### 이번 단계 요약
