@@ -1,5 +1,14 @@
 # FEATURE_STATUS
 
+## 2026-04-12 Phase 8-H-1 진행 상태
+
+- 진행 범위: `findWordIdsInDbWideLanguageSpellingTransliterationCollisionGroups`, `findDuplicateCandidates`, duplicate warning dialog 최소 정리
+- 현재 상태: representative query contract first slice 적용
+- 구조 기준: collision / duplicate 조회는 representative-first query helper 기준으로 전환, strong 우선 규칙과 기존 UI contract는 유지
+- 유지 범위: search pipeline, `Word.fromMap`, edit seed, history/undo/fallback 구조, graph 전체 label contract
+- 주의: production slot contract 제거 시작 단계이며, 제거 완료 단계가 아님
+- 보류 범위: 나머지 slot consumer, search 전반, owner-specific 후속 절편
+
 ## 2026-04-12 Phase 8-B 진행 상태
 
 - 진행 범위: `createWord`, `updateWord`, `deleteWord`, `undoLastChange`

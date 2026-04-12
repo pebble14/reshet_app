@@ -1,5 +1,33 @@
 # Read Source Migration
 
+## 2026-04-12 Phase 8-H-1 representative query contract first slice
+
+### 이번 단계 요약
+
+- 이번 단계는 production slot contract 전체 제거가 아니라 collision / duplicate 조회 2경로의 representative query first slice다.
+- `WORD_TABLE` slot direct-read를 representative-first query helper로 일부 전환하되, strong 우선 규칙과 기존 UI contract는 유지한다.
+- search pipeline 전체, `Word.fromMap`, edit seed, history/undo/fallback 구조, graph 전체 label contract는 이번 단계 대상이 아니다.
+
+### 적용 범위
+
+- `findWordIdsInDbWideLanguageSpellingTransliterationCollisionGroups`
+- `findDuplicateCandidates`
+- duplicate warning dialog wording 최소 정리
+
+### 구현 방식
+
+- collision 조회는 `(언어, representative spelling, representative transliteration)` 축으로 충돌군을 판정한다.
+- duplicate 조회는 strong case에서는 기존 strong 우선 규칙을 그대로 유지하고, non-strong case에서만 representative spelling 기준 비교로 전환한다.
+- representative row가 있으면 해당 row를 그대로 사용한다.
+- representative row가 없을 때만 seq 우선 normalized row, 마지막으로 legacy slot fallback을 검토한다.
+- representative row가 존재하는데 transliteration이 blank인 경우 legacy `음역1`로 되돌아가지 않는다.
+
+### 구조 결과
+
+- collision / duplicate 두 production query에서 slot direct-read 의존이 한 단계 줄었다.
+- representative query helper 패턴을 작은 범위에서 먼저 고정했고, 다음 slot contract 제거 절편의 기준을 마련했다.
+- production slot contract 제거 완료를 의미하지는 않으며, 나머지 consumer와 owner-specific read는 후속 단계로 남겨 둔다.
+
 ## 2026-04-12 Phase 8-B expression write authority first switch
 
 ### 이번 단계 요약
