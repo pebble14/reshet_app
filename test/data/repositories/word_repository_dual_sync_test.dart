@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -15,6 +16,8 @@ typedef SemanticExpressionRow = ({
   String? transliteration,
   String? pronunciation,
 });
+
+const String _historyNormalizedExpressionRowsKey = '_normalized_expression_rows';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -85,6 +88,13 @@ void main() {
       );
 
       await _expectSemanticSync(wordId);
+
+      final createHistoryAfter = await _loadLatestWordHistorySnapshot(
+        wordId: wordId,
+        actionType: 'create',
+        jsonColumn: 'after_json',
+      );
+      expect(_readHistoryNormalizedRows(createHistoryAfter), hasLength(2));
     });
 
     test(
@@ -151,6 +161,25 @@ void main() {
         expect(actualRows, hasLength(2));
         expect(actualRows.first.spelling, 'beth');
         expect(actualRows.first.isRepresentative, 1);
+
+        final rereadAfterSave = await repository
+            .getWordMapByIdForReadAfterSaveSingleWord(wordId);
+        expect(rereadAfterSave, isNotNull);
+        expect(rereadAfterSave!['표기1'], 'beth');
+        expect(rereadAfterSave['표기2'], 'beta');
+
+        final updateHistoryBefore = await _loadLatestWordHistorySnapshot(
+          wordId: wordId,
+          actionType: 'update',
+          jsonColumn: 'before_json',
+        );
+        final updateHistoryAfter = await _loadLatestWordHistorySnapshot(
+          wordId: wordId,
+          actionType: 'update',
+          jsonColumn: 'after_json',
+        );
+        expect(_readHistoryNormalizedRows(updateHistoryBefore), hasLength(3));
+        expect(_readHistoryNormalizedRows(updateHistoryAfter), hasLength(2));
       },
     );
 
@@ -196,9 +225,16 @@ void main() {
         expect(remainingRows, isEmpty);
 
         final undone = await repository.undoLastChange();
-        expect(undone, isTrue);
+        expect(undone.didUndo, isTrue);
+        expect(undone.primaryWordId, wordId);
 
         await _expectSemanticSync(wordId);
+
+        final rereadAfterUndo = await repository
+            .getWordMapByIdForReadAfterUndoSingleWord(wordId);
+        expect(rereadAfterUndo, isNotNull);
+        expect(rereadAfterUndo!['표기1'], 'gamma');
+        expect(rereadAfterUndo['표기2'], 'gimel');
       },
     );
 
@@ -222,7 +258,8 @@ void main() {
       );
 
       final undone = await repository.undoLastChange();
-      expect(undone, isTrue);
+      expect(undone.didUndo, isTrue);
+      expect(undone.primaryWordId, isNull);
 
       final db = await DatabaseService.openDatabaseFile();
       final word = await repository.getWordMapById(wordId);
@@ -282,7 +319,8 @@ void main() {
       await _expectSemanticSync(wordId);
 
       final undone = await repository.undoLastChange();
-      expect(undone, isTrue);
+      expect(undone.didUndo, isTrue);
+      expect(undone.primaryWordId, wordId);
 
       await _expectSemanticSync(wordId);
 
@@ -290,6 +328,152 @@ void main() {
       expect(actualRows, hasLength(2));
       expect(actualRows.first.spelling, 'epsilon');
       expect(actualRows.first.isRepresentative, 1);
+    });
+
+    test('undoLastChange prefers normalized snapshot for new history rows', () async {
+      final repository = WordRepository();
+      const wordId = 'T9000_1006';
+
+      await repository.createWord(
+        id: wordId,
+        payload: _payload(
+          expressionSets: const [
+            CanonicalExpressionWriteSet(
+              spelling: 'zeta',
+              transliteration: '제타',
+              pronunciation: 'ze-ta',
+              seq: 1,
+              isRepresentative: true,
+            ),
+            CanonicalExpressionWriteSet(
+              spelling: 'zayin',
+              transliteration: null,
+              pronunciation: null,
+              seq: 2,
+              isRepresentative: false,
+            ),
+          ],
+        ),
+      );
+
+      await repository.updateWord(
+        id: wordId,
+        payload: _payload(
+          expressionSets: const [
+            CanonicalExpressionWriteSet(
+              spelling: 'updated-zeta',
+              transliteration: '업데이트',
+              pronunciation: null,
+              seq: 1,
+              isRepresentative: true,
+            ),
+          ],
+        ),
+      );
+
+      final historyId = await _loadLatestWordHistoryId(
+        wordId: wordId,
+        actionType: 'update',
+      );
+      final beforeSnapshot = await _loadHistorySnapshot(
+        historyId,
+        'before_json',
+      );
+      beforeSnapshot['표기1'] = 'tampered-legacy';
+      await _writeHistorySnapshot(historyId, 'before_json', beforeSnapshot);
+
+      final undone = await repository.undoLastChange();
+      expect(undone.didUndo, isTrue);
+      expect(undone.primaryWordId, wordId);
+
+      final restoredWordRow = await _loadWordTableRow(wordId);
+      final restoredNormalizedRows = await _loadActualSemanticRows(wordId);
+      expect(restoredWordRow['표기1'], 'tampered-legacy');
+      expect(restoredNormalizedRows, [
+        (
+          wordId: wordId,
+          seq: 1,
+          isRepresentative: 1,
+          spelling: 'zeta',
+          transliteration: '제타',
+          pronunciation: 'ze-ta',
+        ),
+        (
+          wordId: wordId,
+          seq: 2,
+          isRepresentative: 0,
+          spelling: 'zayin',
+          transliteration: null,
+          pronunciation: null,
+        ),
+      ]);
+    });
+
+    test('undoLastChange falls back to legacy snapshot when normalized history is absent', () async {
+      final repository = WordRepository();
+      const wordId = 'T9000_1007';
+
+      await repository.createWord(
+        id: wordId,
+        payload: _payload(
+          expressionSets: const [
+            CanonicalExpressionWriteSet(
+              spelling: 'eta',
+              transliteration: '에타',
+              pronunciation: 'e-ta',
+              seq: 1,
+              isRepresentative: true,
+            ),
+            CanonicalExpressionWriteSet(
+              spelling: 'heth',
+              transliteration: null,
+              pronunciation: null,
+              seq: 2,
+              isRepresentative: false,
+            ),
+          ],
+        ),
+      );
+
+      await repository.updateWord(
+        id: wordId,
+        payload: _payload(
+          expressionSets: const [
+            CanonicalExpressionWriteSet(
+              spelling: 'updated-eta',
+              transliteration: null,
+              pronunciation: null,
+              seq: 1,
+              isRepresentative: true,
+            ),
+          ],
+        ),
+      );
+
+      final historyId = await _loadLatestWordHistoryId(
+        wordId: wordId,
+        actionType: 'update',
+      );
+      final beforeSnapshot = await _loadHistorySnapshot(
+        historyId,
+        'before_json',
+      );
+      beforeSnapshot.remove(_historyNormalizedExpressionRowsKey);
+      beforeSnapshot['표기1'] = 'legacy-only-restore';
+      beforeSnapshot['음역1'] = '레거시 음역';
+      beforeSnapshot['발음1'] = 'legacy-pron';
+      await _writeHistorySnapshot(historyId, 'before_json', beforeSnapshot);
+
+      final undone = await repository.undoLastChange();
+      expect(undone.didUndo, isTrue);
+      expect(undone.primaryWordId, wordId);
+
+      await _expectSemanticSync(wordId);
+
+      final restoredNormalizedRows = await _loadActualSemanticRows(wordId);
+      expect(restoredNormalizedRows.first.spelling, 'legacy-only-restore');
+      expect(restoredNormalizedRows.first.transliteration, '레거시 음역');
+      expect(restoredNormalizedRows.first.pronunciation, 'legacy-pron');
     });
   });
 }
@@ -405,6 +589,96 @@ Future<List<SemanticExpressionRow>> _loadActualSemanticRows(
         ),
       )
       .toList(growable: false);
+}
+
+Future<int> _loadLatestWordHistoryId({
+  required String wordId,
+  required String actionType,
+}) async {
+  final db = await DatabaseService.openDatabaseFile();
+  final rows = await db.query(
+    'CHANGE_HISTORY',
+    columns: const ['id'],
+    where: 'entity_type = ? AND entity_id = ? AND action_type = ?',
+    whereArgs: ['word', wordId, actionType],
+    orderBy: 'created_at DESC, id DESC',
+    limit: 1,
+  );
+
+  expect(rows, isNotEmpty, reason: '변경 이력 row가 필요합니다.');
+  return _readInt(rows.first['id']);
+}
+
+Future<Map<String, dynamic>> _loadLatestWordHistorySnapshot({
+  required String wordId,
+  required String actionType,
+  required String jsonColumn,
+}) async {
+  final historyId = await _loadLatestWordHistoryId(
+    wordId: wordId,
+    actionType: actionType,
+  );
+  return _loadHistorySnapshot(historyId, jsonColumn);
+}
+
+Future<Map<String, dynamic>> _loadHistorySnapshot(
+  int historyId,
+  String jsonColumn,
+) async {
+  final db = await DatabaseService.openDatabaseFile();
+  final rows = await db.query(
+    'CHANGE_HISTORY',
+    columns: [jsonColumn],
+    where: 'id = ?',
+    whereArgs: [historyId],
+    limit: 1,
+  );
+
+  expect(rows, isNotEmpty, reason: '지정한 history row를 찾을 수 없습니다.');
+  final jsonText = rows.first[jsonColumn] as String?;
+  expect(jsonText, isNotNull, reason: '$jsonColumn snapshot이 필요합니다.');
+  return Map<String, dynamic>.from(jsonDecode(jsonText!));
+}
+
+Future<void> _writeHistorySnapshot(
+  int historyId,
+  String jsonColumn,
+  Map<String, dynamic> snapshot,
+) async {
+  final db = await DatabaseService.openDatabaseFile();
+  await db.update(
+    'CHANGE_HISTORY',
+    {jsonColumn: jsonEncode(snapshot)},
+    where: 'id = ?',
+    whereArgs: [historyId],
+  );
+}
+
+List<Map<String, dynamic>> _readHistoryNormalizedRows(
+  Map<String, dynamic> snapshot,
+) {
+  final rawRows = snapshot[_historyNormalizedExpressionRowsKey];
+  if (rawRows is! List) {
+    return const [];
+  }
+
+  return rawRows
+      .whereType<Map>()
+      .map((row) => Map<String, dynamic>.from(row))
+      .toList(growable: false);
+}
+
+Future<Map<String, dynamic>> _loadWordTableRow(String wordId) async {
+  final db = await DatabaseService.openDatabaseFile();
+  final rows = await db.query(
+    'WORD_TABLE',
+    where: 'id = ?',
+    whereArgs: [wordId],
+    limit: 1,
+  );
+
+  expect(rows, isNotEmpty, reason: 'WORD_TABLE row가 필요합니다.');
+  return Map<String, dynamic>.from(rows.first);
 }
 
 int _readInt(Object? value) {
