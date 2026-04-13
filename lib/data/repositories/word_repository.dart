@@ -9,6 +9,7 @@ import '../models/relation_category_lookup.dart';
 import '../models/relation_type_lookup.dart';
 import '../models/word.dart';
 import '../../domain/expression/expression_read_models.dart';
+import '../../domain/graph/graph_relation_add_search_result_item.dart';
 import '../../domain/expression/read_source_debug_collector.dart';
 import '../../domain/expression/read_source_policy.dart';
 import '../../domain/home/home_default_strong_list_item.dart';
@@ -1412,6 +1413,21 @@ class WordRepository {
     );
   }
 
+  GraphRelationAddSearchResultItem _buildGraphRelationAddSearchResultItem(
+    Map<String, dynamic> row,
+  ) {
+    return GraphRelationAddSearchResultItem(
+      wordId: (row['id'] ?? '').toString().trim(),
+      representativeSpelling: (row['representative_spelling'] ?? '')
+          .toString()
+          .trim(),
+      primaryMeaning: (row['primary_meaning'] ?? '').toString().trim(),
+      displayStrongNumber: (row['display_strong_number'] ?? '')
+          .toString()
+          .trim(),
+    );
+  }
+
   Future<List<HomeSearchResultDisplayItem>>
   _resolveHomeSearchDisplayItemsForPhase32(
     Database db,
@@ -2680,23 +2696,38 @@ class WordRepository {
 
   /// 키워드로 단어 검색 (그래프에서 "관계 추가" 대상 단어 선택용)
   /// - 표기1, 의미1, 스트롱넘버 부분일치 검색
-  /// - 결과를 Word 모델로 반환한다(그래프 노드에서 사용하기 쉬움)
-  Future<List<Word>> searchWords(String keyword, {int limit = 200}) async {
+  /// - 검색 semantics는 유지하고 graph relation add dialog용 최소 contract만 반환한다.
+  Future<List<GraphRelationAddSearchResultItem>> searchWords(
+    String keyword, {
+    int limit = 200,
+  }) async {
     final db = await DatabaseService.openDatabaseFile();
 
     final q = keyword.trim();
-    if (q.isEmpty) return [];
+    if (q.isEmpty) return const [];
 
     final like = '%$q%';
 
-    final rows = await db.query(
-      'WORD_TABLE',
-      where: '표기1 LIKE ? OR 의미1 LIKE ? OR 스트롱넘버 LIKE ?',
-      whereArgs: [like, like, like],
-      limit: limit,
+    final rows = await db.rawQuery(
+      '''
+      WITH ${_representativeQueryProjectionCte()}
+      SELECT
+        wt.id AS id,
+        representative_query_projection.representative_spelling AS representative_spelling,
+        TRIM(COALESCE(wt.의미1, '')) AS primary_meaning,
+        TRIM(COALESCE(wt.스트롱넘버, '')) AS display_strong_number
+      FROM WORD_TABLE wt
+      INNER JOIN representative_query_projection
+        ON representative_query_projection.word_id = wt.id
+      WHERE wt.표기1 LIKE ? OR wt.의미1 LIKE ? OR wt.스트롱넘버 LIKE ?
+      LIMIT ?
+      ''',
+      [like, like, like, limit],
     );
 
-    return rows.map((m) => Word.fromMap(m)).toList();
+    return List<GraphRelationAddSearchResultItem>.unmodifiable(
+      rows.map(_buildGraphRelationAddSearchResultItem),
+    );
   }
 
   /// 두 단어 사이에 이미 관계(WORD_RELATION)가 존재하는지 검사한다.

@@ -1,5 +1,30 @@
 # Read Source Migration
 
+## 2026-04-13 Phase 8-H-4 graph relation add search contract first slice
+
+### 이번 단계 요약
+
+- 이번 단계는 graph relation add search consumer contract 축소 first slice다.
+- `searchWords()`의 검색 semantics는 기존 `표기1`, `의미1`, `스트롱넘버` 부분일치 범위를 그대로 유지한다.
+- graph relation add dialog는 raw `Word` 대신 graph relation add search 전용 최소 typed contract만 소비한다.
+
+### 적용 범위
+
+- `searchWords()`
+- `WordGraphScreen` 관계 추가 대상 선택 다이얼로그
+
+### 구현 방식
+
+- repository query의 `WHERE 표기1 LIKE ? OR 의미1 LIKE ? OR 스트롱넘버 LIKE ?` 조건은 유지한다.
+- query result는 representative query projection을 재사용해 `representativeSpelling` 표시값만 보수적으로 projection한다.
+- typed contract 필드는 `wordId`, `representativeSpelling`, `primaryMeaning`, `displayStrongNumber`으로 제한한다.
+
+### 구조 결과
+
+- graph relation add dialog가 raw `Word`와 slot field를 직접 읽지 않게 됐다.
+- search semantics 전면 변경 없이 graph relation add search 경로의 display contract만 한 단계 더 축소했다.
+- home search, graph label / secondary label, 일반 `Word.fromMap` 경계, edit seed, history/undo/fallback 구조는 이번 단계 범위에 포함하지 않는다.
+
 ## 2026-04-13 Phase 8-H-3 duplicate display contract first slice
 
 ### 이번 단계 요약

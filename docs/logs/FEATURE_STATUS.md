@@ -1,5 +1,14 @@
 # FEATURE_STATUS
 
+## 2026-04-13 Phase 8-H-4 진행 상태
+
+- 진행 범위: `searchWords()`, graph relation add search dialog, graph relation add search contract 테스트 보강
+- 현재 상태: graph relation add search contract first slice 적용
+- 구조 기준: `searchWords()`의 기존 `표기1` / `의미1` / `스트롱넘버` 검색 semantics는 유지하고, graph relation add consumer contract만 최소 typed search result contract로 축소
+- 유지 범위: home search, `Word.fromMap` 일반 경계, graph label / secondary label, edit seed, history/undo/fallback 구조
+- 주의: graph relation add search 경로의 raw/slot display 의존 축소 단계이며, search 전면 개편이나 slot contract 제거 완료 단계가 아님
+- 보류 범위: home search, graph label / secondary label, `Word.fromMap` 일반 경계, edit seed, 나머지 slot consumer 후속 절편
+
 ## 2026-04-13 Phase 8-H-3 진행 상태
 
 - 진행 범위: `findDuplicateCandidates`, edit/graph duplicate warning dialog, duplicate display contract 테스트 보강

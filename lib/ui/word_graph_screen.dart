@@ -11,6 +11,7 @@ import '../domain/graph/graph_build_options.dart';
 import '../domain/graph/graph_builder.dart';
 import '../domain/graph/graph_edge.dart';
 import '../domain/graph/graph_node.dart';
+import '../domain/graph/graph_relation_add_search_result_item.dart';
 import '../domain/graph/graph_view_data.dart';
 import '../domain/graph/layout/graph_layout_strategy_resolver.dart';
 import '../domain/relation/relation_formatter.dart';
@@ -4585,7 +4586,13 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     // 저장 후 관계 추가 옵션
     if (payload.createRelationAfterSave) {
       if (createdWord != null) {
-        final relationPayload = await _showCreateRelationDialog(createdWord);
+        final relationPayload = await _showCreateRelationDialog(
+          otherWordId: createdWord.id,
+          otherWordDisplayLabel: _relationTargetDisplayLabel(
+            wordId: createdWord.id,
+            representativeSpelling: createdWord.spelling1,
+          ),
+        );
 
         if (relationPayload != null) {
           final existing = await _repository.findExistingRelationIdBySignature(
@@ -4725,7 +4732,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   }
 
   /// 새로 만든 단어와 현재 중심 단어 사이의 관계 생성 정보 입력
-  Future<CreateRelationPayload?> _showCreateRelationDialog(Word other) async {
+  Future<CreateRelationPayload?> _showCreateRelationDialog({
+    required String otherWordId,
+    required String otherWordDisplayLabel,
+  }) async {
     final categories = _sanitizeLookupItemsByCode(
       await _repository.getRelationCategories(),
       codeOf: (item) => item.code,
@@ -4741,7 +4751,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     final directionItems = _directionDropdownItems(
       centerWordId: _centerWord.id,
       wordId1: _centerWord.id,
-      wordId2: other.id,
+      wordId2: otherWordId,
     );
     String selectedDirectionCode = _normalizeDirectionCodeForEditor(
       rawValue: 'unknown',
@@ -4762,7 +4772,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
               allTypes: types,
             );
             return AlertDialog(
-              title: Text('관계 추가: ${other.spelling1 ?? other.id}'),
+              title: Text('관계 추가: $otherWordDisplayLabel'),
               content: SizedBox(
                 width: 520,
                 child: SingleChildScrollView(
@@ -4940,7 +4950,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     if (other == null) return;
 
     // 자기 자신 선택 방지
-    if (other.id == _centerWord.id) {
+    if (other.wordId == _centerWord.id) {
       if (!mounted) return;
       ScaffoldMessenger.of(
         context,
@@ -4949,13 +4959,16 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     }
 
     // 2) 관계 입력
-    final payload = await _showCreateRelationDialog(other);
+    final payload = await _showCreateRelationDialog(
+      otherWordId: other.wordId,
+      otherWordDisplayLabel: _graphRelationSearchResultLabel(other),
+    );
     if (payload == null) return;
 
     // 3) 중복 검사
     final existingId = await _repository.findExistingRelationIdBySignature(
       _centerWord.id,
-      other.id,
+      other.wordId,
       relationType: payload.relationType,
       directionCode: payload.directionCode,
     );
@@ -4983,7 +4996,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     // 4) INSERT
     await _repository.createRelation(
       wordId1: _centerWord.id,
-      wordId2: other.id,
+      wordId2: other.wordId,
       categoryCode: payload.categoryCode,
       relationType: payload.relationType,
       directionCode: payload.directionCode,
@@ -4994,7 +5007,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     );
 
     // 5) 갱신
-    WordGraphDataCache.invalidateMany([_centerWord.id, other.id]);
+    WordGraphDataCache.invalidateMany([_centerWord.id, other.wordId]);
     await _loadConnectedWords();
 
     if (!mounted) return;
@@ -5004,11 +5017,11 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   }
 
   /// 상대 단어를 검색해서 고르는 다이얼로그
-  Future<Word?> _showSelectWordDialog() async {
+  Future<GraphRelationAddSearchResultItem?> _showSelectWordDialog() async {
     final controller = TextEditingController();
-    List<Word> results = [];
+    List<GraphRelationAddSearchResultItem> results = [];
 
-    return showDialog<Word?>(
+    return showDialog<GraphRelationAddSearchResultItem?>(
       context: context,
       builder: (context) {
         return StatefulBuilder(
@@ -5016,7 +5029,9 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
             Future<void> doSearch(String q) async {
               final r = await _repository.searchWords(q, limit: 200);
               // 중심 단어는 결과에서 제외(혼동 방지)
-              final filtered = r.where((w) => w.id != _centerWord.id).toList();
+              final filtered = r
+                  .where((item) => item.wordId != _centerWord.id)
+                  .toList();
               setState(() => results = filtered);
             }
 
@@ -5053,22 +5068,23 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                               separatorBuilder: (_, __) =>
                                   const Divider(height: 1),
                               itemBuilder: (context, i) {
-                                final w = results[i];
+                                final item = results[i];
+                                final subtitleSegments = <String>[
+                                  if (item.primaryMeaning.isNotEmpty)
+                                    item.primaryMeaning,
+                                  if (item.displayStrongNumber.isNotEmpty)
+                                    '스트롱 번호: ${item.displayStrongNumber}',
+                                ];
                                 return ListTile(
-                                  title: Text(w.spelling1 ?? w.id),
+                                  title: Text(
+                                    _graphRelationSearchResultLabel(item),
+                                  ),
                                   subtitle: Text(
-                                    [
-                                      if ((w.meaning1 ?? '').trim().isNotEmpty)
-                                        w.meaning1!,
-                                      if ((w.strongNumber ?? '')
-                                          .trim()
-                                          .isNotEmpty)
-                                        '스트롱 번호: ${w.strongNumber}',
-                                    ].join(' / '),
+                                    subtitleSegments.join(' / '),
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                   ),
-                                  onTap: () => Navigator.pop(context, w),
+                                  onTap: () => Navigator.pop(context, item),
                                 );
                               },
                             ),
@@ -5087,6 +5103,21 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         );
       },
     );
+  }
+
+  String _graphRelationSearchResultLabel(
+    GraphRelationAddSearchResultItem item,
+  ) {
+    final spelling = item.representativeSpelling.trim();
+    return spelling.isNotEmpty ? spelling : item.wordId;
+  }
+
+  String _relationTargetDisplayLabel({
+    required String wordId,
+    String? representativeSpelling,
+  }) {
+    final spelling = (representativeSpelling ?? '').trim();
+    return spelling.isNotEmpty ? spelling : wordId;
   }
 }
 
