@@ -1,13 +1,11 @@
 class HomeDefaultStrongListItem {
   final String wordId;
-  final String strongNumber;
-  final String title;
-  final String subtitle;
+  final String displayStrongNumber;
+  final String representativeSpelling;
 
   const HomeDefaultStrongListItem({
     required this.wordId,
-    required this.strongNumber,
-    required this.title,
-    required this.subtitle,
+    required this.displayStrongNumber,
+    required this.representativeSpelling,
   });
 }

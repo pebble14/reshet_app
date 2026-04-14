@@ -1,5 +1,31 @@
 # Read Source Migration
 
+## 2026-04-14 Phase 8-H-5 home default strong list display contract first slice
+
+### 이번 단계 요약
+
+- 이번 단계는 `getStrongWordsMap()` 경로의 home default strong list display contract first slice다.
+- `searchWordsMap`, `searchStrongExactMap`, home search ranking helper는 이번 단계 범위에 포함하지 않는다.
+- Home 기본 strong 목록은 `wordId`, `displayStrongNumber`, `representativeSpelling` 최소 typed contract만 소비하도록 한 단계 더 축소한다.
+
+### 적용 범위
+
+- `getStrongWordsMap()`
+- `HomeDefaultStrongListItem`
+- `HomeScreen` 기본 strong 목록 consumer
+
+### 구현 방식
+
+- repository strong-list branch는 home default strong list 전용 typed contract를 직접 projection한다.
+- representative spelling은 기본 strong 목록 contract에서 의미가 드러나는 이름으로 고정하고, strong-list mismatch 보호는 최소 contract 기준으로만 제한한다.
+- home search 결과 contract, ranking semantics, graph / edit / `Word.fromMap` 일반 경계는 이번 단계에서 변경하지 않는다.
+
+### 구조 결과
+
+- Home 기본 strong 목록 경로가 generic `title` / `subtitle` shape 대신 의미가 드러나는 minimal display contract를 사용한다.
+- 기본 strong 목록 consumer는 raw slot display shape를 직접 해석하지 않는다.
+- home search, graph, edit, duplicate, graph relation add search 경로는 그대로 유지한다.
+
 ## 2026-04-13 Phase 8-H-4 graph relation add search contract first slice
 
 ### 이번 단계 요약

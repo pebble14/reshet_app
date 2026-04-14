@@ -917,8 +917,7 @@ class WordRepository {
     ({String strongNumber, String representativeSpelling}) left,
     ({String strongNumber, String representativeSpelling}) right,
   ) {
-    return left.strongNumber == right.strongNumber &&
-        left.representativeSpelling == right.representativeSpelling;
+    return left.strongNumber == right.strongNumber;
   }
 
   String _describeStrongListDisplayMismatch(
@@ -930,16 +929,75 @@ class WordRepository {
     if (legacyDisplay.strongNumber != normalizedDisplay.strongNumber) {
       mismatchedFields.add('strong_number');
     }
-    if (legacyDisplay.representativeSpelling !=
-        normalizedDisplay.representativeSpelling) {
-      mismatchedFields.add('representative_spelling');
-    }
 
     if (mismatchedFields.isEmpty) {
       return 'strong-list display signature mismatch';
     }
 
     return 'strong-list display fields mismatch: ${mismatchedFields.join(', ')}';
+  }
+
+  HomeDefaultStrongListItem _buildHomeDefaultStrongListDisplayContract(
+    Map<String, dynamic> wordRow,
+  ) {
+    final displaySignature = _buildStrongListDisplaySignature(wordRow);
+
+    return HomeDefaultStrongListItem(
+      wordId: _readTrimmedWordValue(wordRow, 'id'),
+      displayStrongNumber: _normalizeStrongValue(displaySignature.strongNumber),
+      representativeSpelling: displaySignature.representativeSpelling,
+    );
+  }
+
+  bool _sameHomeDefaultStrongListDisplayContract(
+    HomeDefaultStrongListItem left,
+    HomeDefaultStrongListItem right,
+  ) {
+    if (left.wordId != right.wordId) {
+      return false;
+    }
+
+    return _sameStrongListDisplaySignature(
+      (
+        strongNumber: left.displayStrongNumber,
+        representativeSpelling: left.representativeSpelling,
+      ),
+      (
+        strongNumber: right.displayStrongNumber,
+        representativeSpelling: right.representativeSpelling,
+      ),
+    );
+  }
+
+  String _describeHomeDefaultStrongListDisplayMismatch(
+    HomeDefaultStrongListItem legacyDisplay,
+    HomeDefaultStrongListItem normalizedDisplay,
+  ) {
+    final signatureDetail = _describeStrongListDisplayMismatch(
+      (
+        strongNumber: legacyDisplay.displayStrongNumber,
+        representativeSpelling: legacyDisplay.representativeSpelling,
+      ),
+      (
+        strongNumber: normalizedDisplay.displayStrongNumber,
+        representativeSpelling: normalizedDisplay.representativeSpelling,
+      ),
+    );
+
+    if (legacyDisplay.wordId == normalizedDisplay.wordId) {
+      return signatureDetail
+          .replaceFirst(
+            'strong-list display signature',
+            'home default strong-list display contract',
+          )
+          .replaceFirst(
+            'strong-list display fields',
+            'home default strong-list display contract fields',
+          );
+    }
+
+    return 'home default strong-list display contract fields mismatch: word_id, '
+        '${signatureDetail.replaceFirst('strong-list display fields mismatch: ', '')}';
   }
 
   ({
@@ -1226,12 +1284,17 @@ class WordRepository {
     }
 
     if (snapshot.context == 'getStrongWordsMap') {
-      final legacyDisplay = _buildStrongListDisplaySignature(legacyWordRow);
-      final normalizedDisplay = _buildStrongListDisplaySignature(
+      final legacyDisplay = _buildHomeDefaultStrongListDisplayContract(
+        legacyWordRow,
+      );
+      final normalizedDisplay = _buildHomeDefaultStrongListDisplayContract(
         normalizedWordRow,
       );
 
-      if (_sameStrongListDisplaySignature(legacyDisplay, normalizedDisplay)) {
+      if (_sameHomeDefaultStrongListDisplayContract(
+        legacyDisplay,
+        normalizedDisplay,
+      )) {
         return (wordRow: normalizedWordRow, snapshot: snapshot);
       }
 
@@ -1240,7 +1303,7 @@ class WordRepository {
         policy: snapshot.requestedPolicy,
         reason: ReadFallbackReason.userVisibleDisplayMismatch,
         context: snapshot.context,
-        detail: _describeStrongListDisplayMismatch(
+        detail: _describeHomeDefaultStrongListDisplayMismatch(
           legacyDisplay,
           normalizedDisplay,
         ),
@@ -1365,15 +1428,7 @@ class WordRepository {
   HomeDefaultStrongListItem _buildHomeDefaultStrongListItem(
     Map<String, dynamic> wordRow,
   ) {
-    final displaySignature = _buildStrongListDisplaySignature(wordRow);
-    final wordId = (wordRow['id'] ?? '').toString().trim();
-
-    return HomeDefaultStrongListItem(
-      wordId: wordId,
-      strongNumber: _normalizeStrongValue(displaySignature.strongNumber),
-      title: displaySignature.representativeSpelling,
-      subtitle: '',
-    );
+    return _buildHomeDefaultStrongListDisplayContract(wordRow);
   }
 
   HomeSearchResultDisplayItem _buildHomeSearchResultDisplayItem(

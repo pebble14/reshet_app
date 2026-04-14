@@ -129,7 +129,7 @@ class _HomeScreenState extends State<HomeScreen> {
     String normalizedStrong,
   ) {
     for (var index = 0; index < words.length; index++) {
-      final displayStrong = words[index].strongNumber;
+      final displayStrong = words[index].displayStrongNumber;
       if (displayStrong == normalizedStrong) {
         return index;
       }
@@ -247,8 +247,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   String _buildDefaultStrongListTitle(HomeDefaultStrongListItem item) {
     return buildStrongListTitle(
-      strong: item.strongNumber,
-      summary: HomeWordDisplaySummary(representativeSpelling: item.title),
+      strong: item.displayStrongNumber,
+      summary: HomeWordDisplaySummary(
+        representativeSpelling: item.representativeSpelling,
+      ),
     );
   }
 

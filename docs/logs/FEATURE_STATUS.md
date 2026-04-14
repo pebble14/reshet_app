@@ -1,5 +1,14 @@
 # FEATURE_STATUS
 
+## 2026-04-14 Phase 8-H-5 진행 상태
+
+- 진행 범위: `getStrongWordsMap()`, home default strong list display contract, `HomeScreen` 기본 strong 목록 consumer, strong-list contract 테스트 보강
+- 현재 상태: home default strong list display contract first slice 적용
+- 구조 기준: 기본 strong 목록 경로는 `wordId`, `displayStrongNumber`, `representativeSpelling` 최소 typed contract를 기준으로 유지하고, `searchWordsMap`, `searchStrongExactMap`, home search ranking helper는 그대로 둔다
+- 유지 범위: home search 결과 contract, `Word.fromMap` 일반 경계, graph label / secondary label, edit seed, duplicate / relation add search, history/undo/fallback 구조
+- 주의: 이번 단계는 Home 전체 재구성이 아니라 기본 strong 목록 경로의 raw slot/display 의존 축소 단계이며, home search 전면 개편이나 slot contract 제거 완료 단계가 아님
+- 보류 범위: home search ranking, `Word.fromMap` 일반 경계, graph label / secondary label, edit seed, 나머지 slot consumer 후속 절편
+
 ## 2026-04-13 Phase 8-H-4 진행 상태
 
 - 진행 범위: `searchWords()`, graph relation add search dialog, graph relation add search contract 테스트 보강
