@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 
 import '../data/adapters/legacy_word_expression_read_adapter.dart';
 import '../domain/expression/expression_read_models.dart';
+import '../domain/word/word_edit_seed.dart';
 import '../domain/word/word_write_models.dart';
 
 /// 표현 세트 1건을 UI에서 다루기 위한 초안 모델이다.
@@ -213,19 +214,7 @@ List<WordWriteExclusionIssue>
 buildLegacyHiddenSlotWriteExclusionIssuesFromReadResult(
   CanonicalExpressionReadResult readResult,
 ) {
-  return readResult.issues
-      .map(
-        (issue) => WordWriteExclusionIssue(
-          issueCode: issue.issueCode,
-          sourceKind: WordWriteExclusionSourceKind.legacyHiddenSlot,
-          sourceIndex: issue.sourceSlot,
-          rawSpelling: issue.rawSpelling,
-          rawTransliteration: issue.rawTransliteration,
-          rawPronunciation: issue.rawPronunciation,
-          resolution: excludedFromWriteResolution,
-        ),
-      )
-      .toList(growable: false);
+  return buildWordEditHiddenSlotIssuesFromReadResult(readResult);
 }
 
 /// 기존 단어 맵을 컨트롤러 리스트로 변환하되 최소 1세트를 보장한다.
@@ -233,7 +222,18 @@ List<WordExpressionSetControllerGroup> createExpressionSetControllerGroups(
   Map<String, dynamic> word,
 ) {
   final readResult = readLegacyWordExpressionRow(word);
-  _logExpressionSetReadIssues(word, readResult);
+  return createExpressionSetControllerGroupsFromReadResult(
+    readResult,
+    wordId: (word['id'] ?? '').toString(),
+  );
+}
+
+List<WordExpressionSetControllerGroup>
+createExpressionSetControllerGroupsFromReadResult(
+  CanonicalExpressionReadResult readResult, {
+  required String wordId,
+}) {
+  _logExpressionSetReadIssues(wordId, readResult);
   final drafts = _expressionSetDraftsFromReadResult(readResult);
   final seededDrafts = drafts.isEmpty
       ? const [WordExpressionSetDraft.empty()]
@@ -259,21 +259,21 @@ List<WordExpressionSetDraft> _expressionSetDraftsFromReadResult(
 }
 
 void _logExpressionSetReadIssues(
-  Map<String, dynamic> word,
+  String wordId,
   CanonicalExpressionReadResult readResult,
 ) {
   if (readResult.issues.isEmpty) {
     return;
   }
 
-  final wordId = (word['id'] ?? '').toString().trim();
+  final normalizedWordId = wordId.trim();
   final sourceSlots = readResult.issues
       .map((issue) => issue.sourceSlot.toString())
       .join(',');
 
   debugPrint(
     '[ExpressionReadIssue] '
-    'wordId=$wordId '
+    'wordId=$normalizedWordId '
     'issueCount=${readResult.issues.length} '
     'sourceSlots=$sourceSlots',
   );

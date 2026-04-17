@@ -1,5 +1,32 @@
 # Read Source Migration
 
+## 2026-04-18 Phase 8-H-7 edit seed typed contract first slice
+
+### 이번 단계 요약
+
+- 이번 단계는 edit seed typed contract first slice다.
+- edit 화면 초기값에 필요한 최소 seed를 `WordEditSeed`로 묶고, `WordEditScreen`의 raw `Map<String, dynamic>` / legacy slot 직접 해석을 한 단계 줄인다.
+- graph / home / search / `Word.fromMap` 일반 경계, history/undo/fallback, duplicate / relation add search는 이번 단계 범위에 포함하지 않는다.
+
+### 적용 범위
+
+- `WordEditSeed`
+- `WordRepository.buildWordEditSeedFromWordRow`
+- `WordEditScreen` 초기 seed 소비 경로
+- `word_expression_set.dart` expression controller group 생성 경계
+
+### 구현 방식
+
+- edit seed contract는 `wordId`, `language`, `strongNumber`, `note`, `meanings`, `expressionReadResult`, `hiddenSlotIssues`만 포함한다.
+- `language`, `strongNumber`, `note`, `wordId`, `meanings`의 해석 규칙은 기존 edit 초기화 동작과 동일하게 유지한다.
+- expression seed는 `CanonicalExpressionReadResult`를 재사용하고, hidden-slot issue는 기존 write exclusion 의미를 유지한다.
+
+### 구조 결과
+
+- edit 초기 seed 경로가 일반 word row 전체 shape 대신 edit 전용 typed seed를 소비하도록 좁아졌다.
+- `readLegacyWordExpressionRow()` compatibility helper는 유지하되, `WordEditScreen`의 직접 slot read 의존은 줄였다.
+- 이번 단계는 edit 전면 개편이나 slot contract 제거 완료가 아니며, 저장 정책과 validation 흐름은 유지한다.
+
 ## 2026-04-14 Phase 8-H-5 home default strong list display contract first slice
 
 ### 이번 단계 요약

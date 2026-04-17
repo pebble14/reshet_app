@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../data/repositories/word_repository.dart';
 import '../domain/word/duplicate_candidate_display_item.dart';
+import '../domain/word/word_edit_seed.dart';
 import '../domain/word/word_write_models.dart';
 import '../domain/word/word_write_service.dart';
 import 'word_graph_cache.dart';
@@ -24,6 +25,7 @@ class _WordEditScreenState extends State<WordEditScreen> {
   late final TextEditingController _noteController;
   late final TextEditingController _customLanguageController;
   late final List<WordWriteExclusionIssue> _legacyHiddenSlotIssues;
+  late final WordEditSeed _editSeed;
   final List<WordExpressionSetControllerGroup> _expressionSetControllerGroups =
       [];
   final List<TextEditingController> _meaningControllers = [];
@@ -47,7 +49,8 @@ class _WordEditScreenState extends State<WordEditScreen> {
   void initState() {
     super.initState();
 
-    final originalLanguage = (widget.word['언어'] ?? '').toString();
+    _editSeed = _repository.buildWordEditSeedFromWordRow(widget.word);
+    final originalLanguage = _editSeed.language;
 
     _selectedLanguageGroup = _resolveLanguageGroup(originalLanguage);
     _customLanguageController = TextEditingController(
@@ -58,16 +61,15 @@ class _WordEditScreenState extends State<WordEditScreen> {
           : '',
     );
 
-    _strongController = TextEditingController(
-      text: (widget.word['스트롱넘버'] ?? '').toString(),
-    );
-    _legacyHiddenSlotIssues = buildLegacyHiddenSlotWriteExclusionIssues(
-      widget.word,
-    );
+    _strongController = TextEditingController(text: _editSeed.strongNumber);
+    _legacyHiddenSlotIssues = _editSeed.hiddenSlotIssues;
     _expressionSetControllerGroups.addAll(
-      createExpressionSetControllerGroups(widget.word),
+      createExpressionSetControllerGroupsFromReadResult(
+        _editSeed.expressionReadResult,
+        wordId: _editSeed.wordId,
+      ),
     );
-    final meaningValues = _loadMeaningValues(widget.word);
+    final meaningValues = _editSeed.meanings;
     if (meaningValues.isEmpty) {
       _meaningControllers.add(TextEditingController());
     } else {
@@ -75,9 +77,7 @@ class _WordEditScreenState extends State<WordEditScreen> {
         meaningValues.map((value) => TextEditingController(text: value)),
       );
     }
-    _noteController = TextEditingController(
-      text: (widget.word['비고'] ?? '').toString(),
-    );
+    _noteController = TextEditingController(text: _editSeed.note);
   }
 
   @override
@@ -112,20 +112,6 @@ class _WordEditScreenState extends State<WordEditScreen> {
       return v;
     }
     return _selectedLanguageGroup;
-  }
-
-  List<String> _loadMeaningValues(Map<String, dynamic> word) {
-    final values = <String>[];
-
-    for (var index = 1; index <= 7; index++) {
-      final value = (word['의미$index'] ?? '').toString().trim();
-      if (value.isEmpty) {
-        continue;
-      }
-      values.add(value);
-    }
-
-    return values;
   }
 
   List<String> _collectMeaningValues() {
@@ -396,7 +382,7 @@ class _WordEditScreenState extends State<WordEditScreen> {
       language: payload.language,
       strongNumber: payload.strongNumber,
       spelling1: payload.representativeSpelling,
-      excludeId: widget.word['id'].toString(),
+      excludeId: _editSeed.wordId,
     );
 
     if (duplicates.isNotEmpty) {
@@ -414,19 +400,14 @@ class _WordEditScreenState extends State<WordEditScreen> {
 
     try {
       await _wordWriteService.execute(
-        UpdateWordCommand(
-          wordId: widget.word['id'].toString(),
-          payload: payload,
-        ),
+        UpdateWordCommand(wordId: _editSeed.wordId, payload: payload),
       );
       WordGraphDataCache.clear();
 
       if (!mounted) return;
 
       final updatedWord = await _repository
-          .getWordMapByIdForReadAfterSaveSingleWord(
-            widget.word['id'].toString(),
-          );
+          .getWordMapByIdForReadAfterSaveSingleWord(_editSeed.wordId);
       if (!mounted) return;
       if (updatedWord == null) {
         throw Exception('저장 후 단어를 다시 불러오지 못했습니다.');
@@ -505,7 +486,7 @@ class _WordEditScreenState extends State<WordEditScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final idText = (widget.word['id'] ?? '').toString();
+    final idText = _editSeed.wordId;
 
     return WillPopScope(
       onWillPop: () async {

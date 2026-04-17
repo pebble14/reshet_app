@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2026-04-18 Phase 8-H-7
+
+- edit 초기 seed 전용 typed contract `WordEditSeed`를 추가했다.
+- `WordEditScreen`은 언어, 스트롱넘버, 비고, 의미, expression read result, hidden-slot issue를 seed contract를 통해 초기화하도록 정리했다.
+- expression controller group 생성은 `CanonicalExpressionReadResult` 기반 helper를 추가해 연결하고, 기존 legacy row helper는 compatibility 용도로 유지했다.
+- hidden-slot issue의 write exclusion 의미와 edit 저장 / validation / submit 정책은 변경하지 않았다.
+- `test/data/repositories/word_repository_phase8h7_edit_seed_contract_test.dart`를 추가하고, `word_edit_screen_test.dart`를 보강해 seed 동일성을 검증했다.
+- `docs/database/read_source_migration.md`, `docs/logs/FEATURE_STATUS.md`에는 edit seed typed contract first slice 적용 사실만 보수적으로 반영했다.
+
 ## 2026-04-14 Phase 8-H-5
 
 - `getStrongWordsMap()` 경로에 home default strong list display contract first slice를 적용했다.

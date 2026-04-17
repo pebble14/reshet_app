@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:reshet_app/ui/word_edit_screen.dart';
@@ -242,6 +241,51 @@ void main() {
       },
     );
   });
+
+  group('WordEditScreen edit seed contract', () {
+    testWidgets('seeds language, strong number, meanings, and note unchanged', (
+      tester,
+    ) async {
+      await tester.binding.setSurfaceSize(const Size(800, 1200));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WordEditScreen(
+            word: {
+              'id': 'G0000_0204',
+              '언어': '영어',
+              '스트롱넘버': ' g2040 ',
+              '표기1': 'seed-title',
+              '의미1': ' first meaning ',
+              '의미2': '',
+              '의미3': 'first meaning',
+              '비고': ' note seed ',
+            },
+          ),
+        ),
+      );
+
+      final languageDropdown = tester.widget<DropdownButtonFormField<String>>(
+        find.byType(DropdownButtonFormField<String>),
+      );
+
+      expect(languageDropdown.initialValue, '영어');
+      expect(
+        _textFieldByLabel(tester, '스트롱넘버 (없으면 비워둠)').controller?.text,
+        ' g2040 ',
+      );
+      expect(
+        _textFieldByLabel(tester, '의미 1').controller?.text,
+        'first meaning',
+      );
+      expect(
+        _textFieldByLabel(tester, '의미 2').controller?.text,
+        'first meaning',
+      );
+      expect(_textFieldByLabel(tester, '비고').controller?.text, ' note seed ');
+    });
+  });
 }
 
 List<String> _expressionSetHeadingLabels(WidgetTester tester) {
@@ -279,4 +323,12 @@ int _expressionSetCount(List<String> fieldValues) {
 
 int _representativeHeadingCount(List<String> headingLabels) {
   return headingLabels.where((label) => label.contains('(대표)')).length;
+}
+
+TextField _textFieldByLabel(WidgetTester tester, String label) {
+  final finder = find.byWidgetPredicate(
+    (widget) => widget is TextField && widget.decoration?.labelText == label,
+  );
+  expect(finder, findsOneWidget);
+  return tester.widget<TextField>(finder);
 }

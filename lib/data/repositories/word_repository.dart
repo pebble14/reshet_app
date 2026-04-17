@@ -16,6 +16,7 @@ import '../../domain/home/home_default_strong_list_item.dart';
 import '../../domain/home/home_search_result_display_item.dart';
 import '../../domain/word/duplicate_candidate_display_item.dart';
 import '../../domain/word/word_detail_like_display_item.dart';
+import '../../domain/word/word_edit_seed.dart';
 import '../../domain/word/word_write_models.dart';
 
 /// 단어(WORD_TABLE) 및 관계(WORD_RELATION) 조회 전용 Repository
@@ -826,6 +827,36 @@ class WordRepository {
       values.add(value);
     }
     return List<String>.unmodifiable(values);
+  }
+
+  List<String> _collectWordEditSeedMeanings(Map<String, dynamic> wordRow) {
+    final values = <String>[];
+
+    for (var index = 1; index <= 7; index++) {
+      final value = (wordRow['의미$index'] ?? '').toString().trim();
+      if (value.isEmpty) {
+        continue;
+      }
+      values.add(value);
+    }
+
+    return List<String>.unmodifiable(values);
+  }
+
+  WordEditSeed buildWordEditSeedFromWordRow(Map<String, dynamic> wordRow) {
+    final expressionReadResult = readLegacyWordExpressionRow(wordRow);
+
+    return WordEditSeed(
+      wordId: (wordRow['id'] ?? '').toString(),
+      language: (wordRow['언어'] ?? '').toString(),
+      strongNumber: (wordRow['스트롱넘버'] ?? '').toString(),
+      note: (wordRow['비고'] ?? '').toString(),
+      meanings: _collectWordEditSeedMeanings(wordRow),
+      expressionReadResult: expressionReadResult,
+      hiddenSlotIssues: buildWordEditHiddenSlotIssuesFromReadResult(
+        expressionReadResult,
+      ),
+    );
   }
 
   List<String> _collectUniqueNonEmptyWordValues(Iterable<String?> values) {

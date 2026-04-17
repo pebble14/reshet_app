@@ -1,5 +1,14 @@
 # FEATURE_STATUS
 
+## 2026-04-18 Phase 8-H-7 진행 상태
+
+- 진행 범위: edit seed typed contract, `WordEditScreen` 초기 seed 소비 경로, `word_expression_set.dart` expression controller group 생성 경계, edit seed contract 테스트 보강
+- 현재 상태: edit seed typed contract first slice 적용
+- 구조 기준: edit 초기값은 `WordEditSeed`의 `wordId`, `language`, `strongNumber`, `note`, `meanings`, `expressionReadResult`, `hiddenSlotIssues` 최소 필드만 기준으로 공급한다
+- 유지 범위: edit 저장 정책, validation, submit 흐름, graph / home / search 전반, `Word.fromMap` 일반 경계, history/undo/fallback, duplicate / relation add search
+- 주의: 이번 단계는 edit 초기 seed 경로의 raw map / slot 의존 축소 단계이며, edit 전면 개편이나 slot contract 제거 완료 단계가 아님
+- 보류 범위: graph label / secondary label, home search / ranking, `Word.fromMap` 일반 경계, history/undo/fallback, 나머지 slot consumer 후속 절편
+
 ## 2026-04-14 Phase 8-H-5 진행 상태
 
 - 진행 범위: `getStrongWordsMap()`, home default strong list display contract, `HomeScreen` 기본 strong 목록 consumer, strong-list contract 테스트 보강
