@@ -10,6 +10,7 @@ import '../models/relation_type_lookup.dart';
 import '../models/word.dart';
 import '../../domain/expression/expression_read_models.dart';
 import '../../domain/graph/graph_relation_add_search_result_item.dart';
+import '../../domain/graph/graph_word_label_display_item.dart';
 import '../../domain/expression/read_source_debug_collector.dart';
 import '../../domain/expression/read_source_policy.dart';
 import '../../domain/home/home_default_strong_list_item.dart';
@@ -85,6 +86,7 @@ class WordRelationEdgeInfo {
 
 typedef VisibleWordGraphData = ({
   List<Word> connectedWords,
+  List<GraphWordLabelDisplayItem> wordLabels,
   List<WordRelationEdgeInfo> relationEdges,
 });
 
@@ -1514,6 +1516,22 @@ class WordRepository {
     );
   }
 
+  GraphWordLabelDisplayItem _buildGraphWordLabelDisplayItem(
+    Map<String, dynamic> row,
+  ) {
+    return GraphWordLabelDisplayItem(
+      wordId: (row['word_id'] ?? '').toString().trim(),
+      representativeSpelling: (row['representative_spelling'] ?? '')
+          .toString()
+          .trim(),
+      representativeTransliteration:
+          (row['representative_transliteration'] ?? '').toString().trim(),
+      displayStrongNumber: _normalizeStrongValue(
+        (row['display_strong_number'] ?? '').toString(),
+      ),
+    );
+  }
+
   Future<List<HomeSearchResultDisplayItem>>
   _resolveHomeSearchDisplayItemsForPhase32(
     Database db,
@@ -1771,6 +1789,50 @@ class WordRepository {
     return List<Map<String, dynamic>>.unmodifiable(resolvedRows);
   }
 
+  Future<List<GraphWordLabelDisplayItem>>
+  getWordLabelDisplayItemsByIdsForGraphBatch(List<String> wordIds) async {
+    final orderedIds = <String>[];
+    final seenIds = <String>{};
+
+    for (final wordId in wordIds) {
+      final normalizedId = wordId.trim();
+      if (normalizedId.isEmpty) continue;
+      if (seenIds.add(normalizedId)) {
+        orderedIds.add(normalizedId);
+      }
+    }
+
+    if (orderedIds.isEmpty) return const [];
+
+    final db = await DatabaseService.openDatabaseFile();
+    final placeholders = List.filled(orderedIds.length, '?').join(', ');
+    final rows = await db.rawQuery('''
+      WITH ${_representativeQueryProjectionCte()}
+      SELECT
+        wt.id AS word_id,
+        representative_query_projection.representative_spelling
+          AS representative_spelling,
+        representative_query_projection.representative_transliteration
+          AS representative_transliteration,
+        TRIM(COALESCE(wt.스트롱넘버, '')) AS display_strong_number
+      FROM WORD_TABLE wt
+      INNER JOIN representative_query_projection
+        ON representative_query_projection.word_id = wt.id
+      WHERE wt.id IN ($placeholders)
+      ''', orderedIds);
+    final labelsById = <String, GraphWordLabelDisplayItem>{
+      for (final row in rows)
+        (row['word_id'] ?? '').toString().trim():
+            _buildGraphWordLabelDisplayItem(row),
+    };
+
+    return List<GraphWordLabelDisplayItem>.unmodifiable(
+      orderedIds
+          .map((wordId) => labelsById[wordId])
+          .whereType<GraphWordLabelDisplayItem>(),
+    );
+  }
+
   Future<List<Map<String, dynamic>>> _getWordsByIdsWithContext(
     List<String> wordIds, {
     required String context,
@@ -1964,7 +2026,14 @@ class WordRepository {
   }) async {
     final visibleEdges = await getVisibleRelationEdgesForGraph(centerWordId);
     if (visibleEdges.isEmpty) {
-      return (connectedWords: const <Word>[], relationEdges: visibleEdges);
+      final wordLabels = await getWordLabelDisplayItemsByIdsForGraphBatch([
+        centerWordId,
+      ]);
+      return (
+        connectedWords: const <Word>[],
+        wordLabels: wordLabels,
+        relationEdges: visibleEdges,
+      );
     }
 
     final orderedIds = <String>[];
@@ -1976,6 +2045,10 @@ class WordRepository {
     }
 
     final rows = await loadWordRows(orderedIds);
+    final wordLabels = await getWordLabelDisplayItemsByIdsForGraphBatch([
+      centerWordId,
+      ...orderedIds,
+    ]);
     final wordsById = <String, Word>{
       for (final row in rows) (row['id'] as String): Word.fromMap(row),
     };
@@ -1984,7 +2057,11 @@ class WordRepository {
         .whereType<Word>()
         .toList(growable: false);
 
-    return (connectedWords: connectedWords, relationEdges: visibleEdges);
+    return (
+      connectedWords: connectedWords,
+      wordLabels: wordLabels,
+      relationEdges: visibleEdges,
+    );
   }
 
   Future<List<Word>> getVisibleConnectedWordsForGraph(

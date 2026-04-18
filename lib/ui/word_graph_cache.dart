@@ -2,16 +2,19 @@ import 'dart:collection';
 
 import '../data/models/word.dart';
 import '../data/repositories/word_repository.dart';
+import '../domain/graph/graph_word_label_display_item.dart';
 
 class _BaseGraphCacheEntry {
   final String centerWordId;
   final List<Word> connectedWords;
+  final List<GraphWordLabelDisplayItem> wordLabels;
   final List<WordRelationEdgeInfo> relationEdges;
   final DateTime lastAccessedAt;
 
   const _BaseGraphCacheEntry({
     required this.centerWordId,
     required this.connectedWords,
+    required this.wordLabels,
     required this.relationEdges,
     required this.lastAccessedAt,
   });
@@ -20,6 +23,7 @@ class _BaseGraphCacheEntry {
     return _BaseGraphCacheEntry(
       centerWordId: centerWordId,
       connectedWords: connectedWords,
+      wordLabels: wordLabels,
       relationEdges: relationEdges,
       lastAccessedAt: now,
     );
@@ -30,6 +34,7 @@ class _ExpansionGraphCacheEntry {
   final String centerWordId;
   final String sourceWordId;
   final List<Word> connectedWords;
+  final List<GraphWordLabelDisplayItem> wordLabels;
   final List<WordRelationEdgeInfo> relationEdges;
   final DateTime lastAccessedAt;
 
@@ -37,6 +42,7 @@ class _ExpansionGraphCacheEntry {
     required this.centerWordId,
     required this.sourceWordId,
     required this.connectedWords,
+    required this.wordLabels,
     required this.relationEdges,
     required this.lastAccessedAt,
   });
@@ -46,6 +52,7 @@ class _ExpansionGraphCacheEntry {
       centerWordId: centerWordId,
       sourceWordId: sourceWordId,
       connectedWords: connectedWords,
+      wordLabels: wordLabels,
       relationEdges: relationEdges,
       lastAccessedAt: now,
     );
@@ -54,11 +61,13 @@ class _ExpansionGraphCacheEntry {
 
 typedef WordGraphBaseCacheData = ({
   List<Word> connectedWords,
+  List<GraphWordLabelDisplayItem> wordLabels,
   List<WordRelationEdgeInfo> relationEdges,
 });
 
 typedef WordGraphExpansionCacheData = ({
   List<Word> connectedWords,
+  List<GraphWordLabelDisplayItem> wordLabels,
   List<WordRelationEdgeInfo> relationEdges,
 });
 
@@ -92,6 +101,7 @@ class WordGraphDataCache {
     _baseEntries[cacheKey] = touchedEntry;
     return (
       connectedWords: List<Word>.from(touchedEntry.connectedWords),
+      wordLabels: List<GraphWordLabelDisplayItem>.from(touchedEntry.wordLabels),
       relationEdges: List<WordRelationEdgeInfo>.from(
         touchedEntry.relationEdges,
       ),
@@ -101,6 +111,7 @@ class WordGraphDataCache {
   static void putBaseGraph({
     required String centerWordId,
     required List<Word> connectedWords,
+    required List<GraphWordLabelDisplayItem> wordLabels,
     required List<WordRelationEdgeInfo> relationEdges,
   }) {
     final cacheKey = _baseCacheKey(centerWordId: centerWordId);
@@ -108,6 +119,7 @@ class WordGraphDataCache {
     _baseEntries[cacheKey] = _BaseGraphCacheEntry(
       centerWordId: centerWordId,
       connectedWords: List<Word>.unmodifiable(connectedWords),
+      wordLabels: List<GraphWordLabelDisplayItem>.unmodifiable(wordLabels),
       relationEdges: List<WordRelationEdgeInfo>.unmodifiable(relationEdges),
       lastAccessedAt: DateTime.now(),
     );
@@ -131,6 +143,7 @@ class WordGraphDataCache {
     _expansionEntries[cacheKey] = touchedEntry;
     return (
       connectedWords: List<Word>.from(touchedEntry.connectedWords),
+      wordLabels: List<GraphWordLabelDisplayItem>.from(touchedEntry.wordLabels),
       relationEdges: List<WordRelationEdgeInfo>.from(
         touchedEntry.relationEdges,
       ),
@@ -141,6 +154,7 @@ class WordGraphDataCache {
     required String centerWordId,
     required String sourceWordId,
     required List<Word> connectedWords,
+    required List<GraphWordLabelDisplayItem> wordLabels,
     required List<WordRelationEdgeInfo> relationEdges,
   }) {
     final cacheKey = _expansionCacheKey(
@@ -152,6 +166,7 @@ class WordGraphDataCache {
       centerWordId: centerWordId,
       sourceWordId: sourceWordId,
       connectedWords: List<Word>.unmodifiable(connectedWords),
+      wordLabels: List<GraphWordLabelDisplayItem>.unmodifiable(wordLabels),
       relationEdges: List<WordRelationEdgeInfo>.unmodifiable(relationEdges),
       lastAccessedAt: DateTime.now(),
     );

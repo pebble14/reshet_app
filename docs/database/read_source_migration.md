@@ -1,5 +1,35 @@
 # Read Source Migration
 
+## 2026-04-18 Phase 8-H-9 graph word label display contract first slice
+
+### 이번 단계 요약
+
+- 이번 단계는 graph word label display contract first slice다.
+- graph peripheral title, secondary label, relation display name, graph builder label에 필요한 최소 typed contract를 도입했다.
+- center node full display, `Word.fromMap` 일반 경계, graph navigation / selection / expansion 흐름은 이번 단계 범위에 포함하지 않는다.
+
+### 적용 범위
+
+- `GraphWordLabelDisplayItem`
+- `WordRepository.getWordLabelDisplayItemsByIdsForGraphBatch`
+- `VisibleWordGraphData.wordLabels`
+- `GraphBuilder` node label 경계
+- `WordGraphScreen` peripheral title / secondary label / relation display name 경계
+- `WordGraphDataCache` label contract 보존
+
+### 구현 방식
+
+- repository는 기존 `connectedWords` 반환을 유지하면서 `wordLabels`를 병행 공급한다.
+- label contract는 `wordId`, `representativeSpelling`, `representativeTransliteration`, `displayStrongNumber`만 포함한다.
+- representative spelling / transliteration은 representative query projection 기준으로 공급하고, representative row가 없을 때만 기존 projection fallback을 사용한다.
+- graph cache는 cache hit 이후에도 label contract가 유지되도록 payload 필드만 확장했다.
+
+### 구조 결과
+
+- graph label 관련 consumer가 `Word.spelling1`, `Word.transliteration1`, `Word.strongNumber` 직접 소비에 덜 의존하게 됐다.
+- center node full display와 detail-like full row display는 기존 구조를 유지한다.
+- 이번 단계는 graph label 전용 contract 검증 절편이며, legacy slot / `Word.fromMap` 제거 완료로 해석하지 않는다.
+
 ## 2026-04-18 Phase 8-H-7 edit seed typed contract first slice
 
 ### 이번 단계 요약

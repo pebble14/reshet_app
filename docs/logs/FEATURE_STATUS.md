@@ -1,5 +1,14 @@
 # FEATURE_STATUS
 
+## 2026-04-18 Phase 8-H-9 진행 상태
+
+- 진행 범위: graph word label display contract, graph peripheral title / secondary label, relation display name, graph builder label, label contract repository 공급 경계
+- 현재 상태: graph word label display contract first slice 적용
+- 구조 기준: graph label 경로는 `GraphWordLabelDisplayItem`의 `wordId`, `representativeSpelling`, `representativeTransliteration`, `displayStrongNumber` 최소 필드를 병행 공급받아 표시한다
+- 유지 범위: center node full display, `connectedWords` 흐름, `Word.fromMap` 일반 경계, graph navigation / selection / expansion, relation add search, duplicate warning, home 경로
+- 주의: 이번 단계는 graph label 관련 display 소비 축소이며, graph 전면 개편이나 `Word.fromMap` 제거 완료 단계가 아님
+- 보류 범위: center node full display contract, `Word.fromMap` 일반 경계, history/undo/fallback, 나머지 slot consumer 후속 절편
+
 ## 2026-04-18 Phase 8-H-7 진행 상태
 
 - 진행 범위: edit seed typed contract, `WordEditScreen` 초기 seed 소비 경로, `word_expression_set.dart` expression controller group 생성 경계, edit seed contract 테스트 보강

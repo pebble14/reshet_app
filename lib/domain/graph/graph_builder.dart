@@ -6,10 +6,12 @@ import 'graph_build_options.dart';
 import 'graph_edge.dart';
 import 'graph_node.dart';
 import 'graph_view_data.dart';
+import 'graph_word_label_display_item.dart';
 
 typedef GraphVisibleDataBuildResult = ({
   GraphViewData viewData,
   List<Word> connectedWords,
+  List<GraphWordLabelDisplayItem> wordLabels,
   List<WordRelationEdgeInfo> relationEdges,
 });
 
@@ -63,6 +65,8 @@ class GraphBuilder {
     required GraphBuildOptions options,
     required Word centerWord,
     required Iterable<Word> connectedWords,
+    Iterable<GraphWordLabelDisplayItem> wordLabels =
+        const <GraphWordLabelDisplayItem>[],
     required Iterable<WordRelationEdgeInfo> relationEdges,
     int? centerDepthOneSoftLimit,
     bool fullyRevealCenterDepthOne = false,
@@ -71,6 +75,7 @@ class GraphBuilder {
       options: options,
       centerWord: centerWord,
       baseWords: connectedWords,
+      wordLabels: wordLabels,
       baseRelationEdges: relationEdges,
       centerDepthOneSoftLimit: centerDepthOneSoftLimit,
       fullyRevealCenterDepthOne: fullyRevealCenterDepthOne,
@@ -81,6 +86,8 @@ class GraphBuilder {
     required GraphBuildOptions options,
     required Word centerWord,
     required Iterable<Word> baseWords,
+    Iterable<GraphWordLabelDisplayItem> wordLabels =
+        const <GraphWordLabelDisplayItem>[],
     required Iterable<WordRelationEdgeInfo> baseRelationEdges,
     Map<String, VisibleWordGraphData> expansionDataBySourceId =
         const <String, VisibleWordGraphData>{},
@@ -96,6 +103,7 @@ class GraphBuilder {
     final placeholderNodes = <GraphNode>[];
     final syntheticEdges = <GraphEdge>[];
     final edgeKeys = <String>{};
+    final labelDisplaysByWordId = <String, GraphWordLabelDisplayItem>{};
     final allBaseWordIds = <String>{};
     final visibleBaseWordIds = <String>{};
     final normalizedRevealedSourceIds = fullyRevealedExpansionSourceIds
@@ -103,6 +111,12 @@ class GraphBuilder {
         .where((sourceWordId) => sourceWordId.isNotEmpty)
         .toSet();
     final baseRelationEdgeList = baseRelationEdges.toList(growable: false);
+
+    void registerLabel(GraphWordLabelDisplayItem labelDisplay) {
+      final wordId = labelDisplay.wordId.trim();
+      if (wordId.isEmpty) return;
+      labelDisplaysByWordId[wordId] = labelDisplay;
+    }
 
     void registerWord(
       Word word, {
@@ -143,6 +157,10 @@ class GraphBuilder {
       );
     }
 
+    for (final labelDisplay in wordLabels) {
+      registerLabel(labelDisplay);
+    }
+
     for (final edgeInfo in baseRelationEdgeList) {
       registerEdgeInfo(edgeInfo);
     }
@@ -152,6 +170,7 @@ class GraphBuilder {
       baseWords: baseWords,
       relationEdges: baseRelationEdgeList,
       relationCountsByWordId: relationCountsByWordId,
+      labelDisplaysByWordId: labelDisplaysByWordId,
     );
     final normalizedCenterDepthOneSoftLimit = centerDepthOneSoftLimit == null
         ? null
@@ -206,6 +225,10 @@ class GraphBuilder {
         continue;
       }
 
+      for (final labelDisplay in entry.value.wordLabels) {
+        registerLabel(labelDisplay);
+      }
+
       final ownedDepthTwoWords = <Word>[];
       final visibleNeighborIds = <String>{
         centerWord.id,
@@ -242,6 +265,7 @@ class GraphBuilder {
         ownedDepthTwoWords: ownedDepthTwoWords,
         relationEdges: entry.value.relationEdges,
         visibleNeighborIds: visibleNeighborIds,
+        labelDisplaysByWordId: labelDisplaysByWordId,
       );
       final visibleDepthTwoCount = revealAll
           ? prioritizedDepthTwoWords.length
@@ -288,6 +312,7 @@ class GraphBuilder {
       isCenter: true,
       expansionSourceId: null,
       weight: relationCountsByWordId[centerWord.id]?.toDouble() ?? 1.0,
+      labelDisplaysByWordId: labelDisplaysByWordId,
     );
     final nodes = wordsById.values
         .where((word) => word.id != centerWord.id)
@@ -298,6 +323,7 @@ class GraphBuilder {
             isCenter: false,
             expansionSourceId: expansionSourceIdByWordId[word.id],
             weight: relationCountsByWordId[word.id]?.toDouble() ?? 1.0,
+            labelDisplaysByWordId: labelDisplaysByWordId,
           ),
         )
         .followedBy(placeholderNodes)
@@ -331,10 +357,21 @@ class GraphBuilder {
         .map((wordId) => wordsById[wordId])
         .whereType<Word>()
         .toList(growable: false);
+    final normalizedWordLabels = [viewData.centerNodeId, ...visibleWordIds]
+        .map(
+          (wordId) =>
+              labelDisplaysByWordId[wordId] ??
+              _labelDisplayForWord(wordsById[wordId]),
+        )
+        .whereType<GraphWordLabelDisplayItem>()
+        .toList(growable: false);
 
     return (
       viewData: viewData,
       connectedWords: List<Word>.unmodifiable(normalizedWords),
+      wordLabels: List<GraphWordLabelDisplayItem>.unmodifiable(
+        normalizedWordLabels,
+      ),
       relationEdges: List<WordRelationEdgeInfo>.unmodifiable(
         normalizedRelationEdges,
       ),
@@ -372,6 +409,15 @@ class GraphBuilder {
     final relatedWords = relatedWordRows
         .map(Word.fromMap)
         .toList(growable: false);
+    final labelDisplays = await repository
+        .getWordLabelDisplayItemsByIdsForGraphBatch([
+          options.centerWordId,
+          ...relatedWordIds,
+        ]);
+    final labelDisplaysByWordId = <String, GraphWordLabelDisplayItem>{
+      for (final labelDisplay in labelDisplays)
+        labelDisplay.wordId.trim(): labelDisplay,
+    };
     final relationCountsByWordId = _countRelationsByOtherWordId(
       centerWordId: options.centerWordId,
       relationRows: visibleRelationRows,
@@ -385,6 +431,7 @@ class GraphBuilder {
       weight: visibleRelationRows.isEmpty
           ? 1.0
           : visibleRelationRows.length.toDouble(),
+      labelDisplaysByWordId: labelDisplaysByWordId,
     );
     final nodes = relatedWords
         .map(
@@ -394,6 +441,7 @@ class GraphBuilder {
             isCenter: false,
             expansionSourceId: null,
             weight: relationCountsByWordId[word.id]?.toDouble() ?? 1.0,
+            labelDisplaysByWordId: labelDisplaysByWordId,
           ),
         )
         .toList(growable: false);
@@ -746,6 +794,7 @@ class GraphBuilder {
     required Iterable<Word> baseWords,
     required Iterable<WordRelationEdgeInfo> relationEdges,
     required Map<String, int> relationCountsByWordId,
+    required Map<String, GraphWordLabelDisplayItem> labelDisplaysByWordId,
   }) {
     final prioritizedWords = baseWords.toList(growable: false);
     if (prioritizedWords.length < 2) {
@@ -754,7 +803,8 @@ class GraphBuilder {
 
     final relationEdgeList = relationEdges.toList(growable: false);
     final labelsByWordId = <String, String>{
-      for (final word in prioritizedWords) word.id: _labelForWord(word),
+      for (final word in prioritizedWords)
+        word.id: _labelForWord(word, labelDisplaysByWordId),
     };
     final priorityCountsByWordId = <String, _BranchPriorityCounts>{
       for (final word in prioritizedWords)
@@ -799,6 +849,7 @@ class GraphBuilder {
     required Iterable<Word> ownedDepthTwoWords,
     required Iterable<WordRelationEdgeInfo> relationEdges,
     required Set<String> visibleNeighborIds,
+    required Map<String, GraphWordLabelDisplayItem> labelDisplaysByWordId,
   }) {
     final prioritizedWords = ownedDepthTwoWords.toList(growable: false);
     if (prioritizedWords.length < 2) {
@@ -814,7 +865,8 @@ class GraphBuilder {
       for (final word in prioritizedWords) word.id: 0,
     };
     final labelsByWordId = <String, String>{
-      for (final word in prioritizedWords) word.id: _labelForWord(word),
+      for (final word in prioritizedWords)
+        word.id: _labelForWord(word, labelDisplaysByWordId),
     };
     final priorityCountsByWordId = <String, _BranchPriorityCounts>{
       for (final word in prioritizedWords)
@@ -883,10 +935,11 @@ class GraphBuilder {
     required bool isCenter,
     required String? expansionSourceId,
     required double weight,
+    required Map<String, GraphWordLabelDisplayItem> labelDisplaysByWordId,
   }) {
     return GraphNode(
       wordId: word.id,
-      label: _labelForWord(word),
+      label: _labelForWord(word, labelDisplaysByWordId),
       depth: depth,
       isCenter: isCenter,
       expansionSourceId: depth <= 1 ? null : expansionSourceId,
@@ -1012,7 +1065,15 @@ class GraphBuilder {
     return '$minWordId::$maxWordId::$relationType::$categoryCode';
   }
 
-  String _labelForWord(Word word) {
+  String _labelForWord(
+    Word word,
+    Map<String, GraphWordLabelDisplayItem> labelDisplaysByWordId,
+  ) {
+    final labelDisplay = labelDisplaysByWordId[word.id];
+    if (labelDisplay != null) {
+      return labelDisplay.graphBuilderLabel;
+    }
+
     final spelling = (word.spelling1 ?? '').trim();
     if (spelling.isNotEmpty) {
       return spelling;
@@ -1024,6 +1085,19 @@ class GraphBuilder {
     }
 
     return word.id;
+  }
+
+  GraphWordLabelDisplayItem? _labelDisplayForWord(Word? word) {
+    if (word == null) {
+      return null;
+    }
+
+    return GraphWordLabelDisplayItem(
+      wordId: word.id,
+      representativeSpelling: (word.spelling1 ?? '').trim(),
+      representativeTransliteration: (word.transliteration1 ?? '').trim(),
+      displayStrongNumber: (word.strongNumber ?? '').trim(),
+    );
   }
 
   String? _languageCodeForWord(Word word) {

@@ -13,6 +13,7 @@ import '../domain/graph/graph_edge.dart';
 import '../domain/graph/graph_node.dart';
 import '../domain/graph/graph_relation_add_search_result_item.dart';
 import '../domain/graph/graph_view_data.dart';
+import '../domain/graph/graph_word_label_display_item.dart';
 import '../domain/graph/layout/graph_layout_strategy_resolver.dart';
 import '../domain/relation/relation_formatter.dart';
 import '../domain/word/duplicate_candidate_display_item.dart';
@@ -711,6 +712,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
   /// 중심 단어와 연결된 단어 목록
   final Map<String, Word> _graphWordsById = {};
+  final Map<String, GraphWordLabelDisplayItem> _graphWordLabelsById = {};
   final Map<String, WordGraphExpansionCacheData> _expansionDataBySourceId = {};
   final Set<String> _expandedDepthOneWordIds = <String>{};
   final Set<String> _expansionRequestsInFlight = <String>{};
@@ -793,17 +795,26 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   void _applyGraphData({
     required GraphViewData viewData,
     required List<Word> words,
+    required List<GraphWordLabelDisplayItem> wordLabels,
     required List<WordRelationEdgeInfo> edges,
   }) {
     final wordsById = <String, Word>{
       _centerWord.id: _centerWord,
       for (final word in words) word.id: word,
     };
+    final labelsById = <String, GraphWordLabelDisplayItem>{
+      for (final labelDisplay in wordLabels)
+        if (labelDisplay.wordId.trim().isNotEmpty)
+          labelDisplay.wordId.trim(): labelDisplay,
+    };
 
     _graphViewData = viewData;
     _graphWordsById
       ..clear()
       ..addAll(wordsById);
+    _graphWordLabelsById
+      ..clear()
+      ..addAll(labelsById);
     _selectedWordId = _resolvedSelectedWordIdForViewData(viewData);
 
     _edgeInfosByEdgeId.clear();
@@ -899,25 +910,28 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     return left.containsAll(right);
   }
 
-  String _secondaryLabelForPeripheralWord(Word word) {
-    final transliteration = (word.transliteration1 ?? '').trim();
-    final strongNumber = formatWordDisplayStrong(
-      (word.strongNumber ?? '').trim(),
+  String _secondaryLabelForPeripheralWord(
+    GraphWordLabelDisplayItem labelDisplay,
+  ) {
+    return labelDisplay.secondaryLabel(
+      showStrongNumber: _dbWideCollisionWordIdsForVisibleGraph.contains(
+        labelDisplay.wordId.trim(),
+      ),
     );
+  }
 
-    if (transliteration.isEmpty) {
-      return strongNumber;
+  GraphWordLabelDisplayItem _labelDisplayForGraphNode(GraphNode graphNode) {
+    final labelDisplay = _graphWordLabelsById[graphNode.wordId];
+    if (labelDisplay != null) {
+      return labelDisplay;
     }
 
-    if (!_dbWideCollisionWordIdsForVisibleGraph.contains(word.id)) {
-      return transliteration;
-    }
-
-    if (strongNumber.isEmpty) {
-      return transliteration;
-    }
-
-    return '$transliteration · $strongNumber';
+    return GraphWordLabelDisplayItem(
+      wordId: graphNode.wordId,
+      representativeSpelling: graphNode.label,
+      representativeTransliteration: '',
+      displayStrongNumber: '',
+    );
   }
 
   String? _normalizedSelectedWordIdForViewData(
@@ -1028,6 +1042,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       options: _graphBuildOptions(),
       centerWord: _centerWord,
       baseWords: baseGraphData.connectedWords,
+      wordLabels: baseGraphData.wordLabels,
       baseRelationEdges: baseGraphData.relationEdges,
       expansionDataBySourceId: _expansionDataBySourceId,
       fullyRevealedExpansionSourceIds: _fullyRevealedExpansionSourceIds,
@@ -1041,6 +1056,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     _applyGraphData(
       viewData: buildResult.viewData,
       words: buildResult.connectedWords,
+      wordLabels: buildResult.wordLabels,
       edges: buildResult.relationEdges,
     );
   }
@@ -1086,14 +1102,19 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
             final visibleGraphData = await _repository
                 .getVisibleGraphDataForGraph(requestedCenterWordId);
             final words = visibleGraphData.connectedWords;
+            final wordLabels = visibleGraphData.wordLabels;
             final edges = visibleGraphData.relationEdges;
             final loadedBaseGraphData = (
               connectedWords: List<Word>.unmodifiable(words),
+              wordLabels: List<GraphWordLabelDisplayItem>.unmodifiable(
+                wordLabels,
+              ),
               relationEdges: List<WordRelationEdgeInfo>.unmodifiable(edges),
             );
             WordGraphDataCache.putBaseGraph(
               centerWordId: requestedCenterWordId,
               connectedWords: words,
+              wordLabels: wordLabels,
               relationEdges: edges,
             );
             return loadedBaseGraphData;
@@ -1736,11 +1757,15 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
               centerWordId: _centerWord.id,
               sourceWordId: word.id,
               connectedWords: visibleGraphData.connectedWords,
+              wordLabels: visibleGraphData.wordLabels,
               relationEdges: visibleGraphData.relationEdges,
             );
             return (
               connectedWords: List<Word>.unmodifiable(
                 visibleGraphData.connectedWords,
+              ),
+              wordLabels: List<GraphWordLabelDisplayItem>.unmodifiable(
+                visibleGraphData.wordLabels,
               ),
               relationEdges: List<WordRelationEdgeInfo>.unmodifiable(
                 visibleGraphData.relationEdges,
@@ -1982,13 +2007,12 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   Widget _buildWordNode(
     Word word,
     Color accentColor, {
+    required GraphWordLabelDisplayItem labelDisplay,
     required _GraphNodeLayout nodeLayout,
     required _GraphVisualState visualState,
   }) {
-    final label = (word.spelling1 != null && word.spelling1!.trim().isNotEmpty)
-        ? word.spelling1!.trim()
-        : word.id;
-    final secondaryLabel = _secondaryLabelForPeripheralWord(word);
+    final label = labelDisplay.peripheralTitleLabel;
+    final secondaryLabel = _secondaryLabelForPeripheralWord(labelDisplay);
     final bool isDepthTwo = nodeLayout.depth >= 2;
     final bool isSelected = visualState == _GraphVisualState.selected;
     final bool isDimmed = visualState == _GraphVisualState.dimmed;
@@ -3005,6 +3029,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
               return _buildWordNode(
                 word,
                 accentColor,
+                labelDisplay: _labelDisplayForGraphNode(graphNode),
                 nodeLayout: nodeLayout,
                 visualState: visualState,
               );
@@ -3495,10 +3520,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   }
 
   String _wordDisplayName(String nodeId) {
-    final word = _wordForNodeId(nodeId);
-    final spelling = (word?.spelling1 ?? '').trim();
-    if (spelling.isNotEmpty) {
-      return spelling;
+    final labelDisplay = _graphWordLabelsById[nodeId.trim()];
+    final displayName = labelDisplay?.relationDisplayName.trim() ?? '';
+    if (displayName.isNotEmpty) {
+      return displayName;
     }
 
     return nodeId;
