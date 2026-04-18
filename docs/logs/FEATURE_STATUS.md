@@ -1,5 +1,14 @@
 # FEATURE_STATUS
 
+## 2026-04-18 Phase 8-H-11 진행 상태
+
+- 진행 범위: graph center full display contract, `_buildCenterNode` center 표시 경계, center display repository helper
+- 현재 상태: graph center full display contract first slice 적용
+- 구조 기준: center node full display는 `GraphCenterWordDisplayItem`의 `wordId`, `language`, `displayStrongNumber`, `representativeSpelling`, `representativeTransliteration`, `representativePronunciation`, `primaryMeaning` 최소 필드를 공급받아 표시한다
+- 유지 범위: `centerWord: Word`, `connectedWords`, graph navigation / selection / expansion / cache key / callback payload, peripheral label / secondary label / relation display name, relation add search, duplicate warning, home, edit seed
+- 주의: 이번 단계는 center node 표시 consumer 축소이며, graph 전면 개편이나 `Word.fromMap` 일반 경계 제거 완료 단계가 아니다
+- 보류 범위: `Word.fromMap` 일반 경계, history/undo/fallback, explorer 경계, 나머지 slot consumer 후속 절편
+
 ## 2026-04-18 Phase 8-H-9 진행 상태
 
 - 진행 범위: graph word label display contract, graph peripheral title / secondary label, relation display name, graph builder label, label contract repository 공급 경계

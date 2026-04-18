@@ -1,5 +1,32 @@
 # Read Source Migration
 
+## 2026-04-18 Phase 8-H-11 graph center full display contract first slice
+
+### 이번 단계 요약
+
+- 이번 단계는 graph center full display contract first slice다.
+- `_buildCenterNode`의 언어, strong, 대표 표기, 대표 음역, 대표 발음, 의미 표시만 `GraphCenterWordDisplayItem`으로 분리했다.
+- `centerWord: Word`, `connectedWords`, graph navigation / selection / expansion / cache key / callback payload는 기존 흐름을 유지한다.
+- peripheral node label, secondary label, relation display name은 Phase 8-H-9 결과를 유지한다.
+
+### 적용 범위
+
+- `GraphCenterWordDisplayItem`
+- `WordRepository.getGraphCenterWordDisplayItemByIdForGraphCenterSingleWord`
+- `WordGraphScreen._buildCenterNode`
+
+### 구현 방식
+
+- repository는 center display 공급 전용 helper에서 center 표시 필드만 projection한다.
+- representative spelling / transliteration / pronunciation은 representative row를 우선하고, representative row가 없을 때만 seq 우선 normalized row, 마지막으로 legacy slot을 사용한다.
+- `displayStrongNumber`는 기존 center 표시와 동일하게 strong 표시 정규화를 유지한다.
+- `primaryMeaning`은 기존 center node의 `meaning1` 표시 기준만 유지한다.
+
+### 구조 결과
+
+- center node full display 경로의 raw `Word` 직접 표시 의존을 줄였다.
+- 이번 단계는 graph 전면 개편, `Word.fromMap` 일반 경계 제거, `connectedWords` 구조 변경 단계가 아니다.
+
 ## 2026-04-18 Phase 8-H-9 graph word label display contract first slice
 
 ### 이번 단계 요약

@@ -9,6 +9,7 @@ import '../data/models/word.dart';
 import '../data/repositories/word_repository.dart';
 import '../domain/graph/graph_build_options.dart';
 import '../domain/graph/graph_builder.dart';
+import '../domain/graph/graph_center_word_display_item.dart';
 import '../domain/graph/graph_edge.dart';
 import '../domain/graph/graph_node.dart';
 import '../domain/graph/graph_relation_add_search_result_item.dart';
@@ -22,7 +23,6 @@ import '../domain/word/word_write_service.dart';
 import 'word_expression_set.dart';
 import 'word_graph_cache.dart';
 import 'word_edit_screen.dart';
-import 'word_info_panel.dart';
 
 const double _centerNodeSize = 180.0;
 const double _centerNodeHalf = _centerNodeSize / 2;
@@ -704,6 +704,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   /// The graph owns the steady-state center word display through a dedicated
   /// single-word reread. Caller input is only the bootstrap payload.
   late Word _centerWord;
+  GraphCenterWordDisplayItem? _centerWordDisplayItem;
 
   bool _isLoading = true;
   String? _errorMessage;
@@ -761,6 +762,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       _resetExpansionState(clearSeedPositions: true);
       setState(() {
         _centerWord = widget.centerWord;
+        _centerWordDisplayItem = null;
         _selectedWordId = widget.selectedWordId;
         _isLoading = true;
         _errorMessage = null;
@@ -1074,14 +1076,23 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     }
   }
 
-  Future<Word> _loadResolvedCenterWord(String centerWordId) async {
+  Future<({Word word, GraphCenterWordDisplayItem displayItem})>
+  _loadResolvedCenterPayload(String centerWordId) async {
     final centerWordMap = await _repository
         .getWordMapByIdForGraphCenterSingleWord(centerWordId);
     if (centerWordMap == null) {
       throw StateError('Graph center word not found: $centerWordId');
     }
 
-    return Word.fromMap(centerWordMap);
+    final centerDisplayItem = await _repository
+        .getGraphCenterWordDisplayItemByIdForGraphCenterSingleWord(
+          centerWordId,
+        );
+    if (centerDisplayItem == null) {
+      throw StateError('Graph center display item not found: $centerWordId');
+    }
+
+    return (word: Word.fromMap(centerWordMap), displayItem: centerDisplayItem);
   }
 
   Future<void> _loadConnectedWords() async {
@@ -1093,7 +1104,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     );
 
     try {
-      final resolvedCenterWord = await _loadResolvedCenterWord(
+      final resolvedCenterPayload = await _loadResolvedCenterPayload(
         requestedCenterWordId,
       );
       final baseGraphData =
@@ -1125,7 +1136,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         return;
       }
       setState(() {
-        _centerWord = resolvedCenterWord;
+        _centerWord = resolvedCenterPayload.word;
+        _centerWordDisplayItem = resolvedCenterPayload.displayItem;
         _baseGraphData = baseGraphData;
         _rebuildGraphData();
       });
@@ -1135,6 +1147,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         _errorMessage = '연결 단어 로딩 실패: $e';
         _isLoading = false;
         _graphViewData = null;
+        _centerWordDisplayItem = null;
         _pendingCenterFocusAfterCenterChange = false;
         _pendingCenterFocusWordId = null;
       });
@@ -1172,6 +1185,13 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                 style: Theme.of(context).textTheme.titleMedium,
               ),
             ),
+          );
+        }
+        final centerDisplayItem = _centerWordDisplayItem;
+        if (centerDisplayItem == null) {
+          return Scaffold(
+            appBar: _buildAppBar(),
+            body: const Center(child: CircularProgressIndicator()),
           );
         }
 
@@ -1290,7 +1310,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                             child: GestureDetector(
                               onTap: _handleCenterNodeTap,
                               child: _buildCenterNode(
-                                _centerWord,
+                                centerDisplayItem,
                                 visualState: centerVisualState,
                               ),
                             ),
@@ -1793,16 +1813,17 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     }
   }
 
-  Widget _buildCenterNode(Word word, {required _GraphVisualState visualState}) {
-    final language = (word.language ?? '').trim();
-    final strongNumber = formatWordDisplayStrong(
-      (word.strongNumber ?? '').trim(),
-    );
-    final spelling = (word.spelling1 ?? '').trim();
-    final pronunciation = (word.pronunciation1 ?? '').trim();
-    final transliteration = (word.transliteration1 ?? '').trim();
-    final meaning = (word.meaning1 ?? '').trim();
-    final languageTintColor = _colorForWordLanguageGroup(word.id);
+  Widget _buildCenterNode(
+    GraphCenterWordDisplayItem displayItem, {
+    required _GraphVisualState visualState,
+  }) {
+    final language = displayItem.language.trim();
+    final strongNumber = displayItem.displayStrongNumber.trim();
+    final spelling = displayItem.representativeSpelling.trim();
+    final pronunciation = displayItem.representativePronunciation.trim();
+    final transliteration = displayItem.representativeTransliteration.trim();
+    final meaning = displayItem.primaryMeaning.trim();
+    final languageTintColor = _colorForWordLanguageGroup(displayItem.wordId);
     final centerInnerColor = _surfaceTint(
       languageTintColor,
       _centerNodeLanguageTintFactor * 0.8,

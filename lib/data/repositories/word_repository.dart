@@ -9,6 +9,7 @@ import '../models/relation_category_lookup.dart';
 import '../models/relation_type_lookup.dart';
 import '../models/word.dart';
 import '../../domain/expression/expression_read_models.dart';
+import '../../domain/graph/graph_center_word_display_item.dart';
 import '../../domain/graph/graph_relation_add_search_result_item.dart';
 import '../../domain/graph/graph_word_label_display_item.dart';
 import '../../domain/expression/read_source_debug_collector.dart';
@@ -1516,6 +1517,27 @@ class WordRepository {
     );
   }
 
+  GraphCenterWordDisplayItem _buildGraphCenterWordDisplayItem(
+    Map<String, dynamic> row,
+  ) {
+    return GraphCenterWordDisplayItem(
+      wordId: (row['word_id'] ?? '').toString().trim(),
+      language: (row['language'] ?? '').toString().trim(),
+      displayStrongNumber: _normalizeStrongValue(
+        (row['display_strong_number'] ?? '').toString(),
+      ),
+      representativeSpelling: (row['representative_spelling'] ?? '')
+          .toString()
+          .trim(),
+      representativeTransliteration:
+          (row['representative_transliteration'] ?? '').toString().trim(),
+      representativePronunciation: (row['representative_pronunciation'] ?? '')
+          .toString()
+          .trim(),
+      primaryMeaning: (row['primary_meaning'] ?? '').toString().trim(),
+    );
+  }
+
   GraphWordLabelDisplayItem _buildGraphWordLabelDisplayItem(
     Map<String, dynamic> row,
   ) {
@@ -1651,6 +1673,77 @@ class WordRepository {
       id,
       context: _readForGraphCenterSingleWordContext,
     );
+  }
+
+  Future<GraphCenterWordDisplayItem?>
+  getGraphCenterWordDisplayItemByIdForGraphCenterSingleWord(String id) async {
+    final normalizedId = id.trim();
+    if (normalizedId.isEmpty) return null;
+
+    final db = await DatabaseService.openDatabaseFile();
+    final rows = await db.rawQuery(
+      '''
+      WITH graph_center_display_projection AS (
+        SELECT
+          wt.id AS word_id,
+          CASE
+            WHEN representative_row.word_id IS NOT NULL
+              THEN TRIM(COALESCE(representative_row.spelling, ''))
+            WHEN fallback_row.word_id IS NOT NULL
+              THEN TRIM(COALESCE(fallback_row.spelling, ''))
+            ELSE TRIM(COALESCE(wt.\u{D45C}\u{AE30}1, ''))
+          END AS representative_spelling,
+          CASE
+            WHEN representative_row.word_id IS NOT NULL
+              THEN TRIM(COALESCE(representative_row.transliteration, ''))
+            WHEN fallback_row.word_id IS NOT NULL
+              THEN TRIM(COALESCE(fallback_row.transliteration, ''))
+            ELSE TRIM(COALESCE(wt.\u{C74C}\u{C5ED}1, ''))
+          END AS representative_transliteration,
+          CASE
+            WHEN representative_row.word_id IS NOT NULL
+              THEN TRIM(COALESCE(representative_row.pronunciation, ''))
+            WHEN fallback_row.word_id IS NOT NULL
+              THEN TRIM(COALESCE(fallback_row.pronunciation, ''))
+            ELSE TRIM(COALESCE(wt.\u{BC1C}\u{C74C}1, ''))
+          END AS representative_pronunciation
+        FROM WORD_TABLE wt
+        LEFT JOIN word_expression_set representative_row
+          ON representative_row.word_id = wt.id
+         AND representative_row.is_representative = 1
+        LEFT JOIN word_expression_set fallback_row
+          ON fallback_row.id = (
+               SELECT wes.id
+               FROM word_expression_set wes
+               WHERE wes.word_id = wt.id
+               ORDER BY wes.seq ASC, wes.id ASC
+               LIMIT 1
+             )
+         AND representative_row.word_id IS NULL
+      )
+      SELECT
+        wt.id AS word_id,
+        TRIM(COALESCE(wt.\u{C5B8}\u{C5B4}, '')) AS language,
+        TRIM(COALESCE(wt.\u{C2A4}\u{D2B8}\u{B871}\u{B118}\u{BC84}, ''))
+          AS display_strong_number,
+        graph_center_display_projection.representative_spelling
+          AS representative_spelling,
+        graph_center_display_projection.representative_transliteration
+          AS representative_transliteration,
+        graph_center_display_projection.representative_pronunciation
+          AS representative_pronunciation,
+        TRIM(COALESCE(wt.\u{C758}\u{BBF8}1, '')) AS primary_meaning
+      FROM WORD_TABLE wt
+      INNER JOIN graph_center_display_projection
+        ON graph_center_display_projection.word_id = wt.id
+      WHERE wt.id = ?
+      LIMIT 1
+      ''',
+      [normalizedId],
+    );
+
+    if (rows.isEmpty) return null;
+    return _buildGraphCenterWordDisplayItem(rows.first);
   }
 
   Future<WordDetailLikeDisplayItem?>
