@@ -3289,6 +3289,65 @@ class WordRepository {
   /// 신규 단어 생성 전 중복 후보 검색
   /// - Strong가 있으면: 스트롱넘버 기준(기존 strong 우선 규칙 유지)
   /// - Strong가 없으면: (언어, representative spelling) 기준
+  Future<List<DuplicateCandidateDisplayItem>>
+  _findDuplicateCandidatesByNormalizedStrong(
+    Database db,
+    String normalizedStrong,
+  ) async {
+    final match = RegExp(r'^([A-Z])(\d+)$').firstMatch(normalizedStrong);
+    if (match == null) {
+      return const [];
+    }
+
+    final prefix = match.group(1)!;
+    final numericPart = int.tryParse(match.group(2)!);
+    if (numericPart == null) {
+      return const [];
+    }
+
+    final rows = await db.rawQuery(
+      '''
+      WITH ${_representativeQueryProjectionCte()}
+      SELECT
+        wt.id AS word_id,
+        TRIM(COALESCE(wt.\u{C5B8}\u{C5B4}, '')) AS language,
+        TRIM(COALESCE(wt.\u{C2A4}\u{D2B8}\u{B871}\u{B118}\u{BC84}, ''))
+          AS strong_number,
+        representative_query_projection.representative_spelling
+          AS representative_spelling,
+        TRIM(COALESCE(wt.\u{C758}\u{BBF8}1, '')) AS primary_meaning
+      FROM WORD_TABLE wt
+      INNER JOIN representative_query_projection
+        ON representative_query_projection.word_id = wt.id
+      WHERE UPPER(SUBSTR(
+              TRIM(COALESCE(wt.\u{C2A4}\u{D2B8}\u{B871}\u{B118}\u{BC84}, '')),
+              1,
+              1
+            )) = ?
+        AND CAST(SUBSTR(
+              TRIM(COALESCE(wt.\u{C2A4}\u{D2B8}\u{B871}\u{B118}\u{BC84}, '')),
+              2
+            ) AS INTEGER) = ?
+      LIMIT 200
+      ''',
+      [prefix, numericPart],
+    );
+
+    return List<DuplicateCandidateDisplayItem>.unmodifiable(
+      rows.map((row) {
+        return DuplicateCandidateDisplayItem(
+          wordId: (row['word_id'] ?? '').toString().trim(),
+          language: (row['language'] ?? '').toString().trim(),
+          strongNumber: (row['strong_number'] ?? '').toString().trim(),
+          representativeSpelling: (row['representative_spelling'] ?? '')
+              .toString()
+              .trim(),
+          primaryMeaning: (row['primary_meaning'] ?? '').toString().trim(),
+        );
+      }),
+    );
+  }
+
   Future<List<DuplicateCandidateDisplayItem>> findDuplicateCandidates({
     required String language,
     String? strongNumber,
@@ -3301,6 +3360,7 @@ class WordRepository {
     final spelling = spelling1.trim();
 
     if (strong.isNotEmpty) {
+      final normalizedStrong = _normalizeStrongValue(strong);
       final rows = await db.rawQuery(
         '''
         WITH ${_representativeQueryProjectionCte()}
@@ -3318,10 +3378,25 @@ class WordRepository {
         ''',
         [strong],
       );
+      final exactCandidates = rows.map(_buildDuplicateCandidateDisplayItem);
+      final candidatesById = <String, DuplicateCandidateDisplayItem>{
+        for (final candidate in exactCandidates) candidate.wordId: candidate,
+        for (final candidate
+            in await _findDuplicateCandidatesByNormalizedStrong(
+              db,
+              normalizedStrong,
+            ))
+          candidate.wordId: candidate,
+      };
 
       return List<DuplicateCandidateDisplayItem>.unmodifiable(
-        rows.map(_buildDuplicateCandidateDisplayItem).where((candidate) {
-          return excludeId == null || candidate.wordId != excludeId;
+        candidatesById.values.where((candidate) {
+          if (excludeId != null && candidate.wordId == excludeId) {
+            return false;
+          }
+
+          return _normalizeStrongValue(candidate.strongNumber) ==
+              normalizedStrong;
         }),
       );
     }
@@ -3338,26 +3413,28 @@ class WordRepository {
       FROM WORD_TABLE wt
       INNER JOIN representative_query_projection
         ON representative_query_projection.word_id = wt.id
-      WHERE wt.언어 = ?
-      LIMIT 200
+      WHERE TRIM(COALESCE(wt.\u{C5B8}\u{C5B4}, '')) = ?
       ''',
-      [language],
+      [language.trim()],
     );
 
     final target = _normalizeSpellingForDuplicateCheck(spelling);
 
     return List<DuplicateCandidateDisplayItem>.unmodifiable(
-      rows.map(_buildDuplicateCandidateDisplayItem).where((candidate) {
-        final id = candidate.wordId;
-        if (excludeId != null && id == excludeId) return false;
+      rows
+          .map(_buildDuplicateCandidateDisplayItem)
+          .where((candidate) {
+            final id = candidate.wordId;
+            if (excludeId != null && id == excludeId) return false;
 
-        final existingSpelling = candidate.representativeSpelling;
-        final normalizedExisting = _normalizeSpellingForDuplicateCheck(
-          existingSpelling,
-        );
+            final existingSpelling = candidate.representativeSpelling;
+            final normalizedExisting = _normalizeSpellingForDuplicateCheck(
+              existingSpelling,
+            );
 
-        return normalizedExisting == target;
-      }),
+            return normalizedExisting == target;
+          })
+          .take(20),
     );
   }
 
@@ -3420,6 +3497,147 @@ class WordRepository {
         entityId: id,
         afterJson: historyAfter,
       );
+    });
+  }
+
+  bool _isGraphCreateDiscardEligibleHistoryRow(
+    Map<String, dynamic> historyRow,
+    String wordId,
+  ) {
+    if ((historyRow['action_type'] ?? '').toString() != 'create') {
+      return false;
+    }
+    if ((historyRow['entity_type'] ?? '').toString() != 'word') {
+      return false;
+    }
+    if ((historyRow['entity_id'] ?? '').toString().trim() != wordId) {
+      return false;
+    }
+    if (historyRow['before_json'] != null) {
+      return false;
+    }
+    if (historyRow['undone_at'] != null) {
+      return false;
+    }
+
+    final afterJsonText = historyRow['after_json'] as String?;
+    if (afterJsonText == null || afterJsonText.trim().isEmpty) {
+      return false;
+    }
+
+    try {
+      final afterJson = jsonDecode(afterJsonText);
+      if (afterJson is! Map) {
+        return false;
+      }
+      final after = Map<String, dynamic>.from(afterJson);
+      if ((after['id'] ?? '').toString().trim() != wordId) {
+        return false;
+      }
+      final normalizedRows = after[_historyNormalizedExpressionRowsKey];
+      if (normalizedRows != null && normalizedRows is! List) {
+        return false;
+      }
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  /// Graph create flow에서 post-create edit 화면을 저장 없이 닫은 경우만
+  /// 방금 생성된 word를 확정 생성 전 상태로 되돌린다.
+  Future<bool> discardCreatedWordForGraphCreateFlow(String wordId) async {
+    final normalizedId = wordId.trim();
+    if (normalizedId.isEmpty) {
+      return false;
+    }
+
+    final db = await DatabaseService.openDatabaseFile();
+    return await db.transaction((txn) async {
+      final wordRows = await txn.query(
+        'WORD_TABLE',
+        columns: ['id'],
+        where: 'id = ?',
+        whereArgs: [normalizedId],
+        limit: 1,
+      );
+      if (wordRows.isEmpty) {
+        return false;
+      }
+
+      final relationRows = await txn.query(
+        'WORD_RELATION',
+        columns: ['id'],
+        where: 'word_id_1 = ? OR word_id_2 = ?',
+        whereArgs: [normalizedId, normalizedId],
+        limit: 1,
+      );
+      if (relationRows.isNotEmpty) {
+        return false;
+      }
+
+      final latestActiveWordHistoryRows = await txn.query(
+        'CHANGE_HISTORY',
+        where: 'entity_type = ? AND entity_id = ? AND undone_at IS NULL',
+        whereArgs: ['word', normalizedId],
+        orderBy: 'id DESC',
+        limit: 1,
+      );
+      if (latestActiveWordHistoryRows.isEmpty) {
+        return false;
+      }
+
+      final createHistoryRow = Map<String, dynamic>.from(
+        latestActiveWordHistoryRows.single,
+      );
+      if (!_isGraphCreateDiscardEligibleHistoryRow(
+        createHistoryRow,
+        normalizedId,
+      )) {
+        return false;
+      }
+
+      final groupId = (createHistoryRow['group_id'] ?? '').toString().trim();
+      if (groupId.isEmpty) {
+        return false;
+      }
+      final activeGroupRows = await txn.query(
+        'CHANGE_HISTORY',
+        columns: ['id'],
+        where: 'group_id = ? AND undone_at IS NULL',
+        whereArgs: [groupId],
+      );
+      if (activeGroupRows.length != 1 ||
+          activeGroupRows.single['id'] != createHistoryRow['id']) {
+        return false;
+      }
+
+      final latestRows = await txn.query(
+        'CHANGE_HISTORY',
+        columns: ['id'],
+        where: 'undone_at IS NULL',
+        orderBy: 'id DESC',
+        limit: 1,
+      );
+      if (latestRows.isEmpty ||
+          latestRows.single['id'] != createHistoryRow['id']) {
+        return false;
+      }
+
+      await _deleteWordExpressionSetRows(txn, normalizedId);
+      await txn.delete(
+        'WORD_TABLE',
+        where: 'id = ?',
+        whereArgs: [normalizedId],
+      );
+      await txn.update(
+        'CHANGE_HISTORY',
+        {'undone_at': DateTime.now().toIso8601String()},
+        where: 'id = ?',
+        whereArgs: [createHistoryRow['id']],
+      );
+
+      return true;
     });
   }
 

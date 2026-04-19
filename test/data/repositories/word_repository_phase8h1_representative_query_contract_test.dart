@@ -221,6 +221,49 @@ void main() {
     );
 
     test(
+      'duplicate candidates match normalized strong display input',
+      () async {
+        final repository = WordRepository();
+        final db = await DatabaseService.openDatabaseFile();
+        const wordId = 'T9000_H1_DUPLICATE_NORMALIZED_STRONG';
+        const storedStrongNumber = 'H000077';
+
+        await _insertWord(
+          db,
+          id: wordId,
+          language: '테스트',
+          strongNumber: storedStrongNumber,
+          legacySpelling: 'legacy-normalized-strong-slot',
+          legacyTransliteration: 'legacy-normalized-strong-translit',
+          meaning1: 'normalized strong meaning',
+          expressionRows: const [
+            {
+              'seq': 1,
+              'is_representative': 1,
+              'spelling': 'representative-normalized-strong',
+              'transliteration': 'rep-normalized-strong',
+            },
+          ],
+        );
+
+        final candidates = await repository.findDuplicateCandidates(
+          language: '다른언어',
+          strongNumber: 'H77',
+          spelling1: 'totally-different-spelling',
+        );
+
+        expect(candidates, hasLength(1));
+        expect(candidates.single.wordId, wordId);
+        expect(candidates.single.strongNumber, storedStrongNumber);
+        expect(
+          candidates.single.representativeSpelling,
+          'representative-normalized-strong',
+        );
+        expect(candidates.single.primaryMeaning, 'normalized strong meaning');
+      },
+    );
+
+    test(
       'duplicate candidates use representative spelling for non-strong matches',
       () async {
         final repository = WordRepository();
@@ -256,6 +299,67 @@ void main() {
         expect(candidates.single.strongNumber, '');
         expect(candidates.single.representativeSpelling, 'כְּפַר');
         expect(candidates.single.primaryMeaning, 'non strong meaning');
+      },
+    );
+
+    test(
+      'duplicate candidates scan all same-language rows before non-strong match',
+      () async {
+        final repository = WordRepository();
+        final db = await DatabaseService.openDatabaseFile();
+        const language = 'phase8h1-non-strong-limit-language';
+        const wordId = 'T9000_H1_DUPLICATE_NON_STRONG_AFTER_LIMIT';
+
+        for (var index = 0; index < 205; index += 1) {
+          await _insertWord(
+            db,
+            id: 'T9000_H1_NON_STRONG_FILLER_$index',
+            language: language,
+            legacySpelling: 'legacy-filler-$index',
+            legacyTransliteration: 'legacy-filler-translit-$index',
+            meaning1: 'filler meaning $index',
+            expressionRows: [
+              {
+                'seq': 1,
+                'is_representative': 1,
+                'spelling': 'filler-spelling-$index',
+                'transliteration': 'filler-translit-$index',
+              },
+            ],
+          );
+        }
+
+        await _insertWord(
+          db,
+          id: wordId,
+          language: ' $language ',
+          legacySpelling: 'legacy-late-target-slot',
+          legacyTransliteration: 'legacy-late-target-translit',
+          meaning1: 'late non strong meaning',
+          expressionRows: const [
+            {
+              'seq': 1,
+              'is_representative': 1,
+              'spelling': 'late-representative-spelling',
+              'transliteration': 'late-rep',
+            },
+          ],
+        );
+
+        final candidates = await repository.findDuplicateCandidates(
+          language: language,
+          spelling1: 'late-representative-spelling',
+        );
+
+        expect(candidates, hasLength(1));
+        expect(candidates.single.wordId, wordId);
+        expect(candidates.single.language, language);
+        expect(candidates.single.strongNumber, '');
+        expect(
+          candidates.single.representativeSpelling,
+          'late-representative-spelling',
+        );
+        expect(candidates.single.primaryMeaning, 'late non strong meaning');
       },
     );
   });

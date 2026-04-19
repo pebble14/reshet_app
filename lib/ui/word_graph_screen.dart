@@ -4616,6 +4616,18 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       if (editedWordMap != null) {
         currentWordMap = Map<String, dynamic>.from(editedWordMap);
       } else {
+        final didDiscardCreatedWord = await _repository
+            .discardCreatedWordForGraphCreateFlow(newId);
+        if (didDiscardCreatedWord) {
+          WordGraphDataCache.invalidateMany([_centerWord.id, newId]);
+          await _loadConnectedWords();
+          if (!mounted) return;
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('단어 추가를 취소했습니다.')));
+          return;
+        }
+
         final reloadedWordMap = await _repository
             .getWordMapByIdForGraphSingleWord(newId);
         if (reloadedWordMap != null) {
