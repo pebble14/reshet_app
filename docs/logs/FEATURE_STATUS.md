@@ -1,5 +1,14 @@
 # FEATURE_STATUS
 
+## 2026-04-19 Phase 8-H-12 진행 상태
+
+- 진행 범위: home search ranking candidate contract, `searchWordsMap` 내부 ranking 입력 경계, ranking candidate repository 테스트
+- 현재 상태: home search ranking candidate contract first slice 적용
+- 구조 기준: `searchWordsMap` ranking helper는 raw row 전체 대신 `HomeSearchRankingCandidate`의 `wordId`, `strongNumber`, indexed spellings / transliterations / meanings 최소 필드를 기준으로 rank를 계산한다
+- 유지 범위: `searchWordsMap` public 반환형 `List<HomeSearchResultDisplayItem>`, `HomeSearchResultDisplayItem`, `_resolveHomeSearchDisplayItemsForPhase32(...)` display projection, `searchStrongExactMap`, `getStrongWordsMap`, Home UI, graph / explorer / detail / edit / duplicate / relation add search
+- 주의: 이번 단계는 ranking 입력 boundary 축소이며, home search 전면 개편이나 `Word.fromMap` 일반 경계 제거 완료 단계가 아니다
+- 보류 범위: `searchStrongExactMap`, `getStrongWordsMap`, explorer/history 후속 절편, `Word.fromMap` 일반 경계, 나머지 slot consumer 후속 절편
+
 ## 2026-04-18 Phase 8-H-11 진행 상태
 
 - 진행 범위: graph center full display contract, `_buildCenterNode` center 표시 경계, center display repository helper

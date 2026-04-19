@@ -1,5 +1,32 @@
 # Read Source Migration
 
+## 2026-04-19 Phase 8-H-12 home search ranking candidate contract first slice
+
+### 이번 단계 요약
+
+- 이번 단계는 home search ranking candidate contract first slice다.
+- `searchWordsMap`의 public 반환형과 `HomeSearchResultDisplayItem` display contract는 유지한다.
+- `searchWordsMap` 내부 ranking helper가 raw row 전체 대신 ranking 입력 전용 `HomeSearchRankingCandidate`를 소비하도록 경계를 줄였다.
+- `searchStrongExactMap`, `getStrongWordsMap`, Home UI, graph / explorer / detail / edit / duplicate / relation add search 경로는 이번 단계 범위에 포함하지 않는다.
+
+### 적용 범위
+
+- `HomeSearchRankingCandidate`
+- `WordRepository.searchWordsMap` 내부 ranking loop
+- `WordRepository._rankHomeSearchCandidate`
+
+### 구현 방식
+
+- SQL 후보 수집은 기존 `WORD_TABLE` row 수집 흐름을 유지한다.
+- 후보 row에서 ranking에 필요한 `wordId`, `strongNumber`, indexed spellings / transliterations / meanings만 candidate로 변환한다.
+- strong exact / prefix / partial, spelling exact / prefix / partial, transliteration exact / prefix / partial, meaning partial ranking priority는 기존 값을 유지한다.
+- display projection은 기존 `_resolveHomeSearchDisplayItemsForPhase32(...)` 흐름을 유지한다.
+
+### 구조 결과
+
+- home search ranking 경로의 raw row 직접 소비가 ranking 전용 typed candidate로 한 단계 줄었다.
+- 이번 단계는 home search public display contract 변경, search semantics 재설계, `Word.fromMap` 일반 경계 제거 단계가 아니다.
+
 ## 2026-04-18 Phase 8-H-11 graph center full display contract first slice
 
 ### 이번 단계 요약

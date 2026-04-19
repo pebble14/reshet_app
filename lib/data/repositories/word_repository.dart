@@ -15,6 +15,7 @@ import '../../domain/graph/graph_word_label_display_item.dart';
 import '../../domain/expression/read_source_debug_collector.dart';
 import '../../domain/expression/read_source_policy.dart';
 import '../../domain/home/home_default_strong_list_item.dart';
+import '../../domain/home/home_search_ranking_candidate.dart';
 import '../../domain/home/home_search_result_display_item.dart';
 import '../../domain/word/duplicate_candidate_display_item.dart';
 import '../../domain/word/word_detail_like_display_item.dart';
@@ -2356,21 +2357,42 @@ class WordRepository {
     return _greekScriptPattern.hasMatch(value);
   }
 
-  List<({String value, int fieldIndex})> _readIndexedValues(
+  List<HomeSearchRankingValue> _readHomeSearchRankingValues(
     Map<String, dynamic> row,
     List<String> columns,
   ) {
-    final values = <({String value, int fieldIndex})>[];
+    final values = <HomeSearchRankingValue>[];
 
     for (var index = 0; index < columns.length; index++) {
       final value = (row[columns[index]] ?? '').toString().trim();
       if (value.isEmpty) {
         continue;
       }
-      values.add((value: value, fieldIndex: index + 1));
+      values.add(HomeSearchRankingValue(value: value, fieldIndex: index + 1));
     }
 
-    return values;
+    return List<HomeSearchRankingValue>.unmodifiable(values);
+  }
+
+  HomeSearchRankingCandidate _buildHomeSearchRankingCandidate(
+    Map<String, dynamic> row,
+  ) {
+    return HomeSearchRankingCandidate(
+      wordId: (row['id'] ?? '').toString(),
+      strongNumber: (row['스트롱넘버'] ?? '').toString().trim(),
+      indexedSpellings: _readHomeSearchRankingValues(
+        row,
+        _homeSearchSpellingColumns,
+      ),
+      indexedTransliterations: _readHomeSearchRankingValues(
+        row,
+        _homeSearchTransliterationColumns,
+      ),
+      indexedMeanings: _readHomeSearchRankingValues(
+        row,
+        _homeSearchMeaningColumns,
+      ),
+    );
   }
 
   ({int priority, int fieldIndex, int valueLength}) _rankRecord(
@@ -2416,7 +2438,7 @@ class WordRepository {
   }
 
   ({int priority, int fieldIndex, int valueLength})? _matchIndexedValues(
-    List<({String value, int fieldIndex})> values, {
+    List<HomeSearchRankingValue> values, {
     required String normalizedKeyword,
     int? exactPriority,
     int? prefixPriority,
@@ -2462,11 +2484,11 @@ class WordRepository {
   }
 
   ({int priority, int fieldIndex, int valueLength})? _matchStrongValue(
-    Map<String, dynamic> row, {
+    HomeSearchRankingCandidate candidate, {
     required String normalizedKeyword,
     required String? normalizedStrongKeyword,
   }) {
-    final strong = (row['스트롱넘버'] ?? '').toString().trim();
+    final strong = candidate.strongNumber;
     if (strong.isEmpty) {
       return null;
     }
@@ -2496,27 +2518,21 @@ class WordRepository {
     return null;
   }
 
-  ({int priority, int fieldIndex, int valueLength})? _rankHomeSearchRow(
-    Map<String, dynamic> row, {
+  ({int priority, int fieldIndex, int valueLength})? _rankHomeSearchCandidate(
+    HomeSearchRankingCandidate candidate, {
     required String normalizedKeyword,
     required String? normalizedStrongKeyword,
   }) {
     var bestRank = _matchStrongValue(
-      row,
+      candidate,
       normalizedKeyword: normalizedKeyword,
       normalizedStrongKeyword: normalizedStrongKeyword,
     );
-    final spellingValues = _readIndexedValues(row, _homeSearchSpellingColumns);
-    final transliterationValues = _readIndexedValues(
-      row,
-      _homeSearchTransliterationColumns,
-    );
-    final meaningValues = _readIndexedValues(row, _homeSearchMeaningColumns);
 
     bestRank = _pickBetterRank(
       bestRank,
       _matchIndexedValues(
-        spellingValues,
+        candidate.indexedSpellings,
         normalizedKeyword: normalizedKeyword,
         exactPriority: 2,
         prefixPriority: 3,
@@ -2526,7 +2542,7 @@ class WordRepository {
     bestRank = _pickBetterRank(
       bestRank,
       _matchIndexedValues(
-        transliterationValues,
+        candidate.indexedTransliterations,
         normalizedKeyword: normalizedKeyword,
         exactPriority: 4,
         prefixPriority: 5,
@@ -2536,7 +2552,7 @@ class WordRepository {
     bestRank = _pickBetterRank(
       bestRank,
       _matchIndexedValues(
-        meaningValues,
+        candidate.indexedMeanings,
         normalizedKeyword: normalizedKeyword,
         partialPriority: 6,
       ),
@@ -2715,8 +2731,9 @@ class WordRepository {
         >[];
 
     for (final row in candidates) {
-      final rank = _rankHomeSearchRow(
-        row,
+      final rankingCandidate = _buildHomeSearchRankingCandidate(row);
+      final rank = _rankHomeSearchCandidate(
+        rankingCandidate,
         normalizedKeyword: normalizedKeyword,
         normalizedStrongKeyword: normalizedStrongKeyword,
       );
@@ -2729,7 +2746,7 @@ class WordRepository {
         priority: rank.priority,
         fieldIndex: rank.fieldIndex,
         valueLength: rank.valueLength,
-        id: (row['id'] ?? '').toString(),
+        id: rankingCandidate.wordId,
       ));
     }
 
