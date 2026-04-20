@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-04-21 Phase 8-H-16
+
+- explorer history availability probe contract first slice를 적용했다.
+- `WordExplorerScreen._isHistoryEntryAvailable`의 back/forward 직전 availability 재검증을 `getWordMapByIdForExplorerSingleWord` full map 조회에서 `probeExistingWordIdsForExplorerHistory` id existence probe로 전환했다.
+- `_ExplorerHistorySnapshot`, history tooltip/display, graph seed, `Word.fromMap` 일반 경계, explorer UX 정책은 변경하지 않았다.
+
 ## 2026-04-20 Phase 8-H-15
 
 - duplicate candidate projection alias contract first slice를 적용했다.

@@ -1,5 +1,24 @@
 # Read Source Migration
 
+## 2026-04-21 Phase 8-H-16 explorer history availability probe contract first slice
+
+### 이번 단계 요약
+
+- 이번 단계는 explorer history availability probe contract first slice다.
+- `_isHistoryEntryAvailable`의 back/forward 직전 availability 재검증 경계를 full map read에서 id existence probe로 줄인다.
+- explorer/history UI, tooltip/display, history payload, graph seed, `Word.fromMap` 일반 경계는 유지한다.
+
+### 적용 범위
+
+- `WordExplorerScreen._isHistoryEntryAvailable`
+- `WordRepository.probeExistingWordIdsForExplorerHistory`
+
+### 구조 결과
+
+- history entry availability 재검증은 `wordId`만 사용한다.
+- 재검증은 `probeExistingWordIdsForExplorerHistory`의 `Set<String>` 결과에 해당 id가 포함되는지 확인한다.
+- back/forward availability UX와 삭제된 entry fallback 정책은 변경하지 않는다.
+
 ## 2026-04-20 Phase 8-H-15 duplicate candidate projection alias contract first slice
 
 ### 이번 단계 요약
@@ -612,7 +631,7 @@ generic
 - `readForSplitViewSingleWord` context 는 `NORMALIZED_WITH_FALLBACK` 대상이다.
 - split view wrapper 는 detail-like single-word resolver 를 재사용하고, 반환값은 기존 `WordInfoPanel` 계약을 유지하는 `WordDetailLikeDisplayItem` 이다.
 - collector 에서는 context=`readForSplitViewSingleWord` 기준으로 success=`normalized`, fallback=`legacy_fallback` 을 해석한다.
-- history availability probe 는 계속 `getWordMapByIdForExplorerSingleWord` / `readForExplorerSingleWord` 로 분리 유지한다.
+- history availability probe 는 Phase 8-H-16 기준으로 back/forward 직전 재검증까지 `probeExistingWordIdsForExplorerHistory` id existence probe 를 사용한다.
 - 이 섹션은 문서 안의 예전 “split view direct DB read 위험 경로” 메모보다 최신 상태를 우선한다.
 
 ## 2026-04-04 Phase 3.3 undo path 적용

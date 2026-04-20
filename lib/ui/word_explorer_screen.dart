@@ -587,10 +587,9 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
       return false;
     }
 
-    final wordMap = await _repository.getWordMapByIdForExplorerSingleWord(
-      wordId,
-    );
-    return wordMap != null;
+    final existingWordIds = await _repository
+        .probeExistingWordIdsForExplorerHistory([wordId]);
+    return existingWordIds.contains(wordId);
   }
 
   WordNavigationHistoryEntry<_ExplorerHistorySnapshot> _createHistoryEntry({

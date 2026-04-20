@@ -1,5 +1,14 @@
 # FEATURE_STATUS
 
+## 2026-04-21 Phase 8-H-16 진행 상태
+
+- 진행 범위: explorer history availability probe contract, `_isHistoryEntryAvailable` back/forward 직전 재검증 경계
+- 현재 상태: explorer history availability probe contract first slice 적용
+- 구조 기준: `_isHistoryEntryAvailable`는 history entry의 `wordId`만 사용해 `probeExistingWordIdsForExplorerHistory` 결과에 포함되는지 확인한다
+- 유지 범위: `_ExplorerHistorySnapshot`, tooltip/display, history payload, graph seed, `Word.fromMap` 일반 경계, explorer/history UX 정책
+- 주의: 이번 단계는 history availability 재검증 boundary 축소이며, explorer/history UI나 navigation payload 변경 단계가 아니다
+- 보류 범위: tooltip display contract, graph seed contract, `Word.fromMap` 일반 경계, explorer/history 후속 절편
+
 ## 2026-04-20 Phase 8-H-15 진행 상태
 
 - 진행 범위: duplicate candidate query projection alias, `_buildDuplicateCandidateDisplayItem` helper 입력 경계, H-1 duplicate regression assertion
