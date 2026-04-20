@@ -1514,11 +1514,13 @@ class WordRepository {
     Map<String, dynamic> row,
   ) {
     return DuplicateCandidateDisplayItem(
-      wordId: (row['id'] ?? '').toString(),
-      language: (row['언어'] ?? '').toString(),
-      strongNumber: (row['스트롱넘버'] ?? '').toString(),
-      representativeSpelling: (row['표기1'] ?? '').toString(),
-      primaryMeaning: (row['의미1'] ?? '').toString(),
+      wordId: (row['word_id'] ?? '').toString().trim(),
+      language: (row['language'] ?? '').toString().trim(),
+      strongNumber: (row['strong_number'] ?? '').toString().trim(),
+      representativeSpelling: (row['representative_spelling'] ?? '')
+          .toString()
+          .trim(),
+      primaryMeaning: (row['primary_meaning'] ?? '').toString().trim(),
     );
   }
 
@@ -3426,17 +3428,7 @@ class WordRepository {
     );
 
     return List<DuplicateCandidateDisplayItem>.unmodifiable(
-      rows.map((row) {
-        return DuplicateCandidateDisplayItem(
-          wordId: (row['word_id'] ?? '').toString().trim(),
-          language: (row['language'] ?? '').toString().trim(),
-          strongNumber: (row['strong_number'] ?? '').toString().trim(),
-          representativeSpelling: (row['representative_spelling'] ?? '')
-              .toString()
-              .trim(),
-          primaryMeaning: (row['primary_meaning'] ?? '').toString().trim(),
-        );
-      }),
+      rows.map(_buildDuplicateCandidateDisplayItem),
     );
   }
 
@@ -3457,11 +3449,12 @@ class WordRepository {
         '''
         WITH ${_representativeQueryProjectionCte()}
         SELECT
-          wt.id AS id,
-          TRIM(COALESCE(wt.언어, '')) AS 언어,
-          TRIM(COALESCE(wt.스트롱넘버, '')) AS 스트롱넘버,
-          representative_query_projection.representative_spelling AS 표기1,
-          TRIM(COALESCE(wt.의미1, '')) AS 의미1
+          wt.id AS word_id,
+          TRIM(COALESCE(wt.언어, '')) AS language,
+          TRIM(COALESCE(wt.스트롱넘버, '')) AS strong_number,
+          representative_query_projection.representative_spelling
+            AS representative_spelling,
+          TRIM(COALESCE(wt.의미1, '')) AS primary_meaning
         FROM WORD_TABLE wt
         INNER JOIN representative_query_projection
           ON representative_query_projection.word_id = wt.id
@@ -3497,11 +3490,12 @@ class WordRepository {
       '''
       WITH ${_representativeQueryProjectionCte()}
       SELECT
-        wt.id AS id,
-        TRIM(COALESCE(wt.언어, '')) AS 언어,
-        TRIM(COALESCE(wt.스트롱넘버, '')) AS 스트롱넘버,
-        representative_query_projection.representative_spelling AS 표기1,
-        TRIM(COALESCE(wt.의미1, '')) AS 의미1
+        wt.id AS word_id,
+        TRIM(COALESCE(wt.언어, '')) AS language,
+        TRIM(COALESCE(wt.스트롱넘버, '')) AS strong_number,
+        representative_query_projection.representative_spelling
+          AS representative_spelling,
+        TRIM(COALESCE(wt.의미1, '')) AS primary_meaning
       FROM WORD_TABLE wt
       INNER JOIN representative_query_projection
         ON representative_query_projection.word_id = wt.id

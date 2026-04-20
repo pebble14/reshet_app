@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-04-20 Phase 8-H-15
+
+- duplicate candidate projection alias contract first slice를 적용했다.
+- `findDuplicateCandidates`의 strong exact / normalized strong / non-strong projection row alias를 `word_id`, `language`, `strong_number`, `representative_spelling`, `primary_meaning` canonical 집합으로 맞췄다.
+- `_buildDuplicateCandidateDisplayItem`는 canonical alias만 소비하도록 줄였고, `DuplicateCandidateDisplayItem` public field 구조와 duplicate warning UI는 유지했다.
+- strong exact / normalized strong / non-strong duplicate 비교 규칙과 create/edit/graph 흐름은 변경하지 않았다.
+
 ## 2026-04-19 Phase 8-H-12
 
 - home search ranking candidate contract first slice를 적용했다.

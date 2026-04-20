@@ -1,5 +1,14 @@
 # FEATURE_STATUS
 
+## 2026-04-20 Phase 8-H-15 진행 상태
+
+- 진행 범위: duplicate candidate query projection alias, `_buildDuplicateCandidateDisplayItem` helper 입력 경계, H-1 duplicate regression assertion
+- 현재 상태: duplicate candidate projection alias contract first slice 적용
+- 구조 기준: strong exact / normalized strong / non-strong duplicate projection row는 `word_id`, `language`, `strong_number`, `representative_spelling`, `primary_meaning` canonical alias 집합을 helper에 공급한다
+- 유지 범위: `DuplicateCandidateDisplayItem` public field 구조, duplicate warning UI, strong 우선 / normalized strong / non-strong representative spelling 비교 규칙, graph / explorer / history / edit seed / home search
+- 주의: 이번 단계는 duplicate projection alias boundary 정리이며, duplicate UX 정책 변경이나 `Word.fromMap` 일반 경계 제거 단계가 아니다
+- 보류 범위: explorer/history/graph seed 잔여 boundary, duplicate warning UI 정책, 나머지 slot consumer 후속 절편
+
 ## 2026-04-19 Phase 8-H-12 진행 상태
 
 - 진행 범위: home search ranking candidate contract, `searchWordsMap` 내부 ranking 입력 경계, ranking candidate repository 테스트

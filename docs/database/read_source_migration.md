@@ -1,5 +1,30 @@
 # Read Source Migration
 
+## 2026-04-20 Phase 8-H-15 duplicate candidate projection alias contract first slice
+
+### 이번 단계 요약
+
+- 이번 단계는 duplicate candidate projection alias contract first slice다.
+- `DuplicateCandidateDisplayItem` public field 구조와 duplicate warning UI는 유지한다.
+- strong exact / normalized strong / non-strong duplicate 비교 규칙은 유지하고, repository 내부 projection row alias만 canonical 집합으로 맞춘다.
+
+### 적용 범위
+
+- `WordRepository.findDuplicateCandidates`
+- `WordRepository._findDuplicateCandidatesByNormalizedStrong`
+- `WordRepository._buildDuplicateCandidateDisplayItem`
+
+### 구현 방식
+
+- duplicate candidate projection row는 `word_id`, `language`, `strong_number`, `representative_spelling`, `primary_meaning`만 helper에 공급한다.
+- `_buildDuplicateCandidateDisplayItem`는 위 canonical alias만 읽어 `DuplicateCandidateDisplayItem`을 생성한다.
+- normalized strong 경로도 같은 helper를 사용하게 해 duplicate candidate projection 입력 경계를 동일하게 유지한다.
+
+### 구조 결과
+
+- duplicate candidate query projection과 helper 입력 사이의 한글 slot alias 직접 의존이 한 단계 줄었다.
+- 이번 단계는 duplicate UX 정책 변경, duplicate warning UI 변경, graph / explorer / history / edit seed / home search 경계 변경, `Word.fromMap` 일반 경계 제거 단계가 아니다.
+
 ## 2026-04-19 Phase 8-H-12 home search ranking candidate contract first slice
 
 ### 이번 단계 요약

@@ -254,6 +254,7 @@ void main() {
 
         expect(candidates, hasLength(1));
         expect(candidates.single.wordId, wordId);
+        expect(candidates.single.language, '테스트');
         expect(candidates.single.strongNumber, storedStrongNumber);
         expect(
           candidates.single.representativeSpelling,
