@@ -99,6 +99,16 @@ class UndoLastChangeResult {
   const UndoLastChangeResult({required this.didUndo, this.primaryWordId});
 }
 
+class _HomeStrongExactCandidate {
+  final String wordId;
+  final String strongNumber;
+
+  const _HomeStrongExactCandidate({
+    required this.wordId,
+    required this.strongNumber,
+  });
+}
+
 class WordRepository {
   static const ReadSourcePolicy _defaultReadSourcePolicy =
       ReadSourcePolicy.legacy;
@@ -162,6 +172,15 @@ class WordRepository {
   static final List<String> _wordPronunciationColumns = List.unmodifiable(
     List.generate(6, (index) => '발음${index + 1}'),
   );
+  static final List<String> _homeSearchDisplayResolutionColumns =
+      List.unmodifiable([
+        'id',
+        '스트롱넘버',
+        ..._homeSearchSpellingColumns,
+        ..._homeSearchTransliterationColumns,
+        ..._wordPronunciationColumns,
+        '의미1',
+      ]);
   static final List<String> _wordRelatedColumns = List.unmodifiable(
     List.generate(7, (index) => '관련${index + 1}'),
   );
@@ -2653,6 +2672,56 @@ class WordRepository {
     return candidatesById.values.toList();
   }
 
+  _HomeStrongExactCandidate _buildHomeStrongExactCandidate(
+    Map<String, dynamic> row,
+  ) {
+    return _HomeStrongExactCandidate(
+      wordId: (row['word_id'] ?? '').toString().trim(),
+      strongNumber: (row['strong_number'] ?? '').toString().trim(),
+    );
+  }
+
+  String _wordTableProjectionSql(Iterable<String> columns) {
+    return columns.map((column) => 'wt."$column" AS "$column"').join(',\n');
+  }
+
+  Future<List<Map<String, dynamic>>>
+  _loadHomeSearchDisplayRowsForStrongExactCandidates(
+    Database db,
+    List<_HomeStrongExactCandidate> candidates,
+  ) async {
+    if (candidates.isEmpty) {
+      return const [];
+    }
+
+    final candidateWordIds = candidates
+        .map((candidate) => candidate.wordId)
+        .where((wordId) => wordId.isNotEmpty)
+        .toList(growable: false);
+    if (candidateWordIds.isEmpty) {
+      return const [];
+    }
+
+    final placeholders = List.filled(candidateWordIds.length, '?').join(', ');
+    final projectionSql = _wordTableProjectionSql(
+      _homeSearchDisplayResolutionColumns,
+    );
+    final rows = await db.rawQuery('''
+      SELECT
+      $projectionSql
+      FROM WORD_TABLE wt
+      WHERE wt.id IN ($placeholders)
+      ''', candidateWordIds);
+    final rowsById = <String, Map<String, dynamic>>{
+      for (final row in rows)
+        (row['id'] ?? '').toString().trim(): Map<String, dynamic>.from(row),
+    };
+
+    return List<Map<String, dynamic>>.unmodifiable(
+      candidateWordIds.map((wordId) => rowsById[wordId]).whereType(),
+    );
+  }
+
   Future<List<HomeSearchResultDisplayItem>> searchStrongExactMap(
     String keyword, {
     int limit = 200,
@@ -2667,28 +2736,34 @@ class WordRepository {
     final db = await DatabaseService.openDatabaseFile();
     final rows = await db.rawQuery(
       '''
-      SELECT *
-      FROM WORD_TABLE
-      WHERE 스트롱넘버 IS NOT NULL
-        AND TRIM(스트롱넘버) <> ''
-        AND UPPER(SUBSTR(TRIM(스트롱넘버), 1, 1)) = ?
-        AND CAST(SUBSTR(TRIM(스트롱넘버), 2) AS INTEGER) = ?
-      ORDER BY id
+      SELECT
+        wt.id AS word_id,
+        TRIM(COALESCE(wt.스트롱넘버, '')) AS strong_number
+      FROM WORD_TABLE wt
+      WHERE wt.스트롱넘버 IS NOT NULL
+        AND TRIM(wt.스트롱넘버) <> ''
+        AND UPPER(SUBSTR(TRIM(wt.스트롱넘버), 1, 1)) = ?
+        AND CAST(SUBSTR(TRIM(wt.스트롱넘버), 2) AS INTEGER) = ?
+      ORDER BY wt.id
       ''',
       [prefix, numericPart],
     );
-    final filteredRows = rows
+    final candidates = rows
+        .map(_buildHomeStrongExactCandidate)
         .where(
-          (row) =>
-              _normalizeStrongValue((row['스트롱넘버'] ?? '').toString()) ==
-              normalizedStrong,
+          (candidate) =>
+              _normalizeStrongValue(candidate.strongNumber) == normalizedStrong,
         )
         .take(limit)
-        .map((row) => Map<String, dynamic>.from(row))
         .toList(growable: false);
+    final displayRows =
+        await _loadHomeSearchDisplayRowsForStrongExactCandidates(
+          db,
+          candidates,
+        );
     return await _resolveHomeSearchDisplayItemsForPhase32(
       db,
-      filteredRows,
+      displayRows,
       context: 'searchStrongExactMap',
     );
   }
