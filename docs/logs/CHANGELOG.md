@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2026-04-21 Phase 8-H-20
+
+- explorer history payload ID contract first slice를 적용했다.
+- `_ExplorerHistorySnapshot`의 중심 payload를 `Word` 전체에서 `centerWordId`로 줄이고, payload는 `centerWordId`, `selectedWordId`만 보유하도록 정리했다.
+- `_applyHistoryEntry`는 `Word(id: centerWordId)`로 기존 graph center reread 흐름에 연결하고, `_isSameHistoryLocation`은 `centerWordId`, `selectedWordId`만 비교한다.
+- tooltip display contract, availability probe contract, `WordGraphScreen(centerWord: Word)`, graph seed public API, `Word.fromMap` 일반 경계, repository/DB는 변경하지 않았다.
+- history back/forward UX, selected history 복원 정책, 삭제된 entry fallback 정책은 변경하지 않았다.
+
 ## 2026-04-21 Phase 8-H-18
 
 - explorer history tooltip display contract first slice를 적용했다.

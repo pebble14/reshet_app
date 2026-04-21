@@ -1,5 +1,14 @@
 # FEATURE_STATUS
 
+## 2026-04-21 Phase 8-H-20 진행 상태
+
+- 진행 범위: explorer history payload ID contract, `_ExplorerHistorySnapshot`, `_createHistoryEntry`, `_applyHistoryEntry`, `_isSameHistoryLocation`
+- 현재 상태: explorer history payload ID contract first slice 적용
+- 구조 기준: history payload는 `centerWordId`, `selectedWordId` 최소 필드만 보유하고, history apply는 `centerWordId`로 `Word(id: ...)`를 만들어 기존 graph center reread 흐름에 연결한다
+- 유지 범위: tooltip display contract, availability probe contract, `WordGraphScreen(centerWord: Word)`, graph seed public API, `Word.fromMap` 일반 경계, repository/DB 구조, explorer/history UX 정책
+- 주의: 이번 단계는 history payload carrier 축소이며, explorer/history 재구성이나 graph seed public API 변경 단계가 아니다
+- 보류 범위: graph seed contract, `Word.fromMap` 일반 경계, explorer/history 후속 절편
+
 ## 2026-04-21 Phase 8-H-18 진행 상태
 
 - 진행 범위: explorer history tooltip display contract, `_createHistoryEntry`의 tooltip 표시값 생성 경계, `_buildHistoryTooltip`의 tooltip 표시 소비 경계

@@ -1,5 +1,28 @@
 # Read Source Migration
 
+## 2026-04-21 Phase 8-H-20 explorer history payload ID contract first slice
+
+### 이번 단계 요약
+
+- 이번 단계는 explorer history payload ID contract first slice다.
+- `_ExplorerHistorySnapshot`의 중심 payload를 `Word` 전체에서 `centerWordId`로 줄였다.
+- history payload는 `centerWordId`, `selectedWordId` 최소 필드만 가진다.
+- `_applyHistoryEntry`는 `centerWordId`로 `Word(id: ...)`를 만들어 기존 graph center reread 흐름에 연결한다.
+
+### 적용 범위
+
+- `WordExplorerScreen._ExplorerHistorySnapshot`
+- `WordExplorerScreen._createHistoryEntry`
+- `WordExplorerScreen._applyHistoryEntry`
+- `WordExplorerScreen._isSameHistoryLocation`
+
+### 유지 범위
+
+- tooltip display contract는 Phase 8-H-18 결과를 유지한다.
+- availability probe contract는 Phase 8-H-16 결과를 유지한다.
+- `WordGraphScreen(centerWord: Word)`, graph seed public API, `Word.fromMap` 일반 경계, repository/DB 구조는 변경하지 않았다.
+- back/forward history UX, selected history 복원 정책, 삭제된 entry fallback 정책은 변경하지 않았다.
+
 ## 2026-04-21 Phase 8-H-18 explorer history tooltip display contract first slice
 
 ### 이번 단계 요약

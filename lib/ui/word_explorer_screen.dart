@@ -10,11 +10,11 @@ import 'word_info_panel.dart';
 import 'word_navigation_history.dart';
 
 class _ExplorerHistorySnapshot {
-  final Word centerWord;
+  final String centerWordId;
   final String? selectedWordId;
 
   const _ExplorerHistorySnapshot({
-    required this.centerWord,
+    required this.centerWordId,
     required this.selectedWordId,
   });
 }
@@ -452,7 +452,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
     final snapshot = entry.payload;
 
     setState(() {
-      _centerWord = snapshot.centerWord;
+      _centerWord = Word(id: snapshot.centerWordId);
       _selectedWordId = null;
       _selectedWordDisplayItem = null;
       _detailError = null;
@@ -614,7 +614,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
             .trim(),
       ),
       payload: _ExplorerHistorySnapshot(
-        centerWord: centerWord,
+        centerWordId: centerWordId,
         selectedWordId: selectedWordId,
       ),
     );
@@ -624,7 +624,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
     _ExplorerHistorySnapshot left,
     _ExplorerHistorySnapshot right,
   ) {
-    return left.centerWord.id == right.centerWord.id &&
+    return left.centerWordId == right.centerWordId &&
         left.selectedWordId == right.selectedWordId;
   }
 
