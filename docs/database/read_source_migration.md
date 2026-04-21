@@ -1,5 +1,27 @@
 # Read Source Migration
 
+## 2026-04-21 Phase 8-H-18 explorer history tooltip display contract first slice
+
+### 이번 단계 요약
+
+- 이번 단계는 explorer history tooltip display contract first slice다.
+- history tooltip 표시가 navigation payload의 `Word` 전체 대신 `WordNavigationHistoryTooltipDisplay`의 최소 display 필드를 사용하도록 분리했다.
+- `_ExplorerHistorySnapshot`, back/forward navigation 의미, graph seed, `Word.fromMap` 일반 경계, repository/DB 구조는 변경하지 않았다.
+
+### 적용 범위
+
+- `WordNavigationHistoryTooltipDisplay`
+- `WordNavigationHistoryEntry` tooltip display 보유 경계
+- `WordExplorerScreen._createHistoryEntry`
+- `WordExplorerScreen._buildHistoryTooltip`
+- history tooltip display contract 단위 테스트
+
+### 구조 결과
+
+- tooltip display 경로는 `wordId`, `representativeSpelling`, `displayStrongNumber`, `representativeTransliteration` 최소 필드만 소비한다.
+- history availability와 기존 호출부 영향은 `WordNavigationHistoryEntry.wordId`, `representativeSpelling`, `strongNumber` getter를 유지해 제한했다.
+- 이번 단계는 explorer/history UX 정책 변경, history payload 제거, graph seed 변경, `Word.fromMap` 일반 경계 제거 단계가 아니다.
+
 ## 2026-04-21 Phase 8-H-16 explorer history availability probe contract first slice
 
 ### 이번 단계 요약

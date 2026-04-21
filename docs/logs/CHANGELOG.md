@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-04-21 Phase 8-H-18
+
+- explorer history tooltip display contract first slice를 적용했다.
+- `WordNavigationHistoryTooltipDisplay`를 추가해 tooltip 표시가 `wordId`, 대표 표기, display Strong, 대표 음역 최소 필드를 사용하도록 분리했다.
+- `_buildHistoryTooltip`은 더 이상 `entry.payload.centerWord.transliteration1`을 직접 읽지 않고, tooltip display contract의 표시 줄만 소비한다.
+- `_ExplorerHistorySnapshot`, back/forward navigation 의미, graph seed, `WordGraphScreen(centerWord: Word)`, `Word.fromMap` 일반 경계, repository/DB는 변경하지 않았다.
+
 ## 2026-04-21 Phase 8-H-16
 
 - explorer history availability probe contract first slice를 적용했다.

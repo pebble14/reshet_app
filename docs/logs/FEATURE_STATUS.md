@@ -1,5 +1,14 @@
 # FEATURE_STATUS
 
+## 2026-04-21 Phase 8-H-18 진행 상태
+
+- 진행 범위: explorer history tooltip display contract, `_createHistoryEntry`의 tooltip 표시값 생성 경계, `_buildHistoryTooltip`의 tooltip 표시 소비 경계
+- 현재 상태: explorer history tooltip display contract first slice 적용
+- 구조 기준: tooltip display는 `WordNavigationHistoryTooltipDisplay`의 `wordId`, `representativeSpelling`, `displayStrongNumber`, `representativeTransliteration` 최소 필드만 기준으로 표시한다
+- 유지 범위: `_ExplorerHistorySnapshot`, history payload, back/forward navigation 의미, graph seed, `WordGraphScreen(centerWord: Word)`, `Word.fromMap` 일반 경계, repository/DB 구조, explorer/history UX 정책
+- 주의: 이번 단계는 tooltip 표시 consumer 축소이며, explorer/history 재구성이나 navigation payload 대체 단계가 아니다
+- 보류 범위: history payload contract, graph seed contract, `Word.fromMap` 일반 경계, explorer/history 후속 절편
+
 ## 2026-04-21 Phase 8-H-16 진행 상태
 
 - 진행 범위: explorer history availability probe contract, `_isHistoryEntryAvailable` back/forward 직전 재검증 경계

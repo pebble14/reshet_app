@@ -1,13 +1,41 @@
-class WordNavigationHistoryEntry<T> {
+class WordNavigationHistoryTooltipDisplay {
   final String wordId;
   final String representativeSpelling;
-  final String strongNumber;
-  final T payload;
+  final String displayStrongNumber;
+  final String representativeTransliteration;
 
-  const WordNavigationHistoryEntry({
+  const WordNavigationHistoryTooltipDisplay({
     required this.wordId,
     required this.representativeSpelling,
-    required this.strongNumber,
+    required this.displayStrongNumber,
+    required this.representativeTransliteration,
+  });
+
+  List<String> get tooltipLines {
+    final spelling = representativeSpelling.trim();
+    final transliteration = representativeTransliteration.trim();
+    final strongNumber = displayStrongNumber.trim();
+
+    return <String>[
+      if (spelling.isNotEmpty) spelling,
+      if (transliteration.isNotEmpty) transliteration,
+      if (strongNumber.isNotEmpty) strongNumber,
+    ];
+  }
+}
+
+class WordNavigationHistoryEntry<T> {
+  final WordNavigationHistoryTooltipDisplay tooltipDisplay;
+  final T payload;
+
+  String get wordId => tooltipDisplay.wordId;
+
+  String get representativeSpelling => tooltipDisplay.representativeSpelling;
+
+  String get strongNumber => tooltipDisplay.displayStrongNumber;
+
+  const WordNavigationHistoryEntry({
+    required this.tooltipDisplay,
     required this.payload,
   });
 }

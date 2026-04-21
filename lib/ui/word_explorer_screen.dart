@@ -606,9 +606,13 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
     );
 
     return WordNavigationHistoryEntry<_ExplorerHistorySnapshot>(
-      wordId: centerWordId,
-      representativeSpelling: representativeSpelling,
-      strongNumber: strongNumber,
+      tooltipDisplay: WordNavigationHistoryTooltipDisplay(
+        wordId: centerWordId,
+        representativeSpelling: representativeSpelling,
+        displayStrongNumber: strongNumber,
+        representativeTransliteration: (centerWord.transliteration1 ?? '')
+            .trim(),
+      ),
       payload: _ExplorerHistorySnapshot(
         centerWord: centerWord,
         selectedWordId: selectedWordId,
@@ -632,14 +636,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
       return '$label: 기록 없음';
     }
 
-    final transliteration = (entry.payload.centerWord.transliteration1 ?? '')
-        .trim();
-    final parts = <String>[
-      if (entry.representativeSpelling.trim().isNotEmpty)
-        entry.representativeSpelling.trim(),
-      if (transliteration.isNotEmpty) transliteration,
-      if (entry.strongNumber.trim().isNotEmpty) entry.strongNumber.trim(),
-    ];
+    final parts = entry.tooltipDisplay.tooltipLines;
 
     if (parts.isEmpty) {
       return '$label: 중심';
