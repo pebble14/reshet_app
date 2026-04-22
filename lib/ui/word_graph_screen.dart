@@ -743,10 +743,17 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     return trimmed.isEmpty ? null : trimmed;
   }
 
+  /// Collapse the external graph seed to the only trusted bootstrap field.
+  String _centerSeedIdOf(Word word) => word.id.trim();
+
+  Word _centerSeedWordFrom(Word word) {
+    return Word(id: _centerSeedIdOf(word));
+  }
+
   @override
   void initState() {
     super.initState();
-    _centerWord = widget.centerWord;
+    _centerWord = _centerSeedWordFrom(widget.centerWord);
     _selectedWordId = widget.selectedWordId;
     _loadConnectedWords();
   }
@@ -755,13 +762,15 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   void didUpdateWidget(covariant WordGraphScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    final didCenterWordChange = widget.centerWord.id != oldWidget.centerWord.id;
+    final nextCenterSeedId = _centerSeedIdOf(widget.centerWord);
+    final oldCenterSeedId = _centerSeedIdOf(oldWidget.centerWord);
+    final didCenterWordChange = nextCenterSeedId != oldCenterSeedId;
 
     if (didCenterWordChange) {
-      WordGraphDataCache.clearExpansionsForCenter(oldWidget.centerWord.id);
+      WordGraphDataCache.clearExpansionsForCenter(oldCenterSeedId);
       _resetExpansionState(clearSeedPositions: true);
       setState(() {
-        _centerWord = widget.centerWord;
+        _centerWord = _centerSeedWordFrom(widget.centerWord);
         _centerWordDisplayItem = null;
         _selectedWordId = widget.selectedWordId;
         _isLoading = true;
@@ -769,7 +778,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         _graphViewData = null;
         _baseGraphData = null;
         _pendingCenterFocusAfterCenterChange = true;
-        _pendingCenterFocusWordId = widget.centerWord.id;
+        _pendingCenterFocusWordId = nextCenterSeedId;
       });
       _loadConnectedWords();
       return;
@@ -1096,7 +1105,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   }
 
   Future<void> _loadConnectedWords() async {
-    final requestedCenterWordId = _centerWord.id;
+    final requestedCenterWordId = _centerWord.id.trim();
     _resetExpansionState(clearSeedPositions: true);
 
     final cachedBaseGraph = WordGraphDataCache.getBaseGraph(
@@ -1132,7 +1141,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
           })();
 
       if (!mounted) return;
-      if (_centerWord.id != requestedCenterWordId) {
+      if (_centerWord.id.trim() != requestedCenterWordId) {
         return;
       }
       setState(() {

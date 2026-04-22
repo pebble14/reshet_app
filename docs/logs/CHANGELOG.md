@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-04-22 Phase 8-H-22
+
+- graph seed id contract first slice를 적용했다.
+- `WordGraphScreen(centerWord: Word)` public API는 유지하면서, graph 내부 seed 소비 경계가 caller `Word`의 표시 필드 대신 `centerWord.id.trim()`만 bootstrap 기준으로 신뢰하도록 정리했다.
+- 초기 load와 center update 비교/적용 경계에서 trim된 center id를 사용하고, center display / graph label / graph data는 기존 graph 내부 reread 결과 경로를 유지했다.
+- `graph_builder`, `word_graph_cache`, repository, DB, `Word.fromMap` 일반 경계, explorer/history payload, graph UX 정책은 변경하지 않았다.
+
 ## 2026-04-21 Phase 8-H-20
 
 - explorer history payload ID contract first slice를 적용했다.
