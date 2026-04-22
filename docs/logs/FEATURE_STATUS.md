@@ -1,5 +1,14 @@
 # FEATURE_STATUS
 
+## 2026-04-22 Phase 8-H-24 진행 상태
+
+- 진행 범위: graph seed public API contract first slice, `WordGraphScreen` public seed boundary, graph 진입 caller seed 전달부
+- 현재 상태: graph seed public API contract first slice 적용
+- 구조 기준: `WordGraphScreen`의 주 seed contract는 `centerWordId`이며, 기존 `centerWord: Word`는 compatibility entrypoint로 남기되 내부 seed는 id만 사용한다
+- 유지 범위: center display reread, graph label reread, graph data build 흐름, `graph_builder`, `word_graph_cache`, repository/DB 구조, `Word.fromMap` 일반 경계, explorer/history payload, graph UX 정책
+- 주의: 이번 단계는 graph public seed 입력 boundary 축소이며, graph public API 전면 개편이나 `Word.fromMap` 제거 시작 단계가 아니다
+- 보류 범위: graph builder/cache carrier contract, repository 반환형 정리, `Word.fromMap` 일반 경계 후속 절편
+
 ## 2026-04-22 Phase 8-H-22 진행 상태
 
 - 진행 범위: graph seed id contract first slice, `WordGraphScreen` 내부 seed 소비 경계, 초기 load / center update 비교와 적용 경계

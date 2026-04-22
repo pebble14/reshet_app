@@ -71,7 +71,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
             flex: 3,
             child: WordGraphScreen(
               key: ValueKey(_graphRevision),
-              centerWord: _centerWord,
+              centerWordId: _centerWord.id,
               selectedWordId: _selectedWordId,
               appBarActionPrefix: _buildHistoryActions(),
               onSelectWord: (word) async {

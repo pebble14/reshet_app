@@ -1,5 +1,26 @@
 # Read Source Migration
 
+## 2026-04-22 Phase 8-H-24 graph seed public API contract first slice
+
+### 이번 단계 요약
+
+- 이번 단계는 graph seed public API contract first slice다.
+- `WordGraphScreen`의 주 seed contract를 `centerWordId`로 전환했다.
+- 기존 `centerWord: Word`는 compatibility entrypoint로 유지하되, 실제 graph seed는 `centerWord.id.trim()`만 사용한다.
+- graph 진입 caller는 full `Word` carrier 대신 `centerWordId`를 전달하도록 한 단계 축소했다.
+
+### 적용 범위
+
+- `WordGraphScreen` public seed boundary
+- home/detail/explorer graph 진입 seed 전달부
+- graph 내부에서 자기 자신을 다시 여는 seed 전달부
+
+### 유지 범위
+
+- center display / graph label / graph data는 기존 graph 내부 reread 결과 경로를 유지한다.
+- `graph_builder`, `word_graph_cache`, repository, DB 구조는 변경하지 않는다.
+- `Word.fromMap` 일반 경계와 explorer/history payload, graph selection / expansion / navigation UX 정책은 변경하지 않는다.
+
 ## 2026-04-22 Phase 8-H-22 graph seed id contract first slice
 
 ### 이번 단계 요약

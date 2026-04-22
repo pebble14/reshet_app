@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-04-22 Phase 8-H-24
+
+- graph seed public API contract first slice를 적용했다.
+- `WordGraphScreen`의 주 seed contract를 `centerWordId`로 전환하고, 기존 `centerWord: Word`는 compatibility entrypoint로 남겨 id-only seed로 축소했다.
+- home/detail/explorer/graph 내부 graph 진입 caller는 full `Word` 대신 `centerWordId`를 전달하도록 최소 변경했다.
+- center display reread, graph label reread, graph data build, `graph_builder`, `word_graph_cache`, repository/DB, `Word.fromMap` 일반 경계, explorer/history payload, graph UX 정책은 변경하지 않았다.
+
 ## 2026-04-22 Phase 8-H-22
 
 - graph seed id contract first slice를 적용했다.

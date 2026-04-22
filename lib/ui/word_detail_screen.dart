@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import '../data/models/word.dart';
 import '../data/repositories/word_repository.dart';
 import '../domain/word/word_detail_like_display_item.dart';
 import '../domain/word/word_write_models.dart';
@@ -101,8 +100,7 @@ class _WordDetailScreenState extends State<WordDetailScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) =>
-            WordGraphScreen(centerWord: Word.fromMap(centerWordMap)),
+        builder: (context) => WordGraphScreen(centerWordId: _wordId),
       ),
     );
   }

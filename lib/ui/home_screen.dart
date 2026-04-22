@@ -15,7 +15,6 @@ import '../domain/home/home_default_strong_list_item.dart';
 import '../domain/home/home_search_result_display_item.dart';
 import '../database/database_service.dart';
 import 'word_detail_screen.dart';
-import '../data/models/word.dart';
 import '../data/repositories/word_repository.dart';
 import 'word_graph_cache.dart';
 import 'word_graph_screen.dart';
@@ -721,10 +720,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     await Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (_) =>
-            WordGraphScreen(centerWord: Word.fromMap(centerWordMap)),
-      ),
+      MaterialPageRoute(builder: (_) => WordGraphScreen(centerWordId: wordId)),
     );
 
     if (!mounted) return;

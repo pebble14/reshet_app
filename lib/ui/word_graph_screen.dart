@@ -656,8 +656,13 @@ class CreateRelationPayload {
 /// - WORD_RELATION을 통해 연결된 단어들을 원형으로 배치하고
 /// - 중심↔연결 단어 간 엣지(선)를 그리는 화면
 class WordGraphScreen extends StatefulWidget {
-  /// 그래프의 중심이 되는 단어(모델)
-  final Word centerWord;
+  /// Graph public seed boundary. The graph rereads center display/data by id.
+  final String centerWordId;
+
+  /// Compatibility entrypoint for older callers. This returns an id-only seed
+  /// object and does not preserve or trust display fields from the caller.
+  @Deprecated('Use centerWordId instead.')
+  Word get centerWord => Word(id: centerWordId);
 
   /// 스플릿뷰 등에서 노드 클릭 시 화면 push 대신
   /// 선택 이벤트만 전달하고 싶을 때 사용한다.
@@ -670,15 +675,37 @@ class WordGraphScreen extends StatefulWidget {
   /// 부모가 중심 단어를 바꾸도록 알린다.
   final ValueChanged<Word>? onChangeCenterWord;
 
-  const WordGraphScreen({
+  WordGraphScreen({
     super.key,
-    required this.centerWord,
+    String? centerWordId,
+    @Deprecated('Use centerWordId instead.') Word? centerWord,
     this.selectedWordId,
     this.appBarActionPrefix = const [],
     this.onSelectWord,
     this.onClearSelection,
     this.onChangeCenterWord,
-  });
+  }) : centerWordId = _resolveCenterWordId(
+         centerWordId: centerWordId,
+         centerWord: centerWord,
+       );
+
+  static String _resolveCenterWordId({
+    required String? centerWordId,
+    required Word? centerWord,
+  }) {
+    final normalizedCenterWordId = centerWordId?.trim();
+    if (normalizedCenterWordId != null && normalizedCenterWordId.isNotEmpty) {
+      return normalizedCenterWordId;
+    }
+
+    final normalizedCompatibilityId = centerWord?.id.trim();
+    if (normalizedCompatibilityId != null &&
+        normalizedCompatibilityId.isNotEmpty) {
+      return normalizedCompatibilityId;
+    }
+
+    throw ArgumentError('WordGraphScreen requires centerWordId.');
+  }
 
   @override
   State<WordGraphScreen> createState() => _WordGraphScreenState();
@@ -744,16 +771,16 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   }
 
   /// Collapse the external graph seed to the only trusted bootstrap field.
-  String _centerSeedIdOf(Word word) => word.id.trim();
+  String _centerSeedIdOf(String centerWordId) => centerWordId.trim();
 
-  Word _centerSeedWordFrom(Word word) {
-    return Word(id: _centerSeedIdOf(word));
+  Word _centerSeedWordFrom(String centerWordId) {
+    return Word(id: _centerSeedIdOf(centerWordId));
   }
 
   @override
   void initState() {
     super.initState();
-    _centerWord = _centerSeedWordFrom(widget.centerWord);
+    _centerWord = _centerSeedWordFrom(widget.centerWordId);
     _selectedWordId = widget.selectedWordId;
     _loadConnectedWords();
   }
@@ -762,15 +789,15 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   void didUpdateWidget(covariant WordGraphScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    final nextCenterSeedId = _centerSeedIdOf(widget.centerWord);
-    final oldCenterSeedId = _centerSeedIdOf(oldWidget.centerWord);
+    final nextCenterSeedId = _centerSeedIdOf(widget.centerWordId);
+    final oldCenterSeedId = _centerSeedIdOf(oldWidget.centerWordId);
     final didCenterWordChange = nextCenterSeedId != oldCenterSeedId;
 
     if (didCenterWordChange) {
       WordGraphDataCache.clearExpansionsForCenter(oldCenterSeedId);
       _resetExpansionState(clearSeedPositions: true);
       setState(() {
-        _centerWord = _centerSeedWordFrom(widget.centerWord);
+        _centerWord = _centerSeedWordFrom(widget.centerWordId);
         _centerWordDisplayItem = null;
         _selectedWordId = widget.selectedWordId;
         _isLoading = true;
@@ -1726,7 +1753,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => WordGraphScreen(centerWord: word)),
+      MaterialPageRoute(builder: (_) => WordGraphScreen(centerWordId: word.id)),
     );
   }
 
@@ -4713,7 +4740,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     if (createdWord != null) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (_) => WordGraphScreen(centerWord: createdWord),
+          builder: (_) => WordGraphScreen(centerWordId: createdWord.id),
         ),
       );
       return;
