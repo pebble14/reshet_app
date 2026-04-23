@@ -670,6 +670,9 @@ class WordGraphScreen extends StatefulWidget {
   /// 선택 이벤트만 전달하고 싶을 때 사용한다.
   final String? selectedWordId;
   final List<Widget> appBarActionPrefix;
+  final ValueChanged<String>? onSelectWordId;
+
+  /// Compatibility fallback for callers that still consume a Word payload.
   final ValueChanged<Word>? onSelectWord;
   final VoidCallback? onClearSelection;
 
@@ -683,6 +686,7 @@ class WordGraphScreen extends StatefulWidget {
     @Deprecated('Use centerWordId instead.') Word? centerWord,
     this.selectedWordId,
     this.appBarActionPrefix = const [],
+    this.onSelectWordId,
     this.onSelectWord,
     this.onClearSelection,
     this.onChangeCenterWord,
@@ -1740,13 +1744,27 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         : _connectedNodeLanguageTintAlpha;
   }
 
+  bool get _hasSelectWordCallback =>
+      widget.onSelectWordId != null || widget.onSelectWord != null;
+
+  void _notifySelectedWord(Word word) {
+    final selectedWordId = word.id.trim();
+    final onSelectWordId = widget.onSelectWordId;
+    if (onSelectWordId != null) {
+      onSelectWordId(selectedWordId);
+      return;
+    }
+
+    widget.onSelectWord?.call(word);
+  }
+
   void _handleCenterNodeTap() {
     _temporarilySuppressBackgroundTapClear();
     if (_selectedWordId != _centerWord.id) {
       setState(() => _selectedWordId = _centerWord.id);
     }
 
-    widget.onSelectWord?.call(_centerWord);
+    _notifySelectedWord(_centerWord);
   }
 
   void _handleConnectedWordTap(Word word) {
@@ -1755,7 +1773,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
     if (!isSameTap) {
       setState(() => _selectedWordId = word.id);
-      widget.onSelectWord?.call(word);
+      _notifySelectedWord(word);
       unawaited(_expandDepthTwoForSelection(word));
       return;
     }
@@ -1765,8 +1783,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       return;
     }
 
-    if (widget.onSelectWord != null) {
-      widget.onSelectWord!(word);
+    if (_hasSelectWordCallback) {
+      _notifySelectedWord(word);
       return;
     }
 

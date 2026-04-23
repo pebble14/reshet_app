@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-04-23 Phase 8-H-30
+
+- graph selection callback contract first slice를 적용했다.
+- `WordGraphScreen`에 `onSelectWordId`를 selection callback 주경로로 추가하고, 기존 `onSelectWord`는 compatibility fallback으로 유지했다.
+- `WordExplorerScreen._selectWord`의 주 입력을 `selectedWordId`로 전환하고, detail panel 갱신은 기존 split-view id reread 경로를 유지했다.
+- `onChangeCenterWord`, `_centerWord`, graph builder/cache, repository/DB, `Word.fromMap` 일반 경계, graph/history/tooltip UX 정책은 변경하지 않았다.
+
 ## 2026-04-23 Phase 8-H-28
 
 - graph UI state visible node contract first slice를 적용했다.

@@ -1,5 +1,14 @@
 # FEATURE_STATUS
 
+## 2026-04-23 Phase 8-H-30 진행 상태
+
+- 진행 범위: graph selection callback contract first slice, `WordGraphScreen.onSelectWordId` → `WordExplorerScreen._selectWord` selection callback 경계
+- 현재 상태: selection callback 주경로가 full `Word` carrier 대신 `selectedWordId`를 전달하도록 적용
+- 구조 기준: `onSelectWordId`는 selection callback의 id 중심 주경로이고, 기존 `onSelectWord`는 compatibility fallback으로만 유지한다
+- 유지 범위: `onChangeCenterWord`, `_centerWord`, `WordGraphScreen` public seed API, graph builder/cache, repository/DB, `Word.fromMap` 일반 경계, history/tooltip/graph UX 정책
+- 주의: 이번 단계는 selection callback boundary first slice이며, graph interaction 전면 개편이나 center carrier 축소 단계가 아니다
+- 보류 범위: `onChangeCenterWord` contract, `_centerWord` 축소, `Word.fromMap` 일반 경계 후속 절편
+
 ## 2026-04-23 Phase 8-H-28 진행 상태
 
 - 진행 범위: graph UI state visible node contract first slice, `WordGraphScreen` 내부 `_graphWordsById` visible node carrier 경계

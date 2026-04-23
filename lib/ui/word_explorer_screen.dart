@@ -74,12 +74,12 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
               centerWordId: _centerWord.id,
               selectedWordId: _selectedWordId,
               appBarActionPrefix: _buildHistoryActions(),
-              onSelectWord: (word) async {
-                await _selectWord(word);
+              onSelectWordId: (selectedWordId) async {
+                await _selectWord(selectedWordId);
               },
               onClearSelection: _clearSelectedWordPanel,
               onChangeCenterWord: (word) async {
-                await _selectWord(word, changeCenterWord: true);
+                await _selectWord(word.id, changeCenterWordTo: word);
               },
             ),
           ),
@@ -90,10 +90,17 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
     );
   }
 
-  Future<void> _selectWord(Word word, {bool changeCenterWord = false}) async {
+  Future<void> _selectWord(
+    String selectedWordId, {
+    Word? changeCenterWordTo,
+  }) async {
+    final normalizedSelectedWordId = selectedWordId.trim();
+    final nextCenterWord = changeCenterWordTo;
+    final shouldChangeCenterWord = nextCenterWord != null;
+
     setState(() {
-      if (changeCenterWord) {
-        _centerWord = word;
+      if (shouldChangeCenterWord) {
+        _centerWord = nextCenterWord;
       }
       _isDetailLoading = true;
       _detailError = null;
@@ -101,13 +108,15 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
     });
 
     try {
-      final selectedDisplayItem = await _loadSplitViewDisplayItem(word.id);
+      final selectedDisplayItem = await _loadSplitViewDisplayItem(
+        normalizedSelectedWordId,
+      );
 
       if (!mounted) return;
 
       final resolvedSelectedWordId = selectedDisplayItem == null
           ? null
-          : word.id.trim();
+          : normalizedSelectedWordId;
       setState(() {
         _selectedWordId = resolvedSelectedWordId;
         _selectedWordDisplayItem = selectedDisplayItem;
@@ -115,7 +124,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
         _detailUnavailableMessage = selectedDisplayItem == null
             ? '선택한 단어의 상세 정보를 찾을 수 없습니다.'
             : null;
-        if (changeCenterWord) {
+        if (shouldChangeCenterWord) {
           _pushHistoryEntry(
             centerWord: _centerWord,
             selectedWordId: resolvedSelectedWordId,

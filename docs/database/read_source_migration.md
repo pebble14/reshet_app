@@ -1,5 +1,21 @@
 # Read Source Migration
 
+## 2026-04-23 Phase 8-H-30 graph selection callback contract first slice
+
+### 이번 단계 요약
+
+- 이번 단계는 graph selection callback contract first slice다.
+- `WordGraphScreen.onSelectWordId`를 selection callback 주경로로 추가했다.
+- `WordExplorerScreen._selectWord`는 full `Word` 대신 `selectedWordId`를 주 입력으로 받고, detail panel은 기존 split-view id reread 경로를 유지한다.
+- 기존 `onSelectWord`는 compatibility fallback으로 유지한다.
+
+### 유지 범위
+
+- `onChangeCenterWord` 시그니처와 동작은 변경하지 않는다.
+- `_centerWord`, `WordGraphScreen` public seed API, graph builder/cache, repository/DB, `Word.fromMap` 일반 경계는 변경하지 않는다.
+- explorer history payload/tooltip, graph selection UX, detail panel UX, navigation 정책은 변경하지 않는다.
+- 이번 단계는 selection callback boundary 축소이며 graph interaction 전면 개편으로 해석하지 않는다.
+
 ## 2026-04-23 Phase 8-H-28 graph UI state visible node contract first slice
 
 ### 이번 단계 요약
