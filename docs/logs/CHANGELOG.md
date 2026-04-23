@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-04-23 Phase 8-H-28
+
+- graph UI state visible node contract first slice를 적용했다.
+- `GraphVisibleNode`를 추가해 `WordGraphScreen` 내부 `_graphWordsById` 저장 carrier를 full `Word`에서 `wordId`, `fallbackSpelling`, `fallbackStrongNumber`, `fallbackTransliteration` 최소 필드로 줄였다.
+- `GraphWordLabelDisplayItem` 주 label 경로, `_centerWord`, `ValueChanged<Word>` callback, explorer callback, `WordGraphScreen` public API는 유지했다.
+- repository/DB, `Word.fromMap` 일반 경계, graph builder/cache carrier는 변경하지 않았다.
+
 ## 2026-04-22 Phase 8-H-26
 
 - graph builder/cache carrier contract first slice를 적용했다.

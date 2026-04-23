@@ -1,5 +1,27 @@
 # Read Source Migration
 
+## 2026-04-23 Phase 8-H-28 graph UI state visible node contract first slice
+
+### 이번 단계 요약
+
+- 이번 단계는 graph UI state visible node contract first slice다.
+- `WordGraphScreen` 내부 `_graphWordsById` 저장 carrier를 full `Word`에서 `GraphVisibleNode`로 줄였다.
+- `GraphVisibleNode`는 `wordId`, `fallbackSpelling`, `fallbackStrongNumber`, `fallbackTransliteration`만 보유한다.
+- `GraphWordLabelDisplayItem` 주 label 경로는 유지하고, label contract가 없을 때만 `_graphWordsById`의 visible node fallback 값을 참조한다.
+
+### 적용 범위
+
+- `GraphVisibleNode`
+- `WordGraphScreen._graphWordsById`
+- visible node lookup / fallback display 경계
+
+### 유지 범위
+
+- `_centerWord`는 변경하지 않는다.
+- `ValueChanged<Word>` callback, explorer callback, `WordGraphScreen` public API는 변경하지 않는다.
+- repository/DB read policy, `Word.fromMap` 일반 경계, graph builder/cache carrier는 변경하지 않는다.
+- relation add/search, detail panel, graph selection, explorer history, home/edit seed UX 정책은 변경하지 않는다.
+
 ## 2026-04-22 Phase 8-H-26 graph builder/cache carrier contract first slice
 
 ### 이번 단계 요약

@@ -14,6 +14,7 @@ import '../domain/graph/graph_edge.dart';
 import '../domain/graph/graph_node.dart';
 import '../domain/graph/graph_relation_add_search_result_item.dart';
 import '../domain/graph/graph_view_data.dart';
+import '../domain/graph/graph_visible_node.dart';
 import '../domain/graph/graph_visible_word.dart';
 import '../domain/graph/graph_word_label_display_item.dart';
 import '../domain/graph/layout/graph_layout_strategy_resolver.dart';
@@ -739,8 +740,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   GraphViewData? _graphViewData;
   WordGraphBaseCacheData? _baseGraphData;
 
-  /// 중심 단어와 연결된 단어 목록
-  final Map<String, Word> _graphWordsById = {};
+  /// 중심 단어와 연결된 visible node fallback 목록
+  final Map<String, GraphVisibleNode> _graphWordsById = {};
   final Map<String, GraphWordLabelDisplayItem> _graphWordLabelsById = {};
   final Map<String, WordGraphExpansionCacheData> _expansionDataBySourceId = {};
   final Set<String> _expandedDepthOneWordIds = <String>{};
@@ -837,9 +838,11 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     required List<GraphWordLabelDisplayItem> wordLabels,
     required List<WordRelationEdgeInfo> edges,
   }) {
-    final wordsById = <String, Word>{
-      _centerWord.id: _centerWord,
-      for (final word in words) word.id: word,
+    final visibleNodesById = <String, GraphVisibleNode>{
+      _centerWord.id: _visibleNodeForWord(_centerWord),
+      for (final word in words)
+        if (word.id.trim().isNotEmpty)
+          word.id.trim(): _visibleNodeForWord(word),
     };
     final labelsById = <String, GraphWordLabelDisplayItem>{
       for (final labelDisplay in wordLabels)
@@ -850,7 +853,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     _graphViewData = viewData;
     _graphWordsById
       ..clear()
-      ..addAll(wordsById);
+      ..addAll(visibleNodesById);
     _graphWordLabelsById
       ..clear()
       ..addAll(labelsById);
@@ -879,6 +882,15 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     _errorMessage = null;
     _isLoading = false;
     _scheduleVisibleCollisionWordIdRefresh();
+  }
+
+  GraphVisibleNode _visibleNodeForWord(Word word) {
+    return GraphVisibleNode(
+      wordId: word.id.trim(),
+      fallbackSpelling: (word.spelling1 ?? '').trim(),
+      fallbackStrongNumber: (word.strongNumber ?? '').trim(),
+      fallbackTransliteration: (word.transliteration1 ?? '').trim(),
+    );
   }
 
   void _scheduleVisibleCollisionWordIdRefresh() {
@@ -960,16 +972,22 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   }
 
   GraphWordLabelDisplayItem _labelDisplayForGraphNode(GraphNode graphNode) {
-    final labelDisplay = _graphWordLabelsById[graphNode.wordId];
+    final wordId = graphNode.wordId.trim();
+    final labelDisplay = _graphWordLabelsById[wordId];
     if (labelDisplay != null) {
       return labelDisplay;
     }
 
+    final visibleNode = _graphWordsById[wordId];
+    final representativeSpelling = graphNode.label.trim().isNotEmpty
+        ? graphNode.label
+        : (visibleNode?.fallbackDisplayName ?? '');
     return GraphWordLabelDisplayItem(
-      wordId: graphNode.wordId,
-      representativeSpelling: graphNode.label,
-      representativeTransliteration: '',
-      displayStrongNumber: '',
+      wordId: wordId,
+      representativeSpelling: representativeSpelling,
+      representativeTransliteration:
+          visibleNode?.fallbackTransliteration.trim() ?? '',
+      displayStrongNumber: visibleNode?.fallbackStrongNumber.trim() ?? '',
     );
   }
 
@@ -3570,21 +3588,43 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   }
 
   Word? _wordForNodeId(String nodeId) {
-    if (nodeId == _centerWord.id) {
+    final normalizedNodeId = nodeId.trim();
+    if (normalizedNodeId == _centerWord.id) {
       return _centerWord;
     }
 
-    return _graphWordsById[nodeId];
+    final visibleNode = _graphWordsById[normalizedNodeId];
+    if (visibleNode == null) {
+      return null;
+    }
+
+    return _wordForVisibleNode(visibleNode);
+  }
+
+  Word _wordForVisibleNode(GraphVisibleNode visibleNode) {
+    return Word(
+      id: visibleNode.wordId,
+      spelling1: _nullIfBlank(visibleNode.fallbackSpelling),
+      strongNumber: _nullIfBlank(visibleNode.fallbackStrongNumber),
+      transliteration1: _nullIfBlank(visibleNode.fallbackTransliteration),
+    );
   }
 
   String _wordDisplayName(String nodeId) {
-    final labelDisplay = _graphWordLabelsById[nodeId.trim()];
+    final normalizedNodeId = nodeId.trim();
+    final labelDisplay = _graphWordLabelsById[normalizedNodeId];
     final displayName = labelDisplay?.relationDisplayName.trim() ?? '';
     if (displayName.isNotEmpty) {
       return displayName;
     }
 
-    return nodeId;
+    final fallbackDisplayName =
+        _graphWordsById[normalizedNodeId]?.fallbackDisplayName.trim() ?? '';
+    if (fallbackDisplayName.isNotEmpty) {
+      return fallbackDisplayName;
+    }
+
+    return normalizedNodeId;
   }
 
   String _edgeDisplayTitle(WordRelationEdgeInfo info) {

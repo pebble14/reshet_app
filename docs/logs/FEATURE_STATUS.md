@@ -1,5 +1,14 @@
 # FEATURE_STATUS
 
+## 2026-04-23 Phase 8-H-28 진행 상태
+
+- 진행 범위: graph UI state visible node contract first slice, `WordGraphScreen` 내부 `_graphWordsById` visible node carrier 경계
+- 현재 상태: `_graphWordsById`가 full `Word` 대신 `GraphVisibleNode` 최소 carrier를 저장하도록 적용
+- 구조 기준: `GraphVisibleNode`는 `wordId`, `fallbackSpelling`, `fallbackStrongNumber`, `fallbackTransliteration`만 보유하는 graph UI state visible node용 carrier다
+- 유지 범위: `GraphWordLabelDisplayItem` 주 label 경로, `_centerWord`, `ValueChanged<Word>` callback, explorer callback, `WordGraphScreen` public API, repository/DB, `Word.fromMap` 일반 경계, graph builder/cache carrier, graph UX 정책
+- 주의: 이번 단계는 `_graphWordsById` state 저장 축소 first slice이며, center/callback/public API나 builder/cache 재정리 단계가 아니다
+- 보류 범위: callback contract 축소, `_centerWord` 축소, `Word.fromMap` 일반 경계 후속 절편
+
 ## 2026-04-22 Phase 8-H-26 진행 상태
 
 - 진행 범위: graph builder/cache carrier contract first slice, `VisibleWordGraphData.connectedWords` → `WordGraphDataCache` → `GraphBuilder` 내부 조립 carrier
