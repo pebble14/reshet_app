@@ -1,5 +1,14 @@
 # FEATURE_STATUS
 
+## 2026-04-22 Phase 8-H-26 진행 상태
+
+- 진행 범위: graph builder/cache carrier contract first slice, `VisibleWordGraphData.connectedWords` → `WordGraphDataCache` → `GraphBuilder` 내부 조립 carrier
+- 현재 상태: graph builder/cache carrier contract first slice 적용
+- 구조 기준: `GraphVisibleWord`는 `wordId`, `fallbackSpelling`, `fallbackStrongNumber`, `fallbackTransliteration`만 보유하는 graph builder/cache용 최소 carrier다
+- 유지 범위: `GraphWordLabelDisplayItem` 주 label 경로, `WordGraphScreen` public API / `_centerWord` / `_graphWordsById` / callback 시그니처, repository/DB read policy, `Word.fromMap` 일반 경계, graph seed public boundary, graph UX 정책
+- 주의: 이번 단계는 graph 내부 조립 carrier first slice이며, graph internal state 전면 개편이나 `Word.fromMap` 제거 시작 단계가 아니다
+- 보류 범위: graph UI state contract 후속 절편, repository 반환형 추가 정리, `Word.fromMap` 일반 경계 후속 절편
+
 ## 2026-04-22 Phase 8-H-24 진행 상태
 
 - 진행 범위: graph seed public API contract first slice, `WordGraphScreen` public seed boundary, graph 진입 caller seed 전달부

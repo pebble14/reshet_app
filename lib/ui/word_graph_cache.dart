@@ -1,12 +1,12 @@
 import 'dart:collection';
 
-import '../data/models/word.dart';
 import '../data/repositories/word_repository.dart';
+import '../domain/graph/graph_visible_word.dart';
 import '../domain/graph/graph_word_label_display_item.dart';
 
 class _BaseGraphCacheEntry {
   final String centerWordId;
-  final List<Word> connectedWords;
+  final List<GraphVisibleWord> connectedWords;
   final List<GraphWordLabelDisplayItem> wordLabels;
   final List<WordRelationEdgeInfo> relationEdges;
   final DateTime lastAccessedAt;
@@ -33,7 +33,7 @@ class _BaseGraphCacheEntry {
 class _ExpansionGraphCacheEntry {
   final String centerWordId;
   final String sourceWordId;
-  final List<Word> connectedWords;
+  final List<GraphVisibleWord> connectedWords;
   final List<GraphWordLabelDisplayItem> wordLabels;
   final List<WordRelationEdgeInfo> relationEdges;
   final DateTime lastAccessedAt;
@@ -60,13 +60,13 @@ class _ExpansionGraphCacheEntry {
 }
 
 typedef WordGraphBaseCacheData = ({
-  List<Word> connectedWords,
+  List<GraphVisibleWord> connectedWords,
   List<GraphWordLabelDisplayItem> wordLabels,
   List<WordRelationEdgeInfo> relationEdges,
 });
 
 typedef WordGraphExpansionCacheData = ({
-  List<Word> connectedWords,
+  List<GraphVisibleWord> connectedWords,
   List<GraphWordLabelDisplayItem> wordLabels,
   List<WordRelationEdgeInfo> relationEdges,
 });
@@ -100,7 +100,7 @@ class WordGraphDataCache {
     final touchedEntry = entry.touch(DateTime.now());
     _baseEntries[cacheKey] = touchedEntry;
     return (
-      connectedWords: List<Word>.from(touchedEntry.connectedWords),
+      connectedWords: List<GraphVisibleWord>.from(touchedEntry.connectedWords),
       wordLabels: List<GraphWordLabelDisplayItem>.from(touchedEntry.wordLabels),
       relationEdges: List<WordRelationEdgeInfo>.from(
         touchedEntry.relationEdges,
@@ -110,7 +110,7 @@ class WordGraphDataCache {
 
   static void putBaseGraph({
     required String centerWordId,
-    required List<Word> connectedWords,
+    required List<GraphVisibleWord> connectedWords,
     required List<GraphWordLabelDisplayItem> wordLabels,
     required List<WordRelationEdgeInfo> relationEdges,
   }) {
@@ -118,7 +118,7 @@ class WordGraphDataCache {
     _baseEntries.remove(cacheKey);
     _baseEntries[cacheKey] = _BaseGraphCacheEntry(
       centerWordId: centerWordId,
-      connectedWords: List<Word>.unmodifiable(connectedWords),
+      connectedWords: List<GraphVisibleWord>.unmodifiable(connectedWords),
       wordLabels: List<GraphWordLabelDisplayItem>.unmodifiable(wordLabels),
       relationEdges: List<WordRelationEdgeInfo>.unmodifiable(relationEdges),
       lastAccessedAt: DateTime.now(),
@@ -142,7 +142,7 @@ class WordGraphDataCache {
     final touchedEntry = entry.touch(DateTime.now());
     _expansionEntries[cacheKey] = touchedEntry;
     return (
-      connectedWords: List<Word>.from(touchedEntry.connectedWords),
+      connectedWords: List<GraphVisibleWord>.from(touchedEntry.connectedWords),
       wordLabels: List<GraphWordLabelDisplayItem>.from(touchedEntry.wordLabels),
       relationEdges: List<WordRelationEdgeInfo>.from(
         touchedEntry.relationEdges,
@@ -153,7 +153,7 @@ class WordGraphDataCache {
   static void putExpansion({
     required String centerWordId,
     required String sourceWordId,
-    required List<Word> connectedWords,
+    required List<GraphVisibleWord> connectedWords,
     required List<GraphWordLabelDisplayItem> wordLabels,
     required List<WordRelationEdgeInfo> relationEdges,
   }) {
@@ -165,7 +165,7 @@ class WordGraphDataCache {
     _expansionEntries[cacheKey] = _ExpansionGraphCacheEntry(
       centerWordId: centerWordId,
       sourceWordId: sourceWordId,
-      connectedWords: List<Word>.unmodifiable(connectedWords),
+      connectedWords: List<GraphVisibleWord>.unmodifiable(connectedWords),
       wordLabels: List<GraphWordLabelDisplayItem>.unmodifiable(wordLabels),
       relationEdges: List<WordRelationEdgeInfo>.unmodifiable(relationEdges),
       lastAccessedAt: DateTime.now(),

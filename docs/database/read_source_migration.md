@@ -1,5 +1,28 @@
 # Read Source Migration
 
+## 2026-04-22 Phase 8-H-26 graph builder/cache carrier contract first slice
+
+### 이번 단계 요약
+
+- 이번 단계는 graph builder/cache carrier contract first slice다.
+- `VisibleWordGraphData.connectedWords`에서 cache와 `GraphBuilder`로 전달되는 graph 내부 조립 carrier를 full `Word`에서 `GraphVisibleWord`로 줄였다.
+- `GraphVisibleWord`는 `wordId`, `fallbackSpelling`, `fallbackStrongNumber`, `fallbackTransliteration`만 보유한다.
+- `GraphWordLabelDisplayItem` 주경로는 유지하고, label contract가 없을 때만 `GraphVisibleWord` fallback 값을 사용한다.
+
+### 적용 범위
+
+- `GraphVisibleWord`
+- `VisibleWordGraphData.connectedWords`
+- `WordGraphDataCache` base/expansion payload
+- `GraphBuilder` base/expansion input, node 생성, fallback label, 정렬, expansion / `+N more` 계산
+
+### 유지 범위
+
+- `WordGraphScreen` public API, `_centerWord`, `_graphWordsById`, callback 시그니처는 변경하지 않는다.
+- repository/DB read policy와 `Word.fromMap` 일반 경계는 변경하지 않는다.
+- graph seed public boundary, graph UX/interaction 정책, relation add/search, duplicate, home, edit seed 경계는 변경하지 않는다.
+- 이번 단계는 graph internal state 전면 개편이나 `Word.fromMap` 제거 시작으로 해석하지 않는다.
+
 ## 2026-04-22 Phase 8-H-24 graph seed public API contract first slice
 
 ### 이번 단계 요약

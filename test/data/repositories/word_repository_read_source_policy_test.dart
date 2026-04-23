@@ -6,6 +6,7 @@ import 'package:reshet_app/data/adapters/legacy_word_expression_read_adapter.dar
 import 'package:reshet_app/data/repositories/word_repository.dart';
 import 'package:reshet_app/database/database_service.dart';
 import 'package:reshet_app/domain/expression/read_source_policy.dart';
+import 'package:reshet_app/domain/graph/graph_visible_word.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -500,9 +501,9 @@ void main() {
             );
 
         expect(graphData.connectedWords, hasLength(1));
-        expect(graphData.connectedWords.single.id, childWordId);
-        expect(graphData.connectedWords.single.spelling1, 'graph-child');
-        expect(graphData.connectedWords.single.meaning1, 'graph child');
+        expect(graphData.connectedWords, isA<List<GraphVisibleWord>>());
+        expect(graphData.connectedWords.single.wordId, childWordId);
+        expect(graphData.connectedWords.single.fallbackSpelling, 'graph-child');
         expect(graphData.relationEdges, hasLength(1));
         expect(genericRows, hasLength(1));
         expect(genericRows.single['id'], childWordId);
@@ -590,9 +591,9 @@ void main() {
             );
 
         expect(graphData.connectedWords, hasLength(1));
-        expect(graphData.connectedWords.single.id, childWordId);
-        expect(graphData.connectedWords.single.spelling1, 'alpha');
-        expect(graphData.connectedWords.single.meaning1, 'graph mismatch');
+        expect(graphData.connectedWords, isA<List<GraphVisibleWord>>());
+        expect(graphData.connectedWords.single.wordId, childWordId);
+        expect(graphData.connectedWords.single.fallbackSpelling, 'alpha');
         expect(
           snapshot.requestedPolicy,
           ReadSourcePolicy.normalizedWithFallback,

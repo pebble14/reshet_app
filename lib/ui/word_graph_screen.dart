@@ -14,6 +14,7 @@ import '../domain/graph/graph_edge.dart';
 import '../domain/graph/graph_node.dart';
 import '../domain/graph/graph_relation_add_search_result_item.dart';
 import '../domain/graph/graph_view_data.dart';
+import '../domain/graph/graph_visible_word.dart';
 import '../domain/graph/graph_word_label_display_item.dart';
 import '../domain/graph/layout/graph_layout_strategy_resolver.dart';
 import '../domain/relation/relation_formatter.dart';
@@ -1032,7 +1033,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     final baseGraphData = _baseGraphData;
     if (baseGraphData != null) {
       for (final word in baseGraphData.connectedWords) {
-        potentialNodeIds.add(word.id);
+        potentialNodeIds.add(word.wordId);
       }
     }
 
@@ -1047,7 +1048,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       }
 
       for (final word in entry.value.connectedWords) {
-        potentialNodeIds.add(word.id);
+        potentialNodeIds.add(word.wordId);
       }
 
       if (!_fullyRevealedExpansionSourceIds.contains(sourceWordId)) {
@@ -1152,7 +1153,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
             final wordLabels = visibleGraphData.wordLabels;
             final edges = visibleGraphData.relationEdges;
             final loadedBaseGraphData = (
-              connectedWords: List<Word>.unmodifiable(words),
+              connectedWords: List<GraphVisibleWord>.unmodifiable(words),
               wordLabels: List<GraphWordLabelDisplayItem>.unmodifiable(
                 wordLabels,
               ),
@@ -1817,7 +1818,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
               relationEdges: visibleGraphData.relationEdges,
             );
             return (
-              connectedWords: List<Word>.unmodifiable(
+              connectedWords: List<GraphVisibleWord>.unmodifiable(
                 visibleGraphData.connectedWords,
               ),
               wordLabels: List<GraphWordLabelDisplayItem>.unmodifiable(

@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-04-22 Phase 8-H-26
+
+- graph builder/cache carrier contract first slice를 적용했다.
+- `GraphVisibleWord`를 추가해 graph builder/cache 경계의 connected carrier를 `wordId`, `fallbackSpelling`, `fallbackStrongNumber`, `fallbackTransliteration` 최소 필드로 줄였다.
+- `VisibleWordGraphData.connectedWords`, `WordGraphDataCache`, `GraphBuilder`의 base/expansion 입력 carrier를 full `Word` 대신 graph visible carrier로 연결했다.
+- `GraphWordLabelDisplayItem` 주경로, `WordGraphScreen` public API / `_centerWord` / `_graphWordsById` / callback 시그니처, repository/DB read policy, `Word.fromMap` 일반 경계는 변경하지 않았다.
+
 ## 2026-04-22 Phase 8-H-24
 
 - graph seed public API contract first slice를 적용했다.

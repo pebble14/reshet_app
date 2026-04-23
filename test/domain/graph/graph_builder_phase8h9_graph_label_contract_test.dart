@@ -3,6 +3,7 @@ import 'package:reshet_app/data/models/word.dart';
 import 'package:reshet_app/data/repositories/word_repository.dart';
 import 'package:reshet_app/domain/graph/graph_build_options.dart';
 import 'package:reshet_app/domain/graph/graph_builder.dart';
+import 'package:reshet_app/domain/graph/graph_visible_word.dart';
 import 'package:reshet_app/domain/graph/graph_word_label_display_item.dart';
 
 void main() {
@@ -14,7 +15,14 @@ void main() {
       final result = builder.buildMergedVisibleGraphData(
         options: GraphBuildOptions(centerWordId: centerWordId),
         centerWord: Word(id: centerWordId, spelling1: 'legacy-center-title'),
-        baseWords: [Word(id: childWordId, spelling1: 'legacy-child-title')],
+        baseWords: const [
+          GraphVisibleWord(
+            wordId: childWordId,
+            fallbackSpelling: 'legacy-child-title',
+            fallbackStrongNumber: '',
+            fallbackTransliteration: '',
+          ),
+        ],
         wordLabels: const [
           GraphWordLabelDisplayItem(
             wordId: centerWordId,
@@ -69,7 +77,14 @@ void main() {
       final result = builder.buildMergedVisibleGraphData(
         options: GraphBuildOptions(centerWordId: centerWordId),
         centerWord: Word(id: centerWordId, spelling1: 'legacy-center-title'),
-        baseWords: [Word(id: childWordId, spelling1: 'legacy-child-title')],
+        baseWords: const [
+          GraphVisibleWord(
+            wordId: childWordId,
+            fallbackSpelling: 'legacy-child-title',
+            fallbackStrongNumber: '',
+            fallbackTransliteration: '',
+          ),
+        ],
         wordLabels: const [
           GraphWordLabelDisplayItem(
             wordId: centerWordId,
@@ -99,5 +114,59 @@ void main() {
 
       expect(result.viewData.nodeById(childWordId)!.label, 'H88');
     });
+
+    test(
+      'uses graph visible word fallback only when label contract is absent',
+      () {
+        const centerWordId = 'T9000_H26_BUILDER_FALLBACK_CENTER';
+        const childWordId = 'T9000_H26_BUILDER_FALLBACK_CHILD';
+        final builder = GraphBuilder();
+        final result = builder.buildMergedVisibleGraphData(
+          options: GraphBuildOptions(centerWordId: centerWordId),
+          centerWord: Word(id: centerWordId, spelling1: 'legacy-center-title'),
+          baseWords: const [
+            GraphVisibleWord(
+              wordId: childWordId,
+              fallbackSpelling: '',
+              fallbackStrongNumber: 'H77',
+              fallbackTransliteration: 'fallback-translit',
+            ),
+          ],
+          wordLabels: const [
+            GraphWordLabelDisplayItem(
+              wordId: centerWordId,
+              representativeSpelling: 'representative-center-title',
+              representativeTransliteration: '',
+              displayStrongNumber: '',
+            ),
+          ],
+          baseRelationEdges: [
+            WordRelationEdgeInfo(
+              relationId: 3,
+              wordId1: centerWordId,
+              wordId2: childWordId,
+              otherWordId: childWordId,
+              directionCode: 'unknown',
+              centerRelativeDirection: 'unknown',
+              relationType: 'translation',
+            ),
+          ],
+        );
+
+        expect(result.viewData.nodeById(childWordId)!.label, 'H77');
+        expect(result.connectedWords.single.id, childWordId);
+        expect(result.connectedWords.single.spelling1, isNull);
+        expect(result.connectedWords.single.strongNumber, 'H77');
+        expect(
+          result.wordLabels.singleWhere((label) => label.wordId == childWordId),
+          const GraphWordLabelDisplayItem(
+            wordId: childWordId,
+            representativeSpelling: '',
+            representativeTransliteration: 'fallback-translit',
+            displayStrongNumber: 'H77',
+          ),
+        );
+      },
+    );
   });
 }

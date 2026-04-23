@@ -11,6 +11,7 @@ import '../models/word.dart';
 import '../../domain/expression/expression_read_models.dart';
 import '../../domain/graph/graph_center_word_display_item.dart';
 import '../../domain/graph/graph_relation_add_search_result_item.dart';
+import '../../domain/graph/graph_visible_word.dart';
 import '../../domain/graph/graph_word_label_display_item.dart';
 import '../../domain/expression/read_source_debug_collector.dart';
 import '../../domain/expression/read_source_policy.dart';
@@ -87,7 +88,7 @@ class WordRelationEdgeInfo {
 }
 
 typedef VisibleWordGraphData = ({
-  List<Word> connectedWords,
+  List<GraphVisibleWord> connectedWords,
   List<GraphWordLabelDisplayItem> wordLabels,
   List<WordRelationEdgeInfo> relationEdges,
 });
@@ -1576,6 +1577,29 @@ class WordRepository {
     );
   }
 
+  GraphVisibleWord _buildGraphVisibleWordFromWord(Word word) {
+    return GraphVisibleWord(
+      wordId: word.id.trim(),
+      fallbackSpelling: (word.spelling1 ?? '').trim(),
+      fallbackStrongNumber: (word.strongNumber ?? '').trim(),
+      fallbackTransliteration: (word.transliteration1 ?? '').trim(),
+    );
+  }
+
+  String? _blankToNull(String value) {
+    final trimmed = value.trim();
+    return trimmed.isEmpty ? null : trimmed;
+  }
+
+  Word _buildFallbackWordFromGraphVisibleWord(GraphVisibleWord word) {
+    return Word(
+      id: word.wordId,
+      spelling1: _blankToNull(word.fallbackSpelling),
+      strongNumber: _blankToNull(word.fallbackStrongNumber),
+      transliteration1: _blankToNull(word.fallbackTransliteration),
+    );
+  }
+
   Future<List<HomeSearchResultDisplayItem>>
   _resolveHomeSearchDisplayItemsForPhase32(
     Database db,
@@ -2145,7 +2169,7 @@ class WordRepository {
         centerWordId,
       ]);
       return (
-        connectedWords: const <Word>[],
+        connectedWords: const <GraphVisibleWord>[],
         wordLabels: wordLabels,
         relationEdges: visibleEdges,
       );
@@ -2164,12 +2188,15 @@ class WordRepository {
       centerWordId,
       ...orderedIds,
     ]);
-    final wordsById = <String, Word>{
-      for (final row in rows) (row['id'] as String): Word.fromMap(row),
+    final wordsById = <String, GraphVisibleWord>{
+      for (final row in rows)
+        (row['id'] as String): _buildGraphVisibleWordFromWord(
+          Word.fromMap(row),
+        ),
     };
     final connectedWords = orderedIds
         .map((id) => wordsById[id])
-        .whereType<Word>()
+        .whereType<GraphVisibleWord>()
         .toList(growable: false);
 
     return (
@@ -2183,7 +2210,9 @@ class WordRepository {
     String centerWordId,
   ) async {
     final visibleGraphData = await getVisibleGraphDataForGraph(centerWordId);
-    return visibleGraphData.connectedWords;
+    return visibleGraphData.connectedWords
+        .map(_buildFallbackWordFromGraphVisibleWord)
+        .toList(growable: false);
   }
 
   /// 주어진 단어 ID들 중에서
