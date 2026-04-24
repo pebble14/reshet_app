@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-04-24 Phase 8-H-32
+
+- graph center state contract first slice를 적용했다.
+- `WordGraphScreen` 내부 center authoritative state를 `_centerWordId`로 전환하고, cache key / stale guard / reload 기준 / pending center focus 기준을 `_centerWordId`로 통일했다.
+- `_centerWord`는 compatibility/local fallback carrier로 유지하고, center display는 기존 `GraphCenterWordDisplayItem` 경로를 유지했다.
+- `onChangeCenterWord`, selection callback, explorer/history, graph builder public signature, repository/DB, `Word.fromMap` 일반 경계는 변경하지 않았다.
+
 ## 2026-04-23 Phase 8-H-30
 
 - graph selection callback contract first slice를 적용했다.

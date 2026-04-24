@@ -1,5 +1,14 @@
 # FEATURE_STATUS
 
+## 2026-04-24 Phase 8-H-32 진행 상태
+
+- 진행 범위: graph center state contract first slice, `WordGraphScreen` 내부 center id authority / reload / stale guard / pending center focus 경계
+- 현재 상태: graph center authoritative source가 `_centerWordId`로 전환되었고 `_centerWord`는 compatibility/local fallback carrier로만 유지
+- 구조 기준: cache key, stale guard, reload 기준, pending center focus 기준은 `_centerWordId`를 사용하고, center display는 `GraphCenterWordDisplayItem` reread 경로를 유지
+- 유지 범위: `onChangeCenterWord`, selection callback, explorer `_centerWord`, history payload/tooltip, graph builder public signature, repository/DB, `Word.fromMap` 일반 경계, graph UX 정책
+- 주의: 이번 단계는 graph center state contract first slice이며, graph center UX 변경이나 callback contract 변경 단계가 아니다
+- 보류 범위: center change callback contract 후속 절편, `Word.fromMap` 일반 경계 정리 후속 절편
+
 ## 2026-04-23 Phase 8-H-30 진행 상태
 
 - 진행 범위: graph selection callback contract first slice, `WordGraphScreen.onSelectWordId` → `WordExplorerScreen._selectWord` selection callback 경계

@@ -734,8 +734,11 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   /// 이 배율보다 작아지면 엣지 태그를 숨긴다(가독성/겹침 감소)
   static const double _labelVisibleScaleThreshold = 1.15;
 
-  /// The graph owns the steady-state center word display through a dedicated
-  /// single-word reread. Caller input is only the bootstrap payload.
+  /// The graph center authority is the normalized id only.
+  late String _centerWordId;
+
+  /// Compatibility/local fallback carrier for places that still require a Word
+  /// object. This is not the authoritative center id state.
   late Word _centerWord;
   GraphCenterWordDisplayItem? _centerWordDisplayItem;
 
@@ -783,10 +786,22 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     return Word(id: _centerSeedIdOf(centerWordId));
   }
 
+  Word _centerWordCompatibilityFallback() {
+    final centerWord = _centerWord;
+    return centerWord.id.trim() == _centerWordId
+        ? centerWord
+        : Word(id: _centerWordId);
+  }
+
+  Word _centerWordBuilderInput() {
+    return Word(id: _centerWordId);
+  }
+
   @override
   void initState() {
     super.initState();
-    _centerWord = _centerSeedWordFrom(widget.centerWordId);
+    _centerWordId = _centerSeedIdOf(widget.centerWordId);
+    _centerWord = _centerSeedWordFrom(_centerWordId);
     _selectedWordId = widget.selectedWordId;
     _loadConnectedWords();
   }
@@ -803,7 +818,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       WordGraphDataCache.clearExpansionsForCenter(oldCenterSeedId);
       _resetExpansionState(clearSeedPositions: true);
       setState(() {
-        _centerWord = _centerSeedWordFrom(widget.centerWordId);
+        _centerWordId = nextCenterSeedId;
+        _centerWord = _centerSeedWordFrom(nextCenterSeedId);
         _centerWordDisplayItem = null;
         _selectedWordId = widget.selectedWordId;
         _isLoading = true;
@@ -843,7 +859,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     required List<WordRelationEdgeInfo> edges,
   }) {
     final visibleNodesById = <String, GraphVisibleNode>{
-      _centerWord.id: _visibleNodeForWord(_centerWord),
+      _centerWordId: _visibleNodeForWord(_centerWordCompatibilityFallback()),
       for (final word in words)
         if (word.id.trim().isNotEmpty)
           word.id.trim(): _visibleNodeForWord(word),
@@ -921,7 +937,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
     unawaited(
       _refreshVisibleCollisionWordIds(
-        expectedCenterWordId: _centerWord.id,
+        expectedCenterWordId: _centerWordId,
         visibleWordIds: visibleWordIds,
         requestSerial: requestSerial,
       ),
@@ -939,7 +955,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         );
 
     if (!mounted) return;
-    if (_centerWord.id != expectedCenterWordId) return;
+    if (_centerWordId != expectedCenterWordId) return;
     if (requestSerial != _collisionWordIdsRefreshSerial) return;
     if (_sameStringSets(
       _dbWideCollisionWordIdsForVisibleGraph,
@@ -1051,7 +1067,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       return _defaultGraphMaxNodes;
     }
 
-    final potentialNodeIds = <String>{_centerWord.id};
+    final potentialNodeIds = <String>{_centerWordId};
     final baseGraphData = _baseGraphData;
     if (baseGraphData != null) {
       for (final word in baseGraphData.connectedWords) {
@@ -1086,7 +1102,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
   GraphBuildOptions _graphBuildOptions() {
     return GraphBuildOptions(
-      centerWordId: _centerWord.id,
+      centerWordId: _centerWordId,
       maxDepth: 2,
       maxNodes: _effectiveGraphMaxNodes(),
       layoutMode: _graphLayoutMode,
@@ -1096,12 +1112,12 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   GraphVisibleDataBuildResult _buildGraphData() {
     final baseGraphData = _baseGraphData;
     if (baseGraphData == null) {
-      throw StateError('Base graph data is not loaded for ${_centerWord.id}.');
+      throw StateError('Base graph data is not loaded for $_centerWordId.');
     }
 
     return _graphBuilder.buildMergedVisibleGraphData(
       options: _graphBuildOptions(),
-      centerWord: _centerWord,
+      centerWord: _centerWordBuilderInput(),
       baseWords: baseGraphData.connectedWords,
       wordLabels: baseGraphData.wordLabels,
       baseRelationEdges: baseGraphData.relationEdges,
@@ -1155,7 +1171,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   }
 
   Future<void> _loadConnectedWords() async {
-    final requestedCenterWordId = _centerWord.id.trim();
+    final requestedCenterWordId = _centerWordId;
     _resetExpansionState(clearSeedPositions: true);
 
     final cachedBaseGraph = WordGraphDataCache.getBaseGraph(
@@ -1191,7 +1207,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
           })();
 
       if (!mounted) return;
-      if (_centerWord.id.trim() != requestedCenterWordId) {
+      if (_centerWordId != requestedCenterWordId) {
         return;
       }
       setState(() {
@@ -1681,7 +1697,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   }
 
   _GraphVisualState _centerVisualState() {
-    return _visualStateForNodeId(_centerWord.id);
+    return _visualStateForNodeId(_centerWordId);
   }
 
   bool _hasActivePeripheralSelection() {
@@ -1689,7 +1705,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     if (selectedWordId == null) {
       return false;
     }
-    return selectedWordId != _centerWord.id;
+    return selectedWordId != _centerWordId;
   }
 
   _GraphVisualState _visualStateForNodeId(String nodeId) {
@@ -1760,11 +1776,11 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
   void _handleCenterNodeTap() {
     _temporarilySuppressBackgroundTapClear();
-    if (_selectedWordId != _centerWord.id) {
-      setState(() => _selectedWordId = _centerWord.id);
+    if (_selectedWordId != _centerWordId) {
+      setState(() => _selectedWordId = _centerWordId);
     }
 
-    _notifySelectedWord(_centerWord);
+    _notifySelectedWord(_centerWordCompatibilityFallback());
   }
 
   void _handleConnectedWordTap(Word word) {
@@ -1833,12 +1849,12 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       return;
     }
 
-    final requestedCenterWordId = _centerWord.id;
+    final requestedCenterWordId = _centerWordId;
     _expansionRequestsInFlight.add(word.id);
 
     try {
       final cachedExpansion = WordGraphDataCache.getExpansion(
-        centerWordId: _centerWord.id,
+        centerWordId: _centerWordId,
         sourceWordId: word.id,
       );
       final expansionData =
@@ -1847,7 +1863,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
             final visibleGraphData = await _repository
                 .getVisibleGraphDataForGraph(word.id);
             WordGraphDataCache.putExpansion(
-              centerWordId: _centerWord.id,
+              centerWordId: _centerWordId,
               sourceWordId: word.id,
               connectedWords: visibleGraphData.connectedWords,
               wordLabels: visibleGraphData.wordLabels,
@@ -1867,7 +1883,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
           })();
 
       if (!mounted) return;
-      if (_centerWord.id != requestedCenterWordId) {
+      if (_centerWordId != requestedCenterWordId) {
         return;
       }
 
@@ -2319,12 +2335,12 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   bool _isCenterDepthOnePlaceholderNode(GraphNode node) {
     return node.isPlaceholderMoreNode &&
         node.depth <= 1 &&
-        _placeholderSourceWordId(node) == _centerWord.id;
+        _placeholderSourceWordId(node) == _centerWordId;
   }
 
   Color _centerDepthOnePlaceholderAccentColor() {
     return _blendColor(
-      _colorForWordLanguageGroup(_centerWord.id),
+      _colorForWordLanguageGroup(_centerWordId),
       Colors.black,
       0.18,
     );
@@ -2549,7 +2565,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
   void _scheduleConditionalCenterFocus(_GraphLayoutData layout) {
     if (!_pendingCenterFocusAfterCenterChange ||
-        _pendingCenterFocusWordId != _centerWord.id ||
+        _pendingCenterFocusWordId != _centerWordId ||
         _didSchedulePendingCenterFocus) {
       return;
     }
@@ -2559,7 +2575,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       _didSchedulePendingCenterFocus = false;
       if (!mounted) return;
       if (!_pendingCenterFocusAfterCenterChange ||
-          _pendingCenterFocusWordId != _centerWord.id) {
+          _pendingCenterFocusWordId != _centerWordId) {
         return;
       }
 
@@ -3607,8 +3623,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
   Word? _wordForNodeId(String nodeId) {
     final normalizedNodeId = nodeId.trim();
-    if (normalizedNodeId == _centerWord.id) {
-      return _centerWord;
+    if (normalizedNodeId == _centerWordId) {
+      return _centerWordCompatibilityFallback();
     }
 
     final visibleNode = _graphWordsById[normalizedNodeId];
@@ -3650,8 +3666,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   }
 
   String _directionReferenceWordId(WordRelationEdgeInfo info) {
-    if (info.wordId1 == _centerWord.id || info.wordId2 == _centerWord.id) {
-      return _centerWord.id;
+    if (info.wordId1 == _centerWordId || info.wordId2 == _centerWordId) {
+      return _centerWordId;
     }
 
     return info.wordId1;
@@ -4195,7 +4211,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
             // 그래프 갱신(색/라벨/팝업 내용 반영)
             WordGraphDataCache.invalidateMany([
-              _centerWord.id,
+              _centerWordId,
               info.wordId1,
               info.wordId2,
             ]);
@@ -4223,7 +4239,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
             // 그래프 갱신(엣지/라벨/색 반영)
             WordGraphDataCache.invalidateMany([
-              _centerWord.id,
+              _centerWordId,
               info.wordId1,
               info.wordId2,
             ]);
@@ -4714,7 +4730,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         final didDiscardCreatedWord = await _repository
             .discardCreatedWordForGraphCreateFlow(newId);
         if (didDiscardCreatedWord) {
-          WordGraphDataCache.invalidateMany([_centerWord.id, newId]);
+          WordGraphDataCache.invalidateMany([_centerWordId, newId]);
           await _loadConnectedWords();
           if (!mounted) return;
           ScaffoldMessenger.of(
@@ -4749,7 +4765,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
         if (relationPayload != null) {
           final existing = await _repository.findExistingRelationIdBySignature(
-            _centerWord.id,
+            _centerWordId,
             createdWord.id,
             relationType: relationPayload.relationType,
             directionCode: relationPayload.directionCode,
@@ -4757,7 +4773,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
           if (existing == null) {
             await _repository.createRelation(
-              wordId1: _centerWord.id,
+              wordId1: _centerWordId,
               wordId2: createdWord.id,
               categoryCode: relationPayload.categoryCode,
               relationType: relationPayload.relationType,
@@ -4778,7 +4794,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       }
 
       if (didCreateRelation && createdWord != null) {
-        WordGraphDataCache.invalidateMany([_centerWord.id, createdWord.id]);
+        WordGraphDataCache.invalidateMany([_centerWordId, createdWord.id]);
       }
 
       await _loadConnectedWords();
@@ -4902,8 +4918,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     String? selectedCategoryCode;
     String? selectedRelationType;
     final directionItems = _directionDropdownItems(
-      centerWordId: _centerWord.id,
-      wordId1: _centerWord.id,
+      centerWordId: _centerWordId,
+      wordId1: _centerWordId,
       wordId2: otherWordId,
     );
     String selectedDirectionCode = _normalizeDirectionCodeForEditor(
@@ -5103,7 +5119,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     if (other == null) return;
 
     // 자기 자신 선택 방지
-    if (other.wordId == _centerWord.id) {
+    if (other.wordId == _centerWordId) {
       if (!mounted) return;
       ScaffoldMessenger.of(
         context,
@@ -5120,7 +5136,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
     // 3) 중복 검사
     final existingId = await _repository.findExistingRelationIdBySignature(
-      _centerWord.id,
+      _centerWordId,
       other.wordId,
       relationType: payload.relationType,
       directionCode: payload.directionCode,
@@ -5148,7 +5164,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
     // 4) INSERT
     await _repository.createRelation(
-      wordId1: _centerWord.id,
+      wordId1: _centerWordId,
       wordId2: other.wordId,
       categoryCode: payload.categoryCode,
       relationType: payload.relationType,
@@ -5160,7 +5176,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     );
 
     // 5) 갱신
-    WordGraphDataCache.invalidateMany([_centerWord.id, other.wordId]);
+    WordGraphDataCache.invalidateMany([_centerWordId, other.wordId]);
     await _loadConnectedWords();
 
     if (!mounted) return;
@@ -5183,7 +5199,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
               final r = await _repository.searchWords(q, limit: 200);
               // 중심 단어는 결과에서 제외(혼동 방지)
               final filtered = r
-                  .where((item) => item.wordId != _centerWord.id)
+                  .where((item) => item.wordId != _centerWordId)
                   .toList();
               setState(() => results = filtered);
             }

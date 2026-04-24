@@ -1,5 +1,25 @@
 # Read Source Migration
 
+## 2026-04-24 Phase 8-H-32 graph center state contract first slice
+
+### 이번 단계 요약
+
+- 이번 단계는 graph center state contract first slice다.
+- `WordGraphScreen` 내부 center authoritative state를 `_centerWord`가 아니라 `_centerWordId`로 분리했다.
+- cache key, stale guard, reload 기준, pending center focus 기준은 `_centerWordId`를 authoritative source로 사용한다.
+- `_centerWord`는 local compatibility fallback carrier로만 유지하고, center display는 계속 `GraphCenterWordDisplayItem` reread 경로를 사용한다.
+
+### 적용 범위
+
+- `WordGraphScreen` 내부 center id authority
+- base graph reload / cache key / stale guard / pending center focus
+- builder input local adapter와 center tap compatibility fallback
+
+### 제외 범위
+
+- `onChangeCenterWord(Word)`, selection callback, explorer `_centerWord`, history payload/tooltip은 변경하지 않는다.
+- graph builder public signature, repository/DB, `Word.fromMap` 일반 경계, graph UX 정책은 변경하지 않는다.
+
 ## 2026-04-23 Phase 8-H-30 graph selection callback contract first slice
 
 ### 이번 단계 요약
