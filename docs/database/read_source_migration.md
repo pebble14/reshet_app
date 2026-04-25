@@ -1,5 +1,36 @@
 # Read Source Migration
 
+## 2026-04-25 Phase 8-H 완료 기준 및 다음 Phase 이관
+
+### 완료 범위
+
+- Phase 8-H 완료 범위는 graph / explorer의 seed, display, callback, carrier 경계를 id 또는 최소 typed contract 중심으로 줄인 문서화 가능한 절편이다.
+- graph seed / public seed는 `centerWordId` 중심으로 축소되었고, graph center state는 `_centerWordId` authority로 정리되었다.
+- graph visible node / builder-cache carrier는 `GraphVisibleNode`, `GraphVisibleWord` 최소 typed contract로 축소되었다.
+- graph selection callback과 center change callback은 id 중심 경로로 정리되었다.
+- explorer center state는 `_centerWordId` 중심으로 정리되었고, explorer tooltip/history display baseline은 `_ExplorerCenterDisplaySeed` / tooltip display contract로 분리되었다.
+- pending side-car, explorer bootstrap `Word.fromMap` 잔여 carrier, graph visible data projection의 `Word.fromMap` 우회, graph create/relation post-save의 `Word.fromMap` 우회는 제거되었다.
+
+### 완료 선언 기준
+
+- UX 정책 변경 없음.
+- graph / explorer 주요 baseline은 유지한다.
+- read/display/seed/callback 경계가 id 또는 typed contract 중심으로 정리되었다.
+- 남은 항목은 별도 Phase 또는 UX 정책 판단 대상으로 분리할 수 있다.
+- global Word.fromMap 제거는 다음 Phase 대상이다.
+
+### 비대상/이관 항목
+
+- history selected state는 UX 정책 판단 대상이다. `_ExplorerHistorySnapshot.selectedWordId`는 저장/비교되지만 apply 시 복원되지 않는다. 다음 Phase에서 history back/forward 시 선택 상태 복원 여부를 결정한다.
+- global Word.fromMap 제거는 다음 Phase 대상이다. repository public API 반환형, generic `getWordById`, `getConnectedWords`, graph center legacy compatibility payload, `GraphBuilder.buildFromRepository`, tool/script 경로는 전역 영향이 있으므로 별도 Phase로 분리한다.
+- analyzer/test baseline 정리는 별도 chore/fix 후보다. 오래된 테스트/API 참조와 tool script의 legacy carrier 가정은 이번 Phase 완료와 분리한다.
+
+### 해석 제한
+
+- Phase 8-H 완료는 사용자-visible UX 정책, DB schema, read source policy 변경을 포함하지 않는다.
+- Phase 8-H 완료는 남은 generic repository API 또는 tool/script carrier 정리를 완료했다는 의미가 아니다.
+- history selected state는 현재 정책 판단 대상으로 남기며, 결함으로 단정하지 않는다.
+
 ## 2026-04-25 Phase 8-H-42 graph create/relation post-save Word.fromMap residual cleanup first slice
 
 ### 이번 단계 요약

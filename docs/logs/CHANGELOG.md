@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 2026-04-25 Phase 8-H 완료
+
+- Phase 8-H 완료 기준과 다음 Phase 이관 항목을 문서화했다.
+- 완료 범위는 graph seed / public seed의 `centerWordId` 축소, graph/explorer `_centerWordId` authority 정리, visible node / builder-cache carrier 최소 typed contract 정리, selection / center change callback id 중심 정리다.
+- 완료 범위에는 explorer tooltip/history display baseline의 `_ExplorerCenterDisplaySeed` / tooltip display contract 분리, pending side-car 제거, explorer bootstrap / graph visible data projection / graph create-relation post-save 경계의 `Word.fromMap` 우회 제거가 포함된다.
+- UX 정책 변경 없음.
+- 비대상/이관 항목으로 history selected state 정책 판단, global / generic `Word.fromMap` 정리, analyzer/test baseline 정리를 남겼다.
+- global Word.fromMap 제거는 다음 Phase 대상이다.
+- history selected state는 UX 정책 판단 대상이다.
+
 ## 2026-04-25 Phase 8-H-42
 
 - graph create/relation post-save Word.fromMap residual cleanup first slice를 적용했다.
