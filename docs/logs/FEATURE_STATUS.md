@@ -1,5 +1,14 @@
 # FEATURE_STATUS
 
+## 2026-04-25 Phase 8-H-33 진행 상태
+
+- 진행 범위: graph center change callback contract first slice, `WordGraphScreen.onChangeCenterWordId`, `WordExplorerScreen` center change callback 소비 경계
+- 현재 상태: center change callback 주경로가 `centerWordId`로 전환되었고, 기존 `onChangeCenterWord(Word)`는 compatibility/local fallback side-car로 유지
+- 구조 기준: graph는 same-node 재탭 시 `onChangeCenterWordId`를 authoritative payload로 전달하고, explorer는 id callback으로 `_selectWord(..., changeCenterWordTo: ...)`에 연결하되 fallback `Word`는 id 일치 시에만 임시 보조 carrier로 사용
+- 유지 범위: explorer `_centerWord`, history payload, tooltip contract, selection callback, graph builder/cache, repository/DB, `Word.fromMap` 일반 경계, graph/explorer UX 정책
+- 주의: 이번 단계는 graph center change callback contract first slice이며, explorer center state 개편이나 history/tooltip 변경 단계가 아니다
+- 보류 범위: explorer `_centerWord` 축소, `Word.fromMap` 일반 경계 정리, history/tooltip 후속 절편
+
 ## 2026-04-24 Phase 8-H-32 진행 상태
 
 - 진행 범위: graph center state contract first slice, `WordGraphScreen` 내부 center id authority / reload / stale guard / pending center focus 경계

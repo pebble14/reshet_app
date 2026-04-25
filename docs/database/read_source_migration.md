@@ -1,5 +1,27 @@
 # Read Source Migration
 
+## 2026-04-25 Phase 8-H-33 graph center change callback contract first slice
+
+### 이번 단계 요약
+
+- 이번 단계는 graph center change callback contract first slice다.
+- `WordGraphScreen.onChangeCenterWordId`를 추가해 graph → explorer center change callback의 주 payload를 `centerWordId`로 줄였다.
+- `WordExplorerScreen`은 id callback으로 center change를 소비하고, fallback `Word`는 history/tooltip baseline 유지를 위한 임시 보조 carrier로만 사용한다.
+- fallback stash는 id가 일치할 때만 사용하고, mismatch면 폐기한다.
+
+### 적용 범위
+
+- `WordGraphScreen.onChangeCenterWordId`
+- same-node 재탭 center change dispatch helper
+- `WordExplorerScreen` center change callback 소비 경계
+
+### 제외 범위
+
+- explorer `_centerWord` 구조
+- history payload / tooltip contract
+- selection callback, graph builder/cache, repository/DB, `Word.fromMap` 일반 경계
+- graph/explorer UX 정책
+
 ## 2026-04-24 Phase 8-H-32 graph center state contract first slice
 
 ### 이번 단계 요약

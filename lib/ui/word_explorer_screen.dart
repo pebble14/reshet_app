@@ -32,6 +32,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
   final WordRepository _repository = WordRepository();
 
   late Word _centerWord;
+  Word? _pendingCenterWordChangeFallback;
   String? _selectedWordId;
   WordDetailLikeDisplayItem? _selectedWordDisplayItem;
   int _graphRevision = 0;
@@ -78,8 +79,17 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
                 await _selectWord(selectedWordId);
               },
               onClearSelection: _clearSelectedWordPanel,
-              onChangeCenterWord: (word) async {
-                await _selectWord(word.id, changeCenterWordTo: word);
+              onChangeCenterWord: (word) {
+                _pendingCenterWordChangeFallback = word;
+              },
+              onChangeCenterWordId: (centerWordId) async {
+                final fallbackWord =
+                    _takePendingCenterWordChangeFallback(centerWordId) ??
+                    Word(id: centerWordId.trim());
+                await _selectWord(
+                  centerWordId,
+                  changeCenterWordTo: fallbackWord,
+                );
               },
             ),
           ),
@@ -145,6 +155,21 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
         _detailUnavailableMessage = null;
       });
     }
+  }
+
+  Word? _takePendingCenterWordChangeFallback(String centerWordId) {
+    final pendingFallback = _pendingCenterWordChangeFallback;
+    _pendingCenterWordChangeFallback = null;
+    if (pendingFallback == null) {
+      return null;
+    }
+
+    final normalizedCenterWordId = centerWordId.trim();
+    if (pendingFallback.id.trim() != normalizedCenterWordId) {
+      return null;
+    }
+
+    return pendingFallback;
   }
 
   Future<WordDetailLikeDisplayItem?> _loadSplitViewDisplayItem(

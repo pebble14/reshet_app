@@ -678,6 +678,7 @@ class WordGraphScreen extends StatefulWidget {
 
   /// 스플릿뷰에서 이미 선택된 노드를 다시 클릭했을 때
   /// 부모가 중심 단어를 바꾸도록 알린다.
+  final ValueChanged<String>? onChangeCenterWordId;
   final ValueChanged<Word>? onChangeCenterWord;
 
   WordGraphScreen({
@@ -689,6 +690,7 @@ class WordGraphScreen extends StatefulWidget {
     this.onSelectWordId,
     this.onSelectWord,
     this.onClearSelection,
+    this.onChangeCenterWordId,
     this.onChangeCenterWord,
   }) : centerWordId = _resolveCenterWordId(
          centerWordId: centerWordId,
@@ -1774,6 +1776,18 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     widget.onSelectWord?.call(word);
   }
 
+  void _dispatchCenterChange(Word word) {
+    final centerWordId = word.id.trim();
+    final onChangeCenterWordId = widget.onChangeCenterWordId;
+    if (onChangeCenterWordId != null) {
+      widget.onChangeCenterWord?.call(word);
+      onChangeCenterWordId(centerWordId);
+      return;
+    }
+
+    widget.onChangeCenterWord?.call(word);
+  }
+
   void _handleCenterNodeTap() {
     _temporarilySuppressBackgroundTapClear();
     if (_selectedWordId != _centerWordId) {
@@ -1794,8 +1808,9 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       return;
     }
 
-    if (widget.onChangeCenterWord != null) {
-      widget.onChangeCenterWord!(word);
+    if (widget.onChangeCenterWordId != null ||
+        widget.onChangeCenterWord != null) {
+      _dispatchCenterChange(word);
       return;
     }
 

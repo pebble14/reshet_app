@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2026-04-25 Phase 8-H-33
+
+- graph center change callback contract first slice를 적용했다.
+- `WordGraphScreen`에 `onChangeCenterWordId`를 추가하고, same-node center change dispatch의 주 payload를 `centerWordId`로 축소했다.
+- 기존 `onChangeCenterWord(Word)`는 compatibility/local fallback side-car로 유지했다.
+- `WordExplorerScreen`은 center change를 id callback으로 소비하고, fallback `Word`는 id 일치 시에만 임시 보조 carrier로 사용하도록 제한했다.
+- explorer `_centerWord`, history payload, tooltip contract, selection callback, graph builder/cache, repository/DB, `Word.fromMap` 일반 경계, graph/explorer UX 정책은 변경하지 않았다.
+
 ## 2026-04-24 Phase 8-H-32
 
 - graph center state contract first slice를 적용했다.
