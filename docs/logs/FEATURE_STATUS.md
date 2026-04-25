@@ -1,5 +1,14 @@
 # FEATURE_STATUS
 
+## 2026-04-25 Phase 8-H-36 진행 상태
+
+- 진행 범위: pending center fallback side-car cleanup first slice, `WordExplorerScreen` center change fallback carrier 축소
+- 현재 상태: explorer pending center fallback이 `Word?` side-car에서 `_ExplorerCenterDisplaySeed?` side-car로 축소되었고, center change authoritative path는 `centerWordId` callback으로 유지
+- 구조 기준: legacy `onChangeCenterWord(Word)`는 public API로 유지하되 explorer에서는 display seed 보정값으로 즉시 축소 저장하고, id mismatch fallback은 폐기한다
+- 유지 범위: tooltip UX, history selected state 정책, history payload schema, graph callback/public API, repository/DB, `Word.fromMap` 일반 경계
+- 주의: 이번 단계는 side-car 완전 제거가 아니라 Word carrier 의존 축소 first slice이며, graph/explorer UX 정책 변경 단계가 아니다
+- 보류 범위: pending display seed fallback 완전 제거 여부, history selected state 정책 검토, `Word.fromMap` consumer별 정리 후속 절편
+
 ## 2026-04-25 Phase 8-H-34 진행 상태
 
 - 진행 범위: explorer center state contract first slice, `WordExplorerScreen` center id authority / tooltip-history display seed 경계

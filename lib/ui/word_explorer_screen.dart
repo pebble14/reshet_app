@@ -116,7 +116,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
 
   late String _centerWordId;
   late _ExplorerCenterDisplaySeed _centerDisplaySeed;
-  Word? _pendingCenterWordChangeFallback;
+  _ExplorerCenterDisplaySeed? _pendingCenterDisplaySeedFallback;
   String? _selectedWordId;
   WordDetailLikeDisplayItem? _selectedWordDisplayItem;
   int _graphRevision = 0;
@@ -168,15 +168,13 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
               },
               onClearSelection: _clearSelectedWordPanel,
               onChangeCenterWord: (word) {
-                _pendingCenterWordChangeFallback = word;
+                _pendingCenterDisplaySeedFallback =
+                    _ExplorerCenterDisplaySeed.fromWord(word);
               },
               onChangeCenterWordId: (centerWordId) async {
-                final fallbackWord = _takePendingCenterWordChangeFallback(
-                  centerWordId,
-                );
-                final centerDisplaySeed = fallbackWord == null
-                    ? _ExplorerCenterDisplaySeed.idOnly(centerWordId)
-                    : _ExplorerCenterDisplaySeed.fromWord(fallbackWord);
+                final centerDisplaySeed =
+                    _takePendingCenterDisplaySeedFallback(centerWordId) ??
+                    _ExplorerCenterDisplaySeed.idOnly(centerWordId);
                 await _selectWord(
                   centerWordId,
                   changeCenterDisplaySeed: centerDisplaySeed,
@@ -250,15 +248,17 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
     }
   }
 
-  Word? _takePendingCenterWordChangeFallback(String centerWordId) {
-    final pendingFallback = _pendingCenterWordChangeFallback;
-    _pendingCenterWordChangeFallback = null;
+  _ExplorerCenterDisplaySeed? _takePendingCenterDisplaySeedFallback(
+    String centerWordId,
+  ) {
+    final pendingFallback = _pendingCenterDisplaySeedFallback;
+    _pendingCenterDisplaySeedFallback = null;
     if (pendingFallback == null) {
       return null;
     }
 
     final normalizedCenterWordId = centerWordId.trim();
-    if (pendingFallback.id.trim() != normalizedCenterWordId) {
+    if (pendingFallback.centerWordId.trim() != normalizedCenterWordId) {
       return null;
     }
 

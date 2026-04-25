@@ -1,5 +1,28 @@
 # Read Source Migration
 
+## 2026-04-25 Phase 8-H-36 pending center fallback side-car cleanup first slice
+
+### 이번 단계 요약
+
+- 이번 단계는 explorer pending center fallback side-car cleanup first slice다.
+- `WordExplorerScreen` center change 경로에서 pending fallback carrier를 `Word?`에서 `_ExplorerCenterDisplaySeed?`로 축소했다.
+- `centerWordId` callback은 center change authoritative path로 유지하고, legacy `onChangeCenterWord(Word)`는 display seed 보정값 생성에만 사용한다.
+- pending display seed fallback은 id callback의 `centerWordId`와 일치할 때만 소비하고, mismatch 시 폐기한다.
+
+### 적용 범위
+
+- `WordExplorerScreen` pending center fallback side-car 타입 축소
+- center change callback 소비부의 id-first 경로 유지
+- `_ExplorerCenterDisplaySeed` 기반 history tooltip/display baseline 유지
+
+### 제외 범위
+
+- `onChangeCenterWord(Word)` public API 제거
+- history selected state 정책 / history payload schema
+- tooltip UX
+- repository/DB, `Word.fromMap` 일반 경계
+- graph/explorer UX 정책
+
 ## 2026-04-25 Phase 8-H-34 explorer center state contract first slice
 
 ### 이번 단계 요약
