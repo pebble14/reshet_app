@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-04-25 Phase 8-H-34
+
+- explorer center state contract first slice를 적용했다.
+- `WordExplorerScreen` center authoritative state를 `_centerWordId`로 줄이고, tooltip/history baseline 값은 private `_ExplorerCenterDisplaySeed`로 분리했다.
+- graph seed 전달은 기존 `centerWordId` 기준을 유지했고, `_pendingCenterWordChangeFallback`은 id 일치 시 display seed 보정용 compatibility side-car로 유지했다.
+- history selected state 복원 정책, tooltip UX, history payload schema, graph callback/public API, repository/DB, `Word.fromMap` 일반 경계는 변경하지 않았다.
+
 ## 2026-04-25 Phase 8-H-33
 
 - graph center change callback contract first slice를 적용했다.

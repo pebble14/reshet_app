@@ -1,5 +1,28 @@
 # Read Source Migration
 
+## 2026-04-25 Phase 8-H-34 explorer center state contract first slice
+
+### 이번 단계 요약
+
+- 이번 단계는 explorer center state contract first slice다.
+- `WordExplorerScreen` 내부 authoritative center state를 full `_centerWord` carrier에서 `_centerWordId`로 줄였다.
+- history tooltip/display baseline에 필요한 값은 private `_ExplorerCenterDisplaySeed` 최소 contract로 분리했다.
+- `_pendingCenterWordChangeFallback`은 제거하지 않고, id 일치 시 display seed 보정용 compatibility side-car로 유지한다.
+
+### 적용 범위
+
+- `WordExplorerScreen` center id authority
+- history entry 생성 시 center display seed 소비
+- graph child `centerWordId` seed 전달 유지
+- center change fallback display seed 보정 경계
+
+### 제외 범위
+
+- history selected state 복원 정책
+- tooltip UX / history payload schema
+- graph public API / graph callback contract
+- repository/DB, `Word.fromMap` 일반 경계
+
 ## 2026-04-25 Phase 8-H-33 graph center change callback contract first slice
 
 ### 이번 단계 요약

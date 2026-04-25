@@ -1,5 +1,14 @@
 # FEATURE_STATUS
 
+## 2026-04-25 Phase 8-H-34 진행 상태
+
+- 진행 범위: explorer center state contract first slice, `WordExplorerScreen` center id authority / tooltip-history display seed 경계
+- 현재 상태: explorer authoritative center state가 `_centerWordId`로 전환되었고, history tooltip/display baseline 값은 private `_ExplorerCenterDisplaySeed` 최소 contract로 분리
+- 구조 기준: graph child seed는 `centerWordId: _centerWordId`를 유지하고, history entry 생성은 `_centerDisplaySeed`를 소비한다
+- 유지 범위: `_pendingCenterWordChangeFallback` compatibility side-car, history selected state 복원 정책, tooltip UX, history payload schema, graph callback/public API, repository/DB, `Word.fromMap` 일반 경계
+- 주의: 이번 단계는 explorer center state contract first slice이며, fallback 제거 또는 history selected state 정책 변경 단계가 아니다
+- 보류 범위: `_pendingCenterWordChangeFallback` cleanup 여부, history selected state 정책 검토, `Word.fromMap` 일반 경계 정리 후속 절편
+
 ## 2026-04-25 Phase 8-H-33 진행 상태
 
 - 진행 범위: graph center change callback contract first slice, `WordGraphScreen.onChangeCenterWordId`, `WordExplorerScreen` center change callback 소비 경계

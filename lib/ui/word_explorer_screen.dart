@@ -19,6 +19,89 @@ class _ExplorerHistorySnapshot {
   });
 }
 
+class _ExplorerCenterDisplaySeed {
+  final String centerWordId;
+  final String representativeSpelling;
+  final String displayStrongNumber;
+  final String representativeTransliteration;
+
+  const _ExplorerCenterDisplaySeed({
+    required this.centerWordId,
+    required this.representativeSpelling,
+    required this.displayStrongNumber,
+    required this.representativeTransliteration,
+  });
+
+  factory _ExplorerCenterDisplaySeed.idOnly(String centerWordId) {
+    final normalizedCenterWordId = centerWordId.trim();
+
+    return _ExplorerCenterDisplaySeed(
+      centerWordId: normalizedCenterWordId,
+      representativeSpelling: normalizedCenterWordId,
+      displayStrongNumber: '',
+      representativeTransliteration: '',
+    );
+  }
+
+  factory _ExplorerCenterDisplaySeed.fromWord(Word word) {
+    final centerWordId = word.id.trim();
+    final fallbackSpelling = (word.spelling1 ?? '').trim();
+
+    return _ExplorerCenterDisplaySeed(
+      centerWordId: centerWordId,
+      representativeSpelling: fallbackSpelling.isNotEmpty
+          ? fallbackSpelling
+          : centerWordId,
+      displayStrongNumber: formatWordDisplayStrong(
+        (word.strongNumber ?? '').trim(),
+      ),
+      representativeTransliteration: (word.transliteration1 ?? '').trim(),
+    );
+  }
+
+  factory _ExplorerCenterDisplaySeed.fromDisplayItem({
+    required String centerWordId,
+    required WordDetailLikeDisplayItem displayItem,
+  }) {
+    final normalizedCenterWordId = centerWordId.trim();
+    final fallbackSpelling = (displayItem.representativeSpelling ?? '').trim();
+    final fallbackTransliteration = displayItem.transliterations.isEmpty
+        ? ''
+        : displayItem.transliterations.first.trim();
+
+    return _ExplorerCenterDisplaySeed(
+      centerWordId: normalizedCenterWordId,
+      representativeSpelling: fallbackSpelling.isNotEmpty
+          ? fallbackSpelling
+          : normalizedCenterWordId,
+      displayStrongNumber: formatWordDisplayStrong(
+        (displayItem.displayStrongNumber ?? '').trim(),
+      ),
+      representativeTransliteration: fallbackTransliteration,
+    );
+  }
+
+  factory _ExplorerCenterDisplaySeed.fromTooltipDisplay(
+    WordNavigationHistoryTooltipDisplay tooltipDisplay, {
+    String? centerWordId,
+  }) {
+    final normalizedCenterWordId = (centerWordId ?? tooltipDisplay.wordId)
+        .trim();
+    final fallbackSpelling = tooltipDisplay.representativeSpelling.trim();
+
+    return _ExplorerCenterDisplaySeed(
+      centerWordId: normalizedCenterWordId,
+      representativeSpelling: fallbackSpelling.isNotEmpty
+          ? fallbackSpelling
+          : normalizedCenterWordId,
+      displayStrongNumber: tooltipDisplay.displayStrongNumber.trim(),
+      representativeTransliteration: tooltipDisplay
+          .representativeTransliteration
+          .trim(),
+    );
+  }
+}
+
 class WordExplorerScreen extends StatefulWidget {
   final String initialWordId;
 
@@ -31,7 +114,8 @@ class WordExplorerScreen extends StatefulWidget {
 class _WordExplorerScreenState extends State<WordExplorerScreen> {
   final WordRepository _repository = WordRepository();
 
-  late Word _centerWord;
+  late String _centerWordId;
+  late _ExplorerCenterDisplaySeed _centerDisplaySeed;
   Word? _pendingCenterWordChangeFallback;
   String? _selectedWordId;
   WordDetailLikeDisplayItem? _selectedWordDisplayItem;
@@ -51,12 +135,16 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
   @override
   void initState() {
     super.initState();
-    _centerWord = Word(id: widget.initialWordId.trim());
+    _centerWordId = widget.initialWordId.trim();
+    _centerDisplaySeed = _ExplorerCenterDisplaySeed.idOnly(_centerWordId);
     _selectedWordId = null;
     _selectedWordDisplayItem = null;
     _isDetailLoading = true;
     _history.reset(
-      _createHistoryEntry(centerWord: _centerWord, selectedWordId: null),
+      _createHistoryEntry(
+        centerDisplaySeed: _centerDisplaySeed,
+        selectedWordId: null,
+      ),
     );
     _refreshHistoryNavigationAvailability();
     _initializeExplorerBootstrap();
@@ -72,7 +160,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
             flex: 3,
             child: WordGraphScreen(
               key: ValueKey(_graphRevision),
-              centerWordId: _centerWord.id,
+              centerWordId: _centerWordId,
               selectedWordId: _selectedWordId,
               appBarActionPrefix: _buildHistoryActions(),
               onSelectWordId: (selectedWordId) async {
@@ -83,12 +171,15 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
                 _pendingCenterWordChangeFallback = word;
               },
               onChangeCenterWordId: (centerWordId) async {
-                final fallbackWord =
-                    _takePendingCenterWordChangeFallback(centerWordId) ??
-                    Word(id: centerWordId.trim());
+                final fallbackWord = _takePendingCenterWordChangeFallback(
+                  centerWordId,
+                );
+                final centerDisplaySeed = fallbackWord == null
+                    ? _ExplorerCenterDisplaySeed.idOnly(centerWordId)
+                    : _ExplorerCenterDisplaySeed.fromWord(fallbackWord);
                 await _selectWord(
                   centerWordId,
-                  changeCenterWordTo: fallbackWord,
+                  changeCenterDisplaySeed: centerDisplaySeed,
                 );
               },
             ),
@@ -102,15 +193,17 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
 
   Future<void> _selectWord(
     String selectedWordId, {
-    Word? changeCenterWordTo,
+    _ExplorerCenterDisplaySeed? changeCenterDisplaySeed,
   }) async {
     final normalizedSelectedWordId = selectedWordId.trim();
-    final nextCenterWord = changeCenterWordTo;
-    final shouldChangeCenterWord = nextCenterWord != null;
+    final nextCenterDisplaySeed = changeCenterDisplaySeed;
+    final shouldChangeCenterWord = nextCenterDisplaySeed != null;
 
     setState(() {
       if (shouldChangeCenterWord) {
-        _centerWord = nextCenterWord;
+        final resolvedCenterDisplaySeed = nextCenterDisplaySeed;
+        _centerWordId = resolvedCenterDisplaySeed.centerWordId;
+        _centerDisplaySeed = resolvedCenterDisplaySeed;
       }
       _isDetailLoading = true;
       _detailError = null;
@@ -136,12 +229,12 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
             : null;
         if (shouldChangeCenterWord) {
           _pushHistoryEntry(
-            centerWord: _centerWord,
+            centerDisplaySeed: _centerDisplaySeed,
             selectedWordId: resolvedSelectedWordId,
           );
         } else {
           _replaceCurrentHistoryEntry(
-            centerWord: _centerWord,
+            centerDisplaySeed: _centerDisplaySeed,
             selectedWordId: resolvedSelectedWordId,
           );
         }
@@ -198,7 +291,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
       );
       if (!mounted) return;
 
-      final resolvedCenterWord = _resolveBootstrapCenterWord(
+      final resolvedCenterDisplaySeed = _resolveBootstrapCenterDisplaySeed(
         wordId: initialWordId,
         centerWordMap: centerWordMap,
         selectedDisplayItem: selectedDisplayItem,
@@ -208,7 +301,8 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
           : initialWordId;
 
       setState(() {
-        _centerWord = resolvedCenterWord;
+        _centerWordId = resolvedCenterDisplaySeed.centerWordId;
+        _centerDisplaySeed = resolvedCenterDisplaySeed;
         _selectedWordId = resolvedSelectedWordId;
         _selectedWordDisplayItem = selectedDisplayItem;
         _isDetailLoading = false;
@@ -218,7 +312,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
             : null;
       });
       _replaceCurrentHistoryEntry(
-        centerWord: resolvedCenterWord,
+        centerDisplaySeed: resolvedCenterDisplaySeed,
         selectedWordId: resolvedSelectedWordId,
       );
     } catch (e) {
@@ -232,21 +326,21 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
     }
   }
 
-  Word _resolveBootstrapCenterWord({
+  _ExplorerCenterDisplaySeed _resolveBootstrapCenterDisplaySeed({
     required String wordId,
     required Map<String, dynamic>? centerWordMap,
     required WordDetailLikeDisplayItem? selectedDisplayItem,
   }) {
     if (centerWordMap != null) {
-      return Word.fromMap(centerWordMap);
+      return _ExplorerCenterDisplaySeed.fromWord(Word.fromMap(centerWordMap));
     }
 
     if (selectedDisplayItem == null) {
-      return Word(id: wordId);
+      return _ExplorerCenterDisplaySeed.idOnly(wordId);
     }
 
-    return _buildFallbackWordFromDisplayItem(
-      wordId: wordId,
+    return _ExplorerCenterDisplaySeed.fromDisplayItem(
+      centerWordId: wordId,
       displayItem: selectedDisplayItem,
     );
   }
@@ -282,8 +376,9 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
             ? '선택한 단어의 상세 정보를 찾을 수 없습니다.'
             : null;
         if (syncCenterWord && refreshedDisplayItem != null) {
-          _centerWord = _buildFallbackWordFromDisplayItem(
-            wordId: wordId,
+          _centerWordId = wordId.trim();
+          _centerDisplaySeed = _ExplorerCenterDisplaySeed.fromDisplayItem(
+            centerWordId: wordId,
             displayItem: refreshedDisplayItem,
           );
         }
@@ -292,7 +387,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
         }
         _isDetailLoading = false;
         _replaceCurrentHistoryEntry(
-          centerWord: _centerWord,
+          centerDisplaySeed: _centerDisplaySeed,
           selectedWordId: _selectedWordId,
         );
       });
@@ -329,7 +424,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
 
     await _refreshSelectedWord(
       wordId: selectedWordId,
-      syncCenterWord: _centerWord.id == selectedWordId,
+      syncCenterWord: _centerWordId == selectedWordId,
       refreshGraphIfChanged: true,
     );
     if (!mounted) return;
@@ -344,7 +439,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
     final selectedDisplayItem = _selectedWordDisplayItem;
     if (selectedWordId == null || selectedDisplayItem == null) return;
 
-    final wasCenterWord = _centerWord.id == selectedWordId;
+    final wasCenterWord = _centerWordId == selectedWordId;
 
     final wasDeleted = await Navigator.push<bool?>(
       context,
@@ -423,7 +518,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
         _graphRevision++;
       }
       _replaceCurrentHistoryEntry(
-        centerWord: _centerWord,
+        centerDisplaySeed: _centerDisplaySeed,
         selectedWordId: null,
       );
     });
@@ -486,7 +581,11 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
     final snapshot = entry.payload;
 
     setState(() {
-      _centerWord = Word(id: snapshot.centerWordId);
+      _centerWordId = snapshot.centerWordId;
+      _centerDisplaySeed = _ExplorerCenterDisplaySeed.fromTooltipDisplay(
+        entry.tooltipDisplay,
+        centerWordId: snapshot.centerWordId,
+      );
       _selectedWordId = null;
       _selectedWordDisplayItem = null;
       _detailError = null;
@@ -497,11 +596,11 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
   }
 
   void _pushHistoryEntry({
-    required Word centerWord,
+    required _ExplorerCenterDisplaySeed centerDisplaySeed,
     required String? selectedWordId,
   }) {
     final entry = _createHistoryEntry(
-      centerWord: centerWord,
+      centerDisplaySeed: centerDisplaySeed,
       selectedWordId: selectedWordId,
     );
     final currentEntry = _history.currentEntry;
@@ -518,12 +617,12 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
   }
 
   void _replaceCurrentHistoryEntry({
-    required Word centerWord,
+    required _ExplorerCenterDisplaySeed centerDisplaySeed,
     required String? selectedWordId,
   }) {
     _history.replaceCurrent(
       _createHistoryEntry(
-        centerWord: centerWord,
+        centerDisplaySeed: centerDisplaySeed,
         selectedWordId: selectedWordId,
       ),
     );
@@ -627,24 +726,23 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
   }
 
   WordNavigationHistoryEntry<_ExplorerHistorySnapshot> _createHistoryEntry({
-    required Word centerWord,
+    required _ExplorerCenterDisplaySeed centerDisplaySeed,
     required String? selectedWordId,
   }) {
-    final centerWordId = centerWord.id.trim();
-    final fallbackSpelling = (centerWord.spelling1 ?? '').trim();
+    final centerWordId = centerDisplaySeed.centerWordId.trim();
+    final fallbackSpelling = centerDisplaySeed.representativeSpelling.trim();
     final representativeSpelling = fallbackSpelling.isNotEmpty
         ? fallbackSpelling
         : centerWordId;
-    final strongNumber = formatWordDisplayStrong(
-      (centerWord.strongNumber ?? '').trim(),
-    );
+    final strongNumber = centerDisplaySeed.displayStrongNumber.trim();
 
     return WordNavigationHistoryEntry<_ExplorerHistorySnapshot>(
       tooltipDisplay: WordNavigationHistoryTooltipDisplay(
         wordId: centerWordId,
         representativeSpelling: representativeSpelling,
         displayStrongNumber: strongNumber,
-        representativeTransliteration: (centerWord.transliteration1 ?? '')
+        representativeTransliteration: centerDisplaySeed
+            .representativeTransliteration
             .trim(),
       ),
       payload: _ExplorerHistorySnapshot(
@@ -677,27 +775,6 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
     }
 
     return '$label: 중심\n${parts.join('\n')}';
-  }
-
-  Word _buildFallbackWordFromDisplayItem({
-    required String wordId,
-    required WordDetailLikeDisplayItem displayItem,
-  }) {
-    return Word(
-      id: wordId.trim(),
-      language: displayItem.language,
-      strongNumber: displayItem.displayStrongNumber,
-      spelling1: displayItem.representativeSpelling,
-      transliteration1: displayItem.transliterations.isEmpty
-          ? null
-          : displayItem.transliterations.first,
-      pronunciation1: displayItem.pronunciations.isEmpty
-          ? null
-          : displayItem.pronunciations.first,
-      meaning1: displayItem.meanings.isEmpty
-          ? null
-          : displayItem.meanings.first,
-    );
   }
 
   Widget _buildDetailPanel() {
