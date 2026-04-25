@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-04-25 Phase 8-H-38
+
+- explorer bootstrap word carrier cleanup first slice를 적용했다.
+- `WordExplorerScreen` bootstrap center display seed 생성에서 `Word.fromMap(centerWordMap)` 사용 1곳을 제거했다.
+- `_ExplorerCenterDisplaySeed`는 `centerWordMap`의 `id`, `스트롱넘버`, `표기1`, `음역1` 최소 필드만 직접 읽어 생성한다.
+- history selected state 정책, global `Word.fromMap`, graph 내부 `Word.fromMap`, repository/DB, graph callback contract, tooltip UX는 변경하지 않았다.
+
 ## 2026-04-25 Phase 8-H-37
 
 - `pending display seed side-car final cleanup first slice`를 적용했다.

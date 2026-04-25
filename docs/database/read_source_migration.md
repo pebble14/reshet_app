@@ -1,5 +1,23 @@
 # Read Source Migration
 
+## 2026-04-25 Phase 8-H-38 explorer bootstrap word carrier cleanup first slice
+
+### 이번 단계 요약
+
+- 이번 단계는 explorer bootstrap word carrier cleanup first slice다.
+- `WordExplorerScreen` bootstrap center display seed 생성 경계에서 `Word.fromMap(centerWordMap)` 잔여 carrier를 제거했다.
+- center display seed는 `centerWordMap`의 `id`, `스트롱넘버`, `표기1`, `음역1` 최소 필드만 직접 읽어 만든다.
+- 대표 표기가 비면 `centerWordId`를 사용하고, Strong 표시는 기존 `formatWordDisplayStrong(...)` 기준을 유지한다.
+
+### 유지 범위
+
+- history selected state 정책 변경 아님
+- global `Word.fromMap` 제거 아님
+- graph 내부 `Word.fromMap` 변경 아님
+- repository/DB 변경 아님
+- graph callback contract 변경 아님
+- tooltip UX 변경 아님
+
 ## 2026-04-25 Phase 8-H-37 pending display seed side-car final cleanup first slice
 
 ### 이번 단계 요약

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../data/models/word.dart';
 import '../data/repositories/word_repository.dart';
 import '../domain/word/word_detail_like_display_item.dart';
 import 'word_detail_screen.dart';
@@ -40,22 +39,6 @@ class _ExplorerCenterDisplaySeed {
       representativeSpelling: normalizedCenterWordId,
       displayStrongNumber: '',
       representativeTransliteration: '',
-    );
-  }
-
-  factory _ExplorerCenterDisplaySeed.fromWord(Word word) {
-    final centerWordId = word.id.trim();
-    final fallbackSpelling = (word.spelling1 ?? '').trim();
-
-    return _ExplorerCenterDisplaySeed(
-      centerWordId: centerWordId,
-      representativeSpelling: fallbackSpelling.isNotEmpty
-          ? fallbackSpelling
-          : centerWordId,
-      displayStrongNumber: formatWordDisplayStrong(
-        (word.strongNumber ?? '').trim(),
-      ),
-      representativeTransliteration: (word.transliteration1 ?? '').trim(),
     );
   }
 
@@ -313,7 +296,20 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
     required WordDetailLikeDisplayItem? selectedDisplayItem,
   }) {
     if (centerWordMap != null) {
-      return _ExplorerCenterDisplaySeed.fromWord(Word.fromMap(centerWordMap));
+      final centerWordId = (centerWordMap['id'] as String).trim();
+      final fallbackSpelling = (centerWordMap['표기1'] as String? ?? '').trim();
+
+      return _ExplorerCenterDisplaySeed(
+        centerWordId: centerWordId,
+        representativeSpelling: fallbackSpelling.isNotEmpty
+            ? fallbackSpelling
+            : centerWordId,
+        displayStrongNumber: formatWordDisplayStrong(
+          (centerWordMap['스트롱넘버'] as String? ?? '').trim(),
+        ),
+        representativeTransliteration:
+            (centerWordMap['음역1'] as String? ?? '').trim(),
+      );
     }
 
     if (selectedDisplayItem == null) {

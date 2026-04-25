@@ -1,5 +1,13 @@
 # FEATURE_STATUS
 
+## 2026-04-25 Phase 8-H-38 진행 상태
+
+- 진행 범위: explorer bootstrap word carrier cleanup first slice, `WordExplorerScreen` bootstrap center display seed 생성 경계
+- 현재 상태: explorer bootstrap에서 `Word.fromMap(centerWordMap)` 잔여 carrier 1곳을 제거했고, `_ExplorerCenterDisplaySeed`는 `centerWordMap`의 `id`, `스트롱넘버`, `표기1`, `음역1` 최소 필드만 직접 읽어 생성한다
+- 구조 기준: 대표 표기가 비면 `centerWordId`를 사용하고, Strong 표시는 기존 `formatWordDisplayStrong(...)` 기준과 trim 기준을 유지한다
+- 유지 범위: history selected state 정책 변경 아님, global `Word.fromMap` 제거 아님, graph 내부 `Word.fromMap` 변경 아님, repository/DB 변경 아님, graph callback contract 변경 아님, tooltip UX 변경 아님
+- 보류 범위: consumer별 `Word.fromMap` 정리 후속 절편, history selected state 정책 검토
+
 ## 2026-04-25 Phase 8-H-37 진행 상태
 
 - 진행 범위: pending display seed side-car final cleanup first slice, `WordExplorerScreen` center change display seed 확정 경계
