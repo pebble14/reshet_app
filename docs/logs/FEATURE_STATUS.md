@@ -1,5 +1,13 @@
 # FEATURE_STATUS
 
+## 2026-04-25 Phase 8-H-42 진행 상태
+
+- 진행 범위: graph create/relation post-save Word.fromMap residual cleanup first slice, `WordGraphScreen` create/relation 후속 경계
+- 현재 상태: `Word.fromMap(currentWordMap)` 우회와 `getWordByIdForGraphSingleWord(newId)` 기반 full `Word` carrier 생성을 제거했고, local payload의 `wordId`, `representativeSpelling`만 사용한다
+- 구조 기준: relation dialog 대표 표기 fallback, create cancel, duplicate warning, relation add, graph refresh, cache invalidation 흐름은 유지한다
+- 유지 범위: global `Word.fromMap` 제거 아님, repository public API 변경 아님, graph center payload 전체 개편 아님, UX 변경 아님, history selected state 정책 변경 아님
+- 보류 범위: 나머지 `Word.fromMap` consumer별 정리 후속 절편, graph center payload 검토, generic repository API 검토
+
 ## 2026-04-25 Phase 8-H-40 진행 상태
 
 - 진행 범위: graph visible data Word.fromMap residual cleanup first slice, repository 내부 graph visible data projection 경계

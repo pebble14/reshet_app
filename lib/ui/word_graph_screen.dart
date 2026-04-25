@@ -4684,6 +4684,26 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     }
   }
 
+  ({String wordId, String representativeSpelling})?
+  _buildGraphCreatePostSavePayload(Map<String, dynamic>? wordMap) {
+    final wordId = _readGraphCreatePostSaveWordValue(wordMap, 'id');
+    if (wordId.isEmpty) {
+      return null;
+    }
+
+    return (
+      wordId: wordId,
+      representativeSpelling: _readGraphCreatePostSaveWordValue(wordMap, '표기1'),
+    );
+  }
+
+  String _readGraphCreatePostSaveWordValue(
+    Map<String, dynamic>? wordMap,
+    String key,
+  ) {
+    return (wordMap?[key] ?? '').toString().trim();
+  }
+
   /// [단어 추가] 전체 흐름
   /// 1) 단어 입력
   /// 2) 중복 후보 경고
@@ -4762,26 +4782,30 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       }
     }
 
-    final createdWord = currentWordMap == null
-        ? await _repository.getWordByIdForGraphSingleWord(newId)
-        : Word.fromMap(currentWordMap);
+    Map<String, dynamic>? postSaveWordMap = currentWordMap;
+    postSaveWordMap ??= await _repository.getWordMapByIdForGraphSingleWord(
+      newId,
+    );
+    final createdWordPayload = _buildGraphCreatePostSavePayload(
+      postSaveWordMap,
+    );
     bool didCreateRelation = false;
 
     // 저장 후 관계 추가 옵션
     if (payload.createRelationAfterSave) {
-      if (createdWord != null) {
+      if (createdWordPayload != null) {
         final relationPayload = await _showCreateRelationDialog(
-          otherWordId: createdWord.id,
+          otherWordId: createdWordPayload.wordId,
           otherWordDisplayLabel: _relationTargetDisplayLabel(
-            wordId: createdWord.id,
-            representativeSpelling: createdWord.spelling1,
+            wordId: createdWordPayload.wordId,
+            representativeSpelling: createdWordPayload.representativeSpelling,
           ),
         );
 
         if (relationPayload != null) {
           final existing = await _repository.findExistingRelationIdBySignature(
             _centerWordId,
-            createdWord.id,
+            createdWordPayload.wordId,
             relationType: relationPayload.relationType,
             directionCode: relationPayload.directionCode,
           );
@@ -4789,7 +4813,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
           if (existing == null) {
             await _repository.createRelation(
               wordId1: _centerWordId,
-              wordId2: createdWord.id,
+              wordId2: createdWordPayload.wordId,
               categoryCode: relationPayload.categoryCode,
               relationType: relationPayload.relationType,
               directionCode: relationPayload.directionCode,
@@ -4808,8 +4832,11 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         }
       }
 
-      if (didCreateRelation && createdWord != null) {
-        WordGraphDataCache.invalidateMany([_centerWordId, createdWord.id]);
+      if (didCreateRelation && createdWordPayload != null) {
+        WordGraphDataCache.invalidateMany([
+          _centerWordId,
+          createdWordPayload.wordId,
+        ]);
       }
 
       await _loadConnectedWords();
@@ -4827,10 +4854,11 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     // 새로 만든 단어를 중심으로 하는 그래프 화면으로 즉시 전환
     if (!mounted) return;
 
-    if (createdWord != null) {
+    if (createdWordPayload != null) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (_) => WordGraphScreen(centerWordId: createdWord.id),
+          builder: (_) =>
+              WordGraphScreen(centerWordId: createdWordPayload.wordId),
         ),
       );
       return;

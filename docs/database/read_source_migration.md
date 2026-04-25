@@ -1,5 +1,22 @@
 # Read Source Migration
 
+## 2026-04-25 Phase 8-H-42 graph create/relation post-save Word.fromMap residual cleanup first slice
+
+### 이번 단계 요약
+
+- 이번 단계는 graph create/relation post-save Word.fromMap residual cleanup first slice다.
+- `WordGraphScreen`의 create/relation post-save 경계에서 `Word.fromMap(currentWordMap)` carrier 우회를 제거했다.
+- 저장 완료 후속 흐름은 full `Word` 대신 local payload의 `wordId`, `representativeSpelling`만 사용한다.
+- relation dialog의 대표 표기 fallback과 graph refresh/cache invalidation 흐름은 유지했다.
+
+### 유지 범위
+
+- global `Word.fromMap` 제거 아님
+- repository public API 변경 아님
+- graph center payload 전체 개편 아님
+- UX 변경 아님
+- history selected state 정책 변경 아님
+
 ## 2026-04-25 Phase 8-H-40 graph visible data Word.fromMap residual cleanup first slice
 
 ### 이번 단계 요약
