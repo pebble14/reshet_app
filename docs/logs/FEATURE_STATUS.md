@@ -1,4 +1,29 @@
-# FEATURE_STATUS
+# FEATURE STATUS
+
+## 현재 상태 (Phase 8-H 완료 기준)
+
+- Phase 8-H 완료 (tag: phase8h-complete)
+- graph / explorer / 일부 repository 정규화 완료
+- UX 정책 변경 없음
+
+### 완료 범위
+
+- graph seed / center / callback id 기반 정리
+- explorer center / tooltip / bootstrap 정리
+- graph visible data / create flow Word carrier 제거
+
+### 비대상 / 다음 Phase 이관
+
+- history selected state → UX 정책 판단 대상
+- global Word.fromMap → 다음 Phase
+- repository public API → 다음 Phase
+
+## 최근 완료 Phase
+
+- Phase 8-H (완료)
+- 상세 변경 기록은 CHANGELOG를 기준으로 확인한다.
+
+## 과거 진행 로그 (Legacy)
 
 ## 2026-04-25 Phase 8-H 완료
 
