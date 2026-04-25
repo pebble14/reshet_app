@@ -1,5 +1,22 @@
 # Read Source Migration
 
+## 2026-04-25 Phase 8-H-37 pending display seed side-car final cleanup first slice
+
+### 이번 단계 요약
+
+- 이번 단계는 `pending display seed side-car final cleanup first slice`다.
+- `WordExplorerScreen` center change 경로는 explorer에서 legacy `onChangeCenterWord(Word)` handler를 더 이상 전달하지 않고 `onChangeCenterWordId`만 주경로로 소비한다.
+- `_pendingCenterDisplaySeedFallback` side-car와 소비 helper를 제거했다.
+- center display seed는 center id 기준 `_loadSplitViewDisplayItem(centerWordId)` 결과로 `_ExplorerCenterDisplaySeed.fromDisplayItem`을 만들어 확정한다.
+- split-view read가 `null`인 예외 경로에서는 id-only fallback을 허용하지만, 정상 center change 경로는 detail-like display item 기반 seed를 사용한다.
+
+### 유지 범위
+
+- tooltip UX 변경 아님
+- history selected state 정책 변경 아님
+- `Word.fromMap` 제거 아님
+- `onChangeCenterWord(Word)` public API, repository/DB, graph callback contract 재수정 없음
+
 ## 2026-04-25 Phase 8-H-36 pending center fallback side-car cleanup first slice
 
 ### 이번 단계 요약

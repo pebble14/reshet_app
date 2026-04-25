@@ -116,7 +116,6 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
 
   late String _centerWordId;
   late _ExplorerCenterDisplaySeed _centerDisplaySeed;
-  _ExplorerCenterDisplaySeed? _pendingCenterDisplaySeedFallback;
   String? _selectedWordId;
   WordDetailLikeDisplayItem? _selectedWordDisplayItem;
   int _graphRevision = 0;
@@ -167,18 +166,8 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
                 await _selectWord(selectedWordId);
               },
               onClearSelection: _clearSelectedWordPanel,
-              onChangeCenterWord: (word) {
-                _pendingCenterDisplaySeedFallback =
-                    _ExplorerCenterDisplaySeed.fromWord(word);
-              },
               onChangeCenterWordId: (centerWordId) async {
-                final centerDisplaySeed =
-                    _takePendingCenterDisplaySeedFallback(centerWordId) ??
-                    _ExplorerCenterDisplaySeed.idOnly(centerWordId);
-                await _selectWord(
-                  centerWordId,
-                  changeCenterDisplaySeed: centerDisplaySeed,
-                );
+                await _selectWord(centerWordId, changeCenterWord: true);
               },
             ),
           ),
@@ -191,17 +180,14 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
 
   Future<void> _selectWord(
     String selectedWordId, {
-    _ExplorerCenterDisplaySeed? changeCenterDisplaySeed,
+    bool changeCenterWord = false,
   }) async {
     final normalizedSelectedWordId = selectedWordId.trim();
-    final nextCenterDisplaySeed = changeCenterDisplaySeed;
-    final shouldChangeCenterWord = nextCenterDisplaySeed != null;
+    final shouldChangeCenterWord = changeCenterWord;
 
     setState(() {
       if (shouldChangeCenterWord) {
-        final resolvedCenterDisplaySeed = nextCenterDisplaySeed;
-        _centerWordId = resolvedCenterDisplaySeed.centerWordId;
-        _centerDisplaySeed = resolvedCenterDisplaySeed;
+        _centerWordId = normalizedSelectedWordId;
       }
       _isDetailLoading = true;
       _detailError = null;
@@ -218,7 +204,19 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
       final resolvedSelectedWordId = selectedDisplayItem == null
           ? null
           : normalizedSelectedWordId;
+      final resolvedCenterDisplaySeed = shouldChangeCenterWord
+          ? selectedDisplayItem == null
+                ? _ExplorerCenterDisplaySeed.idOnly(normalizedSelectedWordId)
+                : _ExplorerCenterDisplaySeed.fromDisplayItem(
+                    centerWordId: normalizedSelectedWordId,
+                    displayItem: selectedDisplayItem,
+                  )
+          : _centerDisplaySeed;
       setState(() {
+        if (shouldChangeCenterWord) {
+          _centerWordId = resolvedCenterDisplaySeed.centerWordId;
+          _centerDisplaySeed = resolvedCenterDisplaySeed;
+        }
         _selectedWordId = resolvedSelectedWordId;
         _selectedWordDisplayItem = selectedDisplayItem;
         _isDetailLoading = false;
@@ -246,23 +244,6 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
         _detailUnavailableMessage = null;
       });
     }
-  }
-
-  _ExplorerCenterDisplaySeed? _takePendingCenterDisplaySeedFallback(
-    String centerWordId,
-  ) {
-    final pendingFallback = _pendingCenterDisplaySeedFallback;
-    _pendingCenterDisplaySeedFallback = null;
-    if (pendingFallback == null) {
-      return null;
-    }
-
-    final normalizedCenterWordId = centerWordId.trim();
-    if (pendingFallback.centerWordId.trim() != normalizedCenterWordId) {
-      return null;
-    }
-
-    return pendingFallback;
   }
 
   Future<WordDetailLikeDisplayItem?> _loadSplitViewDisplayItem(

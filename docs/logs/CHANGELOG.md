@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2026-04-25 Phase 8-H-37
+
+- `pending display seed side-car final cleanup first slice`를 적용했다.
+- `WordExplorerScreen`에서 legacy `onChangeCenterWord(Word)` handler 전달을 중단하고, center change 주경로를 `onChangeCenterWordId`로 유지했다.
+- `_pendingCenterDisplaySeedFallback` 필드와 소비 helper를 제거했다.
+- center display seed는 `_loadSplitViewDisplayItem(centerWordId)` 결과의 detail-like display item으로 확정하고, split-view read가 `null`인 예외 경로에서만 id-only fallback을 허용한다.
+- tooltip UX, history selected state 정책, `Word.fromMap` 일반 경계, `onChangeCenterWord(Word)` public API, repository/DB는 변경하지 않았다.
+
 ## 2026-04-25 Phase 8-H-36
 
 - pending center fallback side-car cleanup first slice를 적용했다.

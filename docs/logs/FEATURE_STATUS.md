@@ -1,5 +1,14 @@
 # FEATURE_STATUS
 
+## 2026-04-25 Phase 8-H-37 진행 상태
+
+- 진행 범위: pending display seed side-car final cleanup first slice, `WordExplorerScreen` center change display seed 확정 경계
+- 현재 상태: explorer는 center change에서 legacy `onChangeCenterWord(Word)` handler를 전달하지 않고 `onChangeCenterWordId`만 주경로로 소비하며, `_pendingCenterDisplaySeedFallback` side-car와 소비 helper를 제거했다
+- 구조 기준: center authority는 계속 `_centerWordId`이고, center display seed는 `_loadSplitViewDisplayItem(centerWordId)` 결과의 detail-like display item으로 `_ExplorerCenterDisplaySeed`를 만들어 확정한다
+- 예외 경로: split-view read가 `null`인 경우에만 id-only fallback을 허용한다
+- 유지 범위: tooltip UX 변경 아님, history selected state 정책 변경 아님, `Word.fromMap` 제거 아님, `onChangeCenterWord(Word)` public API / repository / DB 변경 없음
+- 보류 범위: history selected state 정책 검토, `Word.fromMap` consumer별 정리 후속 절편, explorer bootstrap `Word.fromMap` 잔여 정리
+
 ## 2026-04-25 Phase 8-H-36 진행 상태
 
 - 진행 범위: pending center fallback side-car cleanup first slice, `WordExplorerScreen` center change fallback carrier 축소
