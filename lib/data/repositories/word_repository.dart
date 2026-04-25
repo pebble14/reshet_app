@@ -1577,12 +1577,12 @@ class WordRepository {
     );
   }
 
-  GraphVisibleWord _buildGraphVisibleWordFromWord(Word word) {
+  GraphVisibleWord _buildGraphVisibleWordFromRow(Map<String, dynamic> row) {
     return GraphVisibleWord(
-      wordId: word.id.trim(),
-      fallbackSpelling: (word.spelling1 ?? '').trim(),
-      fallbackStrongNumber: (word.strongNumber ?? '').trim(),
-      fallbackTransliteration: (word.transliteration1 ?? '').trim(),
+      wordId: (row['id'] ?? '').toString().trim(),
+      fallbackSpelling: (row['표기1'] ?? '').toString().trim(),
+      fallbackStrongNumber: (row['스트롱넘버'] ?? '').toString().trim(),
+      fallbackTransliteration: (row['음역1'] ?? '').toString().trim(),
     );
   }
 
@@ -2190,9 +2190,7 @@ class WordRepository {
     ]);
     final wordsById = <String, GraphVisibleWord>{
       for (final row in rows)
-        (row['id'] as String): _buildGraphVisibleWordFromWord(
-          Word.fromMap(row),
-        ),
+        (row['id'] as String): _buildGraphVisibleWordFromRow(row),
     };
     final connectedWords = orderedIds
         .map((id) => wordsById[id])

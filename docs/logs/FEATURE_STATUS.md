@@ -1,5 +1,13 @@
 # FEATURE_STATUS
 
+## 2026-04-25 Phase 8-H-40 진행 상태
+
+- 진행 범위: graph visible data Word.fromMap residual cleanup first slice, repository 내부 graph visible data projection 경계
+- 현재 상태: `_getVisibleGraphDataWithBatchLoader`에서 `rows -> Word.fromMap(row) -> GraphVisibleWord` 우회를 제거했고, row의 `id`, `표기1`, `스트롱넘버`, `음역1` 값을 직접 trim해 `GraphVisibleWord`를 생성한다
+- 구조 기준: `VisibleWordGraphData.connectedWords` 반환 contract와 relation edge order 기반 `orderedIds` 재정렬 흐름을 유지한다
+- 유지 범위: global `Word.fromMap` 제거 아님, repository public API 변경 아님, graph builder/cache 변경 아님, graph center payload 변경 아님, SQL read policy / DB schema 변경 아님, UX 변경 아님
+- 보류 범위: 나머지 `Word.fromMap` consumer별 정리 후속 절편, graph center payload 검토, generic repository API 검토
+
 ## 2026-04-25 Phase 8-H-38 진행 상태
 
 - 진행 범위: explorer bootstrap word carrier cleanup first slice, `WordExplorerScreen` bootstrap center display seed 생성 경계

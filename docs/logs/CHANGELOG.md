@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-04-25 Phase 8-H-40
+
+- graph visible data Word.fromMap residual cleanup first slice를 적용했다.
+- repository 내부 graph visible data projection에서 `Word.fromMap(row)` 우회를 제거하고, row의 `id`, `표기1`, `스트롱넘버`, `음역1` 값을 직접 trim해 `GraphVisibleWord`를 생성하도록 정리했다.
+- `VisibleWordGraphData.connectedWords` 반환 contract와 기존 order 보장 방식은 유지했다.
+- global `Word.fromMap`, repository public API, graph builder/cache, SQL read policy, DB schema, UX는 변경하지 않았다.
+
 ## 2026-04-25 Phase 8-H-38
 
 - explorer bootstrap word carrier cleanup first slice를 적용했다.
