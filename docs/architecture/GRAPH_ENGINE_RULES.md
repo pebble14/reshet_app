@@ -1,13 +1,21 @@
 # GRAPH_ENGINE_RULES.md
 
+> Status: Legacy v1 graph reference
+>
+> 이 문서는 현재 active graph authority가 아니다.
+> 현재 graph-specific semantic authority는 `docs/architecture/graph_semantic_authority.md`이다.
+>
+> 이 문서는 초기 graph 구현의 vocabulary, historical rule, implementation snapshot을 보존하기 위한 reference로 유지된다.
+> 이 문서의 layout, rendering, click flow, state management, Split View 계획은 현재 UX authority를 override하지 않는다.
+
 ## 목적
 
-이 문서는 Reshet 프로젝트의 **단어 관계 그래프 엔진의 핵심 규칙**을 정의한다.
+이 문서는 Reshet 프로젝트의 초기 **단어 관계 그래프 엔진 v1 reference**를 기록한다.
 
-그래프 구조는 프로젝트의 핵심 기능이므로,
-AI 도구(Codex 등) 또는 개발자가 구조를 변경할 때 반드시 이 문서를 따른다.
+그래프 구조는 프로젝트의 핵심 기능이지만, 현재 active graph semantic authority는 `docs/architecture/graph_semantic_authority.md`이다.
+AI 도구(Codex 등) 또는 개발자는 이 문서를 legacy reference와 historical implementation snapshot으로 참고한다.
 
-그래프 구조를 변경하려면 사용자 승인 후 진행해야 한다.
+그래프 구조를 변경하려면 현재 active authority와 사용자 승인을 함께 확인한 뒤 진행해야 한다.
 
 ---
 
@@ -152,13 +160,13 @@ WORD_TABLE의 다음 컬럼은 **그래프 관계 계산에 사용하지 않는�
 ```
 
 
-그래프 관계는 반드시 **WORD_RELATION** 기반이어야 한다.
+v1 reference에서 그래프 관계는 **WORD_RELATION** 기반으로 기록되어 있다.
 
 ---
 
 # 6. 노드 배치 규칙
 
-현재 그래프 배치는 **원형 레이아웃 (Circular Layout)** 을 사용한다.
+v1 implementation snapshot에서 그래프 배치는 **원형 레이아웃 (Circular Layout)** 을 사용한다.
 
 ```text
     node
@@ -240,7 +248,7 @@ connectedWords
 ```
 
 
-그래프 렌더링은 항상 이 두 상태를 기반으로 한다.
+v1 implementation snapshot에서 그래프 렌더링은 이 두 상태를 기반으로 기록되어 있다.
 
 ---
 
@@ -256,7 +264,7 @@ connectedWords
 - 그래프 애니메이션
 - 그래프 레벨 확장
 
-그러나 다음 규칙은 유지해야 한다.
+다음 항목은 v1 implementation snapshot에서 유지 대상으로 기록되었다.
 
 - 중심 노드 기반 구조 유지
 - WORD_RELATION 기반 데이터 유지
@@ -266,7 +274,7 @@ connectedWords
 
 # 12. Split View 확장 계획
 
-향후 UI는 다음 구조로 확장될 수 있다.
+v1 reference에서는 향후 UI 확장 계획으로 다음 구조가 기록되어 있다.
 
 ```text
 ┌──────────────┬──────────────┐
@@ -294,7 +302,7 @@ AI 도구(Codex)는 다음 작업을 수행하기 전에 사용자 승인을 받
 - WORD_RELATION 사용 방식 변경
 - 중심 노드 구조 변경
 
-이 규칙은 그래프 구조 안정성을 위해 필수이다.
+이 항목은 legacy v1 graph reference에서 구조 안정성을 위해 기록된 작업 제한이다.
 
 ---
 
