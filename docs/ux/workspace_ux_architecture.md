@@ -1,81 +1,81 @@
 # Workspace UX Architecture
 
-## 1. Purpose
+## 1. 목적
 
-This document defines the UX architecture authority for Reshet's workspace direction.
+이 문서는 Reshet의 workspace 방향에 대한 UX architecture authority를 정의한다.
 
-Reshet is not defined primarily as a graph viewer. Reshet is a persistent semantic workspace for exploring words, relations, and meaning context over time.
+Reshet는 graph viewer로만 정의되지 않는다. Reshet는 단어, 관계, 의미 맥락을 지속적으로 탐색하기 위한 persistent semantic workspace이다.
 
-This document explains why the user experience is structured around a workspace, persistent navigation, semantic continuity, and coordinated panes. It does not define low-level implementation details.
+이 문서는 사용자 경험이 왜 workspace, persistent navigation, semantic continuity, 조율된 pane 구조를 중심으로 구성되어야 하는지 설명한다. 이 문서는 낮은 수준의 구현 세부사항을 정의하지 않는다.
 
-## 2. Authority Scope
+## 2. Authority 범위
 
-This document is authoritative for:
+이 문서가 authority를 가지는 범위는 다음과 같다.
 
-- UX philosophy
-- workspace concept
-- pane relationship
-- persistent semantic workspace direction
-- graph role in the workspace
-- navigation continuity concept
-- persistent UX direction
-- responsive philosophy direction
-- UX boundary rules
+- UX 철학
+- workspace 개념
+- pane 관계
+- persistent semantic workspace 방향
+- workspace 안에서의 graph 역할
+- navigation continuity 개념
+- persistent UX 방향
+- responsive 철학 방향
+- UX authority boundary
 
-This document is not authoritative for:
+이 문서가 authority를 가지지 않는 범위는 다음과 같다.
 
 - graph traversal semantics
-- edge direction algorithms
-- graph expansion rules
-- search ranking or scoring
+- edge direction algorithm
+- graph expansion rule
+- search ranking 또는 scoring
 - debounce behavior
-- repository interaction details
+- repository interaction detail
 - database schema
 - Flutter widget structure
-- exact responsive breakpoint values
+- exact responsive breakpoint value
 - rendering optimization
-- visual styling systems
-- typography or color systems
-- exact navigation behavior specifications
+- visual styling system
+- typography 또는 color system
+- exact navigation behavior specification
 
-Detailed implementation rules must be defined in their own documents or code-level contracts.
+세부 구현 규칙은 각 영역의 별도 문서 또는 code-level contract에서 정의해야 한다.
 
-## 3. Core Philosophy
+## 3. 핵심 철학
 
-Reshet's core UX goal is to help the user maintain semantic orientation while moving through related words.
+Reshet UX의 핵심 목표는 사용자가 관련 단어 사이를 이동하는 동안 의미적 방향을 잃지 않도록 돕는 것이다.
 
-The user should not experience each graph, detail view, search result, or exploration state as an isolated screen. These surfaces should feel like coordinated views inside one persistent workspace.
+사용자는 graph, detail view, search result, exploration state를 서로 분리된 화면으로 경험하지 않아야 한다. 이 surface들은 하나의 persistent workspace 안에서 조율된 view로 느껴져야 한다.
 
-The UX prioritizes:
+Reshet UX는 다음을 우선한다.
 
-- semantic continuity over isolated page transitions
-- persistent access over one-off navigation
-- contextual exploration over static viewing
-- workspace stability over temporary workflow convenience
+- 분리된 page transition보다 semantic continuity
+- 일회성 이동보다 persistent access
+- 정적인 조회보다 contextual exploration
+- 임시 workflow 편의보다 workspace 안정성
 
-Graph exploration remains important, but the graph is not the application shell. The graph is one contextual workspace surface among others.
+Graph exploration은 여전히 중요하다. 그러나 graph는 application shell이 아니다. graph는 여러 workspace surface 중 하나의 contextual workspace surface이다.
 
 ## 4. Persistent Semantic Workspace
 
-A persistent semantic workspace keeps the user's current meaning context available while allowing exploration to continue.
+Persistent semantic workspace는 사용자가 탐색을 계속하는 동안 현재 의미 맥락을 유지할 수 있게 하는 workspace이다.
 
-The workspace should preserve the user's orientation across:
+Workspace는 다음 항목을 가로질러 사용자의 방향성을 보존해야 한다.
 
-- selected word
-- center or focus word
-- related words
+- 선택된 단어
+- 중심 또는 현재 초점 단어
+- 관련 단어
 - detail context
 - exploration history
-- search entry points
-- creation or correction flow
+- search entry point
+- 생성 또는 수정 흐름
 
-Persistence does not mean every panel must always be visually present on every device. It means the UX architecture should avoid unnecessary loss of semantic context when the user moves between related tasks.
+Persistence는 모든 panel이 모든 기기에서 항상 시각적으로 노출되어야 한다는 뜻이 아니다. 이는 사용자가 관련 작업 사이를 이동할 때 semantic context의 불필요한 손실을 피해야 한다는 뜻이다.
 
-The workspace model exists to support the user's mental continuity: "where am I in the semantic network, what am I looking at, and what can I do next?"
+Workspace model은 사용자의 의미적 연속 질문을 지원하기 위해 존재한다. 사용자는 “나는 의미 네트워크의 어디에 있는가, 무엇을 보고 있는가, 다음에 무엇을 할 수 있는가”를 이해할 수 있어야 한다.
 
-## 5. MainWorkspace Concept
+## 5. MainWorkspace 개념
 
-The target workspace concept is:
+목표 workspace 개념은 다음과 같다.
 
 ```text
 MainWorkspace
@@ -84,88 +84,88 @@ MainWorkspace
  └─ ExplorePane
 ```
 
-These are conceptual panes or views within one semantic workspace. They are not separate application identities.
+이들은 하나의 semantic workspace 안에 있는 개념적 pane 또는 view이다. 이들은 서로 분리된 application identity가 아니다.
 
 ### GraphPane
 
-GraphPane presents relation context. Its role is to help the user understand how the current word is connected to other words.
+GraphPane은 관계 맥락을 표현한다. GraphPane의 역할은 현재 단어가 다른 단어와 어떻게 연결되는지 사용자가 이해하도록 돕는 것이다.
 
-GraphPane should remain contextual. It should not become the only organizing shell for the whole application.
+GraphPane은 contextual하게 유지되어야 한다. GraphPane은 전체 application의 유일한 organizing shell이 되어서는 안 된다.
 
 ### DetailPane
 
-DetailPane presents the selected word's readable semantic information.
+DetailPane은 선택된 단어의 읽을 수 있는 의미 정보를 표현한다.
 
-DetailPane should clarify the user's current focus without taking over navigation authority.
+DetailPane은 사용자의 현재 초점을 명확하게 해야 하지만 navigation authority를 가져가서는 안 된다.
 
 ### ExplorePane
 
-ExplorePane supports broader exploration continuity: history, adjacent context, semantic movement, and workspace-level coordination.
+ExplorePane은 더 넓은 exploration continuity를 지원한다. 여기에는 history, 인접 맥락, semantic movement, workspace-level coordination이 포함된다.
 
-ExplorePane is not merely a graph replacement. It represents the user's ongoing exploration state.
+ExplorePane은 단순한 graph replacement가 아니다. ExplorePane은 사용자의 ongoing exploration state를 나타낸다.
 
-### Pane Coordination
+### Pane 조율
 
-The panes may be visually combined or separated depending on platform and layout needs, but their responsibilities remain distinct.
+Pane들은 platform과 layout 필요에 따라 시각적으로 결합되거나 분리될 수 있다. 그러나 각 pane의 책임은 구분되어야 한다.
 
-The workspace should support semantic context synchronization. Changes in focus, selection, or exploration context should preserve semantic coherence across panes without collapsing their responsibilities into a single overloaded view.
+Workspace는 semantic context의 정합성 유지를 지원해야 한다. Focus, selection, exploration context의 변화는 pane의 책임을 하나의 과부하된 view로 합치지 않으면서 pane 간 semantic coherence를 보존해야 한다.
 
-## 6. Graph Role
+## 6. Graph 역할
 
-The graph is a contextual semantic surface.
+Graph는 contextual semantic surface이다.
 
-Its role is to expose relationship structure around the current context. It should help the user see connections, inspect relation meaning, and move through the semantic network.
+Graph의 역할은 현재 context 주변의 관계 구조를 드러내는 것이다. Graph는 사용자가 연결을 보고, 관계 의미를 확인하고, 의미 네트워크를 따라 이동할 수 있도록 돕는다.
 
-The graph is not:
+Graph는 다음이 아니다.
 
-- the application shell
-- the global navigation system
-- the only workspace authority
-- a replacement for detail reading
-- a replacement for search
-- a replacement for persistent semantic navigation
+- application shell
+- global navigation system
+- 유일한 workspace authority
+- detail reading의 대체물
+- search의 대체물
+- persistent semantic navigation의 대체물
 
-Graph-specific rules such as traversal semantics, relation direction interpretation, expansion limits, edge rendering, and layout algorithms belong to graph authority documents, not this UX architecture document.
+Graph traversal semantics, relation direction interpretation, expansion limit, edge rendering, layout algorithm 같은 graph-specific rule은 graph authority 문서가 담당한다. 이 UX architecture 문서는 이를 정의하지 않는다.
 
-## 7. Persistent Navigation Concept
+## 7. Persistent Navigation 개념
 
-Persistent navigation exists to preserve semantic access while the user explores.
+Persistent navigation은 사용자가 탐색하는 동안 semantic access를 유지하기 위해 존재한다.
 
-Strong Rail is the target semantic navigation spine. It gives persistent access to Strong-based semantic anchors without forcing the graph area to carry global navigation responsibility.
+Strong Rail은 목표 semantic navigation spine이다. Strong Rail은 graph 영역이 global navigation 책임을 떠안지 않도록 하면서 Strong 기반 semantic anchor에 대한 persistent access를 제공한다.
 
-Strong Rail should support:
+Strong Rail은 다음을 지원해야 한다.
 
-- persistent visibility where the platform can support it
-- stable semantic access
-- quick return to known anchors
-- continuity between search, graph, detail, and exploration context
-- minimal intrusion into the graph workspace
+- platform이 허용하는 범위의 persistent visibility
+- 안정적인 semantic access
+- 알려진 anchor로 빠르게 돌아갈 수 있는 가능성
+- search, graph, detail, exploration context 사이의 continuity
+- graph workspace에 대한 최소 침범
 
-Strong Rail is not:
+Strong Rail은 다음이 아니다.
 
-- a detail renderer
-- an explorer replacement
-- a heavy interaction panel
-- a temporary debug surface
-- a graph layout control surface
+- detail renderer
+- explorer replacement
+- heavy interaction panel
+- temporary debug surface
+- graph layout control surface
 
-Exact navigation behavior, jump mechanics, scrolling behavior, selection restoration, and keyboard interaction must be defined in a navigation policy document.
+Exact navigation behavior, jump mechanic, scrolling behavior, selection restoration, keyboard interaction은 navigation policy 문서에서 정의해야 한다.
 
-## 8. Search Philosophy
+## 8. Search 철학
 
-Search is a universal entry point into the semantic workspace.
+Search는 semantic workspace로 들어가는 universal entry point이다.
 
-Search should remain globally accessible in concept, independent of whether the user is currently reading detail content, inspecting the graph, or continuing an exploration path.
+Search는 사용자가 detail content를 읽고 있거나, graph를 확인하고 있거나, exploration path를 이어가는 중이더라도 개념적으로 전역 접근 가능해야 한다.
 
-Search should support persistent access to the corpus without forcing the user to abandon their current semantic context unnecessarily.
+Search는 사용자가 현재 semantic context를 불필요하게 버리지 않고 corpus에 지속적으로 접근할 수 있게 해야 한다.
 
-Search is not defined here by ranking, scoring, normalization, debounce, or result rendering algorithms. Those belong to search-specific implementation or policy documents.
+이 문서는 ranking, scoring, normalization, debounce, result rendering algorithm을 정의하지 않는다. 해당 사항은 search-specific implementation 또는 policy 문서가 담당한다.
 
-## 9. Persistent Action Concept
+## 9. Persistent Action 개념
 
-Creation and correction actions are part of exploration continuity.
+생성 및 수정 action은 exploration continuity의 일부이다.
 
-The add action is not a secondary or hidden action in the UX architecture. It supports the natural flow:
+Add action은 UX architecture에서 부차적이거나 숨겨진 action이 아니다. Add action은 다음과 같은 자연스러운 흐름을 지원한다.
 
 ```text
 explore
@@ -174,100 +174,100 @@ explore
 -> continue exploring
 ```
 
-The workspace should make this flow conceptually available without turning the entire workspace into an editing surface.
+Workspace는 이 흐름을 개념적으로 가능하게 해야 한다. 단, 전체 workspace를 editing surface로 바꾸어서는 안 된다.
 
-Exact creation dialogs, validation behavior, repository writes, and rollback behavior belong to implementation or data boundary documents.
+Exact creation dialog, validation behavior, repository write, rollback behavior는 implementation 또는 data boundary 문서가 담당한다.
 
-## 10. Responsive Philosophy
+## 10. Responsive 철학
 
-Responsive UX must preserve the workspace philosophy while respecting platform constraints.
+Responsive UX는 platform 제약을 존중하면서 workspace 철학을 보존해야 한다.
 
-### Desktop and Tablet
+### Desktop과 Tablet
 
-Desktop and tablet experiences should prioritize persistent workspace UX.
+Desktop과 tablet 경험은 persistent workspace UX를 우선해야 한다.
 
-These form factors can support multiple simultaneous workspace surfaces, such as persistent semantic navigation, graph context, and detail reading.
+이 form factor들은 persistent semantic navigation, graph context, detail reading 같은 여러 workspace surface를 동시에 지원할 수 있다.
 
 ### Mobile
 
-Mobile should use viewer or flow UX.
+Mobile은 viewer 또는 flow UX를 사용해야 한다.
 
-Mobile is not a reduced copy of the desktop workspace. It should preserve semantic continuity through flow, state, and return paths rather than by forcing all desktop panes into a smaller layout.
+Mobile은 desktop workspace의 축소판이 아니다. Mobile은 모든 desktop pane을 작은 layout 안에 강제로 넣는 대신, flow, state, return path를 통해 semantic continuity를 보존해야 한다.
 
-Exact breakpoints, platform layout decisions, and Flutter implementation details belong to a responsive layout policy document.
+Exact breakpoint, platform layout decision, Flutter implementation detail은 responsive layout policy 문서가 담당한다.
 
 ## 11. UX Boundary Rules
 
-The following rules define UX responsibility boundaries:
+다음 규칙은 UX 책임 경계를 정의한다.
 
-1. Graph is not the application shell.
-2. Strong Rail is not a detail renderer.
-3. Strong Rail is not an explorer replacement.
-4. Search is not owned by the graph surface.
-5. Detail reading is not a navigation spine.
-6. Temporary workflow UI must not be promoted into architecture authority.
-7. Migration, debug, or verification UI must not become permanent UX policy by accident.
-8. Implementation convenience must not define UX authority.
-9. A pane may share visual space with another pane, but responsibility boundaries must remain clear.
-10. Current implementation snapshots must not override the target UX architecture.
+1. Graph는 application shell이 아니다.
+2. Strong Rail은 detail renderer가 아니다.
+3. Strong Rail은 explorer replacement가 아니다.
+4. Search는 graph surface에 종속되지 않는다.
+5. Detail reading은 navigation spine이 아니다.
+6. Temporary workflow UI를 architecture authority로 승격하지 않는다.
+7. Migration, debug, verification UI를 permanent UX policy로 삼지 않는다.
+8. Implementation convenience는 UX authority를 정의하지 않는다.
+9. Pane이 시각적 공간을 공유할 수는 있지만, 책임 경계는 명확해야 한다.
+10. Current implementation snapshot은 target UX architecture를 override하지 않는다.
 
-## 12. Relationship With Other Documents
+## 12. 다른 문서와의 관계
 
-This document defines UX architecture direction only. Related documents must own their own detailed authority.
+이 문서는 UX architecture 방향만 정의한다. 관련 문서는 각자의 세부 authority를 가져야 한다.
 
-### Graph Authority Documents
+### Graph Authority 문서
 
-Graph authority documents define graph semantics, relation traversal, direction interpretation, expansion policy, edge behavior, and graph-specific rendering rules.
+Graph authority 문서는 graph semantics, relation traversal, direction interpretation, expansion policy, edge behavior, graph-specific rendering rule을 정의한다.
 
-This document defines the graph's UX role inside the workspace, not graph engine behavior.
+이 문서는 workspace 안에서 graph의 UX 역할을 정의할 뿐, graph engine behavior를 정의하지 않는다.
 
-### Responsive Policy Document
+### Responsive Policy 문서
 
-A future responsive layout policy document should define platform-specific layout rules, breakpoint strategy, and pane presentation rules.
+향후 responsive layout policy 문서는 platform별 layout rule, breakpoint strategy, pane presentation rule을 정의해야 한다.
 
-This document defines only the responsive philosophy: desktop and tablet prioritize persistent workspace UX, while mobile uses viewer or flow UX.
+이 문서는 responsive 철학만 정의한다. Desktop과 tablet은 persistent workspace UX를 우선하고, mobile은 viewer 또는 flow UX를 사용한다.
 
-### Navigation Policy Document
+### Navigation Policy 문서
 
-A future navigation policy document should define Strong Rail behavior, selection rules, jump behavior, keyboard access, scroll behavior, and navigation continuity details.
+향후 navigation policy 문서는 Strong Rail behavior, selection rule, jump behavior, keyboard access, navigation continuity detail을 정의해야 한다.
 
-This document defines only why persistent semantic navigation exists and what role it plays in the workspace.
+이 문서는 persistent semantic navigation이 왜 존재하고 workspace 안에서 어떤 역할을 갖는지만 정의한다.
 
-### Migration and Historical Documents
+### Migration and Historical 문서
 
-Migration and historical documents provide evidence, transition context, and implementation history. They do not override this document's UX architecture authority.
+Migration and historical 문서는 evidence, transition context, implementation history를 제공한다. 이 문서의 UX architecture authority를 override하지 않는다.
 
-### Repository and Data Boundary Documents
+### Repository and Data Boundary 문서
 
-Repository, read boundary, normalization, and database documents define data authority and interaction boundaries.
+Repository, read boundary, normalization, database 문서는 data authority와 interaction boundary를 정의한다.
 
-This document assumes that UI surfaces consume stable semantic contracts, but it does not define repository APIs, read policies, normalization rules, or schema details.
+이 문서는 UI surface가 안정적인 semantic contract를 소비한다고 전제할 수는 있다. 그러나 repository API, read policy, normalization rule, schema detail은 정의하지 않는다.
 
-## 13. Non-Goals
+## 13. 비목표
 
-This document does not prescribe:
+이 문서는 다음을 정의하지 않는다.
 
 - exact screen layout
 - Flutter widget tree
 - database structure
 - search scoring
-- graph traversal rules
-- relation direction algorithms
-- graph layout algorithms
-- responsive breakpoints
-- visual design tokens
+- graph traversal rule
+- relation direction algorithm
+- graph layout algorithm
+- responsive breakpoint
+- visual design token
 - typography
 - color system
-- performance optimizations
+- performance optimization
 
-Those decisions require separate authority documents or implementation-level specifications.
+이 결정들은 별도 authority 문서 또는 implementation-level specification에서 다루어야 한다.
 
-## 14. Summary
+## 14. 요약
 
-Reshet's UX direction is a persistent semantic workspace.
+Reshet의 UX 방향은 persistent semantic workspace이다.
 
-The workspace coordinates graph, detail, exploration, search, navigation, and creation flows without making any single surface responsible for the whole application.
+Workspace는 graph, detail, exploration, search, navigation, creation flow를 조율하되, 어떤 단일 surface도 전체 application의 책임을 독점하지 않게 한다.
 
-The graph remains central to semantic understanding, but it is contextual rather than shell-level. Persistent navigation and search preserve access and orientation. Responsive UX adapts the workspace philosophy to each form factor instead of shrinking one desktop layout everywhere.
+Graph는 의미 이해에 여전히 중요하지만 shell-level이 아니라 contextual하다. Persistent navigation과 search는 access와 orientation을 보존한다. Responsive UX는 하나의 desktop layout을 모든 form factor에 축소 적용하지 않고, 각 form factor에 맞게 workspace 철학을 적용한다.
 
-This document should be used as the UX architecture authority when deciding whether future UX changes strengthen or weaken Reshet's persistent semantic workspace direction.
+이 문서는 future UX change가 Reshet의 persistent semantic workspace 방향을 강화하는지 약화하는지 판단할 때 UX architecture authority로 사용해야 한다.
