@@ -1,5 +1,13 @@
 # GRAPH_ENGINE_RULES_v2
 
+> Status: Legacy v2 semantic source
+>
+> 현재 active graph semantic authority는 `docs/architecture/graph_semantic_authority.md`이다.
+>
+> 이 문서는 relation direction, graph_expand_mode, multi-edge semantics의 semantic source/reference 역할을 가진다.
+>
+> exact display, count, dialog, rendering behavior는 current/historical implementation snapshot이며 active authority가 아니다.
+
 ## 목적
 
 그래프는 단어의 의미 형성 구조를 탐색하기 위한 도구이다.
@@ -55,7 +63,7 @@ graph_expand_mode:
 
 ---
 
-## 핵심 규칙
+## v2 semantic source notes
 
 1. 관계는 방향을 가질 수 있다
 2. 그래프는 incoming/outgoing 모두 고려한다
@@ -64,60 +72,60 @@ graph_expand_mode:
 
 ---
 
-## 금지 규칙
+## direction/display 분리 source notes
 
 - 관계 방향과 표시 정책을 혼합하지 않는다
 - 모든 관계를 동일하게 표시하지 않는다
 
 ---
 
-## graph_expand_mode 동작 규칙
+## graph_expand_mode source notes
 
 - default
-  incoming, outgoing, undirected, unknown 관계를 모두 표시 대상으로 포함한다.
-  다만 일반적인 그래프 표시 규칙은 적용될 수 있다.
+  incoming, outgoing, undirected, unknown 관계를 모두 고려하는 source mode로 기록되어 있다.
+  다만 일반적인 그래프 display rule은 별도 implementation/policy에서 정할 수 있다.
 
 - incoming_only
-  incoming, undirected, unknown 관계를 표시 대상으로 포함하고,
-  outgoing 관계는 표시 대상에서 제외한다.
+  incoming, undirected, unknown 관계를 고려하고,
+  outgoing 관계는 expansion scope에서 제외하는 source mode로 기록되어 있다.
 
 - outgoing_limited
-  incoming, undirected, unknown 관계는 모두 포함한다.
-  outgoing 관계는 제한된 개수만 포함한다.
+  incoming, undirected, unknown 관계는 모두 고려한다.
+  outgoing 관계는 제한된 범위만 고려하는 source mode로 기록되어 있다.
 
 - full
-  incoming, outgoing, undirected, unknown 관계를 모두 포함하며,
-  허브 단어에 대한 일반 제한도 적용하지 않는 예외 모드로 본다.
+  incoming, outgoing, undirected, unknown 관계를 모두 고려하며,
+  허브 단어에 대한 일반 제한도 적용하지 않는 예외 source mode로 기록되어 있다.
 
 ---
 
-## outgoing_limited의 제한 방식
+## outgoing_limited historical count note
 
-1차 구현에서 outgoing_limited의 제한은 "고정 개수 제한"으로 정의한다.
+1차 구현 snapshot에서 outgoing_limited의 제한은 "고정 개수 제한"으로 기록되어 있다.
 
 - outgoing 표시 상한: 12
 
 이 값은 향후 설정값 또는 정책값으로 확장할 수 있으나,
-현재 구현 기준 문서에서는 12를 기본값으로 사용한다.
+현재 active graph semantic authority의 exact count policy가 아니다.
 
 ---
 
-## 다건 관계 보존 규칙
+## Multi-Edge semantic source notes
 
 같은 중심 단어와 같은 상대 단어 사이에 관계가 여러 건 존재할 수 있다.
 
-그래프 엔진은 다음 원칙을 따른다.
+v2 source는 다음 semantic source note를 남긴다.
 
-- 내부 데이터 구조에서는 관계를 단건으로 덮어쓰지 않고 목록으로 보존한다.
-- 화면 표시용 대표 edge는 별도로 선택할 수 있다.
-- 사용자는 edge detail dialog 등에서 동일 pair의 여러 관계를 개별적으로 확인하고 수정할 수 있어야 한다.
+- relation은 단건으로 축소되어 의미를 잃지 않아야 한다.
+- 화면 표시용 대표 edge 선택은 historical display snapshot으로 남긴다.
+- edge detail dialog는 historical implementation snapshot이며 active authority가 아니다.
 
 ---
 
-## direction 표시 규칙
+## historical display notes
 
-그래프는 중심 단어 기준 방향 해석 결과를 노출할 수 있어야 한다.
+v2 source는 중심 단어 기준 방향 해석 결과를 display할 수 있다는 historical note를 남긴다.
 
-- incoming / outgoing 관계는 화살표 또는 동등한 방향 표시를 사용한다.
-- undirected / unknown 관계는 화살표 없이 표시할 수 있다.
-- edge label에는 필요 시 IN / OUT / UNDIR / UNK / MIX 요약을 사용할 수 있다.
+- incoming / outgoing 관계의 화살표 또는 동등한 방향 표시는 historical display snapshot이다.
+- undirected / unknown 관계를 화살표 없이 표시할 수 있다는 내용도 historical display snapshot이다.
+- edge label의 IN / OUT / UNDIR / UNK / MIX 요약은 display note이며 active graph semantic authority가 아니다.
