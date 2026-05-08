@@ -1,5 +1,13 @@
 # PROJECT_CONTEXT.md
 
+> Status: Project overview / context document
+>
+> 이 문서는 active UX 또는 graph authority가 아니다.
+> UX identity는 `docs/ux/workspace_ux_architecture.md`를 따른다.
+> Graph semantics는 `docs/architecture/graph_semantic_authority.md`를 따른다.
+>
+> 이 문서는 프로젝트 개요, historical context, high-level architecture context를 설명하기 위한 reference로 유지된다.
+
 ## 프로젝트 이름
 
 Reshet
@@ -7,10 +15,10 @@ Reshet
 
 ## 프로젝트 목적
 
-Reshet은 **단어 사이의 관계를 탐색하기 위한 그래프 기반 도구**이다.
+Reshet은 **단어 관계와 의미 맥락을 탐색하기 위한 persistent semantic workspace**이다.
 
 특히 성경 원어(히브리어 / 헬라어 등) 단어 사이의 관계를
-네트워크 형태로 탐색할 수 있도록 설계된 프로그램이다.
+graph surface와 workspace 흐름 안에서 탐색할 수 있도록 설계된 프로그램이다.
 
 이 프로젝트의 핵심 목표는
 
@@ -111,17 +119,19 @@ word word word
 
 중심 단어와 직접 연결된 단어들이 주변 노드로 표시된다.
 
-그래프 구조 규칙은 다음 문서에 정의되어 있다.
+현재 active graph semantic authority는 다음 문서에 정의되어 있다.
 
 ```text
-GRAPH_ENGINE_RULES.md
+docs/architecture/graph_semantic_authority.md
 ```
+
+`docs/architecture/GRAPH_ENGINE_RULES.md`는 legacy v1 graph reference로 유지된다.
 
 ---
 
 # 핵심 화면
 
-그래프 기능의 핵심 화면은 다음 파일이다.
+현재 구현 snapshot에서 graph surface의 주요 화면은 다음 파일이다.
 
 ```text
 lib/ui/word_graph_screen.dart
@@ -174,7 +184,7 @@ WordRelation
 
 # 그래프 탐색 방식
 
-그래프 탐색은 다음 방식으로 이루어진다.
+현재 구현 snapshot에서 graph surface 탐색은 다음 방식으로 이루어진다.
 
 ```text
 노드 클릭
@@ -202,7 +212,7 @@ WORD_RELATION 조회
 - 그래프 화면 구현
 - WORD_RELATION 기반 그래프 표시 구현
 
-현재 그래프는 **1단계 관계(Level 1)** 를 표시한다.
+현재 구현 snapshot에서 그래프는 **1단계 관계(Level 1)** 를 표시한다.
 
 ```text
 center word
@@ -216,7 +226,7 @@ center word
 
 # 향후 확장 계획
 
-향후 기능 확장 가능성:
+historical/current implementation context에서 기록된 기능 확장 가능성:
 
 - 노드 클릭 탐색 개선
 - 그래프 애니메이션
@@ -234,9 +244,11 @@ AI 도구(Codex 등)는 다음 규칙을 따른다.
 
 1. AGENTS.md 규칙을 따른다.
 2. lib/AGENTS.md의 Flutter 코드 규칙을 따른다.
-3. 그래프 구조는 GRAPH_ENGINE_RULES.md를 따른다.
-4. 코드 수정 전 반드시 관련 파일을 확인한다.
-5. 사용자 승인 없이 코드를 수정하지 않는다.
+3. UX identity는 docs/ux/workspace_ux_architecture.md를 따른다.
+4. Graph semantics는 docs/architecture/graph_semantic_authority.md를 따른다.
+5. GRAPH_ENGINE_RULES.md는 legacy v1 graph reference로 참고한다.
+6. 코드 수정 전 반드시 관련 파일을 확인한다.
+7. 사용자 승인 없이 코드를 수정하지 않는다.
 
 
 ---
