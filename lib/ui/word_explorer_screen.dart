@@ -383,18 +383,20 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
     final selectedWordId = _selectedWordId;
     if (selectedWordId == null) return;
 
-    final editableWord = await _repository.getWordMapByIdForExplorerSingleWord(
+    final editSeed = await _repository.getWordEditSeedForExplorerEdit(
       selectedWordId,
     );
     if (!mounted) return;
-    if (editableWord == null) {
+    if (editSeed == null) {
       _showWordNavigationUnavailableSnackBar();
       return;
     }
 
     final result = await Navigator.push<Map<String, dynamic>>(
       context,
-      MaterialPageRoute(builder: (_) => WordEditScreen(word: editableWord)),
+      MaterialPageRoute(
+        builder: (_) => WordEditScreen.fromSeed(seed: editSeed),
+      ),
     );
 
     if (result == null || !mounted) return;
