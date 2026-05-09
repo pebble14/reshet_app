@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../data/repositories/word_repository.dart';
 import '../domain/word/word_detail_like_display_item.dart';
+import '../domain/word/word_edit_save_result.dart';
 import 'word_detail_screen.dart';
 import 'word_edit_screen.dart';
 import 'word_graph_screen.dart';
@@ -307,8 +308,8 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
         displayStrongNumber: formatWordDisplayStrong(
           (centerWordMap['스트롱넘버'] as String? ?? '').trim(),
         ),
-        representativeTransliteration:
-            (centerWordMap['음역1'] as String? ?? '').trim(),
+        representativeTransliteration: (centerWordMap['음역1'] as String? ?? '')
+            .trim(),
       );
     }
 
@@ -392,7 +393,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
       return;
     }
 
-    final result = await Navigator.push<Map<String, dynamic>>(
+    final result = await Navigator.push<WordEditSaveResult>(
       context,
       MaterialPageRoute(
         builder: (_) => WordEditScreen.fromSeed(seed: editSeed),
@@ -402,8 +403,8 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
     if (result == null || !mounted) return;
 
     await _refreshSelectedWord(
-      wordId: selectedWordId,
-      syncCenterWord: _centerWordId == selectedWordId,
+      wordId: result.wordId,
+      syncCenterWord: _centerWordId == result.wordId,
       refreshGraphIfChanged: true,
     );
     if (!mounted) return;

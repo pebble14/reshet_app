@@ -10,6 +10,7 @@ import '../data/repositories/word_repository.dart';
 import '../domain/graph/graph_build_options.dart';
 import '../domain/graph/graph_builder.dart';
 import '../domain/graph/graph_center_word_display_item.dart';
+import '../domain/graph/graph_create_post_save_payload.dart';
 import '../domain/graph/graph_edge.dart';
 import '../domain/graph/graph_node.dart';
 import '../domain/graph/graph_relation_add_search_result_item.dart';
@@ -20,6 +21,7 @@ import '../domain/graph/graph_word_label_display_item.dart';
 import '../domain/graph/layout/graph_layout_strategy_resolver.dart';
 import '../domain/relation/relation_formatter.dart';
 import '../domain/word/duplicate_candidate_display_item.dart';
+import '../domain/word/word_edit_save_result.dart';
 import '../domain/word/word_write_models.dart';
 import '../domain/word/word_write_service.dart';
 import 'word_expression_set.dart';
@@ -4684,26 +4686,6 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     }
   }
 
-  ({String wordId, String representativeSpelling})?
-  _buildGraphCreatePostSavePayload(Map<String, dynamic>? wordMap) {
-    final wordId = _readGraphCreatePostSaveWordValue(wordMap, 'id');
-    if (wordId.isEmpty) {
-      return null;
-    }
-
-    return (
-      wordId: wordId,
-      representativeSpelling: _readGraphCreatePostSaveWordValue(wordMap, '표기1'),
-    );
-  }
-
-  String _readGraphCreatePostSaveWordValue(
-    Map<String, dynamic>? wordMap,
-    String key,
-  ) {
-    return (wordMap?[key] ?? '').toString().trim();
-  }
-
   /// [단어 추가] 전체 흐름
   /// 1) 단어 입력
   /// 2) 중복 후보 경고
@@ -4760,8 +4742,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       return;
     }
 
-    Map<String, dynamic>? postSaveWordMap;
-    final editedWordMap = await Navigator.push<Map<String, dynamic>>(
+    GraphCreatePostSavePayload? createdWordPayload;
+    final editResult = await Navigator.push<WordEditSaveResult>(
       context,
       MaterialPageRoute(
         builder: (_) => WordEditScreen.fromSeed(seed: editSeed),
@@ -4770,8 +4752,9 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
     if (!mounted) return;
 
-    if (editedWordMap != null) {
-      postSaveWordMap = Map<String, dynamic>.from(editedWordMap);
+    if (editResult != null) {
+      createdWordPayload = await _repository
+          .getGraphCreatePostSavePayloadAfterEdit(editResult.wordId);
     } else {
       final didDiscardCreatedWord = await _repository
           .discardCreatedWordForGraphCreateFlow(newId);
@@ -4785,19 +4768,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         return;
       }
 
-      final reloadedWordMap = await _repository
-          .getWordMapByIdForGraphSingleWord(newId);
-      if (reloadedWordMap != null) {
-        postSaveWordMap = Map<String, dynamic>.from(reloadedWordMap);
-      }
+      createdWordPayload = await _repository
+          .getGraphCreatePostSavePayloadAfterEdit(newId);
     }
 
-    postSaveWordMap ??= await _repository.getWordMapByIdForGraphSingleWord(
-      newId,
-    );
-    final createdWordPayload = _buildGraphCreatePostSavePayload(
-      postSaveWordMap,
-    );
     bool didCreateRelation = false;
 
     // 저장 후 관계 추가 옵션
@@ -4865,7 +4839,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     if (!mounted) return;
 
     if (createdWordPayload != null) {
-      final createdWord = Word(id: createdWordPayload.wordId);
+      final payload = createdWordPayload;
+      final createdWord = Word(id: payload.wordId);
       if (widget.onChangeCenterWordId != null ||
           widget.onChangeCenterWord != null) {
         _dispatchCenterChange(createdWord);
@@ -4874,8 +4849,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (_) =>
-              WordGraphScreen(centerWordId: createdWordPayload.wordId),
+          builder: (_) => WordGraphScreen(centerWordId: payload.wordId),
         ),
       );
       return;

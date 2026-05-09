@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../data/repositories/word_repository.dart';
 import '../domain/word/word_detail_like_display_item.dart';
+import '../domain/word/word_edit_save_result.dart';
 import '../domain/word/word_write_models.dart';
 import '../domain/word/word_write_service.dart';
 import 'word_edit_screen.dart';
@@ -74,7 +75,7 @@ class _WordDetailScreenState extends State<WordDetailScreen> {
       return;
     }
 
-    final result = await Navigator.push<Map<String, dynamic>>(
+    final result = await Navigator.push<WordEditSaveResult>(
       context,
       MaterialPageRoute(
         builder: (_) => WordEditScreen.fromSeed(seed: editSeed),
