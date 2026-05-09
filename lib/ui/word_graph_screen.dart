@@ -4739,50 +4739,59 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       throw Exception('신규 단어 ID를 생성하지 못했습니다.');
     }
 
-    // Graph single-word reread stays create-flow-only in this phase.
-    final createdWordMap = await _repository.getWordMapByIdForGraphSingleWord(
-      newId,
+    final editSeed = await _repository.getWordEditSeedForGraphCreateEdit(newId);
+    if (!mounted) return;
+
+    if (editSeed == null) {
+      final didDiscardCreatedWord = await _repository
+          .discardCreatedWordForGraphCreateFlow(newId);
+      if (didDiscardCreatedWord) {
+        WordGraphDataCache.invalidateMany([_centerWordId, newId]);
+      }
+      await _loadConnectedWords();
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            didDiscardCreatedWord ? '단어 추가를 취소했습니다.' : '생성한 단어를 다시 불러오지 못했습니다.',
+          ),
+        ),
+      );
+      return;
+    }
+
+    Map<String, dynamic>? postSaveWordMap;
+    final editedWordMap = await Navigator.push<Map<String, dynamic>>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => WordEditScreen.fromSeed(seed: editSeed),
+      ),
     );
-    Map<String, dynamic>? currentWordMap = createdWordMap == null
-        ? null
-        : Map<String, dynamic>.from(createdWordMap);
 
     if (!mounted) return;
 
-    if (currentWordMap != null) {
-      final editedWordMap = await Navigator.push<Map<String, dynamic>>(
-        context,
-        MaterialPageRoute(
-          builder: (_) => WordEditScreen(word: currentWordMap!),
-        ),
-      );
+    if (editedWordMap != null) {
+      postSaveWordMap = Map<String, dynamic>.from(editedWordMap);
+    } else {
+      final didDiscardCreatedWord = await _repository
+          .discardCreatedWordForGraphCreateFlow(newId);
+      if (didDiscardCreatedWord) {
+        WordGraphDataCache.invalidateMany([_centerWordId, newId]);
+        await _loadConnectedWords();
+        if (!mounted) return;
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('단어 추가를 취소했습니다.')));
+        return;
+      }
 
-      if (!mounted) return;
-
-      if (editedWordMap != null) {
-        currentWordMap = Map<String, dynamic>.from(editedWordMap);
-      } else {
-        final didDiscardCreatedWord = await _repository
-            .discardCreatedWordForGraphCreateFlow(newId);
-        if (didDiscardCreatedWord) {
-          WordGraphDataCache.invalidateMany([_centerWordId, newId]);
-          await _loadConnectedWords();
-          if (!mounted) return;
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(const SnackBar(content: Text('단어 추가를 취소했습니다.')));
-          return;
-        }
-
-        final reloadedWordMap = await _repository
-            .getWordMapByIdForGraphSingleWord(newId);
-        if (reloadedWordMap != null) {
-          currentWordMap = Map<String, dynamic>.from(reloadedWordMap);
-        }
+      final reloadedWordMap = await _repository
+          .getWordMapByIdForGraphSingleWord(newId);
+      if (reloadedWordMap != null) {
+        postSaveWordMap = Map<String, dynamic>.from(reloadedWordMap);
       }
     }
 
-    Map<String, dynamic>? postSaveWordMap = currentWordMap;
     postSaveWordMap ??= await _repository.getWordMapByIdForGraphSingleWord(
       newId,
     );
@@ -4843,6 +4852,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
       if (!mounted) return;
       setState(() => _selectedWordId = newId);
+      _notifySelectedWord(Word(id: newId));
 
       ScaffoldMessenger.of(
         context,
@@ -4855,6 +4865,13 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     if (!mounted) return;
 
     if (createdWordPayload != null) {
+      final createdWord = Word(id: createdWordPayload.wordId);
+      if (widget.onChangeCenterWordId != null ||
+          widget.onChangeCenterWord != null) {
+        _dispatchCenterChange(createdWord);
+        return;
+      }
+
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (_) =>
