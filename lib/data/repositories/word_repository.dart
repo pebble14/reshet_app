@@ -119,6 +119,9 @@ class WordRepository {
       'readAfterSaveSingleWord';
   static const String _readAfterUndoSingleWordContext =
       'readAfterUndoSingleWord';
+  static const String _readForDetailEditSeedContext = 'readForDetailEditSeed';
+  static const String _readForExplorerEditSeedContext =
+      'readForExplorerEditSeed';
   static const String _readForGraphSingleWordContext = 'readForGraphSingleWord';
   static const String _readForGraphCenterSingleWordContext =
       'readForGraphCenterSingleWord';
@@ -138,6 +141,10 @@ class WordRepository {
   };
   static const Set<String> _phase33UndoSingleWordContexts = {
     _readAfterUndoSingleWordContext,
+  };
+  static const Set<String> _phaseEditSeedContexts = {
+    _readForDetailEditSeedContext,
+    _readForExplorerEditSeedContext,
   };
   static const Set<String> _phase4SplitViewSingleWordContexts = {
     _readForSplitViewSingleWordContext,
@@ -260,6 +267,7 @@ class WordRepository {
         _phase32HomeDisplayContexts.contains(context) ||
         _phase33SaveSingleWordContexts.contains(context) ||
         _phase33UndoSingleWordContexts.contains(context) ||
+        _phaseEditSeedContexts.contains(context) ||
         _phase4SplitViewSingleWordContexts.contains(context) ||
         _phase4GraphCenterSingleWordContexts.contains(context) ||
         _phase4GraphBatchContexts.contains(context) ||
@@ -1622,6 +1630,35 @@ class WordRepository {
       id,
       context: _getWordMapByIdContext,
     );
+  }
+
+  Future<WordEditSeed?> getWordEditSeedForDetailEdit(String id) async {
+    return _getWordEditSeedWithContext(
+      id,
+      context: _readForDetailEditSeedContext,
+    );
+  }
+
+  Future<WordEditSeed?> getWordEditSeedForExplorerEdit(String id) async {
+    return _getWordEditSeedWithContext(
+      id,
+      context: _readForExplorerEditSeedContext,
+    );
+  }
+
+  Future<WordEditSeed?> _getWordEditSeedWithContext(
+    String id, {
+    required String context,
+  }) async {
+    final wordRow = await _getResolvedWordRowForDetailLikeSingleWordRead(
+      id,
+      context: context,
+    );
+    if (wordRow == null) {
+      return null;
+    }
+
+    return buildWordEditSeedFromWordRow(wordRow);
   }
 
   Future<Map<String, dynamic>?> _getWordMapByIdForPhase33SingleWordReread(
