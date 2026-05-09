@@ -1,5 +1,20 @@
 # FEATURE STATUS
 
+## 현재 상태 (2026-05-10 typed edit boundary)
+
+- Production edit input/output typed boundary가 완료되었다.
+- Detail edit, explorer edit, graph create follow-up edit entry는 typed
+  `WordEditSeed` input을 사용한다.
+- `WordEditScreen` save result는 raw `Map<String, dynamic>` route result가 아니라
+  `WordEditSaveResult`를 반환한다.
+- Graph create post-save payload read는 `GraphCreatePostSavePayload`를 반환하는
+  repository API로 분리되었다.
+- `WordEditScreen(word: Map)`은 legacy compatibility constructor로 유지하지만
+  production caller는 더 이상 사용하지 않는다.
+- 일부 raw read API는 compatibility 및 future cleanup 대상으로 의도적으로 유지한다.
+- Read authority는 여전히 hybrid transition 상태이며, fallback governance와 legacy
+  compatibility projection은 유지된다.
+
 ## 현재 상태 (Phase 8-H 완료 기준)
 
 - Phase 8-H 완료 (tag: phase8h-complete)

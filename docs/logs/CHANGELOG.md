@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## 2026-05-10 edit input/output typed boundary
+
+- Production edit input boundary를 typed `WordEditSeed` contract 기준으로 완료했다.
+- Edit save output/result를 raw `Map<String, dynamic>` route result에서 typed
+  `WordEditSaveResult` contract로 전환했다.
+- Graph create post-save payload read를 `GraphCreatePostSavePayload`와
+  repository-owned post-save payload API로 분리했다.
+- `WordGraphScreen`은 graph create post-save relation payload를 만들 때 더 이상
+  raw `editedWordMap` / `postSaveWordMap` carrier에 의존하지 않는다.
+- DB table/column/index storage는 변경하지 않았다.
+- Active UX authority와 active repository/data authority 문서는 재정의하지 않았다.
+- Legacy compatibility는 유지한다. `WordEditScreen(word: Map)`과 raw read API는
+  compatibility 및 후속 cleanup 판단 대상으로 남겨둔다.
+
 ## 2026-04-25 Phase 8-H 완료
 
 - Phase 8-H 완료 기준과 다음 Phase 이관 항목을 문서화했다.

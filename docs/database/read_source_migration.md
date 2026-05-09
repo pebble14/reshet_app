@@ -1,5 +1,33 @@
 # Read Source Migration
 
+## 2026-05-10 edit seed / save result typed boundary history note
+
+### 요약
+
+- Edit seed read controlled zone 범위를 detail, explorer, graph create follow-up
+  edit의 owner-specific edit read path로 확장했다.
+- Graph create post-save payload에는 `readForGraphCreatePostSavePayload`
+  controlled read context를 추가했다.
+- `readForGraphCreatePostSavePayload`는 `NORMALIZED_WITH_FALLBACK`에 연결되며,
+  기존 resolver / collector / fallback observation 흐름을 재사용한다.
+- Edit route output은 raw `Map<String, dynamic>` result에서 최소 typed
+  `WordEditSaveResult(wordId)`로 전환했다.
+- Graph post-save relation payload data는 typed `GraphCreatePostSavePayload`
+  repository boundary를 통해 읽는다.
+- Graph create flow는 post-save relation payload를 만들 때 더 이상 raw
+  `editedWordMap` / `postSaveWordMap` carrier에 의존하지 않는다.
+
+### Boundary notes
+
+- 이번 변경은 typed boundary 확대와 controlled-zone 후속 단계다.
+- Read authority는 hybrid transition 상태로 유지된다.
+- `LEGACY`와 `NORMALIZED_WITH_FALLBACK` context는 계속 공존한다.
+- Fallback governance는 유지된다.
+- `WORD_TABLE` compatibility projection은 유지된다.
+- DB table/column/index storage는 변경하지 않았다.
+- Raw read API와 legacy edit constructor는 후속 cleanup 판단을 위한
+  compatibility surface로 유지한다.
+
 ## 2026-04-25 Phase 8-H 완료 기준 및 다음 Phase 이관
 
 ### 완료 범위
