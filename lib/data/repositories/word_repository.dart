@@ -10,6 +10,7 @@ import '../models/relation_type_lookup.dart';
 import '../models/word.dart';
 import '../../domain/expression/expression_read_models.dart';
 import '../../domain/graph/graph_center_word_display_item.dart';
+import '../../domain/graph/graph_create_post_save_payload.dart';
 import '../../domain/graph/graph_relation_add_search_result_item.dart';
 import '../../domain/graph/graph_visible_word.dart';
 import '../../domain/graph/graph_word_label_display_item.dart';
@@ -128,6 +129,8 @@ class WordRepository {
   static const String _readForGraphCenterSingleWordContext =
       'readForGraphCenterSingleWord';
   static const String _readForGraphBatchContext = 'readForGraphBatch';
+  static const String _readForGraphCreatePostSavePayloadContext =
+      'readForGraphCreatePostSavePayload';
   static const String _readForSplitViewSingleWordContext =
       'readForSplitViewSingleWord';
   static const String _readForExplorerSingleWordContext =
@@ -157,6 +160,9 @@ class WordRepository {
   };
   static const Set<String> _phase4GraphBatchContexts = {
     _readForGraphBatchContext,
+  };
+  static const Set<String> _phaseGraphCreatePostSavePayloadContexts = {
+    _readForGraphCreatePostSavePayloadContext,
   };
   static const Set<String> _phase5GraphSingleWordContexts = {
     _readForGraphSingleWordContext,
@@ -274,6 +280,7 @@ class WordRepository {
         _phase4SplitViewSingleWordContexts.contains(context) ||
         _phase4GraphCenterSingleWordContexts.contains(context) ||
         _phase4GraphBatchContexts.contains(context) ||
+        _phaseGraphCreatePostSavePayloadContexts.contains(context) ||
         _phase5GraphSingleWordContexts.contains(context) ||
         _phase8ARawSingleWordContexts.contains(context)) {
       return ReadSourcePolicy.normalizedWithFallback;
@@ -1588,6 +1595,17 @@ class WordRepository {
     );
   }
 
+  GraphCreatePostSavePayload _buildGraphCreatePostSavePayload(
+    Map<String, dynamic> wordRow,
+  ) {
+    return GraphCreatePostSavePayload(
+      wordId: (wordRow['id'] ?? '').toString().trim(),
+      representativeSpelling: (wordRow['\uD45C\uAE301'] ?? '')
+          .toString()
+          .trim(),
+    );
+  }
+
   GraphVisibleWord _buildGraphVisibleWordFromRow(Map<String, dynamic> row) {
     return GraphVisibleWord(
       wordId: (row['id'] ?? '').toString().trim(),
@@ -1654,6 +1672,24 @@ class WordRepository {
       id,
       context: _readForGraphCreateEditSeedContext,
     );
+  }
+
+  Future<GraphCreatePostSavePayload?> getGraphCreatePostSavePayloadAfterEdit(
+    String id,
+  ) async {
+    final wordRow = await _getResolvedWordRowForDetailLikeSingleWordRead(
+      id,
+      context: _readForGraphCreatePostSavePayloadContext,
+    );
+    if (wordRow == null) {
+      return null;
+    }
+
+    final payload = _buildGraphCreatePostSavePayload(wordRow);
+    if (payload.wordId.isEmpty) {
+      return null;
+    }
+    return payload;
   }
 
   Future<WordEditSeed?> _getWordEditSeedWithContext(
