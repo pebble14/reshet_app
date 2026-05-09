@@ -46,16 +46,17 @@
 
 - `WORD_TABLE`은 현재 word core 1:1 row 저장소다.
 - 동시에 expression slot(`표기1~6`, `음역1~6`, `발음1~6`)과 relation slot(`관련1~7`)도 함께 보유하고 있다.
-- 현재 앱의 일부 read/write 경로는 아직 이 legacy slot에 의존한다.
+- 현재 앱의 일부 read 경로는 아직 legacy expression slot에 의존한다.
+- expression write 경로에서는 `WORD_TABLE` expression slot을 canonical authority가 아니라 compatibility projection으로 갱신한다.
 
 ### 5.2 word_expression_set
 
 - `word_expression_set`는 expression을 정규화된 row 구조로 저장하는 테이블이다.
 - 현재 상태에서 `word_expression_set`는 이미 존재하는 persisted normalized table이다.
-- 그러나 현재 write authority는 `word_expression_set`가 아니라 `WORD_TABLE` expression slot이다.
-- 현재 write는 `WORD_TABLE`에 먼저 반영한 뒤 `word_expression_set`를 sync하는 dual-sync 구조다.
+- 현재 expression write authority는 repository 내부 canonical expression set과 `word_expression_set` write path를 우선한다.
+- 현재 write는 canonical expression set을 normalized row로 저장한 뒤 `WORD_TABLE` expression slot을 compatibility projection으로 갱신하는 dual-write 구조다.
 - 현재 read source는 전역 단일 전환 상태가 아니라 `LEGACY` 기본 위에 일부 context만 `NORMALIZED_WITH_FALLBACK`으로 승격된 hybrid 상태다.
-- 따라서 현재 `word_expression_set`를 expression canonical authority 완료 상태로 선언하지 않는다.
+- 따라서 현재 `word_expression_set`는 expression write 기준 canonical target이지만, expression read authority 완료 상태 또는 normalized-only 완료 상태로 선언하지 않는다.
 
 ### 5.3 WORD_RELATION / lookup
 
@@ -110,10 +111,9 @@
 
 ### 8.2 expression slot
 
-- 현재 expression slot은 write authority다.
-- 목표 상태에서 expression slot은 authority에서 제외한다.
-- 이후 expression slot은 legacy / compatibility projection으로만 남기거나 제거 대상으로 검토한다.
-- expression slot을 장기 canonical authority로 유지하지 않는다.
+- 현재 expression slot은 canonical write authority가 아니라 compatibility projection이다.
+- expression slot은 legacy read 경로와 호환을 위해 유지되지만, 장기 canonical authority로 유지하지 않는다.
+- 이후 expression slot은 compatibility projection으로만 남기거나 제거 대상으로 검토한다.
 
 ### 8.3 relation slot
 
@@ -126,15 +126,17 @@
 
 ### 9.1 현재 상태
 
-- 현재 `word_expression_set`는 persisted normalized sync table이다.
-- 현재 write authority는 `WORD_TABLE` expression slot이다.
+- 현재 `word_expression_set`는 persisted normalized expression table이다.
+- 현재 expression write authority는 repository 내부 canonical expression set / `word_expression_set` write path를 우선한다.
+- 현재 `WORD_TABLE` expression slot은 legacy compatibility projection으로 유지된다.
 - 현재 read는 legacy 기본 + controlled normalized fallback 구조다.
 
 ### 9.2 목표 상태
 
-- `word_expression_set`는 expression canonical storage가 된다.
-- expression read/write authority는 repository 내부에서 `word_expression_set` 기준으로 확정된다.
-- legacy slot은 authority에서 내려오고 projection 또는 제거 후보가 된다.
+- write 기준에서 `word_expression_set`는 현재 expression canonical write target이다.
+- read 기준에서는 아직 context별 hybrid 상태이며, normalized-only 완료 상태가 아니다.
+- 목표 상태에서 expression read authority도 `word_expression_set` 기준으로 확정된다.
+- legacy slot은 authority에서 내려온 compatibility projection이며, 이후 제거 후보가 된다.
 
 ## 10. relation 정합성 정책
 
