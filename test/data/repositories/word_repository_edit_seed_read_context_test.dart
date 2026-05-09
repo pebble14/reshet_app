@@ -54,7 +54,7 @@ void main() {
 
   group('Edit seed read controlled zone', () {
     test(
-      'returns typed edit seeds and keeps detail/explorer collector contexts isolated',
+      'returns typed edit seeds and keeps owner collector contexts isolated',
       () async {
         final repository = WordRepository();
         final db = await DatabaseService.openDatabaseFile();
@@ -86,6 +86,8 @@ void main() {
         final explorerSeed = await repository.getWordEditSeedForExplorerEdit(
           wordId,
         );
+        final graphCreateSeed = await repository
+            .getWordEditSeedForGraphCreateEdit(wordId);
         final detailSnapshot = _lastSnapshotFor(
           wordId,
           'readForDetailEditSeed',
@@ -94,9 +96,14 @@ void main() {
           wordId,
           'readForExplorerEditSeed',
         );
+        final graphCreateSnapshot = _lastSnapshotFor(
+          wordId,
+          'readForGraphCreateEditSeed',
+        );
 
         expect(detailSeed, isA<WordEditSeed>());
         expect(explorerSeed, isA<WordEditSeed>());
+        expect(graphCreateSeed, isA<WordEditSeed>());
         expect(detailSeed!.wordId, rawSeed.wordId);
         expect(detailSeed.language, rawSeed.language);
         expect(detailSeed.strongNumber, rawSeed.strongNumber);
@@ -112,6 +119,11 @@ void main() {
           explorerSeed.expressionReadResult.sets.single.spelling,
           detailSeed.expressionReadResult.sets.single.spelling,
         );
+        expect(graphCreateSeed!.wordId, rawSeed.wordId);
+        expect(
+          graphCreateSeed.expressionReadResult.sets.single.spelling,
+          detailSeed.expressionReadResult.sets.single.spelling,
+        );
 
         expect(
           detailSnapshot.requestedPolicy,
@@ -122,6 +134,10 @@ void main() {
           ReadSourcePolicy.normalizedWithFallback,
         );
         expect(
+          graphCreateSnapshot.requestedPolicy,
+          ReadSourcePolicy.normalizedWithFallback,
+        );
+        expect(
           detailSnapshot.finalResultSource,
           FinalReadResultSource.normalized,
         );
@@ -129,9 +145,16 @@ void main() {
           explorerSnapshot.finalResultSource,
           FinalReadResultSource.normalized,
         );
+        expect(
+          graphCreateSnapshot.finalResultSource,
+          FinalReadResultSource.normalized,
+        );
         expect(detailSnapshot.didFallback, isFalse);
         expect(explorerSnapshot.didFallback, isFalse);
+        expect(graphCreateSnapshot.didFallback, isFalse);
         expect(detailSnapshot.context, isNot(explorerSnapshot.context));
+        expect(detailSnapshot.context, isNot(graphCreateSnapshot.context));
+        expect(explorerSnapshot.context, isNot(graphCreateSnapshot.context));
       },
     );
 
@@ -161,39 +184,69 @@ void main() {
           ],
         );
 
-        final seed = await repository.getWordEditSeedForExplorerEdit(wordId);
-        final snapshot = _lastSnapshotFor(wordId, 'readForExplorerEditSeed');
+        final explorerSeed = await repository.getWordEditSeedForExplorerEdit(
+          wordId,
+        );
+        final graphCreateSeed = await repository
+            .getWordEditSeedForGraphCreateEdit(wordId);
+        final explorerSnapshot = _lastSnapshotFor(
+          wordId,
+          'readForExplorerEditSeed',
+        );
+        final graphCreateSnapshot = _lastSnapshotFor(
+          wordId,
+          'readForGraphCreateEditSeed',
+        );
 
-        expect(seed, isA<WordEditSeed>());
+        expect(explorerSeed, isA<WordEditSeed>());
+        expect(graphCreateSeed, isA<WordEditSeed>());
         expect(
-          snapshot.finalResultSource,
+          explorerSnapshot.finalResultSource,
           FinalReadResultSource.legacyFallback,
         );
-        expect(snapshot.didFallback, isTrue);
+        expect(explorerSnapshot.didFallback, isTrue);
         expect(
-          snapshot.fallbackObservation?.reason,
+          explorerSnapshot.fallbackObservation?.reason,
           ReadFallbackReason.userVisibleDisplayMismatch,
         );
         expect(
-          snapshot.fallbackObservation?.context,
+          explorerSnapshot.fallbackObservation?.context,
           'readForExplorerEditSeed',
         );
         expect(
-          seed!.expressionReadResult.sets.single.spelling,
+          graphCreateSnapshot.finalResultSource,
+          FinalReadResultSource.legacyFallback,
+        );
+        expect(graphCreateSnapshot.didFallback, isTrue);
+        expect(
+          graphCreateSnapshot.fallbackObservation?.reason,
+          ReadFallbackReason.userVisibleDisplayMismatch,
+        );
+        expect(
+          graphCreateSnapshot.fallbackObservation?.context,
+          'readForGraphCreateEditSeed',
+        );
+        expect(
+          explorerSeed!.expressionReadResult.sets.single.spelling,
           'legacy-visible-title',
         );
-        expect(seed.hiddenSlotIssues, hasLength(1));
         expect(
-          seed.hiddenSlotIssues.single.sourceKind,
+          graphCreateSeed!.expressionReadResult.sets.single.spelling,
+          'legacy-visible-title',
+        );
+        expect(explorerSeed.hiddenSlotIssues, hasLength(1));
+        expect(graphCreateSeed.hiddenSlotIssues, hasLength(1));
+        expect(
+          graphCreateSeed.hiddenSlotIssues.single.sourceKind,
           WordWriteExclusionSourceKind.legacyHiddenSlot,
         );
-        expect(seed.hiddenSlotIssues.single.sourceIndex, 2);
+        expect(graphCreateSeed.hiddenSlotIssues.single.sourceIndex, 2);
         expect(
-          seed.hiddenSlotIssues.single.rawTransliteration,
+          graphCreateSeed.hiddenSlotIssues.single.rawTransliteration,
           'legacy-hidden-translit',
         );
         expect(
-          seed.hiddenSlotIssues.single.resolution,
+          graphCreateSeed.hiddenSlotIssues.single.resolution,
           excludedFromWriteResolution,
         );
       },

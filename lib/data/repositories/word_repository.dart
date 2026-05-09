@@ -122,6 +122,8 @@ class WordRepository {
   static const String _readForDetailEditSeedContext = 'readForDetailEditSeed';
   static const String _readForExplorerEditSeedContext =
       'readForExplorerEditSeed';
+  static const String _readForGraphCreateEditSeedContext =
+      'readForGraphCreateEditSeed';
   static const String _readForGraphSingleWordContext = 'readForGraphSingleWord';
   static const String _readForGraphCenterSingleWordContext =
       'readForGraphCenterSingleWord';
@@ -145,6 +147,7 @@ class WordRepository {
   static const Set<String> _phaseEditSeedContexts = {
     _readForDetailEditSeedContext,
     _readForExplorerEditSeedContext,
+    _readForGraphCreateEditSeedContext,
   };
   static const Set<String> _phase4SplitViewSingleWordContexts = {
     _readForSplitViewSingleWordContext,
@@ -1643,6 +1646,13 @@ class WordRepository {
     return _getWordEditSeedWithContext(
       id,
       context: _readForExplorerEditSeedContext,
+    );
+  }
+
+  Future<WordEditSeed?> getWordEditSeedForGraphCreateEdit(String id) async {
+    return _getWordEditSeedWithContext(
+      id,
+      context: _readForGraphCreateEditSeedContext,
     );
   }
 
