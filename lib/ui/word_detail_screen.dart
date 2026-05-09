@@ -67,16 +67,18 @@ class _WordDetailScreenState extends State<WordDetailScreen> {
   }
 
   Future<void> _openEdit() async {
-    final editableWord = await _repository.getWordMapById(_wordId);
+    final editSeed = await _repository.getWordEditSeedForDetailEdit(_wordId);
     if (!mounted) return;
-    if (editableWord == null) {
+    if (editSeed == null) {
       _showWordNavigationUnavailableSnackBar();
       return;
     }
 
     final result = await Navigator.push<Map<String, dynamic>>(
       context,
-      MaterialPageRoute(builder: (_) => WordEditScreen(word: editableWord)),
+      MaterialPageRoute(
+        builder: (_) => WordEditScreen.fromSeed(seed: editSeed),
+      ),
     );
 
     if (result != null) {
