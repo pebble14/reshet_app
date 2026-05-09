@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:reshet_app/data/adapters/legacy_word_expression_read_adapter.dart';
+import 'package:reshet_app/domain/expression/expression_read_models.dart';
+import 'package:reshet_app/domain/word/word_edit_seed.dart';
+import 'package:reshet_app/domain/word/word_write_models.dart';
 import 'package:reshet_app/ui/word_edit_screen.dart';
 import 'package:reshet_app/ui/word_expression_set.dart';
 
@@ -285,6 +289,108 @@ void main() {
       );
       expect(_textFieldByLabel(tester, '비고').controller?.text, ' note seed ');
     });
+
+    testWidgets(
+      'fromSeed seeds typed values and preserves hidden slot issues',
+      (tester) async {
+        await tester.binding.setSurfaceSize(const Size(800, 1800));
+        addTearDown(() => tester.binding.setSurfaceSize(null));
+
+        final logs = <String>[];
+        final previousDebugPrint = debugPrint;
+        final readResult = CanonicalExpressionReadResult(
+          sets: const [
+            ExpressionSet(
+              spelling: 'typed-seed-title',
+              transliteration: 'typed-seed-translit',
+              pronunciation: 'typed-seed-pron',
+              seq: 1,
+              isRepresentative: true,
+            ),
+            ExpressionSet(
+              spelling: 'typed-seed-alt',
+              transliteration: 'typed-seed-alt-translit',
+              pronunciation: 'typed-seed-alt-pron',
+              seq: 2,
+              isRepresentative: false,
+            ),
+          ],
+          issues: const [
+            ExpressionSetIssue(
+              issueCode: supplementalWithoutSpellingIssueCode,
+              sourceSlot: 4,
+              rawSpelling: null,
+              rawTransliteration: 'typed-hidden-translit',
+              rawPronunciation: null,
+              resolution: excludedFromWriteResolution,
+            ),
+          ],
+        );
+        final seed = WordEditSeed(
+          wordId: 'T9000_EDIT_SEED_WIDGET',
+          language: '영어',
+          strongNumber: ' g2040 ',
+          note: ' note seed ',
+          meanings: const ['first meaning', 'second meaning'],
+          expressionReadResult: readResult,
+          hiddenSlotIssues: buildWordEditHiddenSlotIssuesFromReadResult(
+            readResult,
+          ),
+        );
+
+        try {
+          debugPrint = (String? message, {int? wrapWidth}) {
+            if (message != null) {
+              logs.add(message);
+            }
+          };
+
+          await tester.pumpWidget(
+            MaterialApp(home: WordEditScreen.fromSeed(seed: seed)),
+          );
+
+          final languageDropdown = tester
+              .widget<DropdownButtonFormField<String>>(
+                find.byType(DropdownButtonFormField<String>),
+              );
+          final headingLabels = _expressionSetHeadingLabels(tester);
+          final fieldValues = _expressionFieldValues(tester);
+          final matchingLogs = logs
+              .where((log) => log.contains('wordId=T9000_EDIT_SEED_WIDGET'))
+              .toList(growable: false);
+
+          expect(languageDropdown.initialValue, '영어');
+          expect(
+            _textFieldByLabel(tester, '스트롱넘버 (없으면 비워둠)').controller?.text,
+            ' g2040 ',
+          );
+          expect(
+            _textFieldByLabel(tester, '의미 1').controller?.text,
+            'first meaning',
+          );
+          expect(
+            _textFieldByLabel(tester, '의미 2').controller?.text,
+            'second meaning',
+          );
+          expect(
+            _textFieldByLabel(tester, '비고').controller?.text,
+            ' note seed ',
+          );
+          expect(_representativeHeadingCount(headingLabels), 1);
+          expect(_expressionSetCount(fieldValues), 2);
+          expect(fieldValues[0], 'typed-seed-title');
+          expect(fieldValues[1], 'typed-seed-translit');
+          expect(fieldValues[2], 'typed-seed-pron');
+          expect(fieldValues[3], 'typed-seed-alt');
+          expect(fieldValues, isNot(contains('typed-hidden-translit')));
+          expect(matchingLogs, hasLength(1));
+          expect(matchingLogs.single, contains('issueCount=1'));
+          expect(matchingLogs.single, contains('sourceSlots=4'));
+        } finally {
+          debugPrint = previousDebugPrint;
+        }
+      },
+    );
   });
 }
 

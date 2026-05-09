@@ -9,9 +9,16 @@ import 'word_graph_cache.dart';
 import 'word_expression_set.dart';
 
 class WordEditScreen extends StatefulWidget {
-  final Map<String, dynamic> word;
+  final Map<String, dynamic>? word;
+  final WordEditSeed? seed;
 
-  const WordEditScreen({super.key, required this.word});
+  const WordEditScreen({super.key, required Map<String, dynamic> word})
+    : word = word,
+      seed = null;
+
+  const WordEditScreen.fromSeed({super.key, required WordEditSeed seed})
+    : word = null,
+      seed = seed;
 
   @override
   State<WordEditScreen> createState() => _WordEditScreenState();
@@ -45,11 +52,25 @@ class _WordEditScreenState extends State<WordEditScreen> {
     '기타',
   ];
 
+  WordEditSeed _resolveInitialEditSeed() {
+    final seed = widget.seed;
+    if (seed != null) {
+      return seed;
+    }
+
+    final word = widget.word;
+    if (word == null) {
+      throw StateError('WordEditScreen requires either word or seed.');
+    }
+
+    return _repository.buildWordEditSeedFromWordRow(word);
+  }
+
   @override
   void initState() {
     super.initState();
 
-    _editSeed = _repository.buildWordEditSeedFromWordRow(widget.word);
+    _editSeed = _resolveInitialEditSeed();
     final originalLanguage = _editSeed.language;
 
     _selectedLanguageGroup = _resolveLanguageGroup(originalLanguage);
