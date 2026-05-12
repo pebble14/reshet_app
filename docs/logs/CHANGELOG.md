@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-05-10 Phase 8-1
+
+- **Home/Detail graph navigation existence check 한정**으로 raw map read 의존을 줄였다.
+- `HomeScreen`과 `WordDetailScreen`의 graph 진입 전 확인을 `getWordMapByIdForGraphCenterSingleWord` raw row null-check에서 `wordExistsForGraphNavigation(String id)` boolean probe로 전환했다.
+- `wordExistsForGraphNavigation`은 `WORD_TABLE.id` 존재 여부만 확인하며, 표시 필드와 expression row를 요구하지 않는다.
+- Explorer bootstrap, `GraphBuilder`, `WordEditScreen(word: Map)`, `getWordMapByIdForGraphCenterSingleWord`, public legacy API, DB schema, UI 구조는 변경하지 않았다.
+
 ## 2026-05-10 edit input/output typed boundary
 
 - Production edit input boundary를 typed `WordEditSeed` contract 기준으로 완료했다.

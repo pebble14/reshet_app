@@ -1,5 +1,12 @@
 # FEATURE STATUS
 
+## 현재 상태 (2026-05-10 Phase 8-1)
+
+- Phase 8-1은 **Home/Detail graph navigation existence check 한정** raw carrier 축소 단계다.
+- `HomeScreen`과 `WordDetailScreen`은 graph route 진입 전 raw word row를 읽지 않고 `wordExistsForGraphNavigation(String id)`로 `WORD_TABLE.id` 존재 여부만 확인한다.
+- Home/Detail caller는 반환 row 필드를 사용하지 않는다.
+- Explorer bootstrap, `GraphBuilder`, `WordEditScreen(word: Map)`, public legacy raw read API, DB schema, UI 구조는 변경하지 않았다.
+
 ## 현재 상태 (2026-05-10 typed edit boundary)
 
 - Production edit input/output typed boundary가 완료되었다.

@@ -1,5 +1,28 @@
 # Read Source Migration
 
+## 2026-05-10 Phase 8-1 Home/Detail graph navigation existence check
+
+### 요약
+
+- 이번 단계는 **Home/Detail graph navigation existence check 한정** 정리다.
+- `HomeScreen`과 `WordDetailScreen`의 graph 진입 전 존재 확인에서 raw `Map<String, dynamic>` word row read 의존을 제거했다.
+- repository에 `wordExistsForGraphNavigation(String id)`를 추가해 `WORD_TABLE.id` 존재 여부만 확인하도록 분리했다.
+- Home/Detail caller는 graph route 진입 전 더 이상 반환 row 필드를 사용하지 않는다.
+
+### 유지 범위
+
+- Explorer bootstrap은 변경하지 않았다.
+- `GraphBuilder` 구조와 `buildFromRepository` 경로는 변경하지 않았다.
+- `WordEditScreen(word: Map)` legacy constructor는 변경하거나 삭제하지 않았다.
+- `getWordMapByIdForGraphCenterSingleWord`를 삭제하지 않았다.
+- DB schema와 UI 구조는 변경하지 않았다.
+
+### 검증 기준
+
+- `wordExistsForGraphNavigation`은 `WORD_TABLE.id` 존재 확인만 수행한다.
+- 표시 필드, expression row, graph center display projection은 이 존재 확인의 입력 조건이 아니다.
+- Home/Detail graph navigation 실패 안내 동작은 기존과 동일하게 유지한다.
+
 ## 2026-05-10 edit seed / save result typed boundary history note
 
 ### 요약

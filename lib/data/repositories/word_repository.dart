@@ -1804,6 +1804,22 @@ class WordRepository {
     );
   }
 
+  Future<bool> wordExistsForGraphNavigation(String id) async {
+    final normalizedId = id.trim();
+    if (normalizedId.isEmpty) return false;
+
+    final db = await DatabaseService.openDatabaseFile();
+    final rows = await db.query(
+      'WORD_TABLE',
+      columns: const ['id'],
+      where: 'id = ?',
+      whereArgs: [normalizedId],
+      limit: 1,
+    );
+
+    return rows.isNotEmpty;
+  }
+
   Future<GraphCenterWordDisplayItem?>
   getGraphCenterWordDisplayItemByIdForGraphCenterSingleWord(String id) async {
     final normalizedId = id.trim();

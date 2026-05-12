@@ -710,10 +710,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _openDefaultStrongWordGraph(String wordId) async {
-    final centerWordMap = await _repository
-        .getWordMapByIdForGraphCenterSingleWord(wordId);
+    final centerWordExists = await _repository.wordExistsForGraphNavigation(
+      wordId,
+    );
     if (!mounted) return;
-    if (centerWordMap == null) {
+    if (!centerWordExists) {
       _showWordNavigationUnavailableSnackBar();
       return;
     }

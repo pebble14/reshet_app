@@ -92,10 +92,11 @@ class _WordDetailScreenState extends State<WordDetailScreen> {
   }
 
   Future<void> _openGraph() async {
-    final centerWordMap = await _repository
-        .getWordMapByIdForGraphCenterSingleWord(_wordId);
+    final centerWordExists = await _repository.wordExistsForGraphNavigation(
+      _wordId,
+    );
     if (!mounted) return;
-    if (centerWordMap == null) {
+    if (!centerWordExists) {
       _showWordNavigationUnavailableSnackBar();
       return;
     }
