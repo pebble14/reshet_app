@@ -62,6 +62,12 @@ class GraphBuilder {
 
   const GraphBuilder();
 
+  /// Dormant compatibility wrapper retained for older callers that already
+  /// provide repository-shaped visible graph data. Production graph assembly
+  /// uses [buildMergedVisibleGraphData].
+  @Deprecated(
+    'Dormant compatibility path. Use buildMergedVisibleGraphData instead.',
+  )
   GraphViewData buildFromVisibleGraphData({
     required GraphBuildOptions options,
     required Word centerWord,
@@ -384,6 +390,12 @@ class GraphBuilder {
     );
   }
 
+  /// Dormant repository-driven compatibility path. Production graph UI reads
+  /// visible graph data in the repository layer and assembles it through
+  /// [buildMergedVisibleGraphData].
+  @Deprecated(
+    'Dormant compatibility path. Use repository graph data + buildMergedVisibleGraphData instead.',
+  )
   Future<GraphViewData> buildFromRepository({
     required WordRepository repository,
     required GraphBuildOptions options,

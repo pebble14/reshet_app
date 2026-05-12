@@ -1,5 +1,26 @@
 # Read Source Migration
 
+## 2026-05-13 Phase 8-3A GraphBuilder dormant compatibility 표시
+
+### 요약
+
+- 이번 단계는 **GraphBuilder legacy/public helper 판단 결과를 deprecated marking으로만 반영한 first slice**다.
+- active graph production path는 `WordGraphScreen` → `getVisibleGraphDataForGraph` → `GraphVisibleWord` / `GraphWordLabelDisplayItem` / `WordRelationEdgeInfo` → `WordGraphDataCache` → `GraphBuilder.buildMergedVisibleGraphData`로 유지한다.
+- dormant builder repository path는 `GraphBuilder.buildFromRepository`와 `GraphBuilder.buildFromVisibleGraphData`로 분리해 해석한다.
+- full `Word` 변환 helper인 `getWordByIdForGraphSingleWord`도 production active path가 아닌 dormant compatibility helper로 명시한다.
+
+### 표시 대상
+
+- `GraphBuilder.buildFromRepository`
+- `GraphBuilder.buildFromVisibleGraphData`
+- `WordRepository.getWordByIdForGraphSingleWord`
+
+### 유지 범위
+
+- API 삭제, signature 변경, graph screen center bootstrap 변경은 수행하지 않았다.
+- `GraphBuilder.buildMergedVisibleGraphData`, `getWordMapByIdForGraphSingleWord`, `getWordMapByIdForGraphCenterSingleWord`, `getWordsByIdsForGraphBatch`, `getVisibleGraphDataForGraph`는 변경하지 않았다.
+- stale test 정리와 public legacy API cleanup은 이번 단계 범위에 포함하지 않았다.
+
 ## 2026-05-12 Phase 8-2 Explorer bootstrap graph center typed 전환
 
 ### 요약

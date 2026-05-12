@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-05-13 Phase 8-3A
+
+- GraphBuilder legacy/public helper inventory 결과를 first slice로 반영해 `GraphBuilder.buildFromRepository`, `GraphBuilder.buildFromVisibleGraphData`, `getWordByIdForGraphSingleWord`에 dormant compatibility `@Deprecated` 표시를 추가했다.
+- active graph production path는 `WordGraphScreen` → `getVisibleGraphDataForGraph` → `WordGraphDataCache` → `GraphBuilder.buildMergedVisibleGraphData` 구조로 계속 유지한다.
+- API 삭제, method signature 변경, graph screen center bootstrap 변경, stale test 정리, DB schema/UI 구조 변경은 수행하지 않았다.
+
 ## 2026-05-12 Phase 8-2
 
 - **Explorer bootstrap graph center read 한정**으로 raw center map 의존을 줄였다.

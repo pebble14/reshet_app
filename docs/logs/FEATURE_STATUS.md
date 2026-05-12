@@ -1,5 +1,12 @@
 # FEATURE STATUS
 
+## 현재 상태 (2026-05-13 Phase 8-3A)
+
+- Phase 8-3A는 **GraphBuilder dormant compatibility helper 표시** 단계다.
+- active graph production path는 `WordGraphScreen` → `getVisibleGraphDataForGraph` → `WordGraphDataCache` → `GraphBuilder.buildMergedVisibleGraphData` 구조로 유지한다.
+- `GraphBuilder.buildFromRepository`, `GraphBuilder.buildFromVisibleGraphData`, `getWordByIdForGraphSingleWord`는 production active path가 아닌 dormant compatibility helper로 `@Deprecated` 표시했다.
+- API 삭제, signature 변경, graph screen center bootstrap, DB schema, UI 구조는 변경하지 않았다.
+
 ## 현재 상태 (2026-05-12 Phase 8-2)
 
 - Phase 8-2는 **Explorer bootstrap graph center read 한정** raw carrier 축소 단계다.

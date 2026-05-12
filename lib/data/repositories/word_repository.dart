@@ -2150,6 +2150,12 @@ class WordRepository {
     return Word.fromMap(row);
   }
 
+  /// Dormant compatibility helper that converts the graph single-word raw row
+  /// into a full [Word]. The active graph production path keeps typed graph
+  /// payloads instead of this post-conversion helper.
+  @Deprecated(
+    'Dormant compatibility helper. Use typed graph payload paths instead.',
+  )
   Future<Word?> getWordByIdForGraphSingleWord(String id) async {
     final row = await getWordMapByIdForGraphSingleWord(id);
     if (row == null) return null;
