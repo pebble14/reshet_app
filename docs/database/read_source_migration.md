@@ -1,5 +1,32 @@
 # Read Source Migration
 
+## 2026-05-12 Phase 8-2 Explorer bootstrap graph center typed 전환
+
+### 요약
+
+- 이번 단계는 **Explorer bootstrap graph center read 한정** raw carrier 축소다.
+- `WordExplorerScreen` 초기 bootstrap은 `getWordMapByIdForGraphCenterSingleWord` raw row 대신 `getGraphCenterWordDisplayItemByIdForGraphCenterSingleWord` typed display contract를 사용한다.
+- bootstrap center seed는 `GraphCenterWordDisplayItem.wordId`, `representativeSpelling`, `displayStrongNumber`, `representativeTransliteration`만 소비한다.
+- `representative spelling`, strong display, representative transliteration, center word id의 사용자 표시 의미는 기존 bootstrap seed 흐름과 같은 우선순위로 유지한다.
+
+### 유지 범위
+
+- `GraphBuilder`와 graph screen 자체 center bootstrap은 변경하지 않았다.
+- `WordEditScreen(word: Map)` legacy constructor와 public legacy raw read API는 변경하지 않았다.
+- `getWordMapByIdForGraphCenterSingleWord`는 삭제하지 않았다.
+- DB schema와 UI 구조는 변경하지 않았다.
+
+### 검증 기준
+
+- repository graph center display contract 회귀 테스트를 유지한다.
+- Explorer bootstrap 표시 contract 테스트는 typed center display 우선순위, split-view fallback, id-only fallback이 기존 bootstrap seed 의미를 유지하는지 확인한다.
+- fallback 제어 흐름은 center typed item 우선, 없으면 selected detail display item 여부에 따른 기존 `idOnly` / split-view display fallback 순서를 유지한다.
+
+### 클라이언트 UI 확인 결과
+
+- Explorer 초기 bootstrap coherence 확인: 성공
+- Explorer 초기 bootstrap fallback 체감 확인: 성공
+
 ## 2026-05-10 Phase 8-1 Home/Detail graph navigation existence check
 
 ### 요약
@@ -794,7 +821,7 @@
   - owner read = `getWordMapByIdForGraphCenterSingleWord`
 - Home search -> explorer:
   - payload = `wordId`
-  - center bootstrap = `getWordMapByIdForGraphCenterSingleWord`
+  - center bootstrap = `getGraphCenterWordDisplayItemByIdForGraphCenterSingleWord`
   - selected panel bootstrap = `getWordDetailLikeDisplayItemByIdForSplitView`
 
 ### explorer 초기 구조 정리

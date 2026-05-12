@@ -1,5 +1,14 @@
 # FEATURE STATUS
 
+## 현재 상태 (2026-05-12 Phase 8-2)
+
+- Phase 8-2는 **Explorer bootstrap graph center read 한정** raw carrier 축소 단계다.
+- `WordExplorerScreen` 초기 bootstrap은 raw center map 대신 `GraphCenterWordDisplayItem` typed contract를 읽어 center seed를 구성한다.
+- bootstrap center seed는 대표 표기, strong display, 대표 음역, center word id 표시 의미를 기존과 동일한 우선순위로 유지한다.
+- Explorer bootstrap의 center display 우선순위와 fallback 의미는 신규 표시 contract 테스트로 방어한다.
+- 클라이언트 UI 확인 결과, Explorer 초기 bootstrap coherence와 fallback 체감 확인이 모두 성공했다.
+- `GraphBuilder`, graph screen 자체 center bootstrap, `WordEditScreen(word: Map)`, public legacy raw read API, DB schema, UI 구조는 변경하지 않았다.
+
 ## 현재 상태 (2026-05-10 Phase 8-1)
 
 - Phase 8-1은 **Home/Detail graph navigation existence check 한정** raw carrier 축소 단계다.

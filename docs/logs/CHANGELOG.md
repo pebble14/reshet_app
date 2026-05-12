@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2026-05-12 Phase 8-2
+
+- **Explorer bootstrap graph center read 한정**으로 raw center map 의존을 줄였다.
+- `WordExplorerScreen` 초기 bootstrap을 `getWordMapByIdForGraphCenterSingleWord` raw row 해석에서 `getGraphCenterWordDisplayItemByIdForGraphCenterSingleWord` typed contract 소비로 전환했다.
+- bootstrap center seed는 `wordId`, representative spelling, strong display, representative transliteration의 기존 표시 의미를 유지하며, selected detail display fallback 순서는 기존 제어 흐름을 보존했다.
+- `test/ui/word_explorer_screen_phase8h16_bootstrap_center_display_contract_test.dart`를 추가해 typed center display 우선순위와 split-view/id-only fallback 의미가 기존 bootstrap seed와 일치하는지 검증했다.
+- 클라이언트 UI 확인 결과, Explorer 초기 bootstrap coherence와 fallback 체감 확인이 모두 성공했다.
+- `GraphBuilder`, graph screen 자체 center bootstrap, `WordEditScreen(word: Map)`, `getWordMapByIdForGraphCenterSingleWord`, public legacy API, DB schema, UI 구조는 변경하지 않았다.
+
 ## 2026-05-10 Phase 8-1
 
 - **Home/Detail graph navigation existence check 한정**으로 raw map read 의존을 줄였다.
