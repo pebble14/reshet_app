@@ -558,7 +558,7 @@ Explorer 단일 workspace 전환은 다음 순서를 따른다.
 | --- | --- | --- |
 | Phase 2-A | architecture 문서 확정 | 이번 문서화 작업이다. 구현 변경은 없다. |
 | Phase 2-B | 최소 typed contract 도입 | layout preset, transition origin, workspace state, history entry를 먼저 정의한다. |
-| Phase 2-C | `ExplorerWorkspace` shell 도입 | route 제거 없이 shell boundary를 만든다. |
+| Phase 2-C | `ExplorerWorkspace` shell 도입 | route 제거 없이 placeholder shell boundary를 만든다. |
 | Phase 2-D | panel orchestration 연결 | panel event가 workspace action으로 수렴하도록 연결한다. |
 | Phase 2-E | `GraphPanel` embed | active graph production path를 보호하면서 embedded graph를 canonical path로 이동한다. |
 | Phase 2-F | `DetailPane` embed | detail reading surface를 workspace 안으로 수렴한다. |
@@ -580,6 +580,14 @@ Phase 2-B에서는 `lib/ui/explorer_workspace/explorer_workspace_contract.dart`�
 `ExplorerWorkspaceState`와 `ExplorerWorkspaceHistoryEntry`는 id, semantic origin, layout preset만 담는다. `graphData`, `detailData`, display item, `Map<String, dynamic>` carrier는 포함하지 않는다.
 
 `ExplorerWorkspaceAction`과 `ExplorerWorkspacePanelEvent`는 이번 단계에서 만들지 않는다. 두 타입은 `ExplorerWorkspace` shell과 panel orchestration 연결이 시작되는 Phase 2-C 또는 Phase 2-D 이후 검토 대상으로 남긴다.
+
+### 17.2 Phase 2-C placeholder shell 도입 결과
+
+Phase 2-C에서는 `lib/ui/explorer_workspace/explorer_workspace.dart`에 `ExplorerWorkspace` placeholder shell을 추가한다.
+
+이 shell은 `ExplorerWorkspaceState`를 필수 입력으로 받으며, `layoutPreset`에 따라 `StrongRail`, `GlobalSearch`, `GraphPanel`, `DetailPane`, `AddWordFixedAction` placeholder의 배치와 강조만 조정한다.
+
+이번 단계에서는 route에 연결하지 않는다. 기존 `WordExplorerScreen`, `WordGraphScreen`, `WordDetailScreen`의 state ownership, graph production path, detail reread 흐름도 변경하지 않는다.
 
 ## 18. Phase 2-A 비범위
 
