@@ -1,13 +1,14 @@
-# Explorer 단일 Workspace 통합 조사 초안
+# Explorer 단일 Workspace 통합 Architecture Phase 2-A
 
 ## 1. 문서 성격
 
 - 문서 분류: `reference/context`
-- 목적: 현재 구현의 route, screen, state ownership, navigation 흐름을 실제 코드 기준으로 조사하고, 장기적인 `ExplorerWorkspace` 통합 후보를 설계 초안 수준에서 정리한다.
+- 목적: 현재 구현의 route, screen, state ownership, navigation 흐름 조사 기록을 보존하고, Explorer 단일 workspace 전환을 위한 Phase 2-A architecture 정의를 정리한다.
 - authority 경계:
   - 이 문서는 기존 UX authority 문서를 변경하지 않는다.
   - `docs/ux/workspace_ux_architecture.md`, `docs/ux/navigation_policy.md`, `docs/ux/responsive_layout_policy.md`, `docs/ux/search_policy.md`, `docs/ux/interaction_policy.md`의 정책을 대체하지 않는다.
-  - 현재 구현 snapshot과 migration 후보를 기록하는 참고 문서로만 사용한다.
+  - 현재 구현 snapshot, migration 후보, Phase 2-A workspace architecture vocabulary를 기록하는 참고 문서로 사용한다.
+  - 이 문서는 Flutter widget 구조, route 구현, repository contract, DB/API contract를 변경하지 않는다.
 
 이번 Phase에서는 구현하지 않는다.
 
@@ -21,7 +22,7 @@
 
 ### 2.1 기준 커밋과 브랜치 상태
 
-- 조사 기준 HEAD: `c7bf4c815c7d14e37f0883048280a5a83ca98cb0`
+- Phase 2-A 문서화 기준 HEAD: `e136e585b82da909b382d00f969ffd5e3d131765`
 - 조사 시점 branch state: `main = origin/main`
 - 조사 시작 시 working tree: clean
 
@@ -331,9 +332,9 @@ WordGraphScreen
 
 통합 workspace 설계가 새 public boundary를 만들 때 이 경계를 다시 확장하면 raw carrier 재도입 위험이 있다. 이번 Phase에서는 확장하지 않고 위험으로만 기록한다.
 
-## 8. ExplorerWorkspace 통합 후보 초안
+## 8. ExplorerWorkspace 상태 ownership
 
-### 8.1 목표 개념
+### 8.1 목표 composition
 
 ```text
 ExplorerWorkspace
@@ -344,100 +345,232 @@ ExplorerWorkspace
 └─ AddWordFixedAction
 ```
 
-이 개념은 기존 UX authority 문서를 변경하는 새 정책이 아니라, 현재 구현을 장기 통합할 때 검토할 수 있는 composition 초안이다.
+`ExplorerWorkspace`는 route나 screen 병합 구현이 아니라, 장기적으로 workspace-level semantic state를 소유할 단일 coordination boundary를 의미한다.
 
-### 8.2 panel ownership 초안
+이 문서에서 `StrongRail`은 기존 authority 문서의 `Strong Rail` 역할을 Explorer workspace composition 안에서 부르는 패널명이다. 명칭은 구현 class 도입을 뜻하지 않는다.
 
-| 구성 | 후보 책임 |
+### 8.2 semantic state ownership
+
+`ExplorerWorkspace`가 semantic state의 owner다. Panel은 받은 state를 표시하고 사용자 event를 workspace action으로 전달한다.
+
+| 상태 | owner | 의미 | 변경 원칙 |
+| --- | --- | --- | --- |
+| `selectedWordId` | `ExplorerWorkspace` | 사용자가 현재 선택한 semantic object | selection action에서만 변경 |
+| `graphCenterWordId` | `ExplorerWorkspace` | graph relation context의 anchor | 명시적 center action에서만 변경 |
+| `detailTargetWordId` | `ExplorerWorkspace` | `DetailPane`이 읽는 대상 | detail target action에서만 변경 |
+| `layoutPreset` | `ExplorerWorkspace` | workspace panel emphasis 상태 | layout action 또는 route alias action에서만 변경 |
+| `origin` | `ExplorerWorkspace` history snapshot | transition의 semantic 진입 출처 | snapshot 생성 시 기록 |
+
+`selectedWordId`, `graphCenterWordId`, `detailTargetWordId`는 서로 다른 의미를 가진다. 세 값이 동일할 수는 있지만, 동일성을 전제로 병합하지 않는다.
+
+### 8.3 graph center 변경 제한
+
+`graphCenterWordId`는 명시적 center action에서만 변경한다.
+
+다음 event는 center 변경이 아니다.
+
+- graph node hover
+- graph node 단순 selection
+- detail pane reading target 변경
+- layout preset 변경
+- hidden panel 전환
+- 검색어 입력
+
+다음 event는 center action으로 정의될 수 있다.
+
+- graph node에 대한 명시적 center 요청
+- Detail context를 graph 중심으로 여는 요청
+- workspace snapshot restore
+- 신규 단어 생성 후 명시적으로 graph center를 새 단어로 전환하는 요청
+
+이 제한은 graph 탐색 중 `selectedWordId`와 `detailTargetWordId`가 바뀌어도 graph anchor가 우발적으로 이동하지 않도록 하기 위한 것이다.
+
+## 9. Panel orchestration
+
+Panel은 semantic state를 직접 소유하지 않는다. Panel은 표시와 event emit을 담당하며, 모든 semantic transition은 `ExplorerWorkspace` action으로 귀결된다.
+
+| Panel | 역할 | 받는 state | emit하는 event | 소유하지 않는 것 |
+| --- | --- | --- | --- | --- |
+| `StrongRail` | Strong 기반 semantic anchor 접근과 workspace orientation 제공 | `selectedWordId`, `graphCenterWordId`, `layoutPreset` | strong anchor 선택, workspace entry 요청 | detail data, graph data, selected/detail/center 직접 변경 |
+| `GlobalSearch` | corpus 진입을 위한 global search entry 제공 | 현재 workspace context, 필요 시 query/result 표시 상태 | search result 선택, result를 detail 또는 graph context로 여는 요청 | graph traversal, detail reading, center 직접 변경 |
+| `GraphPanel` | relation graph surface 표시와 graph interaction event 전달 | `graphCenterWordId`, `selectedWordId`, `layoutPreset` | graph node 선택, graph center 요청, graph 관련 add 요청 | workspace semantic state, route stack, detail target |
+| `DetailPane` | `detailTargetWordId`의 읽기 surface 제공 | `detailTargetWordId`, `selectedWordId`, `layoutPreset` | detail target 관련 graph 요청, edit 요청, linked word 선택 요청 | graph center, search state, route authority |
+| `AddWordFixedAction` | exploration 중 생성 흐름에 진입하는 persistent action 제공 | `selectedWordId`, `graphCenterWordId`, `detailTargetWordId` | add word 시작, 생성 결과를 workspace action으로 전달 | 저장소 쓰기 contract, graph production path, center 직접 변경 |
+
+Panel 내부에 필요한 transient UI state는 허용될 수 있다. 단, transient UI state는 `selectedWordId`, `graphCenterWordId`, `detailTargetWordId`의 owner가 될 수 없다.
+
+## 10. layoutPreset 정책
+
+`layoutPreset`은 route가 아니라 workspace 안의 presentation state다. PC split-view를 기준 canonical layout으로 두고, 각 preset은 같은 semantic state를 서로 다른 강조로 표현한다.
+
+| preset | 의미 | PC split-view 기준 배치 |
+| --- | --- | --- |
+| `balanced` | graph와 detail을 함께 보는 기본 workspace | StrongRail은 persistent navigation spine으로 유지하고, GraphPanel과 DetailPane을 동시에 읽을 수 있는 균형 배치로 둔다. |
+| `graphFocused` | graph 탐색과 relation context 확인을 우선 | GraphPanel을 주 surface로 넓게 두고, DetailPane은 context 유지가 가능한 보조 reading surface로 둔다. |
+| `detailFocused` | detail reading과 편집 전후 확인을 우선 | DetailPane을 주 surface로 넓게 두고, GraphPanel은 현재 relation context를 잃지 않는 보조 surface로 둔다. |
+
+`layoutPreset` 변경은 semantic object 변경을 뜻하지 않는다. `balanced`, `graphFocused`, `detailFocused` 사이를 이동해도 `selectedWordId`, `graphCenterWordId`, `detailTargetWordId`는 action이 명시하지 않는 한 유지된다.
+
+## 11. Navigation semantic 재정의
+
+### 11.1 route 이동에서 workspace state transition으로
+
+장기 목표에서 navigation은 route 이동이 아니라 workspace state transition으로 정의한다.
+
+| 현재 흐름 | workspace semantic 해석 |
 | --- | --- |
-| `StrongRail` | strong anchor 접근, 기존 Home strong list 성격 흡수 후보 |
-| `GlobalSearch` | 검색 query와 result entry를 workspace 상위 상태로 승격하는 후보 |
-| `GraphPanel` | 현재 `WordGraphScreen`의 렌더링과 visible graph data 표현 책임 유지 |
-| `DetailPane` | Explorer detail panel과 standalone Detail route의 읽기 책임을 장기적으로 조율 |
-| `AddWordFixedAction` | graph create 흐름을 workspace 고정 action으로 재해석하는 후보 |
+| Home 또는 Search result -> Detail | `detailTargetWordId` 설정 + `detailFocused` |
+| Home 또는 Search result -> Explorer | entry word를 `selectedWordId`와 `detailTargetWordId`로 설정하고, graph 진입 의도가 명시된 경우에만 `graphCenterWordId`를 설정 |
+| Home 또는 Search result -> Graph | entry word를 명시적 center action으로 `graphCenterWordId`에 설정 + `graphFocused` |
+| Explorer -> Detail | 현재 selection 또는 detail target 유지 + `detailFocused` |
+| Explorer -> Graph | 현재 graph center 유지 또는 명시적 center action + `graphFocused` |
+| Detail -> Graph | `detailTargetWordId`를 명시적 center action으로 `graphCenterWordId`에 반영 + `graphFocused` |
+| Graph node selection | `selectedWordId`와 필요 시 `detailTargetWordId` 변경, `graphCenterWordId`는 유지 |
+| Graph node center 요청 | `graphCenterWordId` 변경 |
+| Add Word 후 이동 | 생성 결과를 workspace action으로 반영하되 center 변경은 명시적 center action에 한정 |
+| Edit Word 후 이동 | 기존 semantic state를 유지하고 display/data refresh만 수행 |
 
-### 8.3 layout state 초안
+### 11.2 route alias 방향
 
-| layout state | 의미 |
+Graph route와 Detail route는 장기적으로 별도 semantic destination이 아니라 workspace preset alias로 재정의한다.
+
+| 기존 route 의미 | 장기 alias 의미 |
 | --- | --- |
-| `balanced` | graph와 detail을 함께 보는 기본 workspace 배치 |
-| `graphFocused` | graph 탐색을 우선시하되 detail context는 보존 |
-| `detailFocused` | detail 읽기를 우선시하되 graph context는 보존 |
+| Graph route | `ExplorerWorkspace(layoutPreset: graphFocused)` |
+| Detail route | `ExplorerWorkspace(layoutPreset: detailFocused)` |
+| Explorer route | `ExplorerWorkspace(layoutPreset: balanced)` 또는 이전 workspace snapshot restore |
 
-이 state는 route replacement가 아니라 workspace 안의 layout preset으로 해석한다.
+이 alias 정의는 즉시 route 제거를 뜻하지 않는다. 기존 route는 compatibility layer로 유지하면서 내부 semantic을 workspace state transition으로 먼저 수렴한다.
 
-## 9. navigation 의미 재정의 초안
+## 12. Route collapse 전략
 
-### 9.1 route 이동 대신 workspace state transition
+Route 제거는 마지막 단계다. route를 먼저 제거하면 active graph production path, detail reread 흐름, edit/create 후속 이동의 의미가 동시에 흔들릴 수 있다.
 
-장기 목표에서는 다음 전환을 route 이동이 아니라 workspace state transition으로 해석할 수 있다.
+Collapse 순서는 다음과 같다.
 
-| 현재 흐름 | 후보 해석 |
+1. semantic collapse
+2. implementation collapse
+3. route collapse
+
+### 12.1 semantic collapse
+
+기존 route 이동의 의미를 `ExplorerWorkspace` state transition으로 문서화하고 typed contract로 고정한다. 이 단계에서는 route, screen, graph production path를 변경하지 않는다.
+
+### 12.2 implementation collapse
+
+기존 route가 내부적으로 같은 workspace state와 panel orchestration을 사용하도록 점진적으로 연결한다. Graph/Detail route는 compatibility layer로 남는다.
+
+### 12.3 route collapse
+
+compatibility layer가 더 이상 behavior 차이를 만들지 않는 것이 확인된 뒤 route 제거를 검토한다. route collapse는 Phase 2-A의 범위가 아니다.
+
+## 13. Responsive composition
+
+PC split-view를 canonical layout으로 둔다. 이 기준에서 `StrongRail`, `GlobalSearch`, `GraphPanel`, `DetailPane`, `AddWordFixedAction`은 하나의 `ExplorerWorkspace` 안에서 조율된다.
+
+좁은 화면에서는 composition만 바뀐다. semantic state는 유지된다.
+
+- `DetailPane`이 숨겨져도 `detailTargetWordId`는 제거되지 않는다.
+- `GraphPanel`이 축소되거나 다른 surface로 전환되어도 `graphCenterWordId`는 제거되지 않는다.
+- `StrongRail`이 compact 표현으로 바뀌어도 semantic navigation spine 역할은 유지된다.
+- `GlobalSearch`가 overlay 또는 transient entry로 표현되어도 workspace context와 분리되지 않는다.
+
+Hidden panel은 상태 제거를 의미하지 않는다. 이는 `responsive_layout_policy.md`의 원칙인 "surface가 transient하더라도 semantic context가 transient해져서는 안 된다"와 같은 방향이다.
+
+## 14. Workspace history
+
+Workspace history는 route history가 아니라 workspace snapshot history로 정의한다.
+
+Snapshot 저장 대상은 다음과 같다.
+
+| field | 의미 |
 | --- | --- |
-| Explorer -> Detail | `detailTarget` 확정 + `detailFocused` |
-| Explorer -> Graph | `graphCenter` 유지 또는 재설정 + `graphFocused` |
-| Detail -> Graph | 현재 `detailTarget`을 `graphCenter`로 승격 |
-| Graph -> Detail | graph node selection을 `detailTarget` 갱신으로 해석 |
-| Add Word 후 이동 | 새 word를 `selectedWord` 또는 `graphCenter`로 반영 |
-| Edit Word 후 이동 | 기존 workspace context를 유지한 채 display/data refresh |
+| `selectedWordId` | 사용자가 선택한 semantic object |
+| `graphCenterWordId` | graph relation context anchor |
+| `detailTargetWordId` | detail reading target |
+| `layoutPreset` | workspace presentation emphasis |
+| `origin` | snapshot을 만든 semantic entry source |
 
-### 9.2 핵심 상태 관계 초안
+`origin`은 route 이름이 아니라 semantic 출처를 기록한다. 예시는 다음과 같다.
 
-| 상태 | 후보 의미 |
-| --- | --- |
-| `selectedWord` | 사용자가 현재 선택한 semantic object |
-| `graphCenter` | graph relation context의 anchor |
-| `detailTarget` | DetailPane이 읽는 대상 |
-| `layoutPreset` | workspace panel emphasis 상태 |
+- `strongRail`
+- `globalSearch`
+- `graphNode`
+- `detailPane`
+- `addWordFlow`
+- `editReturn`
+- `snapshotRestore`
 
-### 9.3 관계 정리 초안
+History restore는 panel이 직접 수행하지 않는다. `ExplorerWorkspace`의 restore action이 snapshot을 적용하고, 각 panel은 적용된 state를 표시한다.
 
-- `selectedWord`와 `detailTarget`
-  - 일반적으로 동기화될 수 있다.
-  - 단, graph 탐색 중 selection preview와 detail reading을 분리해야 하는지 여부는 후속 설계 판단이 필요하다.
-- `selectedWord`와 `graphCenter`
-  - 동일할 수도 있고 다를 수도 있다.
-  - 현재 Explorer가 이 분리를 이미 사용 중이다.
-- `detailTarget`과 `graphCenter`
-  - Detail -> Graph 전환에서는 동일하게 맞춰질 수 있다.
-  - Graph browsing 중에는 분리될 수 있다.
-- `layoutPreset`
-  - navigation 대상이 아니라 presentation state다.
-  - 의미 state와 섞지 않는 것이 적절하다.
+## 15. 상태 충돌 방지 전략
 
-## 10. 단계적 migration 후보
+모든 semantic transition은 `ExplorerWorkspace` action으로만 발생한다. Panel은 `selectedWordId`, `graphCenterWordId`, `detailTargetWordId`를 직접 소유하거나 변경하지 않는다.
 
-### 10.1 Phase 후보 A: 문서와 state vocabulary 정렬
+### 15.1 action별 변경 가능 state 범위
 
-- 현재 screen 역할과 workspace state 용어를 문서에서 정리
-- 구현 변경 없음
-- 이번 Phase가 여기에 해당한다.
+| action | 변경 가능 state | 변경 금지 state | 비고 |
+| --- | --- | --- | --- |
+| `selectSemanticWord(wordId, origin)` | `selectedWordId`, `detailTargetWordId`, `origin` | `graphCenterWordId` | 단순 선택은 graph center 변경이 아니다. |
+| `setDetailTarget(wordId, origin)` | `detailTargetWordId`, `origin` | `graphCenterWordId` | detail reading target만 바꾼다. |
+| `centerGraphOnWord(wordId, origin)` | `graphCenterWordId`, `origin` | 없음 | 명시적 center action이다. |
+| `setLayoutPreset(layoutPreset, origin)` | `layoutPreset`, `origin` | `selectedWordId`, `graphCenterWordId`, `detailTargetWordId` | presentation 변경만 수행한다. |
+| `openDetailFocus(wordId, origin)` | `detailTargetWordId`, `layoutPreset`, `origin` | `graphCenterWordId` | Detail route alias의 semantic action이다. |
+| `openGraphFocus(wordId, origin)` | `graphCenterWordId`, `layoutPreset`, `origin` | 없음 | Graph route alias의 semantic action이며 명시적 center action이다. |
+| `restoreWorkspaceSnapshot(snapshot)` | `selectedWordId`, `graphCenterWordId`, `detailTargetWordId`, `layoutPreset`, `origin` | 없음 | snapshot history 복원 전용이다. |
+| `refreshAfterEdit(wordId, origin)` | `origin` 및 display/data refresh trigger | `selectedWordId`, `graphCenterWordId`, `detailTargetWordId` | edit 결과는 기존 semantic context를 보존한다. |
+| `completeAddWord(wordId, origin)` | `selectedWordId`, `detailTargetWordId`, `origin` | `graphCenterWordId` | 생성 후 center 변경이 필요하면 별도 center action을 사용한다. |
 
-### 10.2 Phase 후보 B: workspace-level navigation state 도입 검토
+### 15.2 충돌 방지 원칙
 
-- route 제거 없이도 상위 orchestration state 개념을 추가할지 검토
-- 실제 적용 시 별도 승인과 설계 필요
+- graph center 변경은 `centerGraphOnWord`, `openGraphFocus`, `restoreWorkspaceSnapshot` 같은 명시적 center action에만 허용한다.
+- selection과 detail target 동기화는 action contract에 명시된 경우에만 수행한다.
+- layout 변경은 semantic object 변경과 분리한다.
+- panel-local callback은 곧바로 상태를 바꾸지 않고 workspace action 요청으로만 전달한다.
+- compatibility route는 내부적으로 workspace action을 호출하는 adapter로 제한한다.
 
-### 10.3 Phase 후보 C: Home search / strong list의 workspace 흡수 검토
+## 16. Embedded graph vs standalone graph
 
-- `GlobalSearch`
-- `StrongRail`
-- 단, 현재 Home 구조와 authority 문서의 책임 경계를 먼저 재확인해야 한다.
+Embedded `GraphPanel`이 장기 canonical graph experience다. 이는 graph가 application shell이 아니라 workspace 안의 contextual semantic surface라는 authority 문서의 방향과 일치한다.
 
-### 10.4 Phase 후보 D: Detail route와 DetailPane 책임 정리
+Standalone graph는 장기적으로 다음 중 하나로 재정의한다.
 
-- standalone detail route 유지 여부
-- embedded detail pane과 read context 중복 해소 여부
-- 이번 Phase에서는 결정하지 않는다.
+- compatibility layer
+- `graphFocused` preset alias
 
-### 10.5 Phase 후보 E: graph standalone / embedded 의미 통일
+현재 active graph production path는 마지막까지 보호한다.
 
-- `WordGraphScreen` caller callback 유무에 따른 의미 차이를 줄일지 검토
-- active graph production path는 유지 전제로 검토
+```text
+WordGraphScreen
+-> getVisibleGraphDataForGraph
+-> GraphVisibleWord / GraphWordLabelDisplayItem / WordRelationEdgeInfo
+-> WordGraphDataCache
+-> GraphBuilder.buildMergedVisibleGraphData
+```
 
-## 11. 이번 Phase 비범위
+Phase 2-A는 이 path를 변경하지 않는다. GraphPanel embed 단계에서도 production path 변경과 workspace embed 변경은 분리해서 검토해야 한다.
 
-이번 Phase에서는 다음을 하지 않았다.
+## 17. 단계적 migration architecture
+
+Explorer 단일 workspace 전환은 다음 순서를 따른다.
+
+| Phase | 목표 | 비고 |
+| --- | --- | --- |
+| Phase 2-A | architecture 문서 확정 | 이번 문서화 작업이다. 구현 변경은 없다. |
+| Phase 2-B | typed contract 도입 | workspace state, action, panel event를 typed contract로 정의한다. |
+| Phase 2-C | `ExplorerWorkspace` shell 도입 | route 제거 없이 shell boundary를 만든다. |
+| Phase 2-D | panel orchestration 연결 | panel event가 workspace action으로 수렴하도록 연결한다. |
+| Phase 2-E | `GraphPanel` embed | active graph production path를 보호하면서 embedded graph를 canonical path로 이동한다. |
+| Phase 2-F | `DetailPane` embed | detail reading surface를 workspace 안으로 수렴한다. |
+| Phase 2-G | route alias 전환 | Graph/Detail route를 `graphFocused`/`detailFocused` alias로 전환한다. |
+| Phase 2-H | 내부 navigation 축소 | route push 중심 흐름을 workspace action 중심 흐름으로 줄인다. |
+| Phase 2-I | route collapse 검토 | compatibility layer 제거 가능성을 검토한다. |
+
+Phase 2-I 전에는 route 제거를 완료 상태로 선언하지 않는다. Phase 2-E 전에는 embedded graph가 canonical graph experience라고 구현 완료 선언하지 않는다. Phase 2-B 전에는 public boundary를 raw carrier로 확장하지 않는다.
+
+## 18. 이번 Phase 비범위
+
+이번 Phase에서는 다음을 하지 않는다.
 
 - route 제거
 - screen 병합
@@ -449,17 +582,14 @@ ExplorerWorkspace
 - Flutter widget 구조 수정
 - cache 정책 수정
 - navigation behavior 구현
+- 신규 문서 생성
 
-## 12. 정리
+## 19. 정리
 
-현재 구현은 이미 `WordExplorerScreen` 안에서 graph와 detail을 동시에 보여주는 split workspace의 씨앗을 갖고 있다. 반면 앱 전체 구조는 여전히 `HomeScreen`, `WordExplorerScreen`, `WordGraphScreen`, `WordDetailScreen`이 route 단위로 분리되어 있고, search/list state와 graph/detail state도 화면별로 나뉘어 있다.
+Phase 2-A의 결론은 `ExplorerWorkspace`가 semantic state ownership과 panel orchestration의 중심이 되어야 한다는 것이다.
 
-장기적인 `ExplorerWorkspace` 통합은 다음 문제를 중심으로 후속 검토가 필요하다.
+`selectedWordId`, `graphCenterWordId`, `detailTargetWordId`는 분리된 상태로 유지한다. 특히 `graphCenterWordId`는 명시적 center action에서만 변경한다. Panel은 표시와 event 전달을 담당하며, semantic transition은 workspace action으로만 발생한다.
 
-- selection / center / detail target의 단일 의미 정의
-- standalone graph와 embedded graph의 navigation 의미 통일
-- route 이동으로 발생하는 reread와 bootstrap 중복 검토
-- Home search / strong list를 workspace 상위 상태로 어떻게 재해석할지
-- transition/hybrid 상태의 raw carrier 경계를 새 workspace boundary에서 다시 확대하지 않는 것
+장기적으로 embedded `GraphPanel`이 canonical graph experience가 되고, standalone graph와 detail route는 compatibility layer 또는 layout preset alias로 재정의된다. 단, route collapse는 마지막 단계이며 active graph production path는 마지막까지 보호한다.
 
-이번 Phase에서는 구현하지 않았다.
+이번 Phase에서는 구현하지 않는다.
