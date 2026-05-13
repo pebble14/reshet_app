@@ -10,7 +10,7 @@
   - 현재 구현 snapshot, migration 후보, Phase 2-A workspace architecture vocabulary를 기록하는 참고 문서로 사용한다.
   - 이 문서는 Flutter widget 구조, route 구현, repository contract, DB/API contract를 변경하지 않는다.
 
-이번 Phase에서는 구현하지 않는다.
+Phase 2-A에서는 구현하지 않는다.
 
 - route 제거 없음
 - screen 병합 없음
@@ -270,7 +270,7 @@ WordGraphScreen
 - `WordGraphScreen._buildGraphData()`
   - `GraphBuilder.buildMergedVisibleGraphData(...)`
 
-이번 Phase의 문서 초안은 이 production path를 변경하지 않는다.
+Phase 2-A의 문서 초안은 이 production path를 변경하지 않는다.
 
 ## 7. 중복 또는 충돌 가능성
 
@@ -308,7 +308,7 @@ WordGraphScreen
 - Detail -> Graph:
   - existence check 후 graph screen이 center bootstrap과 graph data를 별도로 읽음
 
-단일 workspace 전환 시 route transition이 줄어들면 이런 reread의 일부는 구조적으로 재검토 대상이 된다. 이번 Phase에서는 검토만 기록한다.
+단일 workspace 전환 시 route transition이 줄어들면 이런 reread의 일부는 구조적으로 재검토 대상이 된다. Phase 2-A에서는 검토만 기록한다.
 
 ### 7.5 standalone graph와 explorer embedded graph의 의미 차이
 
@@ -330,7 +330,7 @@ WordGraphScreen
   - `onChangeCenterWord`
 - repository 내부 일부 `Map<String, dynamic>` 기반 compatibility/helper path
 
-통합 workspace 설계가 새 public boundary를 만들 때 이 경계를 다시 확장하면 raw carrier 재도입 위험이 있다. 이번 Phase에서는 확장하지 않고 위험으로만 기록한다.
+통합 workspace 설계가 새 public boundary를 만들 때 이 경계를 다시 확장하면 raw carrier 재도입 위험이 있다. Phase 2-A에서는 확장하지 않고 위험으로만 기록한다.
 
 ## 8. ExplorerWorkspace 상태 ownership
 
@@ -557,7 +557,7 @@ Explorer 단일 workspace 전환은 다음 순서를 따른다.
 | Phase | 목표 | 비고 |
 | --- | --- | --- |
 | Phase 2-A | architecture 문서 확정 | 이번 문서화 작업이다. 구현 변경은 없다. |
-| Phase 2-B | typed contract 도입 | workspace state, action, panel event를 typed contract로 정의한다. |
+| Phase 2-B | 최소 typed contract 도입 | layout preset, transition origin, workspace state, history entry를 먼저 정의한다. |
 | Phase 2-C | `ExplorerWorkspace` shell 도입 | route 제거 없이 shell boundary를 만든다. |
 | Phase 2-D | panel orchestration 연결 | panel event가 workspace action으로 수렴하도록 연결한다. |
 | Phase 2-E | `GraphPanel` embed | active graph production path를 보호하면서 embedded graph를 canonical path로 이동한다. |
@@ -568,9 +568,22 @@ Explorer 단일 workspace 전환은 다음 순서를 따른다.
 
 Phase 2-I 전에는 route 제거를 완료 상태로 선언하지 않는다. Phase 2-E 전에는 embedded graph가 canonical graph experience라고 구현 완료 선언하지 않는다. Phase 2-B 전에는 public boundary를 raw carrier로 확장하지 않는다.
 
-## 18. 이번 Phase 비범위
+### 17.1 Phase 2-B 최소 contract 도입 결과
 
-이번 Phase에서는 다음을 하지 않는다.
+Phase 2-B에서는 `lib/ui/explorer_workspace/explorer_workspace_contract.dart`에 다음 최소 typed contract만 추가한다.
+
+- `ExplorerWorkspaceLayoutPreset`
+- `ExplorerWorkspaceTransitionOrigin`
+- `ExplorerWorkspaceState`
+- `ExplorerWorkspaceHistoryEntry`
+
+`ExplorerWorkspaceState`와 `ExplorerWorkspaceHistoryEntry`는 id, semantic origin, layout preset만 담는다. `graphData`, `detailData`, display item, `Map<String, dynamic>` carrier는 포함하지 않는다.
+
+`ExplorerWorkspaceAction`과 `ExplorerWorkspacePanelEvent`는 이번 단계에서 만들지 않는다. 두 타입은 `ExplorerWorkspace` shell과 panel orchestration 연결이 시작되는 Phase 2-C 또는 Phase 2-D 이후 검토 대상으로 남긴다.
+
+## 18. Phase 2-A 비범위
+
+Phase 2-A에서는 다음을 하지 않는다.
 
 - route 제거
 - screen 병합
@@ -592,4 +605,4 @@ Phase 2-A의 결론은 `ExplorerWorkspace`가 semantic state ownership과 panel 
 
 장기적으로 embedded `GraphPanel`이 canonical graph experience가 되고, standalone graph와 detail route는 compatibility layer 또는 layout preset alias로 재정의된다. 단, route collapse는 마지막 단계이며 active graph production path는 마지막까지 보호한다.
 
-이번 Phase에서는 구현하지 않는다.
+Phase 2-A에서는 구현하지 않는다. Phase 2-B에서는 최소 typed contract만 도입하고 기존 구현 흐름은 바꾸지 않는다.
