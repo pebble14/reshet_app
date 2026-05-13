@@ -4,8 +4,23 @@ import 'explorer_workspace_contract.dart';
 
 class ExplorerWorkspace extends StatelessWidget {
   final ExplorerWorkspaceState state;
+  final ValueChanged<String>? onStrongSelected;
+  final ValueChanged<String>? onSearchResultSelected;
+  final ValueChanged<String>? onGraphNodeSelected;
+  final ValueChanged<String>? onGraphCenterRequested;
+  final ValueChanged<String>? onDetailRelationSelected;
+  final VoidCallback? onAddWordRequested;
 
-  const ExplorerWorkspace({super.key, required this.state});
+  const ExplorerWorkspace({
+    super.key,
+    required this.state,
+    this.onStrongSelected,
+    this.onSearchResultSelected,
+    this.onGraphNodeSelected,
+    this.onGraphCenterRequested,
+    this.onDetailRelationSelected,
+    this.onAddWordRequested,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -72,6 +87,7 @@ class ExplorerWorkspace extends StatelessWidget {
             child: _ExplorerWorkspaceActionPlaceholder(
               isEmphasized:
                   state.layoutPreset == ExplorerWorkspaceLayoutPreset.balanced,
+              onPressed: onAddWordRequested,
             ),
           ),
         ],
@@ -190,8 +206,12 @@ class _ExplorerWorkspacePlaceholder extends StatelessWidget {
 
 class _ExplorerWorkspaceActionPlaceholder extends StatelessWidget {
   final bool isEmphasized;
+  final VoidCallback? onPressed;
 
-  const _ExplorerWorkspaceActionPlaceholder({required this.isEmphasized});
+  const _ExplorerWorkspaceActionPlaceholder({
+    required this.isEmphasized,
+    this.onPressed,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -203,18 +223,21 @@ class _ExplorerWorkspaceActionPlaceholder extends StatelessWidget {
         ? colorScheme.onPrimary
         : colorScheme.onSecondaryContainer;
 
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(28),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-        child: Text(
-          'AddWordFixedAction',
-          style: Theme.of(context).textTheme.labelLarge?.copyWith(
-            color: foregroundColor,
-            fontWeight: FontWeight.w600,
+    return GestureDetector(
+      onTap: onPressed,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          borderRadius: BorderRadius.circular(28),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+          child: Text(
+            'AddWordFixedAction',
+            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+              color: foregroundColor,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
       ),

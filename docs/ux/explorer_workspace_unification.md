@@ -559,7 +559,7 @@ Explorer 단일 workspace 전환은 다음 순서를 따른다.
 | Phase 2-A | architecture 문서 확정 | 이번 문서화 작업이다. 구현 변경은 없다. |
 | Phase 2-B | 최소 typed contract 도입 | layout preset, transition origin, workspace state, history entry를 먼저 정의한다. |
 | Phase 2-C | `ExplorerWorkspace` shell 도입 | route 제거 없이 placeholder shell boundary를 만든다. |
-| Phase 2-D | panel orchestration 연결 | panel event가 workspace action으로 수렴하도록 연결한다. |
+| Phase 2-D | panel orchestration callback boundary 도입 | 실제 panel 연결 없이 placeholder event boundary를 먼저 둔다. |
 | Phase 2-E | `GraphPanel` embed | active graph production path를 보호하면서 embedded graph를 canonical path로 이동한다. |
 | Phase 2-F | `DetailPane` embed | detail reading surface를 workspace 안으로 수렴한다. |
 | Phase 2-G | route alias 전환 | Graph/Detail route를 `graphFocused`/`detailFocused` alias로 전환한다. |
@@ -588,6 +588,21 @@ Phase 2-C에서는 `lib/ui/explorer_workspace/explorer_workspace.dart`에 `Explo
 이 shell은 `ExplorerWorkspaceState`를 필수 입력으로 받으며, `layoutPreset`에 따라 `StrongRail`, `GlobalSearch`, `GraphPanel`, `DetailPane`, `AddWordFixedAction` placeholder의 배치와 강조만 조정한다.
 
 이번 단계에서는 route에 연결하지 않는다. 기존 `WordExplorerScreen`, `WordGraphScreen`, `WordDetailScreen`의 state ownership, graph production path, detail reread 흐름도 변경하지 않는다.
+
+### 17.3 Phase 2-D callback boundary 도입 결과
+
+Phase 2-D에서는 `ExplorerWorkspace`에 optional callback boundary만 추가한다.
+
+- `onStrongSelected`
+- `onSearchResultSelected`
+- `onGraphNodeSelected`
+- `onGraphCenterRequested`
+- `onDetailRelationSelected`
+- `onAddWordRequested`
+
+placeholder에는 실제 word id가 없으므로 `ValueChanged<String>` callback은 호출하지 않는다. `AddWordFixedAction` placeholder만 id 없이 가능한 `onAddWordRequested`를 호출할 수 있다.
+
+`ExplorerWorkspaceAction`과 `ExplorerWorkspacePanelEvent` 타입은 이번 단계에서도 만들지 않는다. 두 타입은 실제 panel orchestration 연결 또는 state owner 전환을 검토하는 후속 Phase에서 다시 판단한다.
 
 ## 18. Phase 2-A 비범위
 
