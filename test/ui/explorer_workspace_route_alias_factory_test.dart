@@ -68,4 +68,49 @@ void main() {
       );
     });
   });
+
+  group('ExplorerWorkspaceHistoryEntry workspace snapshot semantics', () {
+    test('preserves the complete typed workspace snapshot fields', () {
+      const snapshot = ExplorerWorkspaceState(
+        selectedWordId: 'W_SELECTED_HISTORY',
+        graphCenterWordId: 'W_CENTER_HISTORY',
+        detailTargetWordId: 'W_DETAIL_HISTORY',
+        layoutPreset: ExplorerWorkspaceLayoutPreset.detailFocused,
+        origin: ExplorerWorkspaceTransitionOrigin.detailPane,
+      );
+      const entry = ExplorerWorkspaceHistoryEntry(snapshot: snapshot);
+
+      expect(entry.snapshot.selectedWordId, 'W_SELECTED_HISTORY');
+      expect(entry.snapshot.graphCenterWordId, 'W_CENTER_HISTORY');
+      expect(entry.snapshot.detailTargetWordId, 'W_DETAIL_HISTORY');
+      expect(
+        entry.snapshot.layoutPreset,
+        ExplorerWorkspaceLayoutPreset.detailFocused,
+      );
+      expect(
+        entry.snapshot.origin,
+        ExplorerWorkspaceTransitionOrigin.detailPane,
+      );
+    });
+
+    test(
+      'restores snapshots without adding display or graph data carriers',
+      () {
+        const snapshot = ExplorerWorkspaceState(
+          selectedWordId: 'W_SELECTED_RESTORE',
+          graphCenterWordId: 'W_CENTER_RESTORE',
+          detailTargetWordId: 'W_DETAIL_RESTORE',
+          layoutPreset: ExplorerWorkspaceLayoutPreset.balanced,
+          origin: ExplorerWorkspaceTransitionOrigin.snapshotRestore,
+        );
+        const entry = ExplorerWorkspaceHistoryEntry(snapshot: snapshot);
+
+        final restored = ExplorerWorkspaceState.fromSnapshot(entry);
+
+        expect(identical(restored, snapshot), isTrue);
+        expect(restored, isA<ExplorerWorkspaceState>());
+        expect(restored, isNot(isA<Map<String, dynamic>>()));
+      },
+    );
+  });
 }
