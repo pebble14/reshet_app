@@ -620,6 +620,14 @@ Phase 2-F에서는 `ExplorerWorkspace`에 optional `detailPaneOverride` slot만 
 
 `ExplorerWorkspace`는 `WordDetailScreen`, `WordInfoPanel`, repository를 import하지 않고, dummy id를 만들지 않으며, detail reread 흐름과 display item ownership을 변경하지 않는다.
 
+### 17.6 Phase 2-G route alias factory 도입 결과
+
+Phase 2-G에서는 기존 route와 `Navigator` 호출을 변경하지 않고, `ExplorerWorkspaceState` 안에 route alias semantic을 생성하는 named factory만 추가한다.
+
+추가된 factory는 Explorer entry, Graph route alias, Detail route alias, snapshot restore state를 typed contract로 표현한다. 기존 Graph/Detail/Explorer route는 compatibility layer로 유지한다.
+
+route alias factory는 빈 word id를 허용하지 않고 `ArgumentError`로 차단한다. 특히 Graph route alias는 non-empty `graphCenterWordId`를 요구하며, dummy id를 만들지 않는다.
+
 ## 18. Phase 2-A 비범위
 
 Phase 2-A에서는 다음을 하지 않는다.

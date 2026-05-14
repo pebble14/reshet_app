@@ -2,6 +2,7 @@ enum ExplorerWorkspaceLayoutPreset { balanced, graphFocused, detailFocused }
 
 enum ExplorerWorkspaceTransitionOrigin {
   initialEntry,
+  routeAlias,
   strongRail,
   globalSearch,
   graphNode,
@@ -25,6 +26,57 @@ class ExplorerWorkspaceState {
     this.graphCenterWordId,
     this.detailTargetWordId,
   });
+
+  factory ExplorerWorkspaceState.forExplorerEntry(String wordId) {
+    final normalizedWordId = _requiredRouteAliasWordId(wordId);
+
+    return ExplorerWorkspaceState(
+      selectedWordId: normalizedWordId,
+      detailTargetWordId: normalizedWordId,
+      layoutPreset: ExplorerWorkspaceLayoutPreset.balanced,
+      origin: ExplorerWorkspaceTransitionOrigin.routeAlias,
+    );
+  }
+
+  factory ExplorerWorkspaceState.forGraphRouteAlias(String wordId) {
+    final normalizedWordId = _requiredRouteAliasWordId(wordId);
+
+    return ExplorerWorkspaceState(
+      graphCenterWordId: normalizedWordId,
+      layoutPreset: ExplorerWorkspaceLayoutPreset.graphFocused,
+      origin: ExplorerWorkspaceTransitionOrigin.routeAlias,
+    );
+  }
+
+  factory ExplorerWorkspaceState.forDetailRouteAlias(String wordId) {
+    final normalizedWordId = _requiredRouteAliasWordId(wordId);
+
+    return ExplorerWorkspaceState(
+      selectedWordId: normalizedWordId,
+      detailTargetWordId: normalizedWordId,
+      layoutPreset: ExplorerWorkspaceLayoutPreset.detailFocused,
+      origin: ExplorerWorkspaceTransitionOrigin.routeAlias,
+    );
+  }
+
+  factory ExplorerWorkspaceState.fromSnapshot(
+    ExplorerWorkspaceHistoryEntry entry,
+  ) {
+    return entry.snapshot;
+  }
+
+  static String _requiredRouteAliasWordId(String wordId) {
+    final normalizedWordId = wordId.trim();
+    if (normalizedWordId.isEmpty) {
+      throw ArgumentError.value(
+        wordId,
+        'wordId',
+        'route alias wordId는 비어 있을 수 없습니다.',
+      );
+    }
+
+    return normalizedWordId;
+  }
 
   @override
   bool operator ==(Object other) {
