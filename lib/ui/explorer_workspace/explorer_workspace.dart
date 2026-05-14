@@ -11,6 +11,7 @@ class ExplorerWorkspace extends StatelessWidget {
   final ValueChanged<String>? onDetailRelationSelected;
   final VoidCallback? onAddWordRequested;
   final Widget? graphPanelOverride;
+  final Widget? detailPaneOverride;
 
   const ExplorerWorkspace({
     super.key,
@@ -22,6 +23,7 @@ class ExplorerWorkspace extends StatelessWidget {
     this.onDetailRelationSelected,
     this.onAddWordRequested,
     this.graphPanelOverride,
+    this.detailPaneOverride,
   });
 
   @override
@@ -70,13 +72,16 @@ class ExplorerWorkspace extends StatelessWidget {
                           ),
                           Expanded(
                             flex: layout.detailFlex,
-                            child: _ExplorerWorkspacePlaceholder(
-                              title: 'DetailPane',
-                              description: _detailDescription(state),
-                              isEmphasized:
-                                  state.layoutPreset ==
-                                  ExplorerWorkspaceLayoutPreset.detailFocused,
-                            ),
+                            child:
+                                detailPaneOverride ??
+                                _ExplorerWorkspacePlaceholder(
+                                  title: 'DetailPane',
+                                  description: _detailDescription(state),
+                                  isEmphasized:
+                                      state.layoutPreset ==
+                                      ExplorerWorkspaceLayoutPreset
+                                          .detailFocused,
+                                ),
                           ),
                         ],
                       ),
