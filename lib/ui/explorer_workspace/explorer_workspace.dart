@@ -64,6 +64,7 @@ class ExplorerWorkspace extends StatelessWidget {
                                 _ExplorerWorkspacePlaceholder(
                                   title: 'GraphPanel',
                                   description: _graphDescription(state),
+                                  readOnlyStateLabels: _graphStateLabels(state),
                                   isEmphasized:
                                       state.layoutPreset ==
                                       ExplorerWorkspaceLayoutPreset
@@ -77,6 +78,9 @@ class ExplorerWorkspace extends StatelessWidget {
                                 _ExplorerWorkspacePlaceholder(
                                   title: 'DetailPane',
                                   description: _detailDescription(state),
+                                  readOnlyStateLabels: _detailStateLabels(
+                                    state,
+                                  ),
                                   isEmphasized:
                                       state.layoutPreset ==
                                       ExplorerWorkspaceLayoutPreset
@@ -113,6 +117,20 @@ class ExplorerWorkspace extends StatelessWidget {
   String _detailDescription(ExplorerWorkspaceState state) {
     final detailTargetWordId = state.detailTargetWordId ?? 'none';
     return 'target: $detailTargetWordId';
+  }
+
+  List<String> _graphStateLabels(ExplorerWorkspaceState state) {
+    final selectedWordId = state.selectedWordId ?? 'none';
+    return [
+      'selected: $selectedWordId',
+      'preset: ${state.layoutPreset.name}',
+      'origin: ${state.origin.name}',
+    ];
+  }
+
+  List<String> _detailStateLabels(ExplorerWorkspaceState state) {
+    final selectedWordId = state.selectedWordId ?? 'none';
+    return ['selected: $selectedWordId'];
   }
 }
 
@@ -161,11 +179,13 @@ class _ExplorerWorkspaceLayout {
 class _ExplorerWorkspacePlaceholder extends StatelessWidget {
   final String title;
   final String description;
+  final List<String> readOnlyStateLabels;
   final bool isEmphasized;
 
   const _ExplorerWorkspacePlaceholder({
     required this.title,
     required this.description,
+    this.readOnlyStateLabels = const [],
     this.isEmphasized = false,
   });
 
@@ -206,6 +226,16 @@ class _ExplorerWorkspacePlaceholder extends StatelessWidget {
                 ).textTheme.bodySmall?.copyWith(color: foregroundColor),
                 textAlign: TextAlign.center,
               ),
+              for (final label in readOnlyStateLabels) ...[
+                const SizedBox(height: 4),
+                Text(
+                  label,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodySmall?.copyWith(color: foregroundColor),
+                  textAlign: TextAlign.center,
+                ),
+              ],
             ],
           ),
         ),
