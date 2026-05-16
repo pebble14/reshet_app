@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2026-05-16 Phase 4-E ExplorerWorkspace preview-only composition boundary
+
+- Phase 4-E를 production replacement가 아니라 ExplorerWorkspace preview-only composition boundary를 고정하는 문서 및 source-level regression test 단계로 기록했다.
+- `ExplorerWorkspacePreviewScreen`은 production owner 또는 source of truth가 아니며, workspace-local orchestration은 ownership 이전이 아님을 명시했다.
+- Projection lifecycle은 UI-level lifecycle로 제한하고 repository/data lifecycle, Navigator history, route restore, canonical selection ownership과 분리했다.
+- production route 기본값, `HomeScreen` production entry, `WordExplorerScreen` production owner, repository/read owner, Navigator owner는 변경하지 않았다.
+- preview composition/orchestration boundary가 production import tree, repository ownership, route collapse, dummy id/display item fallback으로 확장되지 않도록 regression test를 추가했다.
+
 ## 2026-05-16 Phase 4-D ExplorerWorkspace preview-local interaction boundary
 
 - Phase 4-D를 ExplorerWorkspace preview 내부에서만 동작하는 preview-local interaction boundary 검증 단계로 기록했다.
