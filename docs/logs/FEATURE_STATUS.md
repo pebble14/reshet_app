@@ -1,5 +1,14 @@
 # FEATURE STATUS
 
+## 현재 상태 (2026-05-16 Phase 4-D)
+
+- Phase 4-D는 **ExplorerWorkspace preview-local interaction boundary** 검증 단계다.
+- `ExplorerWorkspacePreviewInteractionHost`는 production route에 연결되지 않는 preview-only host이며, 내부 ephemeral state로 graph/detail target 전환만 수행한다.
+- interaction 입력은 `ExplorerWorkspacePreviewInput`에 이미 들어온 non-empty id로 제한한다.
+- `ExplorerWorkspacePreviewScreen`은 계속 read-only projection wrapper로 유지한다.
+- production route 기본값, `HomeScreen` production entry, `WordExplorerScreen` production owner, repository/read owner, Navigator history는 변경하지 않았다.
+- DB 조회, route alias 기반 interaction, production screen 직접 embed, dummy id/display item 생성은 수행하지 않았다.
+
 ## 현재 상태 (2026-05-13 Phase 8-3A)
 
 - Phase 8-3A는 **GraphBuilder dormant compatibility helper 표시** 단계다.

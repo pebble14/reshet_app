@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2026-05-16 Phase 4-D ExplorerWorkspace preview-local interaction boundary
+
+- Phase 4-D를 ExplorerWorkspace preview 내부에서만 동작하는 preview-local interaction boundary 검증 단계로 기록했다.
+- `ExplorerWorkspacePreviewInteractionHost`를 추가해 `ExplorerWorkspacePreviewInput`에 이미 들어온 non-empty id만 사용한 graph/detail target 전환을 preview 내부 ephemeral state로 제한했다.
+- 기존 `ExplorerWorkspacePreviewScreen`은 read-only projection wrapper로 유지했고, production route 기본값과 `HomeScreen` production entry는 변경하지 않았다.
+- DB 조회, repository/read owner 이전, Navigator 호출, route alias 기반 interaction, `WordGraphScreen`/`WordDetailScreen`/`WordExplorerScreen` 직접 embed, dummy id/display item 생성은 수행하지 않았다.
+- Phase 4-D boundary regression test를 추가해 preview-local interaction이 production owner, read boundary, route boundary로 확장되지 않는지 검증하도록 했다.
+
 ## 2026-05-16 Phase 4-C ExplorerWorkspace passive synchronization boundary
 
 - Phase 4-C를 passive synchronization 허용 범위 검증 단계로 기록하고, production replacement 또는 owner migration 단계가 아님을 명시했다.
