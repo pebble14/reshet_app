@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-05-16 Phase 4-C ExplorerWorkspace passive synchronization boundary
+
+- Phase 4-C를 passive synchronization 허용 범위 검증 단계로 기록하고, production replacement 또는 owner migration 단계가 아님을 명시했다.
+- `ExplorerWorkspacePreviewInput` 기반 real projection에서 `selectedWordId`, `graphCenterWordId`, `detailTargetWordId`가 동시에 들어와도 병합, 추론, 동기화 ownership으로 확장되지 않는지 boundary regression test를 추가했다.
+- projection 관계가 callback/state mutation API, Navigator/history owner, repository/read source owner, search result/display item/explorer history source 연결로 확장되지 않도록 source-level 검증을 보강했다.
+- production `lib/` 코드는 변경하지 않았고, production route 기본값과 `WordExplorerScreen` production owner 구조를 유지했다.
+
 ## 2026-05-16 Phase 4-B ExplorerWorkspace real projection input
 
 - `ExplorerWorkspacePreviewInput`을 추가해 hidden preview wrapper가 production-compatible real id projection shape를 받을 수 있는 경계를 분리했다.
