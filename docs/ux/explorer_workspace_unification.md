@@ -755,6 +755,53 @@ Phase 4 진입 조건은 다음 항목이 사전에 승인된 경우로 제한�
 
 다음 단계는 바로 Phase 4 production 연결로 진입하기보다, Phase 3-F를 문서 전용 단계로 둘지 검토하는 것이 안전하다. Phase 3-F를 둔다면 목적은 Phase 4 migration plan과 first production-connected wrapper decision을 정리하는 것이며, 이 단계에서도 production code 변경 없이 preview route 허용 여부, first wrapper 범위, state owner migration prerequisite만 확정한다.
 
+### 17.14 Phase 3-F 첫 production 연결 전략
+
+Phase 3-F에서는 Phase 4로 넘어가기 전에 첫 production 연결 후보의 우선순위를 문서로만 정리한다. 이번 단계에서는 production code, test, route, Navigator, repository, DB/API, 기존 screen ownership을 변경하지 않는다.
+
+Phase 4의 첫 production 연결 후보는 다음과 같이 분류한다.
+
+| 후보 | 설명 | 위험도 | 추천 여부 |
+| --- | --- | --- | --- |
+| route 미연결 preview | 기존 route와 무관하게 `ExplorerWorkspace`를 독립 preview surface로 검증한다. | 낮음 | 추천 |
+| production-hidden wrapper | production route 기본값을 바꾸지 않고 숨겨진 wrapper로 제한 검증한다. | 낮음-중간 | 조건부 추천 |
+| preview route | 명시적으로 허용된 dev-only 또는 hidden route에서만 wrapper를 연다. | 중간 | 사전 승인 후 검토 |
+| 기존 `WordExplorerScreen` 내부 삽입 | 기존 production owner 내부에 `ExplorerWorkspace`를 배치한다. | 높음 | 현 단계 비추천 |
+| 직접 route collapse | 기존 graph/detail/explorer route를 workspace route로 합친다. | 매우 높음 | 금지에 가깝게 보류 |
+
+가장 안전한 Phase 4 시작안은 production route 기본값을 변경하지 않는 preview-only 또는 production-hidden 검토다. 이 시작안에서도 `WordExplorerScreen` replacement는 금지한다. `WordGraphScreen`과 `WordDetailScreen` 직접 embed도 금지하며, graph/detail production path는 기존 흐름을 유지한다.
+
+State owner migration은 다음 순서로 검토한다.
+
+1. `selectedWordId`는 passive selection label과 callback 의미가 충분히 안정된 뒤 migration 후보가 된다.
+2. `graphCenterWordId`는 graph focus 의미와 center action 의미가 분리된 뒤 migration 후보가 된다.
+3. `detailTargetWordId`는 selected state와 detail focus state의 불일치 기준이 정리된 뒤 migration 후보가 된다.
+4. History는 Navigator route history와 workspace snapshot history의 관계가 결정된 뒤 migration 후보가 된다.
+5. Display item owner는 `WordDetailScreen.initialDisplayItem` 공급 방식과 repository/read owner가 정리된 뒤 마지막으로 검토한다.
+
+Navigator history와 workspace history는 당분간 분리 유지한다. Route collapse 전에는 두 history를 통합하지 않는다. Preview 단계에서는 workspace history만 독립적으로 검증하고, 기존 Navigator route stack의 production behavior는 compatibility layer로 보존한다.
+
+Phase 4 진입 시에도 다음 항목은 금지한다.
+
+- 기존 route 제거 금지
+- production route 기본값 변경 금지
+- dummy id 또는 dummy display item 생성 금지
+- repository/read owner 무단 이전 금지
+- `WordExplorerScreen`, `WordGraphScreen`, `WordDetailScreen`의 production responsibility 무단 이전 금지
+- `WordGraphScreen` 또는 `WordDetailScreen` 직접 embed 금지
+- UI에서 repository, DB, data source를 우회하는 read path 추가 금지
+
+Phase 4 시작 전에는 다음 항목을 별도로 승인받아야 한다.
+
+- preview route 허용 여부와 노출 범위
+- first wrapper가 route 미연결 preview인지 production-hidden wrapper인지
+- UI 테스트 필요 여부와 테스트 주체
+- 기존 route로 되돌리는 rollback 기준
+- state owner migration을 시작할 최소 조건
+- repository/read owner를 변경하지 않는다는 보존 조건
+
+Phase 4의 첫 작업은 production 연결 자체가 아니라, 승인된 preview 범위에서 wrapper가 기존 production owner와 충돌하지 않는지 확인하는 단계로 시작하는 것이 안전하다.
+
 ## 18. Phase 2-A 비범위
 
 Phase 2-A에서는 다음을 하지 않는다.
