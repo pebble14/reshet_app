@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2026-05-16 Phase 4-B ExplorerWorkspace real projection input
+
+- `ExplorerWorkspacePreviewInput`을 추가해 hidden preview wrapper가 production-compatible real id projection shape를 받을 수 있는 경계를 분리했다.
+- projection input은 `selectedWordId`, `graphCenterWordId`, `detailTargetWordId`, `layoutPreset`, `origin`만 보유하며 callback, repository, Navigator, display item, history source를 보유하지 않는다.
+- `ExplorerWorkspacePreviewScreen`은 input을 소비해 `ExplorerWorkspace`에 read-only projection으로 전달하는 역할만 유지한다.
+- `WordExplorerScreen` production owner, production route 기본값, production import tree isolation, Navigator history / workspace history 분리는 변경하지 않았다.
+- DB existence check, state owner migration, repository/read owner migration, route collapse, `WordGraphScreen`/`WordDetailScreen` 직접 embed, dummy id/display item 생성은 수행하지 않았다.
+
 ## 2026-05-16 Phase 4-A ExplorerWorkspace production-hidden preview wrapper
 
 - `ExplorerWorkspacePreviewScreen`을 추가해 production route에 연결하지 않는 숨겨진 preview host boundary를 만들었다.

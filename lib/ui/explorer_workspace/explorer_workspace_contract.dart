@@ -12,6 +12,99 @@ enum ExplorerWorkspaceTransitionOrigin {
   snapshotRestore,
 }
 
+class ExplorerWorkspacePreviewInput {
+  final String? selectedWordId;
+  final String? graphCenterWordId;
+  final String? detailTargetWordId;
+  final ExplorerWorkspaceLayoutPreset layoutPreset;
+  final ExplorerWorkspaceTransitionOrigin origin;
+
+  factory ExplorerWorkspacePreviewInput({
+    String? selectedWordId,
+    String? graphCenterWordId,
+    String? detailTargetWordId,
+    required ExplorerWorkspaceLayoutPreset layoutPreset,
+    required ExplorerWorkspaceTransitionOrigin origin,
+  }) {
+    return ExplorerWorkspacePreviewInput._(
+      selectedWordId: _optionalProjectionWordId(
+        selectedWordId,
+        'selectedWordId',
+      ),
+      graphCenterWordId: _optionalProjectionWordId(
+        graphCenterWordId,
+        'graphCenterWordId',
+      ),
+      detailTargetWordId: _optionalProjectionWordId(
+        detailTargetWordId,
+        'detailTargetWordId',
+      ),
+      layoutPreset: layoutPreset,
+      origin: origin,
+    );
+  }
+
+  factory ExplorerWorkspacePreviewInput.forExplorerEntry(String wordId) {
+    final normalizedWordId = _requiredProjectionWordId(wordId, 'wordId');
+
+    return ExplorerWorkspacePreviewInput._(
+      selectedWordId: normalizedWordId,
+      detailTargetWordId: normalizedWordId,
+      layoutPreset: ExplorerWorkspaceLayoutPreset.balanced,
+      origin: ExplorerWorkspaceTransitionOrigin.routeAlias,
+    );
+  }
+
+  factory ExplorerWorkspacePreviewInput.forGraphRouteAlias(String wordId) {
+    final normalizedWordId = _requiredProjectionWordId(wordId, 'wordId');
+
+    return ExplorerWorkspacePreviewInput._(
+      graphCenterWordId: normalizedWordId,
+      layoutPreset: ExplorerWorkspaceLayoutPreset.graphFocused,
+      origin: ExplorerWorkspaceTransitionOrigin.routeAlias,
+    );
+  }
+
+  factory ExplorerWorkspacePreviewInput.forDetailRouteAlias(String wordId) {
+    final normalizedWordId = _requiredProjectionWordId(wordId, 'wordId');
+
+    return ExplorerWorkspacePreviewInput._(
+      selectedWordId: normalizedWordId,
+      detailTargetWordId: normalizedWordId,
+      layoutPreset: ExplorerWorkspaceLayoutPreset.detailFocused,
+      origin: ExplorerWorkspaceTransitionOrigin.routeAlias,
+    );
+  }
+
+  const ExplorerWorkspacePreviewInput._({
+    required this.layoutPreset,
+    required this.origin,
+    this.selectedWordId,
+    this.graphCenterWordId,
+    this.detailTargetWordId,
+  });
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other is ExplorerWorkspacePreviewInput &&
+            selectedWordId == other.selectedWordId &&
+            graphCenterWordId == other.graphCenterWordId &&
+            detailTargetWordId == other.detailTargetWordId &&
+            layoutPreset == other.layoutPreset &&
+            origin == other.origin;
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    selectedWordId,
+    graphCenterWordId,
+    detailTargetWordId,
+    layoutPreset,
+    origin,
+  );
+}
+
 class ExplorerWorkspaceState {
   final String? selectedWordId;
   final String? graphCenterWordId;
@@ -56,6 +149,18 @@ class ExplorerWorkspaceState {
       detailTargetWordId: normalizedWordId,
       layoutPreset: ExplorerWorkspaceLayoutPreset.detailFocused,
       origin: ExplorerWorkspaceTransitionOrigin.routeAlias,
+    );
+  }
+
+  factory ExplorerWorkspaceState.fromPreviewInput(
+    ExplorerWorkspacePreviewInput input,
+  ) {
+    return ExplorerWorkspaceState(
+      selectedWordId: input.selectedWordId,
+      graphCenterWordId: input.graphCenterWordId,
+      detailTargetWordId: input.detailTargetWordId,
+      layoutPreset: input.layoutPreset,
+      origin: input.origin,
     );
   }
 
@@ -112,4 +217,23 @@ class ExplorerWorkspaceHistoryEntry {
 
   @override
   int get hashCode => snapshot.hashCode;
+}
+
+String _requiredProjectionWordId(String wordId, String fieldName) {
+  final normalizedWordId = wordId.trim();
+  if (normalizedWordId.isEmpty) {
+    throw ArgumentError.value(
+      wordId,
+      fieldName,
+      'projection word id must not be empty.',
+    );
+  }
+
+  return normalizedWordId;
+}
+
+String? _optionalProjectionWordId(String? wordId, String fieldName) {
+  if (wordId == null) return null;
+
+  return _requiredProjectionWordId(wordId, fieldName);
 }

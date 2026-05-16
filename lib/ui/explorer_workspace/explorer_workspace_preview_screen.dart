@@ -4,20 +4,20 @@ import 'explorer_workspace.dart';
 import 'explorer_workspace_contract.dart';
 
 class ExplorerWorkspacePreviewScreen extends StatelessWidget {
-  final ExplorerWorkspaceState state;
+  final ExplorerWorkspacePreviewInput input;
 
-  const ExplorerWorkspacePreviewScreen.fromState({
+  const ExplorerWorkspacePreviewScreen.fromInput({
     super.key,
-    required this.state,
+    required this.input,
   });
 
   factory ExplorerWorkspacePreviewScreen.forExplorerEntry({
     Key? key,
     required String initialWordId,
   }) {
-    return ExplorerWorkspacePreviewScreen.fromState(
+    return ExplorerWorkspacePreviewScreen.fromInput(
       key: key,
-      state: ExplorerWorkspaceState.forExplorerEntry(initialWordId),
+      input: ExplorerWorkspacePreviewInput.forExplorerEntry(initialWordId),
     );
   }
 
@@ -25,9 +25,9 @@ class ExplorerWorkspacePreviewScreen extends StatelessWidget {
     Key? key,
     required String centerWordId,
   }) {
-    return ExplorerWorkspacePreviewScreen.fromState(
+    return ExplorerWorkspacePreviewScreen.fromInput(
       key: key,
-      state: ExplorerWorkspaceState.forGraphRouteAlias(centerWordId),
+      input: ExplorerWorkspacePreviewInput.forGraphRouteAlias(centerWordId),
     );
   }
 
@@ -35,14 +35,16 @@ class ExplorerWorkspacePreviewScreen extends StatelessWidget {
     Key? key,
     required String wordId,
   }) {
-    return ExplorerWorkspacePreviewScreen.fromState(
+    return ExplorerWorkspacePreviewScreen.fromInput(
       key: key,
-      state: ExplorerWorkspaceState.forDetailRouteAlias(wordId),
+      input: ExplorerWorkspacePreviewInput.forDetailRouteAlias(wordId),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final state = ExplorerWorkspaceState.fromPreviewInput(input);
+
     return Scaffold(
       body: SafeArea(child: ExplorerWorkspace(state: state)),
     );
