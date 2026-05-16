@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2026-05-16 Phase 4-A ExplorerWorkspace production-hidden preview wrapper
+
+- `ExplorerWorkspacePreviewScreen`을 추가해 production route에 연결하지 않는 숨겨진 preview host boundary를 만들었다.
+- wrapper는 `ExplorerWorkspaceState.forExplorerEntry`, `forGraphRouteAlias`, `forDetailRouteAlias` 기반 semantic input만 조립하고 `ExplorerWorkspace`에 전달한다.
+- `main.dart`와 `HomeScreen` production entry는 변경하지 않았고, `WordExplorerScreen` production owner 구조를 유지했다.
+- state owner migration, repository/read owner 이전, `WordGraphScreen`/`WordDetailScreen` 직접 embed, dummy id/display item 생성은 수행하지 않았다.
+- source-level boundary test로 preview wrapper가 production entry에 연결되지 않고 route ownership을 갖지 않는지 검증하도록 보강했다.
+
 ## 2026-05-13 Phase 8-3A
 
 - GraphBuilder legacy/public helper inventory 결과를 first slice로 반영해 `GraphBuilder.buildFromRepository`, `GraphBuilder.buildFromVisibleGraphData`, `getWordByIdForGraphSingleWord`에 dormant compatibility `@Deprecated` 표시를 추가했다.
