@@ -16,6 +16,9 @@ void main() {
       productionSources = _readDartSources(
         'lib',
         excludeNormalizedPrefix: 'lib/ui/explorer_workspace/',
+        excludeNormalizedPaths: const {
+          'lib/main_explorer_workspace_preview.dart',
+        },
       );
       previewSources = _readDartSources('lib/ui/explorer_workspace');
       mainSource = _readText('lib/main.dart');
@@ -192,6 +195,7 @@ void main() {
 Map<String, String> _readDartSources(
   String rootPath, {
   String? excludeNormalizedPrefix,
+  Set<String> excludeNormalizedPaths = const {},
 }) {
   final sources = <String, String>{};
   final root = Directory(rootPath);
@@ -203,6 +207,9 @@ Map<String, String> _readDartSources(
     }
     if (excludeNormalizedPrefix != null &&
         normalizedPath.startsWith(excludeNormalizedPrefix)) {
+      continue;
+    }
+    if (excludeNormalizedPaths.contains(normalizedPath)) {
       continue;
     }
 

@@ -220,36 +220,37 @@ class _ExplorerWorkspacePlaceholder extends StatelessWidget {
       child: Center(
         child: Padding(
           padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                title,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: foregroundColor,
-                  fontWeight: FontWeight.w600,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                description,
-                style: Theme.of(
-                  context,
-                ).textTheme.bodySmall?.copyWith(color: foregroundColor),
-                textAlign: TextAlign.center,
-              ),
-              for (final label in readOnlyStateLabels) ...[
-                const SizedBox(height: 4),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
                 Text(
-                  label,
+                  title,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: foregroundColor,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                Text(
+                  description,
                   style: Theme.of(
                     context,
                   ).textTheme.bodySmall?.copyWith(color: foregroundColor),
                   textAlign: TextAlign.center,
                 ),
+                for (final label in readOnlyStateLabels) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    label,
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodySmall?.copyWith(color: foregroundColor),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
               ],
-            ],
+            ),
           ),
         ),
       ),

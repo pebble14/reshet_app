@@ -922,3 +922,14 @@ Phase 5-A의 preset 전환은 semantic id와 canonical item은 유지한 채 lay
 Preview 내부 panel visibility와 split ratio 조율은 production route 교체나 route collapse를 정당화하지 않는다. `WordExplorerScreen` 제거 또는 대체, `HomeScreen` production entry 변경, preview 구조의 production navigation 연결은 금지한다.
 
 Phase 5-A에서도 dummy/fallback display item은 추가하지 않는다. fake display item, fallback placeholder item, 임시 canonical item 생성은 허용하지 않는다. 검증은 preview-local widget test, source-level boundary regression test, 문서 현행화로 제한한다.
+### 17.21 Phase 5-A-1 route 미연결 preview access boundary 기준
+
+Phase 5-A-1은 route 미연결 preview access boundary 단계다. 이 단계의 목적은 production route를 변경하지 않고 클라이언트가 ExplorerWorkspace preview UI를 직접 확인할 수 있는 최소 실행 진입점을 제공하는 것이다.
+
+이번 단계는 별도 preview 실행 엔트리 포인트만 추가한다. 실행 기준은 `flutter run -t lib/main_explorer_workspace_preview.dart`이며, 이 엔트리 포인트는 production route에 연결하지 않는다.
+
+Phase 5-A-1의 preview access는 production Navigator tree에 preview를 연결하지 않는다. `HomeScreen`, `WordExplorerScreen`, `main.dart`의 production entry, route table, `onGenerateRoute`, hidden button, hidden gesture는 변경하지 않는다.
+
+이 엔트리 포인트는 기존 preview/test harness와 동일한 preview-only input만 사용한다. repository read/write, persistence/history access, canonical authority, display item projection, dummy/fallback display item 생성은 허용하지 않는다.
+
+따라서 Phase 5-A-1은 preview 접근성만 보강하는 boundary다. preview access가 production-connected wrapper, production navigation flow, production owner migration으로 해석되면 안 된다.

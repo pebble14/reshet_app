@@ -57,3 +57,12 @@ Phase 5-A의 layout coordination은 semantic id와 canonical item을 바꾸지 �
 ownership boundary 유지가 전제다. ExplorerWorkspace는 여전히 repository owner가 아니고, Navigator owner가 아니고, canonical authority가 아니고, persistence/history authority가 아니다.
 
 따라서 Phase 5-A의 panel visibility와 split ratio 조율은 production route 교체, `WordExplorerScreen` 제거, route collapse, repository authority 이전, Navigator authority 이전, canonical authority 이전, persistence/history authority 이전의 근거가 될 수 없다.
+## 7. Phase 5-A-1 route 미연결 preview access boundary 보강
+
+Phase 5-A-1은 route 미연결 preview access boundary 보강 단계다. 이 단계는 별도 실행 엔트리 포인트를 통해 preview를 확인할 수 있게 하지만 production route와 결합하지 않는다.
+
+허용 범위는 별도 실행 엔트리 포인트 추가와 preview-only input 연결까지다. `flutter run -t lib/main_explorer_workspace_preview.dart` 실행은 preview app 루트에서만 동작해야 하며 production `main.dart` 경로를 대체하지 않는다.
+
+이 보강은 production Navigator tree, `HomeScreen`, `WordExplorerScreen`, repository owner, canonical authority, persistence/history authority를 침범하지 않는다. preview access는 production shell 내부 hidden entry나 route push로 구현하지 않는다.
+
+즉 Phase 5-A-1은 preview UI 접근 boundary를 여는 단계일 뿐이며, ownership boundary를 이동시키는 단계가 아니다.

@@ -8,6 +8,13 @@
 - `WordExplorerScreen` production owner, production route 기본값, repository ownership, Navigator ownership, canonical authority, persistence/history authority는 유지한다.
 - dummy/fallback display item, fake canonical item, production route 교체, route collapse는 이번 단계에서도 추가하지 않는다.
 - Phase 5-A widget test와 source-level regression test를 추가하고, 관련 UX/architecture 문서를 현행화했다.
+## 2026-05-19 Phase 5-A-1 route 미연결 preview access boundary
+
+- Phase 5-A-1을 route 미연결 preview access boundary 단계로 기록한다. 이 단계는 production route 변경 없이 preview UI 직접 확인용 최소 실행 진입점을 여는 작업이다.
+- `lib/main_explorer_workspace_preview.dart` 엔트리 포인트를 추가하고 `flutter run -t lib/main_explorer_workspace_preview.dart` 실행으로 preview-only host를 별도 app 루트에서 띄울 수 있게 했다.
+- preview access는 production route, `HomeScreen`, `WordExplorerScreen`, production Navigator tree에 연결하지 않는다.
+- preview access는 기존 preview-only input만 사용하며 repository ownership, persistence/history access, display item projection, dummy/fallback display item 추가를 수행하지 않는다.
+- Phase 5-A-1 widget/source boundary test와 관련 UX/architecture 문서를 추가했다.
 
 ## 2026-05-16 Phase 4-E ExplorerWorkspace preview-only composition boundary
 
