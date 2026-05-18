@@ -46,3 +46,14 @@ ExplorerWorkspace가 layout, visibility, split ratio, preview-local event를 조
 projection lifecycle은 UI composition lifecycle이다.
 
 ExplorerWorkspace가 받는 projection 값은 화면 조합, 표시, preview-local interaction에 필요한 수명만 가진다. 이 lifecycle은 repository/data lifecycle, DB existence validation, canonical persistence, route restore lifecycle이 아니다.
+## 6. Phase 5-A preview-only layout orchestration 보강
+
+Phase 5-A에서도 ExplorerWorkspace는 preview-only layout coordinator다. preview-only layout orchestration 보강은 layout coordinator 역할을 더 명확히 검증하는 단계이며 production replacement가 아니다.
+
+이번 보강에서 허용하는 조율 범위는 layout preset 전환, panel visibility orchestration, split ratio orchestration, preview composition layout 조정이다. 이 조율은 preview host 내부 local orchestration state에서만 관리한다.
+
+Phase 5-A의 layout coordination은 semantic id와 canonical item을 바꾸지 않는다. `selectedWordId`, `graphCenterWordId`, `detailTargetWordId`는 명시적 semantic action이 없는 한 유지되며, preset 전환만으로 canonical authority가 이동하지 않는다.
+
+ownership boundary 유지가 전제다. ExplorerWorkspace는 여전히 repository owner가 아니고, Navigator owner가 아니고, canonical authority가 아니고, persistence/history authority가 아니다.
+
+따라서 Phase 5-A의 panel visibility와 split ratio 조율은 production route 교체, `WordExplorerScreen` 제거, route collapse, repository authority 이전, Navigator authority 이전, canonical authority 이전, persistence/history authority 이전의 근거가 될 수 없다.

@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2026-05-19 Phase 5-A preview-only layout orchestration
+
+- Phase 5-A를 preview-only layout orchestration 검증 단계로 기록한다. 이 단계는 production replacement가 아니다.
+- `ExplorerWorkspacePreviewInteractionHost`에 preview host 내부 local orchestration state를 추가해 `balanced`, `graphFocused`, `detailFocused` preset 전환과 graph/detail panel visibility 조율을 preview 내부에서만 검증한다.
+- preset 전환은 semantic id와 canonical item은 유지한 채 layout만 조율하도록 제한한다. panel visibility와 split ratio는 preview host local state에서만 관리한다.
+- `WordExplorerScreen` production owner, production route 기본값, repository ownership, Navigator ownership, canonical authority, persistence/history authority는 유지한다.
+- dummy/fallback display item, fake canonical item, production route 교체, route collapse는 이번 단계에서도 추가하지 않는다.
+- Phase 5-A widget test와 source-level regression test를 추가하고, 관련 UX/architecture 문서를 현행화했다.
+
 ## 2026-05-16 Phase 4-E ExplorerWorkspace preview-only composition boundary
 
 - Phase 4-E를 production replacement가 아니라 ExplorerWorkspace preview-only composition boundary를 고정하는 문서 및 source-level regression test 단계로 기록했다.

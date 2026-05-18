@@ -20,12 +20,13 @@ class _ExplorerWorkspacePreviewInteractionHostState
     extends State<ExplorerWorkspacePreviewInteractionHost> {
   late ExplorerWorkspaceState _state;
   late List<String> _availableWordIds;
+  bool _showGraphPanel = true;
+  bool _showDetailPane = true;
 
   @override
   void initState() {
     super.initState();
-    _state = ExplorerWorkspaceState.fromPreviewInput(widget.input);
-    _availableWordIds = _collectAvailableWordIds(widget.input);
+    _syncPreviewInput(widget.input);
   }
 
   @override
@@ -37,24 +38,41 @@ class _ExplorerWorkspacePreviewInteractionHostState
       return;
     }
 
-    _state = ExplorerWorkspaceState.fromPreviewInput(widget.input);
-    _availableWordIds = _collectAvailableWordIds(widget.input);
+    _syncPreviewInput(widget.input);
   }
 
   @override
   Widget build(BuildContext context) {
-    return ExplorerWorkspace(
-      state: _state,
-      graphPanelOverride: _PreviewGraphPanel(
-        state: _state,
-        availableWordIds: _availableWordIds,
-        onGraphTargetSelected: _setPreviewGraphTarget,
-      ),
-      detailPaneOverride: _PreviewDetailPane(
-        state: _state,
-        availableWordIds: _availableWordIds,
-        onDetailTargetSelected: _setPreviewDetailTarget,
-      ),
+    return Stack(
+      children: [
+        ExplorerWorkspace(
+          state: _state,
+          showGraphPanel: _showGraphPanel,
+          showDetailPane: _showDetailPane,
+          graphPanelOverride: _PreviewGraphPanel(
+            state: _state,
+            availableWordIds: _availableWordIds,
+            onGraphTargetSelected: _setPreviewGraphTarget,
+          ),
+          detailPaneOverride: _PreviewDetailPane(
+            state: _state,
+            availableWordIds: _availableWordIds,
+            onDetailTargetSelected: _setPreviewDetailTarget,
+          ),
+        ),
+        Positioned(
+          top: 16,
+          right: 16,
+          child: _PreviewLayoutOrchestrationCard(
+            state: _state,
+            showGraphPanel: _showGraphPanel,
+            showDetailPane: _showDetailPane,
+            onPresetSelected: _setLayoutPreset,
+            onToggleGraphPanel: _toggleGraphPanel,
+            onToggleDetailPane: _toggleDetailPane,
+          ),
+        ),
+      ],
     );
   }
 
@@ -82,6 +100,42 @@ class _ExplorerWorkspacePreviewInteractionHostState
     });
   }
 
+  void _setLayoutPreset(ExplorerWorkspaceLayoutPreset preset) {
+    if (_state.layoutPreset == preset) {
+      return;
+    }
+
+    setState(() {
+      _state = ExplorerWorkspaceState(
+        selectedWordId: _state.selectedWordId,
+        graphCenterWordId: _state.graphCenterWordId,
+        detailTargetWordId: _state.detailTargetWordId,
+        layoutPreset: preset,
+        origin: _state.origin,
+      );
+    });
+  }
+
+  void _toggleGraphPanel() {
+    if (_showGraphPanel && !_showDetailPane) {
+      return;
+    }
+
+    setState(() {
+      _showGraphPanel = !_showGraphPanel;
+    });
+  }
+
+  void _toggleDetailPane() {
+    if (_showDetailPane && !_showGraphPanel) {
+      return;
+    }
+
+    setState(() {
+      _showDetailPane = !_showDetailPane;
+    });
+  }
+
   List<String> _collectAvailableWordIds(ExplorerWorkspacePreviewInput input) {
     final uniqueWordIds = <String>{};
 
@@ -97,6 +151,13 @@ class _ExplorerWorkspacePreviewInteractionHostState
     }
 
     return List<String>.unmodifiable(uniqueWordIds);
+  }
+
+  void _syncPreviewInput(ExplorerWorkspacePreviewInput input) {
+    _state = ExplorerWorkspaceState.fromPreviewInput(input);
+    _availableWordIds = _collectAvailableWordIds(input);
+    _showGraphPanel = true;
+    _showDetailPane = true;
   }
 }
 
@@ -207,6 +268,96 @@ class _PreviewInteractionPanel extends StatelessWidget {
                     ),
                   ),
                 ],
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PreviewLayoutOrchestrationCard extends StatelessWidget {
+  final ExplorerWorkspaceState state;
+  final bool showGraphPanel;
+  final bool showDetailPane;
+  final ValueChanged<ExplorerWorkspaceLayoutPreset> onPresetSelected;
+  final VoidCallback onToggleGraphPanel;
+  final VoidCallback onToggleDetailPane;
+
+  const _PreviewLayoutOrchestrationCard({
+    required this.state,
+    required this.showGraphPanel,
+    required this.showDetailPane,
+    required this.onPresetSelected,
+    required this.onToggleGraphPanel,
+    required this.onToggleDetailPane,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 260, maxHeight: 280),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: colorScheme.surfaceContainerHighest,
+          border: Border.all(color: colorScheme.outlineVariant),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'PreviewLayoutOrchestration',
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
+                const SizedBox(height: 8),
+                Text('selected word: ${state.selectedWordId ?? 'none'}'),
+                Text('graph center word: ${state.graphCenterWordId ?? 'none'}'),
+                Text(
+                  'detail target word: ${state.detailTargetWordId ?? 'none'}',
+                ),
+                Text('active preset: ${state.layoutPreset.name}'),
+                Text('active origin: ${state.origin.name}'),
+                Text(
+                  'graph panel visibility: ${showGraphPanel ? 'visible' : 'hidden'}',
+                ),
+                Text(
+                  'detail panel visibility: ${showDetailPane ? 'visible' : 'hidden'}',
+                ),
+                const SizedBox(height: 10),
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 6,
+                  children: [
+                    for (final preset in ExplorerWorkspaceLayoutPreset.values)
+                      TextButton(
+                        onPressed: () => onPresetSelected(preset),
+                        child: Text('UsePreset:${preset.name}'),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 6,
+                  children: [
+                    TextButton(
+                      onPressed: onToggleGraphPanel,
+                      child: const Text('ToggleGraphPanel'),
+                    ),
+                    TextButton(
+                      onPressed: onToggleDetailPane,
+                      child: const Text('ToggleDetailPane'),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),

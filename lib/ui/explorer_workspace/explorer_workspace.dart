@@ -10,6 +10,8 @@ class ExplorerWorkspace extends StatelessWidget {
   final ValueChanged<String>? onGraphCenterRequested;
   final ValueChanged<String>? onDetailRelationSelected;
   final VoidCallback? onAddWordRequested;
+  final bool showGraphPanel;
+  final bool showDetailPane;
   final Widget? graphPanelOverride;
   final Widget? detailPaneOverride;
 
@@ -22,6 +24,8 @@ class ExplorerWorkspace extends StatelessWidget {
     this.onGraphCenterRequested,
     this.onDetailRelationSelected,
     this.onAddWordRequested,
+    this.showGraphPanel = true,
+    this.showDetailPane = true,
     this.graphPanelOverride,
     this.detailPaneOverride,
   });
@@ -54,42 +58,7 @@ class ExplorerWorkspace extends StatelessWidget {
                         description: 'global semantic entry',
                       ),
                     ),
-                    Expanded(
-                      child: Row(
-                        children: [
-                          Expanded(
-                            flex: layout.graphFlex,
-                            child:
-                                graphPanelOverride ??
-                                _ExplorerWorkspacePlaceholder(
-                                  title: 'GraphPanel',
-                                  description: _graphDescription(state),
-                                  readOnlyStateLabels: _graphStateLabels(state),
-                                  isEmphasized:
-                                      state.layoutPreset ==
-                                      ExplorerWorkspaceLayoutPreset
-                                          .graphFocused,
-                                ),
-                          ),
-                          Expanded(
-                            flex: layout.detailFlex,
-                            child:
-                                detailPaneOverride ??
-                                _ExplorerWorkspacePlaceholder(
-                                  title: 'DetailPane',
-                                  description: _detailDescription(state),
-                                  readOnlyStateLabels: _detailStateLabels(
-                                    state,
-                                  ),
-                                  isEmphasized:
-                                      state.layoutPreset ==
-                                      ExplorerWorkspaceLayoutPreset
-                                          .detailFocused,
-                                ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    Expanded(child: Row(children: _buildPanelChildren(layout))),
                   ],
                 ),
               ),
@@ -131,6 +100,50 @@ class ExplorerWorkspace extends StatelessWidget {
   List<String> _detailStateLabels(ExplorerWorkspaceState state) {
     final selectedWordId = state.selectedWordId ?? 'none';
     return ['selected: $selectedWordId'];
+  }
+
+  List<Widget> _buildPanelChildren(_ExplorerWorkspaceLayout layout) {
+    final children = <Widget>[];
+
+    if (showGraphPanel) {
+      children.add(
+        Expanded(
+          key: const ValueKey('explorer_workspace_graph_slot'),
+          flex: showDetailPane ? layout.graphFlex : 1,
+          child:
+              graphPanelOverride ??
+              _ExplorerWorkspacePlaceholder(
+                title: 'GraphPanel',
+                description: _graphDescription(state),
+                readOnlyStateLabels: _graphStateLabels(state),
+                isEmphasized:
+                    state.layoutPreset ==
+                    ExplorerWorkspaceLayoutPreset.graphFocused,
+              ),
+        ),
+      );
+    }
+
+    if (showDetailPane) {
+      children.add(
+        Expanded(
+          key: const ValueKey('explorer_workspace_detail_slot'),
+          flex: showGraphPanel ? layout.detailFlex : 1,
+          child:
+              detailPaneOverride ??
+              _ExplorerWorkspacePlaceholder(
+                title: 'DetailPane',
+                description: _detailDescription(state),
+                readOnlyStateLabels: _detailStateLabels(state),
+                isEmphasized:
+                    state.layoutPreset ==
+                    ExplorerWorkspaceLayoutPreset.detailFocused,
+              ),
+        ),
+      );
+    }
+
+    return children;
   }
 }
 

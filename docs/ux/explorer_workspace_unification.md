@@ -909,3 +909,16 @@ Phase 2-A의 결론은 `ExplorerWorkspace`가 semantic state ownership과 panel 
 장기적으로 embedded `GraphPanel`이 canonical graph experience가 되고, standalone graph와 detail route는 compatibility layer 또는 layout preset alias로 재정의된다. 단, route collapse는 마지막 단계이며 active graph production path는 마지막까지 보호한다.
 
 Phase 2-A에서는 구현하지 않는다. Phase 2-B에서는 최소 typed contract만 도입하고 기존 구현 흐름은 바꾸지 않는다.
+### 17.20 Phase 5-A preview-only layout orchestration 기준
+
+Phase 5-A는 preview-only layout orchestration 단계다. 이 단계는 production replacement 단계가 아니다. `WordExplorerScreen` production owner와 production route 기본값은 유지한다.
+
+이번 단계에서 ExplorerWorkspace preview는 layout coordinator로만 동작한다. layout coordination만 수행한다. 허용 범위는 preview 내부 `balanced`, `graphFocused`, `detailFocused` preset 전환, graph/detail panel visibility orchestration, split ratio orchestration, preview composition layout 조정이다.
+
+Phase 5-A의 preset 전환은 semantic id와 canonical item은 유지한 채 layout만 조율해야 한다. `selectedWordId`, `graphCenterWordId`, `detailTargetWordId`는 preset 전환만으로 변경되지 않는다. panel visibility와 split ratio는 preview host 내부 local orchestration state로만 관리한다.
+
+이번 단계에서 ExplorerWorkspace preview는 repository owner, Navigator owner, canonical authority, persistence/history authority가 아니다. Preview orchestration이 repository read/write, route stack, route restore, canonical selection, persistence/history ownership으로 해석되면 범위를 벗어난다.
+
+Preview 내부 panel visibility와 split ratio 조율은 production route 교체나 route collapse를 정당화하지 않는다. `WordExplorerScreen` 제거 또는 대체, `HomeScreen` production entry 변경, preview 구조의 production navigation 연결은 금지한다.
+
+Phase 5-A에서도 dummy/fallback display item은 추가하지 않는다. fake display item, fallback placeholder item, 임시 canonical item 생성은 허용하지 않는다. 검증은 preview-local widget test, source-level boundary regression test, 문서 현행화로 제한한다.
