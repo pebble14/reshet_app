@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2026-05-20 Phase 5-F ExplorerWorkspace graph/detail hierarchy and temporary focus lifecycle
+
+- Phase 5-F를 `GraphPanel` / `DetailPane` hierarchy와 temporary focus lifecycle을 문서로 정리하는 단계로 기록한다. 이 단계는 production migration이나 route collapse 단계가 아니다.
+- Graph / Detail hierarchy는 ownership hierarchy가 아니라 orchestration/foreground hierarchy 후보로만 정리한다. Graph와 Detail 사이에 canonical owner 관계를 부여하지 않는다.
+- contextual foreground semantics는 authority semantics가 아니라 현재 context에서 어느 surface가 전경에 놓이는지 설명하는 비권위 표현으로만 정리한다.
+- temporary focus lifecycle은 `focus acquisition`, `focus decay`, `focus disposal`의 UI-level temporary lifecycle로만 정리하고, canonical selection, repository authority, Navigator authority, persistence authority로 확장하지 않는다.
+- graph/detail synchronization boundary, semantic context transition, temporary expansion vs canonical selection boundary를 owner migration 없이 workspace coordination 관점에서만 정리했다.
+- `WordExplorerScreen` production authority 유지, runtime/UI 코드 무변경, repository/Navigator/persistence authority 비이전 경계를 유지한다.
+
 ## 2026-05-19 Phase 5-E ExplorerWorkspace global creation entry surface candidate
 
 - Phase 5-E를 `AddWordFixedAction`을 global creation entry surface candidate로 정리하는 문서/경계 단계로 기록한다. 이 단계는 preview-only boundary 안에 머무르며 production replacement가 아니다.

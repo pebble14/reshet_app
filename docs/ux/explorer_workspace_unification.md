@@ -1034,3 +1034,27 @@ Creation entry semantics 역시 비권위 표현으로만 유지한다.
 - `global` 의미는 특정 panel owner가 아니라 workspace composition 전반에서 접근 가능한 action 후보라는 뜻이다.
 
 따라서 Phase 5-E에서 추가로 도입하는 Add Word semantics는 unified Explorer UX에서 Add Word를 global creation entry surface candidate로 해석할 수 있는 상한선만 문서로 고정한다. 이번 단계에서 Add Word는 canonical insertion authority, repository owner, persistence owner, route owner가 아니며, `WordExplorerScreen` authority 이전, production navigation replacement, repository/Navigator/persistence authority migration, route collapse를 시작하지 않는다. runtime/UI 코드 변경도 이번 단계 범위에 포함하지 않는다.
+
+### 17.26 Phase 5-F graph/detail hierarchy and temporary focus lifecycle 기준
+
+Phase 5-F는 unified Explorer UX 관점에서 `GraphPanel`과 `DetailPane`의 hierarchy 후보와 temporary focus lifecycle을 정리하는 문서/경계 단계다. 이 단계는 production migration 단계가 아니며, route collapse 단계도 아니다. `WordExplorerScreen` production owner, canonical state owner, repository owner, Navigator owner, persistence/history authority는 유지한다. runtime/UI 코드 변경도 이번 단계 범위에 포함하지 않는다.
+
+이번 단계에서 Graph / Detail hierarchy는 ownership hierarchy가 아니라 orchestration/foreground hierarchy 후보로만 정의한다. `GraphPanel`과 `DetailPane`은 서로의 owner가 아니며, 둘 중 하나가 다른 쪽의 canonical state를 직접 소유하거나 결정하지 않는다. hierarchy라는 표현은 현재 semantic context에서 어느 surface가 일시적으로 foreground reading surface가 되는지, 어떤 surface가 contextual support surface로 남는지에 대한 상대적 foreground order 후보를 뜻한다.
+
+`graphFocused`, `detailFocused`, `balanced` 같은 배치는 foreground semantics를 조정할 수 있지만 authority semantics를 바꾸지 않는다. foreground semantics는 사용자가 지금 어느 surface를 우선 읽고 조작하는지에 대한 contextual emphasis일 뿐이며, canonical selection, graph center, detail target ownership을 재지정하지 않는다. 따라서 foreground semantics를 authority semantics로 해석하면 안 된다.
+
+Graph/detail synchronization boundary도 ownership 이전이 아니라 workspace-level coordination boundary로 제한한다. Graph가 detail 쪽 foreground를 유도하는 signal을 보낼 수 있고, Detail이 graph 쪽 foreground를 유도하는 signal을 보낼 수는 있다. 그러나 이는 `ExplorerWorkspace` action을 통한 contextual synchronization 후보일 뿐이며, Graph가 Detail owner가 되거나 Detail이 Graph owner가 되는 근거가 아니다. `graphCenterWordId`, `detailTargetWordId`, `selectedWordId`는 focus나 foreground만으로 병합되거나 자동 승격되지 않는다.
+
+Temporary focus lifecycle은 UI-level temporary lifecycle로만 정리한다.
+
+- `focus acquisition`은 explicit graph center request, explicit detail-open request, linked context request, search retarget request, temporary expansion reveal 같은 계기로 특정 surface가 foreground 후보가 되는 단계다.
+- `focus decay`는 다른 surface에 대한 명시적 요청, layout emphasis 변경, temporary trigger 소멸로 인해 foreground 강도가 약해지고 해당 surface가 contextual support surface로 돌아가는 단계다.
+- `focus disposal`은 temporary foreground 의미가 종료되어도 canonical selection, repository state, Navigator history, persisted layout을 변경하지 않은 채 temporary focus만 제거되는 단계다.
+
+이 lifecycle은 canonical selection lifecycle과 다르다. temporary focus는 canonical selection으로 자동 확장되지 않으며, temporary focus acquisition만으로 `selectedWordId`가 canonical semantic selection으로 확정되지 않는다. temporary focus는 persistence 대상으로 저장되지 않으며 repository authority, Navigator authority, history authority를 만들지 않는다.
+
+Semantic context transition 역시 foreground 재배치 후보로만 해석한다. 사용자의 explicit action이나 contextual request가 Graph/Detail 사이의 foreground를 바꿀 수는 있지만, 이는 route migration이나 owner migration을 뜻하지 않는다. semantic context transition은 "어느 surface가 현재 context를 전경에서 설명하는가"를 조정하는 수준으로만 제한하며, production route 기본값, canonical state owner, repository/Navigator/persistence authority를 바꾸지 않는다.
+
+Temporary expansion과 canonical selection의 경계도 분리한다. temporary expansion은 graph relation reveal, detail context reveal, linked context preview처럼 현재 context를 잠시 넓혀 보여 주는 후보 의미다. 이는 foreground acquisition의 계기가 될 수는 있지만 canonical selection과 동일하지 않다. temporary expansion은 selection action 없이도 종료될 수 있으며, canonical selection owner나 persistence target으로 승격되지 않는다.
+
+따라서 Phase 5-F에서 추가로 도입하는 graph/detail hierarchy와 temporary focus semantics는 unified Explorer UX에서 foreground orchestration을 어떻게 해석할지에 대한 상한선만 문서로 고정한다. 이번 단계에서 production migration, route collapse, canonical state owner 이전, repository/Navigator/persistence authority migration, Graph와 Detail 간 ownership 부여, temporary focus의 canonical selection 확장은 시작하지 않는다.
