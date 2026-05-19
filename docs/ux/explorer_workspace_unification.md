@@ -1016,3 +1016,21 @@ Search anchor semantics 역시 비권위 표현으로만 유지한다.
 - `explicit retarget request` 의미는 사용자가 명시적으로 고른 target을 workspace action에 전달하는 요청 surface라는 뜻이다.
 
 따라서 Phase 5-D에서 추가로 도입하는 search semantics는 unified Explorer UX에서 Search를 fixed anchor / semantic entry point candidate로 해석할 수 있는 상한선만 문서로 고정한다. 이번 단계에서 Search는 canonical selection owner, graph/detail owner, route owner, persistence owner가 아니며, `WordExplorerScreen` authority 이전, production navigation replacement, repository/Navigator/persistence authority migration, route collapse를 시작하지 않는다. runtime/UI 코드 변경도 이번 단계 범위에 포함하지 않는다.
+
+### 17.25 Phase 5-E global creation entry surface candidate 기준
+
+Phase 5-E는 future unified Explorer UX 관점에서 `AddWordFixedAction`을 global creation entry surface candidate로 정리하는 문서/경계 단계다. 이 단계도 preview-only boundary 안에 머무르며 production replacement 단계가 아니다. `WordExplorerScreen` production owner, production route 기본값, repository owner, Navigator owner, persistence/history authority는 유지한다.
+
+이번 단계에서 Add Word는 creation entry / explicit creation request surface 후보로만 정의한다. Add Word는 사용자가 현재 workspace context 안에서 새 word 생성 흐름을 명시적으로 시작하는 global creation entry point candidate다. 그러나 Add Word가 canonical insertion authority가 되거나, 생성 결과를 canonical state에 삽입하는 owner가 되거나, 생성 완료 이후 semantic state를 스스로 확정하는 주체가 되어서는 안 된다.
+
+Add Word가 내보내는 것은 explicit creation request 수준으로 제한한다. 사용자의 Add Word action은 "생성 흐름을 시작하라"는 workspace-level request 후보일 뿐이며, 그 자체로 repository write 수행, persistence 저장, route push, route replacement, history restore, center 변경, selection 확정, detail target 확정을 직접 소유하지 않는다. 따라서 Add Word는 repository ownership, persistence ownership, route ownership을 갖지 않으며, creation entry / explicit creation request surface로만 해석해야 한다.
+
+Rail/Search/Graph/Detail과의 관계도 후보 관계로만 정리한다. `AddWordFixedAction`은 `StrongRail`, `GlobalSearch`, `GraphPanel`, `DetailPane`과 함께 unified Explorer UX 안에서 조합될 수 있는 creation entry candidate일 뿐이며, 이들 surface의 owner를 흡수하지 않는다. Rail과의 관계는 workspace-level persistent action axis 후보 관계, Search와의 관계는 corpus entry와 creation entry가 병치될 수 있는 후보 관계, Graph/Detail과의 관계는 현재 context를 보조한 채 생성 흐름을 시작할 수 있는 후보 관계로만 본다. 이 관계는 graph/detail production path 재배선, repository write owner 이전, `WordExplorerScreen` replacement, route collapse의 근거가 아니다.
+
+Creation entry semantics 역시 비권위 표현으로만 유지한다.
+
+- `creation entry` 의미는 새 word 생성 흐름으로 들어가는 시작점 후보라는 뜻이다.
+- `explicit creation request` 의미는 사용자가 명시적으로 생성 시작 의도를 workspace action에 전달하는 요청 surface라는 뜻이다.
+- `global` 의미는 특정 panel owner가 아니라 workspace composition 전반에서 접근 가능한 action 후보라는 뜻이다.
+
+따라서 Phase 5-E에서 추가로 도입하는 Add Word semantics는 unified Explorer UX에서 Add Word를 global creation entry surface candidate로 해석할 수 있는 상한선만 문서로 고정한다. 이번 단계에서 Add Word는 canonical insertion authority, repository owner, persistence owner, route owner가 아니며, `WordExplorerScreen` authority 이전, production navigation replacement, repository/Navigator/persistence authority migration, route collapse를 시작하지 않는다. runtime/UI 코드 변경도 이번 단계 범위에 포함하지 않는다.

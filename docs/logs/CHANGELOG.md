@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2026-05-19 Phase 5-E ExplorerWorkspace global creation entry surface candidate
+
+- Phase 5-E를 `AddWordFixedAction`을 global creation entry surface candidate로 정리하는 문서/경계 단계로 기록한다. 이 단계는 preview-only boundary 안에 머무르며 production replacement가 아니다.
+- Add Word는 creation entry / explicit creation request surface 후보로만 정의한다. canonical insertion authority, repository owner, persistence owner, route owner로 확대하지 않는다.
+- Add Word action은 semantic creation request 후보일 뿐이며, repository write, persistence 저장, route push, center 변경, selection 확정, detail target 확정을 직접 소유하지 않는다.
+- Rail/Search/Graph/Detail과의 관계는 workspace composition 안에서의 후보 관계로만 정리하고, owner 이전 또는 production path 재배선의 근거로 해석하지 않는다.
+- `WordExplorerScreen` production authority, route collapse 금지, repository/Navigator/persistence authority 비이전, runtime/UI 코드 무변경 경계를 유지한다.
+
 ## 2026-05-19 Phase 5-D ExplorerWorkspace fixed search anchor / semantic entry point candidate
 
 - Phase 5-D를 `GlobalSearch`를 fixed search anchor / semantic entry point candidate로 정리하는 문서/경계 단계로 기록한다. 이 단계는 preview-only boundary 안에 머무르며 production replacement가 아니다.
