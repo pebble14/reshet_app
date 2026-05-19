@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2026-05-19 Phase 5-D ExplorerWorkspace fixed search anchor / semantic entry point candidate
+
+- Phase 5-D를 `GlobalSearch`를 fixed search anchor / semantic entry point candidate로 정리하는 문서/경계 단계로 기록한다. 이 단계는 preview-only boundary 안에 머무르며 production replacement가 아니다.
+- Search는 corpus entry, workspace orientation, explicit retarget request surface 후보로만 정의한다. canonical selection owner, graph/detail owner, route owner, persistence owner로 확대하지 않는다.
+- Search result 선택은 semantic retarget request 후보일 뿐이며, graph center 확정, detail target 확정, canonical selection 확정, route push, history restore를 직접 소유하지 않는다.
+- `temporary focus initiation`과의 관계는 후보 관계로만 정리하고, focus owner 이전, persistent focus policy, persisted layout 결정 주체로 해석하지 않는다.
+- `WordExplorerScreen` production authority, route collapse 금지, repository/Navigator/persistence authority 비이전, runtime/UI 코드 무변경 경계를 유지한다.
+
 ## 2026-05-19 Phase 5-C ExplorerWorkspace fixed navigation rail candidate
 
 - Phase 5-C를 `StrongRail`의 semantic 역할을 fixed navigation rail candidate로 정리하는 문서/경계 단계로 기록한다. 이 단계는 preview-only boundary 안에 머무르며 production replacement가 아니다.

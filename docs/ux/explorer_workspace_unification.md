@@ -996,3 +996,23 @@ Graph/detail orchestration과의 관계도 제한한다. `StrongRail`은 graph/d
 - `preview` 표현은 현재 구성이 preview-only boundary 안에 있음을 드러내는 비권위 표시이며 persistence, production navigation, repository ownership을 뜻하지 않는다.
 
 따라서 Phase 5-C에서 추가로 도입하는 rail semantics는 unified Explorer UX의 기준축 후보를 문서로 고정하는 역할만 가진다. 장기적으로 rail이 unified workspace orientation의 기준축이 될 수는 있지만, 이번 단계에서 `WordExplorerScreen` authority 이전, route collapse, production navigation replacement, repository/Navigator/persistence authority migration을 시작하지 않는다. `HomeScreen`의 현재 strong list 진입 의미와 `WordExplorerScreen`의 production explorer authority도 계속 분리해서 유지한다.
+
+### 17.24 Phase 5-D fixed search anchor / semantic entry point candidate 기준
+
+Phase 5-D는 future unified Explorer UX 관점에서 `GlobalSearch`를 fixed search anchor / semantic entry point candidate로 정리하는 문서/경계 단계다. 이 단계도 preview-only boundary 안에 머무르며 production replacement 단계가 아니다. `WordExplorerScreen` production owner, production route 기본값, repository owner, Navigator owner, persistence/history authority는 유지한다.
+
+이번 단계에서 Search는 corpus 진입과 workspace retarget initiation을 담당하는 semantic entry surface 후보로만 정의한다. Search는 현재 workspace context를 기준으로 사용자가 다른 word context로 명시적으로 이동할 수 있게 하는 entry point이며, 현재 semantic context를 다시 잡아 주는 orientation surface 후보이기도 하다. 그러나 Search가 canonical selection owner가 되거나 `selectedWordId`, `graphCenterWordId`, `detailTargetWordId`를 직접 소유해서는 안 된다.
+
+Search가 내보내는 것은 explicit retarget request 수준으로 제한한다. Search result 선택은 workspace에 "어느 semantic target을 다음 context로 열지"를 요청하는 event 후보일 뿐이며, 그 자체로 graph center 변경, detail target 확정, canonical selection 확정, route push, history restore를 직접 수행하는 owner가 아니다. Search는 entry / orientation / explicit retarget request surface로만 해석해야 하며, graph/detail ownership, route ownership, persistence ownership으로 확대 해석하면 안 된다.
+
+Graph/detail과의 관계도 제한한다. `GlobalSearch`는 `GraphPanel`이나 `DetailPane`의 read owner를 흡수하지 않으며, graph traversal, detail reading, selected word authority를 직접 갖지 않는다. Search가 어떤 result를 통해 graph 쪽 또는 detail 쪽으로 이동 후보를 제시할 수는 있지만, 이는 "어느 surface를 다음에 열지"에 대한 semantic suggestion 또는 retarget request일 뿐이다. 따라서 Search는 graph/detail production path 재배선, `WordExplorerScreen` replacement, route collapse의 근거가 아니다.
+
+`temporary focus initiation`과의 관계는 후보 관계로만 정리한다. Search result는 장기 unified Explorer UX에서 특정 surface를 잠시 전면에 두거나 먼저 열어 보게 만드는 temporary focus initiation candidate가 될 수 있다. 그러나 이것은 focus owner 이전이나 canonical focus state 도입을 뜻하지 않는다. Search가 `layoutPreset`, persistent focus policy, route alias, persisted workspace layout을 직접 결정하거나 저장하는 주체가 되면 안 된다.
+
+Search anchor semantics 역시 비권위 표현으로만 유지한다.
+
+- `entry` 의미는 corpus 안의 다른 semantic target으로 들어가는 시작점 후보라는 뜻이다.
+- `orientation` 의미는 현재 workspace context를 잃지 않은 채 사용자가 다른 target을 찾도록 돕는 기준 surface라는 뜻이다.
+- `explicit retarget request` 의미는 사용자가 명시적으로 고른 target을 workspace action에 전달하는 요청 surface라는 뜻이다.
+
+따라서 Phase 5-D에서 추가로 도입하는 search semantics는 unified Explorer UX에서 Search를 fixed anchor / semantic entry point candidate로 해석할 수 있는 상한선만 문서로 고정한다. 이번 단계에서 Search는 canonical selection owner, graph/detail owner, route owner, persistence owner가 아니며, `WordExplorerScreen` authority 이전, production navigation replacement, repository/Navigator/persistence authority migration, route collapse를 시작하지 않는다. runtime/UI 코드 변경도 이번 단계 범위에 포함하지 않는다.
