@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 2026-05-19 Phase 5-B ExplorerWorkspace layout state policy / preset UX refinement
+
+- Phase 5-B를 preview-only layout state policy와 preset UX semantics를 더 명확히 고정하는 단계로 기록한다. 이 단계는 production replacement가 아니다.
+- `ExplorerWorkspacePreviewInteractionHost`의 preview-local visibility state를 `graph + detail`, `graph only`, `detail only` 세 상태로 고정하고 `graph hidden + detail hidden` empty workspace 상태를 금지했다.
+- preset은 recommended orchestration snapshot, visibility는 current local workspace state로 분리했다. preset 전환이 local visibility state를 강제로 초기화하거나 authority를 이전하지 않도록 유지했다.
+- `balanced`를 preview 기본 preset으로 유지하고, `graphFocused`와 `detailFocused`는 canonical/persistence authority가 아닌 preview orchestration semantics로만 설명하도록 UI와 문서를 정리했다.
+- `ExplorerWorkspace`에 최소 하나의 semantic panel visible assert를 추가하고, 마지막 visible panel 숨기기 방어를 preview-only UX에서 더 명확히 드러냈다.
+- `WordExplorerScreen` production owner, production route 기본값, repository ownership, Navigator ownership, canonical authority, persistence/history authority는 변경하지 않았다.
+- Phase 5-B widget/source regression test와 UX/architecture/changelog 문서를 현행화했다.
+
 ## 2026-05-19 Phase 5-A preview-only layout orchestration
 
 - Phase 5-A를 preview-only layout orchestration 검증 단계로 기록한다. 이 단계는 production replacement가 아니다.

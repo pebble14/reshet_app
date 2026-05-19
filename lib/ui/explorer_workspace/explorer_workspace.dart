@@ -28,7 +28,10 @@ class ExplorerWorkspace extends StatelessWidget {
     this.showDetailPane = true,
     this.graphPanelOverride,
     this.detailPaneOverride,
-  });
+  }) : assert(
+         showGraphPanel || showDetailPane,
+         'ExplorerWorkspace preview는 최소 하나의 semantic panel을 표시해야 합니다.',
+       );
 
   @override
   Widget build(BuildContext context) {

@@ -66,3 +66,14 @@ Phase 5-A-1은 route 미연결 preview access boundary 보강 단계다. 이 단
 이 보강은 production Navigator tree, `HomeScreen`, `WordExplorerScreen`, repository owner, canonical authority, persistence/history authority를 침범하지 않는다. preview access는 production shell 내부 hidden entry나 route push로 구현하지 않는다.
 
 즉 Phase 5-A-1은 preview UI 접근 boundary를 여는 단계일 뿐이며, ownership boundary를 이동시키는 단계가 아니다.
+## 8. Phase 5-B layout state policy / preset UX refinement 보강
+
+Phase 5-B에서도 ExplorerWorkspace는 preview-only orchestration coordinator다. layout state policy 보강은 authority 이전이 아니라 preview state semantics를 더 명확히 고정하는 단계다.
+
+이 단계에서 `layoutPreset`은 recommended orchestration snapshot이고, panel visibility state는 current local workspace state다. 두 상태는 같은 의미로 결합하지 않으며, preset 변경만으로 local visibility state를 강제로 재설정하지 않는다.
+
+허용 visibility state는 `graph + detail`, `graph only`, `detail only` 세 가지뿐이다. `graph hidden + detail hidden`은 금지 상태이며, preview host와 layout widget은 최소 하나의 semantic panel visible invariant를 유지해야 한다.
+
+`balanced`는 preview 기본 진입 preset으로 유지한다. 이는 graph와 detail을 함께 읽는 split-view 기본 상태를 가장 보수적으로 표현하기 위한 것이며, `graphFocused` 또는 `detailFocused`를 canonical default처럼 오해하지 않게 하기 위한 보호 장치다.
+
+이번 보강도 production owner를 침범하지 않는다. `WordExplorerScreen`, production route, repository, Navigator, canonical authority, persistence/history authority는 계속 기존 production 경로에 남는다.

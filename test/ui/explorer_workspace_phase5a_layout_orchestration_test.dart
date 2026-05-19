@@ -33,14 +33,15 @@ void main() {
           find.text('detail target word: W_PHASE5A_DETAIL_003'),
           findsOneWidget,
         );
-        expect(find.text('active preset: balanced'), findsOneWidget);
-        expect(find.text('active origin: initialEntry'), findsOneWidget);
+        expect(find.text('preset 상태: balanced'), findsOneWidget);
+        expect(find.text('origin 상태: initialEntry'), findsOneWidget);
+        expect(find.text('visibility 상태: graph + detail'), findsOneWidget);
         expect(_slotFlex(tester, 'explorer_workspace_graph_slot'), equals(3));
         expect(_slotFlex(tester, 'explorer_workspace_detail_slot'), equals(2));
 
-        await tester.ensureVisible(find.text('UsePreset:graphFocused'));
+        await tester.ensureVisible(find.text('프리셋: graphFocused'));
         await tester.pumpAndSettle();
-        await tester.tap(find.text('UsePreset:graphFocused'));
+        await tester.tap(find.text('프리셋: graphFocused'));
         await tester.pump();
 
         expect(
@@ -55,14 +56,15 @@ void main() {
           find.text('detail target word: W_PHASE5A_DETAIL_003'),
           findsOneWidget,
         );
-        expect(find.text('active preset: graphFocused'), findsOneWidget);
-        expect(find.text('active origin: initialEntry'), findsOneWidget);
+        expect(find.text('preset 상태: graphFocused'), findsOneWidget);
+        expect(find.text('origin 상태: initialEntry'), findsOneWidget);
+        expect(find.text('visibility 상태: graph + detail'), findsOneWidget);
         expect(_slotFlex(tester, 'explorer_workspace_graph_slot'), equals(5));
         expect(_slotFlex(tester, 'explorer_workspace_detail_slot'), equals(2));
 
-        await tester.ensureVisible(find.text('UsePreset:detailFocused'));
+        await tester.ensureVisible(find.text('프리셋: detailFocused'));
         await tester.pumpAndSettle();
-        await tester.tap(find.text('UsePreset:detailFocused'));
+        await tester.tap(find.text('프리셋: detailFocused'));
         await tester.pump();
 
         expect(
@@ -77,8 +79,9 @@ void main() {
           find.text('detail target word: W_PHASE5A_DETAIL_003'),
           findsOneWidget,
         );
-        expect(find.text('active preset: detailFocused'), findsOneWidget);
-        expect(find.text('active origin: initialEntry'), findsOneWidget);
+        expect(find.text('preset 상태: detailFocused'), findsOneWidget);
+        expect(find.text('origin 상태: initialEntry'), findsOneWidget);
+        expect(find.text('visibility 상태: graph + detail'), findsOneWidget);
         expect(_slotFlex(tester, 'explorer_workspace_graph_slot'), equals(2));
         expect(_slotFlex(tester, 'explorer_workspace_detail_slot'), equals(5));
       },
@@ -106,12 +109,11 @@ void main() {
           find.byKey(const ValueKey('explorer_workspace_detail_slot')),
           findsOneWidget,
         );
-        expect(find.text('graph panel visibility: visible'), findsOneWidget);
-        expect(find.text('detail panel visibility: visible'), findsOneWidget);
+        expect(find.text('visibility 상태: graph + detail'), findsOneWidget);
 
-        await tester.ensureVisible(find.text('ToggleDetailPane'));
+        await tester.ensureVisible(find.text('상세 패널 숨기기'));
         await tester.pumpAndSettle();
-        await tester.tap(find.text('ToggleDetailPane'));
+        await tester.tap(find.text('상세 패널 숨기기'));
         await tester.pump();
 
         expect(
@@ -122,8 +124,7 @@ void main() {
           find.byKey(const ValueKey('explorer_workspace_detail_slot')),
           findsNothing,
         );
-        expect(find.text('graph panel visibility: visible'), findsOneWidget);
-        expect(find.text('detail panel visibility: hidden'), findsOneWidget);
+        expect(find.text('visibility 상태: graph only'), findsOneWidget);
         expect(
           find.text('selected word: W_PHASE5A_SELECTED_011'),
           findsOneWidget,
@@ -134,9 +135,9 @@ void main() {
         );
         expect(_slotFlex(tester, 'explorer_workspace_graph_slot'), equals(1));
 
-        await tester.ensureVisible(find.text('ToggleDetailPane'));
+        await tester.ensureVisible(find.text('상세 패널 표시'));
         await tester.pumpAndSettle();
-        await tester.tap(find.text('ToggleDetailPane'));
+        await tester.tap(find.text('상세 패널 표시'));
         await tester.pump();
 
         expect(
@@ -147,13 +148,13 @@ void main() {
           find.byKey(const ValueKey('explorer_workspace_detail_slot')),
           findsOneWidget,
         );
-        expect(find.text('detail panel visibility: visible'), findsOneWidget);
+        expect(find.text('visibility 상태: graph + detail'), findsOneWidget);
         expect(_slotFlex(tester, 'explorer_workspace_graph_slot'), equals(5));
         expect(_slotFlex(tester, 'explorer_workspace_detail_slot'), equals(2));
 
-        await tester.ensureVisible(find.text('ToggleGraphPanel'));
+        await tester.ensureVisible(find.text('그래프 패널 숨기기'));
         await tester.pumpAndSettle();
-        await tester.tap(find.text('ToggleGraphPanel'));
+        await tester.tap(find.text('그래프 패널 숨기기'));
         await tester.pump();
 
         expect(
@@ -164,13 +165,12 @@ void main() {
           find.byKey(const ValueKey('explorer_workspace_detail_slot')),
           findsOneWidget,
         );
-        expect(find.text('graph panel visibility: hidden'), findsOneWidget);
-        expect(find.text('detail panel visibility: visible'), findsOneWidget);
+        expect(find.text('visibility 상태: detail only'), findsOneWidget);
         expect(_slotFlex(tester, 'explorer_workspace_detail_slot'), equals(1));
       },
     );
 
-    testWidgets('does not hide the last visible panel', (tester) async {
+    testWidgets('disables hiding the last visible panel', (tester) async {
       await _pumpPreviewInteractionHost(
         tester,
         ExplorerWorkspacePreviewInput(
@@ -182,9 +182,9 @@ void main() {
         ),
       );
 
-      await tester.ensureVisible(find.text('ToggleGraphPanel'));
+      await tester.ensureVisible(find.text('그래프 패널 숨기기'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('ToggleGraphPanel'));
+      await tester.tap(find.text('그래프 패널 숨기기'));
       await tester.pump();
 
       expect(
@@ -195,13 +195,9 @@ void main() {
         find.byKey(const ValueKey('explorer_workspace_detail_slot')),
         findsOneWidget,
       );
-      expect(find.text('graph panel visibility: hidden'), findsOneWidget);
-      expect(find.text('detail panel visibility: visible'), findsOneWidget);
-
-      await tester.ensureVisible(find.text('ToggleDetailPane'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('ToggleDetailPane'));
-      await tester.pump();
+      expect(find.text('visibility 상태: detail only'), findsOneWidget);
+      expect(_isTextButtonEnabled(tester, '상세 패널 숨기기'), isFalse);
+      expect(_isTextButtonEnabled(tester, '그래프 패널 표시'), isTrue);
 
       expect(
         find.byKey(const ValueKey('explorer_workspace_graph_slot')),
@@ -211,8 +207,7 @@ void main() {
         find.byKey(const ValueKey('explorer_workspace_detail_slot')),
         findsOneWidget,
       );
-      expect(find.text('graph panel visibility: hidden'), findsOneWidget);
-      expect(find.text('detail panel visibility: visible'), findsOneWidget);
+      expect(find.text('visibility 상태: detail only'), findsOneWidget);
     });
   });
 
@@ -250,13 +245,23 @@ void main() {
     test('keeps layout visibility state outside semantic contract', () {
       expect(contractSource, isNot(contains('showGraphPanel')));
       expect(contractSource, isNot(contains('showDetailPane')));
-      expect(hostSource, contains('bool _showGraphPanel = true;'));
-      expect(hostSource, contains('bool _showDetailPane = true;'));
+      expect(hostSource, contains('_PreviewPanelVisibilityState'));
+      expect(
+        hostSource,
+        contains(
+          '_PreviewPanelVisibilityState _panelVisibilityState =',
+        ),
+      );
+      expect(
+        hostSource,
+        contains('_PreviewPanelVisibilityState.graphAndDetail'),
+      );
       expect(hostSource, contains('_setLayoutPreset'));
       expect(hostSource, contains('_toggleGraphPanel'));
       expect(hostSource, contains('_toggleDetailPane'));
       expect(workspaceSource, contains('final bool showGraphPanel;'));
       expect(workspaceSource, contains('final bool showDetailPane;'));
+      expect(workspaceSource, contains('최소 하나의 semantic panel'));
     });
 
     test('preview layout orchestration does not own repository or routes', () {
@@ -335,9 +340,9 @@ void main() {
           source,
           isNot(contains('ExplorerWorkspacePreviewInteractionHost')),
         );
-        expect(source, isNot(contains('UsePreset:')));
-        expect(source, isNot(contains('ToggleGraphPanel')));
-        expect(source, isNot(contains('ToggleDetailPane')));
+        expect(source, isNot(contains('프리셋: graphFocused')));
+        expect(source, isNot(contains('그래프 패널 숨기기')));
+        expect(source, isNot(contains('상세 패널 숨기기')));
       }
     });
 
@@ -362,6 +367,13 @@ void main() {
       expect(uxDocument, contains('production replacement 단계가 아니다'));
     });
   });
+}
+
+bool _isTextButtonEnabled(WidgetTester tester, String label) {
+  final button = tester.widget<TextButton>(
+    find.widgetWithText(TextButton, label),
+  );
+  return button.onPressed != null;
 }
 
 Future<void> _pumpPreviewInteractionHost(

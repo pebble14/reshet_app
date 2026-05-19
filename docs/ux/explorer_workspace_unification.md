@@ -933,3 +933,49 @@ Phase 5-A-1의 preview access는 production Navigator tree에 preview를 연결�
 이 엔트리 포인트는 기존 preview/test harness와 동일한 preview-only input만 사용한다. repository read/write, persistence/history access, canonical authority, display item projection, dummy/fallback display item 생성은 허용하지 않는다.
 
 따라서 Phase 5-A-1은 preview 접근성만 보강하는 boundary다. preview access가 production-connected wrapper, production navigation flow, production owner migration으로 해석되면 안 된다.
+### 17.22 Phase 5-B layout state policy / preset UX refinement 기준
+
+Phase 5-B는 ExplorerWorkspace preview 안에서 layout state policy와 preset UX semantics를 더 명확히 고정하는 단계다. 이 단계도 production replacement가 아니다. `WordExplorerScreen` production owner, production route 기본값, repository owner, Navigator owner, canonical authority, persistence/history authority는 유지한다.
+
+이번 단계에서 ExplorerWorkspace preview는 계속 preview-only orchestration coordinator로만 동작한다. preset과 panel visibility state는 같은 개념으로 결합하지 않는다.
+
+- `layoutPreset`은 권장 orchestration snapshot이다.
+- panel visibility state는 현재 local workspace state다.
+- preset 전환은 현재 local workspace state를 강제로 canonical layout으로 되돌리는 동작이 아니다.
+
+Preset semantics는 다음과 같이 고정한다.
+
+| preset | 의미 | 허용 해석 |
+| --- | --- | --- |
+| `balanced` | graph/detail 균형 상태 | preview 기본 진입 preset이며, graph와 detail을 함께 읽는 기본 workspace snapshot이다. |
+| `graphFocused` | graph 탐색 집중 상태 | graph surface를 주로 읽도록 강조하지만 detail을 보조 surface로 유지할 수 있다. |
+| `detailFocused` | detail 해석 집중 상태 | detail surface를 주로 읽도록 강조하지만 graph relation context를 보조 surface로 유지할 수 있다. |
+
+Preset은 authority가 아니다.
+
+- preset은 canonical authority가 아니다.
+- preset은 persistence authority가 아니다.
+- preset은 preview orchestration state일 뿐이다.
+
+Preview-only layout state policy는 다음과 같이 유지한다.
+
+| 항목 | 정책 |
+| --- | --- |
+| 기본 visibility | graph + detail |
+| 허용 layout state | `graph + detail`, `graph only`, `detail only` |
+| 금지 layout state | `graph hidden + detail hidden` |
+| invariant | 최소 하나의 semantic panel visible 유지 |
+
+`balanced default`를 유지하는 사유는 다음과 같다.
+
+- preview 기본 상태에서 graph relation context와 detail reading context를 동시에 확인할 수 있어야 한다.
+- `balanced`는 unified Explorer UX의 기본 split-view 후보를 가장 보수적으로 보여준다.
+- `graphFocused` 또는 `detailFocused`를 기본값으로 두면 특정 surface가 canonical default처럼 오해될 수 있으므로, authority 비이전 원칙과 맞지 않는다.
+
+Phase 5-B의 refinement는 과도한 UI 변경이 아니다. 허용 범위는 preset 라벨 정리, 상태명 정리, panel visibility protection 명확화, preview-only 설명 문구 정리까지다. production route 연결, `WordExplorerScreen` 변경, repository 주입 구조 변경, Navigator 구조 변경, DB 변경, persistent layout 저장 추가는 이번 단계 범위를 벗어난다.
+
+미래 unified Explorer UX와의 관계는 다음과 같다.
+
+- 이번 단계는 unified Explorer UX의 최종 production semantics를 확정하는 단계가 아니다.
+- 다만 장기적으로 `preset = recommended orchestration snapshot`, `visibility state = current local workspace state` 구조를 유지할 수 있는 최소 preview policy를 검증한다.
+- route collapse, authority migration, persistence layout 정책은 별도 승인과 별도 단계 없이는 진행하지 않는다.

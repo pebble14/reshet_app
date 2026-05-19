@@ -20,8 +20,8 @@ class _ExplorerWorkspacePreviewInteractionHostState
     extends State<ExplorerWorkspacePreviewInteractionHost> {
   late ExplorerWorkspaceState _state;
   late List<String> _availableWordIds;
-  bool _showGraphPanel = true;
-  bool _showDetailPane = true;
+  _PreviewPanelVisibilityState _panelVisibilityState =
+      _PreviewPanelVisibilityState.graphAndDetail;
 
   @override
   void initState() {
@@ -47,8 +47,8 @@ class _ExplorerWorkspacePreviewInteractionHostState
       children: [
         ExplorerWorkspace(
           state: _state,
-          showGraphPanel: _showGraphPanel,
-          showDetailPane: _showDetailPane,
+          showGraphPanel: _panelVisibilityState.showGraphPanel,
+          showDetailPane: _panelVisibilityState.showDetailPane,
           graphPanelOverride: _PreviewGraphPanel(
             state: _state,
             availableWordIds: _availableWordIds,
@@ -65,8 +65,7 @@ class _ExplorerWorkspacePreviewInteractionHostState
           right: 16,
           child: _PreviewLayoutOrchestrationCard(
             state: _state,
-            showGraphPanel: _showGraphPanel,
-            showDetailPane: _showDetailPane,
+            panelVisibilityState: _panelVisibilityState,
             onPresetSelected: _setLayoutPreset,
             onToggleGraphPanel: _toggleGraphPanel,
             onToggleDetailPane: _toggleDetailPane,
@@ -117,22 +116,24 @@ class _ExplorerWorkspacePreviewInteractionHostState
   }
 
   void _toggleGraphPanel() {
-    if (_showGraphPanel && !_showDetailPane) {
+    final nextState = _panelVisibilityState.toggleGraphPanel();
+    if (nextState == _panelVisibilityState) {
       return;
     }
 
     setState(() {
-      _showGraphPanel = !_showGraphPanel;
+      _panelVisibilityState = nextState;
     });
   }
 
   void _toggleDetailPane() {
-    if (_showDetailPane && !_showGraphPanel) {
+    final nextState = _panelVisibilityState.toggleDetailPane();
+    if (nextState == _panelVisibilityState) {
       return;
     }
 
     setState(() {
-      _showDetailPane = !_showDetailPane;
+      _panelVisibilityState = nextState;
     });
   }
 
@@ -156,8 +157,7 @@ class _ExplorerWorkspacePreviewInteractionHostState
   void _syncPreviewInput(ExplorerWorkspacePreviewInput input) {
     _state = ExplorerWorkspaceState.fromPreviewInput(input);
     _availableWordIds = _collectAvailableWordIds(input);
-    _showGraphPanel = true;
-    _showDetailPane = true;
+    _panelVisibilityState = _PreviewPanelVisibilityState.graphAndDetail;
   }
 }
 
@@ -279,16 +279,14 @@ class _PreviewInteractionPanel extends StatelessWidget {
 
 class _PreviewLayoutOrchestrationCard extends StatelessWidget {
   final ExplorerWorkspaceState state;
-  final bool showGraphPanel;
-  final bool showDetailPane;
+  final _PreviewPanelVisibilityState panelVisibilityState;
   final ValueChanged<ExplorerWorkspaceLayoutPreset> onPresetSelected;
   final VoidCallback onToggleGraphPanel;
   final VoidCallback onToggleDetailPane;
 
   const _PreviewLayoutOrchestrationCard({
     required this.state,
-    required this.showGraphPanel,
-    required this.showDetailPane,
+    required this.panelVisibilityState,
     required this.onPresetSelected,
     required this.onToggleGraphPanel,
     required this.onToggleDetailPane,
@@ -299,7 +297,7 @@ class _PreviewLayoutOrchestrationCard extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 260, maxHeight: 280),
+      constraints: const BoxConstraints(maxWidth: 320, maxHeight: 360),
       child: DecoratedBox(
         decoration: BoxDecoration(
           color: colorScheme.surfaceContainerHighest,
@@ -314,7 +312,7 @@ class _PreviewLayoutOrchestrationCard extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'PreviewLayoutOrchestration',
+                  'PreviewLayoutStatePolicy',
                   style: Theme.of(context).textTheme.titleSmall,
                 ),
                 const SizedBox(height: 8),
@@ -323,13 +321,29 @@ class _PreviewLayoutOrchestrationCard extends StatelessWidget {
                 Text(
                   'detail target word: ${state.detailTargetWordId ?? 'none'}',
                 ),
-                Text('active preset: ${state.layoutPreset.name}'),
-                Text('active origin: ${state.origin.name}'),
+                Text('preset 상태: ${state.layoutPreset.name}'),
                 Text(
-                  'graph panel visibility: ${showGraphPanel ? 'visible' : 'hidden'}',
+                  'preset 의미: ${_presetDescription(state.layoutPreset)}',
+                ),
+                Text('origin 상태: ${state.origin.name}'),
+                Text(
+                  'visibility 상태: ${panelVisibilityState.semanticLabel}',
                 ),
                 Text(
-                  'detail panel visibility: ${showDetailPane ? 'visible' : 'hidden'}',
+                  'preset 역할: 권장 orchestration snapshot',
+                ),
+                Text(
+                  'visibility 역할: 현재 local workspace state',
+                ),
+                const SizedBox(height: 4),
+                Text('기본 진입 정책: balanced default'),
+                Text('허용 상태: graph + detail / graph only / detail only'),
+                Text('금지 상태: graph hidden + detail hidden'),
+                Text('정책: 최소 1개 semantic panel visible 유지'),
+                const SizedBox(height: 10),
+                Text(
+                  'preview-only orchestration boundary 안에서만 검증한다.',
+                  style: Theme.of(context).textTheme.bodySmall,
                 ),
                 const SizedBox(height: 10),
                 Wrap(
@@ -339,7 +353,7 @@ class _PreviewLayoutOrchestrationCard extends StatelessWidget {
                     for (final preset in ExplorerWorkspaceLayoutPreset.values)
                       TextButton(
                         onPressed: () => onPresetSelected(preset),
-                        child: Text('UsePreset:${preset.name}'),
+                        child: Text(_presetButtonLabel(preset)),
                       ),
                   ],
                 ),
@@ -349,12 +363,16 @@ class _PreviewLayoutOrchestrationCard extends StatelessWidget {
                   runSpacing: 6,
                   children: [
                     TextButton(
-                      onPressed: onToggleGraphPanel,
-                      child: const Text('ToggleGraphPanel'),
+                      onPressed: panelVisibilityState.canToggleGraphPanel
+                          ? onToggleGraphPanel
+                          : null,
+                      child: Text(panelVisibilityState.graphToggleLabel),
                     ),
                     TextButton(
-                      onPressed: onToggleDetailPane,
-                      child: const Text('ToggleDetailPane'),
+                      onPressed: panelVisibilityState.canToggleDetailPane
+                          ? onToggleDetailPane
+                          : null,
+                      child: Text(panelVisibilityState.detailToggleLabel),
                     ),
                   ],
                 ),
@@ -364,5 +382,97 @@ class _PreviewLayoutOrchestrationCard extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+String _presetDescription(ExplorerWorkspaceLayoutPreset preset) {
+  switch (preset) {
+    case ExplorerWorkspaceLayoutPreset.balanced:
+      return 'graph/detail 균형 상태';
+    case ExplorerWorkspaceLayoutPreset.graphFocused:
+      return 'graph 탐색 집중 상태';
+    case ExplorerWorkspaceLayoutPreset.detailFocused:
+      return 'detail 해석 집중 상태';
+  }
+}
+
+String _presetButtonLabel(ExplorerWorkspaceLayoutPreset preset) {
+  switch (preset) {
+    case ExplorerWorkspaceLayoutPreset.balanced:
+      return '프리셋: balanced';
+    case ExplorerWorkspaceLayoutPreset.graphFocused:
+      return '프리셋: graphFocused';
+    case ExplorerWorkspaceLayoutPreset.detailFocused:
+      return '프리셋: detailFocused';
+  }
+}
+
+// Preset과 분리된 preview-local visibility state다.
+// empty workspace를 타입 수준에서 허용하지 않도록 세 상태만 둔다.
+enum _PreviewPanelVisibilityState {
+  graphAndDetail,
+  graphOnly,
+  detailOnly;
+
+  bool get showGraphPanel => this != _PreviewPanelVisibilityState.detailOnly;
+
+  bool get showDetailPane => this != _PreviewPanelVisibilityState.graphOnly;
+
+  bool get canToggleGraphPanel => this != _PreviewPanelVisibilityState.graphOnly;
+
+  bool get canToggleDetailPane =>
+      this != _PreviewPanelVisibilityState.detailOnly;
+
+  String get semanticLabel {
+    switch (this) {
+      case _PreviewPanelVisibilityState.graphAndDetail:
+        return 'graph + detail';
+      case _PreviewPanelVisibilityState.graphOnly:
+        return 'graph only';
+      case _PreviewPanelVisibilityState.detailOnly:
+        return 'detail only';
+    }
+  }
+
+  String get graphToggleLabel {
+    switch (this) {
+      case _PreviewPanelVisibilityState.graphAndDetail:
+      case _PreviewPanelVisibilityState.graphOnly:
+        return '그래프 패널 숨기기';
+      case _PreviewPanelVisibilityState.detailOnly:
+        return '그래프 패널 표시';
+    }
+  }
+
+  String get detailToggleLabel {
+    switch (this) {
+      case _PreviewPanelVisibilityState.graphAndDetail:
+      case _PreviewPanelVisibilityState.detailOnly:
+        return '상세 패널 숨기기';
+      case _PreviewPanelVisibilityState.graphOnly:
+        return '상세 패널 표시';
+    }
+  }
+
+  _PreviewPanelVisibilityState toggleGraphPanel() {
+    switch (this) {
+      case _PreviewPanelVisibilityState.graphAndDetail:
+        return _PreviewPanelVisibilityState.detailOnly;
+      case _PreviewPanelVisibilityState.graphOnly:
+        return _PreviewPanelVisibilityState.graphOnly;
+      case _PreviewPanelVisibilityState.detailOnly:
+        return _PreviewPanelVisibilityState.graphAndDetail;
+    }
+  }
+
+  _PreviewPanelVisibilityState toggleDetailPane() {
+    switch (this) {
+      case _PreviewPanelVisibilityState.graphAndDetail:
+        return _PreviewPanelVisibilityState.graphOnly;
+      case _PreviewPanelVisibilityState.graphOnly:
+        return _PreviewPanelVisibilityState.graphAndDetail;
+      case _PreviewPanelVisibilityState.detailOnly:
+        return _PreviewPanelVisibilityState.detailOnly;
+    }
   }
 }

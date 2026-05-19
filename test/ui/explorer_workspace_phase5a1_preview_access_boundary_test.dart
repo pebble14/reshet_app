@@ -19,7 +19,7 @@ void main() {
       await tester.pumpWidget(const ExplorerWorkspacePreviewAccessApp());
       await tester.pumpAndSettle();
 
-      expect(find.text('PreviewLayoutOrchestration'), findsOneWidget);
+      expect(find.text('PreviewLayoutStatePolicy'), findsOneWidget);
       expect(
         find.text('selected word: PREVIEW_SELECTED_ALPHA'),
         findsOneWidget,
@@ -32,12 +32,13 @@ void main() {
         find.text('detail target word: PREVIEW_DETAIL_GAMMA'),
         findsOneWidget,
       );
-      expect(find.text('active preset: balanced'), findsOneWidget);
-      expect(find.text('active origin: initialEntry'), findsOneWidget);
-      expect(find.text('UsePreset:graphFocused'), findsOneWidget);
-      expect(find.text('UsePreset:detailFocused'), findsOneWidget);
-      expect(find.text('ToggleGraphPanel'), findsOneWidget);
-      expect(find.text('ToggleDetailPane'), findsOneWidget);
+      expect(find.text('preset 상태: balanced'), findsOneWidget);
+      expect(find.text('origin 상태: initialEntry'), findsOneWidget);
+      expect(find.text('visibility 상태: graph + detail'), findsOneWidget);
+      expect(find.text('프리셋: graphFocused'), findsOneWidget);
+      expect(find.text('프리셋: detailFocused'), findsOneWidget);
+      expect(find.text('그래프 패널 숨기기'), findsOneWidget);
+      expect(find.text('상세 패널 숨기기'), findsOneWidget);
     });
 
     test('entry point stays outside production route and owner boundaries', () {
