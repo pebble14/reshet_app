@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2026-05-19 Phase 5-C ExplorerWorkspace fixed navigation rail candidate
+
+- Phase 5-C를 `StrongRail`의 semantic 역할을 fixed navigation rail candidate로 정리하는 문서/경계 단계로 기록한다. 이 단계는 preview-only boundary 안에 머무르며 production replacement가 아니다.
+- `StrongRail`은 strong anchor 접근과 workspace orientation을 위한 stable navigation spine 후보로만 정의한다. graph/detail data owner, repository owner, Navigator owner, persistence/history authority로 확대하지 않는다.
+- `persistent narrow rail`은 rail이 좁은 폭으로 계속 남는 시각적 fixed rail 후보라는 뜻으로만 사용한다. persisted layout 저장, route restore, Navigator history 결합, repository-backed preference 의미는 포함하지 않는다.
+- rail과 graph/detail orchestration의 관계를 보조적 navigation axis 후보로 제한하고, `WordExplorerScreen` production authority, route collapse 금지, repository/Navigator/persistence authority 비이전 경계를 유지한다.
+- `active`/`focused`/`preview` 표현은 새 canonical state가 아니라 기존 workspace state와 preview-only 표현에서 파생되는 비권위 표시로만 정리했다.
+
 ## 2026-05-19 Phase 5-B ExplorerWorkspace layout state policy / preset UX refinement
 
 - Phase 5-B를 preview-only layout state policy와 preset UX semantics를 더 명확히 고정하는 단계로 기록한다. 이 단계는 production replacement가 아니다.

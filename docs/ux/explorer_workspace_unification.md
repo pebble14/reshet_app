@@ -979,3 +979,20 @@ Phase 5-B의 refinement는 과도한 UI 변경이 아니다. 허용 범위는 pr
 - 이번 단계는 unified Explorer UX의 최종 production semantics를 확정하는 단계가 아니다.
 - 다만 장기적으로 `preset = recommended orchestration snapshot`, `visibility state = current local workspace state` 구조를 유지할 수 있는 최소 preview policy를 검증한다.
 - route collapse, authority migration, persistence layout 정책은 별도 승인과 별도 단계 없이는 진행하지 않는다.
+### 17.23 Phase 5-C fixed navigation rail candidate 기준
+
+Phase 5-C는 future unified Explorer UX 관점에서 `StrongRail`을 fixed navigation rail candidate로 정의하는 문서/경계 정리 단계다. 이 단계는 preview-only boundary 안에 머무르며 production replacement 단계가 아니다. `WordExplorerScreen` production owner, production route 기본값, repository owner, Navigator owner, persistence/history authority는 유지한다.
+
+`StrongRail`의 semantic 역할은 기존 Strong 기반 진입 의미를 workspace 안의 stable navigation spine으로 다시 설명하는 것이다. Rail은 strong anchor 접근, 현재 workspace orientation, 현재 semantic context의 기준축을 제공할 수 있다. 그러나 rail이 graph data, detail data, repository read/write, route push, history restore를 직접 소유해서는 안 된다. Rail이 내보내는 것은 explicit workspace entry request 또는 explicit anchor request뿐이며, selected/detail/center authority 자체를 가져가면 안 된다.
+
+이번 단계에서 `persistent narrow rail`은 storage 또는 persistence 의미가 아니다. 이는 preview composition 안에서 rail이 폭이 좁은 상태로 계속 남아 있을 수 있는 시각적 고정 rail 후보라는 뜻으로만 사용한다. 따라서 persistent narrow rail 가능성을 문서화하더라도 persisted layout 저장, route restore 기준, Navigator history 결합, repository-backed preference, production shell ownership으로 해석하면 안 된다.
+
+Graph/detail orchestration과의 관계도 제한한다. `StrongRail`은 graph/detail panel 바깥에 남는 stable orientation axis 후보일 뿐이며, `GraphPanel`과 `DetailPane`의 read owner를 흡수하지 않는다. `layoutPreset`이 `balanced`, `graphFocused`, `detailFocused` 사이를 오가더라도 rail은 graph/detail emphasis를 보조하는 navigation spine 후보로만 남는다. 이 관계는 route collapse, `WordExplorerScreen` replacement, graph/detail production path 재배선의 근거가 아니다.
+
+`active`, `focused`, `preview` state 표현은 새 canonical state 추가가 아니라 기존 workspace state에서 파생되는 표현으로만 제한한다.
+
+- `active` 표현은 현재 rail에서 의미상 가리키는 strong anchor 또는 현재 semantic context를 나타내는 read-only highlight 후보다.
+- `focused` 표현은 `layoutPreset`이 어느 surface를 상대적으로 강조하는지 보여주는 보조 표현이며 rail 자체가 focus authority를 소유하지 않는다.
+- `preview` 표현은 현재 구성이 preview-only boundary 안에 있음을 드러내는 비권위 표시이며 persistence, production navigation, repository ownership을 뜻하지 않는다.
+
+따라서 Phase 5-C에서 추가로 도입하는 rail semantics는 unified Explorer UX의 기준축 후보를 문서로 고정하는 역할만 가진다. 장기적으로 rail이 unified workspace orientation의 기준축이 될 수는 있지만, 이번 단계에서 `WordExplorerScreen` authority 이전, route collapse, production navigation replacement, repository/Navigator/persistence authority migration을 시작하지 않는다. `HomeScreen`의 현재 strong list 진입 의미와 `WordExplorerScreen`의 production explorer authority도 계속 분리해서 유지한다.
