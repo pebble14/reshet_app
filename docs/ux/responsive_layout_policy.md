@@ -86,8 +86,8 @@ Desktop layout은 가능한 경우 여러 semantic surface를 동시에 노출�
 - GraphPane은 contextual workspace surface로 유지될 수 있다.
 - DetailPane은 현재 focus에 대한 reading surface로 유지될 수 있다.
 - ExplorePane은 exploration continuity를 보조하는 surface로 유지될 수 있다.
-- Strong Rail은 semantic navigation spine으로 persistent하게 유지될 수 있다.
-- Search는 global entry point로 빠르게 접근 가능해야 한다.
+- Strong Rail은 navigation spine candidate로 persistent하게 유지될 수 있다.
+- Search는 semantic entry surface candidate로 빠르게 접근 가능해야 한다.
 
 Desktop에서 중요한 기준은 surface의 동시 노출 자체가 아니라, 동시 노출된 surface들이 하나의 MainWorkspace로 읽히는 것이다.
 
@@ -104,8 +104,8 @@ Tablet에서 권장되는 기준은 다음과 같다.
 - 핵심 semantic context는 persistent하게 확인 가능해야 한다.
 - 모든 pane을 동시에 고정 노출하려고 해서는 안 된다.
 - GraphPane, DetailPane, ExplorePane은 필요에 따라 paired surface 또는 transient surface로 전환될 수 있다.
-- Strong Rail은 가능한 경우 semantic navigation spine으로 유지하되, workspace surface를 과도하게 침범하지 않아야 한다.
-- Search는 화면 구성이 변해도 global entry point 역할을 잃지 않아야 한다.
+- Strong Rail은 가능한 경우 navigation spine candidate로 유지하되, workspace surface를 과도하게 침범하지 않아야 한다.
+- Search는 화면 구성이 변해도 semantic entry surface candidate 역할을 잃지 않아야 한다.
 
 Tablet adaptation의 목적은 desktop layout을 압축하는 것이 아니라, workspace coherence를 유지하면서 surface 부담을 줄이는 것이다.
 
@@ -120,8 +120,8 @@ Mobile에서 중요한 기준은 다음과 같다.
 - 한 번에 하나의 primary semantic surface를 명확하게 제공한다.
 - surface 전환은 현재 semantic context를 잃지 않도록 구성한다.
 - GraphPane, DetailPane, ExplorePane은 동시에 고정 노출되는 pane보다 flow 안의 semantic surface로 해석될 수 있다.
-- Strong Rail은 desktop과 같은 폭의 persistent rail일 필요는 없지만, semantic navigation spine의 역할을 잃어서는 안 된다.
-- Search는 mobile에서도 global entry point로 접근 가능해야 한다.
+- Strong Rail은 desktop과 같은 폭의 persistent rail일 필요는 없지만, navigation spine candidate의 역할을 잃어서는 안 된다.
+- Search는 mobile에서도 semantic entry surface candidate로 접근 가능해야 한다.
 - 사용자는 현재 어디에 있고 무엇을 보고 있으며 어디로 돌아갈 수 있는지 이해할 수 있어야 한다.
 
 Mobile layout은 workspace를 단순히 축소하지 않는다. Mobile layout은 workspace를 flow로 변형한다.
@@ -181,25 +181,25 @@ ExplorePane은 모든 form factor에서 독립 앱 화면으로 분리되어서�
 
 ## 10. Strong Rail의 Form Factor별 역할
 
-Strong Rail은 semantic navigation spine이다.
+Strong Rail은 semantic navigation spine candidate다.
 
-Responsive layout policy는 Strong Rail의 exact interaction을 정의하지 않는다. 이 문서는 form factor별로 Strong Rail이 workspace layout 안에서 어떤 역할을 유지해야 하는지만 정의한다.
+Responsive layout policy는 Strong Rail의 exact interaction을 정의하지 않는다. 이 문서는 form factor별로 Strong Rail이 workspace layout 안에서 어떤 역할 후보를 유지해야 하는지만 정의한다. 여기서 candidate라는 표현은 canonical authority를 뜻하지 않는다.
 
-Desktop에서는 Strong Rail이 persistent semantic navigation spine으로 유지될 수 있다.
+Desktop에서는 Strong Rail이 persistent navigation spine candidate로 유지될 수 있다.
 
-Tablet에서는 Strong Rail이 persistent하거나 compact한 navigation spine으로 표현될 수 있다. 어떤 표현이든 Strong Rail은 detail renderer, control panel, explorer replacement가 되어서는 안 된다.
+Tablet에서는 Strong Rail이 persistent하거나 compact한 navigation spine candidate로 표현될 수 있다. 어떤 표현이든 Strong Rail은 detail renderer, control panel, explorer replacement가 되어서는 안 된다.
 
-Mobile에서는 Strong Rail이 desktop과 같은 시각적 형태를 유지하지 않을 수 있다. 그러나 semantic navigation spine으로서의 역할은 유지되어야 한다. Mobile에서 rail의 형태가 바뀌더라도 사용자는 현재 semantic position과 주요 semantic entry에 접근할 수 있어야 한다.
+Mobile에서는 Strong Rail이 desktop과 같은 시각적 형태를 유지하지 않을 수 있다. 그러나 navigation spine candidate로서의 orientation 역할은 유지되어야 한다. Mobile에서 rail의 형태가 바뀌더라도 사용자는 현재 semantic position과 주요 semantic entry에 접근할 수 있어야 한다.
 
 ## 11. Search의 Form Factor별 역할
 
-Search는 global entry point다.
+Search는 semantic entry surface candidate다.
 
-Responsive layout policy는 search ranking, scoring, result grouping을 정의하지 않는다. 이 문서는 Search가 form factor 변화 속에서도 semantic workspace로 진입하는 global entry point 역할을 유지해야 한다는 점만 정의한다.
+Responsive layout policy는 search ranking, scoring, result grouping을 정의하지 않는다. 이 문서는 Search가 form factor 변화 속에서도 semantic workspace로 진입하는 entry/orientation surface candidate 역할을 유지해야 한다는 점만 정의한다. 이 표현은 canonical selection owner나 production entry authority를 뜻하지 않는다.
 
 Desktop에서는 Search가 persistent access 또는 즉시 접근 가능한 entry로 유지될 수 있다.
 
-Tablet에서는 Search가 workspace surface를 과도하게 차지하지 않으면서도 global entry 역할을 유지해야 한다.
+Tablet에서는 Search가 workspace surface를 과도하게 차지하지 않으면서도 entry surface candidate 역할을 유지해야 한다.
 
 Mobile에서는 Search가 flow 안에서 사라지는 보조 기능이 되어서는 안 된다. Search는 graph, detail, exploration 어느 surface에서도 semantic context로 진입할 수 있는 접근 경로로 유지되어야 한다.
 
@@ -228,7 +228,7 @@ Responsive layout은 form factor 제약 때문에 surface를 나누더라도 wor
 - mobile에서 graph, detail, exploration이 서로 관계없는 화면처럼 분리되는 상태
 - tablet에서 surface 전환이 semantic context를 잃게 만드는 상태
 - desktop에서 GraphPane이 전체 application shell처럼 작동하는 상태
-- Search가 특정 surface에 종속되어 global entry point 역할을 잃는 상태
+- Search가 특정 surface에 종속되어 semantic entry surface candidate 역할을 잃는 상태
 - Strong Rail이 navigation spine을 넘어 heavy interaction panel로 확장되는 상태
 
 Responsive layout은 한 화면에 많은 것을 보여주는 것보다 semantic coherence를 유지하는 것을 우선해야 한다.
@@ -262,7 +262,7 @@ Responsive layout은 한 화면에 많은 것을 보여주는 것보다 semantic
 
 Search authority 문서는 query behavior, ranking, result grouping, scoring, search-specific interaction contract를 정의해야 한다.
 
-이 문서는 Search가 form factor별로 global entry point 역할을 유지해야 한다는 responsive 기준만 정의한다.
+이 문서는 Search가 form factor별로 semantic entry surface candidate 역할을 유지해야 한다는 responsive 기준만 정의한다.
 
 ### Graph Authority 문서
 

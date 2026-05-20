@@ -345,21 +345,21 @@ ExplorerWorkspace
 └─ AddWordFixedAction
 ```
 
-`ExplorerWorkspace`는 route나 screen 병합 구현이 아니라, 장기적으로 workspace-level semantic state를 소유할 단일 coordination boundary를 의미한다.
+`ExplorerWorkspace`는 route나 screen 병합 구현이 아니라, 장기 reference vocabulary 관점에서 workspace-level semantic state를 설명하기 위한 candidate coordination boundary를 의미한다. 이는 현재 runtime owner 선언이나 production migration commitment를 뜻하지 않는다.
 
 이 문서에서 `StrongRail`은 기존 authority 문서의 `Strong Rail` 역할을 Explorer workspace composition 안에서 부르는 패널명이다. 명칭은 구현 class 도입을 뜻하지 않는다.
 
-### 8.2 semantic state ownership
+### 8.2 semantic state reference vocabulary
 
-`ExplorerWorkspace`가 semantic state의 owner다. Panel은 받은 state를 표시하고 사용자 event를 workspace action으로 전달한다.
+`ExplorerWorkspace`는 이 문서 안에서 semantic state를 설명하기 위한 preview-only coordination semantics의 기준축 후보로만 사용된다. Panel은 받은 state를 표시하고 사용자 event를 workspace action request로 전달한다. 이는 현재 runtime ownership이나 canonical authority를 뜻하지 않는다.
 
-| 상태 | owner | 의미 | 변경 원칙 |
+| 상태 | reference boundary | 의미 | 변경 원칙 |
 | --- | --- | --- | --- |
-| `selectedWordId` | `ExplorerWorkspace` | 사용자가 현재 선택한 semantic object | selection action에서만 변경 |
-| `graphCenterWordId` | `ExplorerWorkspace` | graph relation context의 anchor | 명시적 center action에서만 변경 |
-| `detailTargetWordId` | `ExplorerWorkspace` | `DetailPane`이 읽는 대상 | detail target action에서만 변경 |
-| `layoutPreset` | `ExplorerWorkspace` | workspace panel emphasis 상태 | layout action 또는 route alias action에서만 변경 |
-| `origin` | `ExplorerWorkspace` history snapshot | transition의 semantic 진입 출처 | snapshot 생성 시 기록 |
+| `selectedWordId` | `ExplorerWorkspace` candidate boundary | 사용자가 현재 선택한 semantic object | selection action에서만 변경 |
+| `graphCenterWordId` | `ExplorerWorkspace` candidate boundary | graph relation context의 anchor | 명시적 center action에서만 변경 |
+| `detailTargetWordId` | `ExplorerWorkspace` candidate boundary | `DetailPane`이 읽는 대상 | detail target action에서만 변경 |
+| `layoutPreset` | `ExplorerWorkspace` candidate boundary | workspace panel emphasis 상태 | layout action 또는 route alias action에서만 변경 |
+| `origin` | `ExplorerWorkspace` history snapshot reference | transition의 semantic 진입 출처 | snapshot 생성 시 기록 |
 
 `selectedWordId`, `graphCenterWordId`, `detailTargetWordId`는 서로 다른 의미를 가진다. 세 값이 동일할 수는 있지만, 동일성을 전제로 병합하지 않는다.
 
@@ -472,7 +472,7 @@ PC split-view를 canonical layout으로 둔다. 이 기준에서 `StrongRail`, `
 
 - `DetailPane`이 숨겨져도 `detailTargetWordId`는 제거되지 않는다.
 - `GraphPanel`이 축소되거나 다른 surface로 전환되어도 `graphCenterWordId`는 제거되지 않는다.
-- `StrongRail`이 compact 표현으로 바뀌어도 semantic navigation spine 역할은 유지된다.
+- `StrongRail`이 compact 표현으로 바뀌어도 navigation spine candidate 역할은 유지된다.
 - `GlobalSearch`가 overlay 또는 transient entry로 표현되어도 workspace context와 분리되지 않는다.
 
 Hidden panel은 상태 제거를 의미하지 않는다. 이는 `responsive_layout_policy.md`의 원칙인 "surface가 transient하더라도 semantic context가 transient해져서는 안 된다"와 같은 방향이다.
@@ -531,7 +531,7 @@ History restore는 panel이 직접 수행하지 않는다. `ExplorerWorkspace`�
 
 ## 16. Embedded graph vs standalone graph
 
-Embedded `GraphPanel`이 장기 canonical graph experience다. 이는 graph가 application shell이 아니라 workspace 안의 contextual semantic surface라는 authority 문서의 방향과 일치한다.
+Embedded `GraphPanel`은 장기 reference direction에서 평가되는 graph experience candidate다. 이는 graph가 application shell이 아니라 workspace 안의 contextual semantic surface라는 authority 문서의 방향과 일치한다. 이 표현은 production replacement를 의미하지 않는다.
 
 Standalone graph는 장기적으로 다음 중 하나로 재정의한다.
 
@@ -560,13 +560,13 @@ Explorer 단일 workspace 전환은 다음 순서를 따른다.
 | Phase 2-B | 최소 typed contract 도입 | layout preset, transition origin, workspace state, history entry를 먼저 정의한다. |
 | Phase 2-C | `ExplorerWorkspace` shell 도입 | route 제거 없이 placeholder shell boundary를 만든다. |
 | Phase 2-D | panel orchestration callback boundary 도입 | 실제 panel 연결 없이 placeholder event boundary를 먼저 둔다. |
-| Phase 2-E | `GraphPanel` embed | active graph production path를 보호하면서 embedded graph를 canonical path로 이동한다. |
-| Phase 2-F | `DetailPane` embed | detail reading surface를 workspace 안으로 수렴한다. |
+| Phase 2-E | `GraphPanel` embed | active graph production path를 보호하면서 embedded graph를 future evaluation target으로 두는 reference direction을 정리한다. |
+| Phase 2-F | `DetailPane` embed | detail reading surface를 workspace composition candidate로 평가하는 reference direction을 정리한다. |
 | Phase 2-G | route alias 전환 | Graph/Detail route를 `graphFocused`/`detailFocused` alias로 전환한다. |
 | Phase 2-H | 내부 navigation 축소 | route push 중심 흐름을 workspace action 중심 흐름으로 줄인다. |
 | Phase 2-I | route collapse 검토 | compatibility layer 제거 가능성을 검토한다. |
 
-Phase 2-I 전에는 route 제거를 완료 상태로 선언하지 않는다. Phase 2-E 전에는 embedded graph가 canonical graph experience라고 구현 완료 선언하지 않는다. Phase 2-B 전에는 public boundary를 raw carrier로 확장하지 않는다.
+Phase 2-I 전에는 route 제거를 완료 상태로 선언하지 않는다. Phase 2-E 전에는 embedded graph를 production replacement나 canonical graph experience로 완료 선언하지 않는다. Phase 2-B 전에는 public boundary를 raw carrier로 확장하지 않는다.
 
 ### 17.1 Phase 2-B 최소 contract 도입 결과
 
@@ -902,11 +902,11 @@ Phase 2-A에서는 다음을 하지 않는다.
 
 ## 19. 정리
 
-Phase 2-A의 결론은 `ExplorerWorkspace`가 semantic state ownership과 panel orchestration의 중심이 되어야 한다는 것이다.
+Phase 2-A의 결론은 `ExplorerWorkspace`가 semantic state reference vocabulary와 panel orchestration candidate boundary의 중심으로 검토되어야 한다는 것이다.
 
 `selectedWordId`, `graphCenterWordId`, `detailTargetWordId`는 분리된 상태로 유지한다. 특히 `graphCenterWordId`는 명시적 center action에서만 변경한다. Panel은 표시와 event 전달을 담당하며, semantic transition은 workspace action으로만 발생한다.
 
-장기적으로 embedded `GraphPanel`이 canonical graph experience가 되고, standalone graph와 detail route는 compatibility layer 또는 layout preset alias로 재정의된다. 단, route collapse는 마지막 단계이며 active graph production path는 마지막까지 보호한다.
+장기적으로 embedded `GraphPanel`은 canonical graph experience의 migration candidate direction으로 평가될 수 있고, standalone graph와 detail route는 compatibility layer 또는 layout preset alias 방향으로 검토될 수 있다. 이는 production replacement나 route collapse를 즉시 의미하지 않으며 active graph production path는 마지막까지 보호한다.
 
 Phase 2-A에서는 구현하지 않는다. Phase 2-B에서는 최소 typed contract만 도입하고 기존 구현 흐름은 바꾸지 않는다.
 ### 17.20 Phase 5-A preview-only layout orchestration 기준
@@ -1109,3 +1109,13 @@ Semantic transition lifecycle은 다음과 같이 해석한다.
 - `transition disposal`은 continuity가 더 이상 필요 없을 때 temporary focus와 foreground emphasis만 해제하고 canonical state는 그대로 두는 단계다.
 
 따라서 Phase 5-H에서 추가로 도입하는 semantic transition semantics는 unified Explorer UX에서 workspace 내부 transition을 어떤 orchestration boundary로 해석할지에 대한 상한선만 문서로 고정한다. 이번 단계에서 production migration, route collapse, canonical state owner 이전, repository/Navigator/persistence authority migration, transition의 route navigation 확장, transition의 canonical selection 단정, temporary focus carry-over의 persistence 확장은 시작하지 않는다.
+
+### 17.29 Phase 5-I 용어 약화 및 종료 안정화 기준
+
+Phase 5-I는 새 설계를 추가하는 단계가 아니라, Phase 5-A부터 Phase 5-H까지 사용한 reference vocabulary를 preview-only orchestration semantics boundary 안으로 다시 고정하는 terminology hardening 단계다. 이 단계는 production migration, runtime coordination 구현, route collapse, canonical owner migration을 의미하지 않는다.
+
+이번 단계에서는 `owner`, `canonical path`, `수렴`, `semantic navigation spine`, `global entry point`, `universal entry point`처럼 runtime ownership, production commitment, canonical authority로 오해될 수 있는 표현을 candidate / reference direction / future evaluation target / non-owner semantics로 약화한다. 이 약화는 기존 Phase 5-F/G/H boundary 의미를 바꾸는 것이 아니라, 같은 경계를 더 보수적으로 읽히게 만드는 문서 정리다.
+
+따라서 Phase 5 종료는 preview-only orchestration semantics의 boundary stabilization 완료만 뜻한다. 이는 production replacement 승인, runtime coordination implementation 시작, route collapse 개시, canonical state owner migration, repository/Navigator/persistence authority 이전을 의미하지 않는다.
+
+다음 단계인 Phase 6은 implementation 단계가 아니라 runtime coordination planning 단계로 진입해야 한다. 별도 승인 없는 route collapse, production migration, canonical owner migration, persistence authority 재배치는 Phase 5 종료만으로 정당화되지 않는다.

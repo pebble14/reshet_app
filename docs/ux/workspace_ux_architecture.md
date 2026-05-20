@@ -131,7 +131,7 @@ Graph traversal semantics, relation direction interpretation, expansion limit, e
 
 Persistent navigation은 사용자가 탐색하는 동안 semantic access를 유지하기 위해 존재한다.
 
-Strong Rail은 목표 semantic navigation spine이다. Strong Rail은 graph 영역이 global navigation 책임을 떠안지 않도록 하면서 Strong 기반 semantic anchor에 대한 persistent access를 제공한다.
+Strong Rail은 semantic navigation spine candidate다. Strong Rail은 graph 영역이 global navigation 책임을 떠안지 않도록 하면서 Strong 기반 semantic anchor에 대한 persistent access와 workspace orientation을 제공할 수 있는 candidate surface다. 이는 canonical navigation owner를 뜻하지 않는다.
 
 Strong Rail은 다음을 지원해야 한다.
 
@@ -153,11 +153,11 @@ Exact navigation behavior, jump mechanic, scrolling behavior, selection restorat
 
 ## 8. Search 철학
 
-Search는 semantic workspace로 들어가는 universal entry point이다.
+Search는 semantic workspace로 들어가는 semantic entry surface candidate다.
 
 Search는 사용자가 detail content를 읽고 있거나, graph를 확인하고 있거나, exploration path를 이어가는 중이더라도 개념적으로 전역 접근 가능해야 한다.
 
-Search는 사용자가 현재 semantic context를 불필요하게 버리지 않고 corpus에 지속적으로 접근할 수 있게 해야 한다.
+Search는 사용자가 현재 semantic context를 불필요하게 버리지 않고 corpus에 지속적으로 접근할 수 있게 해야 한다. 이 표현은 canonical selection owner나 production entry authority를 뜻하지 않는다.
 
 이 문서는 ranking, scoring, normalization, debounce, result rendering algorithm을 정의하지 않는다. 해당 사항은 search-specific implementation 또는 policy 문서가 담당한다.
 

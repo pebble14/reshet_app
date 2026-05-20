@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-05-20 Phase 5-I ExplorerWorkspace terminology hardening
+
+- Phase 5-I를 ExplorerWorkspace Phase 5 종료 안정화를 위한 terminology hardening 단계로 기록한다. 이 단계는 새 설계 추가가 아니라 기존 문서 표현을 preview-only orchestration semantics boundary에 맞춰 약화하는 작업이다.
+- `owner`, `canonical path`, `수렴`, `semantic navigation spine`, `global/universal entry point`처럼 runtime ownership, production commitment, canonical authority로 오해될 수 있는 표현을 candidate, reference direction, future evaluation target, non-owner semantics로 정리했다.
+- Phase 5 종료는 preview-only orchestration semantics의 boundary stabilization만 뜻하며, production migration, runtime coordination implementation, route collapse, canonical owner migration, repository/Navigator/persistence authority 이전을 의미하지 않음을 명시했다.
+- 다음 단계는 implementation이 아니라 runtime coordination planning 단계로만 해석해야 하며, 기존 Phase 5-F/G/H boundary 의미는 변경하지 않는다.
+
 ## 2026-05-20 Phase 5-H ExplorerWorkspace semantic transition boundary
 
 - Phase 5-H를 workspace 내부의 focus/context/surface 전환을 semantic transition boundary로 정리하는 문서 단계로 기록한다. 이 단계는 production migration이나 route collapse 단계가 아니다.
