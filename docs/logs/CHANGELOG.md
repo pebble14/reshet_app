@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2026-05-20 Phase 5-H ExplorerWorkspace semantic transition boundary
+
+- Phase 5-H를 workspace 내부의 focus/context/surface 전환을 semantic transition boundary로 정리하는 문서 단계로 기록한다. 이 단계는 production migration이나 route collapse 단계가 아니다.
+- semantic context transition은 workspace-local orchestration semantics로만 정리하고, route navigation이나 canonical selection 변경으로 확장하지 않는다.
+- focus transition boundary와 foreground surface transition은 authority 이동이 아니라 foreground/emphasis 전환으로만 정리한다.
+- temporary focus carry-over는 temporary orchestration continuity로만 제한하고, persistence, repository authority, Navigator authority로 확장하지 않는다.
+- graph/detail/context transition 관계와 fixed entry surface transition request를 owner migration 없이 workspace-local coordination 관점에서만 정리했다.
+- transition semantics와 canonical selection boundary를 분리하고, runtime/UI 코드 무변경, repository/Navigator/persistence authority 비이전 경계를 유지한다.
+
 ## 2026-05-20 Phase 5-G ExplorerWorkspace workspace composition boundary
 
 - Phase 5-G를 `ExplorerWorkspace` 내부 surface들의 workspace composition boundary를 문서로 정리하는 단계로 기록한다. 이 단계는 production migration이나 route collapse 단계가 아니다.

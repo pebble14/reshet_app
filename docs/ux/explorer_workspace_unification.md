@@ -1083,3 +1083,29 @@ Fixed entry surface / graph / detail / temporary focus 사이의 composition 관
 Composition contract와 authority boundary는 분리해서 유지한다. composition contract는 "함께 존재하는 방식"을 설명하고, authority boundary는 "누가 canonical state와 persistence를 소유하는가"를 설명한다. composition contract가 확대되어 canonical owner 재배치, repository/Navigator/persistence authority migration, route ownership 재정의로 이어지면 안 된다.
 
 따라서 Phase 5-G에서 추가로 도입하는 workspace composition semantics는 unified Explorer UX에서 surface들이 어떤 coordination contract로 함께 존재할 수 있는지에 대한 상한선만 문서로 고정한다. 이번 단계에서 production migration, route collapse, canonical state owner 이전, runtime plugin 구조 확장, workspace-local lifecycle의 canonical lifecycle 확장, detachable surface의 실제 분리 구현은 시작하지 않는다.
+
+### 17.28 Phase 5-H semantic transition boundary 기준
+
+Phase 5-H는 unified Explorer UX 관점에서 workspace 안의 focus/context/surface가 전환될 때 무엇이 유지되고 무엇이 해제되는지 정리하는 문서/경계 단계다. 이 단계는 production migration 단계가 아니며, route collapse 단계도 아니다. canonical state owner, repository owner, Navigator owner, persistence/history authority는 유지한다. runtime/UI 코드 변경도 이번 단계 범위에 포함하지 않는다.
+
+이번 단계에서 semantic context transition은 workspace-local orchestration semantics로만 정의한다. transition은 현재 workspace 안에서 어느 semantic context가 foreground에서 해석되는지, 어떤 contextual support surface가 남는지, temporary focus continuity가 어디까지 유지되는지를 조정하는 해석 후보다. 그러나 이 transition이 route navigation 자체이거나 canonical selection 변경 자체라고 단정하면 안 된다.
+
+Focus transition boundary는 authority boundary가 아니라 foreground orchestration boundary다. focus transition은 어떤 surface가 현재 전경에서 읽히고 어떤 surface가 보조 context로 남는지를 조정할 수 있지만, 이 전환만으로 canonical state owner가 바뀌지 않는다. `selectedWordId`, `graphCenterWordId`, `detailTargetWordId`는 explicit semantic action 없이 focus transition만으로 자동 변경되거나 병합되지 않는다.
+
+Foreground surface transition 역시 ownership 이동이 아니라 surface emphasis 전환으로만 해석한다. `GraphPanel`에서 `DetailPane`으로, `DetailPane`에서 `GraphPanel`으로, fixed entry surface에서 graph/detail foreground로 전환되는 경우가 있더라도 이는 현재 전경 설명 surface의 변화일 뿐이다. foreground surface transition을 Graph owner에서 Detail owner로, 또는 entry surface에서 canonical owner로 이동하는 근거로 읽으면 안 된다.
+
+Temporary focus carry-over는 temporary orchestration continuity로만 제한한다. 이전 foreground에서 형성된 temporary focus가 다음 foreground surface에서도 잠시 해석 continuity를 가질 수는 있다. 그러나 이 carry-over는 persistence 대상이 아니며 repository authority, Navigator authority, canonical selection authority를 만들지 않는다. carry-over가 유지되더라도 temporary focus disposal은 언제든 가능해야 하며, disposal은 persisted state나 route history를 남기지 않은 채 temporary orchestration state만 해제하는 의미로만 해석한다.
+
+Graph/detail/context transition 관계도 workspace-local coordination으로만 정리한다. Graph context가 detail foreground로 이어질 수 있고, detail context가 graph foreground로 이어질 수 있으며, 둘 다 shared semantic context를 잠시 참조할 수 있다. 그러나 이 관계는 transition request와 foreground continuity의 문제이지, Graph와 Detail 사이의 ownership 배분 문제가 아니다. graph/detail/context transition은 route migration, data authority migration, canonical owner migration의 근거가 아니다.
+
+Fixed entry surface는 transition request를 발생시키는 후보 surface로만 설명한다. `StrongRail`, `GlobalSearch`, `AddWordFixedAction` 같은 fixed entry surface는 현재 workspace context에 대해 retarget, creation, foreground change 같은 transition request를 발생시킬 수 있다. 그러나 request를 발생시킨다는 사실만으로 entry surface가 transition 결과 state를 직접 소유하지는 않는다. entry surface는 request source일 뿐, transition owner가 아니다.
+
+Transition semantics와 canonical selection boundary도 분리한다. transition은 foreground context를 바꾸거나 temporary focus continuity를 조정할 수 있지만, canonical selection boundary를 넘지 않는다. temporary focus carry-over, foreground surface transition, semantic context retarget은 explicit selection action 없이 canonical selection으로 승격되지 않는다. 따라서 transition 결과와 canonical selection 결과는 서로 다른 contract로 유지해야 한다.
+
+Semantic transition lifecycle은 다음과 같이 해석한다.
+
+- `transition acquisition`은 explicit retarget request, explicit foreground change request, linked context request, temporary focus continuity trigger 같은 계기로 새로운 foreground context가 후보가 되는 단계다.
+- `transition carry-over`는 이전 foreground의 temporary focus가 다음 surface에서 잠시 continuity를 유지하는 단계다.
+- `transition disposal`은 continuity가 더 이상 필요 없을 때 temporary focus와 foreground emphasis만 해제하고 canonical state는 그대로 두는 단계다.
+
+따라서 Phase 5-H에서 추가로 도입하는 semantic transition semantics는 unified Explorer UX에서 workspace 내부 transition을 어떤 orchestration boundary로 해석할지에 대한 상한선만 문서로 고정한다. 이번 단계에서 production migration, route collapse, canonical state owner 이전, repository/Navigator/persistence authority migration, transition의 route navigation 확장, transition의 canonical selection 단정, temporary focus carry-over의 persistence 확장은 시작하지 않는다.
