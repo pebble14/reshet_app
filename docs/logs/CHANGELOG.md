@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-05-20 Phase 6-B owner-preserving runtime coordination candidate inventory
+
+- Phase 6-B를 ExplorerWorkspace Phase 6-A 경계를 유지한 owner-preserving runtime coordination candidate inventory 단계로 기록한다. 이번 단계는 implementation 단계가 아니며 runtime execution model, runtime synchronization architecture, route collapse, canonical owner migration을 승인하지 않는다.
+- inventory 분류는 `passive coordination candidate`와 `explicit request coordination candidate`로만 제한한다. 여기서 explicit request coordination candidate는 runtime action/execution 의미가 아니라 명시적 요청 후보를 약하게 기록하는 reference vocabulary다.
+- 모든 candidate에 current owner / authority 유지, candidate별 forbidden expansion, `implementation status: not approved`를 함께 기록한다.
+- `ExplorerWorkspace`를 coordinator, controller, owner로 승격하지 않으며, Provider/Repository/Navigator/persistence authority, existing production route 기본값, `WordExplorerScreen` production authority는 그대로 유지한다. runtime/UI 코드는 변경하지 않는다.
+
 ## 2026-05-20 Phase 6-A runtime coordination boundary audit
 
 - Phase 6-A를 ExplorerWorkspace Phase 6 진입 전 문서 경계 audit 단계로 기록한다. 이 단계는 runtime/UI 구현 단계가 아니며, runtime execution model 승인 문서도 아니다.

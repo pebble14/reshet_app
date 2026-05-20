@@ -1149,3 +1149,89 @@ Phase 6-A는 runtime coordination planning으로 읽힐 수 있는 기존 문서
 - `현재 authority 유지`:
   - runtime/UI 코드 수정 없이 현재 Provider/Repository/Navigator/persistence authority, existing production route 기본값, `WordExplorerScreen` production authority 경계를 유지한다.
   - 별도 승인 없는 canonical owner migration, route collapse, persistence authority 재배치는 정당화되지 않는다.
+
+### 17.31 Phase 6-B owner-preserving runtime coordination candidate inventory 기준
+
+Phase 6-B는 Phase 6-A 경계를 유지한 채 ExplorerWorkspace 문맥에서 논의 가능한 runtime coordination 후보를 owner-preserving inventory로만 정리하는 문서 단계다. 이번 단계는 implementation 단계가 아니며 runtime execution model, runtime synchronization architecture, route collapse, canonical owner migration, Provider/Repository/Navigator/persistence authority 이전을 승인하지 않는다.
+
+이번 inventory는 `passive coordination candidate`와 `explicit request coordination candidate`로만 구분한다. 여기서 explicit request coordination candidate는 runtime action 또는 execution 주체를 뜻하지 않으며, 사용자의 명시적 요청 후보를 reference vocabulary로 약하게 분류하는 표현이다. `ExplorerWorkspace`는 여전히 coordinator, controller, owner가 아니며 workspace-level semantic reference label로만 유지한다.
+
+#### 17.31.1 passive coordination candidate inventory
+
+- candidate 1
+  - coordination candidate: semantic state projection inventory
+  - 현재 owner / authority: `WordExplorerScreen`이 graph center, selected word, split-view detail display item, explorer history를 직접 보유하고, `WordGraphScreen`이 graph center, selected word, viewport, visible graph data를 직접 보유하며, `WordDetailScreen`이 detail reread와 display ownership을 유지한다.
+  - owner-preserving planning scope: `selectedWordId`, `graphCenterWordId`, `detailTargetWordId`, `layoutPreset`, `origin`를 projection/reference inventory로만 정리한다.
+  - forbidden expansion: state 병합, automatic synchronization, canonical owner 선언, Provider/Repository/Navigator/persistence authority 이전
+  - implementation status: not approved
+- candidate 2
+  - coordination candidate: workspace surface composition contract inventory
+  - 현재 owner / authority: `HomeScreen`, `WordExplorerScreen`, `WordGraphScreen`, `WordDetailScreen`, Flutter `Navigator`가 기존 production entry, screen, route authority를 유지한다.
+  - owner-preserving planning scope: `StrongRail`, `GlobalSearch`, `GraphPanel`, `DetailPane`, `AddWordFixedAction`, temporary focus candidate의 공존 관계를 composition/reference inventory로만 정리한다.
+  - forbidden expansion: `ExplorerWorkspace`를 coordinator/controller/owner로 서술, canonical contract 이전, registration API 또는 runtime plugin 구조 확정
+  - implementation status: not approved
+- candidate 3
+  - coordination candidate: route alias / layout preset reference mapping inventory
+  - 현재 owner / authority: existing Graph/Detail/Explorer route 의미와 route stack authority는 Flutter `Navigator`와 기존 production route가 유지한다.
+  - owner-preserving planning scope: `graphFocused`, `detailFocused`, `balanced`, snapshot restore를 route alias reference mapping으로만 inventory화한다.
+  - forbidden expansion: route collapse 승인, route 제거 순서 확정, runtime route rewiring, route ownership 재정의
+  - implementation status: not approved
+- candidate 4
+  - coordination candidate: workspace snapshot / restore vocabulary inventory
+  - 현재 owner / authority: `WordExplorerScreen` 내부 history와 Flutter `Navigator` route history는 분리된 채로 유지되며, persistence authority도 기존 production 경계를 유지한다.
+  - owner-preserving planning scope: snapshot field와 `restore action` label을 history/restore reference vocabulary로만 정리한다.
+  - forbidden expansion: restore execution owner 지정, persisted snapshot authority 이전, `Navigator` history 병합, display item/graph data/raw carrier 저장
+  - implementation status: not approved
+- candidate 5
+  - coordination candidate: graph/detail foreground synchronization and temporary focus boundary inventory
+  - 현재 owner / authority: `WordExplorerScreen`이 split-view semantic 조율을 유지하고, `WordGraphScreen`이 graph interaction local authority를 유지하며, `WordDetailScreen`이 detail reading authority를 유지한다.
+  - owner-preserving planning scope: foreground, temporary focus, carry-over, disposal을 non-owner coordination boundary 후보로만 정리한다.
+  - forbidden expansion: Graph/Detail ownership 부여, canonical selection 자동 승격, persisted focus policy 확정, runtime synchronization architecture 승인
+  - implementation status: not approved
+
+#### 17.31.2 explicit request coordination candidate inventory
+
+- candidate 1
+  - coordination candidate: fixed navigation entry request candidate
+  - 현재 owner / authority: `HomeScreen`의 현재 strong entry 의미, Flutter `Navigator`의 route push authority, `WordExplorerScreen`의 production explorer authority가 유지된다.
+  - owner-preserving planning scope: `StrongRail`의 explicit workspace entry request, explicit anchor request를 request candidate vocabulary로만 정리한다.
+  - forbidden expansion: Rail의 selected/detail/center authority 흡수, route push ownership 부여, persisted layout 결정 주체화
+  - implementation status: not approved
+- candidate 2
+  - coordination candidate: search retarget request candidate
+  - 현재 owner / authority: `HomeScreen`이 search query와 result entry state를 유지하고, 실제 후속 route와 reading authority는 기존 production screen과 `Navigator`가 유지한다.
+  - owner-preserving planning scope: `GlobalSearch`의 explicit retarget request, semantic suggestion, temporary focus initiation candidate를 request vocabulary로만 정리한다.
+  - forbidden expansion: Search의 canonical selection owner화, graph/detail owner화, route push/history restore ownership 부여, persistence authority 이전
+  - implementation status: not approved
+- candidate 3
+  - coordination candidate: explicit graph focus / center request candidate
+  - 현재 owner / authority: `WordExplorerScreen`과 `WordGraphScreen`이 graph center authority와 selection 관련 production authority를 계속 유지한다.
+  - owner-preserving planning scope: `centerGraphOnWord`, `openGraphFocus`, linked center request를 explicit center request candidate로만 inventory화한다.
+  - forbidden expansion: automatic center propagation, graph execution coordinator 선언, route rewrite 승인, canonical owner migration 정당화
+  - implementation status: not approved
+- candidate 4
+  - coordination candidate: explicit detail focus / linked context request candidate
+  - 현재 owner / authority: `WordExplorerScreen`이 split-view detail target과 selected display context를 유지하고, `WordDetailScreen`이 detail route reread와 display ownership을 유지한다.
+  - owner-preserving planning scope: `setDetailTarget`, `openDetailFocus`, linked context request를 explicit detail request candidate로만 정리한다.
+  - forbidden expansion: detail target owner migration, graph-to-detail automatic route execution, display owner transfer, persistence authority 이전
+  - implementation status: not approved
+- candidate 5
+  - coordination candidate: add-word follow-up request candidate
+  - 현재 owner / authority: create 이후 후속 흐름은 기존 caller screen, repository post-save helper, Flutter `Navigator`, persistence authority가 유지한다.
+  - owner-preserving planning scope: `AddWordFixedAction`, `completeAddWord`, creation follow-up interpretation을 explicit creation/follow-up request candidate로만 정리한다.
+  - forbidden expansion: repository write owner 이전, canonical insertion authority 부여, auto center change 정책 확정, route replacement 정책 고정
+  - implementation status: not approved
+- candidate 6
+  - coordination candidate: post-edit refresh request candidate
+  - 현재 owner / authority: `WordDetailScreen`, `WordExplorerScreen`, `WordGraphScreen`이 각 caller 위치에서 reread/refresh 후속 authority를 유지한다.
+  - owner-preserving planning scope: `refreshAfterEdit`를 semantic owner 변경 없는 explicit refresh request candidate로만 정리한다.
+  - forbidden expansion: refresh coordinator 신설, semantic owner 변경, repository/Navigator/persistence authority 흡수
+  - implementation status: not approved
+
+#### 17.31.3 inventory-wide forbidden expansion
+
+- `ExplorerWorkspace`를 runtime coordinator, runtime controller, runtime owner로 승격하지 않는다.
+- 어떤 candidate도 canonical owner migration proposal, route collapse 승인 근거, runtime execution model 확정, runtime synchronization architecture 승인으로 해석하지 않는다.
+- Provider/Repository/Navigator/persistence authority는 기존 production 경계에 그대로 둔다.
+- `WordExplorerScreen`, `WordGraphScreen`, `WordDetailScreen`, `HomeScreen`, Flutter `Navigator`의 현재 authority를 inventory만으로 재배치하지 않는다.
+- `implementation-ready`, `approved for implementation`, `eventual execution owner`처럼 implementation readiness로 읽히는 표현을 추가하지 않는다.
