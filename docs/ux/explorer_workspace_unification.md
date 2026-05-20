@@ -345,13 +345,13 @@ ExplorerWorkspace
 └─ AddWordFixedAction
 ```
 
-`ExplorerWorkspace`는 route나 screen 병합 구현이 아니라, 장기 reference vocabulary 관점에서 workspace-level semantic state를 설명하기 위한 candidate coordination boundary를 의미한다. 이는 현재 runtime owner 선언이나 production migration commitment를 뜻하지 않는다.
+`ExplorerWorkspace`는 route나 screen 병합 구현이 아니라, 장기 reference vocabulary 관점에서 workspace-level semantic state를 설명하기 위한 candidate coordination boundary를 의미한다. 이는 현재 runtime 권한 주체 선언이나 production migration commitment를 뜻하지 않는다.
 
 이 문서에서 `StrongRail`은 기존 authority 문서의 `Strong Rail` 역할을 Explorer workspace composition 안에서 부르는 패널명이다. 명칭은 구현 class 도입을 뜻하지 않는다.
 
 ### 8.2 semantic state reference vocabulary
 
-`ExplorerWorkspace`는 이 문서 안에서 semantic state를 설명하기 위한 preview-only coordination semantics의 기준축 후보로만 사용된다. Panel은 받은 state를 표시하고 사용자 event를 workspace action request로 전달한다. 이는 현재 runtime ownership이나 canonical authority를 뜻하지 않는다.
+`ExplorerWorkspace`는 이 문서 안에서 semantic state를 설명하기 위한 preview-only coordination semantics의 기준축 후보로만 사용된다. 이때 `workspace action request`라는 표현은 panel event와 semantic state 사이의 관계를 설명하기 위한 preview/reference interaction vocabulary일 뿐이다. 이는 runtime interaction contract, runtime synchronization architecture, runtime execution model 승인, runtime authority 경계, canonical authority를 뜻하지 않는다.
 
 | 상태 | reference boundary | 의미 | 변경 원칙 |
 | --- | --- | --- | --- |
@@ -387,7 +387,7 @@ ExplorerWorkspace
 
 ## 9. Panel orchestration
 
-Panel은 semantic state를 직접 소유하지 않는다. Panel은 표시와 event emit을 담당하며, 모든 semantic transition은 `ExplorerWorkspace` action으로 귀결된다.
+Panel은 semantic state를 직접 소유하지 않는다. 이 절에서 `ExplorerWorkspace` action이라는 표현은 panel event와 semantic state 변화를 연결해 설명하는 preview/reference interaction label일 뿐이다. 이는 runtime action contract나 실행 주체 선언을 뜻하지 않는다.
 
 | Panel | 역할 | 받는 state | emit하는 event | 소유하지 않는 것 |
 | --- | --- | --- | --- | --- |
@@ -395,7 +395,7 @@ Panel은 semantic state를 직접 소유하지 않는다. Panel은 표시와 eve
 | `GlobalSearch` | corpus 진입을 위한 global search entry 제공 | 현재 workspace context, 필요 시 query/result 표시 상태 | search result 선택, result를 detail 또는 graph context로 여는 요청 | graph traversal, detail reading, center 직접 변경 |
 | `GraphPanel` | relation graph surface 표시와 graph interaction event 전달 | `graphCenterWordId`, `selectedWordId`, `layoutPreset` | graph node 선택, graph center 요청, graph 관련 add 요청 | workspace semantic state, route stack, detail target |
 | `DetailPane` | `detailTargetWordId`의 읽기 surface 제공 | `detailTargetWordId`, `selectedWordId`, `layoutPreset` | detail target 관련 graph 요청, edit 요청, linked word 선택 요청 | graph center, search state, route authority |
-| `AddWordFixedAction` | exploration 중 생성 흐름에 진입하는 persistent action 제공 | `selectedWordId`, `graphCenterWordId`, `detailTargetWordId` | add word 시작, 생성 결과를 workspace action으로 전달 | 저장소 쓰기 contract, graph production path, center 직접 변경 |
+| `AddWordFixedAction` | exploration 중 생성 흐름에 진입하는 persistent action 제공 | `selectedWordId`, `graphCenterWordId`, `detailTargetWordId` | add word 시작, 생성 후속 요청 후보 전달 | 저장소 쓰기 contract, graph production path, center 직접 변경 |
 
 Panel 내부에 필요한 transient UI state는 허용될 수 있다. 단, transient UI state는 `selectedWordId`, `graphCenterWordId`, `detailTargetWordId`의 owner가 될 수 없다.
 
@@ -413,9 +413,11 @@ Panel 내부에 필요한 transient UI state는 허용될 수 있다. 단, trans
 
 ## 11. Navigation semantic 재정의
 
-### 11.1 route 이동에서 workspace state transition으로
+### 11.1 route 이동의 workspace state transition 해석 후보
 
-장기 목표에서 navigation은 route 이동이 아니라 workspace state transition으로 정의한다.
+장기 reference 관점에서는 navigation을 route 이동이 아니라 `workspace state transition`이라는 preview/reference semantics로 해석해 기록한다. 이 표현은 runtime contract, runtime execution model, eventual runtime structure 확정을 뜻하지 않는다.
+
+아래 표의 `workspace state transition`, `center action`, `graphFocused`, `detailFocused`는 planning input과 reference candidate 수준의 vocabulary이며, runtime orchestration implementation readiness나 route 구조 승인을 의미하지 않는다.
 
 | 현재 흐름 | workspace semantic 해석 |
 | --- | --- |
@@ -427,12 +429,12 @@ Panel 내부에 필요한 transient UI state는 허용될 수 있다. 단, trans
 | Detail -> Graph | `detailTargetWordId`를 명시적 center action으로 `graphCenterWordId`에 반영 + `graphFocused` |
 | Graph node selection | `selectedWordId`와 필요 시 `detailTargetWordId` 변경, `graphCenterWordId`는 유지 |
 | Graph node center 요청 | `graphCenterWordId` 변경 |
-| Add Word 후 이동 | 생성 결과를 workspace action으로 반영하되 center 변경은 명시적 center action에 한정 |
+| Add Word 후 이동 | 생성 후속 해석 후보를 기록하되 center 변경은 명시적 center action 후보에 한정 |
 | Edit Word 후 이동 | 기존 semantic state를 유지하고 display/data refresh만 수행 |
 
-### 11.2 route alias 방향
+### 11.2 route alias reference direction
 
-Graph route와 Detail route는 장기적으로 별도 semantic destination이 아니라 workspace preset alias로 재정의한다.
+Graph route와 Detail route는 장기 reference 관점에서 별도 semantic destination이 아니라 workspace preset alias 후보로 해석해 볼 수 있다.
 
 | 기존 route 의미 | 장기 alias 의미 |
 | --- | --- |
@@ -440,13 +442,13 @@ Graph route와 Detail route는 장기적으로 별도 semantic destination이 �
 | Detail route | `ExplorerWorkspace(layoutPreset: detailFocused)` |
 | Explorer route | `ExplorerWorkspace(layoutPreset: balanced)` 또는 이전 workspace snapshot restore |
 
-이 alias 정의는 즉시 route 제거를 뜻하지 않는다. 기존 route는 compatibility layer로 유지하면서 내부 semantic을 workspace state transition으로 먼저 수렴한다.
+이 alias 정의는 즉시 route 제거를 뜻하지 않는다. 기존 route는 compatibility layer로 유지한 채, 내부 semantic을 `workspace state transition` reference vocabulary로 읽어 볼 수 있다는 정도만 기록한다. 이 문장은 runtime planning 승인이나 route collapse 선결정을 뜻하지 않는다.
 
-## 12. Route collapse 전략
+## 12. route collapse 관련 reference 메모
 
-Route 제거는 마지막 단계다. route를 먼저 제거하면 active graph production path, detail reread 흐름, edit/create 후속 이동의 의미가 동시에 흔들릴 수 있다.
+이 절의 route collapse 언급은 historical/reference roadmap 메모다. route 제거 순서, runtime orchestration implementation readiness, eventual route structure 확정을 승인하지 않는다.
 
-Collapse 순서는 다음과 같다.
+당시 reference 논의에서는 다음 같은 단계적 분해 표현을 사용했다.
 
 1. semantic collapse
 2. implementation collapse
@@ -454,15 +456,15 @@ Collapse 순서는 다음과 같다.
 
 ### 12.1 semantic collapse
 
-기존 route 이동의 의미를 `ExplorerWorkspace` state transition으로 문서화하고 typed contract로 고정한다. 이 단계에서는 route, screen, graph production path를 변경하지 않는다.
+기존 route 이동의 의미를 `ExplorerWorkspace` state transition reference로 문서화해 볼 수 있다는 메모다. 이 단계는 typed contract 확정, route 변경, screen 변경, graph production path 변경 승인을 뜻하지 않는다.
 
 ### 12.2 implementation collapse
 
-기존 route가 내부적으로 같은 workspace state와 panel orchestration을 사용하도록 점진적으로 연결한다. Graph/Detail route는 compatibility layer로 남는다.
+기존 route가 장기적으로 같은 workspace semantics를 공유할 수 있는지 검토 후보로만 남긴다. Graph/Detail route는 여전히 compatibility layer reference로만 기록한다.
 
 ### 12.3 route collapse
 
-compatibility layer가 더 이상 behavior 차이를 만들지 않는 것이 확인된 뒤 route 제거를 검토한다. route collapse는 Phase 2-A의 범위가 아니다.
+compatibility layer 차이 축소 여부가 확인되더라도 별도 승인 없이는 route 제거를 결정하지 않는다. route collapse는 Phase 2-A의 범위가 아니다.
 
 ## 13. Responsive composition
 
@@ -479,7 +481,7 @@ Hidden panel은 상태 제거를 의미하지 않는다. 이는 `responsive_layo
 
 ## 14. Workspace history
 
-Workspace history는 route history가 아니라 workspace snapshot history로 정의한다.
+이 문서에서 `workspace history`는 route history와 구분해 보기 위한 preview/reference snapshot vocabulary다. 이는 runtime history contract, persisted snapshot authority, restore execution model 승인을 뜻하지 않는다.
 
 Snapshot 저장 대상은 다음과 같다.
 
@@ -501,13 +503,15 @@ Snapshot 저장 대상은 다음과 같다.
 - `editReturn`
 - `snapshotRestore`
 
-History restore는 panel이 직접 수행하지 않는다. `ExplorerWorkspace`의 restore action이 snapshot을 적용하고, 각 panel은 적용된 state를 표시한다.
+History restore 관련 서술도 preview/reference interaction vocabulary로만 제한한다. 여기서 `restore action`은 snapshot 복원 의미를 설명하기 위한 label일 뿐이며, `ExplorerWorkspace` runtime restore contract나 복원 실행 주체 선언을 뜻하지 않는다. panel은 적용 후보 state를 표시하는 surface로만 기록한다.
 
 ## 15. 상태 충돌 방지 전략
 
-모든 semantic transition은 `ExplorerWorkspace` action으로만 발생한다. Panel은 `selectedWordId`, `graphCenterWordId`, `detailTargetWordId`를 직접 소유하거나 변경하지 않는다.
+이 절에서 semantic transition은 `ExplorerWorkspace` action이라는 preview/reference interaction label로만 묶어 서술한다. 이는 runtime action contract나 실행 흐름 승인을 뜻하는 문장이 아니다. Panel은 `selectedWordId`, `graphCenterWordId`, `detailTargetWordId`를 직접 소유하거나 변경하지 않는다.
 
-### 15.1 action별 변경 가능 state 범위
+### 15.1 preview/reference action label별 변경 가능 state 해석 범위
+
+아래 action 이름은 preview/reference interaction vocabulary이며, runtime API나 실행 contract를 확정하지 않는다.
 
 | action | 변경 가능 state | 변경 금지 state | 비고 |
 | --- | --- | --- | --- |
@@ -526,14 +530,14 @@ History restore는 panel이 직접 수행하지 않는다. `ExplorerWorkspace`�
 - graph center 변경은 `centerGraphOnWord`, `openGraphFocus`, `restoreWorkspaceSnapshot` 같은 명시적 center action에만 허용한다.
 - selection과 detail target 동기화는 action contract에 명시된 경우에만 수행한다.
 - layout 변경은 semantic object 변경과 분리한다.
-- panel-local callback은 곧바로 상태를 바꾸지 않고 workspace action 요청으로만 전달한다.
-- compatibility route는 내부적으로 workspace action을 호출하는 adapter로 제한한다.
+- panel-local callback에 대한 서술은 곧바로 상태를 바꾸는 runtime callback contract가 아니라, preview/reference interaction 요청 관계를 설명하는 수준에 한정한다.
+- compatibility route 관련 서술도 내부 semantic을 preview/reference interaction vocabulary에 대응시켜 설명하는 adapter candidate 수준으로만 제한한다. runtime bridge 구현 승인을 뜻하지 않는다.
 
 ## 16. Embedded graph vs standalone graph
 
 Embedded `GraphPanel`은 장기 reference direction에서 평가되는 graph experience candidate다. 이는 graph가 application shell이 아니라 workspace 안의 contextual semantic surface라는 authority 문서의 방향과 일치한다. 이 표현은 production replacement를 의미하지 않는다.
 
-Standalone graph는 장기적으로 다음 중 하나로 재정의한다.
+Standalone graph에 대해서는 장기 reference 관점에서 다음 같은 재해석 후보만 기록한다.
 
 - compatibility layer
 - `graphFocused` preset alias
@@ -550,23 +554,25 @@ WordGraphScreen
 
 Phase 2-A는 이 path를 변경하지 않는다. GraphPanel embed 단계에서도 production path 변경과 workspace embed 변경은 분리해서 검토해야 한다.
 
-## 17. 단계적 migration architecture
+## 17. historical/reference roadmap 기록
 
-Explorer 단일 workspace 전환은 다음 순서를 따른다.
+아래 표와 하위 절은 Explorer 단일 workspace 관련 논의에서 누적된 historical/reference roadmap 기록이다.
+
+이 기록은 deterministic roadmap, 승인된 runtime planning 순서, future implementation inevitability, eventual runtime structure 확정을 뜻하지 않는다. 또한 아래 단계명과 type/action 이름은 historical label일 뿐이며 현재 Phase 6 runtime contract나 runtime execution model 승인 문구가 아니다.
 
 | Phase | 목표 | 비고 |
 | --- | --- | --- |
 | Phase 2-A | architecture 문서 확정 | 이번 문서화 작업이다. 구현 변경은 없다. |
-| Phase 2-B | 최소 typed contract 도입 | layout preset, transition origin, workspace state, history entry를 먼저 정의한다. |
-| Phase 2-C | `ExplorerWorkspace` shell 도입 | route 제거 없이 placeholder shell boundary를 만든다. |
-| Phase 2-D | panel orchestration callback boundary 도입 | 실제 panel 연결 없이 placeholder event boundary를 먼저 둔다. |
-| Phase 2-E | `GraphPanel` embed | active graph production path를 보호하면서 embedded graph를 future evaluation target으로 두는 reference direction을 정리한다. |
-| Phase 2-F | `DetailPane` embed | detail reading surface를 workspace composition candidate로 평가하는 reference direction을 정리한다. |
-| Phase 2-G | route alias 전환 | Graph/Detail route를 `graphFocused`/`detailFocused` alias로 전환한다. |
-| Phase 2-H | 내부 navigation 축소 | route push 중심 흐름을 workspace action 중심 흐름으로 줄인다. |
-| Phase 2-I | route collapse 검토 | compatibility layer 제거 가능성을 검토한다. |
+| Phase 2-B | 최소 typed contract 도입 | layout preset, transition origin, workspace state, history entry를 먼저 정리 후보로 둔다. |
+| Phase 2-C | `ExplorerWorkspace` shell 도입 | route 제거 없이 placeholder shell boundary를 두는 방향을 검토한다. |
+| Phase 2-D | panel orchestration callback boundary 도입 | 실제 panel 연결 없이 placeholder event boundary를 먼저 두는 방향을 검토한다. |
+| Phase 2-E | `GraphPanel` embed | active graph production path를 보호하면서 embedded graph를 future evaluation target으로 두는 reference direction을 정리 후보로 남긴다. |
+| Phase 2-F | `DetailPane` embed | detail reading surface를 workspace composition candidate로 평가하는 reference direction을 정리 후보로 남긴다. |
+| Phase 2-G | route alias 전환 | Graph/Detail route를 `graphFocused`/`detailFocused` alias로 해석하는 후보를 기록한다. |
+| Phase 2-H | 내부 navigation 축소 | route push 중심 흐름을 preview/reference interaction vocabulary 중심 해석으로 줄여 볼 수 있는지 검토한다. |
+| Phase 2-I | route collapse 검토 | compatibility layer 제거 가능성을 historical/reference 관점에서만 검토한다. |
 
-Phase 2-I 전에는 route 제거를 완료 상태로 선언하지 않는다. Phase 2-E 전에는 embedded graph를 production replacement나 canonical graph experience로 완료 선언하지 않는다. Phase 2-B 전에는 public boundary를 raw carrier로 확장하지 않는다.
+Phase 2-I 전에는 route 제거를 완료 상태로 선언하지 않는다. Phase 2-E 전에는 embedded graph를 production replacement나 canonical graph experience로 완료 선언하지 않는다. Phase 2-B 전에는 public boundary를 raw carrier로 확장하지 않는다. 특히 Phase 2-G~2-I의 `route alias 전환`, `내부 navigation 축소`, `route collapse 검토`는 runtime orchestration implementation readiness, route collapse 승인, canonical owner migration inevitability를 뜻하지 않는다.
 
 ### 17.1 Phase 2-B 최소 contract 도입 결과
 
@@ -902,22 +908,22 @@ Phase 2-A에서는 다음을 하지 않는다.
 
 ## 19. 정리
 
-Phase 2-A의 결론은 `ExplorerWorkspace`가 semantic state reference vocabulary와 panel orchestration candidate boundary의 중심으로 검토되어야 한다는 것이다.
+Phase 2-A의 정리 대상은 `ExplorerWorkspace`를 semantic state reference vocabulary와 panel orchestration candidate boundary를 inventory하는 reference candidate로 보수적으로 검토하는 데 있다.
 
-`selectedWordId`, `graphCenterWordId`, `detailTargetWordId`는 분리된 상태로 유지한다. 특히 `graphCenterWordId`는 명시적 center action에서만 변경한다. Panel은 표시와 event 전달을 담당하며, semantic transition은 workspace action으로만 발생한다.
+`selectedWordId`, `graphCenterWordId`, `detailTargetWordId`는 분리된 상태로 유지한다. 특히 `graphCenterWordId`는 명시적 center action에서만 변경한다. 이때 `workspace action`, `semantic transition` 같은 표현은 preview/reference interaction vocabulary일 뿐이며, runtime 실행 주체나 authority semantics를 뜻하지 않는다.
 
-장기적으로 embedded `GraphPanel`은 canonical graph experience의 migration candidate direction으로 평가될 수 있고, standalone graph와 detail route는 compatibility layer 또는 layout preset alias 방향으로 검토될 수 있다. 이는 production replacement나 route collapse를 즉시 의미하지 않으며 active graph production path는 마지막까지 보호한다.
+당시 reference 논의에서는 embedded `GraphPanel`을 canonical graph experience의 migration candidate direction으로 평가할 수 있다고 기록했고, standalone graph와 detail route도 compatibility layer 또는 layout preset alias 방향의 검토 후보로 남겼다. 이는 production replacement, route collapse 승인, canonical owner migration inevitability를 의미하지 않으며 active graph production path는 마지막까지 보호한다.
 
-Phase 2-A에서는 구현하지 않는다. Phase 2-B에서는 최소 typed contract만 도입하고 기존 구현 흐름은 바꾸지 않는다.
+이 문서는 runtime execution model 승인 문서가 아니라, Phase 2-A부터 Phase 5-I까지 누적된 reference semantics와 boundary를 보수적으로 보존하는 문서다.
 ### 17.20 Phase 5-A preview-only layout orchestration 기준
 
 Phase 5-A는 preview-only layout orchestration 단계다. 이 단계는 production replacement 단계가 아니다. `WordExplorerScreen` production owner와 production route 기본값은 유지한다.
 
-이번 단계에서 ExplorerWorkspace preview는 layout coordinator로만 동작한다. layout coordination만 수행한다. 허용 범위는 preview 내부 `balanced`, `graphFocused`, `detailFocused` preset 전환, graph/detail panel visibility orchestration, split ratio orchestration, preview composition layout 조정이다.
+이번 단계에서 ExplorerWorkspace preview는 preview-only layout reference shell로만 서술된다. 허용 범위는 preview 내부 `balanced`, `graphFocused`, `detailFocused` preset 전환, graph/detail panel visibility orchestration, split ratio orchestration, preview composition layout 조정이다.
 
 Phase 5-A의 preset 전환은 semantic id와 canonical item은 유지한 채 layout만 조율해야 한다. `selectedWordId`, `graphCenterWordId`, `detailTargetWordId`는 preset 전환만으로 변경되지 않는다. panel visibility와 split ratio는 preview host 내부 local orchestration state로만 관리한다.
 
-이번 단계에서 ExplorerWorkspace preview는 repository owner, Navigator owner, canonical authority, persistence/history authority가 아니다. Preview orchestration이 repository read/write, route stack, route restore, canonical selection, persistence/history ownership으로 해석되면 범위를 벗어난다.
+이번 단계에서 ExplorerWorkspace preview는 repository, Navigator, canonical authority, persistence/history authority의 주체가 아니다. Preview orchestration이 repository read/write, route stack, route restore, canonical selection, persistence/history 권한 경계로 해석되면 범위를 벗어난다.
 
 Preview 내부 panel visibility와 split ratio 조율은 production route 교체나 route collapse를 정당화하지 않는다. `WordExplorerScreen` 제거 또는 대체, `HomeScreen` production entry 변경, preview 구조의 production navigation 연결은 금지한다.
 
@@ -937,7 +943,7 @@ Phase 5-A-1의 preview access는 production Navigator tree에 preview를 연결�
 
 Phase 5-B는 ExplorerWorkspace preview 안에서 layout state policy와 preset UX semantics를 더 명확히 고정하는 단계다. 이 단계도 production replacement가 아니다. `WordExplorerScreen` production owner, production route 기본값, repository owner, Navigator owner, canonical authority, persistence/history authority는 유지한다.
 
-이번 단계에서 ExplorerWorkspace preview는 계속 preview-only orchestration coordinator로만 동작한다. preset과 panel visibility state는 같은 개념으로 결합하지 않는다.
+이번 단계에서 ExplorerWorkspace preview는 계속 preview-only orchestration reference shell로만 서술된다. preset과 panel visibility state는 같은 개념으로 결합하지 않는다.
 
 - `layoutPreset`은 권장 orchestration snapshot이다.
 - panel visibility state는 현재 local workspace state다.
@@ -1013,7 +1019,7 @@ Search anchor semantics 역시 비권위 표현으로만 유지한다.
 
 - `entry` 의미는 corpus 안의 다른 semantic target으로 들어가는 시작점 후보라는 뜻이다.
 - `orientation` 의미는 현재 workspace context를 잃지 않은 채 사용자가 다른 target을 찾도록 돕는 기준 surface라는 뜻이다.
-- `explicit retarget request` 의미는 사용자가 명시적으로 고른 target을 workspace action에 전달하는 요청 surface라는 뜻이다.
+- `explicit retarget request` 의미는 사용자가 명시적으로 고른 target을 preview/reference interaction label로 전달하는 요청 surface라는 뜻이다.
 
 따라서 Phase 5-D에서 추가로 도입하는 search semantics는 unified Explorer UX에서 Search를 fixed anchor / semantic entry point candidate로 해석할 수 있는 상한선만 문서로 고정한다. 이번 단계에서 Search는 canonical selection owner, graph/detail owner, route owner, persistence owner가 아니며, `WordExplorerScreen` authority 이전, production navigation replacement, repository/Navigator/persistence authority migration, route collapse를 시작하지 않는다. runtime/UI 코드 변경도 이번 단계 범위에 포함하지 않는다.
 
@@ -1030,7 +1036,7 @@ Rail/Search/Graph/Detail과의 관계도 후보 관계로만 정리한다. `AddW
 Creation entry semantics 역시 비권위 표현으로만 유지한다.
 
 - `creation entry` 의미는 새 word 생성 흐름으로 들어가는 시작점 후보라는 뜻이다.
-- `explicit creation request` 의미는 사용자가 명시적으로 생성 시작 의도를 workspace action에 전달하는 요청 surface라는 뜻이다.
+- `explicit creation request` 의미는 사용자가 명시적으로 생성 시작 의도를 preview/reference interaction label로 전달하는 요청 surface라는 뜻이다.
 - `global` 의미는 특정 panel owner가 아니라 workspace composition 전반에서 접근 가능한 action 후보라는 뜻이다.
 
 따라서 Phase 5-E에서 추가로 도입하는 Add Word semantics는 unified Explorer UX에서 Add Word를 global creation entry surface candidate로 해석할 수 있는 상한선만 문서로 고정한다. 이번 단계에서 Add Word는 canonical insertion authority, repository owner, persistence owner, route owner가 아니며, `WordExplorerScreen` authority 이전, production navigation replacement, repository/Navigator/persistence authority migration, route collapse를 시작하지 않는다. runtime/UI 코드 변경도 이번 단계 범위에 포함하지 않는다.
@@ -1119,3 +1125,27 @@ Phase 5-I는 새 설계를 추가하는 단계가 아니라, Phase 5-A부터 Pha
 따라서 Phase 5 종료는 preview-only orchestration semantics의 boundary stabilization 완료만 뜻한다. 이는 production replacement 승인, runtime coordination implementation 시작, route collapse 개시, canonical state owner migration, repository/Navigator/persistence authority 이전을 의미하지 않는다.
 
 다음 단계인 Phase 6은 implementation 단계가 아니라 runtime coordination planning 단계로 진입해야 한다. 별도 승인 없는 route collapse, production migration, canonical owner migration, persistence authority 재배치는 Phase 5 종료만으로 정당화되지 않는다.
+
+### 17.30 Phase 6-A runtime coordination boundary audit 기준
+
+Phase 6-A는 runtime coordination planning으로 읽힐 수 있는 기존 문서 표현의 경계를 다시 고정하는 audit 단계다. 이 절은 새 runtime 구조를 확정하거나 future implementation inevitability를 선언하는 문장이 아니다.
+
+- `historical/reference roadmap`:
+  - 이 문서의 Phase 표, phase label, typed contract/action 이름, route alias/collapse 언급은 historical/reference roadmap 기록이다.
+  - 이는 deterministic roadmap, 승인된 runtime planning 순서, eventual runtime structure 확정을 뜻하지 않는다.
+- `planning은 implementation readiness가 아님`:
+  - `runtime coordination planning`은 planning input과 reference candidate를 정리하는 수준으로만 해석한다.
+  - 이는 runtime orchestration implementation readiness, runtime synchronization architecture 승인, runtime contract 확정으로 이어지지 않는다.
+- `preview/reference semantics != runtime contract`:
+  - 이 문서의 preview/reference semantics는 runtime contract와 동일하지 않다.
+  - `workspace action`, `restore action`, `semantic transition`, `orchestration`, `synchronization`, `history snapshot`, `route alias`는 preview/reference interaction vocabulary 또는 planning input label일 뿐이다.
+  - 현재 문서는 runtime execution model 승인 문서가 아니다.
+- `ExplorerWorkspace 비권위화`:
+  - `ExplorerWorkspace`는 권한 주체나 실행 주체가 아니다.
+  - `ExplorerWorkspace` 명칭은 workspace-level semantic reference를 묶어 설명하기 위한 label일 뿐이며, 현재 runtime 주체 선언이나 실행 모델 선언이 아니다.
+- `coordination vocabulary의 확장 금지`:
+  - coordination/orchestration/synchronization vocabulary는 권한 주체나 실행 주체 semantics로 확장하지 않는다.
+  - 이 vocabulary는 canonical owner migration, Provider/Repository/Navigator/persistence authority 재배치, route collapse 승인, production replacement의 근거가 아니다.
+- `현재 authority 유지`:
+  - runtime/UI 코드 수정 없이 현재 Provider/Repository/Navigator/persistence authority, existing production route 기본값, `WordExplorerScreen` production authority 경계를 유지한다.
+  - 별도 승인 없는 canonical owner migration, route collapse, persistence authority 재배치는 정당화되지 않는다.

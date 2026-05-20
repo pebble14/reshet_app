@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2026-05-20 Phase 6-A runtime coordination boundary audit
+
+- Phase 6-A를 ExplorerWorkspace Phase 6 진입 전 문서 경계 audit 단계로 기록한다. 이 단계는 runtime/UI 구현 단계가 아니며, runtime execution model 승인 문서도 아니다.
+- `docs/ux/explorer_workspace_unification.md`에서 `workspace action`, `restore action`, `semantic transition`, route alias/collapse, staged roadmap 표현을 preview/reference interaction vocabulary와 historical/reference roadmap 기록으로 다시 고정했다.
+- `runtime coordination planning`은 planning input과 reference candidate 정리만 뜻하며, runtime orchestration implementation readiness, runtime synchronization architecture 승인, eventual runtime structure 확정을 의미하지 않음을 명시했다.
+- `ExplorerWorkspace`를 권한 주체나 실행 주체처럼 읽게 만드는 표현을 약화하고, coordination vocabulary가 canonical owner migration, route collapse 승인, Provider/Repository/Navigator/persistence authority 재배치의 근거로 해석되지 않도록 경계를 보강했다.
+- Provider/Repository/Navigator/persistence authority, existing production route 기본값, `WordExplorerScreen` production authority는 유지하며 runtime/UI 코드는 변경하지 않았다.
+
 ## 2026-05-20 Phase 5-I ExplorerWorkspace terminology hardening
 
 - Phase 5-I를 ExplorerWorkspace Phase 5 종료 안정화를 위한 terminology hardening 단계로 기록한다. 이 단계는 새 설계 추가가 아니라 기존 문서 표현을 preview-only orchestration semantics boundary에 맞춰 약화하는 작업이다.
