@@ -1058,3 +1058,28 @@ Semantic context transition 역시 foreground 재배치 후보로만 해석한�
 Temporary expansion과 canonical selection의 경계도 분리한다. temporary expansion은 graph relation reveal, detail context reveal, linked context preview처럼 현재 context를 잠시 넓혀 보여 주는 후보 의미다. 이는 foreground acquisition의 계기가 될 수는 있지만 canonical selection과 동일하지 않다. temporary expansion은 selection action 없이도 종료될 수 있으며, canonical selection owner나 persistence target으로 승격되지 않는다.
 
 따라서 Phase 5-F에서 추가로 도입하는 graph/detail hierarchy와 temporary focus semantics는 unified Explorer UX에서 foreground orchestration을 어떻게 해석할지에 대한 상한선만 문서로 고정한다. 이번 단계에서 production migration, route collapse, canonical state owner 이전, repository/Navigator/persistence authority migration, Graph와 Detail 간 ownership 부여, temporary focus의 canonical selection 확장은 시작하지 않는다.
+
+### 17.27 Phase 5-G workspace composition boundary 기준
+
+Phase 5-G는 unified Explorer UX 관점에서 `ExplorerWorkspace` 내부 surface들이 어떤 composition contract로 함께 존재하는지 정리하는 문서/경계 단계다. 이 단계는 production migration 단계가 아니며, route collapse 단계도 아니다. canonical state owner, repository owner, Navigator owner, persistence/history authority는 유지한다. runtime/UI 코드 변경도 이번 단계 범위에 포함하지 않는다.
+
+이번 단계에서 workspace composition boundary는 ownership boundary가 아니라 surface coordination contract로만 정의한다. `StrongRail`, `GlobalSearch`, `GraphPanel`, `DetailPane`, `AddWordFixedAction`, temporary focus candidate는 같은 workspace 안에서 함께 존재할 수 있지만, 이 공존 자체가 owner 병합이나 canonical contract 이전을 뜻하지 않는다. composition boundary의 목적은 "어떤 surface가 어떤 semantic contract로 나란히 배치되고 조율되는가"를 문서로 고정하는 것이다.
+
+Orchestration layer composition도 UI-level coordination으로만 제한한다. orchestration layer는 surface 간 표시 순서, foreground 후보, local visibility, temporary emphasis, contextual entry ordering을 조정할 수 있다. 그러나 orchestration layer가 canonical state owner를 흡수하거나 repository/Navigator/persistence authority를 재배치하는 계층으로 해석되면 안 된다. orchestration layer composition은 authority layer가 아니라 composition layer다.
+
+Surface registration semantics는 문서상 semantics로만 둔다. registration은 어떤 surface가 workspace composition contract 안에서 어떤 역할 이름과 제약으로 참여하는지 설명하는 표현일 뿐이며, runtime plugin 구조, dynamic module loading, detachable runtime extension, registration API 설계로 확장하지 않는다. 따라서 registration은 설계 vocabulary이지 구현 hook이 아니다.
+
+Workspace-local lifecycle coordination은 canonical lifecycle이 아니라 local coordination lifecycle로만 정리한다. 어떤 surface가 foreground에 오르는지, 어떤 entry surface가 현재 context에서 활성 후보인지, temporary focus가 언제 생기고 사라지는지는 workspace-local coordination 수준에서 조율할 수 있다. 그러나 이 lifecycle은 canonical selection lifecycle, repository data lifecycle, Navigator route lifecycle, persisted workspace lifecycle과 동일하지 않다.
+
+Detachable surface semantics도 해석 후보로만 제한한다. detachable surface라는 표현은 특정 surface가 장기적으로 다른 composition shape에서 분리되어 보일 수 있다는 해석 후보를 뜻할 뿐이며, 실제 분리 구현, 독립 route, 독립 process, runtime detachable module, window 분리 구현을 뜻하지 않는다. detachable surface를 실제 구현 계획으로 읽으면 이번 단계 범위를 벗어난다.
+
+Fixed entry surface / graph / detail / temporary focus 사이의 composition 관계는 다음과 같이 제한한다.
+
+- fixed entry surface는 workspace 진입과 retarget initiation을 위한 entry candidate로 composition에 참여한다.
+- graph surface와 detail surface는 contextual reading surface로 composition에 참여한다.
+- temporary focus는 foreground emphasis candidate로 composition에 참여한다.
+- 이 참여 관계는 coordination contract이지 ownership contract가 아니다.
+
+Composition contract와 authority boundary는 분리해서 유지한다. composition contract는 "함께 존재하는 방식"을 설명하고, authority boundary는 "누가 canonical state와 persistence를 소유하는가"를 설명한다. composition contract가 확대되어 canonical owner 재배치, repository/Navigator/persistence authority migration, route ownership 재정의로 이어지면 안 된다.
+
+따라서 Phase 5-G에서 추가로 도입하는 workspace composition semantics는 unified Explorer UX에서 surface들이 어떤 coordination contract로 함께 존재할 수 있는지에 대한 상한선만 문서로 고정한다. 이번 단계에서 production migration, route collapse, canonical state owner 이전, runtime plugin 구조 확장, workspace-local lifecycle의 canonical lifecycle 확장, detachable surface의 실제 분리 구현은 시작하지 않는다.

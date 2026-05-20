@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2026-05-20 Phase 5-G ExplorerWorkspace workspace composition boundary
+
+- Phase 5-G를 `ExplorerWorkspace` 내부 surface들의 workspace composition boundary를 문서로 정리하는 단계로 기록한다. 이 단계는 production migration이나 route collapse 단계가 아니다.
+- workspace composition boundary는 ownership boundary가 아니라 surface coordination contract로만 정리한다. 여러 surface의 공존을 canonical owner 병합으로 해석하지 않는다.
+- orchestration layer composition은 UI-level coordination으로만 두고 authority layer로 확장하지 않는다.
+- surface registration은 문서상 semantics로만 두고 runtime plugin 구조, dynamic registration API, detachable runtime module로 확장하지 않는다.
+- workspace-local lifecycle coordination은 canonical lifecycle이 아니라 local coordination lifecycle로만 정리한다.
+- detachable surface는 실제 분리 구현이 아니라 해석 후보로만 제한하고, composition contract와 authority boundary를 계속 분리한다.
+
 ## 2026-05-20 Phase 5-F ExplorerWorkspace graph/detail hierarchy and temporary focus lifecycle
 
 - Phase 5-F를 `GraphPanel` / `DetailPane` hierarchy와 temporary focus lifecycle을 문서로 정리하는 단계로 기록한다. 이 단계는 production migration이나 route collapse 단계가 아니다.
