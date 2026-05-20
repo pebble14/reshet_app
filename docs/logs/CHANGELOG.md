@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2026-05-20 Phase 6-C authority-crossing risk classification
+
+- Phase 6-C를 ExplorerWorkspace Phase 6-B candidate의 authority-crossing risk classification 단계로 기록한다. 이번 단계는 implementation planning도 implementation prioritization도 아니며, runtime planning 확장 승인이나 authority migration 승인을 뜻하지 않는다.
+- risk level은 `medium`, `high`, `blocked`만 사용하고 `low` 후보는 이번 단계에서 식별하지 않았다. `medium`도 implementation-ready가 아니며 boundary 문서화가 상대적으로 쉬운 후보라는 뜻으로만 제한한다.
+- `high`는 owner/controller/coordinator drift, runtime synchronization, route collapse, canonical owner migration 위험이 높은 후보로 정의한다.
+- `blocked`는 candidate 자체 폐기를 뜻하지 않으며, reference candidate로 유지할 수 있다. 다만 reference vocabulary / inventory 수준을 넘는 runtime planning 확장, implementation planning, authority migration, route collapse 정당화는 현재 금지된다는 뜻으로 제한한다.
+- `ExplorerWorkspace`를 runtime coordinator/controller/owner로 승격하지 않으며, Provider/Repository/Navigator/persistence authority와 existing production route 기본값은 그대로 유지한다. runtime/UI 코드는 변경하지 않는다.
+
 ## 2026-05-20 Phase 6-B owner-preserving runtime coordination candidate inventory
 
 - Phase 6-B를 ExplorerWorkspace Phase 6-A 경계를 유지한 owner-preserving runtime coordination candidate inventory 단계로 기록한다. 이번 단계는 implementation 단계가 아니며 runtime execution model, runtime synchronization architecture, route collapse, canonical owner migration을 승인하지 않는다.

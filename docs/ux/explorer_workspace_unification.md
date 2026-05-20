@@ -1235,3 +1235,119 @@ Phase 6-B는 Phase 6-A 경계를 유지한 채 ExplorerWorkspace 문맥에서 �
 - Provider/Repository/Navigator/persistence authority는 기존 production 경계에 그대로 둔다.
 - `WordExplorerScreen`, `WordGraphScreen`, `WordDetailScreen`, `HomeScreen`, Flutter `Navigator`의 현재 authority를 inventory만으로 재배치하지 않는다.
 - `implementation-ready`, `approved for implementation`, `eventual execution owner`처럼 implementation readiness로 읽히는 표현을 추가하지 않는다.
+
+### 17.32 Phase 6-C authority-crossing risk classification 기준
+
+Phase 6-C는 Phase 6-B에서 정리한 coordination candidate가 어떤 지점에서 current owner / authority 경계를 침범하거나 그렇게 읽힐 위험이 큰지 분류하는 문서 단계다. 이번 단계는 implementation planning이 아니며, implementation prioritization도 아니다. risk classification 결과는 runtime planning 확장 승인, implementation planning 진입 승인, authority migration 승인, route collapse 승인, implementation roadmap 순서 확정을 뜻하지 않는다.
+
+이번 분류는 candidate 자체의 가치 판단이 아니라 boundary drift 위험을 문서화하는 용도로만 사용한다. `ExplorerWorkspace`는 여전히 runtime coordinator, runtime controller, runtime owner가 아니며 workspace-level semantic reference label로만 유지한다. Provider/Repository/Navigator/persistence authority와 기존 production route 기본값도 그대로 유지한다.
+
+#### 17.32.1 risk level definition
+
+- `low`:
+  - 현재 authority 경계 안에서 drift 가능성이 매우 낮은 후보를 뜻한다.
+  - 이번 Phase 6-C에서는 해당 조건을 만족하는 candidate를 식별하지 않았다.
+  - `low`도 implementation-ready 또는 implementation 우선순위를 뜻하지 않는다.
+- `medium`:
+  - boundary 문서화 자체는 상대적으로 가능하지만, current owner / authority 보호 장치와 forbidden expansion을 함께 적지 않으면 authority-crossing으로 읽히기 쉬운 후보를 뜻한다.
+  - `medium`은 implementation-ready가 아니며, reference vocabulary / inventory 수준에서만 상대적으로 문서화가 쉽다는 뜻으로 제한한다.
+- `high`:
+  - owner/controller/coordinator drift, runtime synchronization architecture 해석, route collapse 근거화, canonical owner migration 정당화 위험이 높은 후보를 뜻한다.
+  - `high`는 현 시점에서 구현 우선순위가 높다는 뜻이 아니며, 오히려 문서 경계가 쉽게 무너질 수 있음을 경고하는 분류다.
+- `blocked`:
+  - candidate 자체 폐기를 뜻하지 않는다.
+  - candidate는 문서상 reference candidate로 유지할 수 있다.
+  - 다만 reference vocabulary / inventory 수준을 넘는 runtime planning 확장, implementation planning, authority migration, route collapse 정당화로 이어지는 해석은 현재 금지된다는 뜻이다.
+
+#### 17.32.2 passive coordination candidate authority-crossing risk classification
+
+- candidate name: `semantic state projection inventory`
+  - candidate type: `passive coordination candidate`
+  - current owner / authority: `WordExplorerScreen`이 graph center, selected word, split-view detail display item, explorer history를 직접 보유하고, `WordGraphScreen`이 graph center, selected word, viewport, visible graph data를 직접 보유하며, `WordDetailScreen`이 detail reread와 display ownership을 유지한다.
+  - authority-crossing risk: `high`
+  - risk reason: `selectedWordId`, `graphCenterWordId`, `detailTargetWordId`, `layoutPreset`, `origin`를 함께 적는 순간 workspace canonical state, Provider source of truth, automatic synchronization contract처럼 읽히기 쉽다.
+  - forbidden expansion: state 병합, automatic synchronization, canonical owner 선언, Provider/Repository/Navigator/persistence authority 이전
+  - implementation status: `not approved`
+- candidate name: `workspace surface composition contract inventory`
+  - candidate type: `passive coordination candidate`
+  - current owner / authority: `HomeScreen`, `WordExplorerScreen`, `WordGraphScreen`, `WordDetailScreen`, Flutter `Navigator`가 기존 production entry, screen, route authority를 유지한다.
+  - authority-crossing risk: `medium`
+  - risk reason: surface composition 설명이 `ExplorerWorkspace` runtime coordinator/controller/owner 의미로 drift할 위험은 있지만, composition/reference inventory로 한정하면 current owner를 직접 대체하지는 않는다.
+  - forbidden expansion: `ExplorerWorkspace`를 coordinator/controller/owner로 서술, canonical contract 이전, registration API 또는 runtime plugin 구조 확정
+  - implementation status: `not approved`
+- candidate name: `route alias / layout preset reference mapping inventory`
+  - candidate type: `passive coordination candidate`
+  - current owner / authority: existing Graph/Detail/Explorer route 의미와 route stack authority는 Flutter `Navigator`와 기존 production route가 유지한다.
+  - authority-crossing risk: `high`
+  - risk reason: route alias, layout preset, snapshot restore 매핑은 runtime route rewiring, route ownership 재정의, route collapse 승인 근거로 오해되기 쉽다.
+  - forbidden expansion: route collapse 승인, route 제거 순서 확정, runtime route rewiring, route ownership 재정의
+  - implementation status: `not approved`
+- candidate name: `workspace snapshot / restore vocabulary inventory`
+  - candidate type: `passive coordination candidate`
+  - current owner / authority: `WordExplorerScreen` 내부 history와 Flutter `Navigator` route history는 분리된 채로 유지되며, persistence authority도 기존 production 경계를 유지한다.
+  - authority-crossing risk: `blocked`
+  - risk reason: snapshot/restore vocabulary는 reference 수준을 조금만 넘겨도 restore execution owner 지정, persisted snapshot authority 이전, `Navigator` history 병합, display item/graph data/raw carrier 저장 정책으로 곧바로 확장되기 쉽다.
+  - forbidden expansion: restore execution owner 지정, persisted snapshot authority 이전, `Navigator` history 병합, display item/graph data/raw carrier 저장
+  - implementation status: `not approved`
+- candidate name: `graph/detail foreground synchronization and temporary focus boundary inventory`
+  - candidate type: `passive coordination candidate`
+  - current owner / authority: `WordExplorerScreen`이 split-view semantic 조율을 유지하고, `WordGraphScreen`이 graph interaction local authority를 유지하며, `WordDetailScreen`이 detail reading authority를 유지한다.
+  - authority-crossing risk: `high`
+  - risk reason: foreground, temporary focus, carry-over, disposal vocabulary는 runtime synchronization architecture, canonical selection 자동 승격, persisted focus policy로 읽히기 쉽다.
+  - forbidden expansion: Graph/Detail ownership 부여, canonical selection 자동 승격, persisted focus policy 확정, runtime synchronization architecture 승인
+  - implementation status: `not approved`
+
+#### 17.32.3 explicit request coordination candidate authority-crossing risk classification
+
+- candidate name: `fixed navigation entry request candidate`
+  - candidate type: `explicit request coordination candidate`
+  - current owner / authority: `HomeScreen`의 현재 strong entry 의미, Flutter `Navigator`의 route push authority, `WordExplorerScreen`의 production explorer authority가 유지된다.
+  - authority-crossing risk: `medium`
+  - risk reason: explicit entry request는 request vocabulary로 유지할 수 있지만, route push owner나 persisted layout 결정 주체처럼 읽히기 쉽다.
+  - forbidden expansion: Rail의 selected/detail/center authority 흡수, route push ownership 부여, persisted layout 결정 주체화
+  - implementation status: `not approved`
+- candidate name: `search retarget request candidate`
+  - candidate type: `explicit request coordination candidate`
+  - current owner / authority: `HomeScreen`이 search query와 result entry state를 유지하고, 실제 후속 route와 reading authority는 기존 production screen과 `Navigator`가 유지한다.
+  - authority-crossing risk: `medium`
+  - risk reason: `GlobalSearch` retarget request는 전역 search owner, canonical selection owner, route push/history restore owner처럼 drift할 위험이 있다.
+  - forbidden expansion: Search의 canonical selection owner화, graph/detail owner화, route push/history restore ownership 부여, persistence authority 이전
+  - implementation status: `not approved`
+- candidate name: `explicit graph focus / center request candidate`
+  - candidate type: `explicit request coordination candidate`
+  - current owner / authority: `WordExplorerScreen`과 `WordGraphScreen`이 graph center authority와 selection 관련 production authority를 계속 유지한다.
+  - authority-crossing risk: `high`
+  - risk reason: `centerGraphOnWord`, `openGraphFocus`, linked center request는 graph center source of truth, automatic center propagation, route rewrite 근거로 읽히기 쉽다.
+  - forbidden expansion: automatic center propagation, graph execution coordinator 선언, route rewrite 승인, canonical owner migration 정당화
+  - implementation status: `not approved`
+- candidate name: `explicit detail focus / linked context request candidate`
+  - candidate type: `explicit request coordination candidate`
+  - current owner / authority: `WordExplorerScreen`이 split-view detail target과 selected display context를 유지하고, `WordDetailScreen`이 detail route reread와 display ownership을 유지한다.
+  - authority-crossing risk: `high`
+  - risk reason: `setDetailTarget`, `openDetailFocus`, linked context request는 detail owner migration, graph-to-detail automatic route execution, display owner transfer로 읽히기 쉽다.
+  - forbidden expansion: detail target owner migration, graph-to-detail automatic route execution, display owner transfer, persistence authority 이전
+  - implementation status: `not approved`
+- candidate name: `add-word follow-up request candidate`
+  - candidate type: `explicit request coordination candidate`
+  - current owner / authority: create 이후 후속 흐름은 기존 caller screen, repository post-save helper, Flutter `Navigator`, persistence authority가 유지한다.
+  - authority-crossing risk: `blocked`
+  - risk reason: create 이후 follow-up request는 reference 수준을 넘는 순간 repository write owner, post-save execution owner, route replacement 정책, auto center change 정책 문제로 바로 확장되기 쉽다.
+  - forbidden expansion: repository write owner 이전, canonical insertion authority 부여, auto center change 정책 확정, route replacement 정책 고정
+  - implementation status: `not approved`
+- candidate name: `post-edit refresh request candidate`
+  - candidate type: `explicit request coordination candidate`
+  - current owner / authority: `WordDetailScreen`, `WordExplorerScreen`, `WordGraphScreen`이 각 caller 위치에서 reread/refresh 후속 authority를 유지한다.
+  - authority-crossing risk: `medium`
+  - risk reason: `refreshAfterEdit`는 caller-local reread를 넘어서 refresh coordinator, shared invalidation owner, global refresh execution 주체처럼 읽힐 수 있다.
+  - forbidden expansion: refresh coordinator 신설, semantic owner 변경, repository/Navigator/persistence authority 흡수
+  - implementation status: `not approved`
+
+#### 17.32.4 risk interpretation guardrail
+
+- risk classification은 implementation prioritization이 아니다.
+- `medium`은 implementation-ready가 아니며, boundary 문서화가 상대적으로 쉬운 후보라는 뜻으로만 제한한다.
+- `high`는 owner/controller/coordinator drift, runtime synchronization, route collapse, canonical owner migration 위험이 높다는 뜻이지 구현 우선순위가 높다는 뜻이 아니다.
+- `blocked`는 candidate 자체 폐기를 뜻하지 않으며, reference candidate로는 유지할 수 있다. 다만 reference vocabulary / inventory 수준을 넘는 runtime planning 확장, implementation planning, authority migration, route collapse 정당화는 현재 금지된다.
+- `ExplorerWorkspace`를 runtime coordinator/controller/owner로 서술하지 않는다.
+- Provider/Repository/Navigator/persistence authority는 기존 production 경계에 그대로 둔다.
+- route collapse 승인 문장, implementation roadmap 순서처럼 읽히는 문장, implementation-ready 표현을 추가하지 않는다.
