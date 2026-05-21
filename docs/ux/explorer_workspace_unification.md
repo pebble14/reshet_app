@@ -1503,3 +1503,82 @@ Phase 7-A는 Phase 6-D guardrail policy 이후 실제 구현으로 넘어가기 
 - implementation status: `not approved`
 - Phase 7-A 문서화는 feature 브랜치 생성 승인이나 runtime/UI implementation permission이 아니다.
 - 첫 구현 단위는 아직 선택되지 않았으며, 진입 조건과 금지선만 고정된 상태다.
+
+### 17.35 Phase 7-B first implementation unit candidate selection 기준
+
+Phase 7-B는 실제 구현 단계가 아니라, current code 기준으로 첫 구현 단위 후보를 조사하고 비교한 뒤 추천 후보를 문서화하는 단계다. 이 단계는 feature 브랜치 생성, runtime/UI 구현 시작, implementation permission을 자동 승인하지 않는다. Phase 7-A에서 고정한 runtime/UI 구현 금지, route collapse 금지, canonical owner migration 금지, Provider/Repository/Navigator/persistence authority 이전 금지 경계도 그대로 유지한다.
+
+#### 17.35.1 조사 기준
+
+- ExplorerWorkspace 관련 파일의 현재 역할, production route 연결 여부, preview/hidden/wrapper 성격, owner 침범 여부를 확인한다.
+- production route / Navigator 관련 파일의 current entry, route 기본값, screen 간 `Navigator.push` 경로를 확인한다.
+- Provider / Repository / persistence authority 관련 파일과 current owner / authority 위치를 실제 코드 기준으로 확인한다.
+- 조사 결과를 바탕으로 첫 구현 후보를 비교하되, recommendation을 implementation approval로 해석하지 않는다.
+
+#### 17.35.2 current owner / authority 조사 결과
+
+- ExplorerWorkspace 계열 파일은 현재 production route에 연결되지 않았고 production owner를 침범하지 않는다.
+- production route authority는 여전히 `main.dart`, `HomeScreen`, 기존 screen들의 `Navigator.push` 경로에 있다.
+- 실제 Provider 계층은 현재 부재한다.
+- search state owner는 `HomeScreen`이다.
+- explorer split-view의 selected/center/detail/history owner는 `WordExplorerScreen`이다.
+- graph state owner는 `WordGraphScreen`이다.
+- detail route owner는 `WordDetailScreen`이다.
+- persistence read/write의 주 경로는 `WordRepository`다.
+- word create/update/delete command wrapper는 `WordWriteService`다.
+- DB bootstrap/reset은 `HomeScreen`에서 `DatabaseService`를 직접 호출하는 예외가 있다.
+- ExplorerWorkspace 계열은 repository, `DatabaseService`, `Navigator`를 직접 소유하지 않는다.
+
+#### 17.35.3 first implementation unit 후보 비교
+
+- 후보 A: `WordExplorer -> ExplorerWorkspaceState` 읽기 전용 projection adapter
+  - 장점: current owner를 유지한 채 `WordExplorerScreen`의 state를 one-way projection으로만 정리할 수 있어 범위가 가장 좁다.
+  - 위험: projection이 source of truth처럼 오해되면 shadow owner로 해석될 위험이 있다.
+  - UI 확인 필요 여부: 원칙적으로 불필요하다. runtime/UI diff가 없어야 한다.
+  - authority crossing 위험: 낮다.
+- 후보 B: `WordExplorerScreen panel composition 추출`
+  - 장점: 후속 composition 준비도를 높이고 split-view 구조를 더 명시적으로 분리할 수 있다.
+  - 위험: production widget tree를 직접 건드리므로 regression 면적이 커진다.
+  - UI 확인 필요 여부: 필요하다.
+  - authority crossing 위험: 낮지만 production UI drift 위험은 후보 A보다 높다.
+- 후보 C: `WordGraphScreen embedded boundary 명시화`
+  - 장점: embedded callback 경계와 standalone self-navigation 경계를 실제 runtime 경로에서 직접 정리할 수 있다.
+  - 위험: graph standalone navigation과 callback 분기 구조를 건드리므로 route/Navigator drift 위험이 상대적으로 크다.
+  - UI 확인 필요 여부: 필요하다.
+  - authority crossing 위험: 중간이다.
+
+#### 17.35.4 추천 후보
+
+- 추천 후보는 `WordExplorer -> ExplorerWorkspaceState` 읽기 전용 projection adapter다.
+- 이 추천은 implementation approval이 아니며, 후속 feature 브랜치 생성 승인이나 runtime/UI 구현 승인도 아니다.
+- 후보 A의 핵심은 `WordExplorerScreen`의 현재 owner state를 one-way projection으로 `ExplorerWorkspaceState`에 투영하는 것이다.
+- source of truth는 계속 `WordExplorerScreen`에 남아 있어야 한다.
+- `ExplorerWorkspace`는 projection consumer일 뿐 runtime owner가 아니다.
+
+#### 17.35.5 후보 A의 forbidden expansion
+
+- production mount 금지
+- route collapse 금지
+- callback mutation API 추가 금지
+- Navigator rewiring 금지
+- Repository / DB import 금지
+- Provider 도입 금지
+- canonical owner migration 금지
+- `ExplorerWorkspace`를 execution owner, synchronization owner, persistence owner로 승격 금지
+
+#### 17.35.6 feature 브랜치 전환 전 조건
+
+- 사용자의 별도 승인 필요
+- 대상 파일을 `WordExplorerScreen`, projection helper, 필요 시 test로 좁게 고정
+- `main.dart`, `HomeScreen`, `WordGraphScreen` standalone navigation, `WordDetailScreen`, `WordRepository`, `DatabaseService`는 첫 구현 범위에서 제외
+- 명령어 기반 검증 계획 확정
+- 최소 `dart analyze`와 source-level/unit test 기준 제시
+- runtime/UI diff가 생기지 않는 구현으로 제한
+- UI diff가 생긴다면 feature 전환 전에 클라이언트 UI 확인 기준을 별도 문서화
+
+#### 17.35.7 implementation status
+
+- implementation status: `not approved`
+- feature branch status: `not approved`
+- recommended first candidate: `WordExplorer -> ExplorerWorkspaceState read-only projection adapter`
+- 추천 후보는 후속 검토 대상이지 구현 승인 사항이 아니다.

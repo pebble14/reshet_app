@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-05-21 Phase 7-B first implementation unit candidate selection
+
+- Phase 7-B를 ExplorerWorkspace Phase 7의 첫 구현 단위 후보를 실제 코드 기준으로 조사하고 비교하는 문서 단계로 기록했다. 이번 단계는 implementation이 아니며, feature 브랜치 생성이나 runtime/UI 구현을 승인하지 않는다.
+- `docs/ux/explorer_workspace_unification.md`에 Phase 7-B 조사 기준, current owner / authority 조사 결과, 후보 A/B/C 비교, 추천 후보, forbidden expansion, feature 브랜치 전환 전 조건을 추가했다.
+- 추천 첫 구현 후보는 `WordExplorer -> ExplorerWorkspaceState` 읽기 전용 projection adapter로 기록했지만, 이는 implementation approval이 아니며 source of truth는 계속 `WordExplorerScreen`에 남아 있어야 한다고 명시했다.
+- implementation status는 `not approved`, feature branch status는 `not approved`로 유지했다.
+
 ## 2026-05-21 Phase 7-A implementation entry boundary planning
 
 - Phase 7-A를 ExplorerWorkspace Phase 6 runtime coordination planning 이후 implementation 진입 전에 허용 범위와 금지선을 고정하는 문서 단계로 기록한다. 이번 단계는 implementation이 아니라 implementation entry boundary planning이며, 후속 feature 브랜치 생성이나 runtime/UI 구현을 자동 승인하지 않는다.
