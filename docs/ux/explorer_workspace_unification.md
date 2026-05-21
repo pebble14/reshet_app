@@ -1351,3 +1351,69 @@ Phase 6-C는 Phase 6-B에서 정리한 coordination candidate가 어떤 지점�
 - `ExplorerWorkspace`를 runtime coordinator/controller/owner로 서술하지 않는다.
 - Provider/Repository/Navigator/persistence authority는 기존 production 경계에 그대로 둔다.
 - route collapse 승인 문장, implementation roadmap 순서처럼 읽히는 문장, implementation-ready 표현을 추가하지 않는다.
+
+### 17.33 Phase 6-D authority-preserving coordination guardrail policy 기준
+
+Phase 6-D는 Phase 6-B coordination candidate inventory와 Phase 6-C authority-crossing risk classification을 owner-preserving guardrail policy로 고정하는 문서 단계다. 이번 단계는 implementation planning이 아니며, guardrail policy 자체도 runtime/UI implementation permission이 아니다. 이 단계는 runtime implementation 승인, route collapse 승인, canonical owner migration 승인, owner/controller/coordinator 재배치 승인으로 해석하지 않는다.
+
+`ExplorerWorkspace`는 여전히 runtime coordinator, runtime controller, runtime owner가 아니며 workspace-level semantic reference label로만 유지한다. Provider/Repository/Navigator/persistence authority와 기존 production route 기본값도 그대로 유지한다. coordination candidate는 owner migration proposal이 아니고, risk classification은 implementation prioritization이 아니며, allowed wording 또한 implementation approval을 뜻하지 않는다.
+
+#### 17.33.1 wording policy
+
+- allowed wording:
+  - `reference vocabulary`, `candidate inventory`, `owner-preserving boundary`, `current owner / authority 유지`, `non-owner coordination label`, `reference-only mapping`, `caller-local reread`, `implementation status: not approved`
+  - allowed wording은 문서상 허용 가능한 boundary 표현일 뿐이며 implementation approval, implementation-ready, runtime execution permission으로 해석하지 않는다.
+- caution wording:
+  - `coordination`, `workspace action request`, `temporary focus`, `foreground synchronization`, `route alias`, `snapshot / restore`, `retarget`, `refresh`
+  - caution wording은 자유롭게 사용 가능한 표현이 아니다.
+  - 반드시 `reference`, `candidate`, `non-owner`, `caller-local`, `not approved`, `current owner 유지` 같은 제한 문구와 함께 사용해야 한다.
+  - 제한 문구 없이 사용될 경우 authority drift 위험 표현으로 간주한다.
+- forbidden wording:
+  - `ExplorerWorkspace`를 runtime coordinator/controller/owner로 표현하는 문장
+  - workspace canonical state, canonical state owner, single source of truth를 `ExplorerWorkspace` candidate에 부여하는 문장
+  - `implementation-ready`, `approved for implementation`, `ready to wire`, `eventual execution owner`처럼 implementation approval로 읽히는 문장
+  - route collapse 승인, route rewrite 승인, implementation roadmap, canonical owner migration 진행처럼 계획 또는 승인으로 읽히는 문장
+  - automatic synchronization, global refresh coordinator, persisted snapshot owner, restore execution owner처럼 authority 이전 또는 execution owner를 부여하는 문장
+
+#### 17.33.2 planning action policy
+
+- allowed planning action:
+  - current owner / authority 재기록
+  - forbidden expansion 재명시
+  - wording hardening
+  - candidate와 authority 사이의 non-owner 관계 설명
+  - authority drift detection checklist 정리
+  - 위 allowed planning action도 implementation planning 진입 승인이나 runtime/UI implementation permission을 뜻하지 않는다.
+- review-required planning action:
+  - `medium`, `high`, `blocked` candidate를 다시 언급하는 문장 구조 조정
+  - `snapshot / restore`, `route alias`, `temporary focus`, `retarget`, `refresh` 관련 reference vocabulary 보강
+  - candidate 간 관계표, boundary comparison, risk note 추가
+  - review-required planning action은 current owner / authority, forbidden expansion, `implementation status: not approved`를 함께 적어야 하며, 별도 승인 없이 implementation planning으로 넘어갈 수 없다.
+- blocked planning action:
+  - implementation roadmap 작성
+  - runtime contract, runtime synchronization architecture, runtime execution model 정의
+  - Provider wiring, Navigator rewiring, Repository 호출 구조 변경, persistence authority 이동을 전제로 한 계획 작성
+  - route collapse 전제 문장, canonical owner migration 전제 문장, runtime coordinator/controller/owner 주체 설계
+  - blocked planning action은 구현 단계뿐 아니라 문서상 계획 단계에서도 금지되는 확장이다.
+
+#### 17.33.3 authority drift detection criteria
+
+- `ExplorerWorkspace` 또는 candidate가 `owns`, `controls`, `executes`, `decides`, `restores`, `persists`, `synchronizes` 의미의 책임을 직접 가지는 문장은 authority drift로 본다.
+- `reference`, `candidate`, `non-owner`, `caller-local`, `not approved`, `current owner 유지` 같은 제한 문구 없이 caution wording이 단독 사용되면 authority drift 위험 표현으로 본다.
+- current owner / authority가 문장에서 생략되거나 `WordExplorerScreen`, `WordGraphScreen`, `WordDetailScreen`, `HomeScreen`, Flutter `Navigator`의 현재 authority가 다른 주체로 치환되면 authority drift로 본다.
+- risk level이 구현 순서, 구현 우선순위, implementation-ready, implementation permission으로 연결되면 authority drift로 본다.
+- route alias가 route replacement 또는 route collapse로, snapshot이 restore execution owner 또는 persisted authority로, refresh가 global coordinator로 읽히게 되면 authority drift로 본다.
+
+#### 17.33.4 escalation criteria
+
+- 문장만으로 owner-preserving 의미를 유지할 수 없는 경우 escalation한다.
+- `high` 또는 `blocked` candidate를 reference vocabulary 범위를 넘어 설명해야 하는 요구가 생기면 escalation한다.
+- route collapse, canonical owner migration, persistence authority 이동, runtime execution model, automatic synchronization, route rewrite, restore execution owner가 언급되면 별도 승인 없이는 진행하지 않는다.
+- 기존 active authority 문서 또는 Phase 6-B/C changelog 의미를 약화하거나 충돌시키는 표현이 필요해지면 escalation한다.
+
+#### 17.33.5 implementation status
+
+- implementation status: `not approved`
+- guardrail policy는 implementation permission이 아니다.
+- Provider/Repository/Navigator/persistence authority 이전은 승인되지 않았다.
+- route collapse 승인 또는 implementation roadmap처럼 읽히는 표현은 금지된다.

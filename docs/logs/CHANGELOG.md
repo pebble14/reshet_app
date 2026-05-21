@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2026-05-21 Phase 6-D authority-preserving coordination guardrail policy
+
+- Phase 6-D를 ExplorerWorkspace Phase 6-B coordination candidate inventory와 Phase 6-C authority-crossing risk classification을 owner-preserving guardrail policy로 고정하는 문서 단계로 기록한다. 이번 단계는 implementation planning이 아니며, guardrail policy도 runtime/UI implementation permission이 아니다.
+- `allowed wording`, `caution wording`, `forbidden wording`, `allowed planning action`, `review-required planning action`, `blocked planning action`, `authority drift detection criteria`, `escalation criteria`, `implementation status: not approved`를 문서에 추가해 boundary violation 해석을 방지한다.
+- `caution wording`은 자유 사용 표현이 아니며 반드시 `reference`, `candidate`, `non-owner`, `caller-local`, `not approved`, `current owner 유지` 같은 제한 문구와 함께 써야 한다. 제한 문구 없이 사용되면 authority drift 위험 표현으로 간주한다.
+- review-required planning action은 current owner / authority, forbidden expansion, `implementation status: not approved`를 함께 적어야 하며, 별도 승인 없이 implementation planning으로 넘어갈 수 없다고 고정한다.
+- blocked planning action은 구현 단계뿐 아니라 문서상 계획 단계에서도 금지되는 확장으로 정의한다.
+- `ExplorerWorkspace`를 runtime coordinator/controller/owner로 승격하지 않으며, Provider/Repository/Navigator/persistence authority와 existing production route 기본값은 그대로 유지한다. route collapse 승인, canonical owner migration, implementation roadmap처럼 읽히는 표현은 금지한다.
+
 ## 2026-05-20 Phase 6-C authority-crossing risk classification
 
 - Phase 6-C를 ExplorerWorkspace Phase 6-B candidate의 authority-crossing risk classification 단계로 기록한다. 이번 단계는 implementation planning도 implementation prioritization도 아니며, runtime planning 확장 승인이나 authority migration 승인을 뜻하지 않는다.
