@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-05-21 Phase 7-A implementation entry boundary planning
+
+- Phase 7-A를 ExplorerWorkspace Phase 6 runtime coordination planning 이후 implementation 진입 전에 허용 범위와 금지선을 고정하는 문서 단계로 기록한다. 이번 단계는 implementation이 아니라 implementation entry boundary planning이며, 후속 feature 브랜치 생성이나 runtime/UI 구현을 자동 승인하지 않는다.
+- `docs/ux/explorer_workspace_unification.md`에 Phase 7에서 허용 가능한 첫 구현 단위의 조건, 아직 금지해야 할 구현 유형, docs 브랜치에서 feature 브랜치로 전환 가능한 기준, implementation entry checklist를 추가한다.
+- runtime/UI 구현 금지, route collapse 금지, canonical owner migration 금지, Provider/Repository/Navigator/persistence authority 이전 금지, coordination candidate의 implementation permission 해석 금지를 Phase 7-A 경계로 다시 고정한다.
+- Codex 명령어 기반 검증 항목을 문서에 명시하고, UI 기반 확인은 이번 단계의 수행 대상이 아니며 후속 feature 브랜치에서 UI 동작 변경이 생길 때만 클라이언트 기준으로 분리해 작성한다고 기록한다.
+
 ## 2026-05-21 Phase 6-D authority-preserving coordination guardrail policy
 
 - Phase 6-D를 ExplorerWorkspace Phase 6-B coordination candidate inventory와 Phase 6-C authority-crossing risk classification을 owner-preserving guardrail policy로 고정하는 문서 단계로 기록한다. 이번 단계는 implementation planning이 아니며, guardrail policy도 runtime/UI implementation permission이 아니다.

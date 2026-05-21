@@ -1417,3 +1417,89 @@ Phase 6-D는 Phase 6-B coordination candidate inventory와 Phase 6-C authority-c
 - guardrail policy는 implementation permission이 아니다.
 - Provider/Repository/Navigator/persistence authority 이전은 승인되지 않았다.
 - route collapse 승인 또는 implementation roadmap처럼 읽히는 표현은 금지된다.
+
+### 17.34 Phase 7-A implementation entry boundary planning 기준
+
+Phase 7-A는 Phase 6-D guardrail policy 이후 실제 구현으로 넘어가기 전에 implementation entry boundary를 고정하는 문서 단계다. 이번 단계는 implementation이 아니라 implementation entry boundary planning이며, 첫 구현 단위를 확정하는 단계도 아니다. 이 문서화만으로 후속 feature 브랜치 생성, runtime/UI 구현 시작, implementation permission이 자동 승인되지 않는다.
+
+`ExplorerWorkspace`는 여전히 runtime coordinator, runtime controller, runtime owner가 아니며 workspace-level semantic reference label로만 유지한다. Provider/Repository/Navigator/persistence authority와 기존 production route 기본값도 그대로 유지한다. Phase 6에서 정리한 coordination candidate는 implementation permission이 아니며, implementation-ready 판단 근거로도 사용하지 않는다.
+
+#### 17.34.1 목적
+
+- Phase 7에서 허용 가능한 첫 구현 단위가 만족해야 할 진입 조건만 고정한다.
+- 첫 구현 단위 자체를 이번 단계에서 선택하거나 확정하지 않는다.
+- docs 브랜치 문서 작업과 runtime implementation 시작 사이의 경계를 분리한다.
+- implementation entry checklist와 verification expectation을 미리 문서화해 boundary drift를 방지한다.
+
+#### 17.34.2 명시적 비승인 경계
+
+- runtime/UI 구현은 이번 단계에서 금지한다.
+- route collapse는 이번 단계에서 금지한다.
+- canonical owner migration은 이번 단계에서 금지한다.
+- Provider/Repository/Navigator/persistence authority 이전은 이번 단계에서 금지한다.
+- coordination candidate를 implementation permission, implementation-ready, automatic next step으로 해석하는 것은 금지한다.
+- docs 브랜치에서의 Phase 7-A 문서화는 후속 feature 브랜치 또는 runtime wiring을 자동 승인하지 않는다.
+
+#### 17.34.3 Phase 7에서 허용 가능한 첫 구현 단위의 조건
+
+- 별도 사용자 승인 이후에만 feature 브랜치로 분리할 수 있다.
+- 구현 단위는 하나의 명확한 목적과 좁은 범위를 가져야 하며, 여러 coordination candidate를 한 번에 묶지 않는다.
+- 구현 제안에는 current owner / authority 유지 대상과 forbidden expansion을 함께 적어야 한다.
+- 구현 단위는 route collapse, canonical owner migration, Provider/Repository/Navigator/persistence authority 이전 없이 설명 가능해야 한다.
+- 구현 단위는 `ExplorerWorkspace`를 execution owner, synchronization owner, persistence owner로 승격하지 않아야 한다.
+- 명령어 기반 검증 항목과, runtime/UI 변경이 발생하는 경우 클라이언트 UI 확인 기준을 분리해 제시해야 한다.
+- 첫 구현 단위는 이번 문서 단계에서 확정하지 않으며, 위 조건 충족 여부만 후속 진입 심사 기준으로 사용한다.
+
+#### 17.34.4 아직 금지해야 할 구현 유형
+
+- `ExplorerWorkspace`를 runtime coordinator/controller/owner로 전제하는 구현
+- Provider wiring 변경, Repository 호출 경계 재배치, Navigator rewiring, persistence authority 이동
+- route alias를 route replacement나 route collapse로 확장하는 구현
+- canonical workspace state owner, global refresh coordinator, automatic synchronization owner를 도입하는 구현
+- snapshot / restore를 persisted execution owner 또는 restore authority로 확장하는 구현
+- current production route 기본값, `HomeScreen`, `WordExplorerScreen`, `WordGraphScreen`, `WordDetailScreen`, Flutter `Navigator`의 현재 authority를 치환하는 구현
+
+#### 17.34.5 docs 브랜치에서 feature 브랜치로 전환 가능한 기준
+
+- Phase 7-A 문서 변경이 커밋되어 review 가능한 boundary 기준으로 고정되어 있어야 한다.
+- 사용자가 implementation 시작과 feature 브랜치 생성을 별도로 승인해야 한다.
+- 첫 구현 단위 제안에 대상 파일, 변경 목적, current owner / authority 유지 방식, forbidden expansion이 명시되어야 한다.
+- 제안이 route collapse, canonical owner migration, authority 이전 없이 성립함을 문서로 재확인해야 한다.
+- 명령어 기반 검증 항목이 준비되어 있어야 하고, runtime/UI 변경이 있으면 클라이언트 UI 확인 기준도 분리되어 있어야 한다.
+- 위 기준이 충족되기 전에는 docs 브랜치 커밋만으로 feature 브랜치로 넘어갈 수 없다.
+
+#### 17.34.6 implementation entry checklist
+
+- Phase 7-A 문서 경계가 최신 기준으로 반영되어 있는가
+- 첫 구현 단위가 하나의 좁은 목적만 다루는가
+- current owner / authority 유지 대상이 명시되어 있는가
+- forbidden expansion과 non-goal이 함께 적혀 있는가
+- route collapse, canonical owner migration, Provider/Repository/Navigator/persistence authority 이전이 범위에 포함되지 않는가
+- coordination candidate를 implementation permission으로 해석하지 않았는가
+- 수정 대상 파일과 변경 위치가 사전에 제시되었는가
+- Codex 명령어 기반 검증 항목이 준비되었는가
+- runtime/UI 변경 시 클라이언트 UI 확인 기준이 별도 섹션으로 준비되었는가
+- 별도 사용자 승인 없이 feature 브랜치 생성이나 구현 시작으로 넘어가지 않는가
+
+#### 17.34.7 Codex 명령어 기반 검증 항목
+
+- `git diff --check`
+- `git diff --stat`
+- `git status --short --branch`
+- `git diff --name-only`
+- `rg -n "Phase 7-A|implementation entry boundary planning|runtime/UI 구현|route collapse|canonical owner migration|Provider/Repository/Navigator/persistence authority|implementation permission" docs/ux/explorer_workspace_unification.md docs/logs/CHANGELOG.md`
+- 위 항목은 boundary 문서화와 변경 파일 범위 검증을 위한 command baseline이며, 후속 feature 브랜치 구현 검증은 해당 구현 범위에 맞는 별도 명령어 기반 테스트를 추가해야 한다.
+
+#### 17.34.8 클라이언트 UI 기반 확인 기준
+
+- 이번 Phase 7-A는 UI 기반 확인 수행 대상이 아니다.
+- Codex는 이번 단계에서 UI 테스트를 수행했다고 보고하지 않는다.
+- 후속 feature 브랜치에서 runtime/UI 동작 변경이 발생하는 경우에만 클라이언트 확인 절차를 별도로 작성한다.
+- 그 절차에는 테스트 목적, 시작 화면, 조작 순서, 입력할 테스트 데이터, 기대되는 화면 변화, 실패 시 확인할 증상, 테스트 완료 판단 기준이 포함되어야 한다.
+- 구체적 UI 확인 시나리오는 첫 구현 단위가 승인된 후 해당 feature 브랜치 제안서에서 확정한다.
+
+#### 17.34.9 implementation status
+
+- implementation status: `not approved`
+- Phase 7-A 문서화는 feature 브랜치 생성 승인이나 runtime/UI implementation permission이 아니다.
+- 첫 구현 단위는 아직 선택되지 않았으며, 진입 조건과 금지선만 고정된 상태다.
