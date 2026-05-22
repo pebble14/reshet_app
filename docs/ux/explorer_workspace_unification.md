@@ -1860,3 +1860,99 @@ Phase 7-F는 Phase 7-E에서 정리한 integration boundary를 실제 `WordExplo
 - source-level test는 private projection getter 존재, blank guard, detail payload gating, field/history 비저장, non-visual boundary 유지를 고정한다.
 - 명령어 기반 검증은 `dart analyze`, 관련 test, `git diff --check`, forbidden pattern grep, `git status`로 분리해 수행한다.
 - UI 테스트는 이번 단계에서 Codex 수행 대상이 아니며, runtime/UI diff가 없는 구현으로 제한한다.
+
+### 17.40 Phase 7-G projection consumer boundary planning 기준
+
+Phase 7-G는 구현 단계가 아니라 Phase 7-F에서 추가된 read-only projection result를 실제 어디에서 소비할 수 있는지 조사하고, 어떤 consumer 경계가 가장 안전한지 proposal로 정리하는 계획 단계다. 이번 단계는 feature 브랜치 생성 승인, visual consumer 구현 승인, `ExplorerWorkspace` shell mount 승인, runtime/UI 구현 승인으로 해석하지 않는다. Phase 7-A~7-F에서 고정한 금지선도 계속 유지한다.
+
+#### 17.40.1 현재 projection boundary 상태
+
+- `_readOnlyWorkspaceProjection`은 `WordExplorerScreen` 내부 private getter다.
+- projection result는 `build()` 시작부 local final과 debug `assert`에서만 참조된다.
+- projection result는 field, history payload, source of truth, runtime policy state로 저장되지 않는다.
+- projection result는 UI prop, widget tree, route, `Navigator`, repository 호출, persistence 호출에 연결되지 않는다.
+- 현재 visual consumer도 없고 authority consumer도 없다.
+- 현재 유일한 소비는 build-local derived read와 assert invariant 검증이다.
+
+#### 17.40.2 ExplorerWorkspace shell / preview / contract 현황
+
+- `ExplorerWorkspaceState`는 typed projection contract로만 유지한다.
+- `ExplorerWorkspace` shell은 stateless placeholder다.
+- preview screen은 `ExplorerWorkspaceState.fromPreviewInput(input) -> ExplorerWorkspace(state: state)` passive wrapper다.
+- preview interaction host는 preview-local `_state`와 `setState`를 가진 preview-local owner다.
+- production entry는 계속 `main.dart -> HomeScreen`이다.
+- 실제 explorer 진입은 계속 `HomeScreen -> Navigator.push -> WordExplorerScreen`이다.
+
+#### 17.40.3 projection consumer 후보 비교
+
+- 후보 A `no consumer 유지`
+  - 장점: 가장 보수적이며 runtime/UI diff가 없다.
+  - 위험: projection result가 실제 downstream shape과 얼마나 맞는지 exercise 범위가 작다.
+  - owner migration 위험: 매우 낮다.
+  - UI 확인 필요 여부: 없다.
+
+- 후보 B `debug/assert-only consumer 유지`
+  - 장점: 실제 `WordExplorerScreen` owner 상태에서 projection result를 계속 계산해 보면서도 visual mount, route 변화, shadow owner 도입을 피한다.
+  - 위험: visual consumer 적합성은 여전히 검증하지 못한다.
+  - runtime/UI diff 가능성: visible UI diff는 없고 build-local 계산만 추가된다.
+  - owner migration 위험: 낮다.
+  - UI 확인 필요 여부: 없다.
+
+- 후보 C `ExplorerWorkspace` shell 또는 preview contract에 visual consumer로 전달
+  - 장점: visual subtree 기준으로 projection shape를 직접 확인할 수 있다.
+  - 위험: production widget tree 변경이 필요하고 runtime/UI diff가 필수이며, preview host의 `_state` / `setState` 때문에 owner migration 또는 shadow owner처럼 읽힐 위험이 크다.
+  - runtime/UI diff 가능성: 높다.
+  - owner migration 위험: 높다.
+  - UI 확인 필요 여부: 있다.
+
+- 후보 D `test-only 또는 non-visual diagnostic consumer`
+  - 장점: production mount 없이 projection compatibility를 조금 더 검증할 수 있다.
+  - 위험: 실제 production visual consumer 연결 증거는 제공하지 못한다.
+  - runtime/UI diff 가능성: 없다.
+  - owner migration 위험: 낮다.
+  - UI 확인 필요 여부: 없다.
+
+#### 17.40.4 추천 consumer 경계
+
+- 추천 후보: `debug/assert-only consumer`
+- 이 추천은 implementation approval이 아니다.
+- 이 추천은 feature 브랜치 생성 승인도 아니다.
+- 후보 B는 실제 `WordExplorerScreen` owner 상태에서 projection result를 계산해 보면서도 visual mount, route 변화, shadow owner 도입을 피하는 가장 보수적인 소비 경계다.
+- projection result는 계속 ephemeral derived value로만 취급해야 한다.
+
+#### 17.40.5 후보 C 보류 이유
+
+- production widget tree 변경이 필수다.
+- runtime/UI diff가 필수다.
+- preview host의 `_state` / `setState` 때문에 owner migration 또는 shadow owner처럼 읽힐 위험이 크다.
+- shell direct mount도 visual consumer 연결이므로 클라이언트 UI 확인이 필요하다.
+- production mount, placeholder UI diff, shadow owner 위험이 크므로 현 단계에서는 비추천으로 유지한다.
+
+#### 17.40.6 후속 feature 브랜치 전환 전 조건
+
+- 사용자의 별도 승인 필요
+- visual consumer가 정말 필요한지 먼저 승인되어야 한다.
+- visual consumer가 필요하면 production mount 자체를 UI diff가 있는 기능 변경으로 취급해야 한다.
+- `ExplorerWorkspace`가 canonical owner가 아니라는 문구와 테스트를 먼저 설계해야 한다.
+- preview host는 production 후보에서 제외해야 한다.
+- 추가 `setState` 필요 여부를 먼저 확인해야 한다.
+- route / `Navigator` 영향 여부를 먼저 확인해야 한다.
+- Repository / DB / Provider 영향 여부를 먼저 확인해야 한다.
+- 명령어 기반 검증 시나리오를 먼저 확정해야 한다.
+- 클라이언트 UI 확인 절차를 먼저 확정해야 한다.
+- Flutter 테스트 실행 환경 정상화 필요성을 기록하고 해소해야 한다.
+
+#### 17.40.7 runtime/UI diff와 UI 확인 기준
+
+- 후보 B는 visible UI diff가 없고 클라이언트 UI 확인이 필요 없다.
+- 후보 C 계열로 넘어가면 runtime/UI diff가 발생한다고 보고, 클라이언트 UI 확인을 필수로 본다.
+- Codex는 수행하지 않은 UI 테스트를 수행했다고 보고하지 않는다.
+
+#### 17.40.8 implementation status
+
+- implementation status: `not approved`
+- feature branch status: `not approved`
+- recommended consumer boundary: `debug/assert-only consumer`
+- visual consumer status: `not approved`
+- shell mount status: `not approved`
+- Phase 7-G 문서화는 projection consumer 구현 승인이나 `ExplorerWorkspace` shell mount 승인이 아니다.

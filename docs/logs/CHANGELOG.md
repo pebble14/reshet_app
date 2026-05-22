@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2026-05-23 Phase 7-G projection consumer boundary planning 문서화
+
+- `docs/ux/explorer_workspace_unification.md`에 `17.40 Phase 7-G projection consumer boundary planning 기준`을 추가해, Phase 7-F read-only projection result의 현재 소비 상태와 안전한 consumer 경계 후보 A/B/C/D 비교를 문서화했다.
+- 현재 projection boundary는 `WordExplorerScreen` 내부 private getter `_readOnlyWorkspaceProjection`과 build-local read + debug assert에만 머무르며, field/history/source of truth, UI prop, widget tree, route, `Navigator`, repository, persistence로 연결되지 않는다는 점을 기준으로 고정했다.
+- 추천 consumer 경계는 후보 B `debug/assert-only consumer`로 기록했지만, 이는 implementation approval이 아니고 feature 브랜치 생성 승인도 아니며 visual consumer 구현 승인이나 `ExplorerWorkspace` shell mount 승인도 아니다.
+- 후보 C visual consumer 연결은 production widget tree 변경, runtime/UI diff, preview host의 `_state` / `setState`로 인한 shadow owner 위험 때문에 현 단계에서는 비추천으로 기록했다.
+- 후속 feature 브랜치 전환 전에는 visual consumer 필요성에 대한 별도 승인, production mount를 UI diff가 있는 기능 변경으로 취급하는 기준, `ExplorerWorkspace` non-owner 문구와 테스트 설계, route / `Navigator` / Repository / DB / Provider 영향 검토, 명령어 기반 검증 시나리오와 클라이언트 UI 확인 절차 확정, Flutter 테스트 실행 환경 정상화가 선행되어야 한다고 명시했다.
+
 ## 2026-05-23 Phase 7-F WordExplorer read-only projection boundary implementation
 
 - `lib/ui/word_explorer_screen.dart`에 private read-only projection boundary `_readOnlyWorkspaceProjection`을 추가하고, current owner state를 `WordExplorerWorkspaceProjectionAdapter.project(...)` 호출로 파생 `ExplorerWorkspaceState` snapshot에만 투영하도록 정리했다.
