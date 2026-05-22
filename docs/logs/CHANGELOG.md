@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-05-22 Phase 7-C Candidate A feature implementation entry plan
+
+- Phase 7-C를 ExplorerWorkspace 후보 A의 feature 구현 진입 계획을 문서로 고정하는 단계로 기록했다. 이번 단계는 implementation이 아니며, feature 브랜치 생성이나 runtime/UI 구현을 승인하지 않는다.
+- `docs/ux/explorer_workspace_unification.md`에 `17.36 Phase 7-C Candidate A feature implementation entry plan` 섹션을 추가해 후보 A의 목적, 허용 책임, 금지 책임, current contract 기준 projection 범위, forbidden expansion, feature 브랜치 전환 전 조건, 명령어 기반 검증 계획, UI 확인 기준을 정리했다.
+- source of truth는 계속 `WordExplorerScreen`에 남아 있어야 하며, `ExplorerWorkspace`는 projection consumer일 뿐 runtime owner가 아니라고 다시 고정했다.
+- implementation status는 `not approved`, feature branch status는 `not approved`로 유지했고, recommended next feature branch는 제안으로만 기록했다.
+
 ## 2026-05-21 Phase 7-B first implementation unit candidate selection
 
 - Phase 7-B를 ExplorerWorkspace Phase 7의 첫 구현 단위 후보를 실제 코드 기준으로 조사하고 비교하는 문서 단계로 기록했다. 이번 단계는 implementation이 아니며, feature 브랜치 생성이나 runtime/UI 구현을 승인하지 않는다.

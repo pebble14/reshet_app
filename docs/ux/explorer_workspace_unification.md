@@ -1582,3 +1582,113 @@ Phase 7-B는 실제 구현 단계가 아니라, current code 기준으로 첫 �
 - feature branch status: `not approved`
 - recommended first candidate: `WordExplorer -> ExplorerWorkspaceState read-only projection adapter`
 - 추천 후보는 후속 검토 대상이지 구현 승인 사항이 아니다.
+
+### 17.36 Phase 7-C Candidate A feature implementation entry plan 기준
+
+Phase 7-C는 실제 구현 단계가 아니라, 후보 A를 후속 feature 브랜치로 넘기기 전에 feature 구현 진입 계획을 문서로 고정하는 단계다. 이 단계는 feature 브랜치 생성, runtime/UI 구현 시작, route collapse, canonical owner migration, Provider/Repository/Navigator/persistence authority 이전을 자동 승인하지 않는다. Phase 7-A와 Phase 7-B에서 고정한 금지선도 그대로 유지한다.
+
+#### 17.36.1 후보 A의 목적
+
+- 후보 A의 목적은 `WordExplorerScreen`의 현재 owner state를 one-way read-only projection으로 `ExplorerWorkspaceState`에 투영하는 adapter 진입 범위를 고정하는 것이다.
+- source of truth는 계속 `WordExplorerScreen`에 남아 있어야 한다.
+- `ExplorerWorkspace`는 projection consumer일 뿐 runtime owner가 아니다.
+- 목표는 runtime/UI diff가 없는 feature 진입 범위를 문서로 좁히는 것이다.
+
+#### 17.36.2 projection adapter의 허용 책임
+
+- 현재 `WordExplorerScreen`이 이미 소유한 state를 읽기 전용 값으로 변환한다.
+- `ExplorerWorkspaceState` 생성에 필요한 최소 projection만 수행한다.
+- current owner가 이미 가진 값을 semantic projection으로 정리하되, 추가 owner를 만들지 않는다.
+- mutation, navigation, persistence, fetch, refresh, synchronization을 수행하지 않는다.
+- callback owner나 command owner가 되지 않는다.
+- UI mount를 수행하지 않는다.
+
+#### 17.36.3 projection adapter의 금지 책임
+
+- selected/center/detail/history state의 source of truth가 되지 않는다.
+- `ExplorerWorkspace`를 runtime coordinator, controller, owner로 승격하지 않는다.
+- repository 또는 DB 접근을 수행하지 않는다.
+- `Navigator` 호출을 수행하지 않는다.
+- Provider를 도입하지 않는다.
+- production route를 연결하지 않는다.
+- route collapse를 수행하지 않는다.
+- callback mutation API를 추가하지 않는다.
+- persistence write/read trigger를 추가하지 않는다.
+- graph/detail/search owner를 이전하지 않는다.
+
+#### 17.36.4 future feature 브랜치에서 허용 가능한 예상 수정 범위
+
+- `lib/ui/word_explorer_screen.dart`
+- `lib/ui/explorer_workspace/` 하위 projection helper 신규 파일 1개
+- 필요 시 source-level/unit test 1개
+- 단, Phase 7-C에서는 위 파일들을 수정하지 않는다.
+
+#### 17.36.5 future feature 브랜치에서 제외해야 할 파일
+
+- `lib/main.dart`
+- `lib/ui/home_screen.dart`
+- `lib/ui/word_graph_screen.dart`
+- `lib/ui/word_detail_screen.dart`
+- `lib/data/repositories/word_repository.dart`
+- `lib/domain/word/word_write_service.dart`
+- `lib/database/database_service.dart`
+- DB 파일
+- route / Navigator / persistence 관련 파일
+
+#### 17.36.6 `ExplorerWorkspaceState` projection 범위
+
+- current code 기준 `ExplorerWorkspaceState`의 현재 contract field는 `selectedWordId`, `graphCenterWordId`, `detailTargetWordId`, `layoutPreset`, `origin`이다.
+- 따라서 current contract 기준 projection 가능 필드 범위는 위 다섯 필드로 한정해 기록한다.
+- 다만 후보 A의 adapter는 `WordExplorerScreen`이 이미 소유한 값만 read-only projection 대상으로 삼아야 하며, 존재하지 않는 owner state나 추측 기반 필드를 새로 만들면 안 된다.
+- `selectedWordId`와 `graphCenterWordId`는 현재 `WordExplorerScreen` owner state에 대응하는 값으로만 다룬다.
+- `detailTargetWordId`는 현재 `WordExplorerScreen`이 이미 관리하는 detail 대상 의미 범위 안에서만 다루며, 별도 detail owner를 추가하지 않는다.
+- `layoutPreset`과 `origin`은 current contract field라는 사실까지만 고정하며, 새로운 runtime policy state, synchronization state, authority state로 확장하지 않는다.
+
+#### 17.36.7 forbidden expansion
+
+- production mount 금지
+- route collapse 금지
+- Navigator rewiring 금지
+- Repository / DB import 금지
+- Provider 도입 금지
+- canonical owner migration 금지
+- callback mutation API 추가 금지
+- runtime/UI diff를 유발하는 구조 확장 금지
+- `ExplorerWorkspace`를 runtime execution owner, synchronization owner, persistence owner로 승격 금지
+
+#### 17.36.8 feature 브랜치 전환 전 조건
+
+- 사용자의 별도 승인 필요
+- feature 브랜치명이 확정되어야 한다.
+- 수정 대상 파일과 수정 금지 파일이 확정되어야 한다.
+- projection adapter 책임이 read-only projection으로 제한되어야 한다.
+- forbidden expansion이 명시되어야 한다.
+- 명령어 기반 검증 계획이 확정되어야 한다.
+- runtime/UI diff 없음이 목표로 고정되어야 한다.
+
+#### 17.36.9 명령어 기반 검증 계획
+
+- 후속 feature 브랜치에서 최소 `dart analyze`를 수행한다.
+- 가능하면 projection helper에 대한 source-level/unit test를 추가한다.
+- `git diff --name-only`로 허용 파일 외 수정 여부를 확인한다.
+- `rg`로 projection helper에 `Navigator`, Repository, `DatabaseService`, Provider import가 생기지 않았는지 확인한다.
+- 코드 diff 기준으로 runtime/UI diff가 의도치 않게 생기지 않았는지 검토한다.
+
+#### 17.36.10 UI 확인 기준
+
+- Phase 7-C 자체는 UI 확인 수행 대상이 아니다.
+- 후속 feature 브랜치에서도 runtime/UI diff가 없도록 제한하는 것이 목표다.
+- 만약 UI diff가 발생한다면 feature 구현 범위 재검토 대상으로 보고하고, 클라이언트 UI 확인 기준을 별도 문서화해야 한다.
+- Codex는 UI 테스트를 수행했다고 보고하지 않는다.
+
+#### 17.36.11 후속 feature 브랜치명 제안
+
+- recommended next feature branch: `feature/explorer-workspace-phase7d-readonly-projection-adapter`
+- 위 이름은 제안일 뿐이며 생성 승인이나 implementation approval이 아니다.
+
+#### 17.36.12 implementation status
+
+- implementation status: `not approved`
+- feature branch status: `not approved`
+- recommended next feature branch: `feature/explorer-workspace-phase7d-readonly-projection-adapter`
+- Phase 7-C 문서화는 후보 A 구현 승인이나 feature 브랜치 생성 승인이 아니다.
