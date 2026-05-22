@@ -1704,3 +1704,106 @@ Phase 7-D는 Phase 7-C에서 고정한 후보 A 범위 안에서 `WordExplorerSc
 - `layoutPreset`, `origin`은 adapter 호출 인자로만 취급하며 runtime policy state, synchronization state, authority state로 확장하지 않는다.
 - production mount, route collapse, Navigator rewiring, Repository/DB import, Provider 도입, callback mutation API, persistence trigger 추가는 수행하지 않는다.
 - 이번 단계의 목표는 runtime/UI diff 없음이며, UI 테스트는 Codex 수행 대상이 아니다.
+
+### 17.38 Phase 7-E projection adapter integration boundary planning
+
+Phase 7-E는 Phase 7-D에서 추가한 read-only projection adapter를 향후 `WordExplorerScreen`에 연결할 수 있는지 실제 코드 기준으로 조사하고, 안전한 연결 경계를 proposal로 정리하는 단계다. 이번 단계는 구현 단계가 아니며 `WordExplorerScreen` 수정 승인, feature 브랜치 생성 승인, runtime/UI 구현 승인으로 간주하지 않는다. Phase 7-A~7-D에서 고정한 runtime/UI 구현 금지, route collapse 금지, canonical owner migration 금지, Provider/Repository/Navigator/persistence authority 이전 금지 경계를 그대로 유지한다.
+
+#### 17.38.1 current owner state 조사 결과
+
+- `_centerWordId`는 현재 `WordExplorerScreen` 내부 graph center source of truth다.
+- `_selectedWordId`와 `_selectedWordDisplayItem`이 현재 선택/상세 상태를 구성한다.
+- detail panel 렌더는 `_selectedWordDisplayItem` 존재 여부에 의해 결정된다.
+- detail route 진입은 `_selectedWordId`와 `_selectedWordDisplayItem` 둘 다 필요하다.
+- `_history`는 `centerWordId`와 `selectedWordId`를 payload에 저장하지만 `_applyHistoryEntry()`는 selection/detail을 복원하지 않고 null로 비운다.
+- current code 기준 projection 입력 출처는 다음이 가장 가깝다.
+  - `graphCenterWordId <- _centerWordId`
+  - `selectedWordId <- _selectedWordId`
+  - `detailTargetWordId <- (_selectedWordDisplayItem != null ? _selectedWordId : null)`
+- 위 mapping은 후속 feature 구현 전 검토 기준이지 구현 승인 사항은 아니다.
+
+#### 17.38.2 build / callback / setState 경계 조사 결과
+
+- split-view build는 `WordExplorerScreen`의 `Row` 경계에 있다.
+- `WordGraphScreen`은 split-view 내부에 embed되어 있다.
+- detail panel은 `_buildDetailPanel()` 경계에서 렌더된다.
+- graph node selection은 `_selectWord(...)`로 연결된다.
+- center 변경은 `_selectWord(..., changeCenterWord: true)`로 연결된다.
+- clear는 `_clearSelectedWordPanel()`로 연결된다.
+- detail navigation은 `_openEditSelectedWord()`와 `_openSelectedWordDetail()`로 연결된다.
+- 현재 `setState` 경로는 current owner state를 직접 갱신하는 mutation 영역이므로 adapter 호출은 mutation 메서드 내부보다 read-only projection method 또는 build 경계의 파생값으로 제한하는 편이 안전하다.
+
+#### 17.38.3 adapter 연결 후보 비교
+
+- 후보 A: `build` 내부 local final projection
+  - 장점: 삽입 위치가 단순하고 추가 owner를 만들지 않는다.
+  - 위험: dead local code가 되기 쉽고 `layoutPreset` / `origin` 임시값을 build에서 즉석 합성하게 된다.
+  - runtime/UI diff 가능성: UI에 연결하지 않으면 없음.
+  - owner migration 위험: 낮음.
+  - UI 확인 필요 여부: 현재 단계에서는 없음.
+- 후보 B: private getter 또는 private method로 projection 생성만 제공
+  - 장점: read-only projection 생성 경계를 한 점으로 고정하고 empty guard, detail target 규칙을 한 곳에 모을 수 있다.
+  - 위험: `layoutPreset` / `origin` 임시값 정책은 별도 합의가 필요하다.
+  - runtime/UI diff 가능성: visual consumer에 연결하지 않으면 없음.
+  - owner migration 위험: 가장 낮음.
+  - UI 확인 필요 여부: 현재 단계에서는 없음.
+- 후보 C: `ExplorerWorkspace` shell 또는 preview contract 연결
+  - 장점: 최종 shell 방향과 contract 사용성을 일찍 점검할 수 있다.
+  - 위험: production mount, visual consumer 연결, shadow owner 해석으로 확장될 위험이 크다.
+  - runtime/UI diff 가능성: 높음.
+  - owner migration 위험: 높음.
+  - UI 확인 필요 여부: 필요할 가능성이 높다.
+
+#### 17.38.4 추천 후보
+
+- 추천 후보는 후보 B `private getter or private method read-only projection`이다.
+- 이 추천은 implementation approval이 아니며 feature 브랜치 생성 승인도 아니다.
+- 후보 B의 핵심은 `WordExplorerScreen` 내부에 read-only projection 생성 경계를 두되, 그 결과를 field/history/source of truth로 저장하지 않는 것이다.
+- projection result는 owner state가 아니라 derived snapshot으로만 취급해야 한다.
+
+#### 17.38.5 후보 B의 forbidden expansion
+
+- `ExplorerWorkspaceState`를 field에 저장 금지
+- history payload 또는 source of truth로 저장 금지
+- 추가 `setState` 금지
+- production mount 금지
+- route collapse 금지
+- Navigator rewiring 금지
+- Repository / DB import 금지
+- Provider 도입 금지
+- persistence trigger 추가 금지
+- graph/detail/search owner 이전 금지
+- `ExplorerWorkspace` runtime owner 승격 금지
+- visual consumer 연결 금지
+- shell mount 금지
+
+#### 17.38.6 unresolved / precondition
+
+- `layoutPreset` / `origin` 임시값 정책은 후속 feature 구현 전에 별도 합의가 필요하다.
+- `_centerWordId.trim().isEmpty` guard 필요 여부를 후속 feature 구현 전에 명시해야 한다.
+- `detailTargetWordId`는 `_selectedWordDisplayItem != null`일 때만 `_selectedWordId`를 반영하는 방향이 current code 기준 가장 보수적이지만, 이것도 후속 feature 구현 전 검토 기준으로만 기록한다.
+- 위 항목들은 구현 확정이 아니라 feature 전환 전 조건이다.
+
+#### 17.38.7 후속 feature 브랜치 전환 전 조건
+
+- 사용자의 별도 승인 필요
+- `WordExplorerScreen` 수정 범위를 private projection method와 필요 시 단일 read-only 호출 지점으로 제한
+- adapter 호출이 read-only projection으로만 제한됨
+- projection result를 field/history/source of truth로 저장하지 않음
+- 추가 `setState` 없음
+- runtime/UI diff 없음
+- Navigator / route / Repository / DB / Provider 영향 없음
+- 명령어 기반 검증 계획 확정
+- UI 확인 필요 여부 분리
+
+#### 17.38.8 후속 feature 브랜치명 제안
+
+- 예시 제안: `feature/explorer-workspace-phase7f-wordexplorer-projection-boundary`
+- 위 이름은 제안일 뿐이며 생성 승인 아님
+
+#### 17.38.9 implementation status
+
+- implementation status: `not approved`
+- feature branch status: `not approved`
+- recommended integration candidate: `private getter or private method read-only projection`
+- Phase 7-E 문서화는 `WordExplorerScreen` 수정 승인이나 adapter 연결 구현 승인이 아니다.

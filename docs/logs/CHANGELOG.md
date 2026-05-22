@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2026-05-22 Phase 7-E projection adapter integration boundary planning
+
+- Phase 7-E를 adapter 연결 전 경계 조사와 proposal 문서화 단계로 기록했다. 이번 단계는 구현 단계가 아니며 `WordExplorerScreen` 수정 승인, feature 브랜치 생성 승인, runtime/UI 구현 승인으로 간주하지 않는다.
+- `docs/ux/explorer_workspace_unification.md`에 `17.38 Phase 7-E projection adapter integration boundary planning` 섹션을 추가해 current owner state 조사 결과, build/callback/setState 경계, adapter 연결 후보 A/B/C 비교, 추천 후보 B, forbidden expansion, unresolved / precondition, feature 전환 전 조건을 정리했다.
+- current code 기준 projection 입력 출처를 `graphCenterWordId <- _centerWordId`, `selectedWordId <- _selectedWordId`, `detailTargetWordId <- (_selectedWordDisplayItem != null ? _selectedWordId : null)`로 기록했지만, 이는 후속 feature 구현 전 검토 기준이지 구현 승인 사항은 아니다.
+- 추천 후보는 `private getter or private method read-only projection`으로 기록했지만, projection result를 field/history/source of truth로 저장하지 않는 derived snapshot 경계로만 취급해야 하며 implementation approval은 아니다.
+- implementation status는 `not approved`, feature branch status는 `not approved`로 유지하며, 제안된 후속 feature 브랜치명 `feature/explorer-workspace-phase7f-wordexplorer-projection-boundary` 역시 생성 승인 없이 제안으로만 남긴다.
+
 ## 2026-05-22 Phase 7-D read-only projection adapter implementation
 
 - `lib/ui/explorer_workspace/word_explorer_workspace_projection_adapter.dart`를 추가해 `WordExplorerScreen`이 이미 소유한 projection candidate 값을 `ExplorerWorkspaceState`로 변환하는 read-only adapter를 구현했다.
