@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2026-05-22 Phase 7-D read-only projection adapter implementation
+
+- `lib/ui/explorer_workspace/word_explorer_workspace_projection_adapter.dart`를 추가해 `WordExplorerScreen`이 이미 소유한 projection candidate 값을 `ExplorerWorkspaceState`로 변환하는 read-only adapter를 구현했다.
+- adapter는 `selectedWordId`, `graphCenterWordId`, `detailTargetWordId`, `layoutPreset`, `origin`을 모두 명시적 입력으로 받으며, 내부에서 mutation, navigation, persistence, fetch, refresh, synchronization을 수행하지 않는다.
+- `detailTargetWordId`는 current owner가 제공한 detail target 의미 값을 read-only projection하는 범위로만 다루며, helper 내부에서 `selectedWordId`로 자동 추론하지 않는다.
+- source of truth는 계속 `WordExplorerScreen`에 남아 있고, `ExplorerWorkspace`는 runtime owner가 아니라 projection consumer로 유지한다.
+- production mount, route collapse, Navigator rewiring, Repository/DB/Provider authority 변경은 수행하지 않았고 runtime/UI diff가 없도록 범위를 제한했다.
+- `test/ui/explorer_workspace_phase7d_readonly_projection_adapter_test.dart`를 추가해 explicit projection, non-inference boundary, 금지 import/호출 부재를 source-level로 검증했다.
+
 ## 2026-05-22 Phase 7-C Candidate A feature implementation entry plan
 
 - Phase 7-C를 ExplorerWorkspace 후보 A의 feature 구현 진입 계획을 문서로 고정하는 단계로 기록했다. 이번 단계는 implementation이 아니며, feature 브랜치 생성이나 runtime/UI 구현을 승인하지 않는다.

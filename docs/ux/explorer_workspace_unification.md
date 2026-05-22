@@ -1692,3 +1692,15 @@ Phase 7-C는 실제 구현 단계가 아니라, 후보 A를 후속 feature 브�
 - feature branch status: `not approved`
 - recommended next feature branch: `feature/explorer-workspace-phase7d-readonly-projection-adapter`
 - Phase 7-C 문서화는 후보 A 구현 승인이나 feature 브랜치 생성 승인이 아니다.
+
+### 17.37 Phase 7-D read-only projection adapter implementation
+
+Phase 7-D는 Phase 7-C에서 고정한 후보 A 범위 안에서 `WordExplorerScreen -> ExplorerWorkspaceState` 읽기 전용 projection adapter를 실제 코드로 추가한 단계다. 이번 단계의 목적은 production wiring이나 owner migration이 아니라, current owner가 이미 가진 값을 `ExplorerWorkspaceState` contract로 옮기는 최소 helper 경계를 구현하고 검증하는 데 있다.
+
+- source of truth는 계속 `WordExplorerScreen`에 남아 있다.
+- `ExplorerWorkspace`는 runtime owner가 아니며 projection consumer로만 유지한다.
+- adapter는 `selectedWordId`, `graphCenterWordId`, `detailTargetWordId`, `layoutPreset`, `origin`을 명시적 입력으로 받아 read-only projection만 수행한다.
+- `detailTargetWordId`는 helper 내부에서 `selectedWordId`로 자동 추론하지 않는다. current owner가 제공한 detail target 의미 값을 그대로 projection한다.
+- `layoutPreset`, `origin`은 adapter 호출 인자로만 취급하며 runtime policy state, synchronization state, authority state로 확장하지 않는다.
+- production mount, route collapse, Navigator rewiring, Repository/DB import, Provider 도입, callback mutation API, persistence trigger 추가는 수행하지 않는다.
+- 이번 단계의 목표는 runtime/UI diff 없음이며, UI 테스트는 Codex 수행 대상이 아니다.
