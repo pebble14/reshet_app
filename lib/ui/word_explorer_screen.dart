@@ -4,6 +4,8 @@ import '../data/repositories/word_repository.dart';
 import '../domain/graph/graph_center_word_display_item.dart';
 import '../domain/word/word_detail_like_display_item.dart';
 import '../domain/word/word_edit_save_result.dart';
+import 'explorer_workspace/explorer_workspace_contract.dart';
+import 'explorer_workspace/word_explorer_workspace_projection_adapter.dart';
 import 'word_detail_screen.dart';
 import 'word_edit_screen.dart';
 import 'word_graph_screen.dart';
@@ -201,8 +203,58 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
     _initializeExplorerBootstrap();
   }
 
+  String? _normalizeReadOnlyProjectionWordId(String? wordId) {
+    if (wordId == null) {
+      return null;
+    }
+
+    final normalizedWordId = wordId.trim();
+    if (normalizedWordId.isEmpty) {
+      return null;
+    }
+
+    return normalizedWordId;
+  }
+
+  ExplorerWorkspaceState? get _readOnlyWorkspaceProjection {
+    final normalizedCenterWordId = _centerWordId.trim();
+    if (normalizedCenterWordId.isEmpty) {
+      return null;
+    }
+
+    final normalizedSelectedWordId = _normalizeReadOnlyProjectionWordId(
+      _selectedWordId,
+    );
+    final detailTargetWordId = _selectedWordDisplayItem != null
+        ? normalizedSelectedWordId
+        : null;
+
+    return WordExplorerWorkspaceProjectionAdapter.project(
+      selectedWordId: normalizedSelectedWordId,
+      graphCenterWordId: normalizedCenterWordId,
+      detailTargetWordId: detailTargetWordId,
+      layoutPreset: ExplorerWorkspaceLayoutPreset.balanced,
+      origin: ExplorerWorkspaceTransitionOrigin.routeAlias,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final workspaceProjection = _readOnlyWorkspaceProjection;
+    assert(() {
+      final projection = workspaceProjection;
+      if (projection == null) {
+        return true;
+      }
+
+      final detailTargetWordId = projection.detailTargetWordId;
+      return projection.graphCenterWordId != null &&
+          projection.layoutPreset == ExplorerWorkspaceLayoutPreset.balanced &&
+          projection.origin == ExplorerWorkspaceTransitionOrigin.routeAlias &&
+          (detailTargetWordId == null ||
+              detailTargetWordId == projection.selectedWordId);
+    }());
+
     return Scaffold(
       appBar: AppBar(title: const Text('탐색')),
       body: Row(

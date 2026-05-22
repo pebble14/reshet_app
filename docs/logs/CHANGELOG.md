@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2026-05-23 Phase 7-F WordExplorer read-only projection boundary implementation
+
+- `lib/ui/word_explorer_screen.dart`에 private read-only projection boundary `_readOnlyWorkspaceProjection`을 추가하고, current owner state를 `WordExplorerWorkspaceProjectionAdapter.project(...)` 호출로 파생 `ExplorerWorkspaceState` snapshot에만 투영하도록 정리했다.
+- projection 입력은 `graphCenterWordId <- _centerWordId`, `selectedWordId <- _selectedWordId`, `detailTargetWordId <- (_selectedWordDisplayItem != null ? normalizedSelectedWordId : null)` 기준으로 유지하되, center/selected/detail 후보가 blank string이면 adapter로 전달하지 않도록 caller-local 방어를 추가했다.
+- `layoutPreset`은 `ExplorerWorkspaceLayoutPreset.balanced`, `origin`은 `ExplorerWorkspaceTransitionOrigin.routeAlias`로 projection 호출 인자에만 고정했고, field/history/source of truth/runtime policy state로 확장하지 않았다.
+- projection 결과는 `build()` 시작부 local final과 debug assert에서만 참조하며, UI prop, widget tree, route, Navigator, persistence, repository 호출에는 연결하지 않았다.
+- `test/ui/word_explorer_screen_phase7f_projection_boundary_test.dart`를 추가해 private projection getter 존재, blank guard, detail payload gating, field/history 비저장, 비시각 경계 유지 여부를 source-level로 검증했다.
+- `docs/ux/explorer_workspace_unification.md`에 Phase 7-F 구현 기록을 추가해 current owner 유지, derived snapshot 경계, 금지 확장 미적용 상태를 문서화했다.
+
 ## 2026-05-22 Phase 7-E projection adapter integration boundary planning
 
 - Phase 7-E를 adapter 연결 전 경계 조사와 proposal 문서화 단계로 기록했다. 이번 단계는 구현 단계가 아니며 `WordExplorerScreen` 수정 승인, feature 브랜치 생성 승인, runtime/UI 구현 승인으로 간주하지 않는다.

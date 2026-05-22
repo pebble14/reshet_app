@@ -1807,3 +1807,56 @@ Phase 7-E는 Phase 7-D에서 추가한 read-only projection adapter를 향후 `W
 - feature branch status: `not approved`
 - recommended integration candidate: `private getter or private method read-only projection`
 - Phase 7-E 문서화는 `WordExplorerScreen` 수정 승인이나 adapter 연결 구현 승인이 아니다.
+
+### 17.39 Phase 7-F WordExplorer read-only projection boundary implementation
+
+Phase 7-F는 Phase 7-E에서 정리한 integration boundary를 실제 `WordExplorerScreen` 내부에 caller-local read-only projection 형태로 추가한 구현 단계다. 이번 단계의 목적은 current owner state를 `ExplorerWorkspaceState` derived snapshot으로만 투영하는 경계를 고정하는 것이며, production mount, route collapse, owner migration, visual consumer 연결은 포함하지 않는다.
+
+- source of truth는 계속 `WordExplorerScreen`에 남아 있다.
+- `ExplorerWorkspace`는 runtime owner가 아니며, 이번 단계에서도 production mount되지 않는다.
+- projection 결과는 field/history/source of truth/runtime policy state로 저장하지 않는다.
+- 목표는 runtime/UI diff 없이 projection boundary만 추가하는 것이다.
+
+#### 17.39.1 구현 범위
+
+- `lib/ui/word_explorer_screen.dart`
+  - private helper `_normalizeReadOnlyProjectionWordId(...)`
+  - private getter `_readOnlyWorkspaceProjection`
+  - `build()` 시작부 local final + debug assert
+- `test/ui/word_explorer_screen_phase7f_projection_boundary_test.dart`
+  - source-level boundary 검증
+- `docs/logs/CHANGELOG.md`
+  - 단계 기록 추가
+
+#### 17.39.2 projection 입력 경계
+
+- `graphCenterWordId <- _centerWordId`
+- `selectedWordId <- _selectedWordId`
+- `detailTargetWordId <- (_selectedWordDisplayItem != null ? normalizedSelectedWordId : null)`
+- `_centerWordId.trim().isEmpty`이면 projection을 생성하지 않는다.
+- `_selectedWordId`가 null이 아니어도 trim 결과가 empty이면 adapter로 전달하지 않는다.
+- current owner가 detail payload를 가진 경우에만 selected id를 detail target projection input으로 전달한다.
+
+#### 17.39.3 metadata 고정값
+
+- `layoutPreset: ExplorerWorkspaceLayoutPreset.balanced`
+- `origin: ExplorerWorkspaceTransitionOrigin.routeAlias`
+
+위 두 값은 이번 단계에서 projection 호출 인자로만 사용되는 임시 metadata다. layout policy state, synchronization state, authority state로 확장하지 않는다.
+
+#### 17.39.4 금지 확장 미적용 확인
+
+- `ExplorerWorkspaceState` field 저장 없음
+- `_history` payload 저장 없음
+- 추가 `setState` 없음
+- UI prop / widget tree 연결 없음
+- `ExplorerWorkspace` shell mount / production mount 없음
+- route collapse / Navigator rewiring 없음
+- Repository / DB / Provider authority 추가 없음
+- graph/detail/search owner 이전 없음
+
+#### 17.39.5 검증 관점
+
+- source-level test는 private projection getter 존재, blank guard, detail payload gating, field/history 비저장, non-visual boundary 유지를 고정한다.
+- 명령어 기반 검증은 `dart analyze`, 관련 test, `git diff --check`, forbidden pattern grep, `git status`로 분리해 수행한다.
+- UI 테스트는 이번 단계에서 Codex 수행 대상이 아니며, runtime/UI diff가 없는 구현으로 제한한다.
