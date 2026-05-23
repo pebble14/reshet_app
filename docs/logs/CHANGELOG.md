@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 2026-05-23 Phase 8-F hidden probe output contract hardening plan
+
+- Phase 8-E output contract를 source-level hardening 관점에서 검토하는 planning 단계로 기록했다.
+- 현재 Phase 7-F/8-C source-level test가 Level 1 hidden probe boundary, read-only input, side-effect 금지, route/shell 미연결, projection result 비저장 상태를 보호한다고 정리했다.
+- `candidateSlots`, `candidateLabels`가 helper 내부 local candidate structure에 머무르며 public API, output DTO/model, persistence schema, route contract, `ExplorerWorkspace` shell contract가 아니라고 기록했다.
+- output contract hardening은 현재 boundary 보호를 유지하되 non-contract 오해 방지 test 후보가 남아 있는 상태로 평가했다.
+- Phase 8-G 후보를 hidden probe output contract source-level test hardening, visual candidate naming risk test, public API / DTO / persistence schema 오해 방지 테스트로 제한했다.
+- Level 1 boundary는 유지하며 Level 2 production-adjacent visual consumer와 Level 3 production visible consumer 진입은 `not approved` 상태로 유지했다.
+- runtime/UI integration, production visual consumer exposure, `ExplorerWorkspace` shell mount, route collapse, owner migration, Provider / Repository / Navigator / persistence authority migration은 계속 `not approved`로 유지했다.
+- 이번 변경은 문서 변경만 포함하며 코드, 테스트, platform 경로 변경과 UI 기반 수동 테스트 대상은 없다.
+
 ## 2026-05-23 Phase 8-E hidden visual probe output contract planning
 
 - Phase 8-E는 구현 단계가 아니라 Phase 8-C hidden visual probe가 내부적으로 도출하는 visual candidate의 output contract를 문서화하는 planning 단계로 기록했다.

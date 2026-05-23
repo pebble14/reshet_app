@@ -2608,3 +2608,143 @@ Phase 8-E는 Phase 8-F 구현, Level 2 production-adjacent visual consumer 진�
 | flutter analyze 기존 이슈 상태가 문서 변경과 분리되어 보고되는지 확인 | analyze 실패 시 기존 저장소 이슈와 문서 변경 영향을 구분해야 함 | 문서 변경이 analyzer 실패 원인처럼 보고됨 | `flutter analyze` | 작업 종료 보고에서 기록 |
 
 UI 기반 수동 테스트는 이번 Phase 8-E 문서/planning 작업의 대상이 아니다.
+
+### 17.47 Phase 8-F hidden probe output contract hardening plan
+
+Phase 8-F는 구현 단계가 아니다. 이번 단계의 목적은 Phase 8-E에서 정리한 hidden visual probe output contract가 현재 source-level test로 충분히 고정되어 있는지 실제 코드와 테스트 기준으로 검토하고, 추가 hardening이 필요한 경우 다음 단계 후보를 문서상으로 제한하는 것이다.
+
+Phase 8-E는 hidden visual probe가 내부적으로 도출하는 output contract의 의미와 non-contract 항목을 문서화했다. Phase 8-F는 그 contract를 public API로 승격하지 않고, 현재 Phase 8-C source-level test가 어떤 범위를 보호하는지와 어떤 오해 방지 test 후보가 남아 있는지만 정리한다.
+
+#### 17.47.1 확인한 source 위치
+
+이번 판단은 다음 실제 source를 기준으로 한다.
+
+- `lib/ui/word_explorer_screen.dart`
+  - private getter `_readOnlyWorkspaceProjection`
+  - private helper `_debugValidateHiddenVisualProbe(...)`
+  - `WordExplorerScreen.build(...)` 내부 build-local projection read와 debug `assert(() { ... }())` 호출
+- `test/ui/word_explorer_screen_phase7f_projection_boundary_test.dart`
+  - projection getter, build-local read, field/history 비저장, non-visual boundary 검증
+- `test/ui/word_explorer_screen_phase8c_hidden_visual_probe_test.dart`
+  - hidden probe helper, helper 내부 local candidate structure, side-effect forbidden marker, persistence/history 비저장, shell/route 미연결 검증
+- `docs/ux/explorer_workspace_unification.md`
+  - Phase 8-C, Phase 8-D, Phase 8-E boundary와 output contract 기록
+- `docs/logs/CHANGELOG.md`
+  - Phase 8-E 종료 기록과 Phase 8-F 후보 제한 기록
+
+#### 17.47.2 현재 source-level test 보호 범위
+
+현재 Phase 7-F/8-C source-level test는 다음 범위를 보호한다.
+
+- `_readOnlyWorkspaceProjection`은 `WordExplorerScreen` 내부 private getter로 유지된다.
+- projection snapshot은 `WordExplorerScreen.build(...)` 내부에서 build-local로 읽힌다.
+- `_debugValidateHiddenVisualProbe(...)`는 `ExplorerWorkspaceState projection`을 입력으로 받는 private helper다.
+- helper는 `candidateSlots`, `candidateLabels` local list를 구성하고 projection의 `selectedWordId`, `graphCenterWordId`, `detailTargetWordId`, `layoutPreset.name`, `origin.name`을 읽는다.
+- helper는 `candidateLabels.every((label) => label.trim().isNotEmpty)` 조건을 포함한다.
+- helper source 안에 `setState`, `Navigator`, `MaterialPageRoute`, `WordRepository`, `DatabaseService`, `Provider`, `ExplorerWorkspace(`, `WordGraphScreen(`, `WordDetailScreen(`, async/future/stream, file/database/preferences 접근 marker가 없어야 한다.
+- projection result는 field, cache, history payload로 저장되지 않아야 한다.
+- `ExplorerWorkspace` shell은 production route에 mount되지 않아야 한다.
+- `main.dart`와 `HomeScreen`의 production entry point는 hidden probe helper에 연결되지 않아야 한다.
+
+따라서 현재 test는 Level 1 hidden probe boundary, read-only input, side-effect 금지, route/shell 미연결, projection result 비저장 상태를 source-level에서 고정하고 있다.
+
+#### 17.47.3 output contract hardening 필요성 평가
+
+현재 test는 output contract의 구현 위치와 side-effect 금지를 보호하는 데 충분한 1차 경계가 있다. 특히 `candidateSlots`와 `candidateLabels`가 helper 내부 local list로 존재하고, helper가 production widget tree나 route, repository, persistence로 연결되지 않는다는 점은 이미 source-level로 확인된다.
+
+다만 Phase 8-E에서 정리한 non-contract 항목 전체를 직접 고정하는 test는 아직 완전하지 않다. 현재 Phase 8-C test는 helper 내부 candidate 구조가 존재하는지와 외부 연결 marker가 없는지를 확인하지만, 다음 오해 방지 조건을 명시적으로 모두 검사하지는 않는다.
+
+- `candidateSlots` / `candidateLabels`가 helper 밖으로 return되거나 field로 승격되지 않는지
+- output DTO/model 또는 public class/API가 새로 추가되지 않는지
+- persistence schema, route contract, `ExplorerWorkspace` shell contract로 해석될 새 경계가 생기지 않는지
+- visual candidate naming이 production visual consumer contract처럼 확장되지 않는지
+
+따라서 Phase 8-F의 결론은 "현재 Level 1 boundary 보호는 유지되지만, Phase 8-E output contract의 오해 방지까지 더 강하게 고정하려면 Phase 8-G에서 최소 source-level hardening test를 후보로 둘 수 있다"로 제한한다.
+
+#### 17.47.4 `candidateSlots` / `candidateLabels` naming risk 평가
+
+`candidateSlots`, `candidateLabels`는 현재 `_debugValidateHiddenVisualProbe(...)` helper 내부 local variable이다. 실제 코드 기준으로 이 이름은 class, public field, exported API, DTO, persistence payload, route argument, shell prop으로 존재하지 않는다.
+
+Naming risk는 낮지 않다. `candidate`, `slots`, `labels`라는 이름이 visual consumer의 output shape 또는 production rendering contract처럼 읽힐 수 있기 때문이다. 그러나 현재 위험은 helper 내부 local structure에 머물러 있으며, 다음 조건이 유지되면 public API로 해석하지 않는다.
+
+- local variable scope 밖으로 노출하지 않는다.
+- helper 반환값은 candidate structure가 아니라 boolean 검증 결과로만 유지한다.
+- class, typedef, public method, DTO/model, route argument, persistence schema로 승격하지 않는다.
+- `ExplorerWorkspace` shell prop 또는 production visual consumer input으로 전달하지 않는다.
+- 문서에서는 "local candidate structure", "internal validation", "not public API" 표현을 함께 유지한다.
+
+Phase 8-G에서 naming risk를 다룬다면 이름 변경 구현이 아니라 source-level test 또는 문서 audit 후보로 제한한다.
+
+#### 17.47.5 public API / DTO / persistence schema 오해 방지 기준
+
+hidden visual probe output contract는 다음으로 해석하지 않는다.
+
+- production UI contract
+- public API
+- output DTO/model contract
+- persistence schema
+- route contract
+- `ExplorerWorkspace` shell contract
+- production visual consumer contract
+- canonical workspace state
+- selection state source of truth
+- projection result persistence/history/source-of-truth usage
+
+오해 방지 기준은 다음과 같다.
+
+- output contract라는 표현은 helper 내부 검증 계약만 뜻한다.
+- `candidateSlots` / `candidateLabels`는 helper 내부 local visual candidate structure만 뜻한다.
+- `ExplorerWorkspace`는 owner, controller, coordinator, production shell mount 대상이 아니다.
+- Level 1 hidden probe boundary는 유지한다.
+- Level 2 / Level 3 visual consumer 진입은 승인하지 않는다.
+
+#### 17.47.6 Phase 8-G 후보 조건
+
+Phase 8-G는 구현 승인 단계가 아니다. Phase 8-F는 다음 후보 조건만 남긴다.
+
+- hidden probe output contract source-level test hardening
+- visual candidate naming risk test 추가
+- public API / DTO / persistence schema 오해 방지 테스트 추가
+
+Phase 8-G 후보는 최소 source-level test 또는 naming risk audit으로 제한한다. Phase 8-F는 Phase 8-G 구현, runtime/UI integration, production visual consumer exposure, shell mount, owner migration을 승인하지 않는다.
+
+#### 17.47.7 유지된 금지선
+
+아래 항목은 Phase 8-F 이후에도 승인되지 않은 상태로 유지한다.
+
+- runtime/UI integration: `not approved`
+- production visual consumer exposure: `not approved`
+- ExplorerWorkspace shell mount: `not approved`
+- route collapse: `not approved`
+- canonical owner migration: `not approved`
+- Provider authority migration: `not approved`
+- Repository authority migration: `not approved`
+- Navigator authority migration: `not approved`
+- persistence authority migration: `not approved`
+- projection result persistence: `not approved`
+- projection result history usage: `not approved`
+- projection result source-of-truth usage: `not approved`
+- output DTO/model addition: `not approved`
+- public API addition: `not approved`
+- Level 2 production-adjacent visual consumer: `not approved`
+- Level 3 production visible consumer: `not approved`
+
+#### 17.47.8 명령어 기반 수동 테스트 체크리스트
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 | 실제 결과 |
+| --- | --- | --- | --- | --- |
+| Phase 8-F 목적이 output contract hardening planning으로 명시되어 있는지 확인 | Phase 8-F가 구현 단계가 아니라 source-level hardening 검토 planning 단계로 기록되어야 함 | 구현 승인 또는 runtime/UI integration처럼 읽히는 문장 | `rg -n "Phase 8-F" docs/ux/explorer_workspace_unification.md` | 작업 종료 보고에서 기록 |
+| Phase 8-F가 Level 2 승격 단계가 아님이 명시되어 있는지 확인 | Level 2 승격이 아니며 Level 1 boundary를 유지한다고 기록되어야 함 | production-adjacent visual consumer 진입 승인처럼 읽힘 | `rg -n "Level 1|Level 2" docs/ux/explorer_workspace_unification.md` | 작업 종료 보고에서 기록 |
+| `candidateSlots` / `candidateLabels`가 public API가 아님이 유지되는지 확인 | 두 이름이 helper 내부 local structure이고 public API가 아니라고 기록되어야 함 | public model, DTO, shell prop처럼 해석됨 | `rg -n "candidateSlots|candidateLabels|public API" docs/ux/explorer_workspace_unification.md` | 작업 종료 보고에서 기록 |
+| output DTO/model 추가가 승인되지 않았는지 확인 | output DTO/model addition이 `not approved`로 유지되어야 함 | output contract가 DTO 추가 승인처럼 읽힘 | `rg -n "output DTO/model" docs/ux/explorer_workspace_unification.md` | 작업 종료 보고에서 기록 |
+| source-level hardening 필요성 평가가 문서화되어 있는지 확인 | 현재 보호 범위와 추가 hardening 후보가 분리되어 기록되어야 함 | 현 테스트가 모든 non-contract 항목을 완전 보호한다고 과도하게 선언됨 | `rg -n "hardening|source-level test" docs/ux/explorer_workspace_unification.md` | 작업 종료 보고에서 기록 |
+| Phase 8-G 후보가 test hardening 또는 naming risk audit으로 제한되어 있는지 확인 | Phase 8-G 후보가 source-level test hardening, naming risk test, 오해 방지 테스트로 제한되어야 함 | Phase 8-G가 runtime/UI 구현 후보처럼 읽힘 | `rg -n "Phase 8-G|naming risk|test hardening" docs/ux/explorer_workspace_unification.md` | 작업 종료 보고에서 기록 |
+| Level 1 boundary가 유지되는지 확인 | Level 1 hidden probe boundary 유지가 기록되어야 함 | Level 2/Level 3 진입 승인처럼 읽힘 | `rg -n "Level 1" docs/ux/explorer_workspace_unification.md` | 작업 종료 보고에서 기록 |
+| Level 2 / Level 3 consumer 진입이 승인되지 않았는지 확인 | Level 2 / Level 3 consumer가 `not approved`로 유지되어야 함 | production-adjacent 또는 visible consumer 진입 승인처럼 읽힘 | `rg -n "Level 2|Level 3|not approved" docs/ux/explorer_workspace_unification.md` | 작업 종료 보고에서 기록 |
+| runtime/UI integration이 승인되지 않았는지 확인 | runtime/UI integration이 `not approved`로 유지되어야 함 | UI 연결 승인처럼 읽힘 | `rg -n "runtime/UI integration|not approved" docs/ux/explorer_workspace_unification.md` | 작업 종료 보고에서 기록 |
+| ExplorerWorkspace shell mount가 승인되지 않았는지 확인 | shell mount가 `not approved`로 유지되어야 함 | shell mount 또는 production mount 승인처럼 읽힘 | `rg -n "shell mount|not approved" docs/ux/explorer_workspace_unification.md` | 작업 종료 보고에서 기록 |
+| 코드/test/platform 변경이 없는지 확인 | 변경 파일은 문서 2개만 있어야 함 | `lib/`, `test/`, platform 경로 변경 발생 | `git diff --name-only` 및 `git diff --name-only -- lib test android ios macos windows linux web` | 작업 종료 보고에서 기록 |
+| 관련 테스트 결과가 문서와 충돌하지 않는지 확인 | Phase 7-F/8-C source-level test가 통과해야 함 | hidden probe boundary test 실패 | `flutter test test/ui/word_explorer_screen_phase7f_projection_boundary_test.dart test/ui/word_explorer_screen_phase8c_hidden_visual_probe_test.dart` | 작업 종료 보고에서 기록 |
+| flutter analyze 기존 이슈 상태가 문서 변경과 분리되어 보고되는지 확인 | analyze 실패 시 기존 저장소 이슈와 문서 변경 영향을 구분해야 함 | 문서 변경이 analyzer 실패 원인처럼 보고됨 | `flutter analyze` | 작업 종료 보고에서 기록 |
+
+UI 기반 수동 테스트는 이번 Phase 8-F 문서/planning 작업의 대상이 아니다.
