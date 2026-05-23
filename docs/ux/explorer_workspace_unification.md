@@ -1956,3 +1956,49 @@ Phase 7-G는 구현 단계가 아니라 Phase 7-F에서 추가된 read-only proj
 - visual consumer status: `not approved`
 - shell mount status: `not approved`
 - Phase 7-G 문서화는 projection consumer 구현 승인이나 `ExplorerWorkspace` shell mount 승인이 아니다.
+
+### 17.41 Phase 7-H projection chain stabilization audit
+
+Phase 7-H는 Phase 7-A~7-G에서 정리·구현된 projection chain을 닫을 수 있는지 확인한 closure / stabilization audit 단계다. 이번 단계는 구현 단계가 아니며 runtime/UI 구현 승인, visual consumer 승인, `ExplorerWorkspace` shell mount 승인, feature 브랜치 생성 승인이 아니다.
+
+#### 17.41.1 audit 결과 요약
+
+- Phase 7-A~7-G 문서 흐름은 implementation planning, 제한 구현, consumer boundary planning 순서와 모순 없이 일치한다.
+- `WordExplorerWorkspaceProjectionAdapter`는 read-only helper로 유지되며 `Navigator`, Repository, `DatabaseService`, Provider 계층을 import하지 않는다.
+- `WordExplorerScreen`의 projection boundary는 private getter `_readOnlyWorkspaceProjection`으로 유지된다.
+- projection result는 field, history payload, source of truth, runtime policy state로 저장되지 않는다.
+- consumer는 `build()` 내부 local read와 debug `assert` invariant 검증으로만 유지된다.
+- visual consumer는 없다.
+- `ExplorerWorkspace` shell mount는 없다.
+- production entry는 계속 `main.dart -> HomeScreen`이다.
+- explorer 진입은 계속 `HomeScreen -> Navigator.push -> WordExplorerScreen`이다.
+- owner boundary 침범은 확인되지 않았다.
+- runtime/UI diff는 확인되지 않았다.
+
+#### 17.41.2 테스트 / 검증 결과
+
+- Phase 7 직접 경계 파일 기준 `dart analyze`는 통과했다.
+- 관련 Flutter test 12개는 sandbox 밖 실행 기준 통과했다.
+- 대상 전체 `dart analyze`는 기존 `home_screen.dart` warning/info 5건으로 exit 1이며, Phase 7-H 직접 경계와 직접 관련 없다.
+- `git diff --check`는 통과했다.
+- sandbox 내부 Flutter test timeout과 Dart telemetry session file 접근 거부는 환경 이슈로 기록한다.
+
+#### 17.41.3 closure 판단
+
+Phase 7은 현재 문서, 코드, 테스트 기준에서 종료 가능 상태로 판단한다. 다만 이 판단은 visual consumer 구현이나 `ExplorerWorkspace` shell production mount를 승인하지 않는다. 두 항목은 승인된 구현이 아니며 다음 phase unresolved 항목으로 이관한다.
+
+#### 17.41.4 다음 phase unresolved 항목
+
+- visual consumer 필요성 별도 승인
+- `ExplorerWorkspace` shell production mount 별도 승인
+- production mount 시 UI diff가 있는 기능 변경으로 취급
+- `ExplorerWorkspace` non-owner 문구와 테스트 설계
+- Flutter 테스트 sandbox timeout / telemetry 권한 문제 해소
+
+#### 17.41.5 implementation status
+
+- Phase 7 status: `closable`
+- visual consumer status: `not approved`
+- shell mount status: `not approved`
+- runtime/UI integration status: `not approved`
+- visual consumer / shell mount 결정은 next phase required 항목으로 남긴다.
