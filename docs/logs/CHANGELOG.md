@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 2026-05-23 Phase 8-G hidden probe output contract source-level test hardening
+
+- `test/ui/word_explorer_screen_phase8g_hidden_probe_contract_hardening_test.dart`를 추가해 hidden probe output contract의 non-contract boundary를 source-level로 보강했다.
+- `candidateSlots`, `candidateLabels`가 `_debugValidateHiddenVisualProbe(...)` helper 내부 local variable 범위에 머무르고 helper 밖 public API, field, getter, DTO/model, route argument, shell prop으로 노출되지 않는지 확인하도록 했다.
+- hidden visual probe helper가 assert-only / read-only / non-owner boundary 안에 머물며 `setState`, `Navigator`, `WordRepository`, `Provider`, DB/persistence, logging, async 흐름에 연결되지 않는지 재확인했다.
+- persistence schema, route contract, `ExplorerWorkspace` shell contract, output DTO/model, public API는 추가하지 않았다.
+- `lib/`와 platform 경로는 수정하지 않았고 production UI diff는 없다.
+- Level 1 boundary는 유지하며 Level 2 production-adjacent visual consumer와 Level 3 production visible consumer 진입은 계속 `not approved`로 유지했다.
+- Phase 8-H 후보는 Level 2 승격이 아니라 Phase 8 hidden probe contract stabilization audit, visual consumer Level 1 boundary termination audit, Phase 8-G test hardening audit으로 제한했다.
+
 ## 2026-05-23 Phase 8-F hidden probe output contract hardening plan
 
 - Phase 8-E output contract를 source-level hardening 관점에서 검토하는 planning 단계로 기록했다.
