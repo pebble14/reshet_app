@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 2026-05-23 Phase 8-B visual consumer candidate selection 문서화
+
+- `docs/ux/explorer_workspace_unification.md`에 `17.43 Phase 8-B visual consumer candidate selection` 섹션을 추가해 Phase 8-A visual consumer entry boundary 이후 첫 visual consumer 후보군을 문서상으로 비교했다.
+- Candidate A `Level 1 hidden visual probe`를 Phase 8-C 첫 구현 후보로 선정하되, Phase 8-B에서는 실제 hidden visual probe를 구현하지 않는다고 기록했다.
+- Candidate B `Level 2 production-adjacent visual consumer`는 production 인접성에 따른 runtime/UI diff와 owner boundary 오해 가능성 때문에 보류로 기록했다.
+- Candidate C `Level 3 production visible consumer`는 production route 노출과 production UI diff를 동반하므로 Phase 8-B에서 `not approved`로 유지했다.
+- runtime/UI integration, `ExplorerWorkspace` shell mount, route collapse, canonical owner migration, Provider / Repository / Navigator / persistence authority migration은 계속 `not approved` 상태로 유지했다.
+- `ExplorerWorkspace`가 owner, controller, coordinator가 아니며 owner boundary는 이전되지 않았다고 다시 고정했다.
+- 이번 변경은 문서 변경만 포함하며 production UI diff는 없다.
+
 ## 2026-05-23 Phase 8-A visual consumer entry boundary 문서화
 
 - `docs/ux/explorer_workspace_unification.md`에 `17.42 Phase 8-A visual consumer entry boundary` 섹션을 추가해 Phase 7 read-only projection chain 이후 visual consumer가 projection snapshot을 읽기 전에 필요한 entry boundary를 문서화했다.

@@ -2115,3 +2115,171 @@ Phase 8-B로 넘어가려면 다음 조건을 먼저 만족해야 한다.
 - route collapse status: `not approved`
 - owner boundary migration status: `not approved`
 - production UI diff status: `not approved`
+
+### 17.43 Phase 8-B visual consumer candidate selection
+
+Phase 8-B는 구현 단계가 아니다. Phase 8-B의 목적은 Phase 8-A에서 정의한 visual consumer entry boundary를 기준으로 첫 visual consumer 구현 후보를 문서상으로 선정하고, Phase 8-C 구현 진입 조건을 정리하는 것이다.
+
+이번 단계에서는 실제 visual consumer를 구현하지 않는다. `ExplorerWorkspace` shell mount, route 추가, production UI 노출, runtime/UI integration, route collapse, canonical owner migration, Provider / Repository / Navigator / persistence authority migration도 수행하지 않는다.
+
+#### 17.43.1 Phase 8-B 목적
+
+- Phase 8-A의 visual consumer entry boundary를 기준으로 visual consumer 후보군을 비교한다.
+- 첫 구현 후보를 Level 1 hidden visual probe로 제한할지 문서상으로 판단한다.
+- Level 2 production-adjacent visual consumer는 비교 후보로만 다루고 후속 승인 전까지 보류한다.
+- Level 3 production visible consumer는 Phase 8-B에서 승인하지 않는다.
+- Phase 8-C가 구현 단계로 전환될 경우 지켜야 할 진입 조건, 허용 범위, 금지선을 정리한다.
+
+#### 17.43.2 Phase 8-A와 Phase 8-B의 차이
+
+| 구분 | Phase 8-A | Phase 8-B |
+| --- | --- | --- |
+| 목적 | visual consumer가 projection snapshot을 읽기 전에 지켜야 할 entry boundary 정의 | entry boundary를 기준으로 첫 visual consumer 후보 선정 |
+| 산출물 | visual consumer 정의, level 구분, 금지선 | Candidate A/B/C 비교, Phase 8-C 후보와 진입 조건 |
+| 구현 여부 | 구현 없음 | 구현 없음 |
+| production route 노출 | `not approved` | `not approved` |
+| runtime/UI integration | `not approved` | `not approved` |
+| `ExplorerWorkspace` shell mount | `not approved` | `not approved` |
+| owner boundary 이전 | `not approved` | `not approved` |
+
+Phase 8-A는 visual consumer가 무엇을 하면 안 되는지와 어떤 level로 분류되는지를 고정했다. Phase 8-B는 그 경계를 바꾸지 않고, 후속 Phase 8-C에서 검토할 첫 구현 후보를 Level 1 hidden visual probe로 제한한다.
+
+#### 17.43.3 visual consumer 후보군 비교
+
+| 비교 기준 | Candidate A: Level 1 hidden visual probe | Candidate B: Level 2 production-adjacent visual consumer | Candidate C: Level 3 production visible consumer |
+| --- | --- | --- | --- |
+| production route 노출 여부 | 없음 | 없어야 하지만 production context 인접성 검토가 필요함 | 있음 |
+| runtime/UI diff 발생 여부 | production UI diff 없음 조건으로 제한 가능 | runtime/UI diff 가능성이 있어 별도 검토 필요 | runtime/UI diff 필수 |
+| `ExplorerWorkspace` shell mount 필요 여부 | 필요 없음 | 필요하지 않은 형태만 검토 가능하지만 경계가 불안정함 | shell mount 또는 production visible entry 검토가 필요해짐 |
+| owner/controller/coordinator 오해 가능성 | 낮음. 단, non-owner probe 표현을 유지해야 함 | 중간. production 인접성 때문에 owner처럼 읽힐 위험이 커짐 | 높음. 사용자에게 보이는 production consumer는 authority drift 위험이 큼 |
+| projection read-only boundary 유지 가능성 | 높음. `WordExplorerScreen` 내부 read-only projection snapshot 소비로 제한 가능 | 가능하지만 source-level 검증과 별도 승인 조건이 더 필요함 | 낮음. production 노출과 함께 selection/navigation authority 오해가 발생하기 쉬움 |
+| rollback 용이성 | 높음. 숨김 probe 또는 source-level 검증 단위로 되돌리기 쉬움 | 중간. production 인접 구조가 생기면 rollback 범위가 넓어질 수 있음 | 낮음. production UI/route 노출을 되돌려야 함 |
+| Phase 8-C 첫 구현 후보 적합성 | 적합 | 보류 | `not approved` |
+
+#### 17.43.4 Candidate A 평가: Level 1 hidden visual probe
+
+Candidate A는 Phase 8-C 첫 구현 후보로 적합하다.
+
+Level 1 hidden visual probe는 production route에 노출되지 않고, `ExplorerWorkspace` shell mount를 요구하지 않으며, production UI diff를 만들지 않는 범위에서만 검토한다. hidden visual probe는 `WordExplorerScreen` 내부에서 생성된 read-only projection snapshot을 소비하는 non-owner view/probe layer다.
+
+허용 의미는 다음으로 제한한다.
+
+- `WordExplorerScreen` 내부에서 생성된 read-only projection snapshot을 비소유 방식으로 관찰한다.
+- projection snapshot을 기반으로 숨김 상태의 render 후보 또는 visual shape 후보를 검증한다.
+- Repository, Provider, Navigator, DB, persistence를 호출하지 않는다.
+- projection result를 field, history payload, persistence payload, source of truth로 저장하지 않는다.
+- `ExplorerWorkspace`를 owner, controller, coordinator로 해석하게 만드는 구조를 만들지 않는다.
+
+이 판단은 Phase 8-B에서 실제 hidden visual probe를 구현한다는 뜻이 아니다. Phase 8-B는 Candidate A를 Phase 8-C 첫 구현 후보로 선정하는 문서 단계로만 남긴다.
+
+#### 17.43.5 Candidate B 평가: Level 2 production-adjacent visual consumer
+
+Candidate B는 Phase 8-B에서 보류한다.
+
+Level 2 production-adjacent visual consumer는 production context에 가까운 구조에서 projection snapshot 소비 적합성을 검토할 수 있지만, production visible exposure는 하지 않는 후보다. 이 후보는 production widget tree 인접성 때문에 runtime/UI diff 가능성, owner/controller/coordinator 오해 가능성, rollback 범위 확대 위험을 추가로 검토해야 한다.
+
+Phase 8-B에서는 Candidate B를 비교 후보로만 기록한다. Candidate B로 이동하려면 Level 1 hidden visual probe 결과, production UI diff 여부, owner boundary 검증 방법, 클라이언트 UI 확인 필요 여부를 별도 승인 단계에서 다시 정해야 한다.
+
+#### 17.43.6 Candidate C 평가: Level 3 production visible consumer
+
+Candidate C는 Phase 8-B에서 승인하지 않는다.
+
+Level 3 production visible consumer는 production route에서 사용자에게 보이는 visual consumer다. 이 후보는 production route 노출, runtime/UI diff, route 또는 shell 연결 검토, 사용자 경험 변경을 동반한다. 또한 `ExplorerWorkspace`가 selection, navigation, repository, persistence authority를 갖는 것처럼 읽힐 위험이 높다.
+
+따라서 Phase 8-B에서 Candidate C는 `not approved`로 유지한다. production visible consumer가 필요해지는 경우에는 Phase 8-C 후보가 아니라 별도 설계, 별도 승인, 클라이언트 UI 확인 기준을 갖는 독립 단계로 분리해야 한다.
+
+#### 17.43.7 Phase 8-C 구현 후보 선정
+
+Phase 8-C 후보는 Level 1 hidden visual probe implementation으로 제한한다.
+
+Phase 8-C 후보의 의미는 다음과 같다.
+
+- hidden visual probe는 production route에 노출되지 않는다.
+- hidden visual probe는 `ExplorerWorkspace` shell mount를 요구하지 않는다.
+- hidden visual probe는 `WordExplorerScreen` 내부에서 생성된 read-only projection snapshot을 비소유 방식으로 관찰하거나 렌더 후보를 검증하는 수준으로 제한된다.
+- hidden visual probe는 `WordExplorerScreen` current owner state를 대체하지 않는다.
+- hidden visual probe는 `ExplorerWorkspace`를 owner, controller, coordinator로 승격하지 않는다.
+
+Phase 8-B는 Phase 8-C 후보를 선정하지만, Phase 8-C 구현 자체를 승인하지 않는다. Phase 8-C 구현으로 전환하려면 별도 작업 계획, 수정 파일 목록, 검증 계획, 사용자 승인이 필요하다.
+
+#### 17.43.8 Phase 8-C 진입 조건
+
+Phase 8-C로 진입하려면 다음 조건을 모두 충족해야 한다.
+
+- Phase 8-B 문서 변경이 검토 가능한 상태로 남아 있어야 한다.
+- Phase 8-C 작업 계획이 hidden visual probe implementation으로 제한되어야 한다.
+- production route 노출 없음, runtime/UI integration 없음, `ExplorerWorkspace` shell mount 없음, route collapse 없음이 작업 계획에 명시되어야 한다.
+- 수정 대상 파일과 변경 위치가 사전에 제시되어야 한다.
+- hidden visual probe가 read-only projection snapshot만 소비하고 Repository / Provider / Navigator / DB / persistence authority를 갖지 않는 검증 기준이 제시되어야 한다.
+- projection result를 persistence, history payload, source of truth, runtime policy state로 사용하지 않는 검증 기준이 제시되어야 한다.
+- 명령어 기반 검증 항목이 준비되어야 한다.
+- production UI diff가 없는 경우 UI 기반 수동 테스트 대상 없음으로 분리해야 한다.
+
+#### 17.43.9 Phase 8-C에서 허용 가능한 파일/구조 범위
+
+Phase 8-C의 허용 가능한 파일/구조 범위는 별도 승인 전까지 후보로만 기록한다.
+
+- `WordExplorerScreen` 내부에서 이미 생성되는 read-only projection snapshot을 private 또는 build-local 범위에서 소비하는 구조
+- production route에 연결되지 않는 hidden probe helper 또는 source-level 검증 구조
+- projection snapshot 입력만 받는 non-owner probe layer
+- Repository, Provider, Navigator, DB, persistence import 없이 projection contract만 확인하는 source-level test
+
+Phase 8-C에서 실제 파일을 수정하려면 그 시점의 작업 계획에서 대상 파일을 다시 제시해야 한다. Phase 8-B는 `lib/`, `test/`, platform directory를 수정하지 않는다.
+
+#### 17.43.10 Phase 8-C에서도 유지해야 할 금지선
+
+아래 항목은 Phase 8-B 이후에도 모두 `not approved` 상태로 유지한다.
+
+- runtime/UI integration: `not approved`
+- visual consumer production exposure: `not approved`
+- `ExplorerWorkspace` shell mount: `not approved`
+- route collapse: `not approved`
+- canonical owner migration: `not approved`
+- Provider authority migration: `not approved`
+- Repository authority migration: `not approved`
+- Navigator authority migration: `not approved`
+- persistence authority migration: `not approved`
+- projection result persistence: `not approved`
+- projection result history usage: `not approved`
+- projection result source-of-truth usage: `not approved`
+
+또한 다음 표현과 구조는 계속 금지한다.
+
+- `ExplorerWorkspace`가 owner처럼 보이는 표현
+- `ExplorerWorkspace`가 controller처럼 보이는 표현
+- `ExplorerWorkspace`가 coordinator처럼 보이는 표현
+- `ExplorerWorkspace`가 selection, navigation, repository, persistence authority를 갖는 표현
+- hidden visual probe가 production UI로 노출되는 것처럼 읽히는 표현
+
+허용 가능한 표현은 visual consumer 또는 hidden visual probe가 `WordExplorerScreen` 내부에서 생성된 read-only projection snapshot을 소비하는 non-owner view/probe layer라는 의미로 제한한다.
+
+#### 17.43.11 수동 테스트 기준 초안
+
+이번 단계는 문서 작업이므로 UI 기반 수동 테스트 대상은 없다. 검증은 명령어 기반 확인과 문서 검색으로 수행한다.
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 | 실제 결과 |
+| --- | --- | --- | --- | --- |
+| Phase 8-B 목적이 visual consumer 후보 선정으로 명시되어 있는지 확인 | Phase 8-B가 구현 단계가 아니며 후보 선정 단계라고 기록되어야 함 | 구현 승인, route 연결, shell mount 승인처럼 읽히는 문장 | `rg -n "Phase 8-B" docs/ux/explorer_workspace_unification.md` | 작업 종료 보고에서 기록 |
+| Candidate A/B/C 비교가 문서화되어 있는지 확인 | 세 후보와 비교 기준이 표로 정리되어야 함 | 후보 누락 또는 기준 누락 | `rg -n "Candidate A|Candidate B|Candidate C" docs/ux/explorer_workspace_unification.md` | 작업 종료 보고에서 기록 |
+| Level 1 hidden visual probe가 Phase 8-C 첫 구현 후보로 선정되어 있는지 확인 | Candidate A가 Phase 8-C 첫 구현 후보로 적합하다고 기록되어야 함 | Candidate A가 production UI 노출처럼 읽힘 | `rg -n "hidden visual probe" docs/ux/explorer_workspace_unification.md` | 작업 종료 보고에서 기록 |
+| Level 2 production-adjacent visual consumer가 보류되어 있는지 확인 | Candidate B가 보류로 기록되어야 함 | Candidate B가 구현 승인처럼 기록됨 | `rg -n "production-adjacent visual consumer" docs/ux/explorer_workspace_unification.md` | 작업 종료 보고에서 기록 |
+| Level 3 production visible consumer가 승인되지 않았는지 확인 | Candidate C가 `not approved`로 기록되어야 함 | production visible consumer가 Phase 8-C 후보처럼 기록됨 | `rg -n "production visible consumer" docs/ux/explorer_workspace_unification.md` | 작업 종료 보고에서 기록 |
+| runtime/UI integration이 승인되지 않았는지 확인 | runtime/UI integration이 `not approved`로 유지되어야 함 | runtime/UI 구현 승인 문장 | `rg -n "runtime/UI integration" docs/ux/explorer_workspace_unification.md` | 작업 종료 보고에서 기록 |
+| `ExplorerWorkspace` shell mount가 승인되지 않았는지 확인 | shell mount가 `not approved`로 유지되어야 함 | shell mount 허용 문장 | `rg -n "shell mount" docs/ux/explorer_workspace_unification.md` | 작업 종료 보고에서 기록 |
+| `ExplorerWorkspace`가 owner/controller/coordinator가 아님이 유지되어 있는지 확인 | owner/controller/coordinator 승격 금지 문장이 유지되어야 함 | authority drift 표현 | `rg -n "owner|controller|coordinator" docs/ux/explorer_workspace_unification.md` | 작업 종료 보고에서 기록 |
+| production UI diff가 없도록 코드 파일 변경이 없는지 확인 | `lib/`, `test/`, platform 경로 변경이 없어야 함 | 코드 또는 platform 경로가 diff에 포함됨 | `git diff --name-only -- lib test android ios macos windows linux web` | 작업 종료 보고에서 기록 |
+| 변경 파일이 docs 범위로 제한되어 있는지 확인 | 변경 파일은 두 문서만이어야 함 | 다른 파일이 diff에 포함됨 | `git diff --name-only` | 작업 종료 보고에서 기록 |
+
+#### 17.43.12 Phase 8-B status
+
+- Phase 8-B status: `documented`
+- selected Phase 8-C candidate: Candidate A `Level 1 hidden visual probe`
+- Candidate B status: `deferred`
+- Candidate C status: `not approved`
+- Phase 8-C implementation status: `not approved`
+- runtime/UI integration status: `not approved`
+- visual consumer production exposure status: `not approved`
+- shell mount status: `not approved`
+- route collapse status: `not approved`
+- owner boundary migration status: `not approved`
+- production UI diff status: `not approved`
