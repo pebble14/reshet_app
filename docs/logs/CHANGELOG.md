@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 2026-05-23 Phase 8-E hidden visual probe output contract planning
+
+- Phase 8-E는 구현 단계가 아니라 Phase 8-C hidden visual probe가 내부적으로 도출하는 visual candidate의 output contract를 문서화하는 planning 단계로 기록했다.
+- input은 `WordExplorerScreen` 내부 build-local read-only `ExplorerWorkspaceState` projection snapshot으로 제한되며, field/cache/history/source of truth로 저장되지 않는다고 정리했다.
+- `candidateSlots`, `candidateLabels`는 helper 내부 local candidate structure이며 향후 visual consumer 렌더링 가능성을 검증하기 위한 내부 후보 구조라고 기록했다.
+- candidate 구조는 production UI contract, public API, persistence schema, route contract, `ExplorerWorkspace` shell contract, canonical state 또는 source of truth가 아니라고 명시했다.
+- Level 1 boundary는 유지하며 Level 2 production-adjacent visual consumer와 Level 3 production visible consumer 진입은 `not approved` 상태로 유지했다.
+- runtime/UI integration, production visual consumer exposure, `ExplorerWorkspace` shell mount, route collapse, owner migration, Provider / Repository / Navigator / DB / persistence authority migration은 계속 `not approved`로 유지했다.
+- Phase 8-F 후보는 output contract source-level hardening, visual candidate structure naming audit, hidden probe contract test expansion으로만 제한하고 구현 승인은 하지 않았다.
+- 이번 변경은 문서 변경만 포함하며 UI 기반 수동 테스트 대상은 없다.
+
 ## 2026-05-23 Phase 8-D hidden visual probe stabilization audit
 
 - Phase 8-D는 구현 단계가 아니라 Phase 8-C hidden visual probe가 Level 1 boundary 안에 머무는지 확인하는 stabilization audit 단계로 기록했다.
