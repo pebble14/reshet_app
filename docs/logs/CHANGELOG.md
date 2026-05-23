@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2026-05-23 Phase 8-C hidden visual probe 구현
+
+- `lib/ui/word_explorer_screen.dart`의 기존 build-local read-only projection read 및 assert-only consumer 경계 안에 `_debugValidateHiddenVisualProbe(...)` helper를 추가했다.
+- hidden visual probe는 `ExplorerWorkspaceState` projection snapshot을 입력으로 받아 graph/detail visual candidate slot과 read-only label 구성 가능성만 검증하며, side effect 없이 assert-only 범위에서만 동작한다.
+- `ExplorerWorkspace` shell mount, production route 노출, `HomeScreen` / `main.dart` / Navigator route 변경, production visible UI diff는 추가하지 않았다.
+- Provider / Repository / Navigator / DB / persistence authority migration은 수행하지 않았고, projection result를 field, cache, history payload, source of truth로 저장하지 않았다.
+- `test/ui/word_explorer_screen_phase8c_hidden_visual_probe_test.dart`를 추가해 hidden visual probe가 read-only / non-owner / non-route / non-shell-mount 경계를 유지하는지 source-level로 검증하도록 했다.
+- `docs/ux/explorer_workspace_unification.md`에 `17.44 Phase 8-C hidden visual probe implementation` 섹션을 추가해 Level 1 boundary 유지, 미승인 항목 유지, Phase 8-D 후보 조건을 기록했다.
+
 ## 2026-05-23 Phase 8-B visual consumer candidate selection 문서화
 
 - `docs/ux/explorer_workspace_unification.md`에 `17.43 Phase 8-B visual consumer candidate selection` 섹션을 추가해 Phase 8-A visual consumer entry boundary 이후 첫 visual consumer 후보군을 문서상으로 비교했다.

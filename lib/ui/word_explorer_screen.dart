@@ -238,6 +238,26 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
     );
   }
 
+  bool _debugValidateHiddenVisualProbe(ExplorerWorkspaceState projection) {
+    final candidateSlots = <String>[
+      if (projection.graphCenterWordId != null) 'graph',
+      if (projection.detailTargetWordId != null) 'detail',
+    ];
+    final candidateLabels = <String>[
+      if (projection.selectedWordId != null) projection.selectedWordId!,
+      if (projection.graphCenterWordId != null) projection.graphCenterWordId!,
+      if (projection.detailTargetWordId != null) projection.detailTargetWordId!,
+      projection.layoutPreset.name,
+      projection.origin.name,
+    ];
+    final detailTargetWordId = projection.detailTargetWordId;
+
+    return candidateSlots.isNotEmpty &&
+        candidateLabels.every((label) => label.trim().isNotEmpty) &&
+        (detailTargetWordId == null ||
+            detailTargetWordId == projection.selectedWordId);
+  }
+
   @override
   Widget build(BuildContext context) {
     final workspaceProjection = _readOnlyWorkspaceProjection;
@@ -252,7 +272,8 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
           projection.layoutPreset == ExplorerWorkspaceLayoutPreset.balanced &&
           projection.origin == ExplorerWorkspaceTransitionOrigin.routeAlias &&
           (detailTargetWordId == null ||
-              detailTargetWordId == projection.selectedWordId);
+              detailTargetWordId == projection.selectedWordId) &&
+          _debugValidateHiddenVisualProbe(projection);
     }());
 
     return Scaffold(

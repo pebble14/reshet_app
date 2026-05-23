@@ -2283,3 +2283,80 @@ Phase 8-C에서 실제 파일을 수정하려면 그 시점의 작업 계획에�
 - route collapse status: `not approved`
 - owner boundary migration status: `not approved`
 - production UI diff status: `not approved`
+
+### 17.44 Phase 8-C hidden visual probe implementation
+
+Phase 8-C는 Phase 7에서 확보한 `WordExplorerScreen` 내부 read-only projection chain과 Phase 8-A/B에서 정의한 visual consumer boundary를 기준으로 첫 번째 Level 1 hidden visual probe를 구현한 단계다. 이번 단계는 production visible UI를 만들거나 `ExplorerWorkspace` shell을 production에 mount하는 단계가 아니다.
+
+#### 17.44.1 구현 결과
+
+- `WordExplorerScreen` 내부의 build-local projection read 및 기존 assert-only consumer 경계 안에 `_debugValidateHiddenVisualProbe(...)` 검증 helper를 추가했다.
+- hidden visual probe는 `ExplorerWorkspaceState` projection snapshot을 입력으로 받아 graph/detail visual candidate slot과 read-only label 구성 가능성만 검증한다.
+- hidden visual probe는 assert-only 경계에서만 호출되며 production visible widget tree에 연결되지 않는다.
+- hidden visual probe는 `ExplorerWorkspace` shell을 생성하거나 mount하지 않는다.
+- hidden visual probe는 `HomeScreen`, `main.dart`, Navigator route, production entry를 변경하지 않는다.
+- hidden visual probe는 Provider, Repository, Navigator, DB, persistence authority를 갖지 않는다.
+- hidden visual probe는 projection result를 field, cache, history payload, source of truth, runtime policy state로 저장하지 않는다.
+
+#### 17.44.2 Level 1 boundary 유지 근거
+
+이번 구현은 Level 1 hidden visual probe 범위에 머문다.
+
+- read-only projection snapshot만 소비한다.
+- projection snapshot 소비는 `WordExplorerScreen`의 기존 debug/assert-only 검증 흐름 안에서 끝난다.
+- owner/controller/coordinator 역할을 추가하지 않는다.
+- selection, navigation, repository, persistence authority를 이전하지 않는다.
+- production route 노출이 없다.
+- production visible UI diff가 없다.
+- `ExplorerWorkspace` shell mount가 없다.
+
+#### 17.44.3 승인되지 않은 항목 유지
+
+아래 항목은 Phase 8-C 구현 이후에도 승인되지 않은 상태로 유지한다.
+
+- runtime/UI integration: `not approved`
+- visual consumer production exposure: `not approved`
+- Level 2 production-adjacent visual consumer: `deferred`
+- Level 3 production visible consumer: `not approved`
+- `ExplorerWorkspace` shell mount: `not approved`
+- route collapse: `not approved`
+- canonical owner migration: `not approved`
+- Provider authority migration: `not approved`
+- Repository authority migration: `not approved`
+- Navigator authority migration: `not approved`
+- persistence authority migration: `not approved`
+- projection result persistence/history/source-of-truth usage: `not approved`
+
+#### 17.44.4 Phase 8-D 후보 조건
+
+Phase 8-D 후보를 검토하려면 Phase 8-C의 Level 1 hidden visual probe 결과를 먼저 검토해야 한다. 다음 단계가 Level 2 production-adjacent visual consumer로 이동하는 경우에도 별도 승인 전까지 production route 노출, production visible UI diff, shell mount, route 변경, owner migration은 허용되지 않는다.
+
+Phase 8-D 후보 조건은 다음과 같다.
+
+- Phase 8-C hidden visual probe가 read-only projection snapshot만 소비한다는 검증 결과가 유지되어야 한다.
+- production route 노출 없음, `ExplorerWorkspace` shell mount 없음, production visible UI diff 없음이 명령어 기반 확인으로 유지되어야 한다.
+- Level 2 후보를 검토하는 경우 production-adjacent 경계가 owner/controller/coordinator로 오해되지 않는 검증 기준을 먼저 제시해야 한다.
+- runtime/UI integration 또는 production visible consumer가 필요해지는 경우 Phase 8-D 후보에서 제외하고 별도 설계와 별도 승인 단계로 분리해야 한다.
+
+#### 17.44.5 수동 테스트 기준
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 | 실제 결과 |
+| --- | --- | --- | --- | --- |
+| hidden visual probe가 Level 1 범위로 구현되었는지 확인 | assert-only helper가 read-only projection snapshot만 소비해야 함 | helper가 production widget tree, route, owner state로 연결됨 | `rg -n "hidden visual probe|_debugValidateHiddenVisualProbe" lib test docs` | 작업 종료 보고에서 기록 |
+| production route 노출이 없는지 확인 | `main.dart`, `HomeScreen`, Navigator route 변경이 없어야 함 | 새 route, production entry, `Navigator.push` 변경 | `git diff --name-only -- lib/main.dart lib/ui/home_screen.dart lib/ui/word_explorer_screen.dart` 및 route 검색 | 작업 종료 보고에서 기록 |
+| `ExplorerWorkspace` shell mount가 없는지 확인 | `WordExplorerScreen`에서 `ExplorerWorkspace(`를 생성하지 않아야 함 | shell mount 또는 preview screen 연결 | `rg -n "ExplorerWorkspace\\(|ExplorerWorkspacePreviewScreen" lib test docs` | 작업 종료 보고에서 기록 |
+| owner/controller/coordinator authority 이전이 없는지 확인 | Provider, Repository, Navigator, persistence 접근이 없어야 함 | helper 내부 side effect, repository 호출, history payload 저장 | source-level test 및 forbidden marker 검색 | 작업 종료 보고에서 기록 |
+| projection result persistence/history/source-of-truth usage가 없는지 확인 | projection result가 field/cache/history/source of truth로 저장되지 않아야 함 | `_history` payload 또는 field 저장 | source-level test 및 `rg -n "source of truth|history|persistence" lib test docs` | 작업 종료 보고에서 기록 |
+| production visible UI diff가 없는지 확인 | production visible widget tree 변경이 없어야 함 | Scaffold body, route, `ExplorerWorkspace` mount 변경 | `git diff -- lib/ui/word_explorer_screen.dart` 검토 | 작업 종료 보고에서 기록 |
+| Flutter/Dart 검증 확인 | `flutter analyze`와 관련 테스트 또는 전체 테스트 결과를 보고해야 함 | analyzer error, test failure, 환경 오류 | `flutter analyze`, `flutter test` | 작업 종료 보고에서 기록 |
+
+#### 17.44.6 Phase 8-C status
+
+- Phase 8-C implementation status: `implemented`
+- hidden visual probe level: `Level 1`
+- production route exposure status: `none`
+- `ExplorerWorkspace` shell mount status: `none`
+- runtime/UI integration status: `not approved`
+- owner/controller/coordinator migration status: `not approved`
+- projection result persistence/history/source-of-truth usage status: `none`
+- production visible UI diff status: `none`
