@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 2026-05-23 Phase 8-D hidden visual probe stabilization audit
+
+- Phase 8-D는 구현 단계가 아니라 Phase 8-C hidden visual probe가 Level 1 boundary 안에 머무는지 확인하는 stabilization audit 단계로 기록했다.
+- `lib/ui/word_explorer_screen.dart`의 `_debugValidateHiddenVisualProbe(...)`가 `WordExplorerScreen.build(...)` 내부 assert-only 경계에서 호출되며 read-only projection snapshot만 소비한다고 정리했다.
+- hidden visual probe는 owner/controller/coordinator authority를 이전하지 않고, Provider / Repository / Navigator / DB / persistence authority migration을 수행하지 않는다고 기록했다.
+- production route 노출, `ExplorerWorkspace` shell mount, `main.dart` / `HomeScreen` / Navigator route 변경, production visible UI diff가 없다고 기록했다.
+- projection result persistence/history/source-of-truth usage가 없고, source-level boundary test가 존재한다고 기록했다.
+- 관련 테스트 `test/ui/word_explorer_screen_phase7f_projection_boundary_test.dart`, `test/ui/word_explorer_screen_phase8c_hidden_visual_probe_test.dart` 결과를 `+11: All tests passed!`로 기록했다.
+- `flutter analyze`는 기존 저장소 이슈로 실패하며, 이번 변경 파일인 `docs/ux/explorer_workspace_unification.md`, `docs/logs/CHANGELOG.md`는 analyzer 오류 목록에 포함되지 않는 상태로 구분했다.
+- Phase 8-E는 Level 2 승격이 아니라 hidden visual probe output contract planning, source-level hardening, visual candidate structure audit 후보로만 기록했다.
+
 ## 2026-05-23 Phase 8-C hidden visual probe 구현
 
 - `lib/ui/word_explorer_screen.dart`의 기존 build-local read-only projection read 및 assert-only consumer 경계 안에 `_debugValidateHiddenVisualProbe(...)` helper를 추가했다.

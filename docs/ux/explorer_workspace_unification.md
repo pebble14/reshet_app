@@ -2360,3 +2360,112 @@ Phase 8-D 후보 조건은 다음과 같다.
 - owner/controller/coordinator migration status: `not approved`
 - projection result persistence/history/source-of-truth usage status: `none`
 - production visible UI diff status: `none`
+
+### 17.45 Phase 8-D hidden visual probe stabilization audit
+
+Phase 8-D는 구현 단계가 아니다. 이번 단계의 목적은 Phase 8-C에서 구현된 Level 1 hidden visual probe가 실제 코드, 테스트, 문서 기준으로 계속 Level 1 boundary 안에 머무는지 감사하고, 승인되지 않은 runtime/UI integration 경계가 유지되는지 정리하는 것이다.
+
+Phase 8-D는 route 변경, `ExplorerWorkspace` shell mount, production UI entry 추가, hidden visual probe 추가 구현, owner/controller/coordinator authority migration을 수행하지 않는다.
+
+#### 17.45.1 실제 확인한 Phase 8-C 구현 경계
+
+감사는 다음 실제 코드와 테스트 위치를 기준으로 수행한다.
+
+- `lib/ui/word_explorer_screen.dart`의 private getter `_readOnlyWorkspaceProjection`
+- `lib/ui/word_explorer_screen.dart`의 private helper `_debugValidateHiddenVisualProbe(...)`
+- `WordExplorerScreen.build(...)` 내부의 build-local `workspaceProjection` read와 debug `assert(() { ... }())` 호출 경계
+- `test/ui/word_explorer_screen_phase7f_projection_boundary_test.dart`
+- `test/ui/word_explorer_screen_phase8c_hidden_visual_probe_test.dart`
+
+`_debugValidateHiddenVisualProbe(...)`는 `ExplorerWorkspaceState` projection snapshot을 입력으로 받아 graph/detail visual candidate slot과 read-only label 구성 가능성만 검증한다. helper는 `setState`, `Navigator`, `MaterialPageRoute`, `WordRepository`, `DatabaseService`, `Provider`, `ExplorerWorkspace(`, `WordGraphScreen(`, `WordDetailScreen(`, `debugPrint`, `print`, async/future/stream, file/database/preferences 접근을 수행하지 않는 source-level forbidden marker 검증 대상이다.
+
+#### 17.45.2 감사 결과 요약
+
+Phase 8-D 기준으로 hidden visual probe는 Level 1 boundary 안에 머문다.
+
+- `_debugValidateHiddenVisualProbe(...)`는 `WordExplorerScreen.build(...)`의 기존 assert-only 경계 안에서만 호출된다.
+- hidden visual probe는 read-only projection snapshot만 소비하며, production visible widget tree에 연결되지 않는다.
+- owner/controller/coordinator authority 이전은 없다.
+- production route 노출은 없다.
+- `ExplorerWorkspace` shell mount는 없다.
+- `main.dart`, `HomeScreen`, Navigator route 변경은 없다.
+- Provider / Repository / Navigator / persistence authority migration은 없다.
+- projection result persistence/history/source-of-truth usage는 없다.
+- production visible UI diff는 없다.
+- source-level boundary test가 존재하며, Phase 7-F projection boundary와 Phase 8-C hidden visual probe boundary를 함께 검증한다.
+
+다만 runtime/UI integration, production exposure, `ExplorerWorkspace` shell mount, Level 2 / Level 3 consumer 진입은 여전히 승인하지 않는다.
+
+#### 17.45.3 Level 1 boundary 유지 근거
+
+| 확인 항목 | 실제 근거 | Phase 8-D 판단 |
+| --- | --- | --- |
+| assert-only boundary | `WordExplorerScreen.build(...)` 내부 debug `assert(() { ... }())`에서 `_debugValidateHiddenVisualProbe(projection)` 호출 | 유지 |
+| read-only projection snapshot 소비 | helper 입력은 `ExplorerWorkspaceState projection`이며 candidate slot과 label 검증만 수행 | 유지 |
+| non-owner boundary | helper 내부 forbidden marker 검증에서 state mutation, navigation, repository, provider, persistence 접근을 금지 | 유지 |
+| production route 미노출 | `main.dart`, `HomeScreen`에 hidden visual probe 연결이 없고 production entry를 변경하지 않음 | 유지 |
+| shell mount 없음 | `WordExplorerScreen`에서 `ExplorerWorkspace(`를 생성하지 않는 source-level test 존재 | 유지 |
+| projection result 비저장 | projection result를 field/cache/history payload/source of truth로 저장하지 않는 source-level test 존재 | 유지 |
+| production visible UI diff 없음 | Phase 8-D 변경 범위는 문서로 제한되며 `lib/`, `test/`, platform 경로 변경 없음 | 유지 |
+
+#### 17.45.4 유지된 금지선
+
+아래 항목은 Phase 8-D 감사 이후에도 승인되지 않은 상태로 유지한다.
+
+- runtime/UI integration: `not approved`
+- visual consumer production exposure: `not approved`
+- Level 2 production-adjacent visual consumer: `not approved`
+- Level 3 production visible consumer: `not approved`
+- `ExplorerWorkspace` shell mount: `not approved`
+- production route 변경: `not approved`
+- `main.dart` entry 변경: `not approved`
+- `HomeScreen` entry 변경: `not approved`
+- Navigator route 변경: `not approved`
+- Provider authority migration: `not approved`
+- Repository authority migration: `not approved`
+- Navigator authority migration: `not approved`
+- DB / persistence authority migration: `not approved`
+- projection result persistence/history/source-of-truth usage: `not approved`
+- production visible UI diff: `not approved`
+
+#### 17.45.5 검증 상태
+
+Phase 8-D의 관련 테스트 기준은 다음 두 source-level test 파일이다.
+
+- `test/ui/word_explorer_screen_phase7f_projection_boundary_test.dart`
+- `test/ui/word_explorer_screen_phase8c_hidden_visual_probe_test.dart`
+
+관련 테스트 결과는 `+11: All tests passed!`로 기록한다.
+
+전체 `flutter analyze`는 기존 저장소 이슈로 실패하는 상태다. Phase 8-D 감사 기록에서는 analyze 실패를 Phase 8-D 문서 변경의 오류로 간주하지 않으며, 이번 변경 파일인 `docs/ux/explorer_workspace_unification.md`, `docs/logs/CHANGELOG.md`는 analyzer 오류 목록에 포함되지 않는 것으로 구분한다.
+
+#### 17.45.6 Phase 8-E 후보 조건
+
+Phase 8-E는 hidden visual probe를 Level 2로 올리는 단계가 아니다. Phase 8-E는 별도 승인 전까지 planning/audit 단계 후보로만 취급한다.
+
+Phase 8-E 후보는 다음 범위로 제한할 수 있다.
+
+- hidden visual probe output contract planning
+- hidden visual probe source-level hardening
+- visual candidate structure audit
+
+Phase 8-D는 Phase 8-E 구현, Level 2 production-adjacent visual consumer 진입, runtime/UI integration, production route 노출, production visible UI diff, `ExplorerWorkspace` shell mount를 승인하지 않는다.
+
+#### 17.45.7 수동 테스트 체크리스트
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 | 실제 결과 |
+| --- | --- | --- | --- | --- |
+| Phase 8-D 목적이 stabilization audit으로 명시되어 있는지 확인 | Phase 8-D가 구현 단계가 아니라고 기록되어야 함 | 구현 승인 또는 기능 추가처럼 읽히는 문장 | `rg -n "Phase 8-D" docs/ux/explorer_workspace_unification.md` | 작업 종료 보고에서 기록 |
+| Phase 8-C hidden visual probe가 Level 1 boundary 안에 머무는지 확인 | Level 1 boundary 유지 판단이 기록되어야 함 | Level 2/Level 3 진입 승인처럼 읽힘 | `rg -n "Level 1" docs/ux/explorer_workspace_unification.md` | 작업 종료 보고에서 기록 |
+| assert-only/read-only boundary가 유지되는지 확인 | helper가 assert-only 경계에서 read-only projection snapshot만 소비한다고 기록되어야 함 | helper가 runtime state owner 또는 visible widget으로 해석됨 | `rg -n "_debugValidateHiddenVisualProbe|read-only" docs/ux/explorer_workspace_unification.md` | 작업 종료 보고에서 기록 |
+| production route 노출이 없는지 확인 | production route 노출 없음이 기록되어야 함 | route 변경, production entry 추가, Navigator route 변경 승인처럼 읽힘 | `rg -n "production route|Navigator route" docs/ux/explorer_workspace_unification.md` | 작업 종료 보고에서 기록 |
+| `ExplorerWorkspace` shell mount가 없는지 확인 | shell mount 없음과 `not approved`가 함께 기록되어야 함 | shell mount 승인 또는 production mount로 해석됨 | `rg -n "ExplorerWorkspace.*shell mount|shell mount" docs/ux/explorer_workspace_unification.md` | 작업 종료 보고에서 기록 |
+| `main.dart` / `HomeScreen` / Navigator route 변경이 없는지 확인 | entry와 route 변경 없음이 기록되어야 함 | entry 변경 또는 route 변경이 허용된 것처럼 읽힘 | `rg -n "main.dart|HomeScreen|Navigator route" docs/ux/explorer_workspace_unification.md` | 작업 종료 보고에서 기록 |
+| Provider / Repository / Navigator / persistence authority migration이 없는지 확인 | authority migration 없음과 `not approved`가 기록되어야 함 | owner/controller/coordinator migration으로 해석됨 | `rg -n "Provider|Repository|Navigator|persistence" docs/ux/explorer_workspace_unification.md` | 작업 종료 보고에서 기록 |
+| projection result persistence/history/source-of-truth usage가 없는지 확인 | projection result 비저장 상태가 기록되어야 함 | field/history/source of truth 사용 승인처럼 읽힘 | `rg -n "projection result persistence|source-of-truth" docs/ux/explorer_workspace_unification.md` | 작업 종료 보고에서 기록 |
+| production visible UI diff가 없는지 확인 | production visible UI diff 없음이 기록되어야 함 | visible UI 변경 승인처럼 읽힘 | `rg -n "production visible UI diff" docs/ux/explorer_workspace_unification.md` | 작업 종료 보고에서 기록 |
+| 관련 테스트 결과가 문서와 일치하는지 확인 | 두 관련 테스트와 `+11: All tests passed!`가 기록되어야 함 | 테스트 파일 누락 또는 결과 불일치 | `flutter test test/ui/word_explorer_screen_phase7f_projection_boundary_test.dart test/ui/word_explorer_screen_phase8c_hidden_visual_probe_test.dart` | 작업 종료 보고에서 기록 |
+| `flutter analyze` 기존 이슈 상태가 문서에 정확히 기록되어 있는지 확인 | 기존 저장소 이슈로 실패하며 이번 변경 파일은 오류 목록에 포함되지 않는다고 구분되어야 함 | 문서 변경이 analyzer 실패 원인처럼 기록됨 | `flutter analyze` | 작업 종료 보고에서 기록 |
+| 변경 파일이 docs 범위로 제한되어 있는지 확인 | 변경 파일은 문서 2개만 있어야 함 | `lib/`, `test/`, platform 경로 변경 발생 | `git diff --name-only` 및 `git diff --name-only -- lib test android ios macos windows linux web` | 작업 종료 보고에서 기록 |
+
+UI 기반 수동 테스트는 이번 Phase 8-D 문서/audit 작업의 대상이 아니다.
