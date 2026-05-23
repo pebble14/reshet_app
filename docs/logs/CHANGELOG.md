@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2026-05-23 Phase 8-A visual consumer entry boundary 문서화
+
+- `docs/ux/explorer_workspace_unification.md`에 `17.42 Phase 8-A visual consumer entry boundary` 섹션을 추가해 Phase 7 read-only projection chain 이후 visual consumer가 projection snapshot을 읽기 전에 필요한 entry boundary를 문서화했다.
+- Phase 8은 `ExplorerWorkspace` shell을 production에 mount하는 단계가 아니며, runtime/UI integration과 visual consumer production exposure는 계속 `not approved` 상태라고 명시했다.
+- `ExplorerWorkspace` shell mount, route collapse, canonical owner migration, Provider / Repository / Navigator / persistence authority migration은 승인되지 않았고 owner boundary 미이전 상태를 유지한다고 기록했다.
+- projection result persistence, projection result history usage, projection result source-of-truth usage는 모두 `not approved`로 고정했다.
+- 이번 변경은 문서 변경만 포함하며 production UI diff는 없다.
+
 ## 2026-05-23 Phase 7-H projection chain stabilization audit 문서화
 
 - `docs/ux/explorer_workspace_unification.md`에 `17.41 Phase 7-H projection chain stabilization audit` 섹션을 추가해 Phase 7-A~7-G projection chain의 closure / stabilization audit 결과를 문서화했다.

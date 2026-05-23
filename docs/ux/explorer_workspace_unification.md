@@ -2002,3 +2002,116 @@ Phase 7은 현재 문서, 코드, 테스트 기준에서 종료 가능 상태로
 - shell mount status: `not approved`
 - runtime/UI integration status: `not approved`
 - visual consumer / shell mount 결정은 next phase required 항목으로 남긴다.
+
+### 17.42 Phase 8-A visual consumer entry boundary
+
+Phase 8은 `ExplorerWorkspace` shell을 production에 mount하는 단계가 아니다. Phase 8은 Phase 7에서 확보된 read-only projection chain을 visual consumer가 안전하게 읽을 수 있는 진입 조건을 정의하는 단계다.
+
+Phase 8-A는 구현 단계가 아니며 runtime/UI integration, visual consumer production exposure, `ExplorerWorkspace` shell mount, route collapse, production UI diff를 승인하지 않는다. 이번 단계의 목적은 visual consumer 후보가 projection result를 읽기 전에 지켜야 할 owner boundary와 금지선을 문서로 고정하는 것이다.
+
+#### 17.42.1 Phase 8 목적
+
+- Phase 8은 Phase 7에서 확보한 `WordExplorerScreen -> ExplorerWorkspaceState` read-only projection chain을 유지한 채, 향후 visual consumer가 그 projection snapshot을 안전하게 읽을 수 있는 진입 조건을 정의한다.
+- Phase 8은 `ExplorerWorkspace`를 production route에 연결하거나 shell을 mount하는 단계가 아니다.
+- Phase 8은 canonical owner migration, Provider authority migration, Repository authority migration, Navigator authority migration, persistence authority migration을 승인하지 않는다.
+- projection result는 source of truth가 아니며, field, history payload, persistence payload, runtime policy state로 저장하지 않는다.
+
+#### 17.42.2 Phase 8-A 범위
+
+- `visual consumer`의 의미와 authority boundary를 정의한다.
+- visual consumer level을 Level 0부터 Level 3까지 구분한다.
+- Level 1 또는 Level 2 후보로 진입하기 전에 필요한 조건을 정리한다.
+- runtime/UI integration 미승인, `ExplorerWorkspace` shell mount 미승인, owner boundary 미이전, production UI diff 없음 기준을 유지한다.
+- Phase 8-A는 문서화 단계이며 `lib/`, `test/`, platform directory, route, Provider, Repository, Navigator, DB/persistence를 수정하지 않는다.
+
+#### 17.42.3 visual consumer 정의
+
+`visual consumer`는 `WordExplorerScreen` 내부에서 생성된 read-only projection snapshot을 읽어 화면 후보를 구성할 수 있는 non-owner view layer다. visual consumer는 repository, provider, navigator, persistence, canonical selection state에 대한 authority를 갖지 않는다.
+
+이 정의에서 `ExplorerWorkspace` 또는 visual consumer는 `WordExplorerScreen` 내부에서 생성된 read-only projection snapshot을 소비하는 non-owner view layer로만 취급한다. `ExplorerWorkspace`는 owner, controller, coordinator가 아니며 selection, navigation, repository, persistence authority를 갖지 않는다.
+
+visual consumer는 다음을 수행하지 않는다.
+
+- projection result를 source of truth로 사용하지 않는다.
+- projection result를 persistence 대상으로 저장하지 않는다.
+- projection result를 history payload로 사용하지 않는다.
+- Repository, Provider, Navigator, DB/persistence를 직접 호출하지 않는다.
+- `selectedWordId`, `graphCenterWordId`, `detailTargetWordId`, `layoutPreset`, `origin`의 owner가 되지 않는다.
+
+#### 17.42.4 visual consumer level 구분
+
+| level | 이름 | 의미 | Phase 8-A 판단 |
+| --- | --- | --- | --- |
+| Level 0 | debug assert-only consumer | `WordExplorerScreen` 내부 build-local read와 debug assert처럼 projection snapshot을 비시각 검증에만 사용하는 consumer | 현재 Phase 7 chain의 안정화 기준으로 유지 가능 |
+| Level 1 | hidden visual probe | production 노출 없이 read-only projection snapshot을 읽어 visual shape 후보를 숨김 상태로 점검하는 consumer | Phase 8-A에서 진입 조건 검토 가능 |
+| Level 2 | production-adjacent visual consumer | production context와 가까운 구조에서 projection snapshot 소비 적합성을 검토하되 production visible exposure는 하지 않는 consumer | 별도 승인 전에는 구현하지 않고 진입 조건만 검토 가능 |
+| Level 3 | production visible consumer | production route에서 사용자에게 보이는 visual consumer | Phase 8-A에서 승인하지 않음 |
+
+Phase 8-A는 Level 1 또는 Level 2의 진입 조건을 검토하는 단계이며, Level 3 production visible consumer는 승인하지 않는다.
+
+#### 17.42.5 Phase 8-A에서 허용되는 것
+
+- read-only projection snapshot을 visual consumer가 읽기 전에 필요한 entry boundary 문서화
+- visual consumer level과 각 level의 authority 제한 정리
+- `ExplorerWorkspace` non-owner boundary, projection result non-source-of-truth boundary 문서화
+- Level 1 또는 Level 2 후보가 후속 단계로 넘어가기 위한 조건 기록
+- runtime/UI integration, shell mount, route collapse, production UI diff가 아직 승인되지 않았음을 명시
+
+#### 17.42.6 Phase 8-A에서 금지되는 것
+
+아래 항목은 모두 `not approved` 상태다.
+
+- runtime/UI integration: `not approved`
+- visual consumer production exposure: `not approved`
+- `ExplorerWorkspace` shell mount: `not approved`
+- route collapse: `not approved`
+- canonical owner migration: `not approved`
+- Provider authority migration: `not approved`
+- Repository authority migration: `not approved`
+- Navigator authority migration: `not approved`
+- persistence authority migration: `not approved`
+- projection result persistence: `not approved`
+- projection result history usage: `not approved`
+- projection result source-of-truth usage: `not approved`
+
+또한 다음 표현과 구조는 금지한다.
+
+- `ExplorerWorkspace`가 owner처럼 보이는 표현
+- `ExplorerWorkspace`가 controller처럼 보이는 표현
+- `ExplorerWorkspace`가 coordinator처럼 보이는 표현
+- `ExplorerWorkspace`가 selection, navigation, repository, persistence authority를 갖는 표현
+- visual consumer가 canonical selection state, route stack, repository read/write, persistence/history payload의 authority를 갖는 구조
+
+허용 가능한 표현은 `ExplorerWorkspace` 또는 visual consumer가 `WordExplorerScreen` 내부에서 생성된 read-only projection snapshot을 소비하는 non-owner view layer라는 범위로 제한한다.
+
+#### 17.42.7 projection result source-of-truth boundary
+
+- projection result는 current owner state에서 파생된 read-only snapshot이다.
+- projection result는 source of truth가 아니며 source of truth처럼 사용하지 않는다.
+- projection result를 persistence에 쓰지 않는다.
+- projection result를 history payload로 쓰지 않는다.
+- projection result를 canonical selection state로 승격하지 않는다.
+- projection result를 runtime policy state, synchronization state, owner state로 저장하지 않는다.
+
+#### 17.42.8 Phase 8-B 후보 조건
+
+Phase 8-B로 넘어가려면 다음 조건을 먼저 만족해야 한다.
+
+- 사용자의 별도 승인이 있어야 한다.
+- 대상 level이 Level 1인지 Level 2인지 명시해야 하며, Level 3은 제외해야 한다.
+- visual consumer가 read-only projection snapshot만 소비하고, Repository / Provider / Navigator / persistence / DB authority를 갖지 않는다는 검증 기준을 먼저 정해야 한다.
+- `ExplorerWorkspace`가 owner, controller, coordinator가 아니라는 문구와 검증 기준을 유지해야 한다.
+- projection result가 field, history payload, source of truth, persistence payload로 저장되지 않는다는 검증 기준을 먼저 정해야 한다.
+- `ExplorerWorkspace` shell mount, route collapse, production visible exposure, production UI diff가 필요한 경우 Phase 8-B 후보에서 제외하고 별도 승인 단계로 분리해야 한다.
+- 코드 수정이 필요한 후속 단계라면 수정 파일 범위, 명령어 기반 검증, UI 확인 필요 여부를 먼저 분리해야 한다.
+
+#### 17.42.9 implementation status
+
+- Phase 8-A status: `documented`
+- implementation status: `not approved`
+- runtime/UI integration status: `not approved`
+- visual consumer production exposure status: `not approved`
+- shell mount status: `not approved`
+- route collapse status: `not approved`
+- owner boundary migration status: `not approved`
+- production UI diff status: `not approved`
