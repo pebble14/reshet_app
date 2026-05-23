@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 2026-05-23 Phase 8-H hidden probe contract termination audit
+
+- Phase 8-A~G의 visual consumer entry boundary, Level 1 hidden visual probe, output contract planning, source-level test hardening 흐름을 종합 감사했다.
+- Level 1 hidden visual probe는 assert-only / read-only / non-owner boundary 안에 머무르며 production route, `ExplorerWorkspace` shell mount, runtime/UI integration으로 연결되지 않는다고 정리했다.
+- `candidateSlots`, `candidateLabels`는 `_debugValidateHiddenVisualProbe(...)` helper 내부 local candidate structure이며 public API, output DTO/model, route argument, shell prop, persistence payload가 아니라고 재확인했다.
+- 관련 source-level test인 `word_explorer_screen_phase7f_projection_boundary_test.dart`, `word_explorer_screen_phase8c_hidden_visual_probe_test.dart`, `word_explorer_screen_phase8g_hidden_probe_contract_hardening_test.dart`의 통과 결과를 Phase 8 종료 가능 판단 근거로 기록했다.
+- 전체 `flutter analyze`는 기존 저장소 이슈로 실패하는 상태이며, 이번 변경 파일인 `docs/ux/explorer_workspace_unification.md`, `docs/logs/CHANGELOG.md`는 analyzer 오류 대상이 아니라고 구분해 기록한다.
+- Level 2 / Level 3 consumer 진입, runtime/UI integration, production visual consumer exposure, `ExplorerWorkspace` shell mount, route collapse, owner migration은 계속 `not approved`로 유지했다.
+- Phase 8-H 기준으로 Phase 8은 종료 가능하다고 판단하되, 이는 Level 2 진입, production route 노출, shell mount, runtime/UI integration 승인을 의미하지 않는다고 명시했다.
+- 다음 단계 후보는 Phase 9-A planning 수준의 Level 2 visual consumer entry boundary planning, production-adjacent visual consumer risk audit, `ExplorerWorkspace` shell mount precondition planning으로만 제한했다.
+
 ## 2026-05-23 Phase 8-G hidden probe output contract source-level test hardening
 
 - `test/ui/word_explorer_screen_phase8g_hidden_probe_contract_hardening_test.dart`를 추가해 hidden probe output contract의 non-contract boundary를 source-level로 보강했다.
