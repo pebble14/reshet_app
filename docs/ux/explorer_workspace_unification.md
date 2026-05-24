@@ -3685,3 +3685,128 @@ Phase 9-E에서 수정한 파일 범위는 다음으로 제한한다.
 | production path 변경 없음 확인 | `lib/`와 platform 경로 변경이 없어야 함 | production code 수정 또는 UI diff 발생 | `git diff --name-only -- lib android ios macos windows linux web` | 작업 종료 보고에서 기록 |
 
 UI 기반 수동 테스트는 이번 Phase 9-E source-level test hardening의 필수 범위가 아니다.
+
+### 17.55 Phase 9-F Level 2 entry / candidate / guardrail hardening termination audit
+
+Phase 9-F는 구현 단계가 아니다. 이번 단계의 목적은 Phase 9-A부터 Phase 9-E까지의 Level 2 entry / candidate / guardrail hardening 흐름을 종합해 Phase 9 전체가 종료 가능한지 audit으로 판단하는 것이다.
+
+Phase 9-F audit은 Level 2 visual consumer implementation, `ExplorerWorkspace` shell mount, production UI diff, route/shell/Navigator/Provider/Repository/persistence 구현 변경, output DTO/model 추가, public API 추가를 승인하지 않는다. 변경 범위는 이 문서와 `docs/logs/CHANGELOG.md` 기록으로 제한한다.
+
+#### 17.55.1 Phase 9-A~E 완료 항목 요약
+
+Phase 9-A부터 Phase 9-E까지 완료된 항목은 다음으로 정리한다.
+
+| 단계 | 완료된 항목 | 종료 audit 판단 |
+| --- | --- | --- |
+| Phase 9-A | Level 2 visual consumer 진입 조건 정의 | Level 2를 구현하지 않고 entry precondition만 문서화했다. |
+| Phase 9-B | Level 2 visual consumer 후보 선정 경계 정의 | 후보 선정이 구현 승인으로 해석되지 않도록 candidate-only boundary를 고정했다. |
+| Phase 9-C | source-level guardrail planning | public API / DTO / model / route contract / shell contract 승격 방지 후보를 planning으로만 정리했다. |
+| Phase 9-D | guardrail test hardening target audit | 기존 Phase 7-F / 8-C / 8-G 테스트의 coverage와 remaining gap을 audit으로 분리했다. |
+| Phase 9-E | 기존 Phase 8-G source-level test 제한 보강 | 새 테스트 파일 없이 기존 Phase 8-G 테스트 안에서 candidate marker public surface와 production entry marker guardrail을 보강했다. |
+
+#### 17.55.2 Phase 9-E 테스트 보강 결과
+
+Phase 9-E 테스트 보강 결과는 다음으로 제한해 해석한다.
+
+- 보강은 기존 `test/ui/word_explorer_screen_phase8g_hidden_probe_contract_hardening_test.dart` 안에서만 수행했다.
+- 새 테스트 파일은 생성하지 않았다.
+- production code는 수정하지 않았다.
+- `lib/`, `android`, `ios`, `macos`, `windows`, `linux`, `web` 경로는 수정하지 않았다.
+- 관련 source-level test 실행 결과는 `+17: All tests passed!`로 확인됐다.
+- 이 결과는 Level 1 hidden visual probe와 Level 2 후보 guardrail의 source-level 보호를 강화한 것이며, Level 2 production-adjacent visual consumer 구현 승인이 아니다.
+
+#### 17.55.3 Phase 9에서 승인된 것과 승인되지 않은 것
+
+Phase 9에서 승인된 것은 다음으로 제한한다.
+
+- Level 2 진입 조건 문서화
+- Level 2 후보 선정 기준 문서화
+- Level 2 후보를 보호하기 위한 source-level guardrail planning 문서화
+- guardrail test hardening target audit 문서화
+- 기존 Phase 8-G source-level test의 제한적 보강
+
+Phase 9에서 승인되지 않은 것은 다음으로 유지한다.
+
+- Level 2 visual consumer implementation
+- Level 3 production visible consumer implementation
+- `ExplorerWorkspace` shell mount
+- production UI diff
+- route wiring / route registration change
+- route / shell / Navigator / Provider / Repository / persistence 구현 변경
+- Provider / Repository / Navigator / persistence authority migration
+- output DTO/model addition
+- public API addition
+- projection result persistence/history/source-of-truth usage
+
+#### 17.55.4 Phase 9 종료 후에도 유지되는 금지선
+
+아래 항목은 Phase 9 종료 이후에도 모두 `not approved` 상태로 유지한다.
+
+- Level 2 visual consumer implementation: `not approved`
+- Level 3 production visible consumer: `not approved`
+- `ExplorerWorkspace` shell mount: `not approved`
+- production UI diff: `not approved`
+- route wiring / route registration change: `not approved`
+- route / shell / Navigator / Provider / Repository / persistence 구현 변경: `not approved`
+- Provider / Repository / Navigator / persistence authority migration: `not approved`
+- output DTO/model addition: `not approved`
+- public API addition: `not approved`
+- projection result persistence/history/source-of-truth usage: `not approved`
+- runtime/UI integration: `not approved`
+- production visual consumer exposure: `not approved`
+- route collapse: `not approved`
+- canonical owner migration: `not approved`
+
+#### 17.55.5 Phase 10 또는 후속 단계 후보
+
+Phase 10 또는 후속 단계로 넘길 수 있는 후보는 다음으로 제한한다.
+
+- Level 2 production-adjacent visual consumer 구현 여부 검토
+- production UI diff 승인 절차 검토
+- `ExplorerWorkspace` shell mount precondition checklist 검토
+- route/shell/owner migration 여부 검토
+- Level 2 후보가 production entry에 접근하기 전 필요한 command 기반 검증 계획 검토
+
+위 항목은 모두 후보일 뿐이며, 별도 설계, 수정 파일 목록, command 기반 검증 계획, 사용자 승인 전까지는 `not approved` 상태로 유지한다.
+
+#### 17.55.6 Phase 9 종료 가능 판단
+
+현재 기준으로 Phase 9는 종료 가능 상태로 판단한다.
+
+이 판단의 근거는 다음과 같다.
+
+- Phase 9-A~E 문서가 Level 2 entry / candidate / guardrail hardening 흐름을 서로 연결해 기록하고 있다.
+- Phase 9-E가 Phase 9-D coverage gap 일부를 기존 Phase 8-G source-level test 보강으로 연결했다.
+- Phase 9-E 보강은 production 구현, shell mount, route wiring, owner migration, production UI diff로 확장되지 않았다.
+- Level 2 visual consumer implementation, Level 3 production visible consumer, shell mount, production UI diff는 모두 `not approved`로 유지된다.
+
+Phase 9 종료 가능 판단은 Phase 10 또는 후속 단계의 자동 승인으로 해석하지 않는다. 후속 단계는 별도 scope review, 수정 파일 목록, command 기반 검증 계획, 사용자 승인을 받은 뒤에만 시작할 수 있다.
+
+#### 17.55.7 Phase 9-F에서 제외되는 범위
+
+Phase 9-F에서 명시적으로 제외되는 범위는 다음과 같다.
+
+- 코드 파일 수정
+- 테스트 파일 수정
+- 추가 source-level test 구현
+- route/shell/Navigator/Provider/Repository/persistence 구현 변경
+- `ExplorerWorkspace` shell mount 승인
+- production UI diff 승인
+- Level 2 visual consumer 구현 승인
+- Level 3 production visible consumer 구현 승인
+- output DTO/model 추가
+- public API 추가
+
+#### 17.55.8 명령어 기반 수동 테스트 체크리스트
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 | 실제 결과 |
+| --- | --- | --- | --- | --- |
+| 현재 브랜치 및 상태 확인 | Phase 9-F 작업 브랜치에서 문서 변경만 수행해야 함 | 다른 브랜치 또는 uncommitted 변경이 섞임 | `git status --short --branch`, `git branch --show-current`, `git log -1 --oneline` | 작업 종료 보고에서 기록 |
+| 변경 파일 확인 | 변경 파일은 승인된 문서 2개여야 함 | `lib/`, `test/`, platform 경로 또는 새 문서가 포함됨 | `git diff --stat`, `git diff --name-only` | 작업 종료 보고에서 기록 |
+| whitespace 검증 | diff에 trailing whitespace 오류가 없어야 함 | `git diff --check` 실패 | `git diff --check` | 작업 종료 보고에서 기록 |
+| Phase 9-F 반영 확인 | 두 문서에 Phase 9-F 기록이 있어야 함 | Phase 9-F 기록 누락 또는 구현 승인처럼 읽히는 문장 | `rg -n "Phase 9-F" docs/ux/explorer_workspace_unification.md docs/logs/CHANGELOG.md` | 작업 종료 보고에서 기록 |
+| Phase 9-A~E 연결 확인 | Phase 9-A~E 흐름이 종료 audit 안에서 요약되어야 함 | 특정 단계 누락 또는 Phase 9-E test hardening 의미 과장 | `rg -n "Phase 9-A|Phase 9-B|Phase 9-C|Phase 9-D|Phase 9-E" docs/ux/explorer_workspace_unification.md` | 작업 종료 보고에서 기록 |
+| 금지선 유지 확인 | Level 2/3 구현, shell mount, production UI diff, route/owner/persistence 변경이 `not approved`로 유지되어야 함 | 후속 단계 자동 승인 또는 구현 승인처럼 읽힘 | `rg -n "not approved|Level 2|Level 3|shell mount|production UI diff|route wiring|route registration|Provider|Repository|Navigator|persistence|public API|DTO|model" docs/ux/explorer_workspace_unification.md` | 작업 종료 보고에서 기록 |
+| 코드/test/platform 변경 없음 확인 | `lib/`, `test/`, platform 경로 변경이 없어야 함 | 구현 또는 테스트 수정 발생 | `git diff --name-only -- lib test android ios macos windows linux web` | 작업 종료 보고에서 기록 |
+
+UI 기반 수동 테스트와 `flutter test`는 이번 Phase 9-F 문서/audit 작업의 필수 범위가 아니다.
