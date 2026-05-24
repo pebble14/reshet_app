@@ -4213,3 +4213,32 @@ Phase 10-D 진입 조건이 충족되지 않으면 feature 구현으로 넘어�
 | 금지선 유지 확인 | production UI diff, shell mount, route, Provider, Repository, Navigator, persistence 변경이 `not approved`로 유지되어야 함 | Phase 10-C가 production 연결 승인처럼 읽힘 | `rg -n "production UI diff|shell mount|route wiring|route registration|Provider|Repository|Navigator|persistence|not approved" docs/ux/explorer_workspace_unification.md docs/logs/CHANGELOG.md` | 작업 종료 보고에서 기록 |
 
 UI 기반 수동 테스트는 이번 Phase 10-C 문서/audit 작업의 대상이 아니다. production-visible UI, shell mount, route 변경이 없으므로 사용자가 화면에서 확인할 수 있는 새 동작은 만들지 않는다.
+
+### 17.59 Phase 10-D candidate representation reader 최소 구현 시작
+
+Phase 10-D는 `candidate representation reader`를 최소 구현으로 시작한다. 이번 단계의 구현은 production preview, mounted widget, production-visible consumer가 아니며, 기존 `_debugValidateHiddenVisualProbe(...)` 내부에서 helper-local candidate representation을 read-only로 읽는 제한적 구조로만 둔다.
+
+#### 17.59.1 구현 범위
+
+- 구현 위치는 `lib/ui/word_explorer_screen.dart`의 `_debugValidateHiddenVisualProbe(...)` 내부로 제한한다.
+- `candidateSlots`, `candidateLabels`는 helper 내부 local candidate structure로만 유지한다.
+- reader는 local function 범위에만 존재하며 private symbol보다 좁은 helper-local boundary로 취급한다.
+- 기존 직접 predicate는 local reader 호출로 대체하되, widget tree, route, shell, persistence, owner/controller/coordinator 역할과 연결하지 않는다.
+
+#### 17.59.2 테스트 범위
+
+- 신규 테스트는 `test/ui/word_explorer_screen_phase10d_candidate_representation_reader_test.dart` source-level guardrail test로 제한한다.
+- 테스트는 reader가 `_debugValidateHiddenVisualProbe(...)` 내부에만 존재하는지, 금지 import / 금지 참조가 없는지, DTO/model/public API로 승격하지 않는지, production entry와 shell mount로 노출되지 않는지를 문자열/범위 기반으로 확인한다.
+- UI pump, route 실행, runtime integration test는 이번 단계의 검증 대상이 아니다.
+
+#### 17.59.3 계속 금지되는 항목
+
+- production UI diff: `not approved`
+- `ExplorerWorkspace` shell mount: `not approved`
+- route wiring / route registration change: `not approved`
+- `HomeScreen -> WordExplorerScreen` 진입 구조 변경: `not approved`
+- Provider / Repository / Navigator / persistence 구현 변경: `not approved`
+- owner migration 또는 persistence authority migration: `not approved`
+- DTO/model/public API addition: `not approved`
+- projection result persistence/history/source-of-truth usage: `not approved`
+- runtime/UI integration: `not approved`

@@ -250,10 +250,14 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
       projection.layoutPreset.name,
       projection.origin.name,
     ];
+    bool readCandidateRepresentation() {
+      return candidateSlots.isNotEmpty &&
+          candidateLabels.every((label) => label.trim().isNotEmpty);
+    }
+
     final detailTargetWordId = projection.detailTargetWordId;
 
-    return candidateSlots.isNotEmpty &&
-        candidateLabels.every((label) => label.trim().isNotEmpty) &&
+    return readCandidateRepresentation() &&
         (detailTargetWordId == null ||
             detailTargetWordId == projection.selectedWordId);
   }

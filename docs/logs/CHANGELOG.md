@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-05-24 Phase 10-D candidate representation reader 최소 구현
+
+- Phase 10-D에서 `candidate representation reader`를 production preview, mounted widget, production-visible consumer가 아닌 `_debugValidateHiddenVisualProbe(...)` 내부 helper-local read-only reader로 제한해 시작했다.
+- `candidateSlots`, `candidateLabels`는 helper 내부 local candidate structure로만 읽고, public API, DTO, model, route contract, shell contract, persistence/history/source-of-truth payload로 승격하지 않는 기준을 유지했다.
+- 신규 source-level guardrail test 후보를 `test/ui/word_explorer_screen_phase10d_candidate_representation_reader_test.dart`로 두고, UI pump, route 실행, runtime integration 검증이 아니라 문자열/범위 기반 검증으로 제한했다.
+- production UI diff, `ExplorerWorkspace` shell mount, route wiring / route registration 변경, `HomeScreen -> WordExplorerScreen` 진입 구조 변경, Provider / Repository / Navigator / persistence 구현 변경, DTO/model/public API 추가는 계속 `not approved`로 유지한다.
+
 ## 2026-05-24 Phase 10-C candidate preview consumer preflight audit
 
 - Phase 10-C를 implementation이 아니라 Phase 10-D feature 구현 전 명칭, 파일 후보, 테스트 전략, 금지 import / 금지 참조, 진입 조건을 고정하는 preflight audit 단계로 기록했다.
