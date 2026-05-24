@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2026-05-24 Phase 9-D Level 2 source-level guardrail test hardening target audit
+
+- Phase 9-D를 source-level test 구현 단계가 아니라 Level 2 source-level guardrail test hardening 대상 후보를 확인하는 docs/audit 단계로 기록했다.
+- 기존 관련 테스트인 `word_explorer_screen_phase7f_projection_boundary_test.dart`, `word_explorer_screen_phase8c_hidden_visual_probe_test.dart`, `word_explorer_screen_phase8g_hidden_probe_contract_hardening_test.dart`의 역할과 현재 guardrail 커버리지를 정리했다.
+- projection boundary, hidden visual probe assert-only/read-only boundary, `candidateSlots` / `candidateLabels` helper-local boundary, public API / DTO / model marker 미노출, shell mount / route / persistence 미연결은 기존 테스트가 일부 커버한다고 기록했다.
+- 전체 `lib/` model / DTO / public export 경로, 전체 route wiring / route registration 변화, future Level 2 production-adjacent path의 Navigator / Provider / Repository / persistence 참조 방지, production UI diff 판정은 coverage gap 후보로 남겼다.
+- 테스트 구현이 필요할 경우 기존 Phase 8-G 테스트 보강을 우선 후보로 두되, Phase 9-D에서는 새 테스트 파일명, test name, assertion 구현 방식을 확정하지 않는다고 명시했다.
+- source-level test implementation, test file creation/modification, code file modification, runtime/UI integration, shell mount, route wiring, authority migration, output DTO/model, public API, Level 2 구현, production UI diff는 모두 `not approved`로 유지했다.
+
 ## 2026-05-24 Phase 9-C Level 2 visual consumer source-level guardrail planning
 
 - Phase 9-C를 source-level test 구현 단계가 아니라 Level 2 visual consumer 후보를 보호하기 위한 source-level guardrail 후보 문서화 단계로 기록했다.

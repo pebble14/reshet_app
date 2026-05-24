@@ -3458,3 +3458,151 @@ Phase 9-C guardrail planning은 다음 의미로만 사용한다.
 | shell/route/owner 경계 확인 | production UI diff, shell mount, route wiring, Navigator, Provider, Repository, persistence가 미승인 상태로 남아야 함 | runtime wiring 승인처럼 읽힘 | `rg -n "production UI diff|shell mount|route wiring|Navigator|Provider|Repository|persistence" docs/ux/explorer_workspace_unification.md` | 작업 종료 보고에서 기록 |
 
 UI 기반 수동 테스트와 `flutter test`는 이번 Phase 9-C 문서/audit 작업의 필수 범위가 아니다.
+
+### 17.53 Phase 9-D Level 2 source-level guardrail test hardening target audit
+
+Phase 9-D는 source-level test implementation 단계가 아니다. 이번 단계의 목적은 Phase 9-C에서 문서화한 Level 2 visual consumer source-level guardrail 후보를 기존 테스트가 어디까지 보호하는지 확인하고, 이후 source-level test hardening 대상 후보를 audit으로 분리하는 것이다.
+
+Phase 9-D audit은 테스트 구현 승인, 새 테스트 파일 생성 승인, code file modification 승인, Level 2 production-adjacent visual consumer implementation 승인, production UI diff 승인, shell mount 승인, route wiring 승인, authority migration 승인을 뜻하지 않는다. 변경 범위는 이 문서와 `docs/logs/CHANGELOG.md` 기록으로 제한한다.
+
+#### 17.53.1 기존 관련 테스트 파일 목록과 역할
+
+이번 audit에서 확인한 관련 테스트 파일은 다음 세 개다.
+
+| 테스트 파일 | 현재 역할 |
+| --- | --- |
+| `test/ui/word_explorer_screen_phase7f_projection_boundary_test.dart` | `_readOnlyWorkspaceProjection` private getter, build-local read, projection result field/history 미저장, projection boundary 내부 forbidden marker 차단을 확인한다. |
+| `test/ui/word_explorer_screen_phase8c_hidden_visual_probe_test.dart` | `_debugValidateHiddenVisualProbe(...)` helper가 assert-only 호출 안에 있고, read-only projection을 visual candidate input으로만 소비하며, helper 내부 side effect와 shell mount / production route entry 변경이 없는지 확인한다. |
+| `test/ui/word_explorer_screen_phase8g_hidden_probe_contract_hardening_test.dart` | `candidateSlots`, `candidateLabels` helper-local boundary, public API / DTO / model marker 미노출, route / shell / persistence contract 미연결, assert-only / read-only / non-owner boundary를 source-level로 보강한다. |
+
+이 목록은 기존 테스트 역할을 정리하는 audit이다. Phase 9-D는 위 테스트를 수정하거나 새 테스트를 생성하지 않는다.
+
+#### 17.53.2 현재 테스트가 커버하는 guardrail 요약
+
+현재 테스트가 이미 커버하는 guardrail은 다음으로 정리한다.
+
+- projection boundary:
+  - `_readOnlyWorkspaceProjection`은 `WordExplorerScreen` 내부 private getter로 확인된다.
+  - projection snapshot은 `build()` 내부 local read와 debug assert 소비로 제한된다.
+  - projection result는 field, cache, history payload, source of truth로 저장되지 않는지 확인된다.
+- hidden visual probe assert-only / read-only boundary:
+  - `_debugValidateHiddenVisualProbe(...)`는 private helper로 확인된다.
+  - helper 호출은 `assert(() { ... })` 내부에 있어야 한다.
+  - helper 내부에는 `setState`, `Navigator`, `WordRepository`, `Provider`, DB/persistence, async/future/stream, logging marker가 없어야 한다.
+- `candidateSlots`, `candidateLabels` helper-local boundary:
+  - 두 이름은 helper 본문 내부 local variable로 존재해야 한다.
+  - helper 외부 source와 `_WordExplorerScreenState` field 영역에는 두 이름이 없어야 한다.
+  - helper 반환값은 candidate output이 아니라 boolean 검증 결과로 유지된다.
+- public API / DTO / model marker 노출 방지:
+  - hidden probe output처럼 읽히는 public class, typedef, getter, named argument marker가 제한된 public boundary source에 없어야 한다.
+  - `candidateSlots`, `candidateLabels`가 public getter, constructor argument, DTO/model field marker로 노출되지 않아야 한다.
+- shell mount / route / persistence 연결 방지:
+  - `WordExplorerScreen`은 `explorer_workspace.dart` shell을 import하거나 `ExplorerWorkspace(`를 mount하지 않아야 한다.
+  - `main.dart`와 `home_screen.dart`는 hidden probe helper 또는 candidate structure를 알지 않아야 한다.
+  - candidate structure는 payload, arguments, shell state, persistence value로 전달되지 않아야 한다.
+
+이 커버리지는 Level 1 hidden visual probe boundary와 Phase 9-C guardrail 후보 일부를 보호한다. 다만 이 audit은 현재 테스트 커버리지를 기록하는 것이며 추가 assertion 구현을 승인하지 않는다.
+
+#### 17.53.3 Phase 9-C guardrail 후보 중 이미 커버된 항목
+
+Phase 9-C에서 문서화한 guardrail 후보 중 이미 기존 테스트가 커버하는 항목은 다음과 같다.
+
+- `candidateSlots`, `candidateLabels`가 helper-local structure 밖으로 노출되지 않는지 확인하는 guardrail
+- `_readOnlyWorkspaceProjection` 결과가 field/cache/history payload/source of truth로 저장되지 않는지 확인하는 guardrail
+- hidden probe helper가 assert-only / read-only / non-owner boundary 안에 머무르는지 확인하는 guardrail
+- helper 내부에서 Navigator, Provider, Repository, DB/persistence, async/future/stream 흐름이 추가되지 않는지 확인하는 guardrail
+- `WordExplorerScreen` production path에 `ExplorerWorkspace` shell mount가 추가되지 않는지 확인하는 guardrail
+- `main.dart`, `home_screen.dart`, workspace contract, workspace shell source에 helper/candidate marker가 노출되지 않는지 확인하는 guardrail
+- hidden probe output이 public API / DTO / model marker로 승격되지 않는지 확인하는 guardrail
+
+이미 커버된 항목은 기존 Phase 7-F / 8-C / 8-G 테스트의 보호 범위로만 해석한다. Phase 9-D는 이 테스트를 확장하지 않는다.
+
+#### 17.53.4 아직 커버되지 않은 coverage gap 후보
+
+Phase 9-C guardrail 후보 중 아직 테스트로 충분히 일반화되지 않은 coverage gap 후보는 다음과 같다.
+
+- 전체 `lib/`의 model / DTO / public export 경로까지 포괄하는 guardrail이 부족하다.
+- 전체 route wiring / route registration 변화까지 일반화한 guardrail이 부족하다.
+- future Level 2 production-adjacent path 전체에 대한 Navigator / Provider / Repository / persistence 참조 방지 guardrail이 부족하다.
+- production UI diff는 source-level test만으로 완전 판정하기 어렵고, path-level audit 확인이 계속 필요하다.
+- production entry 변경, platform 경로 변경, route registration 변경은 source marker test와 `git diff --name-only -- lib test android ios macos windows linux web` 확인을 함께 사용해야 한다.
+
+위 gap은 Phase 9-D audit 결과로만 남긴다. gap 기록은 source-level test hardening implementation approval이 아니며, gap마다 별도 설계와 사용자 승인이 필요하다.
+
+#### 17.53.5 테스트 구현 방향 후보
+
+테스트 구현이 별도 승인될 경우의 방향 후보는 다음과 같이 제한한다.
+
+- 우선 후보는 기존 `test/ui/word_explorer_screen_phase8g_hidden_probe_contract_hardening_test.dart` 보강이다.
+- 기존 Phase 8-G 테스트 보강은 helper-local, public boundary, route/shell/persistence 미연결 guardrail을 같은 문맥에서 유지할 수 있다는 장점이 있다.
+- 별도 추적이 필요한 경우 Phase 9 전용 새 테스트 파일 후보를 둘 수 있지만, Phase 9-D에서는 새 테스트 파일명, test name, assertion 구현 방식을 확정하지 않는다.
+- path-level production UI diff 확인은 source-level test만으로 대체하지 않고 command 기반 audit 항목으로 유지한다.
+
+Phase 9-D는 실제 assertion 추가를 승인하지 않는다. 테스트 파일 생성/수정은 별도 승인 단계에서만 검토한다.
+
+#### 17.53.6 이후 별도 승인 단계 원칙
+
+Phase 9-D audit 결과를 바탕으로 source-level test hardening이 필요하다고 판단되더라도, 다음 항목이 별도로 승인되기 전에는 구현을 시작하지 않는다.
+
+- source-level test hardening 대상 파일
+- test name 또는 group name
+- assertion 후보와 forbidden marker 목록
+- command 기반 검증 계획
+- 변경 파일 목록
+- production UI diff 없음 확인 절차
+- 사용자 승인
+
+따라서 Phase 9-D는 이후 작업의 target audit일 뿐이며, Phase 9-D 자체가 source-level test hardening branch 또는 implementation branch로 전환되지 않는다.
+
+#### 17.53.7 Phase 9-D에서 제외되는 범위
+
+Phase 9-D에서 명시적으로 제외되는 범위는 다음과 같다.
+
+- source-level test implementation
+- test file creation/modification
+- code file modification
+- 실제 assertion 추가
+- 새 test name 확정
+- route, shell, Navigator, Provider, Repository, persistence 구현 변경
+- `ExplorerWorkspace` shell mount
+- production UI diff
+- Level 2 production-adjacent visual consumer implementation
+- Level 3 production visible consumer implementation
+- output DTO/model addition
+- public API addition
+
+#### 17.53.8 유지되는 금지선
+
+아래 항목은 Phase 9-D 이후에도 모두 `not approved` 상태로 유지한다.
+
+- source-level test implementation: `not approved`
+- test file creation/modification: `not approved`
+- code file modification: `not approved`
+- runtime/UI integration: `not approved`
+- production visual consumer exposure: `not approved`
+- `ExplorerWorkspace` shell mount: `not approved`
+- route collapse: `not approved`
+- route wiring / route registration change: `not approved`
+- canonical owner migration: `not approved`
+- Provider / Repository / Navigator / persistence authority migration: `not approved`
+- projection result persistence/history/source-of-truth usage: `not approved`
+- output DTO/model addition: `not approved`
+- public API addition: `not approved`
+- Level 2 production-adjacent visual consumer implementation: `not approved`
+- Level 3 production visible consumer: `not approved`
+- production UI diff: `not approved`
+
+#### 17.53.9 명령어 기반 수동 테스트 체크리스트
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 | 실제 결과 |
+| --- | --- | --- | --- | --- |
+| 현재 브랜치 및 상태 확인 | Phase 9-D 작업 브랜치이며 clean main에서 분기했음을 확인할 수 있어야 함 | 다른 브랜치 또는 uncommitted 변경에서 작업함 | `git status --short --branch`, `git branch --show-current`, `git log -1 --oneline` | 작업 종료 보고에서 기록 |
+| 변경 파일 확인 | 변경 파일은 승인된 문서 2개여야 함 | `lib/`, `test/`, platform 경로 또는 새 문서가 포함됨 | `git diff --stat`, `git diff --name-only` | 작업 종료 보고에서 기록 |
+| whitespace 검증 | markdown diff에 trailing whitespace 오류가 없어야 함 | `git diff --check` 실패 | `git diff --check` | 작업 종료 보고에서 기록 |
+| Phase 9-D 반영 확인 | 두 문서에 Phase 9-D 기록이 있어야 함 | Phase 9-D 기록 누락 또는 구현 승인처럼 읽히는 문장 | `rg -n "Phase 9-D" docs/ux/explorer_workspace_unification.md docs/logs/CHANGELOG.md` | 작업 종료 보고에서 기록 |
+| 기존 테스트 파일 기록 확인 | 세 테스트 파일명이 Phase 9-D audit에 기록되어야 함 | 관련 테스트 역할 누락 | `rg -n "word_explorer_screen_phase7f_projection_boundary_test|word_explorer_screen_phase8c_hidden_visual_probe_test|word_explorer_screen_phase8g_hidden_probe_contract_hardening_test" docs/ux/explorer_workspace_unification.md` | 작업 종료 보고에서 기록 |
+| coverage gap / guardrail 확인 | coverage gap과 guardrail 후보가 구현 지시가 아니라 audit으로 기록되어야 함 | source-level test implementation approval처럼 읽힘 | `rg -n "coverage gap|guardrail|source-level test hardening|not approved" docs/ux/explorer_workspace_unification.md` | 작업 종료 보고에서 기록 |
+| Level 2 guardrail marker 확인 | candidateSlots, candidateLabels, public API, DTO, model, route wiring, route registration, Navigator, Provider, Repository, persistence, production UI diff가 경계 문맥에서 기록되어야 함 | Level 2 구현 승인 또는 runtime wiring 승인처럼 읽힘 | `rg -n "candidateSlots|candidateLabels|public API|DTO|model|route wiring|route registration|Navigator|Provider|Repository|persistence|production UI diff" docs/ux/explorer_workspace_unification.md` | 작업 종료 보고에서 기록 |
+| 코드/test/platform 변경 없음 확인 | `lib/`, `test/`, platform 경로 변경이 없어야 함 | 테스트 구현 또는 코드 변경 발생 | `git diff --name-only -- lib test android ios macos windows linux web` | 작업 종료 보고에서 기록 |
+
+UI 기반 수동 테스트와 `flutter test`는 이번 Phase 9-D 문서/audit 작업의 필수 범위가 아니다.
