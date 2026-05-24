@@ -4386,3 +4386,101 @@ Phase 10의 `candidate representation reader`는 `_debugValidateHiddenVisualProb
 | Phase 10-D candidate representation reader test | reader가 helper-local boundary에 머물러야 함 | public contract 승격, shell/route 노출, 금지 import 참조 | `flutter test test/ui/word_explorer_screen_phase10d_candidate_representation_reader_test.dart` | 작업 종료 보고에서 기록 |
 
 UI 기반 수동 테스트는 이번 Phase 11-A 문서/audit 작업의 완료 기준이 아니다. Phase 11-A는 production-visible UX 변화를 만들지 않으므로 사용자가 화면에서 확인할 새 동작도 만들지 않는다.
+
+### 17.62 Phase 11-B ExplorerWorkspace shell mount precondition audit
+
+Phase 11-B의 목적은 `ExplorerWorkspace` shell mount를 구현하는 것이 아니라, shell mount 검토 전에 필요한 전제조건, 위험 요소, 금지선, 검증 기준을 문서로 분리해 확인하는 것이다.
+
+Phase 11-B는 shell mount 구현 단계가 아니다. 이 단계에서는 production UI diff, route wiring, route registration, route collapse, owner/controller/coordinator 이전, Provider / Repository / Navigator / persistence authority migration, DTO/model/public API addition, runtime/UI integration을 수행하지 않는다.
+
+`ExplorerWorkspace` shell mount는 계속 `not approved`다. shell mount precondition을 검토한다는 사실은 production-visible UX 승인, production owner migration, route collapse 승인, Level 3 production visible consumer 승인으로 이어지지 않는다. 사용자-visible UX 변화는 Phase 11-B 범위가 아니다.
+
+현재 production entry 구조는 유지한다.
+
+- `main.dart -> HomeScreen`
+- `HomeScreen -> Navigator.push -> WordExplorerScreen`
+
+`ExplorerWorkspace`는 아직 production owner, controller, coordinator가 아니다. 현재 production explorer owner는 계속 `WordExplorerScreen`이며, graph center, selected word, detail target, explorer history, route push 흐름의 소유권은 이전하지 않는다.
+
+#### 17.62.1 shell mount 검토 전 최소 precondition
+
+shell mount 검토 전에 다음 조건을 먼저 확인해야 한다. 아래 조건은 구현 승인 조건이 아니라 후속 feature 승인 여부를 판단하기 위한 audit 기준이다.
+
+| precondition | 확인 기준 | Phase 11-B 판단 |
+| --- | --- | --- |
+| production entry 영향 범위 | `main.dart -> HomeScreen` 구조와 `HomeScreen -> Navigator.push -> WordExplorerScreen` 진입 경로를 유지한 채 검토 가능한지 확인한다. | entry 변경은 `not approved`다. |
+| route 영향 범위 | route registration 없이 검토 가능한지, route collapse가 필요한지 확인한다. | route wiring / route registration / route collapse는 `not approved`다. |
+| ownership 영향 범위 | `ExplorerWorkspace`가 owner/controller/coordinator가 되는 순간 어떤 책임이 이동하는지, 기존 owner와 충돌하는지 확인한다. | canonical owner migration은 `not approved`다. |
+| persistence authority 영향 범위 | Provider / Repository / Navigator / persistence authority migration 없이 가능한지 확인한다. | authority migration은 `not approved`다. |
+| projection result 의미 | projection 결과가 persistence, history, source-of-truth payload처럼 사용될 위험이 있는지 확인한다. | projection result persistence/history/source-of-truth usage는 `not approved`다. |
+| UI diff 영향 범위 | shell mount가 production UI diff를 동반하는지, 사용자-visible 변화 없이 검토 가능한지 확인한다. | production UI diff와 runtime/UI integration은 `not approved`다. |
+| public contract 영향 범위 | DTO/model/public API 추가 없이 가능한지 확인한다. | DTO/model/public API addition은 `not approved`다. |
+| Phase 10 결과 해석 | Phase 10-D `candidate representation reader`가 helper-local 구조로만 유지되는지 확인한다. | public contract 승격은 `not approved`다. |
+| 테스트 기준 | source-level guardrail test로 entry, route, shell, public contract, persistence authority 변경을 막을 수 있는지 확인한다. | Phase 11-B에서는 UI 테스트를 수행하지 않고 확인 방법만 정의한다. |
+
+#### 17.62.2 shell mount 위험 요소
+
+`ExplorerWorkspace` shell mount는 단순한 wrapper 추가로 취급할 수 없다. production tree에 shell이 mount되면 다음 위험이 함께 발생할 수 있다.
+
+- production entry가 `HomeScreen` 중심 구조에서 다른 shell entry로 이동할 위험
+- `HomeScreen -> WordExplorerScreen` Navigator 진입 경로가 변경되거나 축소될 위험
+- route registration 또는 route wiring이 shell 중심으로 재배치될 위험
+- route collapse가 shell mount의 부수 효과처럼 처리될 위험
+- `ExplorerWorkspace`가 production owner/controller/coordinator처럼 해석될 위험
+- `WordExplorerScreen`과 `ExplorerWorkspace`가 graph center, selected word, detail target, history authority를 중복 소유할 위험
+- Provider / Repository / Navigator / persistence authority가 shell 쪽으로 이동할 위험
+- projection result가 persistence, history, source-of-truth처럼 사용될 위험
+- Phase 10-D helper-local `candidate representation reader`가 public API, DTO, model, route contract, shell contract로 오해될 위험
+- production-visible UX 승인 없이 UI diff 또는 visible consumer exposure가 발생할 위험
+
+위 위험 중 하나라도 실제 구현 변경을 필요로 하면 Phase 11-B 범위를 벗어난다. 해당 변경은 별도 feature 설계, 수정 파일 목록, command 기반 검증 계획, UI 확인 기준, 사용자 승인 대상으로 분리해야 한다.
+
+#### 17.62.3 현재 유지되는 금지선
+
+아래 항목은 Phase 11-B에서도 별도 승인 전까지 `not approved`로 유지한다.
+
+- production UI diff: `not approved`
+- `ExplorerWorkspace` shell mount: `not approved`
+- route wiring / route registration change: `not approved`
+- `HomeScreen -> WordExplorerScreen` 진입 구조 변경: `not approved`
+- Provider / Repository / Navigator / persistence authority migration: `not approved`
+- DTO/model/public API addition: `not approved`
+- projection result persistence/history/source-of-truth usage: `not approved`
+- runtime/UI integration: `not approved`
+- production visual consumer exposure: `not approved`
+- route collapse: `not approved`
+- canonical owner migration: `not approved`
+- Level 3 production visible consumer: `not approved`
+
+#### 17.62.4 shell mount 검토가 승인으로 이어지지 않는 기준
+
+Phase 11-B에서 shell mount precondition을 문서화해도 다음 항목은 승인된 것으로 해석하지 않는다.
+
+- `ExplorerWorkspace` shell을 production tree에 mount하는 것
+- `ExplorerWorkspace`를 production owner, controller, coordinator로 승격하는 것
+- `main.dart`, `HomeScreen`, `WordExplorerScreen`의 production entry 또는 Navigator 진입 흐름을 바꾸는 것
+- route registration, route wiring, route alias, route collapse를 변경하는 것
+- Provider / Repository / Navigator / persistence authority를 이전하는 것
+- DTO/model/public API를 추가하는 것
+- Phase 10-D `candidate representation reader`를 reusable contract 또는 public contract로 승격하는 것
+- 사용자-visible UX 변화를 만드는 것
+
+shell mount가 후속 단계에서 허용되더라도 그 자체로 production-visible UX 승인을 뜻하지 않는다. shell mount 구현, production UI diff, UI 기반 수동 확인, rollback 기준은 별도 feature 단계에서 다시 승인받아야 한다.
+
+#### 17.62.5 테스트 기준
+
+Phase 11-B의 command 기반 검증은 source-level guardrail 확인으로 제한한다. 목표는 이번 문서/audit 변경이 production entry, route, shell mount, public contract, persistence authority, production UI를 변경하지 않았음을 확인하는 것이다.
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 | 실제 결과 |
+| --- | --- | --- | --- | --- |
+| production entry 구조 유지 확인 | `main.dart -> HomeScreen`, `HomeScreen -> Navigator.push -> WordExplorerScreen` 흐름이 유지되어야 함 | `home` 변경, route entry 변경, explorer 진입 구조 변경 | `rg` 기반 source 확인 | 작업 종료 보고에서 기록 |
+| `ExplorerWorkspace` shell production mount 없음 확인 | production entry 또는 `WordExplorerScreen` production path에 shell mount가 없어야 함 | shell mount, visible widget tree 연결, shell prop 연결 | `rg` 기반 source 확인 | 작업 종료 보고에서 기록 |
+| route registration / route wiring 변경 없음 확인 | route table, `Navigator` wiring, route alias 변경이 없어야 함 | route 등록 변경, push 대상 변경, route collapse 조짐 | `git diff`와 `rg` 기반 확인 | 작업 종료 보고에서 기록 |
+| public API / DTO / model 추가 없음 확인 | `lib/` public contract 변경이 없어야 함 | 새 DTO/model/public export 추가 | `git diff --name-only -- lib` | 작업 종료 보고에서 기록 |
+| production UI diff 없음 확인 | `lib/`, platform production path 변경이 없어야 함 | UI 구현 파일, route, shell, platform 파일 변경 | `git diff --name-only -- lib android ios macos windows linux web` | 작업 종료 보고에서 기록 |
+| Phase 7-F projection boundary guardrail test | source-level projection boundary가 유지되어야 함 | projection boundary 누출 또는 authority drift | `flutter test test/ui/word_explorer_screen_phase7f_projection_boundary_test.dart` | 작업 종료 보고에서 기록 |
+| Phase 8-C hidden visual probe guardrail test | hidden probe가 production-visible path로 연결되지 않아야 함 | runtime/UI integration 또는 visible exposure 조짐 | `flutter test test/ui/word_explorer_screen_phase8c_hidden_visual_probe_test.dart` | 작업 종료 보고에서 기록 |
+| Phase 8-G hidden probe contract hardening test | candidate marker가 public surface, route, shell로 노출되지 않아야 함 | public API / DTO / model / route / shell 노출 | `flutter test test/ui/word_explorer_screen_phase8g_hidden_probe_contract_hardening_test.dart` | 작업 종료 보고에서 기록 |
+| Phase 10-D candidate representation reader test | reader가 helper-local boundary에 머물러야 함 | public contract 승격, shell/route 노출, 금지 import 참조 | `flutter test test/ui/word_explorer_screen_phase10d_candidate_representation_reader_test.dart` | 작업 종료 보고에서 기록 |
+
+UI 기반 수동 테스트는 Phase 11-B에서 수행하지 않는다. UI 기반 수동 테스트는 production-visible UX 변경, shell mount 구현, route 또는 visible consumer 노출이 별도 feature 단계에서 승인된 뒤 필요하다. 그 시점의 UI 확인 기준은 시작 화면, 조작 순서, 사람이 식별 가능한 테스트 데이터, 기대 화면 변화, 실패 증상, 완료 판단 기준을 포함해야 한다.

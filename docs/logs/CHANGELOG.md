@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 2026-05-25 Phase 11-B ExplorerWorkspace shell mount precondition audit
+
+- Phase 11-B를 `ExplorerWorkspace` shell mount 구현 단계가 아니라 shell mount 검토 전 precondition, 위험 요소, 금지선, 검증 기준을 문서화하는 audit 단계로 기록했다.
+- 현재 production entry 구조는 `main.dart -> HomeScreen`, `HomeScreen -> Navigator.push -> WordExplorerScreen`로 유지하며, `ExplorerWorkspace`는 아직 production owner/controller/coordinator가 아니라고 명시했다.
+- shell mount 검토가 production-visible UX 승인, production UI diff 승인, route collapse 승인, owner migration 승인으로 이어지지 않는다고 분리했다.
+- production entry, route, ownership, persistence authority, UI diff, public contract, Phase 10 helper-local reader 해석, 테스트 기준별 precondition과 위험 요소를 정리했다.
+- Phase 10-D `candidate representation reader`는 `_debugValidateHiddenVisualProbe(...)` 내부 helper-local 구조이며 public API / DTO / model / route contract / shell contract로 승격하지 않는다고 재확인했다.
+- production UI diff, `ExplorerWorkspace` shell mount, route wiring / route registration 변경, `HomeScreen -> WordExplorerScreen` 진입 구조 변경, Provider / Repository / Navigator / persistence authority migration, DTO/model/public API addition, projection result persistence/history/source-of-truth usage, runtime/UI integration, production visual consumer exposure, route collapse, canonical owner migration, Level 3 production visible consumer는 계속 `not approved`로 유지한다.
+- UI 기반 수동 테스트는 Phase 11-B에서 수행하지 않으며, production-visible UX 변경이나 shell mount 구현이 별도 feature 단계에서 승인된 뒤 시작 화면, 조작 순서, 테스트 데이터, 기대 화면 변화, 실패 증상, 완료 판단 기준을 포함해 수행해야 한다고 기록했다.
+
 ## 2026-05-24 Phase 11-A production-visible readiness review
 
 - Phase 11의 목적을 Phase 10 `candidate representation reader` 이후 production-visible 전환 검토 조건과 금지선을 분리해 확인하는 단계로 기록했다.
