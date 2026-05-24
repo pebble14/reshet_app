@@ -3810,3 +3810,111 @@ Phase 9-F에서 명시적으로 제외되는 범위는 다음과 같다.
 | 코드/test/platform 변경 없음 확인 | `lib/`, `test/`, platform 경로 변경이 없어야 함 | 구현 또는 테스트 수정 발생 | `git diff --name-only -- lib test android ios macos windows linux web` | 작업 종료 보고에서 기록 |
 
 UI 기반 수동 테스트와 `flutter test`는 이번 Phase 9-F 문서/audit 작업의 필수 범위가 아니다.
+
+### 17.56 Phase 10-A Level 2 production-adjacent visual consumer implementation scope review
+
+Phase 10은 production 연결 단계가 아니다. Phase 10의 목적은 Phase 9에서 정리한 Level 2 entry / candidate / guardrail 기준을 바탕으로, production UI diff 없이 검토 가능한 Level 2 implementation scope의 최소 범위를 확정하는 것이다.
+
+Phase 10-A는 docs/audit 기반 scope review 단계다. 이 단계는 implementation approval, feature implementation, production exposure approval, shell mount approval이 아니다. 실제 Level 2 visual consumer 구현은 수행하지 않으며, 변경 범위는 이 문서와 `docs/logs/CHANGELOG.md` 기록으로 제한한다.
+
+#### 17.56.1 Phase 10-A 목적
+
+Phase 10-A의 목적은 Level 2 production-adjacent visual consumer가 이후 별도 구현 브랜치에서 검토될 수 있다면 어떤 최소 단위로 제한되어야 하는지 문서화하는 것이다.
+
+이 목적은 다음을 포함한다.
+
+- Phase 10이 production route, production shell, production visible UI로 연결되는 단계가 아님을 고정한다.
+- Level 2 production-adjacent visual consumer의 최소 구현 가능 범위를 입력, 출력, 금지 권한, helper-local boundary 기준으로 분리한다.
+- production UI diff 없이 command 기반으로 확인 가능한 항목과 확인할 수 없는 항목을 구분한다.
+- Phase 10 이후 가능한 분기를 후보로만 남기고, Phase 10-A에서 feature 구현으로 바로 전환하지 않는다.
+
+#### 17.56.2 Level 2 최소 구현 단위 검토 기준
+
+Level 2 최소 구현 단위는 다음 조건을 모두 만족하는 경우에만 후속 구현 후보로 검토할 수 있다.
+
+| 기준 | 허용 범위 | 금지 범위 |
+| --- | --- | --- |
+| 읽을 수 있는 입력 | `WordExplorerScreen` 내부 build-local read-only `ExplorerWorkspaceState` projection snapshot | Repository, Data Source, DB, Provider, Navigator, route argument, persistence/history 직접 읽기 |
+| 만들 수 있는 출력 | helper-local visual candidate structure 또는 assert/debug 검증용 ephemeral candidate | output DTO/model, public field/getter, public API, route contract, shell contract, persistence payload |
+| 상태 수명 | build-local 또는 helper-local ephemeral value | field/cache/history/source-of-truth 저장 |
+| 권한 | read-only candidate interpretation | selection owner, route owner, shell owner, repository owner, persistence owner, canonical owner |
+| 노출 범위 | production UI diff 없는 internal scope review 후보 | production visible surface, runtime/UI integration, production visual consumer exposure |
+
+Level 2 최소 구현 단위가 만들 수 있는 출력은 production 화면 표시 결과가 아니라 candidate structure 검토 결과여야 한다. 이 출력은 저장되거나 재사용 가능한 public contract가 되어서는 안 되며, 이후 단계에서 별도 승인 없이 widget tree, route, shell, persistence, history로 연결할 수 없다.
+
+#### 17.56.3 helper-local boundary 유지 조건
+
+`candidateSlots`, `candidateLabels`는 helper-local candidate structure로만 유지한다.
+
+다음 조건은 Phase 10에서도 유지한다.
+
+- `candidateSlots`, `candidateLabels`는 `_debugValidateHiddenVisualProbe(...)` 같은 helper 내부 local value 범위를 벗어나지 않는다.
+- `candidateSlots`, `candidateLabels`는 public API, DTO, model, public export, route contract, shell contract로 승격하지 않는다.
+- `candidateSlots`, `candidateLabels`는 route argument, shell prop, persistence payload, history payload, source-of-truth value가 아니다.
+- `candidateSlots`, `candidateLabels`는 Provider / Repository / Navigator / persistence authority migration의 근거가 될 수 없다.
+- helper-local candidate structure는 production visible UI의 data contract로 해석하지 않는다.
+
+따라서 Phase 10-A에서 허용되는 판단은 helper-local boundary를 유지할 수 있는 최소 구현 범위의 문서상 검토까지다. 이 판단은 implementation approval이 아니며, 실제 코드 구현은 별도 단계에서 다시 설계, 수정 파일 목록, command 기반 검증 계획, 사용자 승인을 받아야 한다.
+
+#### 17.56.4 UI diff 없이 검증 가능한 항목과 불가능한 항목
+
+Phase 10-A에서 UI diff 없이 검증 가능한 항목은 source/path/document audit로 확인 가능한 항목에 한정한다.
+
+| 구분 | 항목 | 확인 기준 |
+| --- | --- | --- |
+| 검증 가능 | production 권한 미획득 | Provider / Repository / Navigator / persistence 참조 추가 없음 |
+| 검증 가능 | shell/route 미연결 | `ExplorerWorkspace` shell mount, route wiring, route registration 변경 없음 |
+| 검증 가능 | public API 미추가 | public getter/field/export/contract 추가 없음 |
+| 검증 가능 | DTO/model 미추가 | output DTO/model 파일 또는 class 추가 없음 |
+| 검증 가능 | persistence 미사용 | projection result persistence/history/source-of-truth usage 없음 |
+| 검증 가능 | production UI diff 없음 | `lib/`, `test/`, platform 경로 변경 없음 |
+| 검증 불가능 | 실제 사용자 UX 만족도 | production visible UI가 없으므로 판단 대상 아님 |
+| 검증 불가능 | 화면 배치 적절성 | production 화면 배치가 변경되지 않으므로 판단 대상 아님 |
+| 검증 불가능 | interaction flow | runtime/UI integration이 없으므로 판단 대상 아님 |
+| 검증 불가능 | production-visible 사용성 | production visual consumer exposure가 없으므로 판단 대상 아님 |
+
+검증 불가능 항목은 Phase 10-A의 실패가 아니라 범위 밖 항목이다. 해당 항목은 production-visible 검토가 승인되는 Phase 11 이후 또는 별도 production UI diff 승인 단계에서만 다룰 수 있다.
+
+#### 17.56.5 Phase 10에서도 유지되는 금지선
+
+아래 항목은 Phase 10-A뿐 아니라 Phase 10 전체에서도 별도 승인 전까지 `not approved`로 유지한다.
+
+- production UI diff: `not approved`
+- `ExplorerWorkspace` shell mount: `not approved`
+- route wiring / route registration change: `not approved`
+- `HomeScreen -> WordExplorerScreen` 진입 구조 변경: `not approved`
+- Provider / Repository / Navigator / persistence 구현 변경: `not approved`
+- owner migration: `not approved`
+- persistence authority migration: `not approved`
+- DTO/model/public API addition: `not approved`
+- production visible exposure: `not approved`
+- Level 2 visual consumer implementation: `not approved`
+- Level 3 production visible consumer implementation: `not approved`
+- projection result persistence/history/source-of-truth usage: `not approved`
+- runtime/UI integration: `not approved`
+- route collapse: `not approved`
+- canonical owner migration: `not approved`
+
+#### 17.56.6 Phase 10 이후 분기 가능성
+
+Phase 10-A 이후 가능한 분기는 다음 후보로만 남긴다.
+
+- 추가 docs/audit로 Level 2 minimum implementation checklist를 더 세분화한다.
+- 별도 사용자 승인 후 Level 2 최소 구현 브랜치로 전환할 수 있다.
+- source-level guardrail test 보강이 필요한지 별도 단계에서 검토할 수 있다.
+- production-visible 검토는 Phase 11 이후 또는 별도 production UI diff 승인 단계로 분리한다.
+
+위 분기는 모두 후보이며 Phase 10-A의 자동 후속 작업이 아니다. Phase 10-A는 feature implementation으로 바로 넘어가지 않고, 후속 단계는 다시 설계, 수정 파일 목록, command 기반 검증 계획, 사용자 승인을 받아야 한다.
+
+#### 17.56.7 명령어 기반 수동 테스트 체크리스트
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 | 실제 결과 |
+| --- | --- | --- | --- | --- |
+| 변경 파일 확인 | 승인된 문서 2개만 변경되어야 함 | `lib/`, `test/`, platform 경로 또는 승인 외 문서 변경 포함 | `git diff --name-only` | 작업 종료 보고에서 기록 |
+| whitespace 검증 | diff에 trailing whitespace 오류가 없어야 함 | `git diff --check` 실패 | `git diff --check` | 작업 종료 보고에서 기록 |
+| production 경로 변경 없음 확인 | `lib/`, `test/`, platform 경로 변경이 없어야 함 | 구현, 테스트, production UI 변경 발생 | `git diff --name-only -- lib test android ios macos windows linux web` | 작업 종료 보고에서 기록 |
+| Phase 10-A 반영 확인 | 두 문서에 Phase 10-A 기록이 있어야 함 | Phase 10-A 누락 또는 구현 승인처럼 읽히는 문장 | `rg -n "Phase 10-A" docs/ux/explorer_workspace_unification.md docs/logs/CHANGELOG.md` | 작업 종료 보고에서 기록 |
+| helper-local boundary 확인 | `candidateSlots`, `candidateLabels`가 helper-local 제한으로 기록되어야 함 | public API / DTO / model / route contract / shell contract 승격처럼 읽힘 | `rg -n "candidateSlots|candidateLabels|public API|DTO|model|route contract|shell contract" docs/ux/explorer_workspace_unification.md docs/logs/CHANGELOG.md` | 작업 종료 보고에서 기록 |
+| 금지선 유지 확인 | production UI diff, shell mount, route, Provider, Repository, Navigator, persistence 변경이 `not approved`로 유지되어야 함 | Phase 10-A가 production 연결 승인처럼 읽힘 | `rg -n "production UI diff|shell mount|route wiring|route registration|Provider|Repository|Navigator|persistence|not approved" docs/ux/explorer_workspace_unification.md docs/logs/CHANGELOG.md` | 작업 종료 보고에서 기록 |
+
+UI 기반 수동 테스트는 이번 Phase 10-A 문서/audit 작업의 대상이 아니다. 관련 guardrail 확인을 위해 기존 source-level 테스트를 실행할 수는 있으나, 새 UI 테스트 작성이나 UI 수행 완료 보고는 하지 않는다.

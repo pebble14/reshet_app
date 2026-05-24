@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 2026-05-24 Phase 10-A Level 2 production-adjacent visual consumer implementation scope review
+
+- Phase 10을 production 연결 단계가 아니라 Level 2 implementation scope의 최소 범위를 확정하는 단계로 기록했다.
+- Phase 10-A를 docs/audit 기반 scope review 단계로 제한하고, implementation approval이나 feature implementation 단계가 아니라고 명시했다.
+- Level 2 최소 구현 단위 검토 기준을 read-only projection snapshot 입력, helper-local candidate structure 출력, production 권한 미획득, helper-local boundary 유지 기준으로 정리했다.
+- `candidateSlots`, `candidateLabels`는 helper-local candidate structure이며 public API, DTO, model, route contract, shell contract, persistence/history/source-of-truth payload로 승격할 수 없다고 재확인했다.
+- UI diff 없이 검증 가능한 항목과 검증 불가능한 항목을 분리하고, 실제 사용자 UX 만족도와 production-visible 사용성은 Phase 10-A 검증 범위가 아니라고 기록했다.
+- production UI diff, `ExplorerWorkspace` shell mount, route wiring / route registration 변경, `HomeScreen -> WordExplorerScreen` 진입 구조 변경, Provider / Repository / Navigator / persistence 변경, owner migration, persistence authority migration, DTO/model/public API 추가, production visible exposure는 모두 `not approved`로 유지했다.
+- Phase 10 이후 분기 가능성은 추가 docs/audit, 별도 승인 후 Level 2 최소 구현 브랜치, source-level guardrail test 보강 검토, Phase 11 이후 production-visible 검토 후보로만 기록하고 Phase 10-A에서 바로 feature 구현으로 넘어가지 않는다고 명시했다.
+
 ## 2026-05-24 Phase 9-F Level 2 entry / candidate / guardrail hardening termination audit
 
 - Phase 9-F를 구현 단계가 아니라 Phase 9-A~E의 Level 2 entry / candidate / guardrail hardening 흐름을 종합하는 termination audit 단계로 기록했다.
