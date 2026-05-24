@@ -4242,3 +4242,59 @@ Phase 10-D는 `candidate representation reader`를 최소 구현으로 시작한
 - DTO/model/public API addition: `not approved`
 - projection result persistence/history/source-of-truth usage: `not approved`
 - runtime/UI integration: `not approved`
+
+### 17.60 Phase 10-E candidate representation reader termination audit
+
+Phase 10-E는 구현 단계가 아니라 Phase 10-D에서 추가한 `candidate representation reader`가 Phase 10-A/B/C에서 정한 금지선과 최소 구현 조건을 지켰는지 확인하는 termination audit 단계다. 이 단계에서는 `lib/`, `test/`, production UI, shell, route, Provider / Repository / Navigator / persistence, DTO/model/public API를 수정하지 않는다.
+
+#### 17.60.1 Phase 10-D 구현 결과 audit
+
+Phase 10-D의 `candidate representation reader`는 `lib/ui/word_explorer_screen.dart`의 `_debugValidateHiddenVisualProbe(...)` 내부 helper-local local function으로만 존재한다. `readCandidateRepresentation`은 선언과 호출 모두 helper 내부에만 있으며, helper 밖 public symbol이나 reusable contract로 승격되지 않았다.
+
+`candidateSlots`, `candidateLabels`는 helper-local candidate structure로만 유지된다. 두 값은 helper 외부로 노출되지 않고, return value, field, getter, public contract, route argument, shell prop, persistence payload로 나가지 않는다.
+
+확인 결과 다음 승격 또는 연결은 발생하지 않았다.
+
+- public API / DTO / model / route contract / shell contract 승격 없음
+- production UI diff 없음
+- `ExplorerWorkspace` shell mount 없음
+- route wiring / route registration 변경 없음
+- `HomeScreen -> WordExplorerScreen` 진입 구조 변경 없음
+- Provider / Repository / Navigator / persistence authority migration 없음
+- projection result persistence/history/source-of-truth 사용 없음
+- runtime/UI integration 또는 production visual consumer exposure 없음
+
+#### 17.60.2 테스트 성격과 검증 결과
+
+Phase 10-D 신규 테스트인 `test/ui/word_explorer_screen_phase10d_candidate_representation_reader_test.dart`는 UI pump나 runtime integration 검증이 아니라 source-level guardrail test다. 이 테스트는 reader가 `_debugValidateHiddenVisualProbe(...)` 내부에만 존재하는지, `candidateSlots` / `candidateLabels`가 helper-local candidate structure로만 유지되는지, 금지 import / 금지 참조가 없는지, DTO/model/public API 또는 production entry / shell mount로 노출되지 않는지를 문자열과 범위 기반으로 확인한다.
+
+Phase 10-E audit 기준으로 기존 guardrail 테스트와 Phase 10-D 신규 테스트는 모두 통과했다.
+
+- `flutter test test/ui/word_explorer_screen_phase7f_projection_boundary_test.dart`: 통과
+- `flutter test test/ui/word_explorer_screen_phase8c_hidden_visual_probe_test.dart`: 통과
+- `flutter test test/ui/word_explorer_screen_phase8g_hidden_probe_contract_hardening_test.dart`: 통과
+- `flutter test test/ui/word_explorer_screen_phase10d_candidate_representation_reader_test.dart`: 통과
+
+UI 기반 수동 테스트는 아직 대상이 아니다. Phase 10-E까지 production-visible UI, shell mount, route wiring, runtime integration이 없으므로 사용자가 화면에서 확인할 수 있는 새 동작을 만들지 않았고, UI 테스트 완료로 보고할 기준도 만들지 않았다.
+
+#### 17.60.3 계속 금지되는 항목
+
+아래 항목은 Phase 10-E 종료 audit 이후에도 별도 승인 전까지 `not approved`로 유지한다.
+
+- production UI diff: `not approved`
+- `ExplorerWorkspace` shell mount: `not approved`
+- route wiring / route registration 변경: `not approved`
+- `HomeScreen -> WordExplorerScreen` 진입 구조 변경: `not approved`
+- Provider / Repository / Navigator / persistence authority migration: `not approved`
+- DTO/model/public API 추가: `not approved`
+- projection result persistence/history/source-of-truth 사용: `not approved`
+- runtime/UI integration: `not approved`
+- production visual consumer exposure: `not approved`
+- route collapse: `not approved`
+- canonical owner migration: `not approved`
+
+#### 17.60.4 Phase 10 종료 가능 판단
+
+Phase 10-A/B/C에서 정한 금지선과 Phase 10-D의 최소 구현 조건은 Phase 10-E audit 기준으로 유지되었다. 따라서 Phase 10은 종료 가능 상태로 판단할 수 있다.
+
+이 판단은 Phase 11 production-visible 논의, production UI diff 승인, `ExplorerWorkspace` shell mount, route collapse, owner 또는 canonical authority migration 승인을 의미하지 않는다. Phase 11 또는 production-visible 검토는 별도 설계, 수정 범위, command 기반 검증 계획, 사용자 승인 대상으로 분리한다.

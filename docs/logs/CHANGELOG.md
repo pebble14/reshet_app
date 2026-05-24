@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## 2026-05-24 Phase 10-E candidate representation reader termination audit
+
+- Phase 10-E를 구현이 아니라 Phase 10-D `candidate representation reader`가 Phase 10-A/B/C의 금지선과 최소 구현 조건을 지켰는지 확인하는 termination audit 단계로 기록했다.
+- `readCandidateRepresentation`은 `_debugValidateHiddenVisualProbe(...)` 내부 helper-local local function으로만 존재하며, 선언과 호출 모두 helper 내부에만 있다고 확인했다.
+- `candidateSlots`, `candidateLabels`는 helper-local candidate structure로만 유지되며 helper 외부 노출, return, field/getter, public contract 승격이 없다고 정리했다.
+- public API / DTO / model / route contract / shell contract 승격, production UI diff, `ExplorerWorkspace` shell mount, route wiring / route registration 변경, `HomeScreen -> WordExplorerScreen` 진입 구조 변경은 없다고 기록했다.
+- Provider / Repository / Navigator / persistence authority migration, projection result persistence/history/source-of-truth 사용, runtime/UI integration, production visual consumer exposure가 없다고 기록했다.
+- Phase 10-D 신규 테스트는 UI pump나 runtime integration이 아닌 source-level guardrail test이며, 기존 guardrail 테스트와 Phase 10-D 신규 테스트가 모두 통과했다고 정리했다.
+- production-visible UI, shell mount, route wiring, runtime integration이 없으므로 UI 기반 수동 테스트는 아직 대상이 아니라고 명시했다.
+- Phase 10은 종료 가능 상태로 판단할 수 있으나, Phase 11 production-visible 논의는 별도 승인 대상으로 분리한다고 기록했다.
+- production UI diff, `ExplorerWorkspace` shell mount, route wiring / route registration 변경, `HomeScreen -> WordExplorerScreen` 진입 구조 변경, Provider / Repository / Navigator / persistence authority migration, DTO/model/public API 추가, projection result persistence/history/source-of-truth 사용, runtime/UI integration, production visual consumer exposure, route collapse, canonical owner migration은 계속 `not approved`로 유지한다.
+
 ## 2026-05-24 Phase 10-D candidate representation reader 최소 구현
 
 - Phase 10-D에서 `candidate representation reader`를 production preview, mounted widget, production-visible consumer가 아닌 `_debugValidateHiddenVisualProbe(...)` 내부 helper-local read-only reader로 제한해 시작했다.
