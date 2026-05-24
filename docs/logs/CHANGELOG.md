@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 2026-05-24 Phase 10-B Level 2 minimum consumer target review
+
+- Phase 10-B를 implementation이 아니라 첫 Level 2 minimum consumer 후보를 고르는 docs/audit 기반 target review 단계로 기록했다.
+- Phase 10-B가 implementation approval이 아니며 production 연결, production UI diff, `ExplorerWorkspace` shell mount, route wiring / route registration 변경을 승인하지 않는다고 명시했다.
+- Level 2 minimum consumer 후보 기준을 production source-of-truth 미소유, unmounted, non-route, non-owner, non-persistent, non-production-visible, helper-local boundary 유지 기준으로 정리했다.
+- 후보 유형으로 `candidate preview-only consumer`, hidden visual probe extension, source-level visual structure reader, test-only representation consumer, ExplorerWorkspace shell-adjacent but unmounted consumer를 비교했다.
+- `candidate preview-only consumer` 계열을 가장 안전한 다음 feature 브랜치 검토 후보로 권장하되, 이 preview가 production preview를 뜻하지 않고 test-or-hidden-probe-adjacent helper-local candidate representation이라고 제한했다.
+- `candidateSlots`, `candidateLabels`는 helper-local candidate structure로만 소비 가능하며 public API, DTO, model, route contract, shell contract, persistence/history/source-of-truth payload로 승격할 수 없다고 재확인했다.
+- Phase 10-C 진입 전 테스트 기준을 기존 테스트 재사용 가능 항목, 기존 테스트 확장 필요 항목, 새 source-level 또는 hidden/probe test 후보, UI 기반 수동 테스트로는 아직 검증할 수 없는 항목으로 분리했다.
+- `lib/`, `test/`, production UI, shell mount, route, Provider / Repository / Navigator / persistence, DTO/model/public API 변경은 모두 `not approved`로 유지했다.
+
 ## 2026-05-24 Phase 10-A Level 2 production-adjacent visual consumer implementation scope review
 
 - Phase 10을 production 연결 단계가 아니라 Level 2 implementation scope의 최소 범위를 확정하는 단계로 기록했다.
