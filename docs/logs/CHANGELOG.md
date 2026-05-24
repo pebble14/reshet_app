@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 2026-05-24 Phase 9-A Level 2 visual consumer entry boundary planning
+
+- Phase 9-A를 Level 2 구현 단계가 아니라 Level 2 visual consumer 진입 조건을 정의하는 planning 단계로 기록했다.
+- Level 2 visual consumer를 production-adjacent visual consumer 후보를 가리키는 임시 planning 용어로 제한하고, owner / controller / coordinator / route owner / shell owner / persistence owner가 아니라고 명시했다.
+- Level 2 진입 전 사전 조건으로 Level 1 hidden visual probe의 assert-only / read-only / non-owner boundary 유지, `candidateSlots` / `candidateLabels` local helper structure 유지, public API / DTO / persistence / route / shell contract 미승격을 기록했다.
+- production-adjacent visual consumer 검토 위험으로 production UI diff 우회, shadow owner, shell mount 승인 오해, projection result의 history/source-of-truth 사용 위험을 정리했다.
+- `ExplorerWorkspace` shell mount는 Phase 9-A에서 승인하지 않고 shell mount 검토 precondition만 문서화할 수 있다고 분리했다.
+- production UI diff는 별도 명시 승인 단계에서만 다루며 Phase 9-A에서는 `not approved` 상태로 유지한다고 기록했다.
+- Phase 9-B 후보 범위는 Level 2 candidate selection 기준, risk audit 보강, source-level guardrail 후보, shell mount precondition checklist 보강으로 제한하고, 구현 범위는 Phase 9-A에서 제외했다.
+- 이번 변경은 문서 2개만 포함하며 코드, 테스트, route, shell, Provider, Repository, Navigator, persistence 구현 변경은 없다.
+
 ## 2026-05-23 Phase 8-H hidden probe contract termination audit
 
 - Phase 8-A~G의 visual consumer entry boundary, Level 1 hidden visual probe, output contract planning, source-level test hardening 흐름을 종합 감사했다.

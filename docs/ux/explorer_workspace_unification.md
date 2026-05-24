@@ -3035,3 +3035,145 @@ Phase 9-A로 이동하려면 별도 설계, 수정 파일 목록, 검증 계획,
 | flutter analyze 기존 이슈 상태가 이번 문서 변경과 분리되어 보고되는지 확인 | analyze 실패 시 기존 저장소 이슈와 문서 변경 영향을 구분해야 함 | 문서 변경이 analyzer 실패 원인처럼 보고됨 | `flutter analyze` | 작업 종료 보고에서 기록 |
 
 UI 기반 수동 테스트는 이번 Phase 8-H 문서/audit 작업의 대상이 아니다.
+
+### 17.50 Phase 9-A Level 2 visual consumer entry boundary planning
+
+Phase 9-A는 Level 2를 구현하는 단계가 아니다. 이번 단계의 목적은 Phase 8-H에서 종료 가능하다고 판단한 Level 1 hidden visual probe contract를 유지한 채, 이후 Level 2 visual consumer 검토에 들어가기 전 필요한 진입 조건과 금지선을 문서화하는 것이다.
+
+Phase 9-A는 runtime/UI integration, production route 노출, `ExplorerWorkspace` shell mount, production UI diff, owner authority migration을 승인하지 않는다. 변경 범위는 이 문서와 `docs/logs/CHANGELOG.md` 기록으로 제한한다.
+
+#### 17.50.1 Phase 9-A 판단
+
+Phase 9-A의 판단은 다음과 같이 제한한다.
+
+- Phase 9-A는 Level 2 visual consumer 구현 단계가 아니다.
+- Phase 9-A는 Level 2 진입 조건을 정의하는 planning 단계다.
+- Phase 9-A는 Phase 8-H 종료 판단을 확장해 production-adjacent visual consumer를 승인하지 않는다.
+- Phase 9-A는 `ExplorerWorkspace` shell mount를 승인하지 않는다.
+- Phase 9-A는 production UI diff를 승인하지 않는다.
+- Phase 9-A는 코드, 테스트, route, shell, Provider, Repository, Navigator, persistence 구현 변경을 포함하지 않는다.
+
+#### 17.50.2 Level 2 visual consumer 임시 정의
+
+Level 2 visual consumer는 후속 단계에서 검토할 수 있는 production-adjacent visual consumer 후보를 가리키는 임시 planning 용어다.
+
+임시 정의는 다음 범위로 제한한다.
+
+- Level 2는 Level 1 hidden visual probe보다 production 구조에 가까운 visual consumer 후보를 뜻한다.
+- Level 2는 사용자가 보는 production UI surface 또는 production route 노출을 뜻하지 않는다.
+- Level 2는 read-only projection snapshot 또는 helper 내부 visual candidate 해석 가능성을 소비할 수 있는 후보 경계를 검토하는 이름일 뿐이다.
+- Level 2는 owner, controller, coordinator, repository read owner, route owner, shell owner, persistence owner가 아니다.
+- Level 2 진입 검토는 별도 승인 전에는 구현, mount, route wiring, public API, DTO/model, persistence schema로 이어지지 않는다.
+
+이 정의는 Phase 9-A 안에서만 임시로 사용한다. 이후 Phase에서 Level 2 후보를 실제 구현 대상으로 다루려면 별도 설계, 수정 파일 목록, 명령어 기반 검증 계획, UI 확인 절차, 사용자 승인이 필요하다.
+
+#### 17.50.3 Level 2 진입 사전 조건
+
+Level 2 검토로 이동하기 전에는 다음 조건이 먼저 충족되어야 한다.
+
+- Phase 8-H 기준 Level 1 hidden visual probe가 assert-only / read-only / non-owner boundary 안에 머무르는지 다시 확인한다.
+- `candidateSlots`, `candidateLabels`가 helper 내부 local candidate structure에만 머무르는지 확인한다.
+- Level 2 후보가 읽을 수 있는 입력은 read-only projection snapshot 또는 그에 대한 문서상 해석으로 제한한다.
+- Level 2 후보가 production widget tree, route argument, shell prop, Provider state, Repository return value, Navigator payload, persistence payload를 새 public contract로 만들지 않는다는 기준을 먼저 고정한다.
+- Level 2 후보의 위치가 hidden, preview-only, production-adjacent 중 어디에 속하는지 별도 문서 또는 승인 단계에서 구분한다.
+- production UI diff가 필요한 경우 Phase 9-A 범위에서 다루지 않고 별도 명시 승인 단계로 분리한다.
+- `ExplorerWorkspace` shell mount를 검토하려면 먼저 shell mount precondition을 문서화해야 하며, precondition 문서화는 shell mount 승인으로 해석하지 않는다.
+- 검증 계획은 command 기반 확인과 사용자가 수행할 UI 확인 절차를 분리해서 제시해야 한다.
+
+#### 17.50.4 Level 1 hidden visual probe boundary 유지 조건
+
+Phase 9-A 이후에도 Level 1 hidden visual probe는 다음 조건을 유지해야 한다.
+
+- `_readOnlyWorkspaceProjection`은 `WordExplorerScreen` 내부 private read-only projection boundary로 유지한다.
+- `_debugValidateHiddenVisualProbe(...)`는 private helper로 유지한다.
+- helper 호출은 debug `assert` 내부로 제한한다.
+- helper는 `setState`, `Navigator`, `WordRepository`, `Provider`, DB/persistence, logging, async/future/stream 흐름을 수행하지 않는다.
+- helper 결과는 production widget tree, route, shell state, persistence payload, history payload, source of truth로 전달하지 않는다.
+- `candidateSlots`, `candidateLabels`는 helper 내부 local candidate structure로만 유지한다.
+
+특히 `candidateSlots`, `candidateLabels` 같은 구조는 public API, DTO, persistence schema, route contract, shell contract로 승격되면 안 된다.
+
+#### 17.50.5 production-adjacent visual consumer 검토 위험 요소
+
+production-adjacent visual consumer 검토 시 주요 위험은 다음과 같다.
+
+- hidden consumer가 production widget tree에 가까워지면서 production UI diff를 우회적으로 만들 수 있다.
+- consumer가 projection snapshot을 읽는 수준을 넘어 owner 또는 coordinator처럼 해석될 수 있다.
+- `ExplorerWorkspace` shell mount precondition 문서가 shell mount 승인으로 오해될 수 있다.
+- candidate local structure가 public output DTO/model 또는 public API로 승격될 수 있다.
+- route argument, shell prop, Provider state, Repository return value, Navigator payload, persistence payload로 projection result가 확장될 수 있다.
+- `WordExplorerScreen` production owner와 `ExplorerWorkspace` candidate boundary가 같은 selection/detail/graph center state를 동시에 소유하는 shadow owner 상태가 생길 수 있다.
+- production UI diff와 Level 2 검토가 같은 단계에 섞이면 사용자 승인 범위가 불명확해질 수 있다.
+- projection result가 history payload 또는 source of truth처럼 쓰이면 Phase 8에서 보호한 read-only projection chain 의미가 깨질 수 있다.
+
+#### 17.50.6 production UI diff와 ExplorerWorkspace shell mount 분리 원칙
+
+사용자가 볼 수 있는 production UI 변경은 별도 명시 승인 단계에서만 다룬다. Phase 9-A는 production UI diff를 승인하지 않으며, Level 2 검토 문서가 production UI diff의 선승인 근거가 될 수 없다.
+
+`ExplorerWorkspace` shell mount는 Phase 9-A 범위가 아니다. Phase 9-A에서 문서화할 수 있는 것은 shell mount 자체가 아니라 shell mount를 검토하기 위한 precondition뿐이다.
+
+shell mount 검토 precondition 후보는 다음과 같이 제한한다.
+
+- 현재 production owner가 `WordExplorerScreen`에 남아 있는지 확인한다.
+- route stack과 workspace snapshot history를 통합할지 분리 유지할지 별도 판단한다.
+- Provider / Repository / Navigator / persistence authority migration 여부를 별도 승인 대상으로 분리한다.
+- shell mount가 필요한 production UI diff인지, hidden/preview-only 검증인지 먼저 구분한다.
+- rollback 가능한 검증 단위와 command 기반 확인 항목을 먼저 정의한다.
+- 사용자가 수행할 UI 기반 확인 절차를 별도 승인 단계에서 제시한다.
+
+이 precondition 기록은 `ExplorerWorkspace` shell mount 승인, route 추가/변경 승인, production UI diff 승인, owner migration 승인으로 해석하지 않는다.
+
+#### 17.50.7 Phase 9-A에서 여전히 승인되지 않은 항목
+
+아래 항목은 Phase 9-A 이후에도 모두 `not approved` 상태로 유지한다.
+
+- runtime/UI integration: `not approved`
+- production visual consumer exposure: `not approved`
+- `ExplorerWorkspace` shell mount: `not approved`
+- route collapse: `not approved`
+- canonical owner migration: `not approved`
+- Provider / Repository / Navigator / persistence authority migration: `not approved`
+- projection result persistence/history/source-of-truth usage: `not approved`
+- output DTO/model addition: `not approved`
+- public API addition: `not approved`
+- Level 2 production-adjacent visual consumer implementation: `not approved`
+- Level 3 production visible consumer: `not approved`
+- production UI diff: `not approved`
+
+#### 17.50.8 Phase 9-B 후보 범위와 Phase 9-A 제외 범위
+
+Phase 9-B에서 다룰 수 있는 후보는 다음 planning 또는 audit 범위로 제한한다.
+
+- Level 2 candidate selection 기준 정리
+- production-adjacent visual consumer risk audit 보강
+- Level 2 후보가 필요로 하는 source-level guardrail 후보 정리
+- production UI diff 별도 승인 절차 초안 정리
+- `ExplorerWorkspace` shell mount precondition checklist 보강
+
+Phase 9-A에서 다루지 않는 범위는 다음과 같다.
+
+- Level 2 production-adjacent visual consumer 구현
+- Level 3 production visible consumer 구현
+- `ExplorerWorkspace` shell mount
+- production route 노출
+- route collapse
+- production UI diff
+- Provider / Repository / Navigator / persistence authority migration
+- output DTO/model 추가
+- public API 추가
+- projection result persistence/history/source-of-truth 사용
+
+Phase 9-B로 이동하려면 별도 설계, 수정 파일 목록, 검증 계획, 사용자 승인이 필요하다.
+
+#### 17.50.9 명령어 기반 수동 테스트 체크리스트
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 | 실제 결과 |
+| --- | --- | --- | --- | --- |
+| 현재 브랜치 및 상태 확인 | Phase 9-A 작업 브랜치이며 변경 전후 상태를 확인할 수 있어야 함 | 다른 브랜치에서 작업하거나 예상하지 못한 변경이 섞임 | `git status --short --branch`, `git branch --show-current`, `git log -1 --oneline` | 작업 종료 보고에서 기록 |
+| 변경 파일 확인 | 변경 파일은 승인된 문서 2개여야 함 | `lib/`, `test/`, platform 경로 또는 새 문서가 포함됨 | `git diff --stat`, `git diff -- docs/ux/explorer_workspace_unification.md docs/logs/CHANGELOG.md` | 작업 종료 보고에서 기록 |
+| Phase 9-A 반영 확인 | 두 문서에 Phase 9-A 기록이 있어야 함 | Phase 9-A 기록 누락 또는 구현 승인처럼 읽히는 문장 | `rg -n "Phase 9-A" docs/ux/explorer_workspace_unification.md docs/logs/CHANGELOG.md` | 작업 종료 보고에서 기록 |
+| Level 2 진입 경계 확인 | Level 2가 구현이 아니라 진입 조건 정의로 기록되어야 함 | Level 2 implementation 승인처럼 읽힘 | `rg -n "Level 2" docs/ux/explorer_workspace_unification.md` | 작업 종료 보고에서 기록 |
+| 금지선 유지 확인 | 요청된 항목이 `not approved`로 유지되어야 함 | shell mount, production UI diff, owner migration, public API 추가 승인처럼 읽힘 | `rg -n "not approved" docs/ux/explorer_workspace_unification.md` | 작업 종료 보고에서 기록 |
+| 코드 변경 없음 확인 | 변경 파일 목록이 승인된 문서 2개만 포함해야 함 | 코드, 테스트, platform 변경 발생 | `git diff --name-only` | 작업 종료 보고에서 기록 |
+
+UI 기반 수동 테스트는 이번 Phase 9-A 문서/planning 작업의 대상이 아니다.
