@@ -3177,3 +3177,135 @@ Phase 9-B로 이동하려면 별도 설계, 수정 파일 목록, 검증 계획,
 | 코드 변경 없음 확인 | 변경 파일 목록이 승인된 문서 2개만 포함해야 함 | 코드, 테스트, platform 변경 발생 | `git diff --name-only` | 작업 종료 보고에서 기록 |
 
 UI 기반 수동 테스트는 이번 Phase 9-A 문서/planning 작업의 대상이 아니다.
+
+### 17.51 Phase 9-B Level 2 visual consumer candidate selection boundary
+
+Phase 9-B는 Level 2 visual consumer를 구현하는 단계가 아니다. 이번 단계의 목적은 Phase 9-A에서 정의한 Level 2 진입 조건을 바탕으로, 어떤 후보를 Level 2 visual consumer 후보로 검토할 수 있는지 선정 기준과 금지선을 문서화하는 것이다.
+
+Phase 9-B의 후보 선정은 implementation approval, production exposure approval, route approval, shell mount approval, authority migration approval을 뜻하지 않는다. 변경 범위는 이 문서와 `docs/logs/CHANGELOG.md` 기록으로 제한한다.
+
+#### 17.51.1 Level 2 후보 선정 기준
+
+Level 2 visual consumer 후보는 다음 기준을 모두 만족할 때만 문서상 후보로 기록할 수 있다.
+
+- Level 1 hidden visual probe가 유지하는 read-only projection snapshot 의미를 깨지 않는다.
+- 후보 입력은 `ExplorerWorkspaceState` read-only projection snapshot 또는 문서상 해석 가능한 helper-local candidate 의미로 제한한다.
+- 후보는 production visible UI surface가 아니며, production route에 노출되지 않는다.
+- 후보는 `WordExplorerScreen` production owner state를 대체하거나 병행 소유하지 않는다.
+- 후보는 `ExplorerWorkspace`를 owner, controller, coordinator, shell owner로 승격하지 않는다.
+- 후보는 projection result를 persistence, history payload, source of truth, runtime policy state로 사용하지 않는다.
+- 후보 선정은 Phase 9-C 이후 source-level guardrail 검토 후보를 남기는 수준으로 제한한다.
+
+Phase 9-B에서 특정 후보를 기록하더라도 그 후보는 production 적용 대상이 아니다. 후보 기록은 후속 검토 대상을 좁히는 문서상 classification일 뿐이며, 구현하려면 별도 승인 단계가 필요하다.
+
+#### 17.51.2 production-adjacent 후보가 가져서는 안 되는 권한
+
+production-adjacent visual consumer 후보는 다음 권한을 가져서는 안 된다.
+
+- selection, graph center, detail target ownership
+- route push, route replacement, route alias execution, route collapse 결정 권한
+- Provider state read/write authority 또는 Provider wiring authority
+- Repository read/write authority
+- Navigator authority
+- DB, file, cache, persistence authority
+- history snapshot 생성, 저장, 복원 authority
+- public API, DTO/model, route argument, shell prop 정의 authority
+- production UI exposure 또는 production UI diff 결정 권한
+
+Level 2 후보가 위 권한 중 하나라도 필요해지는 경우, Phase 9-B 후보 선정 범위에서 제외하고 별도 설계와 별도 승인 대상으로 분리해야 한다.
+
+#### 17.51.3 Level 1 boundary를 유지한 Level 2 후보 정의 기준
+
+Level 2 후보 정의는 Level 1 hidden visual probe boundary를 약화하지 않는 방식으로만 가능하다.
+
+유지 조건은 다음과 같다.
+
+- `_readOnlyWorkspaceProjection`은 `WordExplorerScreen` 내부 private read-only projection boundary로 유지한다.
+- `_debugValidateHiddenVisualProbe(...)`는 private helper로 유지한다.
+- `candidateSlots`, `candidateLabels`는 helper 내부 local candidate structure로 유지한다.
+- helper 호출은 debug `assert` 내부로 제한한다.
+- helper 결과는 production widget tree, route, shell state, persistence payload, history payload, source of truth로 전달하지 않는다.
+- Level 2 후보는 이 helper 내부 구조를 public output contract로 승격하지 않는다.
+
+따라서 Phase 9-B에서 가능한 Level 2 후보 정의는 "read-only projection 의미를 생산 경로에 연결하지 않고 관찰 가능한 후보 경계"까지만 허용한다.
+
+#### 17.51.4 후보 선정이 구현 승인으로 읽히지 않도록 하는 필수 문구
+
+Level 2 후보를 문서에 기록할 때는 다음 제한 문구를 함께 사용해야 한다.
+
+- `candidate only`
+- `planning only`
+- `not implementation approval`
+- `not production exposure approval`
+- `not shell mount approval`
+- `not route approval`
+- `not authority migration`
+- `not public API`
+- `not DTO/model`
+- `not persistence contract`
+
+한국어 설명에는 다음 의미를 함께 기록한다.
+
+- 후보 선정은 구현 순서 확정이 아니다.
+- 후보 선정은 production 적용 승인도 아니다.
+- 후보 선정은 source-level guardrail 검토 대상을 좁히기 위한 문서상 분류다.
+- 후보 선정 이후에도 code/test 변경은 별도 승인 없이는 수행하지 않는다.
+
+#### 17.51.5 후보 선정 이후에도 유지되는 금지선
+
+아래 항목은 Phase 9-B 이후에도 모두 `not approved` 상태로 유지한다.
+
+- runtime/UI integration: `not approved`
+- production visual consumer exposure: `not approved`
+- `ExplorerWorkspace` shell mount: `not approved`
+- route collapse: `not approved`
+- canonical owner migration: `not approved`
+- Provider / Repository / Navigator / persistence authority migration: `not approved`
+- projection result persistence/history/source-of-truth usage: `not approved`
+- output DTO/model addition: `not approved`
+- public API addition: `not approved`
+- Level 2 production-adjacent visual consumer implementation: `not approved`
+- Level 3 production visible consumer: `not approved`
+- production UI diff: `not approved`
+
+#### 17.51.6 Phase 9-C 이후로 넘길 source-level guardrail 후보
+
+Phase 9-C 이후 단계에서 검토할 수 있는 source-level guardrail 후보는 다음으로 제한한다.
+
+- Level 2 후보 명칭이 public widget, public API, DTO/model로 확장되지 않았는지 확인하는 source-level guardrail
+- `candidateSlots`, `candidateLabels`가 helper-local structure 밖으로 노출되지 않았는지 확인하는 guardrail
+- `ExplorerWorkspace` shell mount, route wiring, Navigator call, Provider/Repository reference가 추가되지 않았는지 확인하는 guardrail
+- projection result가 field, history payload, persistence payload, source of truth로 저장되지 않았는지 확인하는 guardrail
+- production UI diff가 발생하지 않았는지 확인하는 path-level guardrail
+
+Phase 9-C 후보는 source-level guardrail 검토 후보일 뿐이며, Phase 9-B는 테스트 파일 생성이나 수정도 승인하지 않는다.
+
+#### 17.51.7 별도 승인 대상으로 유지할 범위
+
+다음 항목은 Phase 9-B 문서화와 분리된 별도 승인 대상으로 유지한다.
+
+- production UI diff
+- `ExplorerWorkspace` shell mount
+- route 추가, route 변경, route collapse
+- `main.dart`, `HomeScreen`, `WordExplorerScreen`, `WordGraphScreen`, `WordDetailScreen` production entry 변경
+- Provider / Repository / Navigator / persistence authority migration
+- output DTO/model 추가
+- public API 추가
+- Level 2 production-adjacent visual consumer 구현
+- Level 3 production visible consumer 구현
+
+이 항목 중 하나라도 필요해지는 경우 Phase 9-B 범위에서 제외하고, 별도 설계, 수정 파일 목록, command 기반 검증 계획, 사용자 UI 확인 절차, 사용자 승인을 먼저 받아야 한다.
+
+#### 17.51.8 명령어 기반 수동 테스트 체크리스트
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 | 실제 결과 |
+| --- | --- | --- | --- | --- |
+| 현재 브랜치 및 상태 확인 | Phase 9-B 작업 브랜치이며 clean main에서 분기했음을 확인할 수 있어야 함 | 다른 브랜치 또는 uncommitted 변경에서 작업함 | `git status --short --branch`, `git branch --show-current`, `git log -1 --oneline` | 작업 종료 보고에서 기록 |
+| 변경 파일 확인 | 변경 파일은 승인된 문서 2개여야 함 | `lib/`, `test/`, platform 경로 또는 새 문서가 포함됨 | `git diff --stat`, `git diff --name-only` | 작업 종료 보고에서 기록 |
+| whitespace 검증 | markdown diff에 trailing whitespace 오류가 없어야 함 | `git diff --check` 실패 | `git diff --check` | 작업 종료 보고에서 기록 |
+| Phase 9-B 반영 확인 | 두 문서에 Phase 9-B 기록이 있어야 함 | Phase 9-B 기록 누락 또는 구현 승인처럼 읽히는 문장 | `rg -n "Phase 9-B" docs/ux/explorer_workspace_unification.md docs/logs/CHANGELOG.md` | 작업 종료 보고에서 기록 |
+| Level 2 후보 선정 경계 확인 | Level 2가 구현이 아니라 후보 선정 기준으로 기록되어야 함 | Level 2 implementation approval처럼 읽힘 | `rg -n "Level 2 visual consumer" docs/ux/explorer_workspace_unification.md` | 작업 종료 보고에서 기록 |
+| 금지선 유지 확인 | 요청된 항목이 `not approved`로 유지되어야 함 | shell mount, production UI diff, owner migration, public API 추가 승인처럼 읽힘 | `rg -n "not approved" docs/ux/explorer_workspace_unification.md` | 작업 종료 보고에서 기록 |
+| 별도 승인 대상 유지 확인 | production UI diff, shell mount, route collapse, owner migration이 별도 승인 대상으로 남아야 함 | Phase 9-B 안에서 승인처럼 기록됨 | `rg -n "production UI diff|shell mount|route collapse|owner migration" docs/ux/explorer_workspace_unification.md` | 작업 종료 보고에서 기록 |
+
+UI 기반 수동 테스트와 `flutter test`는 이번 Phase 9-B 문서/audit 작업의 필수 범위가 아니다.

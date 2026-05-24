@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 2026-05-24 Phase 9-B Level 2 visual consumer candidate selection boundary
+
+- Phase 9-B를 Level 2 구현 단계가 아니라 Level 2 visual consumer 후보 선정 기준을 문서화하는 planning/audit 단계로 기록했다.
+- Level 2 후보 선정 기준을 read-only projection snapshot 유지, production route 미노출, production visible UI surface 아님, production owner state 미대체, projection result 비저장 기준으로 제한했다.
+- production-adjacent visual consumer 후보가 selection, route, Provider, Repository, Navigator, persistence, history, public API, DTO/model, production UI exposure 권한을 갖지 않아야 한다고 정리했다.
+- 후보 선정은 `candidate only`, `planning only`, `not implementation approval`, `not production exposure approval`, `not shell mount approval`, `not authority migration` 문구와 함께 사용해야 한다고 기록했다.
+- Phase 9-C 이후 후보는 source-level guardrail 검토로만 제한하고, Phase 9-B에서는 코드와 테스트 파일을 수정하지 않는다고 분리했다.
+- production UI diff, `ExplorerWorkspace` shell mount, route 변경, owner migration은 계속 별도 승인 대상으로 유지했다.
+- runtime/UI integration, production visual consumer exposure, shell mount, route collapse, owner migration, authority migration, output DTO/model, public API, Level 2 구현, Level 3 visible consumer, production UI diff는 모두 `not approved`로 유지했다.
+
 ## 2026-05-24 Phase 9-A Level 2 visual consumer entry boundary planning
 
 - Phase 9-A를 Level 2 구현 단계가 아니라 Level 2 visual consumer 진입 조건을 정의하는 planning 단계로 기록했다.
