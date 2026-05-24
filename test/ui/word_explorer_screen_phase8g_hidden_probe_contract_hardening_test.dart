@@ -18,6 +18,8 @@ void main() {
     late String fieldSource;
     late String buildAssertSource;
     late Map<String, String> publicBoundarySources;
+    late Map<String, String> libPublicSurfaceSources;
+    late Map<String, String> productionEntryBoundarySources;
 
     setUpAll(() {
       wordExplorerSource = File(wordExplorerSourcePath).readAsStringSync();
@@ -41,7 +43,7 @@ void main() {
         '  Widget build(BuildContext context) {',
         '    return Scaffold(',
       );
-      publicBoundarySources = <String, String>{
+      productionEntryBoundarySources = <String, String>{
         workspaceContractSourcePath: File(
           workspaceContractSourcePath,
         ).readAsStringSync(),
@@ -51,6 +53,16 @@ void main() {
         mainSourcePath: File(mainSourcePath).readAsStringSync(),
         homeSourcePath: File(homeSourcePath).readAsStringSync(),
       };
+      publicBoundarySources = Map<String, String>.unmodifiable(
+        productionEntryBoundarySources,
+      );
+      libPublicSurfaceSources = Map<String, String>.unmodifiable({
+        wordExplorerSourcePath: helperExternalSource,
+        ..._dartSourcesUnder(
+          'lib',
+          excludedPaths: <String>{wordExplorerSourcePath},
+        ),
+      });
     });
 
     test('keeps candidate structures scoped to helper local variables', () {
@@ -111,6 +123,45 @@ void main() {
       );
     });
 
+    test('keeps candidate output out of lib public surface paths', () {
+      const forbiddenPublicSurfaceMarkers = <String>[
+        'class HiddenVisualProbe',
+        'class HiddenProbeOutput',
+        'class HiddenVisualProbeOutput',
+        'class VisualProbeOutput',
+        'class VisualCandidateOutput',
+        'class HiddenProbeModel',
+        'class VisualProbeModel',
+        'class CandidateSlots',
+        'class CandidateLabels',
+        'typedef HiddenVisualProbe',
+        'typedef HiddenProbeOutput',
+        'typedef HiddenVisualProbeOutput',
+        'typedef VisualProbeOutput',
+        'List<String> get candidateSlots',
+        'List<String> get candidateLabels',
+        'get candidateSlots',
+        'get candidateLabels',
+        'candidateSlots:',
+        'candidateLabels:',
+        'candidateSlots',
+        'candidateLabels',
+      ];
+
+      for (final entry in libPublicSurfaceSources.entries) {
+        for (final forbiddenMarker in forbiddenPublicSurfaceMarkers) {
+          expect(
+            entry.value,
+            isNot(contains(forbiddenMarker)),
+            reason:
+                '${entry.key} must not expose hidden probe output as a public '
+                'API, DTO/model, public export, route contract, or shell '
+                'contract: $forbiddenMarker.',
+          );
+        }
+      }
+    });
+
     test('keeps route, shell, and persistence contracts disconnected', () {
       for (final entry in publicBoundarySources.entries) {
         expect(
@@ -143,6 +194,48 @@ void main() {
       expect(wordExplorerSource, isNot(contains('state: candidateLabels')));
       expect(helperSource, isNot(contains('openDatabase')));
       expect(helperSource, isNot(contains('SharedPreferences')));
+    });
+
+    test('keeps production entry boundaries free of hidden probe markers', () {
+      const forbiddenProductionEntryMarkers = <String>[
+        '_debugValidateHiddenVisualProbe',
+        'debugValidateHiddenVisualProbe(',
+        'candidateSlots',
+        'candidateLabels',
+        'HiddenVisualProbe',
+        'HiddenProbeOutput',
+        'HiddenVisualProbeOutput',
+        'VisualProbeOutput',
+        'VisualCandidateOutput',
+        'CandidateSlots',
+        'CandidateLabels',
+      ];
+
+      for (final entry in productionEntryBoundarySources.entries) {
+        for (final forbiddenMarker in forbiddenProductionEntryMarkers) {
+          expect(
+            entry.value,
+            isNot(contains(forbiddenMarker)),
+            reason:
+                '${entry.key} must not expose the hidden probe or candidate '
+                'markers as production entry, route, shell, or persistence '
+                'contract: $forbiddenMarker.',
+          );
+        }
+      }
+
+      expect(
+        productionEntryBoundarySources[mainSourcePath],
+        contains('home: const HomeScreen()'),
+      );
+      expect(
+        productionEntryBoundarySources[mainSourcePath],
+        isNot(contains('routes:')),
+      );
+      expect(
+        productionEntryBoundarySources[mainSourcePath],
+        isNot(contains('onGenerateRoute')),
+      );
     });
 
     test('keeps the hidden probe assert-only, read-only, and non-owner', () {
@@ -194,6 +287,29 @@ void main() {
   });
 }
 
+Map<String, String> _dartSourcesUnder(
+  String rootPath, {
+  Set<String> excludedPaths = const <String>{},
+}) {
+  final excluded = excludedPaths.map(_normalizePath).toSet();
+  final sources = <String, String>{};
+
+  for (final entity in Directory(rootPath).listSync(recursive: true)) {
+    if (entity is! File || !entity.path.endsWith('.dart')) {
+      continue;
+    }
+
+    final normalizedPath = _normalizePath(entity.path);
+    if (excluded.contains(normalizedPath)) {
+      continue;
+    }
+
+    sources[normalizedPath] = entity.readAsStringSync();
+  }
+
+  return sources;
+}
+
 String _extractBetween(String source, String startMarker, String endMarker) {
   final start = source.indexOf(startMarker);
   final end = source.indexOf(endMarker, start + startMarker.length);
@@ -213,6 +329,8 @@ String _removeBetween(String source, String startMarker, String endMarker) {
 
   return source.substring(0, start) + source.substring(end);
 }
+
+String _normalizePath(String path) => path.replaceAll('\\', '/');
 
 int _occurrences(String source, String marker) {
   var count = 0;

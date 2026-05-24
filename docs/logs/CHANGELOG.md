@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2026-05-24 Phase 9-E Level 2 source-level guardrail test hardening
+
+- Phase 9-E를 production 구현 단계가 아니라 기존 Phase 8-G source-level test를 제한적으로 보강하는 단계로 기록했다.
+- 새 테스트 파일은 만들지 않고 `test/ui/word_explorer_screen_phase8g_hidden_probe_contract_hardening_test.dart`에 candidate marker public surface 누출 방지와 production entry marker 노출 방지 guardrail을 추가했다.
+- `candidateSlots`, `candidateLabels`가 public API, DTO, model, public export, route contract, shell contract 성격의 경로로 새어 나가지 않는지 source-level로 보강했다.
+- `main.dart`, `home_screen.dart`, workspace contract/shell source에 hidden probe 또는 candidate marker가 production entry처럼 노출되지 않는지 확인하도록 했다.
+- production UI diff는 source-level test만으로 완전 판정하지 않고 `git diff --name-only -- lib android ios macos windows linux web` 기반 path-level audit을 병행한다고 기록했다.
+- route/shell/Navigator/Provider/Repository/persistence 구현 변경, `ExplorerWorkspace` shell mount, production UI diff, Level 2/Level 3 visual consumer 구현, output DTO/model 추가, public API 추가는 모두 `not approved`로 유지했다.
+
 ## 2026-05-24 Phase 9-D Level 2 source-level guardrail test hardening target audit
 
 - Phase 9-D를 source-level test 구현 단계가 아니라 Level 2 source-level guardrail test hardening 대상 후보를 확인하는 docs/audit 단계로 기록했다.
