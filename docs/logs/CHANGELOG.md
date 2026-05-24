@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 2026-05-24 Phase 9-C Level 2 visual consumer source-level guardrail planning
+
+- Phase 9-C를 source-level test 구현 단계가 아니라 Level 2 visual consumer 후보를 보호하기 위한 source-level guardrail 후보 문서화 단계로 기록했다.
+- public API / DTO / model / route contract / shell contract 승격 방지 guardrail 후보를 Phase 9-D 이후 검토 대상으로 제한했다.
+- `candidateSlots`, `candidateLabels`가 `_debugValidateHiddenVisualProbe(...)` helper 내부 local structure 밖으로 노출되지 않도록 하는 guardrail 후보를 정리했다.
+- projection result persistence/history/source-of-truth usage, shell mount, route wiring, Navigator, Provider, Repository, persistence 참조 추가를 막는 guardrail 후보를 문서화했다.
+- production UI diff 방지 path-level guardrail 후보를 기록하되, Phase 9-C에서는 코드와 테스트 파일을 수정하지 않는다고 분리했다.
+- Phase 9-D 이후 source-level test hardening 후보는 별도 설계, 수정 파일 목록, command 기반 검증 계획, 사용자 승인 전까지 구현하지 않는다고 명시했다.
+- source-level test implementation, Level 2 구현, Level 3 visible consumer, production UI diff, shell mount, route collapse, authority migration, output DTO/model, public API는 모두 `not approved`로 유지했다.
+
 ## 2026-05-24 Phase 9-B Level 2 visual consumer candidate selection boundary
 
 - Phase 9-B를 Level 2 구현 단계가 아니라 Level 2 visual consumer 후보 선정 기준을 문서화하는 planning/audit 단계로 기록했다.

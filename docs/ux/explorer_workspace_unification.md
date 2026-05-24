@@ -3309,3 +3309,152 @@ Phase 9-C 후보는 source-level guardrail 검토 후보일 뿐이며, Phase 9-B
 | 별도 승인 대상 유지 확인 | production UI diff, shell mount, route collapse, owner migration이 별도 승인 대상으로 남아야 함 | Phase 9-B 안에서 승인처럼 기록됨 | `rg -n "production UI diff|shell mount|route collapse|owner migration" docs/ux/explorer_workspace_unification.md` | 작업 종료 보고에서 기록 |
 
 UI 기반 수동 테스트와 `flutter test`는 이번 Phase 9-B 문서/audit 작업의 필수 범위가 아니다.
+
+### 17.52 Phase 9-C Level 2 visual consumer source-level guardrail planning
+
+Phase 9-C는 source-level test 구현 단계가 아니다. 이번 단계의 목적은 Phase 9-B에서 정리한 Level 2 visual consumer 후보 선정 기준을 보호하기 위해 어떤 source-level guardrail 후보를 후속 단계에서 검토할 수 있는지 문서화하는 것이다.
+
+Phase 9-C의 guardrail planning은 test implementation approval, Level 2 implementation approval, production exposure approval, shell mount approval, route approval, authority migration approval을 뜻하지 않는다. 변경 범위는 이 문서와 `docs/logs/CHANGELOG.md` 기록으로 제한한다.
+
+#### 17.52.1 public boundary 승격 방지 guardrail 후보
+
+Phase 9-D 이후에 검토할 수 있는 public boundary 승격 방지 guardrail 후보는 다음으로 제한한다.
+
+- Level 2 후보 명칭이 public widget class로 추가되지 않았는지 확인하는 source-level guardrail 후보
+- Level 2 후보가 exported public API로 추가되지 않았는지 확인하는 guardrail 후보
+- Level 2 후보가 output DTO 또는 model로 추가되지 않았는지 확인하는 guardrail 후보
+- Level 2 후보가 route argument, route contract, shell prop, shell contract로 연결되지 않았는지 확인하는 guardrail 후보
+- hidden probe output contract가 public output contract처럼 확장되지 않았는지 확인하는 guardrail 후보
+
+이 항목은 Phase 9-D 이후 source-level test hardening 후보일 뿐이다. Phase 9-C는 public API, DTO, model, route contract, shell contract 추가를 승인하지 않는다.
+
+#### 17.52.2 `candidateSlots` / `candidateLabels` helper-local 유지 guardrail 후보
+
+`candidateSlots`, `candidateLabels`는 계속 `_debugValidateHiddenVisualProbe(...)` 내부 local candidate structure로만 유지해야 한다.
+
+Phase 9-D 이후에 검토할 수 있는 guardrail 후보는 다음과 같다.
+
+- `candidateSlots`, `candidateLabels`가 helper 본문 내부 local variable로만 존재하는지 확인하는 guardrail 후보
+- `_WordExplorerScreenState` field, getter, public method, constructor argument, widget prop으로 노출되지 않았는지 확인하는 guardrail 후보
+- helper 반환값이 candidate output이 아니라 boolean 검증 결과로 유지되는지 확인하는 guardrail 후보
+- `candidateSlots`, `candidateLabels`가 route arguments, shell state, persistence payload, history payload로 전달되지 않았는지 확인하는 guardrail 후보
+
+Phase 9-C는 이 guardrail 후보를 문서화할 뿐이며, 테스트 파일 생성이나 수정은 승인하지 않는다.
+
+#### 17.52.3 projection result persistence/history/source-of-truth 방지 guardrail 후보
+
+Phase 9-D 이후에 검토할 수 있는 projection result guardrail 후보는 다음으로 제한한다.
+
+- `_readOnlyWorkspaceProjection` 결과가 field/cache/history/source of truth로 저장되지 않는지 확인하는 guardrail 후보
+- projection result가 persistence payload, history payload, route payload, shell state로 전달되지 않는지 확인하는 guardrail 후보
+- projection result가 Provider state, Repository return value, Navigator payload로 승격되지 않았는지 확인하는 guardrail 후보
+- projection result가 runtime policy state 또는 canonical owner state로 해석되는 이름으로 확장되지 않았는지 확인하는 guardrail 후보
+
+Phase 9-C는 projection result persistence/history/source-of-truth usage를 승인하지 않는다.
+
+#### 17.52.4 shell / route / Navigator / Provider / Repository 참조 방지 guardrail 후보
+
+Phase 9-D 이후에 검토할 수 있는 source-level guardrail 후보는 다음으로 제한한다.
+
+- `WordExplorerScreen` production path에 `ExplorerWorkspace` shell mount가 추가되지 않았는지 확인하는 guardrail 후보
+- route wiring, route registration, route argument, route collapse 관련 코드가 추가되지 않았는지 확인하는 guardrail 후보
+- `Navigator` call 또는 Navigator owner 변경이 추가되지 않았는지 확인하는 guardrail 후보
+- `Provider` wiring 또는 Provider state authority가 추가되지 않았는지 확인하는 guardrail 후보
+- `Repository` import, read call, write call, repository owner 변경이 추가되지 않았는지 확인하는 guardrail 후보
+- DB, cache, persistence import 또는 persistence write/read 흐름이 추가되지 않았는지 확인하는 guardrail 후보
+
+이 항목은 source-level inspection 후보일 뿐이며, Phase 9-C에서 route, shell, Navigator, Provider, Repository, persistence 구현 변경을 수행하지 않는다.
+
+#### 17.52.5 production UI diff 방지 path-level guardrail 후보
+
+Phase 9-D 이후에 검토할 수 있는 production UI diff 방지 guardrail 후보는 다음으로 제한한다.
+
+- `lib/` production UI 경로 변경이 없는지 확인하는 path-level guardrail 후보
+- `test/` 변경이 source-level test hardening 승인 없이 추가되지 않았는지 확인하는 guardrail 후보
+- `main.dart`, `HomeScreen`, `WordExplorerScreen`, `WordGraphScreen`, `WordDetailScreen` production entry 변경이 없는지 확인하는 guardrail 후보
+- platform 경로 변경이 없는지 확인하는 guardrail 후보
+- production visible UI surface, production route exposure, shell mount가 없는지 확인하는 guardrail 후보
+
+Phase 9-C는 production UI diff를 승인하지 않는다.
+
+#### 17.52.6 Phase 9-C 문서화 범위와 Phase 9-D 이후 후보 분리
+
+Phase 9-C에서 문서화할 수 있는 것은 guardrail 후보의 목적, 금지선, 후속 검토 조건뿐이다.
+
+Phase 9-C에서 수행하지 않는 항목은 다음과 같다.
+
+- source-level test 구현
+- test file 생성 또는 수정
+- code file 수정
+- guardrail test name 확정
+- test assertion 구현 방식 확정
+- Level 2 visual consumer 구현
+- production UI diff
+- route, shell, Navigator, Provider, Repository, persistence 구현 변경
+
+Phase 9-D 이후로 넘길 수 있는 항목은 다음과 같이 제한한다.
+
+- source-level test hardening 후보 검토
+- guardrail test 대상 파일 후보 검토
+- guardrail assertion 후보 검토
+- 문서와 기존 source-level test의 coverage gap audit
+- 테스트를 추가할 경우 별도 승인 절차 정의
+
+Phase 9-D 이후 후보도 자동 승인 상태가 아니다. 별도 설계, 수정 파일 목록, command 기반 검증 계획, 사용자 승인 전에는 테스트 구현을 시작하지 않는다.
+
+#### 17.52.7 guardrail planning 오해 방지 문구
+
+Phase 9-C guardrail planning은 다음 의미로만 사용한다.
+
+- `planning only`
+- `guardrail candidate only`
+- `not source-level test implementation approval`
+- `not Level 2 implementation approval`
+- `not production exposure approval`
+- `not shell mount approval`
+- `not route approval`
+- `not authority migration`
+- `not public API`
+- `not DTO/model`
+- `not persistence contract`
+
+한국어 설명에는 다음 제한을 함께 기록한다.
+
+- guardrail 후보 문서화는 test 구현 지시가 아니다.
+- guardrail 후보 문서화는 Level 2 visual consumer 구현 승인이 아니다.
+- guardrail 후보 문서화는 production UI, route, shell, owner authority 변경 승인이 아니다.
+- guardrail 후보는 Phase 9-D 이후 별도 승인 전까지 문서상 검토 후보로만 남긴다.
+
+#### 17.52.8 유지되는 금지선
+
+아래 항목은 Phase 9-C 이후에도 모두 `not approved` 상태로 유지한다.
+
+- runtime/UI integration: `not approved`
+- production visual consumer exposure: `not approved`
+- `ExplorerWorkspace` shell mount: `not approved`
+- route collapse: `not approved`
+- canonical owner migration: `not approved`
+- Provider / Repository / Navigator / persistence authority migration: `not approved`
+- projection result persistence/history/source-of-truth usage: `not approved`
+- output DTO/model addition: `not approved`
+- public API addition: `not approved`
+- source-level test implementation: `not approved`
+- Level 2 production-adjacent visual consumer implementation: `not approved`
+- Level 3 production visible consumer: `not approved`
+- production UI diff: `not approved`
+
+#### 17.52.9 명령어 기반 수동 테스트 체크리스트
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 | 실제 결과 |
+| --- | --- | --- | --- | --- |
+| 현재 브랜치 및 상태 확인 | Phase 9-C 작업 브랜치이며 clean main에서 분기했음을 확인할 수 있어야 함 | 다른 브랜치 또는 uncommitted 변경에서 작업함 | `git status --short --branch`, `git branch --show-current`, `git log -1 --oneline` | 작업 종료 보고에서 기록 |
+| 변경 파일 확인 | 변경 파일은 승인된 문서 2개여야 함 | `lib/`, `test/`, platform 경로 또는 새 문서가 포함됨 | `git diff --stat`, `git diff --name-only` | 작업 종료 보고에서 기록 |
+| whitespace 검증 | markdown diff에 trailing whitespace 오류가 없어야 함 | `git diff --check` 실패 | `git diff --check` | 작업 종료 보고에서 기록 |
+| Phase 9-C 반영 확인 | 두 문서에 Phase 9-C 기록이 있어야 함 | Phase 9-C 기록 누락 또는 구현 승인처럼 읽히는 문장 | `rg -n "Phase 9-C" docs/ux/explorer_workspace_unification.md docs/logs/CHANGELOG.md` | 작업 종료 보고에서 기록 |
+| source-level guardrail 후보 확인 | guardrail이 구현이 아니라 후보로 기록되어야 함 | test implementation approval처럼 읽힘 | `rg -n "source-level guardrail|guardrail" docs/ux/explorer_workspace_unification.md` | 작업 종료 보고에서 기록 |
+| `candidateSlots` / `candidateLabels` 경계 확인 | helper-local 유지가 기록되어야 함 | public API, DTO, field, getter, shell contract로 해석됨 | `rg -n "candidateSlots|candidateLabels" docs/ux/explorer_workspace_unification.md` | 작업 종료 보고에서 기록 |
+| public boundary 미승격 확인 | public API / DTO / model / route contract / shell contract 추가가 승인되지 않아야 함 | public contract 추가 승인처럼 읽힘 | `rg -n "public API|DTO|model|route contract|shell contract" docs/ux/explorer_workspace_unification.md` | 작업 종료 보고에서 기록 |
+| 금지선 유지 확인 | 요청된 항목이 `not approved`로 유지되어야 함 | source-level test 구현, Level 2 구현, production UI diff 승인처럼 읽힘 | `rg -n "not approved" docs/ux/explorer_workspace_unification.md` | 작업 종료 보고에서 기록 |
+| shell/route/owner 경계 확인 | production UI diff, shell mount, route wiring, Navigator, Provider, Repository, persistence가 미승인 상태로 남아야 함 | runtime wiring 승인처럼 읽힘 | `rg -n "production UI diff|shell mount|route wiring|Navigator|Provider|Repository|persistence" docs/ux/explorer_workspace_unification.md` | 작업 종료 보고에서 기록 |
+
+UI 기반 수동 테스트와 `flutter test`는 이번 Phase 9-C 문서/audit 작업의 필수 범위가 아니다.
