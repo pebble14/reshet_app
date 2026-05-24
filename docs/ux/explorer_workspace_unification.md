@@ -4298,3 +4298,91 @@ UI 기반 수동 테스트는 아직 대상이 아니다. Phase 10-E까지 produ
 Phase 10-A/B/C에서 정한 금지선과 Phase 10-D의 최소 구현 조건은 Phase 10-E audit 기준으로 유지되었다. 따라서 Phase 10은 종료 가능 상태로 판단할 수 있다.
 
 이 판단은 Phase 11 production-visible 논의, production UI diff 승인, `ExplorerWorkspace` shell mount, route collapse, owner 또는 canonical authority migration 승인을 의미하지 않는다. Phase 11 또는 production-visible 검토는 별도 설계, 수정 범위, command 기반 검증 계획, 사용자 승인 대상으로 분리한다.
+
+### 17.61 Phase 11-A production-visible readiness review
+
+Phase 11의 목적은 Phase 10에서 확보한 `candidate representation reader` 기반 이후, `ExplorerWorkspace` 또는 관련 Level 2 consumer가 production-visible 전환을 검토할 수 있는 조건과 금지선을 분리해 확인하는 것이다.
+
+Phase 11-A는 production-visible UX 구현 단계가 아니다. 이 단계는 readiness review 문서/audit 단계이며, production UI diff, route wiring, shell mount, runtime/UI integration, public API / DTO / model 추가, owner/controller/coordinator 이전을 수행하지 않는다.
+
+사용자에게 보이는 UX 변화는 Phase 11-A 범위가 아니다. 실제 UX 변화는 readiness review와 shell mount precondition audit 이후, 별도 승인된 feature 단계에서만 가능하다.
+
+#### 17.61.1 readiness review 판단 기준
+
+Phase 11-A에서 production-visible 전환을 검토할 수 있다고 판단하려면 다음 조건을 먼저 확인해야 한다. 이 조건은 구현 승인 조건이 아니라 후속 승인 검토에 필요한 선행 audit 기준이다.
+
+- production entry 구조가 유지되어야 한다. `main.dart -> HomeScreen`, `HomeScreen -> Navigator.push -> WordExplorerScreen` 흐름은 변경하지 않는다.
+- `ExplorerWorkspace` shell이 production에 mount되지 않아야 한다.
+- route registration 또는 route wiring 변경이 없어야 한다.
+- Provider / Repository / Navigator / persistence authority migration이 없어야 한다.
+- `WordExplorerScreen` production owner 상태가 유지되어야 한다.
+- DTO/model/public API 추가가 없어야 한다.
+- projection result를 persistence, history, source-of-truth로 사용하지 않아야 한다.
+- Phase 10-D `candidate representation reader`는 helper-local read-only 구조로만 유지되어야 한다.
+- 관련 source-level guardrail test가 통과해야 한다.
+- production-visible UX 변경은 별도 feature 범위, 수정 파일 목록, command 기반 검증 계획, 사용자 승인을 다시 받아야 한다.
+
+#### 17.61.2 shell mount precondition audit이 필요한 이유
+
+`ExplorerWorkspace` shell mount는 단순한 문서 표현이나 helper-local reader 확장이 아니다. shell이 production tree에 mount되면 화면 노출, entry path, state ownership, route stack, history/persistence 해석, callback authority, rollback 범위가 함께 바뀔 수 있다.
+
+따라서 shell mount를 검토하기 전에는 다음 precondition audit이 필요하다.
+
+- 어떤 production entry에서 shell을 mount할지 확인해야 한다.
+- 기존 `HomeScreen -> WordExplorerScreen` 진입 구조를 유지할지, 변경할지 별도 승인해야 한다.
+- `WordExplorerScreen`이 소유한 graph center, selected word, detail target, history authority가 중복 소유되지 않는지 확인해야 한다.
+- route registration, route alias, route collapse가 필요한지 별도 검토해야 한다.
+- Provider / Repository / Navigator / persistence authority 이동이 필요한지 확인하고, 필요한 경우 Phase 11-A 범위 밖으로 분리해야 한다.
+- 사용자-visible UI diff와 UI 테스트 기준을 별도 feature 단계에서 승인받아야 한다.
+
+Phase 11-A에서는 위 precondition을 audit 대상으로만 기록한다. shell mount 자체는 계속 `not approved`다.
+
+#### 17.61.3 Phase 10 결과의 승격 금지
+
+Phase 10의 `candidate representation reader`는 `_debugValidateHiddenVisualProbe(...)` 내부 helper-local 구조다. `readCandidateRepresentation`은 helper 내부 local function으로만 취급하며, public symbol이나 reusable contract가 아니다.
+
+`candidateSlots`, `candidateLabels`는 helper-local candidate structure로만 유지된다. 두 값은 public API, DTO, model, route contract, shell contract, persistence payload, history payload, source-of-truth payload로 승격되지 않았다.
+
+따라서 Phase 10 결과는 다음을 의미하지 않는다.
+
+- public API 승격 아님
+- DTO/model 추가 아님
+- route contract 추가 아님
+- shell contract 추가 아님
+- production visual consumer exposure 아님
+- runtime/UI integration 아님
+- `ExplorerWorkspace` shell mount 승인 아님
+- Level 3 production visible consumer 승인 아님
+
+#### 17.61.4 Phase 11-A에서 계속 금지되는 항목
+
+아래 항목은 Phase 11-A에서도 별도 승인 전까지 `not approved`로 유지한다.
+
+- production UI diff: `not approved`
+- `ExplorerWorkspace` shell mount: `not approved`
+- route wiring / route registration change: `not approved`
+- `HomeScreen -> WordExplorerScreen` 진입 구조 변경: `not approved`
+- Provider / Repository / Navigator / persistence authority migration: `not approved`
+- DTO/model/public API addition: `not approved`
+- projection result persistence/history/source-of-truth usage: `not approved`
+- runtime/UI integration: `not approved`
+- production visual consumer exposure: `not approved`
+- route collapse: `not approved`
+- canonical owner migration: `not approved`
+- Level 3 production visible consumer: `not approved`
+
+#### 17.61.5 명령어 기반 수동 테스트 체크리스트
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 | 실제 결과 |
+| --- | --- | --- | --- | --- |
+| production entry 구조 유지 확인 | `main.dart -> HomeScreen`, `HomeScreen -> Navigator.push -> WordExplorerScreen` 흐름이 유지되어야 함 | `home` 변경, route entry 변경, explorer 진입 구조 변경 | `rg` 기반 source 확인 | 작업 종료 보고에서 기록 |
+| `ExplorerWorkspace` shell production mount 없음 확인 | production entry 또는 `WordExplorerScreen` production path에 shell mount가 없어야 함 | shell mount, visible widget tree 연결, shell prop 연결 | `rg` 기반 source 확인 | 작업 종료 보고에서 기록 |
+| route registration / route wiring 변경 없음 확인 | route table, `Navigator` wiring, route alias 변경이 없어야 함 | route 등록 변경, push 대상 변경, route collapse 조짐 | `git diff`와 `rg` 기반 확인 | 작업 종료 보고에서 기록 |
+| public API / DTO / model 추가 없음 확인 | `lib/` public contract 변경이 없어야 함 | 새 DTO/model/public export 추가 | `git diff --name-only -- lib` | 작업 종료 보고에서 기록 |
+| production UI diff 없음 확인 | `lib/`, platform production path 변경이 없어야 함 | UI 구현 파일, route, shell, platform 파일 변경 | `git diff --name-only -- lib android ios macos windows linux web` | 작업 종료 보고에서 기록 |
+| Phase 7-F projection boundary guardrail test | source-level projection boundary가 유지되어야 함 | projection boundary 누출 또는 authority drift | `flutter test test/ui/word_explorer_screen_phase7f_projection_boundary_test.dart` | 작업 종료 보고에서 기록 |
+| Phase 8-C hidden visual probe guardrail test | hidden probe가 production-visible path로 연결되지 않아야 함 | runtime/UI integration 또는 visible exposure 조짐 | `flutter test test/ui/word_explorer_screen_phase8c_hidden_visual_probe_test.dart` | 작업 종료 보고에서 기록 |
+| Phase 8-G hidden probe contract hardening test | candidate marker가 public surface, route, shell로 노출되지 않아야 함 | public API / DTO / model / route / shell 노출 | `flutter test test/ui/word_explorer_screen_phase8g_hidden_probe_contract_hardening_test.dart` | 작업 종료 보고에서 기록 |
+| Phase 10-D candidate representation reader test | reader가 helper-local boundary에 머물러야 함 | public contract 승격, shell/route 노출, 금지 import 참조 | `flutter test test/ui/word_explorer_screen_phase10d_candidate_representation_reader_test.dart` | 작업 종료 보고에서 기록 |
+
+UI 기반 수동 테스트는 이번 Phase 11-A 문서/audit 작업의 완료 기준이 아니다. Phase 11-A는 production-visible UX 변화를 만들지 않으므로 사용자가 화면에서 확인할 새 동작도 만들지 않는다.

@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 2026-05-24 Phase 11-A production-visible readiness review
+
+- Phase 11의 목적을 Phase 10 `candidate representation reader` 이후 production-visible 전환 검토 조건과 금지선을 분리해 확인하는 단계로 기록했다.
+- Phase 11-A를 production-visible UX 구현 단계가 아닌 readiness review 문서/audit 단계로 제한했다.
+- 사용자-visible UX 변화는 Phase 11-A 범위가 아니며, 실제 UX 변화는 readiness review와 shell mount precondition audit 이후 별도 승인된 feature 단계에서만 가능하다고 명시했다.
+- `ExplorerWorkspace` shell mount는 화면 노출, entry path, state ownership, route stack, history/persistence 해석, callback authority에 영향을 줄 수 있으므로 별도 precondition audit이 필요하다고 정리했다.
+- Phase 10의 `candidate representation reader`는 `_debugValidateHiddenVisualProbe(...)` 내부 helper-local 구조이며 public API / DTO / model / route contract / shell contract 승격이 아니라고 재확인했다.
+- production UI diff, `ExplorerWorkspace` shell mount, route wiring / route registration 변경, `HomeScreen -> WordExplorerScreen` 진입 구조 변경은 계속 `not approved`로 유지한다.
+- Provider / Repository / Navigator / persistence authority migration, DTO/model/public API 추가, projection result persistence/history/source-of-truth 사용, runtime/UI integration, production visual consumer exposure, route collapse, canonical owner migration, Level 3 production visible consumer는 계속 `not approved`로 유지한다.
+
 ## 2026-05-24 Phase 10-E candidate representation reader termination audit
 
 - Phase 10-E를 구현이 아니라 Phase 10-D `candidate representation reader`가 Phase 10-A/B/C의 금지선과 최소 구현 조건을 지켰는지 확인하는 termination audit 단계로 기록했다.
