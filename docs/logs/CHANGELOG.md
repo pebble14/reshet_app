@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 2026-05-24 Phase 10-C candidate preview consumer preflight audit
+
+- Phase 10-C를 implementation이 아니라 Phase 10-D feature 구현 전 명칭, 파일 후보, 테스트 전략, 금지 import / 금지 참조, 진입 조건을 고정하는 preflight audit 단계로 기록했다.
+- Phase 10-C가 implementation approval이 아니며 Level 2 visual consumer 구현, 새 widget/class/helper 구현, 새 테스트 파일 작성, 기존 테스트 파일 수정, `lib/` / `test/` 수정, production UI diff, shell mount, route wiring / route registration 변경을 승인하지 않는다고 명시했다.
+- `candidate preview-only consumer`가 production preview 또는 mounted widget consumer로 오해될 위험을 줄이기 위해 `candidate representation reader`, `candidate preview probe`, `candidate visual probe consumer`, `candidate structure preview`, `candidate preview-only consumer` 명칭 후보를 비교했다.
+- 다음 feature 브랜치 검토 후보명으로 `candidate representation reader`를 권장하되, 이는 구현 승인명이 아니라 helper-local candidate representation을 읽는 read-only 후보명이라고 제한했다.
+- Phase 10-D 구현 파일 후보를 허용 가능 후보, 위험 후보, 금지 후보로 분리하고, route/shell/Provider/Repository/Navigator/persistence/DTO/model/public API 경로는 별도 승인 전 금지 후보로 기록했다.
+- 테스트 전략을 기존 테스트 재사용 가능 항목, 기존 테스트 확장 가능 항목, 새 source-level test 후보, 새 hidden/probe-adjacent test 후보, 아직 UI 기반 수동 테스트로 검증할 수 없는 항목으로 분리했다.
+- `candidateSlots`, `candidateLabels`는 helper-local candidate structure로만 소비 가능하며 production-visible surface, route contract, shell contract, persistence/history/source-of-truth payload, public API, DTO, model로 승격할 수 없다고 재확인했다.
+- Phase 10-D feature 브랜치 진입 조건으로 후보명 확정, 구현 위치 후보 확정, 테스트 파일 후보 확정, 금지 import / 금지 참조 기준 확정, production UI diff 없음, shell mount 없음, route 변경 없음, owner/persistence migration 없음, DTO/model/public API 추가 없음, 사용자 승인을 기록했다.
+
 ## 2026-05-24 Phase 10-B Level 2 minimum consumer target review
 
 - Phase 10-B를 implementation이 아니라 첫 Level 2 minimum consumer 후보를 고르는 docs/audit 기반 target review 단계로 기록했다.

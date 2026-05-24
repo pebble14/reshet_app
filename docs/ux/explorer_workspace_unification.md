@@ -4046,3 +4046,170 @@ Phase 10-C로 이동하기 전 테스트 기준은 다음처럼 분리한다.
 | 금지선 유지 확인 | production UI diff, shell mount, route, Provider, Repository, Navigator, persistence 변경이 `not approved`로 유지되어야 함 | Phase 10-B가 production 연결 승인처럼 읽힘 | `rg -n "production UI diff|shell mount|route wiring|route registration|Provider|Repository|Navigator|persistence|not approved" docs/ux/explorer_workspace_unification.md docs/logs/CHANGELOG.md` | 작업 종료 보고에서 기록 |
 
 UI 기반 수동 테스트는 이번 Phase 10-B 문서/audit 작업의 대상이 아니다. production-visible UI, shell mount, route 변경이 없으므로 사용자가 화면에서 확인할 수 있는 새 동작은 만들지 않는다.
+
+### 17.58 Phase 10-C candidate preview consumer preflight audit
+
+Phase 10-C는 implementation이 아니라 preflight audit이다. 이번 단계의 목적은 Phase 10-D 또는 이후 feature 구현으로 이동하기 전에 candidate preview 계열 후보의 명칭, 구현 파일 후보, 테스트 전략, 금지 import / 금지 참조, 중단 조건, feature 브랜치 진입 조건을 문서/audit 기준으로 고정하는 것이다.
+
+Phase 10-C는 implementation approval이 아니다. 이 단계는 Level 2 visual consumer 실제 구현, 새 widget/class 구현, 새 helper 구현, 새 테스트 파일 작성, 기존 테스트 파일 수정, `lib/` 수정, `test/` 수정, production UI diff, `ExplorerWorkspace` shell mount, route wiring, route registration, `HomeScreen -> WordExplorerScreen` 진입 구조 변경, Provider / Repository / Navigator / persistence 구현 변경, DTO/model/public API 추가를 승인하지 않는다. 변경 범위는 이 문서와 `docs/logs/CHANGELOG.md` 기록으로 제한한다.
+
+#### 17.58.1 Phase 10-C 판단 범위
+
+Phase 10-C에서 고정할 수 있는 것은 구현 전 조건뿐이다.
+
+- Phase 10-D feature 브랜치에서 검토할 후보명을 implementation approval과 분리한다.
+- Phase 10-D에서 수정 가능성이 있는 파일 후보를 허용 가능 후보, 위험 후보, 금지 후보로 나눈다.
+- 새 테스트 파일을 만들지, 기존 hidden/probe-adjacent 테스트를 확장할지 판단하기 위한 기준만 문서화한다.
+- Provider / Repository / Navigator / persistence, route, shell, DTO/model/public API 관련 금지 import / 금지 참조 범위를 문서화한다.
+- candidateSlots, candidateLabels가 helper-local candidate structure로만 소비되어야 한다는 기준을 유지한다.
+- production-visible consumer, production UI diff, shell mount, route 변경, owner/persistence migration은 별도 승인 전까지 `not approved`로 유지한다.
+
+이 판단은 Phase 10-D 구현 착수, feature 브랜치 생성, 테스트 파일 수정, production source 수정, route/shell 연결을 자동 승인하지 않는다.
+
+#### 17.58.2 candidate preview 계열 명칭 후보 비교
+
+`candidate preview-only consumer`는 Phase 10-B에서 다음 feature 브랜치 검토 후보 계열로 기록되었지만, `preview`라는 단어가 production preview 또는 production-visible preview surface로 오해될 수 있다. Phase 10-C에서는 다음 명칭 후보를 비교하고, 구현 승인 표현 없이 다음 feature 브랜치 검토 후보명만 기록한다.
+
+| 명칭 후보 | production preview 오해 위험 | widget 구현 오해 위험 | helper-local boundary 적합성 | hidden/probe-adjacent 성격 표현 | Phase 10-D feature 구현 후보명 적합성 |
+| --- | --- | --- | --- | --- | --- |
+| `candidate representation reader` | 낮음. preview라는 단어를 피하고 candidate representation을 읽는 행위로 제한한다. | 낮음. widget, visual surface, consumer mount를 직접 암시하지 않는다. | 높음. helper-local representation reader로 제한하기 쉽다. | 중간. probe 성격은 직접 드러나지 않으므로 hidden/probe-adjacent 제한 문구가 함께 필요하다. | 높음. 다음 feature 브랜치 검토 후보명으로 가장 안전하다. |
+| `candidate preview probe` | 중간. preview가 production preview로 오해될 수 있다. | 낮음. probe가 mounted widget보다 검증용 구조를 암시한다. | 높음. helper-local probe로 제한 가능하다. | 높음. hidden/probe-adjacent 성격이 분명하다. | 중간. preview 단어 때문에 추가 제한 설명이 필요하다. |
+| `candidate visual probe consumer` | 낮음에서 중간. preview 단어는 없지만 visual consumer가 production visual consumer로 읽힐 수 있다. | 중간. visual과 consumer가 widget 구현으로 오해될 수 있다. | 중간. helper-local boundary 문구가 없으면 production-adjacent UI로 확장될 위험이 있다. | 높음. probe 성격은 잘 표현한다. | 중간. Level 2 visual consumer 구현 승인처럼 읽히지 않도록 제한이 필요하다. |
+| `candidate structure preview` | 중간. structure는 안전하지만 preview가 production preview로 오해될 수 있다. | 낮음. widget 구현 암시는 약하다. | 높음. candidate structure를 helper-local로 묶기 쉽다. | 중간. probe 성격은 직접 드러나지 않는다. | 중간. preview 단어의 오해를 제거하지 못한다. |
+| `candidate preview-only consumer` | 중간에서 높음. preview-only가 production preview surface로 오해될 수 있다. | 중간. consumer가 widget 소비자 또는 mounted UI로 읽힐 수 있다. | 중간. helper-local 제한을 명시하면 유지 가능하지만 명칭 자체만으로는 부족하다. | 중간. hidden/probe-adjacent 성격은 보조 설명이 필요하다. | 낮음에서 중간. Phase 10-B historical 후보명으로 유지하되 Phase 10-D 후보명으로는 더 안전한 대체명이 필요하다. |
+
+Phase 10-C 기준으로 가장 안전한 다음 feature 브랜치 검토 후보명은 `candidate representation reader`다. 이 명칭은 candidate preview 계열의 의도를 helper-local candidate representation을 읽는 read-only 구조로 좁히며, production preview, mounted widget, route/shell consumer, production-visible surface로 오해될 위험이 가장 낮다.
+
+단, `candidate representation reader`는 구현 승인명이 아니다. 이 명칭은 Phase 10-D 또는 이후 feature 브랜치에서 검토할 후보명일 뿐이며, 구현 파일, 테스트 파일, 금지 import 기준, command 기반 검증 계획, 사용자 승인이 별도로 제시되기 전까지 코드에 추가할 수 없다.
+
+#### 17.58.3 Phase 10-D 구현 파일 후보 preflight 검토
+
+다음 분류는 Phase 10-D에서 실제 구현으로 진입하는 경우의 후보 위치를 문서상으로 검토한 것이다. Phase 10-C에서는 어떤 파일도 만들거나 수정하지 않는다.
+
+| 분류 | 후보 위치 | 검토 기준 | Phase 10-C 판단 |
+| --- | --- | --- | --- |
+| 허용 가능 후보 | `lib/ui/word_explorer_screen.dart` 내부의 기존 hidden/probe-adjacent debug/assert boundary 인접 영역 | production route/shell에 연결되지 않고, build-local 또는 helper-local read-only candidate representation reader로 제한되며, 새 public API / DTO / model / widget/class를 만들지 않는 경우 | 별도 승인 후 Phase 10-D에서만 검토 가능하다. Phase 10-C에서는 수정하지 않는다. |
+| 허용 가능 후보 | 기존 hidden/probe 관련 source-level guardrail의 관찰 대상 경로 | 테스트가 읽는 source marker 또는 path-level diff 기준으로만 다루고 runtime/UI integration을 만들지 않는 경우 | 구현 파일 후보가 아니라 검증 관찰 대상 후보로만 기록한다. |
+| 위험 후보 | `test/ui/word_explorer_screen_phase8c_hidden_visual_probe_test.dart` 확장 | 기존 hidden visual probe boundary를 보강할 수 있지만 Level 1 probe 확장과 Level 2 candidate representation reader 경계가 섞일 수 있다. | Phase 10-D에서 기존 테스트 확장을 선택할 경우 수정 위치와 assertion 기준을 별도 승인받아야 한다. |
+| 위험 후보 | `test/ui/word_explorer_screen_phase8g_hidden_probe_contract_hardening_test.dart` 확장 | candidateSlots, candidateLabels, public API, DTO, model, route, shell, persistence 누출 방지에 적합하지만 future Level 2 path의 범위를 명확히 지정해야 한다. | Phase 10-D에서 기존 테스트 확장을 선택할 경우 guardrail marker를 먼저 확정해야 한다. |
+| 위험 후보 | 새 source-level test 파일 | 구현 후보의 금지 import / 금지 참조를 분리해서 검증할 수 있지만 새 테스트 파일 작성 승인이 필요하다. | Phase 10-C에서는 작성하지 않는다. Phase 10-D에서 별도 승인 전까지 후보로만 둔다. |
+| 위험 후보 | 새 hidden/probe-adjacent test 파일 | unmounted, non-route, non-owner, non-persistent, non-production-visible 조건을 명시적으로 검증할 수 있지만 새 테스트 파일 작성 승인이 필요하다. | Phase 10-C에서는 작성하지 않는다. Phase 10-D에서 별도 승인 전까지 후보로만 둔다. |
+| 금지 후보 | `lib/main.dart`, `lib/ui/home_screen.dart`, route registration 파일 또는 route table | route wiring, route registration, `HomeScreen -> WordExplorerScreen` 진입 구조 변경으로 이어질 수 있다. | Phase 10-C 및 별도 승인 전 Phase 10-D 후보에서 제외한다. |
+| 금지 후보 | `lib/ui/explorer_workspace/` shell contract 또는 shell mount 관련 파일 | `ExplorerWorkspace` shell mount, shell owner, shell prop 추가로 오해될 수 있다. | shell mount 승인 전까지 제외한다. |
+| 금지 후보 | Provider / Repository / Data Source / persistence 관련 경로 | Provider / Repository / Navigator / persistence authority migration 또는 source-of-truth 변경으로 이어질 수 있다. | Phase 10-C 목적과 맞지 않으므로 제외한다. |
+| 금지 후보 | DTO/model/public export 경로 | candidate representation이 public API, DTO, model, route contract, shell contract로 승격될 위험이 있다. | output DTO/model/public API 추가가 승인되지 않았으므로 제외한다. |
+| 금지 후보 | platform 경로, production UI 노출 경로, visible route/screen 경로 | production UI diff, production-visible consumer exposure, runtime/UI integration으로 이어질 수 있다. | Phase 10-C 및 feature 구현 사전 조건에서 제외한다. |
+
+허용 가능 후보로 기록된 위치도 Phase 10-C에서 수정할 수 없다. Phase 10-D에서 허용 가능 후보를 선택하려면 수정할 정확한 파일, 위치, 삽입/교체/삭제 여부, 앞뒤 문맥, 테스트 계획을 다시 제시하고 사용자 승인을 받아야 한다.
+
+#### 17.58.4 구현 전 테스트 전략 preflight 검토
+
+Phase 10-D에서 구현으로 진입한다면 테스트 전략은 다음 기준으로 분리한다.
+
+| 구분 | 테스트 기준 | Phase 10-C 판단 |
+| --- | --- | --- |
+| 기존 테스트 재사용 가능 항목 | `test/ui/word_explorer_screen_phase7f_projection_boundary_test.dart`로 projection boundary가 Repository / Data Source / persistence source-of-truth로 확장되지 않는지 확인 | 기존 테스트 실행 후보로 둔다. Phase 10-C에서는 수정하지 않는다. |
+| 기존 테스트 재사용 가능 항목 | `test/ui/word_explorer_screen_phase8c_hidden_visual_probe_test.dart`로 hidden visual probe가 read-only, assert-only, non-owner, non-route, non-shell-mount boundary를 유지하는지 확인 | 기존 테스트 실행 후보로 둔다. Phase 10-C에서는 수정하지 않는다. |
+| 기존 테스트 재사용 가능 항목 | `test/ui/word_explorer_screen_phase8g_hidden_probe_contract_hardening_test.dart`로 `candidateSlots`, `candidateLabels`가 public API, DTO, model, route contract, shell contract, persistence payload로 새지 않는지 확인 | 기존 테스트 실행 후보로 둔다. Phase 10-C에서는 수정하지 않는다. |
+| 기존 테스트 확장 가능 항목 | candidate representation reader가 Provider / Repository / Navigator / persistence import 또는 참조를 추가하지 않는지 확인 | Phase 10-D에서 구현 위치가 확정된 뒤 기존 guardrail test 확장 후보로 검토한다. |
+| 기존 테스트 확장 가능 항목 | candidate representation reader 명칭 또는 marker가 route wiring, route registration, shell mount, production-visible path에 나타나지 않는지 확인 | Phase 10-D에서 기존 테스트 확장을 선택할 경우 assertion 범위를 별도 승인받는다. |
+| 새 source-level test 후보 | future Level 2 candidate path 전체에서 금지 import, 금지 class reference, public export, DTO/model marker가 없는지 검사 | Phase 10-C에서는 새 테스트 파일을 만들지 않는다. Phase 10-D에서 별도 승인 후 후보로 검토한다. |
+| 새 source-level test 후보 | `git diff --name-only -- lib test android ios macos windows linux web`와 조합해 production UI diff, route/shell/platform 변경이 없는지 path-level로 확인 | Phase 10-D에서 source-level guardrail 설계가 필요할 때 후보로 둔다. |
+| 새 hidden/probe-adjacent test 후보 | candidate representation reader가 unmounted, non-route, non-owner, non-persistent, non-production-visible인지 검사 | 새 테스트 파일 작성 또는 기존 hidden/probe test 확장 중 하나를 Phase 10-D에서 선택해야 한다. |
+| 새 hidden/probe-adjacent test 후보 | `candidateSlots`, `candidateLabels`가 helper-local candidate structure로만 소비되고 return value, field, getter, route argument, shell prop, persistence payload가 아닌지 검사 | Phase 10-D에서 구현 형태가 확정된 뒤 테스트 설계가 가능하다. |
+| 아직 UI 기반 수동 테스트로 검증할 수 없는 항목 | production-visible 화면 배치, interaction flow, 실제 사용자 UX 만족도, shell-mounted 상태, route navigation 결과 | production UI diff와 shell mount가 없으므로 Phase 10-C와 Phase 10-D 최소 후보의 검증 대상이 아니다. production-visible consumer 승인 전까지 UI 테스트 완료로 보고할 수 없다. |
+
+Phase 10-D 구현 전 테스트 기준은 consumer가 unmounted, non-route, non-owner, non-persistent, non-production-visible인지, Provider / Repository / Navigator / persistence import가 없는지, DTO/model/public API 추가가 없는지, candidateSlots와 candidateLabels가 helper-local candidate structure로만 소비되는지, production UI diff와 shell mount가 없는지를 command 기반으로 확인할 수 있어야 한다.
+
+#### 17.58.5 금지 import / 금지 참조 기준
+
+Phase 10-D에서 구현 후보를 제시하기 전 다음 import 또는 참조는 금지 대상으로 둔다. Phase 10-C에서는 실제 import 검사 코드를 작성하지 않는다.
+
+| 금지 범위 | 금지 기준 | 이유 |
+| --- | --- | --- |
+| Navigator | `Navigator`, route push/pop, route argument, navigation callback 참조 금지 | candidate representation reader가 non-route, unmounted 상태를 유지해야 한다. |
+| Provider | Provider import, provider lookup, inherited provider dependency 참조 금지 | production owner 또는 state authority로 승격될 위험을 차단한다. |
+| Repository | `WordRepository` 또는 repository 계층 import/호출 금지 | UI → Repository 흐름을 새로 만들거나 source-of-truth를 우회하지 않기 위함이다. |
+| persistence | DB, storage, history, cache, persistence payload, source-of-truth write/read 참조 금지 | candidate representation이 non-persistent 상태를 유지해야 한다. |
+| route wiring / route registration | route table, `main.dart`, `home_screen.dart`, route alias, shell route 연결 참조 금지 | production route 변경과 route registration 변경을 차단한다. |
+| shell mount / shell contract | `ExplorerWorkspace` mount point, shell prop, shell owner, shell coordinator 참조 금지 | shell mount 승인 또는 production UI diff로 오해되는 경로를 차단한다. |
+| production owner/controller/coordinator | selection owner, route owner, shell owner, repository owner, persistence owner, canonical owner 역할 참조 금지 | candidate reader가 non-owner 경계를 유지해야 한다. |
+| DTO/model/public API | output DTO, public model, public field/getter, public export, route contract, shell contract 추가 금지 | helper-local candidate structure가 public boundary로 승격되는 것을 막는다. |
+| production-visible UI | visible widget tree, screen layout, interaction handler, user-facing preview surface 참조 금지 | production-visible consumer exposure와 production UI diff를 차단한다. |
+
+이 금지 기준은 구현 전 중단 조건이다. Phase 10-D 제안에서 위 금지 import 또는 참조가 필요해지는 경우, candidate representation reader 최소 구현 후보로 진행하지 않고 별도 설계 검토로 되돌려야 한다.
+
+#### 17.58.6 구현 전 실패 조건과 중단 조건
+
+Phase 10-D 구현 제안은 다음 조건 중 하나라도 발생하면 중단해야 한다.
+
+- 구현 후보가 mounted widget, production-visible UI, route-connected consumer로 바뀌는 경우
+- candidate representation reader가 Provider / Repository / Navigator / persistence import 또는 호출을 필요로 하는 경우
+- candidateSlots, candidateLabels가 helper-local boundary 밖으로 return, field, getter, DTO/model, public API, route argument, shell prop, persistence payload로 나가는 경우
+- route wiring, route registration, `HomeScreen -> WordExplorerScreen` 진입 구조 변경이 필요한 경우
+- `ExplorerWorkspace` shell mount 또는 shell contract 변경이 필요한 경우
+- production owner/controller/coordinator 역할을 새로 만들거나 이전해야 하는 경우
+- production UI diff 또는 runtime/UI integration이 필요한 경우
+- 새 테스트 파일 작성 또는 기존 테스트 수정 범위가 사용자 승인 없이 필요해지는 경우
+- 구현 위치, 테스트 위치, 금지 import 기준이 확정되지 않은 상태에서 feature 브랜치 전환을 시도하는 경우
+
+위 조건은 실패가 아니라 scope 중단 신호로 취급한다. 중단 시에는 Phase 10-D 구현으로 진행하지 않고 파일 후보와 테스트 전략을 다시 문서/audit 기준으로 검토해야 한다.
+
+#### 17.58.7 Phase 10-D feature 브랜치 진입 조건
+
+Phase 10-D가 feature 구현 브랜치로 진입하려면 다음 조건이 모두 충족되어야 한다.
+
+- 구현 대상 명칭이 확정되어야 한다. Phase 10-C 기준 후보명은 `candidate representation reader`이며, 이는 구현 승인명이 아니라 다음 feature 브랜치 검토 후보명이다.
+- 구현 위치 후보가 허용 가능 후보 안에서 확정되어야 한다.
+- 수정할 파일 목록과 정확한 수정 위치, 삽입/교체/삭제 여부, 앞뒤 문맥이 제시되어야 한다.
+- 새 테스트 파일 작성 여부 또는 기존 테스트 확장 여부가 확정되어야 한다.
+- 금지 import / 금지 참조 기준이 테스트 또는 command 기반 audit으로 확인 가능해야 한다.
+- production UI diff 없음, shell mount 없음, route wiring / route registration 변경 없음, `HomeScreen -> WordExplorerScreen` 진입 구조 변경 없음이 확인 가능해야 한다.
+- Provider / Repository / Navigator / persistence 변경 없음과 owner/persistence migration 없음이 확인 가능해야 한다.
+- DTO/model/public API 추가 없음이 확인 가능해야 한다.
+- candidateSlots, candidateLabels가 helper-local candidate structure로만 소비된다는 검증 기준이 있어야 한다.
+- 명령어 기반 테스트 계획과 UI 기반 수동 테스트 비대상 사유가 제시되어야 한다.
+- 사용자 승인 후 feature 브랜치를 생성해야 한다.
+
+Phase 10-D 진입 조건이 충족되지 않으면 feature 구현으로 넘어가지 않는다.
+
+#### 17.58.8 Phase 10-C에서 여전히 승인되지 않은 항목
+
+아래 항목은 Phase 10-C에서도 별도 승인 전까지 `not approved`로 유지한다.
+
+- Level 2 visual consumer implementation: `not approved`
+- Level 3 production visible consumer implementation: `not approved`
+- production-visible consumer exposure: `not approved`
+- production UI diff: `not approved`
+- `ExplorerWorkspace` shell mount: `not approved`
+- route wiring / route registration change: `not approved`
+- `HomeScreen -> WordExplorerScreen` 진입 구조 변경: `not approved`
+- Provider / Repository / Navigator / persistence 구현 변경: `not approved`
+- owner migration: `not approved`
+- persistence authority migration: `not approved`
+- DTO/model/public API addition: `not approved`
+- output DTO/model 추가: `not approved`
+- projection result persistence/history/source-of-truth usage: `not approved`
+- runtime/UI integration: `not approved`
+- route collapse: `not approved`
+- canonical owner migration: `not approved`
+- `lib/` modification: `not approved`
+- `test/` modification: `not approved`
+- 새 widget/class 구현: `not approved`
+- 새 helper 구현: `not approved`
+- 새 테스트 파일 작성: `not approved`
+- 기존 테스트 파일 수정: `not approved`
+
+#### 17.58.9 명령어 기반 수동 테스트 체크리스트
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 | 실제 결과 |
+| --- | --- | --- | --- | --- |
+| 변경 파일 확인 | 승인된 문서 2개만 변경되어야 함 | `lib/`, `test/`, platform 경로 또는 승인 외 문서 변경 포함 | `git diff --name-only` | 작업 종료 보고에서 기록 |
+| whitespace 검증 | diff에 trailing whitespace 오류가 없어야 함 | `git diff --check` 실패 | `git diff --check` | 작업 종료 보고에서 기록 |
+| production 경로 변경 없음 확인 | `lib/`, `test/`, platform 경로 변경이 없어야 함 | 구현, 테스트, production UI 변경 발생 | `git diff --name-only -- lib test android ios macos windows linux web` | 작업 종료 보고에서 기록 |
+| Phase 10-C 반영 확인 | 두 문서에 Phase 10-C preflight audit 기록이 있어야 함 | Phase 10-C 누락 또는 implementation approval처럼 읽히는 문장 | `rg -n "Phase 10-C|preflight audit" docs/ux/explorer_workspace_unification.md docs/logs/CHANGELOG.md` | 작업 종료 보고에서 기록 |
+| 명칭 후보 확인 | candidate preview 계열과 candidate representation reader 비교가 기록되어야 함 | production preview 또는 widget 구현 승인처럼 읽힘 | `rg -n "candidate preview|candidate representation|candidate visual probe" docs/ux/explorer_workspace_unification.md docs/logs/CHANGELOG.md` | 작업 종료 보고에서 기록 |
+| helper-local boundary 확인 | `candidateSlots`, `candidateLabels`가 helper-local 제한으로 기록되어야 함 | public API / DTO / model / route contract / shell contract 승격처럼 읽힘 | `rg -n "candidateSlots|candidateLabels|helper-local|public API|DTO|model|route contract|shell contract" docs/ux/explorer_workspace_unification.md docs/logs/CHANGELOG.md` | 작업 종료 보고에서 기록 |
+| 금지선 유지 확인 | production UI diff, shell mount, route, Provider, Repository, Navigator, persistence 변경이 `not approved`로 유지되어야 함 | Phase 10-C가 production 연결 승인처럼 읽힘 | `rg -n "production UI diff|shell mount|route wiring|route registration|Provider|Repository|Navigator|persistence|not approved" docs/ux/explorer_workspace_unification.md docs/logs/CHANGELOG.md` | 작업 종료 보고에서 기록 |
+
+UI 기반 수동 테스트는 이번 Phase 10-C 문서/audit 작업의 대상이 아니다. production-visible UI, shell mount, route 변경이 없으므로 사용자가 화면에서 확인할 수 있는 새 동작은 만들지 않는다.
