@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 2026-05-25 Phase 11-D Phase 11 termination audit
+
+- Phase 11-D를 Phase 11 전체 종료 가능 여부를 판단하는 termination audit 단계로 기록하고, implementation 단계가 아니라고 명시했다.
+- Phase 11-A readiness review, Phase 11-B shell mount precondition audit, Phase 11-C production-visible candidate boundary review의 완료 내용을 모두 docs/audit 결과로만 요약했다.
+- Phase 11 전체에서 확정된 것은 production-visible 전환 readiness 조건, `ExplorerWorkspace` shell mount precondition, production-visible candidate boundary, Phase 10/11 결과의 승격 금지 기준, 후속 feature 단계 전 금지선이라고 정리했다.
+- Phase 10-D `candidate representation reader`는 `_debugValidateHiddenVisualProbe(...)` 내부 helper-local read-only 구조이며 public API / DTO / model / route contract / shell contract로 승격하지 않는다고 재확인했다.
+- Phase 11이 production-visible 구현, `ExplorerWorkspace` shell mount, route 변경, public API / DTO / model 추가, 실제 사용자-visible UX 변경을 승인하거나 발생시킨 것이 아니라고 명시했다.
+- production UI diff, `ExplorerWorkspace` shell mount, route wiring / route registration change, `HomeScreen -> WordExplorerScreen` 진입 구조 변경, Provider / Repository / Navigator / persistence authority migration, DTO/model/public API addition, projection result persistence/history/source-of-truth usage, runtime/UI integration, production visual consumer exposure, route collapse, canonical owner migration, owner/controller/coordinator migration, Level 3 production visible consumer는 계속 `not approved`로 유지한다.
+- UI 기반 수동 테스트는 Phase 11-D에서 수행하지 않으며, 이번 변경은 화면에서 확인할 새 동작을 만들지 않는다고 기록했다.
+
 ## 2026-05-25 Phase 11-C production-visible candidate boundary review
 
 - Phase 11-C를 production-visible feature 구현 단계가 아니라, Phase 11-A readiness review와 Phase 11-B shell mount precondition audit 이후 production-visible 후보 검토 시 넘지 말아야 할 경계와 후보 조건을 정리하는 boundary review 단계로 기록했다.
