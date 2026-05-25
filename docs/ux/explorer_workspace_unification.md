@@ -4703,3 +4703,121 @@ Phase 11-D의 command 기반 검증은 source-level guardrail 확인과 path-lev
 | Phase 10-D candidate representation reader test | reader가 helper-local boundary에 머물러야 함 | public contract 승격, shell/route 노출, 금지 import 참조 | `flutter test test/ui/word_explorer_screen_phase10d_candidate_representation_reader_test.dart` | 작업 종료 보고에서 기록 |
 
 UI 기반 수동 테스트는 Phase 11-D에서 수행하지 않는다. Phase 11-D는 사용자-visible UX 변화를 만들지 않으므로 화면에서 확인할 새 동작도 만들지 않는다. UI 기반 수동 테스트는 production-visible UX 변경, shell mount 구현, route 또는 visible consumer 노출이 별도 feature 단계에서 승인된 뒤 필요하다.
+
+### 17.65 Phase 12-A minimum production-visible candidate selection audit
+
+Phase 12-A는 구현 단계가 아니라 `minimum production-visible candidate selection audit` 단계다. 이번 단계의 목적은 ExplorerWorkspace를 곧바로 production-visible 구조로 전환하는 것이 아니라, Phase 12에서 가장 작은 production-visible 후보 범주가 무엇인지 문서/audit 기준으로 선정 가능한 상태를 만드는 것이다.
+
+Phase 12-A는 production UI diff, `ExplorerWorkspace` shell mount, route wiring, route registration, `HomeScreen -> WordExplorerScreen` 진입 구조 변경, owner/controller/coordinator migration, Provider / Repository / Navigator / persistence authority migration, DTO/model/public API addition, projection result persistence/history/source-of-truth usage, runtime/UI integration, production visual consumer exposure, route collapse, canonical owner migration, Level 3 production-visible consumer 구현을 수행하지 않는다.
+
+#### 17.65.1 Phase 12-A 판단 질문
+
+Phase 12-A에서 판단할 수 있는 것은 구현 가능성이 아니라 후보 범주의 문서상 적합성이다.
+
+| 질문 | Phase 12-A 판단 |
+| --- | --- |
+| Phase 12의 목적을 production-visible 전환 실행이 아니라 minimum production-visible candidate selection으로 정의할 수 있는가? | 예. Phase 12-A는 전환 실행이 아니라 후보 범주 선정 audit이다. |
+| full `ExplorerWorkspace` shell mount를 Phase 12-A 또는 Phase 12-B의 직접 구현 후보에서 제외해야 하는가? | 예. Phase 12-A 직접 후보에서 제외한다. Phase 12-B에서도 별도 승인 전 직접 구현 후보로 넘기지 않는다. |
+| shell mount 없이 기존 `HomeScreen -> WordExplorerScreen` 경로 안에서 검토 가능한 최소 UX 후보가 있는가? | 예. 기존 `WordExplorerScreen` 경로 안의 제한적 read-only UX diff는 Phase 12-B의 후보 범주가 될 수 있다. 단, Phase 12-A는 해당 UX diff를 구현하거나 승인하지 않는다. |
+| production UI diff는 검토 대상으로만 둘 것인가, Phase 12-B 이후 제한 구현 후보로 넘길 수 있는가? | production UI diff는 검토 대상이 될 수 있으나 구현 승인은 아직 아니다. Phase 12-B 이후 제한 후보로 넘기려면 별도 설계와 승인이 필요하다. |
+| feature 브랜치로 넘어가기 위한 조건은 무엇인가? | candidate 범주, 진입 경로, 금지선, UI diff 범위, rollback 가능성, command 기반 검증, UI 기반 수동 테스트 기준이 문서화되어야 한다. |
+| Phase 12-A 종료 시 어떤 판단이 가능해야 하는가? | shell mount를 직접 후보에서 제외하고, 기존 `WordExplorerScreen` 경로 안의 제한적 read-only UX diff를 Phase 12-B 후보 범주로 둘 수 있는지 판단할 수 있어야 한다. |
+
+#### 17.65.2 `ExplorerWorkspace` shell mount 직접 후보 제외
+
+`ExplorerWorkspace` shell mount는 Phase 12-A 직접 후보에서 제외한다. shell mount는 단일 UI 조정이 아니라 다음 변경 압력을 동시에 만들 수 있기 때문이다.
+
+- route 변경 압력
+- owner/controller/coordinator migration 압력
+- production UI diff 압력
+- Provider / Repository / Navigator / persistence authority migration 압력
+- `HomeScreen -> WordExplorerScreen` 진입 구조 변경 압력
+- route collapse 또는 production visual consumer exposure 압력
+
+따라서 Phase 12-A는 shell mount를 구현하지 않고, shell mount를 Phase 12-B의 직접 구현 후보로도 자동 승격하지 않는다. shell mount가 필요해지는 후보는 별도 feature 설계, 수정 파일 목록, command 기반 검증 계획, UI 기반 수동 테스트 기준, rollback 기준, 사용자 승인을 다시 받아야 한다.
+
+#### 17.65.3 production UI diff 상태 구분
+
+Phase 12-A에서 production UI diff의 상태는 아래 세 단계로 분리한다.
+
+| 구분 | 상태 | Phase 12-A 의미 |
+| --- | --- | --- |
+| 검토 대상 | 가능 | production-visible 후보 범주를 고르기 위한 문서상 비교 대상으로 둘 수 있다. |
+| 구현 승인 | 아직 아님 | Phase 12-A는 production UI diff를 구현하거나 승인하지 않는다. |
+| Phase 12-B 이후 제한 후보 | 가능 | 기존 `HomeScreen -> WordExplorerScreen` 진입 구조를 유지하고 shell mount 없이 작고 rollback 가능한 read-only UX diff로 제한될 때만 후보가 될 수 있다. |
+
+이 구분은 production UI diff를 즉시 구현한다는 뜻이 아니다. Phase 12-B 이후에도 production UI diff가 실제 구현 후보가 되려면 수정 파일 목록, 변경 위치, command 기반 검증 계획, UI 기반 수동 테스트 기준, rollback 기준을 다시 제시하고 승인받아야 한다.
+
+#### 17.65.4 기존 `WordExplorerScreen` 경로 안 최소 후보 가능성
+
+기존 `HomeScreen -> WordExplorerScreen` 경로 안의 제한적 read-only UX diff는 Phase 12-B의 후보 범주가 될 수 있다. 단, Phase 12-A는 해당 UX diff를 구현하거나 승인하지 않는다.
+
+Phase 12-B 후보로 검토 가능한 최소 범주는 다음 조건을 만족해야 한다.
+
+- `HomeScreen -> WordExplorerScreen` 진입 구조를 유지한다.
+- `ExplorerWorkspace` shell mount가 없다.
+- route wiring 또는 route registration 변경이 없다.
+- owner/controller/coordinator migration이 없다.
+- Provider / Repository / Navigator / persistence authority migration이 없다.
+- DTO/model/public API addition이 없다.
+- projection result persistence/history/source-of-truth usage가 없다.
+- runtime/UI integration 권한을 새로 만들지 않는다.
+- production visual consumer exposure를 확대하지 않는다.
+- UI diff가 작고 rollback 가능해야 한다.
+
+이 후보 범주는 특정 UI 구현 승인으로 해석하지 않는다. Phase 12-A의 결론은 후보 범주 선정이며, production-visible UX 구현은 별도 승인된 후속 단계에서만 가능하다.
+
+#### 17.65.5 Phase 12-B 또는 feature 브랜치 진입 조건
+
+Phase 12-B 또는 feature 브랜치로 넘어가려면 아래 조건이 먼저 문서상 명확해야 한다.
+
+- candidate 범주가 문서상 명확할 것
+- 진입 경로가 기존 `HomeScreen -> WordExplorerScreen`을 유지할 것
+- shell mount가 없을 것
+- route 변경이 없을 것
+- owner/controller/coordinator migration이 없을 것
+- Provider / Repository / Navigator / persistence authority migration이 없을 것
+- DTO/model/public API 추가가 없을 것
+- projection result persistence/history/source-of-truth usage가 없을 것
+- runtime/UI integration 권한이 새로 생기지 않을 것
+- production visual consumer exposure가 확대되지 않을 것
+- UI diff 범위가 작고 rollback 가능할 것
+- 수동 테스트 기준이 문서화될 것
+- command 기반 검증 계획과 UI 기반 수동 테스트 절차가 구분될 것
+- 수정 파일 목록과 변경 위치가 사전 제시될 것
+- 사용자가 별도 승인할 것
+
+위 조건은 Phase 12-A 종료와 동시에 자동 충족되지 않는다. Phase 12-A는 다음 단계로 넘길 수 있는 후보 범주와 금지선만 정리한다.
+
+#### 17.65.6 Phase 12-A에서 유지되는 금지선
+
+아래 항목은 Phase 12-A 종료 이후에도 별도 승인 전까지 `not approved`로 유지한다.
+
+- production UI diff 구현: `not approved`
+- `ExplorerWorkspace` shell mount: `not approved`
+- route wiring / route registration change: `not approved`
+- `HomeScreen -> WordExplorerScreen` 진입 구조 변경: `not approved`
+- Provider / Repository / Navigator / persistence authority migration: `not approved`
+- DTO/model/public API addition: `not approved`
+- projection result persistence/history/source-of-truth usage: `not approved`
+- runtime/UI integration: `not approved`
+- production visual consumer exposure: `not approved`
+- route collapse: `not approved`
+- canonical owner migration: `not approved`
+- owner/controller/coordinator migration: `not approved`
+- Level 3 production visible consumer: `not approved`
+
+#### 17.65.7 명령어 기반 수동 테스트 체크리스트
+
+Phase 12-A의 command 기반 검증은 문서 반영 확인과 path-level diff 확인으로 제한한다. 목표는 이번 문서/audit 변경이 production entry, route, shell mount, public contract, DTO/model, persistence authority, production UI를 변경하지 않았음을 확인하는 것이다.
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 | 실제 결과 |
+| --- | --- | --- | --- | --- |
+| Phase 12-A 목적 정의 확인 | Phase 12-A가 `minimum production-visible candidate selection audit` 단계로 기록되어야 함 | production-visible 전환 실행 또는 구현 승인처럼 읽힘 | `rg -n "Phase 12-A|minimum production-visible candidate selection" docs/ux/explorer_workspace_unification.md docs/logs/CHANGELOG.md` | 작업 종료 보고에서 기록 |
+| 금지선 유지 확인 | production UI diff, shell mount, route, Provider, Repository, Navigator, persistence, DTO, public API가 `not approved`로 유지되어야 함 | Phase 12-A가 production 연결 승인처럼 읽힘 | `rg -n "production UI diff|ExplorerWorkspace.*shell mount|route wiring|route registration|HomeScreen -> WordExplorerScreen|Provider|Repository|Navigator|persistence|DTO|public API|not approved" docs/ux/explorer_workspace_unification.md docs/logs/CHANGELOG.md` | 작업 종료 보고에서 기록 |
+| route / public API / DTO / model 변경 없음 확인 | `lib/`, `test/`, platform, dependency 파일 변경이 없어야 함 | route 등록 변경, 새 DTO/model/public export, dependency 변경 | `git diff --name-only -- lib test android ios macos windows linux web pubspec.yaml pubspec.lock` | 작업 종료 보고에서 기록 |
+| production UI diff 없음 확인 | production UI 관련 경로 변경이 없어야 함 | `lib/`, platform production path 변경 | `git diff --name-only -- lib android ios macos windows linux web` | 작업 종료 보고에서 기록 |
+| whitespace 검증 | diff에 whitespace 오류가 없어야 함 | trailing whitespace 또는 patch formatting 오류 | `git diff --check` | 작업 종료 보고에서 기록 |
+| Git 상태 확인 | 변경 파일이 Phase 12-A 문서 범위로 제한되어야 함 | `lib/` 코드 변경 또는 승인되지 않은 파일 변경 | `git status --short --branch` | 작업 종료 보고에서 기록 |
+
+UI 기반 수동 테스트는 Phase 12-A에서 수행하지 않는다. Phase 12-A는 사용자-visible UX 변화를 만들지 않으므로 화면에서 확인할 새 동작도 만들지 않는다. UI 기반 수동 테스트는 production-visible UX 변경이 별도 feature 단계에서 승인된 뒤 필요하며, 그 시점에는 테스트 목적, 시작 화면, 조작 순서, 사람이 식별 가능한 테스트 데이터, 기대되는 화면 변화, 실패 시 확인할 증상, 테스트 완료 판단 기준을 포함해야 한다.

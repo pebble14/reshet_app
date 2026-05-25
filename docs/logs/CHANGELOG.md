@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 2026-05-25 Phase 12-A minimum production-visible candidate selection audit
+
+- Phase 12-A를 구현 단계가 아니라 `minimum production-visible candidate selection audit` 단계로 기록했다.
+- Phase 12의 목적을 ExplorerWorkspace의 즉시 production-visible 전환이 아니라 가장 작은 production-visible 후보 범주를 문서/audit 기준으로 선정하는 것으로 정의했다.
+- `ExplorerWorkspace` shell mount는 route 변경, owner/controller/coordinator migration, production UI diff, authority migration을 동시에 압박할 수 있으므로 Phase 12-A 직접 후보에서 제외했다.
+- production UI diff의 상태를 검토 대상은 가능, 구현 승인은 아직 아님, Phase 12-B 이후 제한 후보는 가능이라는 세 단계로 분리했다.
+- 기존 `HomeScreen -> WordExplorerScreen` 경로 안의 제한적 read-only UX diff는 Phase 12-B의 후보 범주가 될 수 있으나, Phase 12-A는 해당 UX diff를 구현하거나 승인하지 않는다고 기록했다.
+- Phase 12-B 또는 feature 브랜치 진입 조건으로 candidate 범주 명확화, 기존 진입 경로 유지, shell mount 없음, route 변경 없음, owner/controller/coordinator migration 없음, Provider / Repository / Navigator / persistence authority migration 없음, DTO/model/public API 추가 없음, 작고 rollback 가능한 UI diff, 수동 테스트 기준 문서화를 명시했다.
+- production UI diff 구현, `ExplorerWorkspace` shell mount, route wiring / route registration change, `HomeScreen -> WordExplorerScreen` 진입 구조 변경, Provider / Repository / Navigator / persistence authority migration, DTO/model/public API addition, projection result persistence/history/source-of-truth usage, runtime/UI integration, production visual consumer exposure, route collapse, canonical owner migration, owner/controller/coordinator migration, Level 3 production visible consumer는 계속 `not approved`로 유지한다.
+- UI 기반 수동 테스트는 Phase 12-A에서 수행하지 않으며, 이번 변경은 화면에서 확인할 새 동작을 만들지 않는다고 기록했다.
+
 ## 2026-05-25 Phase 11-D Phase 11 termination audit
 
 - Phase 11-D를 Phase 11 전체 종료 가능 여부를 판단하는 termination audit 단계로 기록하고, implementation 단계가 아니라고 명시했다.
