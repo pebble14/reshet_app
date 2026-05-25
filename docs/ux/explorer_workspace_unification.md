@@ -5220,3 +5220,45 @@ Phase 12-F의 command 기반 확인은 문서 반영 확인과 path-level diff �
 | production UI diff 추가 없음 확인 | `lib`, 플랫폼 경로 변경이 없어야 함 | UI 또는 플랫폼 파일 변경 | `git diff --name-only -- lib android ios macos windows linux web` | 작업 종료 보고에서 기록 |
 | whitespace 검증 | diff에 whitespace 오류가 없어야 함 | trailing whitespace 또는 patch formatting 오류 | `git diff --check` | 작업 종료 보고에서 기록 |
 | Git 상태 확인 | 변경 파일과 브랜치 상태가 명확해야 함 | 승인 범위 밖 파일 변경 또는 잘못된 브랜치 | `git status --short --branch` | 작업 종료 보고에서 기록 |
+
+### 17.71 Phase 12-G word_info_panel_test baseline fix
+
+Phase 12-G의 목적은 Phase 12-F remaining baseline red 중 다음 fix 후보 1순위로 선정한 `test/ui/word_info_panel_test.dart`를 현행 `WordInfoPanel` API와 구조에 맞춰 최소 수정하는 것이다. 이번 단계는 test baseline fix이며 UX 변경, ExplorerWorkspace 확장, production-visible UX diff가 아니다.
+
+#### 17.71.1 범위와 전략 판단
+
+이번 단계에서는 새로 개발과 병렬 개발을 계속 보류하고, 기존 방식의 점진 전환과 baseline 안정화를 유지한다. 추가 production-visible UX diff도 계속 보류한다.
+
+변경 범위는 아래 파일로 제한한다.
+
+- `test/ui/word_info_panel_test.dart`
+- `docs/ux/explorer_workspace_unification.md`
+- `docs/logs/CHANGELOG.md`
+
+`lib/` production code, `WordInfoPanel` production 구현, ExplorerWorkspace UX, `WordExplorerScreen`, context strip, route/shell/authority/API는 변경하지 않는다.
+
+#### 17.71.2 테스트 현행화 내용
+
+`test/ui/word_info_panel_test.dart`는 과거 `WordInfoPanel(wordMap:)` 생성자와 제거된 `buildWordRepresentativeSpelling` helper를 참조하고 있었다. 현행 production contract는 `WordDetailLikeDisplayItem` 기반 `WordInfoPanel(displayItem: ...)`이므로, 테스트 fixture를 `WordDetailLikeDisplayItem`로 구성하고 `displayItem:` 기반 호출로 전환한다.
+
+제거된 helper 참조 테스트는 현행 `WordInfoPanel` 테스트 범위에서 제외한다. 이는 assertion 삭제만으로 통과시키는 조치가 아니라, 더 이상 production API에 존재하지 않는 helper/API 참조를 panel widget baseline 테스트에서 분리하는 것이다.
+
+#### 17.71.3 Phase 12-F remaining red 반영
+
+Phase 12-G에서 `word_info_panel_test.dart` 1건을 정리 대상으로 삼는다. 남은 baseline red는 아래 항목으로 별도 phase 또는 test stabilization 단계에서 유지한다.
+
+- `word_repository_read_source_policy_test.dart`
+- `word_repository_phase8h1_representative_query_contract_test.dart`
+- `explorer_workspace_phase4e_composition_boundary_test.dart`
+
+#### 17.71.4 Phase 12-G 명령어 기반 확인 체크리스트
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 | 실제 결과 |
+| --- | --- | --- | --- | --- |
+| `word_info_panel_test.dart` 단독 확인 | 현행 `WordInfoPanel(displayItem:)` 기준으로 컴파일되고 통과해야 함 | loading timeout, compile error, pump hang | `flutter test test/ui/word_info_panel_test.dart --reporter expanded` | 작업 종료 보고에서 기록 |
+| 기존 root widget smoke 유지 | `widget_test.dart`가 통과해야 함 | Phase 12-E 정리 회귀 | `flutter test test/widget_test.dart --reporter expanded` | 작업 종료 보고에서 기록 |
+| Phase 12-B context strip 좁은 테스트 유지 | 기존 context strip 테스트가 통과해야 함 | ExplorerWorkspace UX 주변 회귀 | `flutter test test/ui/word_explorer_screen_phase12b_readonly_context_strip_test.dart` | 작업 종료 보고에서 기록 |
+| 전체 baseline 변화 확인 | 기존 `+206 -4` 대비 `word_info_panel_test.dart` 실패 제거 여부를 비교해야 함 | 새 branch-only 실패 또는 remaining red 불일치 | `flutter test --reporter compact` | 작업 종료 보고에서 기록 |
+| 변경 파일 확인 | 승인된 3개 파일만 변경되어야 함 | 승인 범위 밖 파일 변경 | `git diff --name-only` | 작업 종료 보고에서 기록 |
+| whitespace 검증 | diff에 whitespace 오류가 없어야 함 | trailing whitespace 또는 patch formatting 오류 | `git diff --check` | 작업 종료 보고에서 기록 |
+| Git 상태 확인 | 변경 파일과 브랜치 상태가 명확해야 함 | 잘못된 브랜치 또는 불필요한 변경 | `git status --short --branch` | 작업 종료 보고에서 기록 |

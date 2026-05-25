@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## 2026-05-25 Phase 12-G word_info_panel_test baseline fix
+
+- Phase 12-G의 목적은 Phase 12-F remaining red 중 `test/ui/word_info_panel_test.dart` 1건을 현행 `WordInfoPanel` API 기준으로 정리하는 것이다.
+- `word_info_panel_test.dart`의 오래된 `WordInfoPanel(wordMap:)` 호출을 현행 `WordDetailLikeDisplayItem` 기반 `displayItem:` 호출로 전환했다.
+- 제거된 `buildWordRepresentativeSpelling` helper 참조는 현행 production API에 대응되지 않으므로 `WordInfoPanel` widget baseline 테스트 범위에서 제외했다.
+- 이번 단계는 test baseline fix이며 UX 변경이 아니다.
+- production code와 `WordInfoPanel` production 구현은 변경하지 않았다.
+- ExplorerWorkspace UX, `WordExplorerScreen`, context strip, route/shell/authority/API는 변경하지 않았다.
+- Phase 12-F remaining red 중 `word_info_panel_test.dart` 1건을 정리 대상으로 기록하고, 남은 baseline red는 별도 phase로 유지한다.
+- 남은 baseline red는 `word_repository_read_source_policy_test.dart`, `word_repository_phase8h1_representative_query_contract_test.dart`, `explorer_workspace_phase4e_composition_boundary_test.dart`다.
+- 추가 UX diff는 계속 보류한다.
+- 새로 개발과 병렬 개발은 보류하고 기존 방식의 점진 전환과 baseline 안정화를 계속한다.
+
 ## 2026-05-25 Phase 12-F remaining baseline red review
 
 - Phase 12-F를 수정 작업이 아니라 docs/audit 단계로 기록했다. 이번 단계의 목적은 Phase 12-E 이후 `main` 기준으로 남은 baseline red를 다시 확인하고 다음 fix 후보를 선정하는 것이다.
