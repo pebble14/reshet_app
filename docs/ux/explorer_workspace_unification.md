@@ -4863,3 +4863,25 @@ UI 기반 수동 테스트는 클라이언트 확인 대상으로 남긴다. 구
 | 선택 해제 상태 확인 | 선택이 없으면 `선택 없음`이 표시됨 | 빈 문자열 표시 또는 이전 선택 잔존 | 선택 해제 동작이 가능한 상태에서 선택을 해제하고 strip 확인 |
 | 기존 detail panel 유지 확인 | strip 아래 기존 detail 정보, loading, error, no-selection UI가 유지됨 | detail 내용이 사라지거나 스크롤 영역이 깨짐 | 탐색 진입 직후와 노드 선택 후 detail pane 확인 |
 | 기존 탐색 흐름 유지 확인 | 뒤로 가기와 기존 HomeScreen 복귀 흐름이 유지됨 | route stack 변화, 뒤로 가기 실패 | `WordExplorerScreen`에서 뒤로 가기 실행 후 HomeScreen 복귀 확인 |
+
+#### 17.66.3 baseline red 분리 판단
+
+Phase 12-B 직접 관련 source-level guardrail은 통과했다.
+
+```text
+flutter test test/ui/word_explorer_screen_phase12b_readonly_context_strip_test.dart
+결과: 4 tests passed
+```
+
+클라이언트 UI 테스트도 성공으로 기록한다. 기존 `HomeScreen -> WordExplorerScreen` 진입 후 detail pane 상단 context strip 표시와 선택 ID 변경 흐름을 클라이언트가 확인했다.
+
+전체 `flutter test`는 red 상태다.
+
+```text
+Phase 12-B 브랜치: +204 -6 실패
+main baseline: +200 -6 실패
+```
+
+실패 계열은 main baseline과 동일 또는 동종이다. Phase 12-B 변경 파일인 `word_explorer_screen.dart` 또는 신규 Phase 12-B 테스트가 유발한 branch-only 실패는 확인되지 않았다.
+
+따라서 전체 `flutter test` red는 Phase 12-B 신규 회귀가 아니라 기존 baseline red로 분리한다. Phase 12-B 병합 판단은 좁은 관련 테스트 통과, 클라이언트 UI 테스트 성공, 금지선 유지 여부를 기준으로 한다.

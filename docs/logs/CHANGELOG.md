@@ -7,7 +7,10 @@
 - context strip은 기존 `WordExplorerScreen` 내부 상태인 `_centerWordId`, `_selectedWordId`만 읽으며 클릭, 편집, 이동 동작을 추가하지 않는다.
 - `ExplorerWorkspaceState` projection 또는 hidden visual probe 결과를 visible UI 입력으로 사용하지 않았다.
 - route wiring / route registration, `HomeScreen -> WordExplorerScreen` 진입 구조, `ExplorerWorkspace` shell mount, owner/controller/coordinator, Provider / Repository / Navigator / persistence authority, DTO/model/public API는 변경하지 않았다.
-- UI 기반 수동 테스트는 클라이언트 확인 대상으로 남긴다.
+- `flutter test test/ui/word_explorer_screen_phase12b_readonly_context_strip_test.dart`는 4 tests passed로 통과했다.
+- 기존 `HomeScreen -> WordExplorerScreen` 진입 후 detail pane 상단 context strip 표시와 선택 ID 변경 흐름을 클라이언트가 확인했다.
+- 전체 `flutter test`는 Phase 12-B 브랜치에서 `+204 -6`, main baseline에서 `+200 -6`으로 실패했다. 실패 계열은 main baseline과 동일 또는 동종이며, `word_explorer_screen.dart` 또는 신규 Phase 12-B 테스트가 유발한 branch-only 실패는 확인되지 않았다.
+- 전체 `flutter test` red는 Phase 12-B 신규 회귀가 아니라 기존 baseline red로 분리한다. Phase 12-B 병합 판단은 좁은 관련 테스트 통과, 클라이언트 UI 테스트 성공, 금지선 유지 여부를 기준으로 한다.
 
 ## 2026-05-25 Phase 12-A minimum production-visible candidate selection audit
 
