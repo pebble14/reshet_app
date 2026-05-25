@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2026-05-25 Phase 12-B WordExplorerScreen 최소 read-only context strip
+
+- Phase 12-B를 full `ExplorerWorkspace` shell mount가 아니라 기존 `HomeScreen -> WordExplorerScreen` production 진입 경로 안의 제한적 read-only UX diff 구현 단계로 기록했다.
+- `lib/ui/word_explorer_screen.dart`의 detail pane 상단에 `중심 단어: ... · 선택: ...` 형식의 작은 context strip을 추가했다.
+- context strip은 기존 `WordExplorerScreen` 내부 상태인 `_centerWordId`, `_selectedWordId`만 읽으며 클릭, 편집, 이동 동작을 추가하지 않는다.
+- `ExplorerWorkspaceState` projection 또는 hidden visual probe 결과를 visible UI 입력으로 사용하지 않았다.
+- route wiring / route registration, `HomeScreen -> WordExplorerScreen` 진입 구조, `ExplorerWorkspace` shell mount, owner/controller/coordinator, Provider / Repository / Navigator / persistence authority, DTO/model/public API는 변경하지 않았다.
+- UI 기반 수동 테스트는 클라이언트 확인 대상으로 남긴다.
+
 ## 2026-05-25 Phase 12-A minimum production-visible candidate selection audit
 
 - Phase 12-A를 구현 단계가 아니라 `minimum production-visible candidate selection audit` 단계로 기록했다.

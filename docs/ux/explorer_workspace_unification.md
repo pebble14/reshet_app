@@ -4821,3 +4821,45 @@ Phase 12-A의 command 기반 검증은 문서 반영 확인과 path-level diff �
 | Git 상태 확인 | 변경 파일이 Phase 12-A 문서 범위로 제한되어야 함 | `lib/` 코드 변경 또는 승인되지 않은 파일 변경 | `git status --short --branch` | 작업 종료 보고에서 기록 |
 
 UI 기반 수동 테스트는 Phase 12-A에서 수행하지 않는다. Phase 12-A는 사용자-visible UX 변화를 만들지 않으므로 화면에서 확인할 새 동작도 만들지 않는다. UI 기반 수동 테스트는 production-visible UX 변경이 별도 feature 단계에서 승인된 뒤 필요하며, 그 시점에는 테스트 목적, 시작 화면, 조작 순서, 사람이 식별 가능한 테스트 데이터, 기대되는 화면 변화, 실패 시 확인할 증상, 테스트 완료 판단 기준을 포함해야 한다.
+
+### 17.66 Phase 12-B WordExplorerScreen 최소 read-only context strip
+
+Phase 12-B는 full `ExplorerWorkspace` shell mount가 아니라 기존 `HomeScreen -> WordExplorerScreen` production 진입 경로 안에서 수행하는 제한적 read-only UX diff 단계다. 이번 단계의 production-visible 변경은 `WordExplorerScreen` detail pane 상단에 작은 context strip을 추가하는 것으로 제한한다.
+
+Context strip은 기존 `WordExplorerScreen` 내부 상태만 읽는다. 표시 내용은 `중심 단어: <centerWordId> · 선택: <selectedWordId>` 또는 선택 단어가 없을 때 `중심 단어: <centerWordId> · 선택 없음`이다. 이 strip은 보조 표시이며 클릭, 편집, 이동, route push, repository read/write, persistence 동작을 추가하지 않는다.
+
+이번 구현에서 유지한 경계는 다음과 같다.
+
+- `HomeScreen -> WordExplorerScreen` 진입 구조 변경 없음
+- route wiring / route registration 변경 없음
+- `ExplorerWorkspace` shell mount 없음
+- owner/controller/coordinator migration 없음
+- Provider / Repository / Navigator / persistence authority migration 없음
+- DTO/model/public API addition 없음
+- `ExplorerWorkspaceState` projection visible UI 사용 없음
+- projection result persistence/history/source-of-truth usage 없음
+- route collapse 또는 canonical owner migration 없음
+
+#### 17.66.1 명령어 기반 수동 테스트 체크리스트
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 | 실제 결과 |
+| --- | --- | --- | --- | --- |
+| 전체 Flutter 테스트 | 기존 테스트와 Phase 12-B guardrail 테스트가 통과해야 함 | context strip 구현이 기존 테스트 또는 source-level guardrail과 충돌 | `flutter test` | 작업 종료 보고에서 기록 |
+| Phase 12-B 관련 source-level guardrail | context strip이 detail pane 내부에 있고 projection/route/shell/authority migration marker를 사용하지 않아야 함 | projection visible UI 사용, route 또는 repository hook 추가 | `flutter test test/ui/word_explorer_screen_phase12b_readonly_context_strip_test.dart` | 작업 종료 보고에서 기록 |
+| diff 파일 범위 확인 | 변경 파일이 승인된 `lib/ui/word_explorer_screen.dart`, 관련 test/docs로 제한되어야 함 | route, shell, public API, dependency 파일 변경 | `git diff --name-only` | 작업 종료 보고에서 기록 |
+| whitespace 검증 | diff에 whitespace 오류가 없어야 함 | trailing whitespace 또는 patch formatting 오류 | `git diff --check` | 작업 종료 보고에서 기록 |
+| projection visible UI 미사용 확인 | `_readOnlyWorkspaceProjection`, hidden probe, projection은 기존 assert-only 경계에 머물러야 함 | context strip이 projection을 visible UI 입력으로 사용 | `rg -n "ExplorerWorkspaceState|_debugValidateHiddenVisualProbe|explorerWorkspaceState|projection" lib/ui/word_explorer_screen.dart` | 작업 종료 보고에서 기록 |
+| route 진입 경로 확인 | `HomeScreen -> WordExplorerScreen(initialWordId: normalizedWordId)`가 유지되어야 함 | route registration 또는 진입 구조 변경 | `rg -n "Navigator\\.push|MaterialPageRoute|HomeScreen" lib/ui/word_explorer_screen.dart lib/ui/home_screen.dart` | 작업 종료 보고에서 기록 |
+| Git 상태 확인 | 커밋 전 변경 범위와 브랜치가 명확해야 함 | 승인되지 않은 파일 변경 또는 잘못된 브랜치 | `git status --short --branch` | 작업 종료 보고에서 기록 |
+
+#### 17.66.2 UI 기반 수동 테스트 체크리스트
+
+UI 기반 수동 테스트는 클라이언트 확인 대상으로 남긴다. 구현자는 아래 절차를 수행했다고 보고하지 않는다.
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 |
+| --- | --- | --- | --- |
+| 기존 홈 진입 경로에서 context strip 확인 | `WordExplorerScreen` 우측 detail pane 상단에 `중심 단어: ... · 선택: ...` 또는 `선택 없음`이 표시됨 | strip 미표시, 문구 깨짐, detail pane 레이아웃 겹침 | 앱 실행 후 기존 HomeScreen에서 사람이 식별 가능한 단어를 선택해 탐색 화면 진입 |
+| 그래프 노드 선택 반영 | 그래프에서 다른 노드를 선택하면 context strip의 선택 ID가 변경됨 | 선택 ID 미갱신, 기존 detail 내용 미표시 | `WordExplorerScreen`에서 그래프 노드를 클릭하고 우측 상단 strip과 detail 내용 확인 |
+| 선택 해제 상태 확인 | 선택이 없으면 `선택 없음`이 표시됨 | 빈 문자열 표시 또는 이전 선택 잔존 | 선택 해제 동작이 가능한 상태에서 선택을 해제하고 strip 확인 |
+| 기존 detail panel 유지 확인 | strip 아래 기존 detail 정보, loading, error, no-selection UI가 유지됨 | detail 내용이 사라지거나 스크롤 영역이 깨짐 | 탐색 진입 직후와 노드 선택 후 detail pane 확인 |
+| 기존 탐색 흐름 유지 확인 | 뒤로 가기와 기존 HomeScreen 복귀 흐름이 유지됨 | route stack 변화, 뒤로 가기 실패 | `WordExplorerScreen`에서 뒤로 가기 실행 후 HomeScreen 복귀 확인 |

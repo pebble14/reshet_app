@@ -301,8 +301,44 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
             ),
           ),
           const VerticalDivider(width: 1),
-          Expanded(flex: 2, child: _buildDetailPanel()),
+          Expanded(flex: 2, child: _buildDetailPane()),
         ],
+      ),
+    );
+  }
+
+  Widget _buildDetailPane() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _buildDetailPaneContextStrip(),
+        const Divider(height: 1),
+        Expanded(child: _buildDetailPanel()),
+      ],
+    );
+  }
+
+  Widget _buildDetailPaneContextStrip() {
+    final centerWordId = _centerWordId.trim();
+    final selectedWordId = _selectedWordId?.trim();
+    final selectedLabel = selectedWordId == null || selectedWordId.isEmpty
+        ? '선택 없음'
+        : '선택: $selectedWordId';
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        child: Text(
+          '중심 단어: $centerWordId · $selectedLabel',
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: Theme.of(context).textTheme.labelMedium?.copyWith(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ),
       ),
     );
   }
