@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## 2026-05-25 Phase 12-D baseline test red inventory
+
+- Phase 12-D를 테스트 수정 단계가 아니라 docs/audit 단계로 기록했다.
+- main baseline 기준 전체 `flutter test` 결과는 `+204 -6` red 상태로 확인했다.
+- 실패 6건을 inventory 형태로 정리했다. 대상은 `word_repository_read_source_policy_test.dart`, `word_repository_phase8h1_representative_query_contract_test.dart`, `explorer_workspace_phase4e_composition_boundary_test.dart`, `explorer_workspace_phase5a_layout_orchestration_test.dart`, `word_info_panel_test.dart`, `widget_test.dart`다.
+- 실패 유형은 오래된 Repository API 참조, duplicate candidate 기대값 불일치, ExplorerWorkspace source-level guardrail 불일치, 문서 guardrail 문구 불일치, 오래된 `WordInfoPanel` API 참조, `package:study` / `MyApp` import 경로 불일치로 분류했다.
+- 현재 inventory 기준으로 Phase 12-B/C 변경 파일 또는 신규 Phase 12-B 테스트가 직접 유발한 branch-only 실패는 확인되지 않았다. 확인된 실패는 기존 baseline test debt로 분류한다.
+- 즉시 작은 fix 브랜치로 검토 가능한 항목은 package/import 오류와 오래된 API 참조 계열이다. 다만 실제 수정은 Phase 12-D가 아니라 별도 `fix/` 또는 test stabilization 단계에서 수행한다.
+- 별도 test stabilization phase가 필요한 항목으로 duplicate candidate query 의미 확인, ExplorerWorkspace guardrail 재정의, 넓은 read source policy 테스트 현행화를 남겼다.
+- 다음 단계 선택지는 A: 작은 fix 브랜치로 즉시 정리, B: 별도 test stabilization phase로 분리, C: baseline red 수용 정책 문서화 후 UX 확장 제한으로 정리했다.
+- Phase 12-E 진입 조건으로 먼저 고칠 실패 선택, fix 범위 구분, production code 변경 사전 승인, ExplorerWorkspace UX 변경과 테스트 안정화 작업 분리, 수정 후 좁은 테스트와 전체 `flutter test` 기준 정의를 기록했다.
+- 이번 단계에서는 코드, 테스트, 플랫폼, dependency 파일을 수정하지 않았다.
+
 ## 2026-05-25 Phase 12-C 첫 production-visible UX diff 평가
 
 - Phase 12-C를 구현 단계가 아니라 docs/audit 단계로 기록했다.

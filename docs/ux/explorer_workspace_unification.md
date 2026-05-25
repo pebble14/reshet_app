@@ -4984,3 +4984,113 @@ Phase 12-C의 command 기반 확인은 문서 반영 확인과 path-level diff �
 | production UI diff 추가 없음 확인 | `lib`, 플랫폼 경로 변경이 없어야 함 | UI 또는 플랫폼 파일 변경 | `git diff --name-only -- lib android ios macos windows linux web` | 작업 종료 보고에서 기록 |
 | whitespace 검증 | diff에 whitespace 오류가 없어야 함 | trailing whitespace 또는 patch formatting 오류 | `git diff --check` | 작업 종료 보고에서 기록 |
 | Git 상태 확인 | 변경 파일과 브랜치 상태가 명확해야 함 | 승인 범위 밖 파일 변경 또는 잘못된 브랜치 | `git status --short --branch` | 작업 종료 보고에서 기록 |
+
+### 17.68 Phase 12-D baseline test red inventory
+
+Phase 12-D는 테스트 수정 단계가 아니라 docs/audit 단계다. 이번 단계의 목적은 main baseline의 `flutter test` red 상태를 inventory 형태로 정리하고, 각 실패가 ExplorerWorkspace Phase 12와 직접 관련 있는지, 기존 test debt인지, 오래된 API 또는 package/import 경로 문제인지, 즉시 작은 fix 브랜치로 정리할 수 있는지, 별도 test stabilization phase로 분리해야 하는지를 구분하는 것이다.
+
+Phase 12-D에서는 코드 수정, 테스트 파일 수정, UI 변경, production route 변경, `ExplorerWorkspace` shell mount, owner/controller/coordinator migration, Provider / Repository / Navigator / persistence authority migration, DTO/model/public API 추가, baseline 실패를 고치기 위한 임의 수정을 수행하지 않는다.
+
+#### 17.68.1 확인 기준과 실행 명령
+
+확인 기준은 `main` 최신 상태에서 생성한 `docs/explorer-workspace-phase12d-baseline-test-red-inventory` 브랜치다. 기준 HEAD는 `b1fc6dd570b8f6f2a9fd8c1476e20e6ae289f523`이며, Phase 12-D 문서 수정 전 working tree는 clean 상태였다.
+
+실행한 주요 명령은 다음과 같다.
+
+- `git checkout main`
+- `git pull --ff-only`
+- `git checkout -b docs/explorer-workspace-phase12d-baseline-test-red-inventory`
+- `flutter test --reporter expanded`
+- `flutter test --reporter compact`
+- `flutter test test/data/repositories/word_repository_phase8h1_representative_query_contract_test.dart --reporter expanded`
+- `flutter test test/data/repositories/word_repository_read_source_policy_test.dart --reporter expanded`
+- `flutter test test/ui/explorer_workspace_phase4e_composition_boundary_test.dart --reporter expanded`
+- `flutter test test/ui/explorer_workspace_phase5a_layout_orchestration_test.dart --reporter expanded`
+- `flutter test test/ui/word_info_panel_test.dart --reporter expanded`
+- `flutter test test/widget_test.dart --reporter expanded`
+- `rg -n "WordInfoPanel\\(|wordMap|package:study|MyApp|Phase 5-A|guardrail|representative|read_source|Repository" test docs lib`
+- `rg -n "class WordInfoPanel|WordInfoPanel\\(" lib test`
+- `rg -n "class MyApp|package:study|package:reshet" lib test`
+
+#### 17.68.2 전체 flutter test baseline red 요약
+
+전체 `flutter test` 결과는 `+204 -6`으로 red 상태다. JSON reporter 기준으로 실패 event를 다시 추출했을 때도 실패 6건은 동일하게 확인되었다.
+
+현재 inventory 기준으로 Phase 12-B/C 변경 파일 또는 신규 Phase 12-B 테스트가 직접 유발한 branch-only 실패는 확인되지 않았다. 확인된 실패는 기존 baseline test debt로 분류한다.
+
+#### 17.68.3 실패 목록 inventory
+
+| 실패 테스트 파일 | 실패 테스트명 또는 그룹명 | 실패 유형 | 원인 요약 | Phase 12-B/C 직접 관련 여부 | 즉시 fix 가능 여부 | 별도 test stabilization 필요 여부 | 권장 브랜치 성격 | 우선순위 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `test/data/repositories/word_repository_read_source_policy_test.dart` | loading 단계 | 컴파일 실패 / 오래된 API 참조 | 테스트가 `WordRepository.getWordMapByIdForSplitViewSingleWord`, `getWordDetailMapByIdForReadSourcePhase2Only`를 호출하지만 현재 `lib/data/repositories/word_repository.dart`에는 해당 public method가 없다. 현재 확인된 대응 API 후보는 `getWordDetailLikeDisplayItemByIdForSplitView`, `getWordMapByIdForExplorerSingleWord` 계열이다. | 직접 관련 없음 | 가능. 테스트를 현행 public contract에 맞추거나 compatibility API 복원 여부를 별도 판단해야 한다. | 필요. read source policy 테스트 범위가 넓어 단순 rename인지 contract 재정의인지 먼저 분리해야 한다. | `fix/` 또는 별도 test stabilization | 높음 |
+| `test/data/repositories/word_repository_phase8h1_representative_query_contract_test.dart` | `duplicate candidates use representative spelling for non-strong matches` | 기대값 불일치 | 기대값은 후보 1건이지만 실제 반환은 `DuplicateCandidateDisplayItem` 3건이다. non-strong duplicate query의 현행 검색 범위 또는 테스트 fixture 기대값이 어긋난 상태다. | 직접 관련 없음 | 제한적으로 가능. 원인이 테스트 기대값 노후화인지 repository query regression인지 먼저 좁은 검증이 필요하다. | 필요. 데이터 의미와 duplicate policy 영향이 있어 stabilization phase에서 다루는 편이 안전하다. | 별도 test stabilization 또는 `fix/` | 높음 |
+| `test/ui/explorer_workspace_phase4e_composition_boundary_test.dart` | `production import tree does not reference preview composition` | 기대값 불일치 / source-level guardrail 불일치 | 테스트는 production import tree가 `explorer_workspace/`를 참조하지 않아야 한다고 기대하지만, 현재 `lib/ui/word_explorer_screen.dart`는 `explorer_workspace_contract.dart`, `word_explorer_workspace_projection_adapter.dart`를 import한다. 확인된 현재 소스 기준으로 기존 guardrail과 read-only projection boundary 흐름이 충돌한다. | Phase 12-B/C 직접 관련 없음. 다만 ExplorerWorkspace 장기 boundary와 관련 있는 기존 guardrail debt다. | 가능. guardrail 문구와 금지 범위를 현행 projection boundary에 맞게 재정의해야 한다. | 필요. preview composition 금지와 read-only projection helper 허용 범위를 분리해야 한다. | 별도 test stabilization 또는 `docs/` + test fix | 중간 |
+| `test/ui/explorer_workspace_phase5a_layout_orchestration_test.dart` | `documents record preview-only layout orchestration boundary` | 문서 guardrail 문구 불일치 | 테스트가 `docs/ux/explorer_workspace_unification.md`에서 `layout coordination만 수행한다` 문구를 찾지만 현재 문서의 Phase 5-A 섹션에는 해당 정확 문구가 없다. | 직접 관련 없음 | 가능. 문서 문구를 복원할지, 테스트 문구를 현행 문서 표현에 맞출지 선택하면 된다. | 제한적으로 필요. 문서 active authority와 historical guardrail test의 문구 고정 정책을 정해야 한다. | `docs/` 또는 별도 test stabilization | 중간 |
+| `test/ui/word_info_panel_test.dart` | loading 단계 | 컴파일 실패 / 오래된 API 참조 | 테스트가 제거되었거나 이동된 `buildWordRepresentativeSpelling` helper와 과거 `WordInfoPanel(wordMap:)` 생성자를 참조한다. 현재 production 사용처는 `WordInfoPanel(displayItem: ...)` contract를 사용한다. | 직접 관련 없음 | 가능. 테스트를 `WordDetailLikeDisplayItem` 기반 contract로 갱신할 수 있다. | 필요. raw Map carrier 제거/전환 boundary와 UI panel contract를 함께 확인해야 한다. | `fix/` 또는 별도 test stabilization | 높음 |
+| `test/widget_test.dart` | loading 단계 | import/package 경로 오류 | 테스트가 `package:study/main.dart`와 `MyApp`을 참조하지만 `pubspec.yaml`의 package name은 `reshet_app`이고 앱 class는 `ReshetApp`이다. | 직접 관련 없음 | 가능. import와 root widget class를 현행 이름으로 갱신하는 작은 fix 후보다. | 불필요할 수 있음. 단, 기본 widget smoke test의 기대 UI는 별도 확인이 필요하다. | `fix/` | 높음 |
+
+#### 17.68.4 실패 유형별 분류
+
+| 실패 유형 | 해당 파일 | 분류 |
+| --- | --- | --- |
+| 컴파일 실패 / 오래된 API 참조 | `word_repository_read_source_policy_test.dart`, `word_info_panel_test.dart` | 기존 테스트가 삭제되었거나 변경된 public contract를 참조한다. |
+| import/package 경로 오류 | `widget_test.dart` | package name과 root widget class가 현행 프로젝트와 맞지 않는다. |
+| 기대값 불일치 | `word_repository_phase8h1_representative_query_contract_test.dart` | duplicate candidate query의 기대값과 실제 반환 결과가 다르다. |
+| source-level guardrail 불일치 | `explorer_workspace_phase4e_composition_boundary_test.dart` | 과거 preview composition guardrail과 이후 read-only projection boundary 흐름이 충돌한다. |
+| 문서 guardrail 문구 불일치 | `explorer_workspace_phase5a_layout_orchestration_test.dart` | 테스트가 특정 문구를 고정해 확인하지만 현재 문서 문구와 일치하지 않는다. |
+
+#### 17.68.5 즉시 fix 가능 항목과 stabilization 분리
+
+즉시 작은 fix 브랜치로 우선 검토할 수 있는 항목은 다음과 같다.
+
+- `test/widget_test.dart`: `package:study`와 `MyApp` 참조를 현행 `reshet_app` / `ReshetApp` 기준으로 맞추는 작은 import/root widget fix 후보
+- `test/ui/word_info_panel_test.dart`: `WordInfoPanel(displayItem: ...)` contract에 맞춘 테스트 갱신 후보
+- `test/data/repositories/word_repository_read_source_policy_test.dart`: 삭제/변경된 Repository API 참조를 현행 read boundary contract로 재정렬하는 후보
+- `test/ui/explorer_workspace_phase5a_layout_orchestration_test.dart`: 문서 문구 복원 또는 테스트 기대 문구 갱신 후보
+
+별도 test stabilization phase로 분리하는 편이 안전한 항목은 다음과 같다.
+
+- `test/data/repositories/word_repository_phase8h1_representative_query_contract_test.dart`: duplicate candidate 의미와 query policy를 확인해야 하므로 단순 기대값 변경으로 처리하지 않는다.
+- `test/ui/explorer_workspace_phase4e_composition_boundary_test.dart`: preview composition 금지와 read-only projection helper 허용 범위를 다시 나눠야 하므로 ExplorerWorkspace guardrail 재정의가 필요하다.
+- `test/data/repositories/word_repository_read_source_policy_test.dart`: API 참조 fix 자체는 작을 수 있으나 read source policy test 전체가 넓어 별도 stabilization에서 다루는 편이 안전할 수 있다.
+
+#### 17.68.6 다음 단계 선택지
+
+| 선택지 | 내용 | 조건 |
+| --- | --- | --- |
+| A | 작은 fix 브랜치로 즉시 정리 | package/import 오류와 오래된 API 참조 계열부터 좁게 정리한다. production code 변경 없이 테스트 현행화로 끝나는 범위를 우선 선택한다. |
+| B | 별도 test stabilization phase로 분리 | duplicate query 의미, ExplorerWorkspace source-level guardrail, read source policy처럼 contract 재해석이 필요한 항목을 묶어 안정화한다. |
+| C | baseline red 수용 정책 문서화 후 UX 확장 제한 | 당장 red를 고치지 않는 대신, 추가 production-visible UX 확장은 baseline red 수용 근거와 좁은 관련 테스트 통과 조건이 명확할 때만 허용한다. |
+
+권장 판단은 다음과 같다.
+
+```text
+추가 production-visible UX 확장 전,
+package/import 오류와 오래된 API 참조 계열을 우선 정리하는 것이 바람직하다.
+다만 실제 수정은 Phase 12-D가 아니라 별도 fix 또는 test stabilization 단계에서 수행한다.
+```
+
+#### 17.68.7 Phase 12-E 또는 다음 Phase 진입 조건
+
+Phase 12-E 또는 다음 Phase로 진입하려면 아래 조건을 먼저 충족해야 한다.
+
+- 어떤 실패를 먼저 고칠지 선택되어야 한다.
+- fix 범위가 문서, 테스트, 코드 중 어디인지 구분되어야 한다.
+- production code 변경 여부가 사전에 승인되어야 한다.
+- ExplorerWorkspace UX 변경과 테스트 안정화 작업이 섞이지 않아야 한다.
+- 수정 후 실행할 좁은 테스트와 전체 `flutter test` 기준이 정의되어야 한다.
+- package/import 오류와 오래된 API 참조 계열을 작은 fix 브랜치에서 처리할지, 별도 test stabilization phase로 분리할지 결정되어야 한다.
+- duplicate query 의미 변경 가능성이 있는 항목은 데이터 의미와 repository contract 검증 기준이 먼저 정의되어야 한다.
+- source-level guardrail 항목은 active authority, reference/context, migration/history 문서 성격을 구분한 뒤 수정되어야 한다.
+
+#### 17.68.8 Phase 12-D 명령어 기반 확인 체크리스트
+
+Phase 12-D의 command 기반 확인은 문서 반영 확인과 path-level diff 확인으로 제한한다. 목표는 이번 docs/audit 변경이 코드, 테스트, 플랫폼, dependency, production UI를 변경하지 않았음을 확인하는 것이다.
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 | 실제 결과 |
+| --- | --- | --- | --- | --- |
+| Phase 12-D 기록 확인 | Phase 12-D, baseline test red, `flutter test`, test debt, inventory 기록이 두 문서에 있어야 함 | Phase 12-D 항목 누락 또는 inventory 누락 | `rg -n "Phase 12-D|baseline test red|flutter test|test debt|inventory" docs/ux/explorer_workspace_unification.md docs/logs/CHANGELOG.md` | 작업 종료 보고에서 기록 |
+| 코드/테스트/플랫폼/dependency 변경 없음 확인 | `lib`, `test`, 플랫폼 경로, `pubspec.yaml`, `pubspec.lock` 변경이 없어야 함 | 문서 외 파일 변경 | `git diff --name-only -- lib test android ios macos windows linux web pubspec.yaml pubspec.lock` | 작업 종료 보고에서 기록 |
+| production UI diff 추가 없음 확인 | `lib`, 플랫폼 경로 변경이 없어야 함 | UI 또는 플랫폼 파일 변경 | `git diff --name-only -- lib android ios macos windows linux web` | 작업 종료 보고에서 기록 |
+| whitespace 검증 | diff에 whitespace 오류가 없어야 함 | trailing whitespace 또는 patch formatting 오류 | `git diff --check` | 작업 종료 보고에서 기록 |
+| Git 상태 확인 | 변경 파일과 브랜치 상태가 명확해야 함 | 승인 범위 밖 파일 변경 또는 잘못된 브랜치 | `git status --short --branch` | 작업 종료 보고에서 기록 |
