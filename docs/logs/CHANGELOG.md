@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## 2026-05-25 Phase 12-F remaining baseline red review
+
+- Phase 12-F를 수정 작업이 아니라 docs/audit 단계로 기록했다. 이번 단계의 목적은 Phase 12-E 이후 `main` 기준으로 남은 baseline red를 다시 확인하고 다음 fix 후보를 선정하는 것이다.
+- Phase 12-E 이후 main 기준 전체 flutter test 결과: +206 -4
+- `flutter test --reporter compact`와 `flutter test --reporter expanded` 모두 `+206 -4`로 종료되었고, 현재 확인된 새 실패는 없다.
+- Phase 12-D inventory 대비 제거/통과 항목은 `widget_test.dart`와 `explorer_workspace_phase5a_layout_orchestration_test.dart`로 구분했다. `widget_test.dart`는 Phase 12-E에서 제거되었고, `explorer_workspace_phase5a_layout_orchestration_test.dart`는 개별 실행에서 `+8: All tests passed!`로 확인했다.
+- 남은 baseline red 항목은 `word_repository_read_source_policy_test.dart`, `word_repository_phase8h1_representative_query_contract_test.dart`, `explorer_workspace_phase4e_composition_boundary_test.dart`, `word_info_panel_test.dart`다.
+- `word_repository_read_source_policy_test.dart`는 오래된 Repository API 참조, `word_repository_phase8h1_representative_query_contract_test.dart`는 duplicate candidate 기대값 불일치, `explorer_workspace_phase4e_composition_boundary_test.dart`는 source-level guardrail 불일치, `word_info_panel_test.dart`는 오래된 `WordInfoPanel` API 참조로 재분류했다.
+- 다음 fix 후보 1순위는 `test/ui/word_info_panel_test.dart`로 기록했다. 실패가 loading 단계 컴파일 실패로 명확하고, 현행 `WordDetailLikeDisplayItem` 기반 `displayItem` contract에 맞춘 좁은 테스트 현행화 후보이기 때문이다.
+- Phase 12-F는 다음 fix 후보를 선정하지만, Phase 12-G가 반드시 fix 단계로 확정된 것은 아니다. 현재 개발 속도와 구조 부담을 고려하여, 다음 단계는 `word_info_panel_test` fix 또는 incremental migration vs rebuild feasibility audit 중 하나로 별도 판단한다.
+- 추가 production-visible UX diff는 baseline red 정리 또는 별도 수용 정책이 더 명확해질 때까지 계속 보류한다.
+- 이번 단계에서는 코드, 테스트, 플랫폼, dependency 파일을 수정하지 않았다.
+
 ## 2026-05-25 Phase 12-E widget_test package/import baseline fix
 
 - Phase 12-E의 목적을 Phase 12-D baseline red inventory 6건 중 `widget_test.dart` package/import 오류 1건 정리로 한정했다.
