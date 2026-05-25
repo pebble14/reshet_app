@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2026-05-25 Phase 11-C production-visible candidate boundary review
+
+- Phase 11-C를 production-visible feature 구현 단계가 아니라, Phase 11-A readiness review와 Phase 11-B shell mount precondition audit 이후 production-visible 후보 검토 시 넘지 말아야 할 경계와 후보 조건을 정리하는 boundary review 단계로 기록했다.
+- production-visible candidate 최소 조건을 candidate 위치, 책임, Level 2 / Level 3 경계, production-visible 전환 가능성, shell mount 관계, route와 entry 구조, 테스트 기준으로 분리했다.
+- Phase 10-D `candidate representation reader`는 `_debugValidateHiddenVisualProbe(...)` 내부 helper-local read-only 구조이며 public API / DTO / model / route contract / shell contract로 승격하지 않는다고 재확인했다.
+- Phase 10 / 11-A / 11-B 결과가 production visual consumer exposure, runtime/UI integration, `ExplorerWorkspace` shell mount, route wiring / route registration 변경, `HomeScreen -> WordExplorerScreen` 진입 구조 변경, owner/controller/coordinator migration, Provider / Repository / Navigator / persistence authority migration, Level 3 production-visible consumer 승인이 아니라고 명시했다.
+- production UI diff, `ExplorerWorkspace` shell mount, route wiring / route registration change, `HomeScreen -> WordExplorerScreen` 진입 구조 변경, Provider / Repository / Navigator / persistence authority migration, DTO/model/public API addition, projection result persistence/history/source-of-truth usage, runtime/UI integration, production visual consumer exposure, route collapse, canonical owner migration, owner/controller/coordinator migration, Level 3 production visible consumer는 계속 `not approved`로 유지한다.
+- UI 기반 수동 테스트는 Phase 11-C에서 수행하지 않으며, production-visible UX 변경이나 shell mount 구현이 별도 feature 단계에서 승인된 뒤 테스트 목적, 시작 화면, 조작 순서, 사람이 식별 가능한 테스트 데이터, 기대 화면 변화, 실패 증상, 완료 판단 기준을 포함해 수행해야 한다고 기록했다.
+
 ## 2026-05-25 Phase 11-B ExplorerWorkspace shell mount precondition audit
 
 - Phase 11-B를 `ExplorerWorkspace` shell mount 구현 단계가 아니라 shell mount 검토 전 precondition, 위험 요소, 금지선, 검증 기준을 문서화하는 audit 단계로 기록했다.
