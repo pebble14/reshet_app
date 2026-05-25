@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## 2026-05-25 Phase 12-E widget_test package/import baseline fix
+
+- Phase 12-E의 목적을 Phase 12-D baseline red inventory 6건 중 `widget_test.dart` package/import 오류 1건 정리로 한정했다.
+- `test/widget_test.dart`에서 오래된 `package:study/main.dart` import와 존재하지 않는 `MyApp` 참조를 제거하고, 현행 `package:reshet_app/main.dart` / `ReshetApp` 기준의 root widget smoke test로 정리했다.
+- 기존 counter app 템플릿 assertion은 제거하고, 테스트 목적을 `ReshetApp` root widget이 첫 frame에서 예외 없이 빌드되는지 확인하는 수준으로 제한했다.
+- 이번 단계는 UX 변경이 아니며 production code는 수정하지 않았다.
+- ExplorerWorkspace UX 확장, `WordExplorerScreen` context strip 조정, route/shell/authority/API 변경은 수행하지 않았다.
+- `flutter test test/widget_test.dart --reporter expanded`는 통과했고, 전체 `flutter test --reporter compact`는 기존 Phase 12-D inventory 기준 `+204 -6`에서 현재 `+206 -4`로 바뀌었다.
+- 남은 baseline red 항목은 `word_repository_read_source_policy_test.dart`, `word_repository_phase8h1_representative_query_contract_test.dart`, `explorer_workspace_phase4e_composition_boundary_test.dart`, `word_info_panel_test.dart`이며 별도 phase 또는 test stabilization 단계로 유지한다.
+- Phase 12-D inventory에 있던 `explorer_workspace_phase5a_layout_orchestration_test.dart`는 Phase 12-E 개별 확인에서 통과했지만, 이번 단계의 의도적 수정 대상은 아니다.
+- 추가 UX diff는 계속 보류한다.
+
 ## 2026-05-25 Phase 12-D baseline test red inventory
 
 - Phase 12-D를 테스트 수정 단계가 아니라 docs/audit 단계로 기록했다.

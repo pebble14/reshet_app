@@ -5094,3 +5094,38 @@ Phase 12-D의 command 기반 확인은 문서 반영 확인과 path-level diff �
 | production UI diff 추가 없음 확인 | `lib`, 플랫폼 경로 변경이 없어야 함 | UI 또는 플랫폼 파일 변경 | `git diff --name-only -- lib android ios macos windows linux web` | 작업 종료 보고에서 기록 |
 | whitespace 검증 | diff에 whitespace 오류가 없어야 함 | trailing whitespace 또는 patch formatting 오류 | `git diff --check` | 작업 종료 보고에서 기록 |
 | Git 상태 확인 | 변경 파일과 브랜치 상태가 명확해야 함 | 승인 범위 밖 파일 변경 또는 잘못된 브랜치 | `git status --short --branch` | 작업 종료 보고에서 기록 |
+
+### 17.69 Phase 12-E widget_test package/import baseline fix
+
+Phase 12-E의 목적은 Phase 12-D baseline red inventory 6건 중 가장 작고 명확한 `test/widget_test.dart`의 package/import 오류 1건을 정리하는 것이다.
+
+이번 단계는 UX 변경 단계가 아니다. production code는 수정하지 않으며, `ExplorerWorkspace` UX 확장, `WordExplorerScreen` context strip 조정, route/shell/authority/API 변경도 수행하지 않는다. 추가 UX diff는 계속 보류한다.
+
+#### 17.69.1 수정 범위
+
+- `test/widget_test.dart`의 `package:study/main.dart` import를 현행 package name인 `package:reshet_app/main.dart`로 교체했다.
+- 존재하지 않는 `MyApp` 참조를 제거하고 실제 app root인 `ReshetApp` 기준의 최소 smoke test로 바꿨다.
+- 기본 counter app 템플릿 assertion은 제거했다.
+- 테스트 목적은 `ReshetApp` root widget이 첫 frame에서 예외 없이 빌드되는지 확인하는 수준으로 제한했다.
+- `lib/` production code, ExplorerWorkspace UX, route/shell/authority/API, DTO/model/public API는 변경하지 않았다.
+
+#### 17.69.2 명령어 기반 확인 결과
+
+- `flutter test test/widget_test.dart --reporter expanded`는 `+1` 통과로 확인했다.
+- `flutter test test/ui/word_explorer_screen_phase12b_readonly_context_strip_test.dart`는 `+4` 통과로 유지됨을 확인했다.
+- 전체 `flutter test --reporter compact`는 기존 Phase 12-D inventory 기준 `+204 -6`에서 현재 `+206 -4`로 바뀌었다.
+- `widget_test.dart` 실패는 제거되었다.
+- 이번 branch에서 새 실패는 확인되지 않았다.
+
+#### 17.69.3 남은 baseline red 처리
+
+Phase 12-E는 Phase 12-D inventory 중 `widget_test.dart` 1건만 의도적으로 정리한다. 나머지 baseline red 항목은 별도 phase 또는 test stabilization 단계로 유지한다.
+
+현재 전체 테스트에서 남은 red 항목은 다음과 같다.
+
+- `test/data/repositories/word_repository_read_source_policy_test.dart`
+- `test/data/repositories/word_repository_phase8h1_representative_query_contract_test.dart`
+- `test/ui/explorer_workspace_phase4e_composition_boundary_test.dart`
+- `test/ui/word_info_panel_test.dart`
+
+`test/ui/explorer_workspace_phase5a_layout_orchestration_test.dart`는 Phase 12-E 개별 확인에서 통과했다. 이 항목은 이번 단계의 의도적 수정 대상이 아니므로, Phase 12-D inventory의 나머지 test stabilization 후보와 별도로 재분류가 필요하다.
