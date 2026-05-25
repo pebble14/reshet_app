@@ -4885,3 +4885,102 @@ main baseline: +200 -6 실패
 실패 계열은 main baseline과 동일 또는 동종이다. Phase 12-B 변경 파일인 `word_explorer_screen.dart` 또는 신규 Phase 12-B 테스트가 유발한 branch-only 실패는 확인되지 않았다.
 
 따라서 전체 `flutter test` red는 Phase 12-B 신규 회귀가 아니라 기존 baseline red로 분리한다. Phase 12-B 병합 판단은 좁은 관련 테스트 통과, 클라이언트 UI 테스트 성공, 금지선 유지 여부를 기준으로 한다.
+
+### 17.67 Phase 12-C 첫 production-visible UX diff 평가
+
+Phase 12-C는 구현 단계가 아니라 docs/audit 단계다. 이번 단계의 목적은 Phase 12-B에서 처음 도입한 production-visible UX diff인 `WordExplorerScreen` detail pane 상단 context strip을 평가하고, 추가 UX 확장 또는 baseline 정리로 넘어가기 전 판단 기준을 문서화하는 것이다.
+
+Phase 12-C는 코드 수정, UI 변경, 테스트 파일 수정, 플랫폼 파일 수정, dependency 변경을 수행하지 않는다. 또한 `ExplorerWorkspace` shell mount, route wiring / route registration 변경, `HomeScreen -> WordExplorerScreen` 진입 구조 변경, owner/controller/coordinator migration, Provider / Repository / Navigator / persistence authority migration, DTO/model/public API 추가, projection result persistence/history/source-of-truth usage, `ExplorerWorkspaceState` projection visible UI 사용, route collapse, canonical owner migration, Level 3 production-visible consumer 승격을 승인하지 않는다.
+
+#### 17.67.1 Phase 12-B context strip 평가
+
+Phase 12-B context strip은 첫 production-visible UX diff로 성공한 것으로 평가한다. 성공 판단의 근거는 변경 범위가 작고 rollback 가능하며, 기존 `HomeScreen -> WordExplorerScreen` 진입 경로를 유지했고, `ExplorerWorkspace` shell mount와 route 변경 없이 기존 `WordExplorerScreen` 내부 상태만 read-only로 표시했다는 점이다.
+
+다만 이 평가는 추가 UX 구현 승인으로 이어지지 않는다. Phase 12-C의 판단은 Phase 12-B 결과를 평가하는 docs/audit 기록이며, 추가 production-visible UX diff는 별도 범위 정의, 테스트 기준, 금지선 재확인, 사용자 승인을 거쳐야 한다.
+
+Context strip의 장점은 다음과 같다.
+
+- 작고 rollback 가능한 production-visible UX diff였다.
+- 기존 `HomeScreen -> WordExplorerScreen` 진입 경로를 유지했다.
+- `ExplorerWorkspace` shell mount가 없었다.
+- route wiring / route registration 변경이 없었다.
+- Provider / Repository / Navigator / persistence authority migration이 없었다.
+- DTO/model/public API 추가가 없었다.
+- `ExplorerWorkspaceState` projection visible UI 사용이 없었다.
+- projection result persistence/history/source-of-truth usage가 없었다.
+
+Context strip의 한계는 다음과 같다.
+
+- raw ID 표시는 현재 최소 read-only UX diff로는 허용 가능하지만, 장기 사용자 UX로 유지하기에는 사용자 친화성이 낮을 수 있다.
+- 장기 UX 표현으로는 lemma, spelling 또는 사람이 읽을 수 있는 대표 표시가 필요할 수 있다.
+- 사람이 읽을 수 있는 표시로 조정하려면 추가 Repository 조회, 표시 정책, loading/error/no-selection 상태, 테스트 기준을 별도로 검토해야 한다.
+- raw ID 표시를 조정하는 작업은 단순 문구 변경이 아니라 data read boundary와 표시 authority에 영향을 줄 수 있으므로 별도 승인 전 구현하지 않는다.
+
+#### 17.67.2 context strip 유지/조정/제거 판단
+
+Phase 12-C 기준으로 context strip은 유지한다. 제거할 직접 근거는 없으며, Phase 12-B 클라이언트 UI 테스트 성공은 참조 기록으로 남긴다.
+
+다만 raw ID 표시는 장기 사용자 UX로 확정하지 않는다. 다음 UX 단계에서는 context strip을 그대로 유지할지, lemma/spelling 기반 표시로 조정할지, 또는 다른 detail pane context 표현으로 대체할지 먼저 판단해야 한다.
+
+#### 17.67.3 다음 단계 선택지
+
+| 선택지 | 내용 | 조건 |
+| --- | --- | --- |
+| A | context strip 유지 후 다음 제한 UX diff 검토 | baseline red 수용 정책 또는 정리 계획이 명확하고, 추가 UX diff 범위가 기존 진입 경로 안의 작은 read-only 변경으로 제한될 때 |
+| B | context strip 표시 방식 조정 검토 | raw ID 대신 사람이 읽을 수 있는 표시가 필요하다고 판단하고, Repository 조회 또는 표시 정책 영향 범위를 별도로 정의할 때 |
+| C | 추가 UX diff 전에 baseline `flutter test` red 정리 | 전체 테스트 red가 후속 production-visible UX 판단을 흐리므로 먼저 baseline 실패 원인과 수용 정책을 정리할 때 |
+
+권장 판단은 다음과 같다.
+
+```text
+Phase 12-B는 성공으로 본다.
+다만 추가 production-visible UX 확장 전,
+baseline flutter test red 정리를 우선 검토한다.
+```
+
+#### 17.67.4 Phase 12-D 또는 다음 Phase 진입 조건
+
+Phase 12-D 또는 다음 Phase로 진입하려면 아래 조건을 먼저 충족해야 한다.
+
+- baseline `flutter test` red 정리 여부 또는 수용 정책을 명시해야 한다.
+- context strip 유지/조정/제거 여부를 명시해야 한다.
+- 추가 UX diff의 범위를 문서로 명시해야 한다.
+- 기존 `HomeScreen -> WordExplorerScreen` 진입 경로를 유지해야 한다.
+- `ExplorerWorkspace` shell mount가 없어야 한다.
+- route wiring / route registration 변경이 없어야 한다.
+- owner/controller/coordinator migration이 없어야 한다.
+- Provider / Repository / Navigator / persistence authority migration이 없어야 한다.
+- DTO/model/public API 추가가 없어야 한다.
+- `ExplorerWorkspaceState` projection visible UI 사용이 없어야 한다.
+- projection result persistence/history/source-of-truth usage가 없어야 한다.
+- command 기반 테스트 기준과 UI 기반 수동 테스트 기준을 분리해 제시해야 한다.
+
+위 조건이 충족되지 않으면 추가 UX 구현 브랜치로 넘어가지 않고 docs/audit를 계속해야 한다. 특히 baseline test red의 정리 여부 또는 수용 정책이 불명확하거나, context strip 표시 방식 조정이 Repository/Data Source 흐름을 요구하거나, shell mount / route 변경 / authority migration 압력이 생기는 경우에는 Phase 12-C 이후에도 docs/audit를 이어간다.
+
+#### 17.67.5 production-visible UX diff 테스트 기준
+
+production-visible UX diff를 계속 확장할 때는 아래 기준을 유지한다.
+
+- 명령어 기반 테스트는 구현자가 수행하고 실제 실행 결과를 기록한다.
+- UI 기반 수동 테스트는 클라이언트 확인 대상으로 남기며, 구현자는 수행하지 않은 UI 테스트를 수행했다고 보고하지 않는다.
+- UI 기반 수동 테스트 안내에는 테스트 목적, 시작 화면, 조작 순서, 사람이 식별 가능한 테스트 데이터, 기대되는 화면 변화, 실패 시 확인할 증상, 테스트 완료 판단 기준을 포함한다.
+- 전체 `flutter test`가 red인 경우 신규 회귀인지 baseline red인지 분리 판단해야 한다.
+- baseline red를 수용하는 경우에는 수용 근거와 후속 정리 조건을 문서화해야 한다.
+
+#### 17.67.6 Phase 12 전체 종료 전 해결 필요 항목
+
+Phase 12 전체 종료 전에는 baseline `flutter test` red의 정리 또는 수용 정책, context strip의 장기 표시 방향, 추가 production-visible UX diff의 범위, shell mount / route 변경 / authority migration 금지선 유지 여부를 명확히 해야 한다.
+
+Phase 12-C 자체는 UI 테스트를 수행하지 않는다. Phase 12-B에서 기존 `HomeScreen -> WordExplorerScreen` 진입 후 detail pane 상단 context strip 표시와 선택 ID 변경 흐름을 클라이언트가 확인했다는 점은 참조 기록으로만 사용한다.
+
+#### 17.67.7 명령어 기반 확인 체크리스트
+
+Phase 12-C의 command 기반 확인은 문서 반영 확인과 path-level diff 확인으로 제한한다. 목표는 이번 docs/audit 변경이 코드, 테스트, 플랫폼, dependency, production UI를 변경하지 않았음을 확인하는 것이다.
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 | 실제 결과 |
+| --- | --- | --- | --- | --- |
+| Phase 12-C 기록 확인 | Phase 12-C 목적, context strip 평가, baseline red 판단이 두 문서에 기록되어야 함 | Phase 12-C 항목 누락 또는 Phase 12-B 평가 누락 | `rg -n "Phase 12-B|context strip|baseline|flutter test|Phase 12-C" docs/ux/explorer_workspace_unification.md docs/logs/CHANGELOG.md` | 작업 종료 보고에서 기록 |
+| 코드/테스트/플랫폼/dependency 변경 없음 확인 | `lib`, `test`, 플랫폼 경로, `pubspec.yaml`, `pubspec.lock` 변경이 없어야 함 | 문서 외 파일 변경 | `git diff --name-only -- lib test android ios macos windows linux web pubspec.yaml pubspec.lock` | 작업 종료 보고에서 기록 |
+| production UI diff 추가 없음 확인 | `lib`, 플랫폼 경로 변경이 없어야 함 | UI 또는 플랫폼 파일 변경 | `git diff --name-only -- lib android ios macos windows linux web` | 작업 종료 보고에서 기록 |
+| whitespace 검증 | diff에 whitespace 오류가 없어야 함 | trailing whitespace 또는 patch formatting 오류 | `git diff --check` | 작업 종료 보고에서 기록 |
+| Git 상태 확인 | 변경 파일과 브랜치 상태가 명확해야 함 | 승인 범위 밖 파일 변경 또는 잘못된 브랜치 | `git status --short --branch` | 작업 종료 보고에서 기록 |

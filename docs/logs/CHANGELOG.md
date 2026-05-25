@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## 2026-05-25 Phase 12-C 첫 production-visible UX diff 평가
+
+- Phase 12-C를 구현 단계가 아니라 docs/audit 단계로 기록했다.
+- Phase 12-B context strip은 첫 production-visible UX diff로 성공한 것으로 평가했다. 변경 범위가 작고 rollback 가능하며, 기존 `HomeScreen -> WordExplorerScreen` 진입 경로를 유지했고, `ExplorerWorkspace` shell mount, route 변경, authority migration, projection visible UI 사용이 없었다.
+- 이 평가는 추가 UX 구현 승인으로 이어지지 않으며, 추가 production-visible UX diff는 별도 범위 정의, 테스트 기준, 금지선 재확인, 사용자 승인을 거쳐야 한다고 명시했다.
+- raw ID 표시는 현재 최소 read-only UX diff로는 허용 가능하지만, 장기 사용자 UX로는 lemma/spelling 등 사람이 읽을 수 있는 표시로 조정 검토가 필요할 수 있다고 기록했다.
+- 다음 단계 선택지를 A: context strip 유지 후 다음 제한 UX diff 검토, B: context strip 표시 방식 조정 검토, C: 추가 UX diff 전 baseline `flutter test` red 정리로 정리했다.
+- 권장 판단은 Phase 12-B는 성공으로 보되, 추가 production-visible UX 확장 전 baseline `flutter test` red 정리를 우선 검토하는 것으로 기록했다.
+- Phase 12-D 또는 다음 Phase 진입 조건으로 baseline test red 정리 여부 또는 수용 정책, context strip 유지/조정 여부, 추가 UX diff 범위, 기존 진입 경로 유지, shell mount 없음, route 변경 없음, owner/controller/coordinator migration 없음, Provider / Repository / Navigator / persistence authority migration 없음, DTO/model/public API 추가 없음, `ExplorerWorkspaceState` projection visible UI 사용 없음 등을 명시했다.
+- Phase 12-C 자체는 UI 테스트를 수행하지 않으며, Phase 12-B 클라이언트 UI 테스트 성공은 참조 기록으로만 사용한다고 기록했다.
+- 이번 단계에서는 코드, 테스트, 플랫폼, dependency 파일을 수정하지 않았다.
+
 ## 2026-05-25 Phase 12-B WordExplorerScreen 최소 read-only context strip
 
 - Phase 12-B를 full `ExplorerWorkspace` shell mount가 아니라 기존 `HomeScreen -> WordExplorerScreen` production 진입 경로 안의 제한적 read-only UX diff 구현 단계로 기록했다.
