@@ -5396,3 +5396,108 @@ Phase 12-I에서는 `word_repository_phase8h1_representative_query_contract_test
 - `test/ui/explorer_workspace_phase4e_composition_boundary_test.dart`: `production import tree does not reference preview composition`에서 `explorer_workspace/` import guardrail 불일치
 
 Phase 12-H remaining red 중 `word_repository_read_source_policy_test.dart` 1건은 정리되었다. 남은 baseline red 2건은 별도 phase로 유지한다.
+
+### 17.74 Phase 12-J final red decision audit
+
+Phase 12-J의 목적은 Phase 12-I 이후 남은 baseline red 2건을 고치는 것이 아니라, 각 실패가 단순 테스트 현행화인지, 정책 재정의 대상인지, 데이터/seed DB 기대값 재검토 대상인지, ExplorerWorkspace guardrail 재정의 대상인지 판단하고 다음 phase 방향을 결정하는 것이다.
+
+이번 단계에서는 코드, 테스트, UI, 플랫폼, dependency 파일을 수정하지 않는다. `lib/`, `test/`, production route, `WordExplorerScreen` context strip, `ExplorerWorkspace` shell mount, owner/controller/coordinator migration, Provider / Repository / Navigator / persistence authority migration, DTO/model/public API 추가는 수행하지 않는다. 추가 production-visible UX diff는 계속 보류한다.
+
+새로 개발과 병렬 개발은 보류하고 기존 방식의 점진 안정화 전략을 유지한다.
+
+#### 17.74.1 확인 기준과 실행 명령
+
+확인 기준은 Phase 12-I 종료 후 main 최신 상태에서 생성한 `docs/explorer-workspace-phase12j-final-red-decision-audit` 브랜치다. 기준 main HEAD는 `86545f1742a31b7195826f1e29101ae5afc3db12`이며, 최신 커밋 메시지는 `fix: read source policy test baseline 현행화`다.
+
+실행한 주요 명령은 다음과 같다.
+
+- `git checkout main`
+- `git pull --ff-only`
+- `git checkout -b docs/explorer-workspace-phase12j-final-red-decision-audit`
+- `flutter test --reporter compact`
+- `flutter test test/data/repositories/word_repository_phase8h1_representative_query_contract_test.dart --reporter expanded`
+- `flutter test test/ui/explorer_workspace_phase4e_composition_boundary_test.dart --reporter expanded`
+- `rg -n "DuplicateCandidateDisplayItem|representative|duplicate candidate|כפר|candidate|Phase 8-H|Phase 8H|representative query" test lib docs`
+- `rg -n "composition boundary|Phase 4-E|production import|explorer_workspace/|ExplorerWorkspace|guardrail|projection" test lib docs`
+- seed DB 확인용 읽기 전용 SQLite 조회
+- `git status --short --branch`
+
+#### 17.74.2 전체 flutter test 결과
+
+Phase 12-I 이후 main 기준 전체 `flutter test --reporter compact` 결과는 `+226 -2`로 종료되었다.
+
+남은 실패 2건은 Phase 12-I 종료 기록과 일치하며, 이번 Phase 12-J 브랜치에서 새 branch-only 실패는 확인되지 않았다.
+
+#### 17.74.3 남은 baseline red 2건 개별 실행 결과
+
+| 실패 테스트 파일 | 실패 테스트명 또는 그룹명 | 실제 실패 결과 |
+| --- | --- | --- |
+| `test/data/repositories/word_repository_phase8h1_representative_query_contract_test.dart` | `Phase 8-H-1 representative query contract first slice duplicate candidates use representative spelling for non-strong matches` | 기대값은 후보 1건이지만 실제 `DuplicateCandidateDisplayItem` 3건이 반환되어 `Expected: an object with length of <1>`, `Actual: ... length of <3>`로 실패했다. 파일 전체는 `+5 -1`로 종료되었다. |
+| `test/ui/explorer_workspace_phase4e_composition_boundary_test.dart` | `Phase 4-E ExplorerWorkspace preview-only composition boundary production import tree does not reference preview composition` | 테스트는 production import tree가 `explorer_workspace/`를 포함하지 않아야 한다고 기대하지만, 현재 `lib/ui/word_explorer_screen.dart`가 `explorer_workspace/explorer_workspace_contract.dart`, `explorer_workspace/word_explorer_workspace_projection_adapter.dart`를 import해 source-level guardrail 불일치로 실패했다. 파일 전체는 `+5 -1`로 종료되었다. |
+
+#### 17.74.4 실패 성격 판단
+
+| 실패 테스트 파일 | 실패 유형 | Phase 12-B~I 직접 관련 여부 | test-only 수정 가능성 | docs-only 수정 가능성 | production code 변경 필요 가능성 | 정책 판단 필요 여부 | Phase 12 안 해결 여부 | 별도 phase 이월 여부 | 위험도 | 권장 다음 조치 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `test/data/repositories/word_repository_phase8h1_representative_query_contract_test.dart` | 기대값 불일치 / 데이터·seed DB 기대값 불일치 | 직접 관련 없음 | 높음 | 낮음. 문서만으로 red는 제거되지 않음 | 낮음. production query 변경은 duplicate 후보 정책 변경이 될 수 있어 우선하지 않음 | 낮음~중간. 현행 정책은 non-strong 대표 표기 비교이며 seed fixture 기대값 현행화 성격이 강함 | 가능. Phase 12-K 후보로 적합 | 이월 가능하지만 남은 red 축소 관점에서는 Phase 12-K가 더 작음 | 중간 | Phase 12-K에서 representative query expectation test 현행화를 진행한다. |
+| `test/ui/explorer_workspace_phase4e_composition_boundary_test.dart` | source-level guardrail 불일치 / ExplorerWorkspace guardrail 정책 불일치 | 직접 관련 없음. 다만 Phase 7~12 projection/helper 흐름과 연결됨 | 중간. 단순 금지어 삭제가 아니라 guardrail 범위 재정의가 필요함 | 중간. 문서 정리는 가능하지만 red 제거에는 테스트 수정이 필요함 | 중간. production import를 되돌리면 Phase 7-D/F read-only projection chain과 Phase 8/10 guardrail 흐름을 건드릴 수 있음 | 높음. preview composition 금지와 read-only projection helper 허용 범위를 분리해야 함 | Phase 12에서 반드시 고치기보다 전환 정책으로 분리하는 편이 안전함 | Phase 13 또는 별도 ExplorerWorkspace guardrail 재정의 phase로 이월 권장 | 중간 | Phase 13 전환 정책에서 composition boundary guardrail 재정의를 진행한다. |
+
+#### 17.74.5 representative query 실패 판단
+
+`word_repository_phase8h1_representative_query_contract_test.dart`의 실패 케이스는 테스트 내부에서 히브리어 단어 `T9000_H1_DUPLICATE_NON_STRONG`을 추가하고 `spelling1: 'כפר'`로 non-strong duplicate 후보를 조회한다. 기대값은 테스트가 삽입한 1건만 반환되는 것이다.
+
+실제 seed DB 기준으로는 테스트 삽입 전부터 `representative_spelling`에서 히브리어 모음을 제거한 값이 `כפר`인 히브리어 row가 2건 존재한다.
+
+| seed word id | language | strong number | representative spelling | primary meaning |
+| --- | --- | --- | --- | --- |
+| `H3722_0000` | 히브리어 | `H3722` | `כָּפַר` | 덮다 |
+| `H3723_0000` | 히브리어 | `H3723` | `כָּפָר` | 마을/촌락 |
+
+따라서 실제 반환 3건은 seed DB 2건과 테스트가 삽입한 1건을 합친 결과로 설명된다. 현행 `findDuplicateCandidates`의 non-strong 경로는 같은 언어 row 전체를 representative projection으로 읽고, `_normalizeSpellingForDuplicateCheck`로 히브리어 표시 부호를 제거한 뒤 동일 spelling 후보를 `.take(20)`까지 반환한다. 이 동작은 Phase 8-H 기록의 "strong 우선 / normalized strong / non-strong representative spelling 비교 규칙"과 충돌한다고 확인되지 않는다.
+
+현재 판단은 데이터 정책 변경이 아니라 테스트 fixture/expectation 현행화 대상이다. 테스트가 실제 seed DB에 존재하는 자연 후보를 포함하도록 기대값을 갱신하거나, 테스트 목적이 "삽입한 단일 row projection 확인"이면 seed DB와 충돌하지 않는 fixture spelling으로 바꾸는 방향이 가능하다. 어느 쪽이든 production code 변경 없이 진행 가능한 test-only 안정화 후보로 본다.
+
+#### 17.74.6 composition boundary 실패 판단
+
+`explorer_workspace_phase4e_composition_boundary_test.dart`의 과거 guardrail은 Phase 4-E 당시 preview-only composition이 production import tree로 유입되지 않도록 `explorer_workspace/` 참조 자체를 금지했다. 이 guardrail은 `ExplorerWorkspacePreviewScreen`, preview interaction host, preview input, repository/Navigator ownership, dummy id/display item 합성을 막는 목적이었다.
+
+현재 production import tree에서 `explorer_workspace/` 참조가 발생하는 이유는 preview composition mount가 아니라 `WordExplorerScreen`의 read-only projection chain 때문이다. 현재 `WordExplorerScreen`은 `explorer_workspace_contract.dart`와 `word_explorer_workspace_projection_adapter.dart`를 import해 `_readOnlyWorkspaceProjection`을 만들고, assert-only hidden visual probe와 candidate representation reader guardrail에서 projection을 읽는다.
+
+Phase 7-D/F 이후 `WordExplorerWorkspaceProjectionAdapter`와 `_readOnlyWorkspaceProjection`은 production owner 값을 `ExplorerWorkspaceState`로 투영하는 read-only boundary로 기록되었다. Phase 8-C/G는 이 projection을 assert-only hidden probe와 helper-local candidate marker로 제한했고, Phase 10-D는 candidate representation reader가 source-level, read-only, unmounted, non-route, non-owner, non-persistent boundary에 머무르는지 검증했다. Phase 12-B context strip guardrail도 visible UI input으로 projection을 쓰지 않는다는 경계를 확인한다.
+
+따라서 현재 실패는 실제 `ExplorerWorkspace` shell mount, production route 변경, preview composition mount, repository/Navigator/persistence authority migration을 직접 가리키는 실패라기보다, Phase 4-E의 광범위한 `explorer_workspace/` 금지 문구가 Phase 7 이후 read-only projection helper 허용 범위를 반영하지 못하는 guardrail 노후화로 판단한다.
+
+다만 이 항목은 단순 테스트 현행화로 처리하기에 정책 영향이 크다. 다음 단계에서는 preview composition 금지, `ExplorerWorkspace` shell mount 금지, read-only contract/adapter import 허용, visible UI input 금지, route/shell/owner/persistence migration 금지를 각각 분리한 새 guardrail로 재정의해야 한다. 이는 Phase 13 전환 정책 또는 별도 ExplorerWorkspace guardrail 재정의 phase로 넘기는 편이 안전하다.
+
+#### 17.74.7 결론과 다음 phase 후보
+
+Phase 12-J 결론은 선택지 D다.
+
+```text
+하나는 Phase 12-K에서 처리하고, 다른 하나는 Phase 13 전환 정책으로 이월한다.
+```
+
+Phase 12-K 후보는 `word_repository_phase8h1_representative_query_contract_test.dart`의 representative query expectation test 현행화다. 이 항목은 실제 seed DB 확인 결과를 기준으로 실패 원인이 설명되며, production code 변경 없이 test-only로 정리할 수 있는 가능성이 가장 높다.
+
+`explorer_workspace_phase4e_composition_boundary_test.dart`는 Phase 12-K에서 함께 처리하지 않는다. 이 항목은 Phase 4-E preview-only composition guardrail과 Phase 7~12 read-only projection/helper guardrail 사이의 정책 재정의가 필요하므로, Phase 13 전환 정책 또는 별도 guardrail 재정의 단계로 이월한다.
+
+Phase 12 종료 audit로 갈 수 있는 조건은 다음과 같다.
+
+- Phase 12-K에서 representative query expectation test 현행화를 진행하고 전체 `flutter test` 결과 변화를 확인한다.
+- 남은 실패가 `explorer_workspace_phase4e_composition_boundary_test.dart` 1건으로 축소되는지 확인한다.
+- Phase 12 종료 audit에서 composition boundary guardrail을 Phase 13 전환 정책으로 이월한다는 판단을 명시한다.
+- 추가 UX diff, 새로 개발, 병렬 개발, production route/shell/authority/API 변경이 계속 보류되어야 한다.
+
+Phase 12 종료 audit에서 zero-red를 필수 조건으로 삼는다면 composition boundary guardrail 재정의까지 Phase 12 안에서 처리해야 한다. 그러나 현재 점진 안정화 전략 기준의 권장안은 Phase 12-K에서 데이터/fixture 기대값 현행화를 먼저 처리하고, ExplorerWorkspace guardrail 정책 재정의는 Phase 13로 분리하는 것이다.
+
+#### 17.74.8 Phase 12-J 명령어 기반 확인 체크리스트
+
+Phase 12-J의 command 기반 확인은 문서 반영 확인과 path-level diff 확인으로 제한한다. 목표는 이번 docs/audit 변경이 코드, 테스트, 플랫폼, dependency, production UI를 변경하지 않았음을 확인하는 것이다.
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 | 실제 결과 |
+| --- | --- | --- | --- | --- |
+| Phase 12-J 기록 확인 | Phase 12-J, final red decision, remaining baseline red, Phase 12-K, representative, composition boundary, `flutter test` 기록이 두 문서에 있어야 함 | Phase 12-J 목적, 실패 판단, 다음 phase 후보 누락 | `rg -n "Phase 12-J|final red decision|remaining baseline red|Phase 12-K|representative|composition boundary|flutter test" docs/ux/explorer_workspace_unification.md docs/logs/CHANGELOG.md` | 작업 종료 보고에서 기록 |
+| 코드/테스트/플랫폼/dependency 변경 없음 확인 | `lib`, `test`, 플랫폼 경로, `pubspec.yaml`, `pubspec.lock` 변경이 없어야 함 | 문서 외 파일 변경 | `git diff --name-only -- lib test android ios macos windows linux web pubspec.yaml pubspec.lock` | 작업 종료 보고에서 기록 |
+| production UI diff 없음 확인 | `lib`, 플랫폼 경로 변경이 없어야 함 | UI 또는 플랫폼 파일 변경 | `git diff --name-only -- lib android ios macos windows linux web` | 작업 종료 보고에서 기록 |
+| whitespace 검증 | diff에 whitespace 오류가 없어야 함 | trailing whitespace 또는 patch formatting 오류 | `git diff --check` | 작업 종료 보고에서 기록 |
+| Git 상태 확인 | 변경 파일과 브랜치 상태가 명확해야 함 | 승인 범위 밖 파일 변경 또는 잘못된 브랜치 | `git status --short --branch` | 작업 종료 보고에서 기록 |

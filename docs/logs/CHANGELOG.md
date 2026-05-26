@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## 2026-05-26 Phase 12-J final red decision audit
+
+- Phase 12-J를 수정 단계가 아니라 docs/audit 및 final red decision audit 단계로 기록했다. 목적은 Phase 12-I 이후 남은 baseline red 2건의 성격을 실제 명령 결과 기준으로 판단하고 Phase 12-K 또는 Phase 13 방향을 결정하는 것이다.
+- Phase 12-I 이후 main 기준 전체 `flutter test --reporter compact` 결과는 `+226 -2`로 유지되었다.
+- `test/data/repositories/word_repository_phase8h1_representative_query_contract_test.dart`는 `duplicate candidates use representative spelling for non-strong matches`에서 기대 1건 대비 실제 `DuplicateCandidateDisplayItem` 3건 반환으로 실패했다.
+- seed DB 확인 결과, 테스트 삽입 전에도 히브리어 대표 표기 정규화 기준 `כפר` 후보가 `H3722_0000`, `H3723_0000` 2건 존재했다. 따라서 실제 3건은 seed DB 2건과 테스트 삽입 1건의 합계로 설명되며, 현 판단은 데이터 정책 변경이 아니라 representative query expectation test 현행화 대상이다.
+- `test/ui/explorer_workspace_phase4e_composition_boundary_test.dart`는 `production import tree does not reference preview composition`에서 `lib/ui/word_explorer_screen.dart`의 `explorer_workspace/` contract/adapter import 때문에 source-level guardrail 불일치로 실패했다.
+- 현재 `explorer_workspace/` 참조는 preview composition mount가 아니라 Phase 7 이후 read-only projection chain, Phase 8 hidden probe, Phase 10 candidate representation reader, Phase 12-B context strip guardrail 흐름에서 발생한다. 따라서 이 항목은 단순 금지어 테스트 현행화가 아니라 ExplorerWorkspace composition boundary guardrail 재정의 대상으로 판단했다.
+- Phase 12-J 결론은 선택지 D로 기록했다. Phase 12-K 후보는 `word_repository_phase8h1_representative_query_contract_test.dart`의 representative query expectation test 현행화이며, `explorer_workspace_phase4e_composition_boundary_test.dart`는 Phase 13 전환 정책 또는 별도 guardrail 재정의 phase로 이월한다.
+- Phase 12 종료 audit 가능 조건은 Phase 12-K 이후 남은 실패가 composition boundary 1건으로 축소되는지 확인하고, 해당 guardrail을 Phase 13 전환 정책으로 명시 이월하는 것이다. zero-red를 Phase 12 종료 필수 조건으로 삼는 경우에는 composition boundary guardrail 재정의까지 Phase 12 안에서 처리해야 한다.
+- 이번 단계에서는 코드, 테스트, UI, 플랫폼, dependency 파일을 수정하지 않았다.
+- 추가 production-visible UX diff는 계속 보류한다.
+- 새로 개발과 병렬 개발은 보류하고 기존 방식의 점진 안정화를 계속한다.
+
 ## 2026-05-26 Phase 12-I read source policy test baseline fix
 
 - Phase 12-I의 목적은 Phase 12-H remaining red 중 `test/data/repositories/word_repository_read_source_policy_test.dart` 1건을 현행 `WordRepository` API 기준으로 정리하는 것이다.
