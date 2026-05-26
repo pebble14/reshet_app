@@ -1,5 +1,22 @@
 # CHANGELOG
 
+## 2026-05-26 Phase 12-L termination and boundary carryover audit
+
+- Phase 12-L을 수정 단계가 아니라 `termination and boundary carryover audit` 단계로 기록했다. 목적은 Phase 12 종료 가능성과 마지막 `composition boundary` red의 Phase 13 이월 여부를 실제 명령 결과 기준으로 판단하는 것이다.
+- Phase 12는 첫 production-visible UX diff를 제한적으로 도입했고, `WordExplorerScreen` detail pane 상단에 read-only context strip을 추가했다.
+- 기존 `HomeScreen -> WordExplorerScreen` 진입 경로는 유지했다.
+- `ExplorerWorkspace` shell mount, route 변경, owner/controller/coordinator migration, Provider / Repository / Navigator / persistence authority migration, DTO/model/public API 추가, `ExplorerWorkspaceState` projection visible UI 사용은 수행하지 않았다.
+- Phase 12-D 이후 baseline red는 전체 `flutter test --reporter compact` 기준 `+204 -6`에서 `+227 -1`로 개선되었다.
+- Phase 12-L 기준 전체 `flutter test --reporter compact` 결과는 `+227 -1`이며, 남은 red는 `test/ui/explorer_workspace_phase4e_composition_boundary_test.dart` 1건이다.
+- 남은 red 개별 실행 결과는 `flutter test test/ui/explorer_workspace_phase4e_composition_boundary_test.dart --reporter expanded` 기준 `+5 -1`이다.
+- 실패 내용은 `lib/ui/word_explorer_screen.dart`의 `explorer_workspace/` contract/adapter import로 인해 `production import tree does not reference preview composition` source-level guardrail이 불일치하는 것이다.
+- 이 실패는 단순 오래된 API 참조나 기대값 현행화가 아니라, Phase 4-E production import guardrail과 Phase 7 이후 read-only projection/adapter import 허용 범위가 충돌하는 문제로 판단했다.
+- 따라서 Phase 12에서 임의로 테스트를 수정하지 않고, Phase 13 전환 정책 또는 별도 guardrail 재정의 phase로 이월한다.
+- Phase 12는 첫 production-visible UX diff 도입과 baseline red 대폭 축소라는 핵심 목적을 달성했다. 남은 composition boundary red 1건은 Phase 13 guardrail 재정의 과제로 이월 가능하므로 Phase 12-M 종료 audit로 진행할 수 있다.
+- 추가 production-visible UX diff는 계속 보류한다.
+- 새로 개발과 병렬 개발은 보류하고 기존 방식의 점진 안정화 전략을 유지한다.
+- 이번 단계에서는 코드, 테스트, UI, 플랫폼, dependency 파일을 수정하지 않았다.
+
 ## 2026-05-26 Phase 12-K representative query expectation baseline 현행화
 
 - Phase 12-K의 목적은 Phase 12-J에서 test-only fix 후보로 선정한 `test/data/repositories/word_repository_phase8h1_representative_query_contract_test.dart`의 representative query expectation을 현행 seed DB/fixture 결과와 production duplicate candidate 정책에 맞춰 현행화하는 것이다.

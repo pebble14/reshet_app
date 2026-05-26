@@ -5525,3 +5525,94 @@ Phase 12-J remaining red 중 representative query 1건을 정리 대상으로 �
 새로 개발과 병렬 개발은 보류하고 기존 방식의 점진 안정화 전략을 계속한다.
 
 명령어 기반 확인 결과, `word_repository_phase8h1_representative_query_contract_test.dart`는 `+6: All tests passed!`로 통과했다. 전체 `flutter test --reporter compact` 결과는 Phase 12-J 기준 `+226 -2`에서 `+227 -1`로 변했다. representative query 실패는 제거되었고 새 branch-only 실패는 확인되지 않았다. 남은 baseline red는 `test/ui/explorer_workspace_phase4e_composition_boundary_test.dart` 1건이며 실패 내용은 기존 Phase 12-J inventory와 동일한 `explorer_workspace/` import guardrail 불일치다.
+
+### 17.76 Phase 12-L termination and boundary carryover audit
+
+Phase 12-L은 수정 단계가 아니라 `termination and boundary carryover audit` 단계다. 목적은 Phase 12 전체 종료 가능성을 검토하고, 마지막 남은 `test/ui/explorer_workspace_phase4e_composition_boundary_test.dart` red를 Phase 12 안에서 직접 해결할지, Phase 13 전환 정책 또는 별도 guardrail 재정의 phase로 이월할지 판단하는 것이다.
+
+이번 단계에서는 코드, 테스트, UI, 플랫폼, dependency 파일을 수정하지 않는다. `lib/`, `test/`, production route, `WordExplorerScreen` context strip, `ExplorerWorkspace` shell mount, owner/controller/coordinator migration, Provider / Repository / Navigator / persistence authority migration, DTO/model/public API 추가는 수행하지 않는다.
+
+#### 17.76.1 Phase 12 전체 성과
+
+Phase 12는 첫 production-visible UX diff를 제한적으로 도입하고 baseline red를 대폭 축소했다.
+
+- `WordExplorerScreen` detail pane 상단에 read-only context strip을 추가했다.
+- 기존 `HomeScreen -> WordExplorerScreen` 진입 경로를 유지했다.
+- `ExplorerWorkspace` shell mount는 하지 않았다.
+- route 변경은 하지 않았다.
+- owner/controller/coordinator migration은 하지 않았다.
+- Provider / Repository / Navigator / persistence authority migration은 하지 않았다.
+- DTO/model/public API 추가는 하지 않았다.
+- `ExplorerWorkspaceState` projection을 visible UI input으로 사용하지 않았다.
+- 전체 `flutter test --reporter compact` baseline red는 Phase 12-D 기준 `+204 -6`에서 Phase 12-K 이후 `+227 -1`로 개선되었다.
+
+첫 production-visible UX diff인 context strip은 기존 production owner 내부의 `_centerWordId`, `_selectedWordId`만 읽는 read-only 표시로 제한되었다. 이 변경은 graph/detail split 구조, route entry, shell mount, authority ownership, projection visible UI 사용으로 확장되지 않았다.
+
+#### 17.76.2 명령어 기반 확인 결과
+
+현재 Phase 12-L 브랜치에서 전체 `flutter test --reporter compact`는 `+227 -1`로 종료되었다. 남은 실패는 `test/ui/explorer_workspace_phase4e_composition_boundary_test.dart` 1건이며, Phase 12-B부터 Phase 12-K까지의 변경으로 새 실패가 추가되었다고 확인되지 않았다.
+
+남은 red 1건의 개별 실행 결과는 다음과 같다.
+
+| 테스트 파일 | 개별 실행 결과 | 실패 지점 | 실패 요약 |
+| --- | --- | --- | --- |
+| `test/ui/explorer_workspace_phase4e_composition_boundary_test.dart` | `+5 -1` | `production import tree does not reference preview composition` | `lib/ui/word_explorer_screen.dart`가 `explorer_workspace/` contract/adapter를 import해 source-level guardrail과 불일치한다. |
+
+실패 메시지는 `Production import tree must not reference preview composition: lib/ui/word_explorer_screen.dart -> explorer_workspace/.`로 확인되었다.
+
+#### 17.76.3 composition boundary 실패 성격
+
+이 실패는 production 기능 오류로 판단하지 않는다. 현재 실패는 `ExplorerWorkspace` shell mount, production route 변경, preview composition mount, repository ownership, Navigator ownership, persistence authority migration이 발생했다는 신호가 아니다.
+
+현재 `word_explorer_screen.dart`의 `explorer_workspace/` import는 Phase 7 이후 도입된 read-only projection chain 때문이다. `WordExplorerScreen`은 `explorer_workspace_contract.dart`와 `word_explorer_workspace_projection_adapter.dart`를 import해 `_readOnlyWorkspaceProjection`을 만들고, assert-only hidden visual probe와 candidate representation reader guardrail에서 이를 읽는다. Phase 12-B context strip도 projection을 visible UI input으로 쓰지 않는다는 guardrail을 유지한다.
+
+따라서 이 실패는 단순 오래된 API 참조나 기대값 현행화가 아니라, Phase 4-E production import guardrail과 Phase 7 이후 read-only projection/adapter import 허용 범위가 충돌하는 문제다. Phase 4-E guardrail은 preview-only composition 유입을 막기 위해 `explorer_workspace/` 참조 자체를 광범위하게 금지했지만, Phase 7 이후에는 preview composition mount가 아닌 read-only contract/adapter import가 별도 boundary로 허용되는 흐름이 생겼다.
+
+#### 17.76.4 Phase 12에서 직접 수정하지 않는 이유
+
+`explorer_workspace_phase4e_composition_boundary_test.dart`를 Phase 12에서 직접 수정하지 않는다.
+
+이 항목은 단순 test fix로 처리하기에 정책 영향이 크다. 금지어 목록에서 `explorer_workspace/`만 제거하면 preview composition 금지, shell mount 금지, read-only contract/adapter import 허용, visible UI input 금지, route/shell/owner/persistence migration 금지의 경계가 분리되지 않는다. 반대로 production import를 되돌리면 Phase 7-D/F read-only projection chain, Phase 8 hidden probe, Phase 10 candidate representation reader, Phase 12-B context strip guardrail 흐름을 흔들 수 있다.
+
+따라서 Phase 12에서 임의로 테스트를 수정하지 않고, Phase 13 전환 정책 또는 별도 guardrail 재정의 phase로 이월한다. 후속 단계에서는 preview composition 금지와 read-only projection/adapter import 허용 범위를 별도 assertion으로 분리해야 한다.
+
+#### 17.76.5 Phase 13 이월 조건
+
+Phase 13 또는 별도 guardrail 재정의 phase로 이월할 때의 조건은 다음과 같다.
+
+- `ExplorerWorkspacePreviewScreen`, preview interaction host, preview input, preview-only shell mount 금지는 계속 유지한다.
+- production route, `HomeScreen -> WordExplorerScreen` entry, Navigator ownership, repository ownership, persistence/history authority migration 금지는 계속 유지한다.
+- `ExplorerWorkspace` shell mount 또는 production replacement는 별도 승인 전까지 금지한다.
+- read-only `ExplorerWorkspaceState` contract/adapter import 허용 여부를 preview composition import 금지와 분리해 정의한다.
+- projection 결과를 visible UI input, persisted state, route state, canonical owner로 쓰지 않는다는 guardrail을 유지한다.
+- Phase 4-E 문서와 테스트가 Phase 7 이후 projection/helper 흐름을 반영하도록 재정의한다.
+
+#### 17.76.6 Phase 12 종료 판단
+
+권장 판단은 다음과 같다.
+
+```text
+Phase 12는 첫 production-visible UX diff 도입과 baseline red 대폭 축소라는 핵심 목적을 달성했다.
+남은 composition boundary red 1건은 Phase 13 guardrail 재정의 과제로 이월 가능하므로,
+Phase 12-M 종료 audit로 진행할 수 있다.
+```
+
+다만 이 판단은 조건부다. Phase 12 종료 기준을 zero-red로 정의한다면 composition boundary guardrail 재정의까지 Phase 12 안에서 수행해야 한다. 현재 점진 안정화 전략에서는 이 red를 production 기능 오류가 아니라 guardrail 정의 불일치로 분류하고, Phase 13 전환 정책 또는 별도 guardrail phase로 이월하는 것이 안전하다.
+
+Phase 12-M은 Phase 12 종료 audit로 필요하다. Phase 12-M에서는 Phase 12-A부터 Phase 12-L까지의 결과, 남은 carryover 1건, Phase 13 진입 조건, 추가 UX diff 보류 상태를 최종 확인해야 한다.
+
+추가 production-visible UX diff는 계속 보류한다. 새로 개발과 병렬 개발도 보류하고 기존 방식의 점진 안정화 전략을 유지한다.
+
+#### 17.76.7 Phase 12-L 명령어 기반 확인 체크리스트
+
+Phase 12-L의 command 기반 확인은 문서 반영 확인과 path-level diff 확인으로 제한한다. 목표는 이번 docs/audit 변경이 코드, 테스트, 플랫폼, dependency, production UI를 변경하지 않았음을 확인하는 것이다.
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 | 실제 결과 |
+| --- | --- | --- | --- | --- |
+| 전체 baseline 확인 | 전체 `flutter test`가 `+227 -1`로 종료되고 남은 실패가 1건이어야 함 | 새 branch-only 실패 또는 실패 수 증가 | `flutter test --reporter compact` | `+227 -1` |
+| 남은 red 개별 확인 | composition boundary 테스트가 `+5 -1`로 종료되어야 함 | 실패 성격이 기존 inventory와 달라짐 | `flutter test test/ui/explorer_workspace_phase4e_composition_boundary_test.dart --reporter expanded` | `+5 -1` |
+| Phase 12-L 기록 확인 | Phase 12-L, termination, carryover, composition boundary, Phase 13, `flutter test`, `+227 -1` 기록이 두 문서에 있어야 함 | Phase 12-L 목적, 이월 판단, 종료 audit 판단 누락 | `rg -n "Phase 12-L|termination|carryover|composition boundary|Phase 13|flutter test|\\+227 -1" docs/ux/explorer_workspace_unification.md docs/logs/CHANGELOG.md` | 작업 종료 보고에서 기록 |
+| 코드/테스트/플랫폼/dependency 변경 없음 확인 | `lib`, `test`, 플랫폼 경로, `pubspec.yaml`, `pubspec.lock` 변경이 없어야 함 | 문서 외 파일 변경 | `git diff --name-only -- lib test android ios macos windows linux web pubspec.yaml pubspec.lock` | 작업 종료 보고에서 기록 |
+| production UI diff 없음 확인 | `lib`, 플랫폼 경로 변경이 없어야 함 | UI 또는 플랫폼 파일 변경 | `git diff --name-only -- lib android ios macos windows linux web` | 작업 종료 보고에서 기록 |
+| whitespace 검증 | diff에 whitespace 오류가 없어야 함 | trailing whitespace 또는 patch formatting 오류 | `git diff --check` | 작업 종료 보고에서 기록 |
+| Git 상태 확인 | 변경 파일과 브랜치 상태가 명확해야 함 | 승인 범위 밖 파일 변경 또는 잘못된 브랜치 | `git status --short --branch` | 작업 종료 보고에서 기록 |
