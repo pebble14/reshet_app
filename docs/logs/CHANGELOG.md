@@ -1,5 +1,20 @@
 # CHANGELOG
 
+## 2026-05-26 Phase 12-I read source policy test baseline fix
+
+- Phase 12-I의 목적은 Phase 12-H remaining red 중 `test/data/repositories/word_repository_read_source_policy_test.dart` 1건을 현행 `WordRepository` API 기준으로 정리하는 것이다.
+- 오래된 `WordRepository` API 참조인 `getWordMapByIdForSplitViewSingleWord`, `getWordDetailMapByIdForReadSourcePhase2Only`를 현행 typed API인 `getWordDetailLikeDisplayItemByIdForSplitView`, `getWordDetailLikeDisplayItemByIdForDetailScreen` 기준으로 현행화했다.
+- 테스트 파일 내부에 `WordDetailLikeDisplayItem` import를 추가하고, `_expectSameDetailDisplay(...)` helper가 raw row와 typed display item을 비교할 수 있도록 최소 조정했다.
+- 현행 production code에서 `getWordMapById`, `getWordMapByIdForExplorerSingleWord`는 `_phase8ARawSingleWordContexts`에 포함되어 `ReadSourcePolicy.normalizedWithFallback` 경로를 사용하므로, 관련 read source policy assertion을 실제 production 경로에 맞춰 조정했다. 전역 기본값 `debugCurrentReadSourcePolicy == ReadSourcePolicy.legacy`는 유지된다.
+- 이번 단계는 test baseline fix이며 UX 변경이 아니다.
+- production code와 `WordRepository` production 구현은 변경하지 않았다.
+- ExplorerWorkspace UX, `WordExplorerScreen`, context strip, route/shell/authority/API는 변경하지 않았다.
+- Phase 12-H remaining red 중 `word_repository_read_source_policy_test.dart` 1건을 정리했다.
+- 전체 `flutter test --reporter compact` 결과는 기존 `+209 -3`에서 `+226 -2`로 변했다. read source policy loading 실패는 제거되었고 새 branch-only 실패는 없다.
+- 남은 baseline red 2건은 `word_repository_phase8h1_representative_query_contract_test.dart`, `explorer_workspace_phase4e_composition_boundary_test.dart`이며 별도 phase로 유지한다.
+- 추가 UX diff는 계속 보류한다.
+- 새로 개발과 병렬 개발은 보류하고 기존 방식의 점진 안정화를 계속한다.
+
 ## 2026-05-26 Phase 12-H remaining baseline red triage
 
 - Phase 12-H를 fix 단계가 아니라 docs/audit 단계로 기록했다. 목적은 Phase 12-G 이후 남은 baseline red 3건을 다시 확인하고 다음 fix 후보 1건을 선정하는 것이다.

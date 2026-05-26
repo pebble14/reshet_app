@@ -5347,3 +5347,52 @@ Phase 12-H의 command 기반 확인은 문서 반영 확인과 path-level diff �
 | production UI diff 추가 없음 확인 | `lib`, 플랫폼 경로 변경이 없어야 함 | UI 또는 플랫폼 파일 변경 | `git diff --name-only -- lib android ios macos windows linux web` | 작업 종료 보고에서 기록 |
 | whitespace 검증 | diff에 whitespace 오류가 없어야 함 | trailing whitespace 또는 patch formatting 오류 | `git diff --check` | 작업 종료 보고에서 기록 |
 | Git 상태 확인 | 변경 파일과 브랜치 상태가 명확해야 함 | 승인 범위 밖 파일 변경 또는 잘못된 브랜치 | `git status --short --branch` | 작업 종료 보고에서 기록 |
+
+### 17.73 Phase 12-I read source policy test baseline fix
+
+Phase 12-I의 목적은 Phase 12-H remaining red 중 1순위로 선정한 `test/data/repositories/word_repository_read_source_policy_test.dart` 1건을 현행 `WordRepository` API에 맞춰 정리하는 것이다. 이번 단계는 test baseline fix이며 UX 변경, ExplorerWorkspace 확장, production-visible UX diff가 아니다.
+
+새로 개발과 병렬 개발은 계속 보류하고 기존 방식의 점진 안정화 전략을 유지한다. 추가 UX diff도 계속 보류한다.
+
+#### 17.73.1 범위와 전략 판단
+
+변경 범위는 아래 3개 파일로 제한한다.
+
+- `test/data/repositories/word_repository_read_source_policy_test.dart`
+- `docs/ux/explorer_workspace_unification.md`
+- `docs/logs/CHANGELOG.md`
+
+production `lib/` 코드는 수정하지 않는다. `WordRepository` production 구현, ExplorerWorkspace UX, `WordExplorerScreen`, context strip, route/shell/authority/API도 변경하지 않는다. DTO/model/public API를 새로 추가하지 않는다.
+
+Phase 12-I에서는 `word_repository_phase8h1_representative_query_contract_test.dart`, `explorer_workspace_phase4e_composition_boundary_test.dart`를 함께 수정하지 않는다. 두 항목은 별도 phase 또는 stabilization 단계로 유지한다.
+
+#### 17.73.2 테스트 현행화 내용
+
+`word_repository_read_source_policy_test.dart`의 loading 실패 원인은 현재 `WordRepository` public surface에 없는 오래된 API 호출이었다.
+
+현행화한 API 대응은 다음과 같다.
+
+| 오래된 테스트 API | 현행 Repository API | 비고 |
+| --- | --- | --- |
+| `getWordMapByIdForSplitViewSingleWord` | `getWordDetailLikeDisplayItemByIdForSplitView` | split view detail-like display typed contract 기준으로 교체 |
+| `getWordDetailMapByIdForReadSourcePhase2Only` | `getWordDetailLikeDisplayItemByIdForDetailScreen` | detail screen display item typed contract 기준으로 교체 |
+| raw `Map<String, dynamic>` detail display 비교 | `WordDetailLikeDisplayItem` 비교 지원 helper | 테스트 파일 내부 `_expectSameDetailDisplay(...)`만 조정 |
+
+현행 `WordRepository`에서 `getWordMapById`와 `getWordMapByIdForExplorerSingleWord`는 `_phase8ARawSingleWordContexts`에 포함되어 `ReadSourcePolicy.normalizedWithFallback` 경로를 사용한다. 따라서 관련 assertion은 production code의 실제 policy 경로에 맞춰 최소 조정했다. 전역 기본값 `debugCurrentReadSourcePolicy == ReadSourcePolicy.legacy` 자체는 유지된다.
+
+#### 17.73.3 명령어 기반 확인 결과
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 | 실제 결과 |
+| --- | --- | --- | --- | --- |
+| read source policy 단일 테스트 | 오래된 API loading 실패가 제거되고 전체 테스트가 통과해야 함 | 컴파일 실패, policy assertion 불일치, typed display 비교 실패 | `flutter test test/data/repositories/word_repository_read_source_policy_test.dart --reporter expanded` | `+17: All tests passed!` |
+| root widget smoke 유지 | Phase 12-E 이후 root smoke가 계속 통과해야 함 | package/import 회귀 또는 root build 실패 | `flutter test test/widget_test.dart --reporter expanded` | `+1: All tests passed!` |
+| WordInfoPanel baseline 유지 | Phase 12-G에서 정리한 panel 테스트가 계속 통과해야 함 | typed display item contract 회귀 | `flutter test test/ui/word_info_panel_test.dart --reporter expanded` | `+3: All tests passed!` |
+| Phase 12-B context strip 좁은 테스트 유지 | ExplorerWorkspace UX/context strip 변경 없이 기존 guardrail이 통과해야 함 | context strip, route/shell/authority/API 관련 회귀 | `flutter test test/ui/word_explorer_screen_phase12b_readonly_context_strip_test.dart` | `+4: All tests passed!` |
+| 전체 baseline 변화 확인 | 기존 `+209 -3`에서 read source policy 실패가 제거되어야 하며 새 branch-only 실패가 없어야 함 | 남은 실패가 Phase 12-H inventory와 불일치하거나 새 실패 발생 | `flutter test --reporter compact` | `+226 -2`로 종료. `word_repository_read_source_policy_test.dart` 실패는 제거되었고 새 실패는 없다. |
+
+전체 `flutter test`의 남은 실패 2건은 Phase 12-H inventory의 나머지 항목과 일치한다.
+
+- `test/data/repositories/word_repository_phase8h1_representative_query_contract_test.dart`: `duplicate candidates use representative spelling for non-strong matches`에서 기대 1건 대비 실제 3건 반환
+- `test/ui/explorer_workspace_phase4e_composition_boundary_test.dart`: `production import tree does not reference preview composition`에서 `explorer_workspace/` import guardrail 불일치
+
+Phase 12-H remaining red 중 `word_repository_read_source_policy_test.dart` 1건은 정리되었다. 남은 baseline red 2건은 별도 phase로 유지한다.

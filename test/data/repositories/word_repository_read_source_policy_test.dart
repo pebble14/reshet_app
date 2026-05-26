@@ -7,6 +7,7 @@ import 'package:reshet_app/data/repositories/word_repository.dart';
 import 'package:reshet_app/database/database_service.dart';
 import 'package:reshet_app/domain/expression/read_source_policy.dart';
 import 'package:reshet_app/domain/graph/graph_visible_word.dart';
+import 'package:reshet_app/domain/word/word_detail_like_display_item.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -52,27 +53,33 @@ void main() {
   });
 
   group('WordRepository read source foundation', () {
-    test('keeps the default policy as LEGACY', () async {
-      expect(
-        WordRepository.debugCurrentReadSourcePolicy,
-        ReadSourcePolicy.legacy,
-      );
+    test(
+      'keeps the global default as LEGACY while raw single-word read uses NORMALIZED_WITH_FALLBACK',
+      () async {
+        expect(
+          WordRepository.debugCurrentReadSourcePolicy,
+          ReadSourcePolicy.legacy,
+        );
 
-      final repository = WordRepository();
-      final row = await repository.getWordMapById('E0000_0010');
-      final snapshot = WordRepository.debugReadSourceCollector
-          .debugLastSnapshotForWord('E0000_0010');
+        final repository = WordRepository();
+        final row = await repository.getWordMapById('E0000_0010');
+        final snapshot = WordRepository.debugReadSourceCollector
+            .debugLastSnapshotForWord('E0000_0010');
 
-      expect(row, isNotNull);
-      expect(snapshot, isNotNull);
-      expect(snapshot!.requestedPolicy, ReadSourcePolicy.legacy);
-      expect(snapshot.resolvedSource, ResolvedReadSource.legacy);
-      expect(snapshot.finalResultSource, FinalReadResultSource.legacy);
-      expect(snapshot.didFallback, isFalse);
-      expect(snapshot.legacyResultAvailable, isTrue);
-      expect(snapshot.normalizedResultAvailable, isFalse);
-      expect(snapshot.readResult.sets, hasLength(2));
-    });
+        expect(row, isNotNull);
+        expect(snapshot, isNotNull);
+        expect(
+          snapshot!.requestedPolicy,
+          ReadSourcePolicy.normalizedWithFallback,
+        );
+        expect(snapshot.resolvedSource, ResolvedReadSource.normalized);
+        expect(snapshot.finalResultSource, FinalReadResultSource.normalized);
+        expect(snapshot.didFallback, isFalse);
+        expect(snapshot.legacyResultAvailable, isTrue);
+        expect(snapshot.normalizedResultAvailable, isTrue);
+        expect(snapshot.readResult.sets, hasLength(2));
+      },
+    );
 
     test(
       'connects normalized read adapter when policy override is enabled',
@@ -321,14 +328,14 @@ void main() {
 
   group('WordRepository split view single-word path', () {
     test(
-      'split view uses NORMALIZED_WITH_FALLBACK while explorer history probe stays LEGACY',
+      'split view and explorer single-word reads use NORMALIZED_WITH_FALLBACK while contexts stay separated',
       () async {
         final repository = WordRepository();
 
         final splitViewRow = await repository
-            .getWordMapByIdForSplitViewSingleWord('E0000_0010');
+            .getWordDetailLikeDisplayItemByIdForSplitView('E0000_0010');
         final detailRow = await repository
-            .getWordDetailMapByIdForReadSourcePhase2Only('E0000_0010');
+            .getWordDetailLikeDisplayItemByIdForDetailScreen('E0000_0010');
         final explorerRow = await repository
             .getWordMapByIdForExplorerSingleWord('E0000_0010');
         final splitViewSnapshot = WordRepository.debugReadSourceCollector
@@ -360,10 +367,13 @@ void main() {
         expect(splitViewSnapshot.didFallback, isFalse);
         expect(splitViewSnapshot.legacyResultAvailable, isTrue);
         expect(splitViewSnapshot.normalizedResultAvailable, isTrue);
-        expect(explorerSnapshot.requestedPolicy, ReadSourcePolicy.legacy);
+        expect(
+          explorerSnapshot.requestedPolicy,
+          ReadSourcePolicy.normalizedWithFallback,
+        );
         expect(
           explorerSnapshot.finalResultSource,
-          FinalReadResultSource.legacy,
+          FinalReadResultSource.normalized,
         );
         expect(explorerSnapshot.didFallback, isFalse);
         _expectSameDetailDisplay(detailRow!, splitViewRow!);
@@ -406,7 +416,9 @@ void main() {
         });
 
         final splitViewRow = await repository
-            .getWordMapByIdForSplitViewSingleWord('T9000_RS_SPLIT_MISMATCH');
+            .getWordDetailLikeDisplayItemByIdForSplitView(
+              'T9000_RS_SPLIT_MISMATCH',
+            );
         final snapshot = WordRepository.debugReadSourceCollector
             .debugRecentSnapshots()
             .lastWhere(
@@ -750,30 +762,33 @@ void main() {
     );
   });
 
-  group('WordRepository detail-only phase2 path', () {
+  group('WordRepository detail screen display item path', () {
     test(
-      'keeps the global default as LEGACY while the detail-only API uses NORMALIZED_WITH_FALLBACK',
+      'keeps the global default as LEGACY while detail screen display item read uses NORMALIZED_WITH_FALLBACK',
       () async {
         final repository = WordRepository();
 
-        final legacyRow = await repository.getWordMapById('E0000_0010');
-        final legacySnapshot = WordRepository.debugReadSourceCollector
+        final rawSingleWordRow = await repository.getWordMapById('E0000_0010');
+        final rawSingleWordSnapshot = WordRepository.debugReadSourceCollector
             .debugLastSnapshotForWord('E0000_0010');
         final detailRow = await repository
-            .getWordDetailMapByIdForReadSourcePhase2Only('E0000_0010');
+            .getWordDetailLikeDisplayItemByIdForDetailScreen('E0000_0010');
         final detailSnapshot = WordRepository.debugReadSourceCollector
             .debugRecentSnapshots()
             .lastWhere(
               (snapshot) =>
                   snapshot.wordId == 'E0000_0010' &&
                   snapshot.context ==
-                      'getWordDetailMapByIdForReadSourcePhase2Only',
+                      'getWordDetailLikeDisplayItemByIdForDetailScreen',
             );
 
-        expect(legacyRow, isNotNull);
+        expect(rawSingleWordRow, isNotNull);
         expect(detailRow, isNotNull);
-        expect(legacySnapshot, isNotNull);
-        expect(legacySnapshot!.requestedPolicy, ReadSourcePolicy.legacy);
+        expect(rawSingleWordSnapshot, isNotNull);
+        expect(
+          rawSingleWordSnapshot!.requestedPolicy,
+          ReadSourcePolicy.normalizedWithFallback,
+        );
         expect(
           detailSnapshot.requestedPolicy,
           ReadSourcePolicy.normalizedWithFallback,
@@ -785,7 +800,7 @@ void main() {
         expect(detailSnapshot.didFallback, isFalse);
         expect(detailSnapshot.legacyResultAvailable, isTrue);
         expect(detailSnapshot.normalizedResultAvailable, isTrue);
-        _expectSameDetailDisplay(legacyRow!, detailRow!);
+        _expectSameDetailDisplay(rawSingleWordRow!, detailRow!);
       },
     );
 
@@ -806,7 +821,7 @@ void main() {
         await db.insert('WORD_TABLE', legacyWordRow);
 
         final detailRow = await repository
-            .getWordDetailMapByIdForReadSourcePhase2Only(
+            .getWordDetailLikeDisplayItemByIdForDetailScreen(
               'T9000_RS_DETAIL_EMPTY',
             );
         final snapshot = WordRepository.debugReadSourceCollector
@@ -815,7 +830,7 @@ void main() {
               (entry) =>
                   entry.wordId == 'T9000_RS_DETAIL_EMPTY' &&
                   entry.context ==
-                      'getWordDetailMapByIdForReadSourcePhase2Only',
+                      'getWordDetailLikeDisplayItemByIdForDetailScreen',
             );
 
         expect(detailRow, isNotNull);
@@ -875,7 +890,7 @@ void main() {
         });
 
         final detailRow = await repository
-            .getWordDetailMapByIdForReadSourcePhase2Only(
+            .getWordDetailLikeDisplayItemByIdForDetailScreen(
               'T9000_RS_DETAIL_MISMATCH',
             );
         final snapshot = WordRepository.debugReadSourceCollector
@@ -884,7 +899,7 @@ void main() {
               (entry) =>
                   entry.wordId == 'T9000_RS_DETAIL_MISMATCH' &&
                   entry.context ==
-                      'getWordDetailMapByIdForReadSourcePhase2Only',
+                      'getWordDetailLikeDisplayItemByIdForDetailScreen',
             );
 
         expect(detailRow, isNotNull);
@@ -929,7 +944,7 @@ void main() {
           '발음1': 'summary',
         });
 
-        await repository.getWordDetailMapByIdForReadSourcePhase2Only(
+        await repository.getWordDetailLikeDisplayItemByIdForDetailScreen(
           'T9000_RS_SUMMARY',
         );
 
@@ -993,12 +1008,9 @@ Future<Directory> _createIsolatedWorkspace(
   return isolatedRoot;
 }
 
-void _expectSameDetailDisplay(
-  Map<String, dynamic> expectedWordRow,
-  Map<String, dynamic> actualWordRow,
-) {
-  final expected = _buildDetailDisplaySummary(expectedWordRow);
-  final actual = _buildDetailDisplaySummary(actualWordRow);
+void _expectSameDetailDisplay(Object expectedDetail, Object actualDetail) {
+  final expected = _buildDetailDisplaySummary(expectedDetail);
+  final actual = _buildDetailDisplaySummary(actualDetail);
 
   expect(actual.representativeSpelling, expected.representativeSpelling);
   expect(actual.spellings, equals(expected.spellings));
@@ -1008,22 +1020,43 @@ void _expectSameDetailDisplay(
 }
 
 ({
-  String representativeSpelling,
+  String? representativeSpelling,
   List<String> spellings,
   List<String> transliterations,
   List<String> pronunciations,
   List<String> meanings,
 })
-_buildDetailDisplaySummary(Map<String, dynamic> wordRow) {
+_buildDetailDisplaySummary(Object detail) {
+  if (detail is WordDetailLikeDisplayItem) {
+    return (
+      representativeSpelling: detail.representativeSpelling,
+      spellings: detail.spellings,
+      transliterations: detail.transliterations,
+      pronunciations: detail.pronunciations,
+      meanings: detail.meanings,
+    );
+  }
+
+  if (detail is! Map<String, dynamic>) {
+    throw ArgumentError.value(
+      detail,
+      'detail',
+      'Map<String, dynamic> 또는 WordDetailLikeDisplayItem만 비교할 수 있습니다.',
+    );
+  }
+
+  final wordRow = detail;
   final readResult = readLegacyWordExpressionRow(wordRow);
   final representativeSpelling = readResult.sets.isEmpty
-      ? ''
-      : readResult.sets
-            .firstWhere(
-              (set) => set.isRepresentative,
-              orElse: () => readResult.sets.first,
-            )
-            .spelling;
+      ? null
+      : _nullIfEmptyString(
+          readResult.sets
+              .firstWhere(
+                (set) => set.isRepresentative,
+                orElse: () => readResult.sets.first,
+              )
+              .spelling,
+        );
 
   return (
     representativeSpelling: representativeSpelling,
@@ -1038,6 +1071,14 @@ _buildDetailDisplaySummary(Map<String, dynamic> wordRow) {
     ),
     meanings: _collectSeries(wordRow, '의미', 7),
   );
+}
+
+String? _nullIfEmptyString(String value) {
+  final trimmed = value.trim();
+  if (trimmed.isEmpty) {
+    return null;
+  }
+  return trimmed;
 }
 
 List<String> _collectUniqueNonEmptyValues(Iterable<String?> values) {
