@@ -5501,3 +5501,27 @@ Phase 12-J의 command 기반 확인은 문서 반영 확인과 path-level diff �
 | production UI diff 없음 확인 | `lib`, 플랫폼 경로 변경이 없어야 함 | UI 또는 플랫폼 파일 변경 | `git diff --name-only -- lib android ios macos windows linux web` | 작업 종료 보고에서 기록 |
 | whitespace 검증 | diff에 whitespace 오류가 없어야 함 | trailing whitespace 또는 patch formatting 오류 | `git diff --check` | 작업 종료 보고에서 기록 |
 | Git 상태 확인 | 변경 파일과 브랜치 상태가 명확해야 함 | 승인 범위 밖 파일 변경 또는 잘못된 브랜치 | `git status --short --branch` | 작업 종료 보고에서 기록 |
+
+### 17.75 Phase 12-K representative query expectation baseline 현행화
+
+Phase 12-K의 목적은 Phase 12-J에서 test-only fix 후보로 선정한 `test/data/repositories/word_repository_phase8h1_representative_query_contract_test.dart`의 representative query expectation을 현행 seed DB와 production duplicate candidate 정책에 맞춰 정리하는 것이다. 이번 단계는 baseline test red 정리이며 production 정책 변경, seed DB 변경, ExplorerWorkspace UX 변경이 아니다.
+
+대상 테스트의 기존 기대값은 non-strong duplicate 후보 조회에서 테스트가 삽입한 `T9000_H1_DUPLICATE_NON_STRONG` 1건만 반환되는 것이었다. 그러나 seed DB에는 테스트 삽입 전부터 히브리어 대표 표기 정규화 기준 `כפר` 후보가 `H3722_0000`, `H3723_0000` 2건 존재한다.
+
+| candidate id | language | strong number | representative spelling | normalized spelling | primary meaning |
+| --- | --- | --- | --- | --- | --- |
+| `H3722_0000` | 히브리어 | `H3722` | `כָּפַר` | `כפר` | 덮다 |
+| `H3723_0000` | 히브리어 | `H3723` | `כָּפָר` | `כפר` | 마을/촌락 |
+| `T9000_H1_DUPLICATE_NON_STRONG` | 히브리어 | 없음 | `כְּפַר` | `כפר` | non strong meaning |
+
+현행 `findDuplicateCandidates`의 non-strong 경로는 같은 언어 row를 representative projection으로 읽고 히브리어 표시 부호를 제거한 representative spelling 기준으로 후보를 비교한다. 따라서 실제 반환 3건은 seed DB 기존 후보 2건과 테스트 삽입 1건이 함께 반환되는 자연스러운 결과다.
+
+Phase 12-K에서는 이 동작을 production code 변경 없이 테스트 expectation으로 명시한다. 테스트는 단순 count 제거가 아니라 3건의 식별 가능한 값인 candidate id, language, strong number, representative spelling, primary meaning을 검증한다.
+
+이번 단계에서는 `lib/` production code, `WordRepository` production 구현, seed DB, fixture DB, ExplorerWorkspace UX, `WordExplorerScreen`, context strip, route/shell/owner/controller/coordinator, Provider/Repository/Navigator/persistence authority, DTO/model/public API를 변경하지 않는다. 추가 production-visible UX diff는 계속 보류한다.
+
+Phase 12-J remaining red 중 representative query 1건을 정리 대상으로 삼고, 남은 baseline red는 `test/ui/explorer_workspace_phase4e_composition_boundary_test.dart` 1건으로 유지한다. 이 항목은 Phase 13 전환 정책 또는 별도 ExplorerWorkspace guardrail 재정의 단계로 이월한다.
+
+새로 개발과 병렬 개발은 보류하고 기존 방식의 점진 안정화 전략을 계속한다.
+
+명령어 기반 확인 결과, `word_repository_phase8h1_representative_query_contract_test.dart`는 `+6: All tests passed!`로 통과했다. 전체 `flutter test --reporter compact` 결과는 Phase 12-J 기준 `+226 -2`에서 `+227 -1`로 변했다. representative query 실패는 제거되었고 새 branch-only 실패는 확인되지 않았다. 남은 baseline red는 `test/ui/explorer_workspace_phase4e_composition_boundary_test.dart` 1건이며 실패 내용은 기존 Phase 12-J inventory와 동일한 `explorer_workspace/` import guardrail 불일치다.

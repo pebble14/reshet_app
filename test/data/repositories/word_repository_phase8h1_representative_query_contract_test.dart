@@ -265,7 +265,7 @@ void main() {
     );
 
     test(
-      'duplicate candidates use representative spelling for non-strong matches',
+      'duplicate candidates include seed and inserted representative spelling matches',
       () async {
         final repository = WordRepository();
         final db = await DatabaseService.openDatabaseFile();
@@ -293,13 +293,34 @@ void main() {
           spelling1: 'כפר',
         );
 
-        expect(candidates, hasLength(1));
-        expect(candidates.single, isA<DuplicateCandidateDisplayItem>());
-        expect(candidates.single.wordId, wordId);
-        expect(candidates.single.language, '히브리어');
-        expect(candidates.single.strongNumber, '');
-        expect(candidates.single.representativeSpelling, 'כְּפַר');
-        expect(candidates.single.primaryMeaning, 'non strong meaning');
+        expect(candidates, hasLength(3));
+        expect(candidates, everyElement(isA<DuplicateCandidateDisplayItem>()));
+        expect(
+          candidates,
+          containsAll(const <DuplicateCandidateDisplayItem>[
+            DuplicateCandidateDisplayItem(
+              wordId: 'H3722_0000',
+              language: '히브리어',
+              strongNumber: 'H3722',
+              representativeSpelling: 'כָּפַר',
+              primaryMeaning: '덮다',
+            ),
+            DuplicateCandidateDisplayItem(
+              wordId: 'H3723_0000',
+              language: '히브리어',
+              strongNumber: 'H3723',
+              representativeSpelling: 'כָּפָר',
+              primaryMeaning: '마을/촌락',
+            ),
+            DuplicateCandidateDisplayItem(
+              wordId: wordId,
+              language: '히브리어',
+              strongNumber: '',
+              representativeSpelling: 'כְּפַר',
+              primaryMeaning: 'non strong meaning',
+            ),
+          ]),
+        );
       },
     );
 

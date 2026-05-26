@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## 2026-05-26 Phase 12-K representative query expectation baseline 현행화
+
+- Phase 12-K의 목적은 Phase 12-J에서 test-only fix 후보로 선정한 `test/data/repositories/word_repository_phase8h1_representative_query_contract_test.dart`의 representative query expectation을 현행 seed DB/fixture 결과와 production duplicate candidate 정책에 맞춰 현행화하는 것이다.
+- `duplicate candidates use representative spelling for non-strong matches` 계열 기대값을 기존 1건에서 현행 반환 3건 기준으로 조정했다.
+- 실제 반환 3건은 seed DB 기존 후보 `H3722_0000`(`כָּפַר`, `H3722`, 의미 `덮다`), `H3723_0000`(`כָּפָר`, `H3723`, 의미 `마을/촌락`) 2건과 테스트 삽입 후보 `T9000_H1_DUPLICATE_NON_STRONG`(`כְּפַר`, strong 없음, 의미 `non strong meaning`) 1건이다.
+- 테스트는 단순 count assertion 삭제가 아니라 candidate id, language, strong number, representative spelling, primary meaning을 검증하도록 조정했다.
+- production code와 `WordRepository` production 구현은 변경하지 않았다.
+- seed DB와 fixture DB는 변경하지 않았다.
+- ExplorerWorkspace UX, `WordExplorerScreen`, context strip, route/shell/authority/API는 변경하지 않았다.
+- Phase 12-J remaining red 중 representative query 1건을 정리 대상으로 기록하고, 남은 baseline red는 `test/ui/explorer_workspace_phase4e_composition_boundary_test.dart` 1건으로 유지한다.
+- 명령어 기반 확인 결과, representative query contract test는 `+6: All tests passed!`로 통과했고 전체 `flutter test --reporter compact` 결과는 기존 `+226 -2`에서 `+227 -1`로 변했다. 새 branch-only 실패는 없으며 남은 실패는 기존 `explorer_workspace_phase4e_composition_boundary_test.dart` 1건과 일치한다.
+- 추가 production-visible UX diff는 계속 보류한다.
+- 새로 개발과 병렬 개발은 보류하고 기존 방식의 점진 안정화를 계속한다.
+
 ## 2026-05-26 Phase 12-J final red decision audit
 
 - Phase 12-J를 수정 단계가 아니라 docs/audit 및 final red decision audit 단계로 기록했다. 목적은 Phase 12-I 이후 남은 baseline red 2건의 성격을 실제 명령 결과 기준으로 판단하고 Phase 12-K 또는 Phase 13 방향을 결정하는 것이다.
