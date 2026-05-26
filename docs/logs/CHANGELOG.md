@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## 2026-05-26 Phase 12-H remaining baseline red triage
+
+- Phase 12-H를 fix 단계가 아니라 docs/audit 단계로 기록했다. 목적은 Phase 12-G 이후 남은 baseline red 3건을 다시 확인하고 다음 fix 후보 1건을 선정하는 것이다.
+- Phase 12-G 이후 main 기준 전체 flutter test 결과: +209 -3
+- 남은 baseline red는 `word_repository_read_source_policy_test.dart`, `word_repository_phase8h1_representative_query_contract_test.dart`, `explorer_workspace_phase4e_composition_boundary_test.dart`다.
+- `word_repository_read_source_policy_test.dart`는 loading 단계 컴파일 실패이며 오래된 `WordRepository` API 참조로 재분류했다. 현행 `WordRepository`에 대응 가능한 typed API가 이미 있어 production code 변경 없이 테스트 현행화 가능성이 가장 높으므로 다음 fix 후보 1순위로 기록했다.
+- `word_repository_phase8h1_representative_query_contract_test.dart`는 `DuplicateCandidateDisplayItem` 기대값 불일치로 재분류했다. 기대 1건 대비 실제 3건이 반환되며 seed DB / 정규화 / 대표 후보 정책 판단이 필요하므로 바로 fix보다 stabilization 또는 정책 검토가 필요하다.
+- `explorer_workspace_phase4e_composition_boundary_test.dart`는 production import tree의 `explorer_workspace/` 참조 금지 guardrail 불일치로 재분류했다. ExplorerWorkspace 경계 정책 재정의가 필요하므로 단순 테스트 수정으로 처리하지 않는다.
+- Phase 12-I 진입 조건은 `test/data/repositories/word_repository_read_source_policy_test.dart` 단일 fix로 제한하고, production `WordRepository` 구현 변경은 원칙적으로 금지하며, 테스트를 현행 Repository API에 맞추는 방향으로 한정한다고 기록했다.
+- Phase 12-I에서는 다른 남은 red 2건을 함께 수정하지 않고, 전체 `flutter test` 결과가 `+209 -3`에서 어떻게 변하는지 비교하며, 새 branch-only 실패가 없어야 한다.
+- 이번 단계에서는 코드, 테스트, UI, 플랫폼, dependency 파일을 수정하지 않았다.
+- 추가 production-visible UX diff는 계속 보류한다.
+- 새로 개발과 병렬 개발은 보류하고 기존 방식의 점진 안정화를 계속한다.
+
 ## 2026-05-25 Phase 12-G word_info_panel_test baseline fix
 
 - Phase 12-G의 목적은 Phase 12-F remaining red 중 `test/ui/word_info_panel_test.dart` 1건을 현행 `WordInfoPanel` API 기준으로 정리하는 것이다.

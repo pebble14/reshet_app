@@ -5262,3 +5262,88 @@ Phase 12-G에서 `word_info_panel_test.dart` 1건을 정리 대상으로 삼는�
 | 변경 파일 확인 | 승인된 3개 파일만 변경되어야 함 | 승인 범위 밖 파일 변경 | `git diff --name-only` | 작업 종료 보고에서 기록 |
 | whitespace 검증 | diff에 whitespace 오류가 없어야 함 | trailing whitespace 또는 patch formatting 오류 | `git diff --check` | 작업 종료 보고에서 기록 |
 | Git 상태 확인 | 변경 파일과 브랜치 상태가 명확해야 함 | 잘못된 브랜치 또는 불필요한 변경 | `git status --short --branch` | 작업 종료 보고에서 기록 |
+
+### 17.72 Phase 12-H remaining baseline red triage
+
+Phase 12-H는 fix 단계가 아니라 docs/audit 단계다. 목적은 Phase 12-G 이후 남은 baseline red 3건을 실제 명령 결과 기준으로 다시 확인하고, 수정 난이도, 위험도, 정책 영향도, production code 영향 가능성을 비교하여 다음 fix 대상 1건만 선정하는 것이다.
+
+이번 단계에서는 코드, 테스트, UI, 플랫폼, dependency 파일을 수정하지 않는다. `lib/`, `test/`, production route, `WordExplorerScreen` context strip, `ExplorerWorkspace` shell mount, owner/controller/coordinator migration, Provider / Repository / Navigator / persistence authority migration, DTO/model/public API 추가는 수행하지 않는다. 추가 production-visible UX diff는 계속 보류한다.
+
+새로 개발과 병렬 개발은 보류하고 기존 방식의 점진 안정화 전략을 유지한다. Phase 12-H는 남은 baseline red를 모두 고치는 단계가 아니며, 다음 Phase에서 가장 작고 정책 영향이 낮은 항목 1건만 fix 대상으로 선택하기 위한 triage 단계다.
+
+#### 17.72.1 확인 기준과 실행 명령
+
+확인 기준은 Phase 12-G 이후 main 최신 상태에서 생성한 `docs/explorer-workspace-phase12h-remaining-baseline-red-triage` 브랜치다. 기준 main HEAD는 `cdba5e894845ab78a6545d008c288df63fa2399e`이며, 최신 커밋 메시지는 `fix: word_info_panel_test baseline 현행화`다.
+
+실행한 주요 명령은 다음과 같다.
+
+- `git checkout main`
+- `git pull --ff-only`
+- `git checkout -b docs/explorer-workspace-phase12h-remaining-baseline-red-triage`
+- `flutter test --reporter compact`
+- `flutter test test/data/repositories/word_repository_read_source_policy_test.dart --reporter expanded`
+- `flutter test test/data/repositories/word_repository_phase8h1_representative_query_contract_test.dart --reporter expanded`
+- `flutter test test/ui/explorer_workspace_phase4e_composition_boundary_test.dart --reporter expanded`
+- `rg -n "read_source|readSource|source policy|source_policy|WordRepository|representative|duplicate candidate|composition boundary|ExplorerWorkspace|projection|import" test lib docs`
+- `rg -n "word_repository_read_source_policy|word_repository_phase8h1|phase4e_composition" test docs`
+- `git status --short --branch`
+
+#### 17.72.2 전체 flutter test 결과
+
+Phase 12-G 이후 main 기준 전체 flutter test 결과: +209 -3
+
+`flutter test --reporter compact`는 남은 baseline red 3건을 포함해 `+209 -3`으로 종료되었다. Phase 12-G에서 `word_info_panel_test.dart` 실패가 제거된 상태로 유지되었고, 이번 단계에서 확인된 새 branch-only 실패는 없다.
+
+#### 17.72.3 남은 baseline red 3건 재확인 결과
+
+| 항목 | 개별 실행 결과 | 확인 내용 |
+| --- | --- | --- |
+| `test/data/repositories/word_repository_read_source_policy_test.dart` | loading 단계 컴파일 실패 | 테스트가 현재 `WordRepository` public surface에 없는 `getWordMapByIdForSplitViewSingleWord`, `getWordDetailMapByIdForReadSourcePhase2Only`를 호출한다. |
+| `test/data/repositories/word_repository_phase8h1_representative_query_contract_test.dart` | `duplicate candidates use representative spelling for non-strong matches` 실패 | `DuplicateCandidateDisplayItem` 기대값은 1건이지만 실제 반환은 3건이다. |
+| `test/ui/explorer_workspace_phase4e_composition_boundary_test.dart` | `production import tree does not reference preview composition` 실패 | 테스트는 production import tree가 `explorer_workspace/`를 참조하지 않아야 한다고 기대하지만, 현재 `word_explorer_screen.dart`는 read-only projection boundary용 ExplorerWorkspace contract와 adapter를 import한다. |
+
+#### 17.72.4 남은 baseline red 재분류
+
+| 실패 테스트 파일 | 실패 테스트명 또는 그룹명 | 실패 유형 | 원인 요약 | Phase 12-B/G 직접 관련 여부 | production code 변경 필요 가능성 | test-only 수정 가능성 | docs-only 수정 가능성 | 정책 판단 필요 여부 | 수정 난이도 | 위험도 | 권장 브랜치 성격 | 우선순위 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `test/data/repositories/word_repository_read_source_policy_test.dart` | loading 단계 / `WordRepository split view single-word path`, `WordRepository detail-only phase2 path`, `ReadSourceDebugCollector wrapper output` 부근 | 오래된 Repository API 참조 | 테스트가 삭제되었거나 변경된 `WordRepository` API를 호출한다. 현재 대응 가능한 typed API 후보는 `getWordDetailLikeDisplayItemByIdForSplitView`, `getWordMapByIdForExplorerSingleWord`, detail screen display item read 계열이다. | 직접 관련 없음 | 낮음. 현행 API가 이미 있어 production 구현 변경 없이 테스트 현행화 가능성이 가장 높다. | 높음. 테스트를 현행 Repository API에 맞추는 방향이 우선이다. | 낮음. 문서만으로 red를 제거할 수 없다. | 낮음. API 대응 범위를 확인하되 정책 재정의 부담은 가장 작다. | 낮음 | 낮음 | `fix/` | 1순위 |
+| `test/data/repositories/word_repository_phase8h1_representative_query_contract_test.dart` | `duplicate candidates use representative spelling for non-strong matches` | 기대값 불일치 | 기대 1건 대비 실제 `DuplicateCandidateDisplayItem` 3건이 반환된다. seed DB / 정규화 / 대표 후보 정책 중 어느 쪽이 현행 기준인지 판단이 필요하다. | 직접 관련 없음 | 중간. query 정책을 바꾸면 production duplicate candidate 동작에 영향이 생긴다. | 중간. fixture 기대값이 낡은 것인지 실제 query regression인지 먼저 분리해야 한다. | 낮음. 문서만으로 red를 제거할 수 없다. | 높음. duplicate candidate 의미와 representative normalization 정책 판단이 필요하다. | 중간 | 높음 | `test-stabilization` 또는 `fix/` | 후순위 |
+| `test/ui/explorer_workspace_phase4e_composition_boundary_test.dart` | `production import tree does not reference preview composition` | source-level guardrail 불일치 | production import tree의 `explorer_workspace/` 참조 금지 guardrail이 현재 read-only projection boundary 흐름과 충돌한다. ExplorerWorkspace preview composition 금지와 read-only projection helper 허용 범위를 다시 구분해야 한다. | 직접 관련 없음. 다만 ExplorerWorkspace 장기 boundary와 연결된 기존 guardrail debt다. | 중간. production import를 되돌리는 방식은 Phase 7 이후 projection boundary를 건드릴 수 있다. | 중간. 단순 테스트 수정으로 처리하지 말고 경계 정책 재정의가 먼저 필요하다. | 중간. guardrail 문서 정리는 가능하지만 red 제거에는 테스트 수정도 필요하다. | 높음. ExplorerWorkspace 경계 정책 재정의가 필요하다. | 중간 | 중간 | `docs/` + test fix 또는 `test-stabilization` | 후순위 |
+
+#### 17.72.5 다음 fix 후보 1순위
+
+다음 fix 후보 1순위는 `test/data/repositories/word_repository_read_source_policy_test.dart`다.
+
+선정 이유는 다음과 같다.
+
+- 컴파일 실패라 원인이 가장 명확하고, 현행 `WordRepository`에 대응 가능한 typed API가 이미 있어 production code 변경 없이 테스트 현행화 가능성이 가장 높기 때문이다.
+- `word_repository_phase8h1_representative_query_contract_test.dart`는 seed DB / 정규화 / 대표 후보 정책 판단이 필요하므로 바로 fix보다 stabilization 또는 정책 검토가 먼저 필요하다.
+- `explorer_workspace_phase4e_composition_boundary_test.dart`는 ExplorerWorkspace 경계 정책 재정의가 필요하므로 단순 테스트 수정으로 처리하지 않는다.
+- ExplorerWorkspace UX 변경, `WordExplorerScreen` context strip 변경, route/shell/authority/API 변경과 섞이지 않는다.
+- 개별 테스트와 전체 `flutter test` 결과를 비교해 개선 여부를 확인할 수 있다.
+
+#### 17.72.6 Phase 12-I 진입 조건
+
+Phase 12-I로 진입하려면 아래 조건을 충족해야 한다.
+
+- Phase 12-I는 `test/data/repositories/word_repository_read_source_policy_test.dart` 단일 fix로 제한한다.
+- production `WordRepository` 구현 변경은 원칙적으로 금지한다.
+- 수정 방향은 테스트를 현행 Repository API에 맞추는 것으로 제한한다.
+- `word_repository_phase8h1_representative_query_contract_test.dart`, `explorer_workspace_phase4e_composition_boundary_test.dart`는 함께 수정하지 않는다.
+- 개별 실행으로 `word_repository_read_source_policy_test.dart`의 컴파일 실패 제거 여부를 확인한다.
+- 전체 `flutter test --reporter compact` 결과가 `+209 -3`에서 어떻게 변하는지 비교한다.
+- 새 branch-only 실패가 없어야 한다.
+- 추가 production-visible UX diff는 계속 보류한다.
+- 새로 개발과 병렬 개발은 보류하고 기존 방식의 점진 안정화를 계속한다.
+
+#### 17.72.7 Phase 12-H 명령어 기반 확인 체크리스트
+
+Phase 12-H의 command 기반 확인은 문서 반영 확인과 path-level diff 확인으로 제한한다. 목표는 이번 docs/audit 변경이 코드, 테스트, 플랫폼, dependency, production UI를 변경하지 않았음을 확인하는 것이다.
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 | 실제 결과 |
+| --- | --- | --- | --- | --- |
+| Phase 12-H 기록 확인 | Phase 12-H, remaining baseline red, triage, Phase 12-I, next fix, `flutter test`, `read_source_policy` 기록이 두 문서에 있어야 함 | Phase 12-H 목적, 다음 fix 후보, Phase 12-I 조건 누락 | `rg -n "Phase 12-H|remaining baseline red|triage|Phase 12-I|next fix|flutter test|read_source_policy" docs/ux/explorer_workspace_unification.md docs/logs/CHANGELOG.md` | 작업 종료 보고에서 기록 |
+| 코드/테스트/플랫폼/dependency 변경 없음 확인 | `lib`, `test`, 플랫폼 경로, `pubspec.yaml`, `pubspec.lock` 변경이 없어야 함 | 문서 외 파일 변경 | `git diff --name-only -- lib test android ios macos windows linux web pubspec.yaml pubspec.lock` | 작업 종료 보고에서 기록 |
+| production UI diff 추가 없음 확인 | `lib`, 플랫폼 경로 변경이 없어야 함 | UI 또는 플랫폼 파일 변경 | `git diff --name-only -- lib android ios macos windows linux web` | 작업 종료 보고에서 기록 |
+| whitespace 검증 | diff에 whitespace 오류가 없어야 함 | trailing whitespace 또는 patch formatting 오류 | `git diff --check` | 작업 종료 보고에서 기록 |
+| Git 상태 확인 | 변경 파일과 브랜치 상태가 명확해야 함 | 승인 범위 밖 파일 변경 또는 잘못된 브랜치 | `git status --short --branch` | 작업 종료 보고에서 기록 |
