@@ -1,5 +1,26 @@
 # CHANGELOG
 
+## 2026-05-26 Phase 12-M termination audit
+
+- Phase 12-M을 구현 단계가 아니라 Phase 12 종료 audit 단계로 기록했다. 목적은 Phase 12-A부터 Phase 12-L까지의 결과를 종합해 Phase 12 종료 가능 여부와 Phase 13 carryover를 확정하는 것이다.
+- Phase 12-A는 minimum production-visible candidate selection audit로 full `ExplorerWorkspace` shell mount를 직접 후보에서 제외했고, Phase 12-B는 기존 `HomeScreen -> WordExplorerScreen` 경로 안에서 `WordExplorerScreen` detail pane 상단 read-only context strip을 추가했다.
+- Phase 12-C부터 Phase 12-L까지는 첫 production-visible UX diff 평가, baseline red inventory, package/import baseline fix, remaining baseline red review, `word_info_panel_test.dart` baseline 현행화, remaining baseline red triage, `word_repository_read_source_policy_test.dart` baseline 현행화, final red decision audit, representative query expectation baseline 현행화, termination and boundary carryover audit를 순서대로 정리했다.
+- Phase 12에서 실제로 발생한 production-visible UX 변경은 `WordExplorerScreen` detail pane 상단 read-only context strip 추가 하나로 한정한다.
+- Phase 12에서는 `ExplorerWorkspace` shell mount, route 변경, owner/controller/coordinator migration, Provider / Repository / Navigator / persistence authority migration, DTO/model/public API 추가, `ExplorerWorkspaceState` projection visible UI 사용을 수행하지 않았고, 기존 `HomeScreen -> WordExplorerScreen` 진입 경로를 유지했다.
+- 새로 개발과 병렬 개발은 보류했고, 기존 방식의 점진 안정화 전략을 유지했다.
+- baseline test red는 전체 `flutter test --reporter compact` 기준 `+204 -6 -> +227 -1`로 개선되었다.
+- 남은 red는 `test/ui/explorer_workspace_phase4e_composition_boundary_test.dart` 1건이다.
+- 남은 red는 production 기능 오류가 아니라, Phase 4-E production import guardrail과 Phase 7 이후 read-only projection/adapter import 허용 범위의 정책 불일치로 기록했다.
+- 남은 red는 Phase 12-M에서 직접 수정하지 않고 Phase 13 guardrail 재정의 또는 별도 boundary policy phase로 이월한다.
+- Phase 12는 첫 production-visible UX diff 도입과 baseline red 대폭 축소라는 핵심 목적을 달성했다. 남은 composition boundary red 1건은 Phase 13 guardrail 재정의 과제로 이월 가능하므로 Phase 12는 종료 가능하다.
+- Phase 13 첫 작업은 composition boundary guardrail 재정의 여부 판단으로 시작해야 하며, 추가 production-visible UX diff는 guardrail 정리 이후 재검토한다.
+- `ExplorerWorkspace` shell mount, route 변경, owner/controller/coordinator migration은 별도 승인 전까지 금지한다.
+- Phase 13은 새 ChatGPT 채팅에서 시작하는 것을 권장한다.
+- 이번 단계에서는 코드, 테스트, UI, 플랫폼, dependency 파일을 수정하지 않았다.
+- 명령어 기반 확인 결과, 전체 `flutter test --reporter compact`는 `+227 -1`로 종료되었고 남은 실패는 `test/ui/explorer_workspace_phase4e_composition_boundary_test.dart` 1건이었다.
+- 남은 red 개별 실행 결과는 `flutter test test/ui/explorer_workspace_phase4e_composition_boundary_test.dart --reporter expanded` 기준 `+5 -1`이며, 실패 지점은 `production import tree does not reference preview composition`이다.
+- Phase 12-M 기록 검색은 확인되었고, `lib/`, `test/`, 플랫폼, dependency 파일 변경은 없으며, production UI diff와 whitespace 오류도 없었다.
+
 ## 2026-05-26 Phase 12-L termination and boundary carryover audit
 
 - Phase 12-L을 수정 단계가 아니라 `termination and boundary carryover audit` 단계로 기록했다. 목적은 Phase 12 종료 가능성과 마지막 `composition boundary` red의 Phase 13 이월 여부를 실제 명령 결과 기준으로 판단하는 것이다.
