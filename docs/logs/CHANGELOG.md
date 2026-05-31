@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## 2026-05-31 Phase 15-A minimum production-visible UX diff candidate selection audit
+
+- Phase 15-A를 구현 단계가 아니라 docs/audit only 단계로 기록했다.
+- Phase 14-B 이후 추가 minimum production-visible UX diff를 재개할 수 있는지 후보군을 비교했다.
+- Phase 15-B 후보는 `WordExplorerScreen` detail pane 선택 없음 empty state 안내 가독성 개선 하나로 제한했다.
+- 후보 B인 context strip 추가 개선은 Phase 14-B 직후 같은 영역을 연속 수정하는 것이므로 보류했다.
+- 후보 C인 graph/history/navigation 관련 표시 개선은 navigation/history owner, availability probe, repository probe와 결합될 위험이 있어 제외했다.
+- 후보 D인 `ExplorerWorkspace` shell mount 또는 route 전환은 명시적 금지선에 해당하므로 제외했다.
+- `ExplorerWorkspace` shell mount, route wiring / route registration 변경, `HomeScreen -> WordExplorerScreen` 진입 구조 변경, owner/controller/coordinator migration, Provider / Repository / Navigator / persistence authority migration, DTO/model/public API 추가, `ExplorerWorkspaceState` projection visible UI source-of-truth 사용, 새 repository read, 새 DB query는 계속 금지한다.
+- 이번 단계에서는 production code, test code, dependency, 플랫폼 파일을 변경하지 않는다.
+- 전체 `flutter test --reporter compact`는 docs/audit only 변경이며 production code/test code 변경이 없으므로 실행하지 않는 것으로 판단한다.
+
 ## 2026-05-31 Phase 14-C termination audit
 
 - Phase 14-C를 구현, test fix, UI 변경 단계가 아니라 Phase 14 전체 종료 가능 여부를 판단하는 termination audit 단계로 기록했다.

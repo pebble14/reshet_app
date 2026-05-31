@@ -6152,3 +6152,108 @@ Phase 14는 후보 선정, 최소 UX diff 구현, 테스트/문서/UI 확인까�
 | 금지 경로 변경 없음 확인 | `lib`, `test`, 플랫폼 경로, `pubspec.yaml`, `pubspec.lock` 변경이 없어야 함 | production code, 테스트, UI 구현, dependency 변경 발생 | `git diff --name-only -- lib test android ios macos windows linux web pubspec.yaml pubspec.lock` | 출력 없음 |
 | whitespace 검증 | diff에 whitespace 오류가 없어야 함 | trailing whitespace 또는 patch formatting 오류 | `git diff --check` | whitespace 오류 없음. 문서 2개는 `LF will be replaced by CRLF` 줄바꿈 경고가 출력됨 |
 | 전체 flutter test 판단 | docs/audit only 변경이므로 전체 테스트 미실행 사유가 명확해야 함 | 문서 외 변경이 있는데 test를 생략함 | `flutter test --reporter compact` 실행 여부 판단 | 전체 flutter test는 Phase 14-C가 문서/audit only 변경이며 lib/test/production code 변경이 없으므로 미실행함. Phase 14-B에서 전체 flutter test --reporter compact는 +233: All tests passed!로 이미 확인됨 |
+
+### 17.84 Phase 15-A minimum production-visible UX diff candidate selection audit
+
+Phase 15-A는 구현 단계가 아니라 docs/audit only 단계다. 목적은 Phase 14-B에서 `WordExplorerScreen` detail pane 상단 read-only context strip 표시 가독성 개선을 완료한 뒤, Phase 15에서 추가 minimum production-visible UX diff를 재개할 수 있는지 문서상으로 판단하는 것이다.
+
+이번 단계에서는 후보군을 비교하고 Phase 15-B로 넘길 단일 후보를 선정할 수 있는지만 기록한다. Phase 15-B 구현, production code 변경, test code 변경, dependency 변경, 플랫폼 파일 변경, UI 테스트 수행 보고는 하지 않는다.
+
+#### 17.84.1 Phase 14-B 이후 추가 production-visible UX diff 재개 가능 여부
+
+Phase 14-B의 context strip 가독성 개선은 기존 `HomeScreen -> WordExplorerScreen` production 진입 경로 안에서 완료되었고, Phase 14-C에서 종료 가능하다고 기록되었다. 따라서 추가 UX diff 후보 검토는 가능하다.
+
+다만 Phase 15-A 기준으로 재개 가능한 범위는 기존 `WordExplorerScreen` 내부 표시 개선에 한정한다. shell mount, route wiring, owner/authority migration, 새 repository read, 새 DB query를 동반하는 후보는 minimum production-visible UX diff 범위를 초과하므로 Phase 15-B 후보에서 제외한다.
+
+#### 17.84.2 유지 금지선
+
+| 항목 | Phase 15-A 기준 |
+| --- | --- |
+| `ExplorerWorkspace` shell mount | 금지 |
+| route wiring / route registration 변경 | 금지 |
+| `HomeScreen -> WordExplorerScreen` 진입 구조 변경 | 금지 |
+| owner/controller/coordinator migration | 금지 |
+| Provider / Repository / Navigator / persistence authority migration | 금지 |
+| DTO/model/public API 추가 | 금지 |
+| projection result persistence/history/source-of-truth 사용 | 금지 |
+| `ExplorerWorkspaceState` projection visible UI source-of-truth 사용 | 금지 |
+| route collapse | 금지 |
+| canonical owner migration | 금지 |
+| Level 3 production-visible consumer 승격 | 금지 |
+| 새 repository read | 금지 |
+| 새 DB query | 금지 |
+| production code 변경 | 금지 |
+| test code 변경 | 금지 |
+| dependency 변경 | 금지 |
+| 플랫폼 파일 변경 | 금지 |
+
+#### 17.84.3 후보군 비교
+
+| 후보 | 내용 | 평가 | Phase 15-B 후보 여부 |
+| --- | --- | --- | --- |
+| 후보 A | `WordExplorerScreen` detail pane 선택 없음 empty state 안내 가독성 개선 | 기존 `_buildNoSelectionDetailPanel()` 범위의 표시 개선으로 제한 가능하고 route, shell, owner, repository, DTO, projection source-of-truth 변경 없이 진행 가능한 최소 UX diff 후보 | 선정 |
+| 후보 B | context strip 추가 개선 | Phase 14-B에서 같은 영역의 가독성 개선을 막 완료했으므로 연속 수정 시 UX diff 목적이 흐려질 수 있음 | 보류 |
+| 후보 C | graph/history/navigation 관련 표시 개선 | history tooltip, graph action, navigation affordance 개선은 navigation/history owner, availability probe, repository probe와 결합될 위험이 있음 | 제외 |
+| 후보 D | `ExplorerWorkspace` shell mount 또는 route 전환 | 명시적 금지선에 해당하며 production shell mount 또는 route 전환을 포함함 | 제외 |
+
+#### 17.84.4 Phase 15-B 단일 후보 선정 여부
+
+Phase 15-B로 넘길 후보는 후보 A 하나로 제한한다.
+
+선정 후보는 `WordExplorerScreen` detail pane 선택 없음 empty state 안내 가독성 개선이다. 이 후보는 선택된 그래프 노드가 없는 상태에서 detail pane에 표시되는 안내 문구와 시각적 안내를 더 명확하게 정리하는 범위로 제한한다.
+
+#### 17.84.5 선정 이유
+
+- 기존 production 진입 경로인 `HomeScreen -> WordExplorerScreen` 구조를 유지할 수 있다.
+- 기존 `WordExplorerScreen` 내부 `_buildNoSelectionDetailPanel()` 수준의 표시 개선으로 제한할 수 있다.
+- `ExplorerWorkspace` shell mount, route wiring, owner/controller/coordinator migration 없이 진행할 수 있다.
+- Provider / Repository / Navigator / persistence authority migration 없이 진행할 수 있다.
+- DTO/model/public API 추가 없이 진행할 수 있다.
+- 새 repository read와 새 DB query 없이 진행할 수 있다.
+- Phase 14-B 이후에도 사용자가 볼 수 있는 최소 UX diff로 분리할 수 있다.
+
+#### 17.84.6 제외 후보와 제외 이유
+
+| 제외 후보 | 제외 이유 |
+| --- | --- |
+| 후보 B: context strip 추가 개선 | Phase 14-B에서 context strip 표시 가독성 개선을 막 완료했으므로 같은 영역을 연속 수정하면 Phase 15의 UX diff 목적이 좁아질 수 있다. 추가 필요는 실제 UI 기반 확인에서 별도 문제가 확인될 때 재검토한다. |
+| 후보 C: graph/history/navigation 관련 표시 개선 | navigation/history owner, availability probe, repository probe와 결합될 수 있어 minimum production-visible UX diff 범위를 초과할 위험이 있다. |
+| 후보 D: `ExplorerWorkspace` shell mount 또는 route 전환 | `ExplorerWorkspace` shell mount와 route wiring / route registration 변경은 Phase 15-A 금지선에 직접 해당하므로 Phase 15 후보에서 제외한다. |
+
+#### 17.84.7 Phase 15-B 진행 시 필요한 테스트 조건
+
+Phase 15-B를 진행하려면 먼저 별도 승인을 받고 신규 source-level guardrail test를 추가해야 한다. 권장 파일은 `test/ui/word_explorer_screen_phase15b_empty_state_readability_test.dart`이다.
+
+해당 테스트는 다음을 확인해야 한다.
+
+- empty state 개선이 `_buildNoSelectionDetailPanel()` 범위에 머무는지 확인한다.
+- `Navigator`, `MaterialPageRoute`, `Provider`, `Repository`, `WordRepository`, `SharedPreferences`, `ExplorerWorkspaceState`, `WordExplorerWorkspaceProjectionAdapter`, `setState`, `async`, `await`, `Future<` marker를 empty state 영역에 추가하지 않는지 확인한다.
+- route/shell/owner/authority migration이 없는지 확인한다.
+- 기존 context strip guardrail을 깨지 않는지 확인한다.
+
+Phase 15-B에서 실행해야 할 명령은 다음과 같다.
+
+- `flutter test test/ui/word_explorer_screen_phase15b_empty_state_readability_test.dart --reporter expanded`
+- `flutter test test/ui/word_explorer_screen_phase12b_readonly_context_strip_test.dart --reporter expanded`
+- `flutter test test/ui/word_explorer_screen_phase14b_context_strip_readability_test.dart --reporter expanded`
+- `flutter test test/ui/explorer_workspace_phase4e_composition_boundary_test.dart --reporter expanded`
+- `flutter test --reporter compact`
+
+Phase 15-B의 클라이언트 UI 기반 테스트 조건은 다음과 같다. CodeX는 UI 테스트를 수행했다고 보고하지 않고, 실제 UI 판단은 클라이언트가 수행한다.
+
+| 테스트 목적 | 시작 화면 | 조작 순서 | 입력할 테스트 데이터 | 기대되는 화면 변화 | 실패 시 확인할 증상 | 테스트 완료 판단 기준 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 선택 없음 empty state 안내 가독성 확인 | `HomeScreen` | 사람이 식별 가능한 단어를 Explorer로 열고 그래프 노드를 선택하지 않은 detail pane 상태를 확인한다. | Home 기본 목록 또는 검색 결과에서 대표 표기와 Strong 번호가 보이는 단어 | 선택 없음 안내가 현재 상태와 다음 가능한 행동을 혼동 없이 전달한다. | 안내 문구가 과하거나, 선택이 이미 된 것처럼 보이거나, 불필요한 동작을 유도함 | 선택 없음 상태가 명확하고 detail pane의 다른 정보와 충돌하지 않음 |
+| context strip 유지 확인 | `WordExplorerScreen` | detail pane 상단 context strip을 확인한다. | 같은 단어 | Phase 14-B의 중심/선택 단어 context strip 표시가 유지된다. | context strip이 사라지거나 raw id 중심으로 퇴행함 | context strip 표시와 empty state 안내가 동시에 읽기 쉬움 |
+| 선택 후 상세 패널 전환 확인 | `WordExplorerScreen` | 그래프에서 사람이 식별 가능한 다른 노드를 선택한다. | 그래프에 표시되는 다른 단어 노드 | 선택 없음 안내가 사라지고 선택 단어 상세 패널로 자연스럽게 전환된다. | 선택 후에도 empty state가 남거나 상세 정보와 겹침 | 선택된 노드와 상세 패널 내용이 일치함 |
+| 레이아웃 겹침 확인 | `WordExplorerScreen` | 창 크기를 일반 데스크톱 사용 크기로 유지한 채 detail pane을 확인한다. | 별도 id 입력 없음 | 안내 문구, context strip, 상세 패널 영역이 겹치지 않는다. | 텍스트 잘림, 겹침, 빈 공간 과다 발생 | 안내와 상세 패널 전환이 안정적으로 보임 |
+
+#### 17.84.8 Phase 15-A 명령어 기반 확인 체크리스트
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 |
+| --- | --- | --- | --- |
+| 변경 파일 확인 | `docs/ux/explorer_workspace_unification.md`, `docs/logs/CHANGELOG.md` 두 파일만 변경되어야 함 | 허용 외 파일 변경 발생 | `git diff --name-only` |
+| 금지 경로 변경 없음 확인 | `lib`, `test`, 플랫폼 경로, `pubspec.yaml`, `pubspec.lock` 변경이 없어야 함 | production code, test code, dependency, 플랫폼 파일 변경 발생 | `git diff --name-only -- lib test android ios macos windows linux web pubspec.yaml pubspec.lock` |
+| whitespace 검증 | whitespace 오류가 없어야 함 | trailing whitespace 또는 patch formatting 오류 | `git diff --check` |
+| 문서 반영 검색 | Phase 15-A 목적, 후보 선정, 금지선, Phase 15-B 후보, 테스트 조건이 문서에서 확인되어야 함 | 후보 선정 또는 금지선 기록 누락 | `rg -n "Phase 15-A|minimum production-visible UX diff|candidate selection audit|empty state|선택 없음|ExplorerWorkspace shell|route wiring|owner/controller/coordinator|Provider / Repository / Navigator / persistence|DTO/model/public API|ExplorerWorkspaceState|visible UI source-of-truth|새 repository read|새 DB query|Phase 15-B" docs/ux/explorer_workspace_unification.md docs/logs/CHANGELOG.md` |
+| 전체 flutter test 판단 | docs/audit only이며 production code/test code 변경이 없으면 전체 `flutter test --reporter compact`는 실행하지 않는다 | 문서 외 변경이 있는데 전체 테스트를 생략함 | 변경 파일 범위 확인 후 실행 여부 판단 |
