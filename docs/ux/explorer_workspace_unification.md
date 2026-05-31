@@ -6257,3 +6257,93 @@ Phase 15-B의 클라이언트 UI 기반 테스트 조건은 다음과 같다. Co
 | whitespace 검증 | whitespace 오류가 없어야 함 | trailing whitespace 또는 patch formatting 오류 | `git diff --check` |
 | 문서 반영 검색 | Phase 15-A 목적, 후보 선정, 금지선, Phase 15-B 후보, 테스트 조건이 문서에서 확인되어야 함 | 후보 선정 또는 금지선 기록 누락 | `rg -n "Phase 15-A|minimum production-visible UX diff|candidate selection audit|empty state|선택 없음|ExplorerWorkspace shell|route wiring|owner/controller/coordinator|Provider / Repository / Navigator / persistence|DTO/model/public API|ExplorerWorkspaceState|visible UI source-of-truth|새 repository read|새 DB query|Phase 15-B" docs/ux/explorer_workspace_unification.md docs/logs/CHANGELOG.md` |
 | 전체 flutter test 판단 | docs/audit only이며 production code/test code 변경이 없으면 전체 `flutter test --reporter compact`는 실행하지 않는다 | 문서 외 변경이 있는데 전체 테스트를 생략함 | 변경 파일 범위 확인 후 실행 여부 판단 |
+
+### 17.85 Phase 15-B WordExplorerScreen 선택 없음 empty state 안내 가독성 개선
+
+Phase 15-B는 Phase 15-A에서 선정한 단일 후보를 구현하는 production-visible UX diff 단계다. 목적은 `WordExplorerScreen` detail pane에서 그래프 노드가 선택되지 않은 상태의 안내를 더 명확하고 읽기 쉽게 개선하는 것이다.
+
+#### 17.85.1 실제 UX 변경 내용
+
+`_buildNoSelectionDetailPanel()`의 empty state 안내 문구를 다음 사용자 기준 문구로 개선했다.
+
+- `그래프에서 단어를 선택하세요`
+- `선택한 단어의 상세 정보가 이 영역에 표시됩니다.`
+- `중심 단어 정보는 상단 표시줄에서 확인할 수 있습니다.`
+
+기존 아이콘 기반 empty state 구조와 `Center`, `Padding`, `Column` 기반 레이아웃은 유지했다. 안내 문구 읽기 폭을 안정화하기 위해 `_buildNoSelectionDetailPanel()` 내부에 `ConstrainedBox(maxWidth: 360)`만 추가했다.
+
+#### 17.85.2 변경 범위
+
+| 항목 | Phase 15-B 결과 |
+| --- | --- |
+| production UI 변경 | `WordExplorerScreen` detail pane 선택 없음 empty state 문구 개선 |
+| 구현 위치 | `lib/ui/word_explorer_screen.dart`의 `_buildNoSelectionDetailPanel()` 내부 |
+| 신규 테스트 | `test/ui/word_explorer_screen_phase15b_empty_state_readability_test.dart` |
+| 문서 갱신 | `docs/ux/explorer_workspace_unification.md`, `docs/logs/CHANGELOG.md` |
+| `_buildDetailPaneContextStrip()` 변경 | 없음 |
+| `_readOnlyWorkspaceProjection` 변경 | 없음 |
+| `HomeScreen`, `WordGraphScreen`, `WordInfoPanel` 변경 | 없음 |
+
+#### 17.85.3 유지 금지선
+
+| 항목 | Phase 15-B 결과 |
+| --- | --- |
+| `ExplorerWorkspace` shell mount | 없음 |
+| route wiring / route registration 변경 | 없음 |
+| `HomeScreen -> WordExplorerScreen` 진입 구조 변경 | 없음 |
+| owner/controller/coordinator migration | 없음 |
+| Provider / Repository / Navigator / persistence authority migration | 없음 |
+| DTO/model/public API 추가 | 없음 |
+| projection result persistence/history/source-of-truth 사용 | 없음 |
+| `ExplorerWorkspaceState` projection visible UI source-of-truth 사용 | 없음 |
+| route collapse | 없음 |
+| canonical owner migration | 없음 |
+| Level 3 production-visible consumer 승격 | 없음 |
+| 새 repository read | 없음 |
+| 새 DB query | 없음 |
+| dependency 변경 | 없음 |
+| 플랫폼 파일 변경 | 없음 |
+
+#### 17.85.4 신규 테스트 조건
+
+`test/ui/word_explorer_screen_phase15b_empty_state_readability_test.dart`는 source-level guardrail 방식으로 다음을 확인한다.
+
+- `_buildNoSelectionDetailPanel()`이 존재하고 기존 detail pane 내부에서 호출되는지 확인한다.
+- empty state에 Phase 15-B 사용자 기준 문구가 포함되는지 확인한다.
+- 앱 화면 문구에 개발자 용어인 `context strip`이 들어가지 않는지 확인한다.
+- `_buildNoSelectionDetailPanel()` 내부가 `Center`, `Padding`, `ConstrainedBox`, `Column`, 기존 아이콘 기반 read-only 표시 개선에 머무는지 확인한다.
+- `_buildNoSelectionDetailPanel()` 내부에 `Navigator`, `MaterialPageRoute`, `Provider`, `Repository`, `WordRepository`, `SharedPreferences`, `ExplorerWorkspaceState`, `WordExplorerWorkspaceProjectionAdapter`, `_readOnlyWorkspaceProjection`, `workspaceProjection`, `projection.`, `detailTargetWordId`, `layoutPreset`, `origin`, `setState`, `async`, `await`, `Future<`, `routes:`, `onGenerateRoute`, `ExplorerWorkspace(` marker가 없는지 확인한다.
+- 기존 context strip helper와 `HomeScreen -> WordExplorerScreen` 진입 구조가 유지되는지 확인한다.
+
+#### 17.85.5 명령어 기반 테스트 결과
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 | 실제 결과 |
+| --- | --- | --- | --- | --- |
+| Phase 15-B 신규 empty state guardrail | empty state 문구 개선과 `_buildNoSelectionDetailPanel()` 범위 제한이 확인되어야 함 | 사용자 기준 문구 누락, 개발자 용어 노출, route/shell/owner/repository marker 유입 | `flutter test test/ui/word_explorer_screen_phase15b_empty_state_readability_test.dart --reporter expanded` | `+4: All tests passed!` |
+| Phase 12-B context strip guardrail 유지 | context strip이 detail pane 안에 read-only로 존재하고 기존 owner state 기준을 유지해야 함 | context strip 위치 이탈, projection visible UI 입력 사용, route/owner/authority marker 유입 | `flutter test test/ui/word_explorer_screen_phase12b_readonly_context_strip_test.dart --reporter expanded` | `+4: All tests passed!` |
+| Phase 14-B context strip 가독성 유지 | 중심/선택 단어 표시와 선택 없음 fallback이 유지되어야 함 | context strip 표시 퇴행, 선택 없음 누락, 빈 segment 출력 | `flutter test test/ui/word_explorer_screen_phase14b_context_strip_readability_test.dart --reporter expanded` | `+5: All tests passed!` |
+| composition boundary 유지 | production import tree가 preview/shell/route/owner 유입을 차단해야 함 | `ExplorerWorkspace` shell mount, route/default home 변경, owner migration marker 유입 | `flutter test test/ui/explorer_workspace_phase4e_composition_boundary_test.dart --reporter expanded` | `+6: All tests passed!` |
+| 전체 테스트 | 전체 테스트가 통과해야 함 | 변경 범위 밖 회귀, source-level guardrail 실패, repository/data test 실패 | `flutter test --reporter compact` | `+237: All tests passed!` |
+
+#### 17.85.6 클라이언트 UI 기반 테스트 체크리스트
+
+CodeX는 UI 테스트를 수행하지 않는다. 아래 절차는 클라이언트가 production-visible UX diff를 확인하기 위한 기준이다.
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 |
+| --- | --- | --- | --- |
+| 선택 없음 empty state 안내 확인 | detail pane에 `그래프에서 단어를 선택하세요`, `선택한 단어의 상세 정보가 이 영역에 표시됩니다.`, `중심 단어 정보는 상단 표시줄에서 확인할 수 있습니다.`가 표시되어야 함 | 문구가 이전 상태로 남거나 개발자 용어가 보임 | HomeScreen에서 사람이 식별 가능한 단어를 Explorer로 열고 그래프 노드를 선택하지 않은 detail pane을 확인한다. |
+| 상단 context strip 유지 확인 | Phase 14-B의 중심/선택 단어 context strip이 유지되어야 함 | context strip이 사라지거나 raw id 중심 표시로 퇴행함 | 같은 화면에서 detail pane 상단 표시줄과 선택 없음 안내를 함께 확인한다. |
+| 그래프 노드 선택 후 전환 확인 | 그래프 노드를 선택하면 empty state 안내가 사라지고 선택 단어 상세 정보가 표시되어야 함 | 선택 후에도 empty state가 남거나 상세 패널과 겹침 | 그래프에서 사람이 식별 가능한 다른 단어 노드를 선택한다. |
+| 레이아웃 겹침 확인 | 안내 문구, 상단 표시줄, 상세 패널 영역이 겹치지 않아야 함 | 텍스트 잘림, 겹침, 빈 공간 과다 발생 | 일반 Windows Desktop 창 크기에서 detail pane을 확인한다. |
+
+클라이언트 UI 기반 테스트는 성공 확인됨으로 기록한다. 클라이언트가 직접 확인한 실제 UI 문구는 다음과 같다.
+
+```text
+그래프에서 단어를 선택하세요
+선택한 단어의 상세 정보가 이 영역에 표시됩니다.
+중심 단어 정보는 상단 표시줄에서 확인할 수 있습니다.
+```
+
+#### 17.85.7 Phase 15-B 종료 전 확인 조건
+
+Phase 15-B는 명령어 기반 테스트 기준으로 remaining red 없이 green 상태다. 클라이언트 UI 기반 테스트도 성공 확인됨으로 기록한다. 최종 커밋 조건은 문서 갱신 후 전체 `flutter test --reporter compact` 재실행과 변경 범위 확인까지 통과하는 것이다.

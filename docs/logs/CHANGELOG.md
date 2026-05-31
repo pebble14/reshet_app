@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 2026-05-31 Phase 15-B WordExplorerScreen 선택 없음 empty state 안내 가독성 개선
+
+- Phase 15-B를 production-visible UX diff 단계로 기록했다.
+- 변경 대상은 `WordExplorerScreen` detail pane 선택 없음 empty state 안내이며, 구현 범위는 `lib/ui/word_explorer_screen.dart`의 `_buildNoSelectionDetailPanel()` 내부 표시 개선으로 제한했다.
+- 실제 UI 문구는 `그래프에서 단어를 선택하세요`, `선택한 단어의 상세 정보가 이 영역에 표시됩니다.`, `중심 단어 정보는 상단 표시줄에서 확인할 수 있습니다.`로 정리했다.
+- 기존 아이콘 기반 empty state 구조와 `Center`, `Padding`, `Column` 기반 레이아웃을 유지하고, 읽기 폭 제한을 위해 `_buildNoSelectionDetailPanel()` 내부에 `ConstrainedBox(maxWidth: 360)`만 추가했다.
+- route/shell/owner/repository/DTO/projection source-of-truth/DB query 변경은 없다. `_buildDetailPaneContextStrip()`, `_readOnlyWorkspaceProjection`, `HomeScreen`, `WordGraphScreen`, `WordInfoPanel`, domain/model/public API도 변경하지 않았다.
+- 신규 guardrail test `test/ui/word_explorer_screen_phase15b_empty_state_readability_test.dart`를 추가해 empty state 문구, 사용자 기준 표현, 금지 marker 부재, 기존 context strip과 `HomeScreen -> WordExplorerScreen` 진입 구조 유지를 확인했다.
+- 테스트 결과 `flutter test test/ui/word_explorer_screen_phase15b_empty_state_readability_test.dart --reporter expanded`는 `+4: All tests passed!`, Phase 12-B context strip 테스트는 `+4: All tests passed!`, Phase 14-B context strip readability 테스트는 `+5: All tests passed!`, composition boundary test는 `+6: All tests passed!`, 전체 `flutter test --reporter compact`는 `+237: All tests passed!`로 통과했다.
+- 클라이언트 UI 기반 테스트는 CodeX 수행 대상이 아니며, 클라이언트 UI 기반 테스트 성공 확인됨으로 기록한다. 클라이언트가 확인한 실제 UI 문구는 `그래프에서 단어를 선택하세요`, `선택한 단어의 상세 정보가 이 영역에 표시됩니다.`, `중심 단어 정보는 상단 표시줄에서 확인할 수 있습니다.`이다.
+
 ## 2026-05-31 Phase 15-A minimum production-visible UX diff candidate selection audit
 
 - Phase 15-A를 구현 단계가 아니라 docs/audit only 단계로 기록했다.
