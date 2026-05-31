@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## 2026-05-31 Phase 14-C termination audit
+
+- Phase 14-C를 구현, test fix, UI 변경 단계가 아니라 Phase 14 전체 종료 가능 여부를 판단하는 termination audit 단계로 기록했다.
+- Phase 14-A는 minimum production-visible UX diff candidate selection audit로 진행되었고, 후보를 `WordExplorerScreen` detail pane 상단 read-only context strip 표시 가독성 개선 하나로 제한했다.
+- Phase 14-A에서 `ExplorerWorkspace` shell mount, route wiring / route registration 변경, `HomeScreen -> WordExplorerScreen` 진입 구조 변경, owner/controller/coordinator migration, Provider / Repository / Navigator / persistence authority migration, DTO/model/public API 추가, `ExplorerWorkspaceState` projection visible UI source-of-truth 사용 금지선을 재확인했다.
+- Phase 14-B는 `WordExplorerScreen` detail pane 상단 read-only context strip 표시 가독성 개선을 구현했다. 중심 단어와 선택 단어를 가능한 경우 대표 표기 / Strong 번호 / transliteration 기반으로 표시하고, 값이 부족하면 기존 word id fallback을 유지하며, 선택 없음 상태는 `선택 없음`으로 유지했다.
+- Phase 14-B 구현은 빈 segment를 생략해 빈 괄호, 중복 구분자, 의미 없는 공백을 방지하는 범위에 머물렀다.
+- Phase 14 전체에서 `ExplorerWorkspace` shell mount, route wiring / route registration 변경, owner/controller/coordinator migration, Provider / Repository / Navigator / persistence authority migration, DTO/model/public API 추가, projection result persistence/history/source-of-truth 사용, `ExplorerWorkspaceState` projection visible UI source-of-truth 사용, 새 repository read, 새 DB query, route collapse, canonical owner migration, Level 3 production-visible consumer 승격은 수행하지 않았다.
+- Phase 14-B 테스트 결과는 Phase 12-B context strip 테스트 `+4: All tests passed!`, Phase 14-B context strip readability 테스트 `+5: All tests passed!`, composition boundary test `+6: All tests passed!`, 전체 `flutter test --reporter compact` `+233: All tests passed!`로 기록한다. 클라이언트 UI 기반 테스트도 성공 확인되었다.
+- Phase 14는 후보 선정, 최소 UX diff 구현, 테스트/문서/UI 확인까지 완료했고 remaining red가 없으므로 종료 가능하다. 다음 Phase에서도 별도 승인 전까지 shell mount, route wiring, owner/authority migration은 계속 금지한다.
+- Phase 14-C는 docs/audit only 변경이므로 전체 `flutter test`는 실행하지 않는다. Phase 14-B에서 전체 `flutter test --reporter compact`는 `+233: All tests passed!`로 이미 확인되었다.
+
 ## 2026-05-31 Phase 14-B WordExplorerScreen context strip 표시 가독성 개선
 
 - Phase 14-B를 production-visible UX diff 단계로 기록했다. 변경 목적은 기존 `WordExplorerScreen` detail pane 상단 read-only context strip을 raw word id 중심 표시에서 대표 표기 / Strong 번호 / transliteration 중심의 사람이 읽기 쉬운 표시로 개선하는 것이다.

@@ -6067,3 +6067,88 @@ CodeX는 UI 테스트를 수행하지 않는다. 아래 절차는 클라이언�
 | 선택 단어 context strip 갱신 확인 | `WordExplorerScreen` | 그래프에서 다른 노드를 선택하고 context strip의 선택 영역을 확인한다. | 그래프에 표시되는 사람이 식별 가능한 다른 단어 노드 | 선택 단어가 가능한 경우 대표 표기 / Strong 번호 / transliteration 조합으로 갱신된다. | 선택 영역이 갱신되지 않거나 raw id만 표시되거나 detail panel의 선택 단어와 어긋남 | 선택한 노드와 detail panel, context strip 선택 표시가 같은 단어를 가리킴 |
 | 선택 없음 상태 유지 확인 | `WordExplorerScreen` | 선택이 없는 초기 상태 또는 선택 해제 가능한 흐름에서 context strip을 확인한다. | 별도 id 입력 없음 | 선택 단어 영역이 `선택 없음`으로 유지된다. | 선택 없음 상태에서 빈 문자열, 빈 구분자, 이전 선택 단어가 남음 | 선택 없음 상태가 명확히 표시되고 center 표시가 유지됨 |
 | fallback 확인 | `WordExplorerScreen` | 대표 표기 또는 Strong 번호가 부족한 단어를 Explorer에서 확인한다. | 대표 표기 일부가 비어 있는 단어가 있을 경우 해당 단어 | 표시 가능한 값이 부족하면 기존 word id fallback이 유지되고 Strong 번호/transliteration은 비어 있으면 생략된다. | 빈 괄호, 중복 구분자, 공백만 있는 segment가 보임 | 표시 가능한 값만 보이고 부족한 값은 생략되며 word id fallback이 남음 |
+
+### 17.83 Phase 14-C termination audit
+
+Phase 14-C는 Phase 14 전체 종료 가능 여부를 판단하는 termination audit 단계다. 이번 단계는 구현, test fix, UX 변경 단계가 아니며 `docs/ux/explorer_workspace_unification.md`와 `docs/logs/CHANGELOG.md`에 Phase 14-A/B 결과와 종료 판단을 정리하는 docs/audit only 변경으로 제한한다.
+
+#### 17.83.1 Phase 14-A 요약
+
+Phase 14-A는 Phase 13 composition boundary guardrail green 이후 추가 production-visible UX diff를 재개할 수 있는지 판단하기 위한 minimum production-visible UX diff candidate selection audit였다.
+
+Phase 14-A에서 후보는 `WordExplorerScreen` detail pane 상단 read-only context strip 표시 가독성 개선 하나로 제한되었다. 이 후보는 기존 `HomeScreen -> WordExplorerScreen` production 진입 경로 안에서 기존 `WordExplorerScreen` 내부 상태를 read-only로 표시하는 최소 UX diff로 평가되었다.
+
+Phase 14-A에서 재확인한 금지선은 다음과 같다.
+
+- `ExplorerWorkspace` shell mount 금지
+- route wiring / route registration 변경 금지
+- `HomeScreen -> WordExplorerScreen` 진입 구조 변경 금지
+- owner/controller/coordinator migration 금지
+- Provider / Repository / Navigator / persistence authority migration 금지
+- DTO/model/public API 추가 금지
+- projection result persistence/history/source-of-truth 사용 금지
+- `ExplorerWorkspaceState` projection visible UI source-of-truth 사용 금지
+- route collapse 금지
+- canonical owner migration 금지
+- Level 3 production-visible consumer 승격 금지
+
+#### 17.83.2 Phase 14-B 요약
+
+Phase 14-B는 Phase 14-A에서 선정한 단일 후보를 구현했다. `WordExplorerScreen` detail pane 상단 read-only context strip 표시를 raw word id 중심에서 가능한 경우 대표 표기 / Strong 번호 / transliteration 기반으로 읽기 쉽게 개선했다.
+
+Phase 14-B의 실제 변경은 다음과 같다.
+
+- 중심 단어는 `_centerDisplaySeed`의 `representativeSpelling`, `displayStrongNumber`, `representativeTransliteration`을 우선 사용한다.
+- 선택 단어는 `_selectedWordDisplayItem`의 `representativeSpelling`, `displayStrongNumber`, 첫 번째 비어 있지 않은 transliteration 값을 우선 사용한다.
+- 표시값이 부족하면 기존 word id fallback을 유지한다.
+- 선택이 없으면 `선택 없음` 상태를 유지한다.
+- 빈 segment는 생략해 빈 괄호, 중복 구분자, 의미 없는 공백이 나오지 않도록 했다.
+
+#### 17.83.3 Phase 14 금지선 유지 결과
+
+| 항목 | Phase 14 결과 |
+| --- | --- |
+| `ExplorerWorkspace` shell mount | 없음 |
+| route wiring / route registration 변경 | 없음 |
+| `HomeScreen -> WordExplorerScreen` 진입 구조 변경 | 없음 |
+| owner/controller/coordinator migration | 없음 |
+| Provider / Repository / Navigator / persistence authority migration | 없음 |
+| DTO/model/public API 추가 | 없음 |
+| projection result persistence/history/source-of-truth 사용 | 없음 |
+| `ExplorerWorkspaceState` projection visible UI source-of-truth 사용 | 없음 |
+| 새 repository read | 없음 |
+| 새 DB query | 없음 |
+| route collapse | 없음 |
+| canonical owner migration | 없음 |
+| Level 3 production-visible consumer 승격 | 없음 |
+
+#### 17.83.4 Phase 14 테스트와 UI 확인 결과
+
+| 확인 항목 | 실제 결과 |
+| --- | --- |
+| Phase 12-B context strip 테스트 | `+4: All tests passed!` |
+| Phase 14-B context strip readability 테스트 | `+5: All tests passed!` |
+| composition boundary test | `+6: All tests passed!` |
+| 전체 `flutter test --reporter compact` | `+233: All tests passed!` |
+| 클라이언트 UI 기반 테스트 | 성공 확인됨 |
+
+전체 flutter test는 Phase 14-C가 문서/audit only 변경이며 lib/test/production code 변경이 없으므로 미실행했다. Phase 14-B에서 전체 flutter test --reporter compact는 +233: All tests passed!로 이미 확인되었다.
+
+#### 17.83.5 Phase 14 종료 판단
+
+Phase 14는 후보 선정, 최소 UX diff 구현, 테스트/문서/UI 확인까지 완료했다. Phase 14-C 기준 remaining red는 없고, `main == origin/main`, working tree clean, local branch `main` only, 원격 Phase 14-B 브랜치 없음 상태에서 시작되었다.
+
+따라서 Phase 14는 종료 가능하다.
+
+다음 Phase에서는 별도 승인 전까지 `ExplorerWorkspace` shell mount, route wiring / route registration 변경, `HomeScreen -> WordExplorerScreen` 진입 구조 변경, owner/controller/coordinator migration, Provider / Repository / Navigator / persistence authority migration, DTO/model/public API 추가, `ExplorerWorkspaceState` projection visible UI source-of-truth 사용, 새 repository read, 새 DB query를 계속 금지한다.
+
+#### 17.83.6 Phase 14-C 명령어 기반 확인 체크리스트
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 | 실제 결과 |
+| --- | --- | --- | --- | --- |
+| 기준 git 상태 확인 | Phase 14-C docs 브랜치에서 HEAD와 origin/main이 `0f9cbcc72494e65af01a9105a1b97fb0cc4da8bc`로 일치해야 함 | 기준 브랜치 또는 기준 커밋 불일치 | `git status --short --branch`, `git branch --list`, `git rev-parse HEAD`, `git rev-parse origin/main`, `git log -1 --oneline` | 브랜치 `docs/explorer-workspace-phase14c-termination-audit`, HEAD `0f9cbcc72494e65af01a9105a1b97fb0cc4da8bc`, origin/main `0f9cbcc72494e65af01a9105a1b97fb0cc4da8bc`, 최신 커밋 `0f9cbcc feat: ExplorerWorkspace Phase 14-B context strip 가독성 개선` 확인 |
+| 문서 반영 검색 | Phase 14-C, termination audit, Phase 14 종료, Phase 14-A/B, context strip, test 결과, UI 기반 확인, 금지선 문구가 두 문서에서 검색되어야 함 | 종료 판단 또는 금지선 기록 누락 | `rg -n "Phase 14-C|termination audit|Phase 14 종료|Phase 14-A|Phase 14-B|context strip|flutter test|\\+233|UI 기반|ExplorerWorkspace shell|route wiring|owner/controller/coordinator|Provider / Repository / Navigator / persistence|DTO/model/public API|ExplorerWorkspaceState|visible UI source-of-truth|새 repository read|새 DB query" docs/ux/explorer_workspace_unification.md docs/logs/CHANGELOG.md` | 요청한 검색어가 두 문서에서 정상 매칭됨 |
+| 변경 파일 확인 | 문서 2개만 변경되어야 함 | 허용 범위 밖 파일 변경 | `git diff --name-only` | `docs/logs/CHANGELOG.md`, `docs/ux/explorer_workspace_unification.md` 출력. 문서 2개는 `LF will be replaced by CRLF` 줄바꿈 경고가 함께 출력됨 |
+| 금지 경로 변경 없음 확인 | `lib`, `test`, 플랫폼 경로, `pubspec.yaml`, `pubspec.lock` 변경이 없어야 함 | production code, 테스트, UI 구현, dependency 변경 발생 | `git diff --name-only -- lib test android ios macos windows linux web pubspec.yaml pubspec.lock` | 출력 없음 |
+| whitespace 검증 | diff에 whitespace 오류가 없어야 함 | trailing whitespace 또는 patch formatting 오류 | `git diff --check` | whitespace 오류 없음. 문서 2개는 `LF will be replaced by CRLF` 줄바꿈 경고가 출력됨 |
+| 전체 flutter test 판단 | docs/audit only 변경이므로 전체 테스트 미실행 사유가 명확해야 함 | 문서 외 변경이 있는데 test를 생략함 | `flutter test --reporter compact` 실행 여부 판단 | 전체 flutter test는 Phase 14-C가 문서/audit only 변경이며 lib/test/production code 변경이 없으므로 미실행함. Phase 14-B에서 전체 flutter test --reporter compact는 +233: All tests passed!로 이미 확인됨 |
