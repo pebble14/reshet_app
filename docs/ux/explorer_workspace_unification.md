@@ -5862,3 +5862,62 @@ Phase 13-B는 Phase 13-A에서 문서화한 allowed / forbidden 기준을 `explo
 | 변경 파일 확인 | 테스트 파일과 문서 2개만 변경되어야 함 | 허용 범위 밖 파일 변경 | `git diff --name-only` | 테스트 파일 1개와 문서 2개 |
 | whitespace 검증 | diff에 whitespace 오류가 없어야 함 | trailing whitespace 또는 patch formatting 오류 | `git diff --check` | 출력 없음 |
 | Git 상태 확인 | Phase 13-B 브랜치에서 변경 범위가 명확해야 함 | 잘못된 브랜치 또는 예상 외 파일 변경 | `git status --short --branch` | `fix/explorer-workspace-phase13b-composition-boundary-guardrail-test`, 파일 3개 변경 |
+
+### 17.80 Phase 13-C termination audit
+
+Phase 13-C는 구현, test fix, UX 변경 단계가 아니라 Phase 13 전체 종료 가능 여부를 판단하는 termination audit 단계다. 이번 단계에서는 `lib/`, `test/`, 플랫폼, dependency, DB, repository/provider/navigator/route production code를 수정하지 않는다. 추가 production-visible UX diff도 수행하지 않는다.
+
+#### 17.80.1 Phase 13-A 결과 요약
+
+Phase 13-A는 composition boundary guardrail 정책을 재정의했다. Phase 4-E blanket `explorer_workspace/` import ban의 원래 목적은 preview-only composition이 production owner 또는 source of truth로 유입되는 것을 막는 것이었음을 재확인했다.
+
+Phase 13-A는 이후 Phase 7~12에서 생긴 `WordExplorerScreen` 내부 read-only projection/adapter import를 별도 allowed boundary로 분리했다. allowed 범위는 `explorer_workspace_contract.dart`, `word_explorer_workspace_projection_adapter.dart`, `ExplorerWorkspaceState`, `ExplorerWorkspaceLayoutPreset`, `ExplorerWorkspaceTransitionOrigin`의 read-only 참조로 제한한다.
+
+동시에 preview/shell/route/authority 유입은 forbidden boundary로 유지했다. `ExplorerWorkspace` shell mount, `ExplorerWorkspacePreviewScreen`, `ExplorerWorkspacePreviewInteractionHost`, `ExplorerWorkspacePreviewInput` production route/input contract 소비, `ExplorerWorkspaceHistoryEntry` production history/source-of-truth 사용, route wiring 변경, owner/controller/coordinator migration, Provider / Repository / Navigator / persistence authority migration은 계속 금지된다.
+
+#### 17.80.2 Phase 13-B 결과 요약
+
+Phase 13-B는 `test/ui/explorer_workspace_phase4e_composition_boundary_test.dart`를 Phase 13-A 기준에 맞게 현행화했다. 기존 `explorer_workspace/` 전체 production source blanket ban을 제거하고, `WordExplorerScreen`의 read-only projection/adapter import만 허용하도록 테스트를 재구성했다.
+
+Preview/shell/route/history/authority 유입 차단은 유지했다. `ExplorerWorkspace(` shell mount, preview screen/interaction host/input/history marker, `explorer_workspace.dart` production import, route/default home 변경, owner/controller/coordinator migration, Provider / Repository / Navigator / persistence authority migration은 계속 실패 조건으로 남는다.
+
+Phase 13-B 결과로 Phase 12-M 이후 남아 있던 remaining red 1건인 `explorer_workspace_phase4e_composition_boundary_test.dart` 실패가 해소되었다.
+
+#### 17.80.3 Phase 13 종료 판단
+
+Phase 13은 다음 조건을 충족했다.
+
+- Phase 13-A에서 composition boundary guardrail 정책을 allowed / forbidden 기준으로 재정의했다.
+- Phase 13-B에서 오래된 Phase 4-E source-level guardrail test를 현행 정책에 맞게 수정했다.
+- 기존 remaining red 1건이 해소되었다.
+- 전체 `flutter test --reporter compact` green 상태를 명령어 기반으로 확인했다.
+- 이번 Phase 13-C에서는 production-visible UX diff를 수행하지 않는다.
+
+명령어 기반 확인에서 위 조건이 유지되었으므로 Phase 13은 종료 가능하다.
+
+#### 17.80.4 추가 production-visible UX diff 재개 조건
+
+Phase 13-C 이후 추가 production-visible UX diff를 재개하려면 별도 Phase에서 다음 조건을 다시 확인해야 한다.
+
+- `ExplorerWorkspace` shell mount 금지 유지 여부
+- route wiring 변경 여부
+- owner/controller/coordinator migration 여부
+- Provider / Repository / Navigator / persistence authority migration 여부
+- DTO/model/public API 추가 여부
+- `ExplorerWorkspaceState` projection visible UI source-of-truth 사용 여부
+- rollback 가능한 최소 production-visible UX diff인지 여부
+
+이 조건 확인은 Phase 13-C의 범위가 아니며, 추가 UX diff 구현 승인도 아니다.
+
+#### 17.80.5 Phase 13-C 명령어 기반 확인 체크리스트
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 | 실제 결과 |
+| --- | --- | --- | --- | --- |
+| 전체 test baseline 확인 | 전체 `flutter test`가 `+228: All tests passed!`로 종료되어야 함 | 새 branch-only 실패 또는 green baseline 붕괴 | `flutter test --reporter compact` | `+228: All tests passed!` |
+| composition boundary test 개별 확인 | Phase 13-B 현행화 테스트가 `+6: All tests passed!`로 종료되어야 함 | allowed/forbidden guardrail 회귀 | `flutter test test/ui/explorer_workspace_phase4e_composition_boundary_test.dart --reporter expanded` | `+6: All tests passed!` |
+| 문서 반영 확인 | Phase 13-C, termination audit, Phase 13 종료, Phase 13-A/B, `+228`, production-visible UX diff 재개 조건이 두 문서에 있어야 함 | 종료 판단, 테스트 결과, 후속 UX diff 조건 누락 | `rg -n "Phase 13-C|termination audit|Phase 13 종료|composition boundary guardrail|Phase 13-A|Phase 13-B|flutter test|\\+228|production-visible UX diff|ExplorerWorkspace shell|route wiring|owner/controller/coordinator|Provider / Repository / Navigator / persistence" docs/ux/explorer_workspace_unification.md docs/logs/CHANGELOG.md` | 기록 확인됨 |
+| 코드/테스트/플랫폼/dependency 변경 없음 확인 | `lib`, `test`, 플랫폼 경로, `pubspec.yaml`, `pubspec.lock` 변경이 없어야 함 | docs/audit 범위 밖 파일 변경 | `git diff --name-only -- lib test android ios macos windows linux web pubspec.yaml pubspec.lock` | 출력 없음 |
+| production UI diff 없음 확인 | `lib`, 플랫폼 경로 변경이 없어야 함 | production-visible UI/플랫폼 변경 발생 | `git diff --name-only -- lib android ios macos windows linux web` | 출력 없음 |
+| 변경 파일 확인 | 문서 2개만 변경되어야 함 | 허용 범위 밖 파일 변경 | `git diff --name-only` | `docs/logs/CHANGELOG.md`, `docs/ux/explorer_workspace_unification.md` |
+| whitespace 검증 | diff에 whitespace 오류가 없어야 함 | trailing whitespace 또는 patch formatting 오류 | `git diff --check` | 출력 없음 |
+| Git 상태 확인 | Phase 13-C 브랜치에서 변경 범위가 명확해야 함 | 잘못된 브랜치 또는 예상 외 파일 변경 | `git status --short --branch` | `docs/explorer-workspace-phase13c-termination-audit`, 문서 2개 변경 |

@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 2026-05-31 Phase 13-C termination audit
+
+- Phase 13-C를 구현, test fix, UX 변경 단계가 아니라 Phase 13 전체 종료 가능 여부를 판단하는 termination audit 단계로 기록했다.
+- Phase 13-A는 Phase 4-E blanket `explorer_workspace/` import ban의 원래 목적을 재확인하고, read-only projection/adapter import allowed 기준과 preview/shell/route/authority 유입 forbidden 기준을 문서화했다.
+- Phase 13-B는 `test/ui/explorer_workspace_phase4e_composition_boundary_test.dart`를 현행 정책에 맞게 수정했고, read-only projection/adapter import 허용과 preview/shell/route/history/authority 유입 차단을 함께 유지했다.
+- Phase 13-B 결과 기존 remaining red 1건이 해소되었다.
+- Phase 13-C에서는 추가 production-visible UX diff를 수행하지 않는다.
+- 이후 추가 UX diff를 재개하려면 별도 Phase에서 `ExplorerWorkspace` shell mount 금지 유지 여부, route wiring 변경 여부, owner/controller/coordinator migration 여부, Provider / Repository / Navigator / persistence authority migration 여부, DTO/model/public API 추가 여부, `ExplorerWorkspaceState` projection visible UI source-of-truth 사용 여부, rollback 가능한 최소 production-visible UX diff인지 여부를 다시 확인해야 한다.
+- 명령어 기반 확인 결과, 전체 `flutter test --reporter compact`는 `+228: All tests passed!`로 통과했고 composition boundary test 개별 실행은 `+6: All tests passed!`로 통과했다. 문서 반영 검색은 확인되었고, `lib/`, `test/`, 플랫폼, dependency 변경 없음, production UI diff 없음, 변경 파일 문서 2개, whitespace 오류 없음으로 확인했다.
+
 ## 2026-05-31 Phase 13-B composition boundary guardrail test 현행화
 
 - Phase 13-B를 production code 변경이 아니라 `test/ui/explorer_workspace_phase4e_composition_boundary_test.dart`의 test guardrail fix 단계로 기록했다.
