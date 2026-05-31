@@ -5734,3 +5734,81 @@ Phase 12-M의 command 기반 확인은 문서 반영 확인, baseline red 확인
 | production UI diff 없음 확인 | `lib`, 플랫폼 경로 변경이 없어야 함 | UI 또는 플랫폼 파일 변경 | `git diff --name-only -- lib android ios macos windows linux web` | 출력 없음 |
 | whitespace 검증 | diff에 whitespace 오류가 없어야 함 | trailing whitespace 또는 patch formatting 오류 | `git diff --check` | whitespace 오류 없음 |
 | Git 상태 확인 | 변경 파일과 브랜치 상태가 명확해야 함 | 승인 범위 밖 파일 변경 또는 잘못된 브랜치 | `git status --short --branch` | `docs/explorer-workspace-phase12m-termination-audit`, 문서 2개 변경 |
+
+### 17.78 Phase 13-A composition boundary guardrail 재정의 audit
+
+Phase 13-A는 구현 단계가 아니라 docs/audit 단계다. 목적은 Phase 4-E production import guardrail과 Phase 7 이후 read-only projection/adapter import 허용 흐름의 충돌을 문서 기준으로 재정의하는 것이다. 이번 단계에서는 코드, 테스트, UI, 플랫폼, dependency 파일을 수정하지 않는다.
+
+Phase 4-E guardrail의 원래 목적은 preview-only composition이 production owner 또는 source of truth로 유입되는 것을 막는 것이었다. 당시의 광범위한 `explorer_workspace/` production import 금지는 `ExplorerWorkspace` shell mount, `ExplorerWorkspacePreviewScreen` route 연결, preview interaction host 연결, preview input의 production contract 소비, repository/Navigator/persistence authority 이전을 차단하기 위한 방어선이었다.
+
+Phase 7 이후에는 별도 흐름이 생겼다. `WordExplorerScreen`의 read-only projection/adapter import는 shell mount, route 변경, owner migration이 아니다. 이 경계는 기존 `WordExplorerScreen` owner state를 `ExplorerWorkspaceState` snapshot으로 읽어 assert/probe에서 확인하는 one-way read-only projection이며, repository, Navigator, persistence, route authority를 이전하지 않는다.
+
+따라서 현재 남은 red 1건은 production 기능 오류가 아니라 Phase 4-E blanket import guardrail과 Phase 7 이후 read-only projection/adapter import 허용 정책의 불일치로 기록한다. `explorer_workspace/` import를 전면 금지하는 기존 guardrail은 노후화되었으며, allowed import와 forbidden import를 분리한 새 composition boundary guardrail로 재정의해야 한다.
+
+#### 17.78.1 allowed import 범위
+
+Phase 13-A 기준 allowed 범위는 다음으로 제한한다.
+
+- `WordExplorerScreen` 내부 read-only projection adapter import
+- `ExplorerWorkspaceState` / `ExplorerWorkspaceLayoutPreset` / `ExplorerWorkspaceTransitionOrigin`의 read-only 참조
+- 기존 `WordExplorerScreen` owner state를 projection으로 읽는 assert/probe 용도
+- repository, Navigator, persistence, route authority를 이전하지 않는 참조
+
+allowed import는 source of truth 이전이 아니다. projection 결과는 production history, persisted state, route state, visible UI source-of-truth, canonical owner state로 승격하지 않는다.
+
+#### 17.78.2 forbidden import 및 변경 범위
+
+Phase 13-A 기준 forbidden 범위는 다음과 같다.
+
+- `ExplorerWorkspace` shell mount
+- `ExplorerWorkspacePreviewScreen` production route 연결
+- `ExplorerWorkspacePreviewInteractionHost` production 연결
+- `ExplorerWorkspacePreviewInput`을 production route/input contract로 소비
+- `ExplorerWorkspaceHistoryEntry`를 production history/source-of-truth로 사용
+- `main.dart` route/default home 변경
+- `HomeScreen -> WordExplorerScreen` 진입 구조 변경
+- owner/controller/coordinator migration
+- Provider / Repository / Navigator / persistence authority migration
+- DTO/model/public API 추가
+- `ExplorerWorkspaceState` projection을 visible UI source-of-truth로 사용
+- 추가 production-visible UX diff
+
+이 forbidden 범위는 Phase 13-A에서 직접 수정하지 않는다. 후속 test fix가 필요하더라도 `explorer_workspace_phase4e_composition_boundary_test.dart`는 allowed/forbidden boundary가 문서로 고정된 뒤 별도 승인된 단계에서만 현행화한다.
+
+#### 17.78.3 Phase 13-A에서 하지 않는 것
+
+이번 단계에서는 다음을 하지 않는다.
+
+- `explorer_workspace_phase4e_composition_boundary_test.dart` 수정
+- `lib/` 수정
+- `test/` 수정
+- `ExplorerWorkspace` shell mount
+- route wiring 변경
+- owner/controller/coordinator migration
+- Provider / Repository / Navigator / persistence authority migration
+- DTO/model/public API 추가
+- 추가 production-visible UX diff
+
+#### 17.78.4 Phase 13-A 판단
+
+Phase 13-A의 판단은 다음과 같다.
+
+```text
+Phase 4-E의 blanket explorer_workspace/ import 금지는 preview-only composition 유입 방지 목적이었다.
+Phase 7 이후 WordExplorerScreen의 read-only projection/adapter import는 production owner/source-of-truth 이전이 아니다.
+따라서 남은 composition boundary red 1건은 production 기능 오류가 아니라 guardrail 정의 불일치다.
+후속 단계에서는 allowed import와 forbidden import를 분리한 source-level guardrail로 재정의해야 한다.
+```
+
+#### 17.78.5 Phase 13-A 명령어 기반 확인 체크리스트
+
+Phase 13-A의 command 기반 확인은 문서 반영 확인과 path-level diff 확인으로 제한한다. 이번 단계는 docs/audit 변경만 수행하므로 전체 `flutter test` 실행은 필수로 보지 않는다.
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 | 실제 결과 |
+| --- | --- | --- | --- | --- |
+| 문서 반영 확인 | Phase 13-A, composition boundary guardrail, read-only projection, adapter import, allowed, forbidden, Phase 4-E, Phase 7, production-visible UX diff 기록이 두 문서에 있어야 함 | Phase 13-A 목적, allowed/forbidden 범위, 남은 red 성격 누락 | `rg -n "Phase 13-A|composition boundary guardrail|read-only projection|adapter import|allowed|forbidden|Phase 4-E|Phase 7|production-visible UX diff" docs/ux/explorer_workspace_unification.md docs/logs/CHANGELOG.md` | 기록 확인됨 |
+| 코드/테스트/플랫폼/dependency 변경 없음 확인 | `lib`, `test`, 플랫폼 경로, `pubspec.yaml`, `pubspec.lock` 변경이 없어야 함 | 문서 외 파일 변경 | `git diff --name-only -- lib test android ios macos windows linux web pubspec.yaml pubspec.lock` | 출력 없음 |
+| production UI diff 없음 확인 | `lib`, 플랫폼 경로 변경이 없어야 함 | UI 또는 플랫폼 파일 변경 | `git diff --name-only -- lib android ios macos windows linux web` | 출력 없음 |
+| whitespace 검증 | diff에 whitespace 오류가 없어야 함 | trailing whitespace 또는 patch formatting 오류 | `git diff --check` | whitespace 오류 없음 |
+| Git 상태 확인 | 변경 파일과 브랜치 상태가 명확해야 함 | 승인 범위 밖 파일 변경 또는 잘못된 브랜치 | `git status --short --branch` | `docs/explorer-workspace-phase13a-composition-boundary-guardrail-audit`, 문서 2개 변경 |
+| 최신 커밋 확인 | 커밋 전에는 Phase 12-M 커밋, 커밋 후에는 Phase 13-A 커밋이 확인되어야 함 | 기준 커밋 또는 최종 커밋 불일치 | `git log -1 --oneline` | 커밋 전 `ca0b32e docs: ExplorerWorkspace Phase 12-M 종료 audit 정리` 확인 |

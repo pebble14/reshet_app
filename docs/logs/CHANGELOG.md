@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## 2026-05-31 Phase 13-A composition boundary guardrail 재정의 audit
+
+- Phase 13-A를 구현이나 test fix가 아니라 docs/audit 단계로 기록했다. 목적은 Phase 4-E production import guardrail과 Phase 7 이후 read-only projection/adapter import 허용 흐름의 충돌을 문서 기준으로 재정의하는 것이다.
+- Phase 4-E guardrail의 원래 목적은 preview-only composition이 production owner 또는 source of truth로 유입되는 것을 막는 것이었다고 정리했다.
+- Phase 7 이후 `WordExplorerScreen`의 read-only projection/adapter import는 `ExplorerWorkspace` shell mount, route 변경, owner migration이 아니며, 기존 owner state를 `ExplorerWorkspaceState` snapshot으로 읽는 one-way read-only boundary라고 구분했다.
+- 현재 남은 red 1건은 production 기능 오류가 아니라 Phase 4-E blanket import guardrail과 Phase 7 이후 read-only projection/adapter import 허용 정책의 불일치로 기록했다.
+- `explorer_workspace/` import를 전면 금지하는 기존 guardrail은 노후화되었으며, allowed import와 forbidden import를 분리한 새 composition boundary guardrail로 재정의해야 한다고 기록했다.
+- allowed 범위는 `WordExplorerScreen` 내부 read-only projection adapter import, `ExplorerWorkspaceState` / `ExplorerWorkspaceLayoutPreset` / `ExplorerWorkspaceTransitionOrigin` read-only 참조, 기존 owner state를 projection으로 읽는 assert/probe 용도, repository / Navigator / persistence / route authority를 이전하지 않는 참조로 제한했다.
+- forbidden 범위는 `ExplorerWorkspace` shell mount, `ExplorerWorkspacePreviewScreen` production route 연결, `ExplorerWorkspacePreviewInteractionHost` production 연결, `ExplorerWorkspacePreviewInput` production route/input contract 소비, `ExplorerWorkspaceHistoryEntry` production history/source-of-truth 사용, `main.dart` route/default home 변경, `HomeScreen -> WordExplorerScreen` 진입 구조 변경, owner/controller/coordinator migration, Provider / Repository / Navigator / persistence authority migration, DTO/model/public API 추가, `ExplorerWorkspaceState` projection visible UI source-of-truth 사용, 추가 production-visible UX diff로 분리했다.
+- 이번 단계에서는 `explorer_workspace_phase4e_composition_boundary_test.dart`, `lib/`, `test/`, UI, 플랫폼, dependency 파일을 수정하지 않았다.
+- 전체 `flutter test`는 실행하지 않았다. 이번 단계는 문서/audit 변경만 수행했기 때문이다.
+- 명령어 기반 확인 결과, 문서 반영 검색은 확인되었고 `lib/`, `test/`, 플랫폼, dependency 파일 변경은 없으며 production UI diff와 whitespace 오류도 없었다.
+- 커밋 전 최신 커밋은 `ca0b32e docs: ExplorerWorkspace Phase 12-M 종료 audit 정리`로 확인했다.
+
 ## 2026-05-26 Phase 12-M termination audit
 
 - Phase 12-M을 구현 단계가 아니라 Phase 12 종료 audit 단계로 기록했다. 목적은 Phase 12-A부터 Phase 12-L까지의 결과를 종합해 Phase 12 종료 가능 여부와 Phase 13 carryover를 확정하는 것이다.
