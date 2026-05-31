@@ -6347,3 +6347,81 @@ CodeX는 UI 테스트를 수행하지 않는다. 아래 절차는 클라이언�
 #### 17.85.7 Phase 15-B 종료 전 확인 조건
 
 Phase 15-B는 명령어 기반 테스트 기준으로 remaining red 없이 green 상태다. 클라이언트 UI 기반 테스트도 성공 확인됨으로 기록한다. 최종 커밋 조건은 문서 갱신 후 전체 `flutter test --reporter compact` 재실행과 변경 범위 확인까지 통과하는 것이다.
+
+### 17.86 Phase 15-C termination audit
+
+Phase 15-C는 구현, test fix, UX 변경, 후보 선정 단계가 아니다. Phase 15-A와 Phase 15-B 결과를 문서상 정리하고 Phase 15 전체 종료 가능 여부를 판단하는 docs/audit only 단계다.
+
+#### 17.86.1 Phase 15-A 요약
+
+Phase 15-A는 minimum production-visible UX diff candidate selection audit로 진행되었다. Phase 14-B 이후 추가 production-visible UX diff를 재개할 수 있는지 후보군을 비교했고, Phase 15-B 후보를 `WordExplorerScreen` detail pane 선택 없음 empty state 안내 가독성 개선 하나로 제한했다.
+
+Phase 15-A에서 보류 또는 제외한 후보는 다음과 같다.
+
+- context strip 추가 개선은 Phase 14-B 직후 같은 영역을 연속 수정하는 것이므로 보류했다.
+- graph/history/navigation 표시 개선은 navigation/history owner, availability probe, repository probe와 결합될 위험이 있으므로 제외했다.
+- `ExplorerWorkspace` shell mount 또는 route 전환은 명시적 금지선에 해당하므로 제외했다.
+
+#### 17.86.2 Phase 15-B 요약
+
+Phase 15-B는 Phase 15-A에서 선정한 단일 후보를 구현한 production-visible UX diff 단계다. 구현 범위는 `lib/ui/word_explorer_screen.dart`의 `_buildNoSelectionDetailPanel()` 내부 표시 개선으로 제한했다.
+
+실제 UI 문구는 다음과 같다.
+
+- `그래프에서 단어를 선택하세요`
+- `선택한 단어의 상세 정보가 이 영역에 표시됩니다.`
+- `중심 단어 정보는 상단 표시줄에서 확인할 수 있습니다.`
+
+Phase 15-B에서는 기존 아이콘 기반 empty state 구조와 `Center`, `Padding`, `Column` 기반 레이아웃을 유지했고, 안내 문구 읽기 폭 제한을 위해 `_buildNoSelectionDetailPanel()` 내부에 `ConstrainedBox(maxWidth: 360)`만 추가했다. 신규 guardrail test는 `test/ui/word_explorer_screen_phase15b_empty_state_readability_test.dart`로 추가했다.
+
+#### 17.86.3 Phase 15 금지선 유지 결과
+
+| 항목 | Phase 15 결과 |
+| --- | --- |
+| `ExplorerWorkspace` shell mount | 없음 |
+| route wiring / route registration 변경 | 없음 |
+| `HomeScreen -> WordExplorerScreen` 진입 구조 변경 | 없음 |
+| owner/controller/coordinator migration | 없음 |
+| Provider / Repository / Navigator / persistence authority migration | 없음 |
+| DTO/model/public API 추가 | 없음 |
+| projection result persistence/history/source-of-truth 사용 | 없음 |
+| `ExplorerWorkspaceState` projection visible UI source-of-truth 사용 | 없음 |
+| route collapse | 없음 |
+| canonical owner migration | 없음 |
+| Level 3 production-visible consumer 승격 | 없음 |
+| 새 repository read | 없음 |
+| 새 DB query | 없음 |
+| dependency 변경 | 없음 |
+| 플랫폼 파일 변경 | 없음 |
+
+#### 17.86.4 Phase 15 테스트와 UI 확인 결과
+
+| 확인 항목 | 실제 결과 |
+| --- | --- |
+| Phase 15-B 신규 empty state guardrail | `+4: All tests passed!` |
+| Phase 12-B context strip guardrail | `+4: All tests passed!` |
+| Phase 14-B context strip readability | `+5: All tests passed!` |
+| composition boundary | `+6: All tests passed!` |
+| 전체 `flutter test --reporter compact` | `+237: All tests passed!` |
+| 클라이언트 UI 기반 테스트 | 성공 확인됨 |
+
+클라이언트 UI 기반 테스트는 CodeX가 수행한 것이 아니라 클라이언트가 직접 확인한 결과다. 확인된 UI 문구는 `그래프에서 단어를 선택하세요`, `선택한 단어의 상세 정보가 이 영역에 표시됩니다.`, `중심 단어 정보는 상단 표시줄에서 확인할 수 있습니다.`이다.
+
+#### 17.86.5 Phase 15 종료 판단
+
+Phase 15-A는 후보 선정 audit를 완료했고, Phase 15-B는 선정된 단일 후보를 production-visible UX diff로 구현했다. Phase 15-B 명령어 기반 테스트는 전체 `flutter test --reporter compact` 기준 `+237: All tests passed!`로 통과했고, 클라이언트 UI 기반 테스트도 성공 확인됨으로 기록되었다.
+
+Phase 15 전체에서 금지선 위반은 확인되지 않았고, 문서 최신화도 완료되었다. 따라서 Phase 15는 종료 가능하다.
+
+#### 17.86.6 Phase 15-C 명령어 기반 확인 체크리스트
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 |
+| --- | --- | --- | --- |
+| 기준 git 상태 확인 | `main == origin/main`, HEAD `ff43a45042b8014371339f766aa224de38fa34d3`, working tree clean, local branch `main` only 상태에서 시작해야 함 | 기준 커밋 또는 브랜치 상태 불일치 | `git status --short --branch`, `git branch --list`, `git rev-parse HEAD`, `git rev-parse origin/main`, `git log -1 --oneline` |
+| 문서 반영 검색 | Phase 15-C, termination audit, Phase 15 종료, Phase 15-A/B, empty state, 테스트 결과, 클라이언트 UI 기반 테스트 성공 확인, 금지선 문구가 두 문서에서 검색되어야 함 | 종료 판단, 테스트 결과, UI 확인, 금지선 기록 누락 | `rg -n "Phase 15-C|termination audit|Phase 15 종료|Phase 15-A|Phase 15-B|empty state|선택 없음|그래프에서 단어를 선택하세요|선택한 단어의 상세 정보|상단 표시줄|flutter test|\\+237|클라이언트 UI 기반 테스트|성공 확인|ExplorerWorkspace shell|route wiring|owner/controller/coordinator|Provider / Repository / Navigator / persistence|DTO/model/public API|ExplorerWorkspaceState|visible UI source-of-truth|새 repository read|새 DB query" docs/ux/explorer_workspace_unification.md docs/logs/CHANGELOG.md` |
+| 변경 파일 확인 | `docs/ux/explorer_workspace_unification.md`, `docs/logs/CHANGELOG.md` 두 파일만 변경되어야 함 | 허용 범위 밖 파일 변경 | `git diff --name-only` |
+| 금지 경로 변경 없음 확인 | `lib`, `test`, 플랫폼 경로, `pubspec.yaml`, `pubspec.lock` 변경이 없어야 함 | production code, test code, dependency, 플랫폼 파일 변경 발생 | `git diff --name-only -- lib test android ios macos windows linux web pubspec.yaml pubspec.lock` |
+| whitespace 검증 | diff에 whitespace 오류가 없어야 함 | trailing whitespace 또는 patch formatting 오류 | `git diff --check` |
+| 전체 flutter test 판단 | Phase 15-C는 docs/audit only 변경이며 lib/test/production code 변경이 없으므로 전체 flutter test를 실행하지 않아야 함 | 문서 외 변경이 있는데 전체 테스트를 생략함 | 변경 파일 범위 확인 후 실행 여부 판단 |
+
+Phase 15-C는 docs/audit only 변경이며 lib/test/production code 변경이 없으므로 전체 flutter test는 실행하지 않는다. Phase 15-B에서 전체 flutter test --reporter compact는 +237: All tests passed!로 이미 확인되었다.

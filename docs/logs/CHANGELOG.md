@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## 2026-06-01 Phase 15-C termination audit
+
+- Phase 15-C를 구현, test fix, UI 변경 단계가 아니라 Phase 15 전체 종료 가능 여부를 판단하는 termination audit 단계로 기록했다.
+- Phase 15-A는 minimum production-visible UX diff candidate selection audit로 진행되었고, Phase 15-B 후보를 `WordExplorerScreen` detail pane 선택 없음 empty state 안내 가독성 개선 하나로 제한했다.
+- Phase 15-A에서 context strip 추가 개선은 보류했고, graph/history/navigation 표시 개선과 `ExplorerWorkspace` shell mount 또는 route 전환 후보는 제외했다.
+- Phase 15-B는 `WordExplorerScreen` detail pane 선택 없음 empty state 안내를 개선했다. 실제 UI 문구는 `그래프에서 단어를 선택하세요`, `선택한 단어의 상세 정보가 이 영역에 표시됩니다.`, `중심 단어 정보는 상단 표시줄에서 확인할 수 있습니다.`이다.
+- Phase 15-B 구현 범위는 `_buildNoSelectionDetailPanel()` 내부 표시 개선으로 제한했고, `ConstrainedBox(maxWidth: 360)` 추가와 신규 guardrail test 추가만 수행했다.
+- Phase 15-B 테스트 결과는 신규 empty state guardrail `+4: All tests passed!`, Phase 12-B context strip guardrail `+4: All tests passed!`, Phase 14-B context strip readability `+5: All tests passed!`, composition boundary `+6: All tests passed!`, 전체 `flutter test --reporter compact` `+237: All tests passed!`로 기록한다.
+- 클라이언트 UI 기반 테스트는 성공 확인됨으로 기록한다.
+- Phase 15 전체에서 `ExplorerWorkspace` shell mount, route wiring / route registration 변경, `HomeScreen -> WordExplorerScreen` 진입 구조 변경, owner/controller/coordinator migration, Provider / Repository / Navigator / persistence authority migration, DTO/model/public API 추가, `ExplorerWorkspaceState` projection visible UI source-of-truth 사용, 새 repository read, 새 DB query, dependency 변경, 플랫폼 파일 변경은 수행하지 않았다.
+- Phase 15는 후보 선정, 최소 UX diff 구현, 명령어 기반 테스트, 클라이언트 UI 확인, 문서 최신화까지 완료했으므로 종료 가능하다.
+- Phase 15-C는 docs/audit only 변경이며 `lib/`, `test/`, production code 변경이 없으므로 전체 `flutter test`는 실행하지 않는다. Phase 15-B에서 전체 `flutter test --reporter compact`는 `+237: All tests passed!`로 이미 확인되었다.
+
 ## 2026-05-31 Phase 15-B WordExplorerScreen 선택 없음 empty state 안내 가독성 개선
 
 - Phase 15-B를 production-visible UX diff 단계로 기록했다.
