@@ -28,38 +28,84 @@ void main() {
       changelog = _readText('docs/logs/CHANGELOG.md');
     });
 
-    test('production import tree does not reference preview composition', () {
-      const forbiddenPreviewMarkers = <String>[
-        'ExplorerWorkspacePreviewScreen',
-        'ExplorerWorkspacePreviewInteractionHost',
-        'ExplorerWorkspacePreviewInput',
-        'ExplorerWorkspaceHistoryEntry',
-        'explorer_workspace_preview_screen.dart',
-        'explorer_workspace_preview_interaction_host.dart',
-        'ui/explorer_workspace/',
-        'explorer_workspace/',
-      ];
+    test(
+      'production import tree only allows read-only workspace projection boundary',
+      () {
+        const allowedWordExplorerWorkspaceImports = <String>{
+          'explorer_workspace_contract.dart',
+          'word_explorer_workspace_projection_adapter.dart',
+        };
+        final wordExplorerWorkspaceImports = _extractExplorerWorkspaceImports(
+          wordExplorerSource,
+        );
 
-      for (final source in productionSources.entries) {
-        for (final forbiddenMarker in forbiddenPreviewMarkers) {
-          expect(
-            source.value,
-            isNot(contains(forbiddenMarker)),
-            reason:
-                'Production import tree must not reference preview '
-                'composition: ${source.key} -> $forbiddenMarker.',
-          );
+        expect(
+          wordExplorerWorkspaceImports,
+          equals(allowedWordExplorerWorkspaceImports),
+          reason:
+              'WordExplorerScreen may only import the read-only '
+              'workspace projection contract and adapter.',
+        );
+
+        expect(wordExplorerSource, contains('ExplorerWorkspaceState'));
+        expect(wordExplorerSource, contains('ExplorerWorkspaceLayoutPreset'));
+        expect(
+          wordExplorerSource,
+          contains('ExplorerWorkspaceTransitionOrigin'),
+        );
+        expect(
+          wordExplorerSource,
+          contains('WordExplorerWorkspaceProjectionAdapter'),
+        );
+
+        const forbiddenProductionWorkspaceMarkers = <String>[
+          'ExplorerWorkspace(',
+          'ExplorerWorkspacePreviewScreen',
+          'ExplorerWorkspacePreviewInteractionHost',
+          'ExplorerWorkspacePreviewInput',
+          'ExplorerWorkspaceHistoryEntry',
+          "explorer_workspace/explorer_workspace.dart",
+          "explorer_workspace/explorer_workspace_preview_screen.dart",
+          "explorer_workspace/explorer_workspace_preview_interaction_host.dart",
+        ];
+
+        for (final source in productionSources.entries) {
+          for (final forbiddenMarker in forbiddenProductionWorkspaceMarkers) {
+            expect(
+              source.value,
+              isNot(contains(forbiddenMarker)),
+              reason:
+                  'Production import tree must not mount preview/shell '
+                  'composition or consume workspace route/history authority: '
+                  '${source.key} -> $forbiddenMarker.',
+            );
+          }
         }
-      }
-    });
+      },
+    );
 
     test(
       'production route default and explorer owner remain outside preview',
       () {
+        const forbiddenProductionRouteMarkers = <String>[
+          'ExplorerWorkspacePreviewScreen',
+          'ExplorerWorkspacePreviewInteractionHost',
+          'ExplorerWorkspacePreviewInput',
+          'ExplorerWorkspaceHistoryEntry',
+          'ExplorerWorkspace(',
+          'ExplorerWorkspaceState.fromPreviewInput',
+          'explorer_workspace_preview_screen.dart',
+          'explorer_workspace_preview_interaction_host.dart',
+        ];
+
         expect(mainSource, contains('home: const HomeScreen()'));
+        expect(mainSource, isNot(contains('ExplorerWorkspace')));
+        expect(mainSource, isNot(contains('explorer_workspace/')));
+
         expect(homeSource, contains('WordExplorerScreen('));
         expect(homeSource, contains('Navigator.push'));
         expect(homeSource, contains('MaterialPageRoute'));
+        expect(homeSource, isNot(contains('explorer_workspace/')));
 
         expect(
           wordExplorerSource,
@@ -70,12 +116,9 @@ void main() {
         expect(wordExplorerSource, contains('WordDetailScreen('));
 
         for (final source in [mainSource, homeSource, wordExplorerSource]) {
-          expect(source, isNot(contains('ExplorerWorkspacePreviewScreen')));
-          expect(
-            source,
-            isNot(contains('ExplorerWorkspacePreviewInteractionHost')),
-          );
-          expect(source, isNot(contains('ExplorerWorkspacePreviewInput')));
+          for (final forbiddenMarker in forbiddenProductionRouteMarkers) {
+            expect(source, isNot(contains(forbiddenMarker)));
+          }
         }
       },
     );
@@ -221,6 +264,13 @@ Map<String, String> _readDartSources(
 
 String _readText(String path) {
   return File(path).readAsStringSync();
+}
+
+Set<String> _extractExplorerWorkspaceImports(String source) {
+  return RegExp(
+    "^import 'explorer_workspace/([^']+)';",
+    multiLine: true,
+  ).allMatches(source).map((match) => match.group(1)!).toSet();
 }
 
 String _normalizePath(String path) {

@@ -5812,3 +5812,53 @@ Phase 13-A의 command 기반 확인은 문서 반영 확인과 path-level diff �
 | whitespace 검증 | diff에 whitespace 오류가 없어야 함 | trailing whitespace 또는 patch formatting 오류 | `git diff --check` | whitespace 오류 없음 |
 | Git 상태 확인 | 변경 파일과 브랜치 상태가 명확해야 함 | 승인 범위 밖 파일 변경 또는 잘못된 브랜치 | `git status --short --branch` | `docs/explorer-workspace-phase13a-composition-boundary-guardrail-audit`, 문서 2개 변경 |
 | 최신 커밋 확인 | 커밋 전에는 Phase 12-M 커밋, 커밋 후에는 Phase 13-A 커밋이 확인되어야 함 | 기준 커밋 또는 최종 커밋 불일치 | `git log -1 --oneline` | 커밋 전 `ca0b32e docs: ExplorerWorkspace Phase 12-M 종료 audit 정리` 확인 |
+
+### 17.79 Phase 13-B composition boundary guardrail test 현행화
+
+Phase 13-B는 Phase 13-A에서 문서화한 allowed / forbidden 기준을 `explorer_workspace_phase4e_composition_boundary_test.dart`에 반영하는 test guardrail fix 단계다. 이번 단계는 production code 변경이 아니라 오래된 Phase 4-E blanket import guardrail을 현재 read-only projection/adapter boundary에 맞게 현행화하는 작업이다.
+
+이번 단계에서는 `lib/`, 플랫폼, dependency, DB, repository/provider/navigator/route production code를 수정하지 않는다. 추가 production-visible UX diff도 만들지 않는다. UI 기반 테스트는 수행 대상이 아니며 클라이언트 UI 확인 대상도 없다.
+
+#### 17.79.1 테스트 guardrail 현행화 기준
+
+기존 테스트의 `explorer_workspace/` 전체 production source 금지는 Phase 13-A 이후 노후화된 blanket ban으로 취급한다. Phase 13-B에서는 다음 allowed 범위를 production source에서 허용한다.
+
+- `WordExplorerScreen` 내부 read-only projection adapter import
+- `explorer_workspace_contract.dart`
+- `word_explorer_workspace_projection_adapter.dart`
+- `ExplorerWorkspaceState`
+- `ExplorerWorkspaceLayoutPreset`
+- `ExplorerWorkspaceTransitionOrigin`
+
+동시에 다음 forbidden 범위는 계속 차단한다.
+
+- `ExplorerWorkspace(` shell mount
+- `ExplorerWorkspacePreviewScreen`
+- `ExplorerWorkspacePreviewInteractionHost`
+- `ExplorerWorkspacePreviewInput` production route/input contract 소비
+- `ExplorerWorkspaceHistoryEntry` production history/source-of-truth 사용
+- `explorer_workspace.dart` production import
+- `explorer_workspace_preview_screen.dart`
+- `explorer_workspace_preview_interaction_host.dart`
+- `main.dart` default home 변경
+- `HomeScreen -> WordExplorerScreen` 진입 구조 변경
+- owner/controller/coordinator migration
+- Provider / Repository / Navigator / persistence authority migration
+
+#### 17.79.2 테스트 변경 의도
+
+`WordExplorerScreen`은 `explorer_workspace_contract.dart`와 `word_explorer_workspace_projection_adapter.dart`만 import할 수 있다. `explorer_workspace.dart`, preview screen, preview interaction host, preview input, history entry를 production route/input/history/source-of-truth로 소비하면 테스트가 실패해야 한다.
+
+이 현행화는 `ExplorerWorkspace shell` 또는 preview composition을 production에 연결하는 승인이 아니다. read-only projection/adapter import만 allowed boundary로 유지하고, preview/shell/route/authority 유입은 forbidden boundary로 유지한다.
+
+#### 17.79.3 Phase 13-B 명령어 기반 확인 체크리스트
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 | 실제 결과 |
+| --- | --- | --- | --- | --- |
+| 개별 composition boundary test | Phase 13-B 기준으로 전체 통과해야 함 | allowed import가 과도하게 막히거나 forbidden marker가 누락됨 | `flutter test test/ui/explorer_workspace_phase4e_composition_boundary_test.dart --reporter expanded` | `+6: All tests passed!` |
+| 전체 baseline test | 기존 remaining red 1건이 해소되어 전체 green이어야 함 | 새 branch-only 실패 또는 기존 red 잔존 | `flutter test --reporter compact` | `+228: All tests passed!` |
+| 문서 반영 확인 | Phase 13-B, composition boundary guardrail, read-only projection, adapter import, allowed, forbidden, ExplorerWorkspacePreviewScreen, ExplorerWorkspace shell, production-visible UX diff 기록이 두 문서에 있어야 함 | Phase 13-B 목적 또는 allowed/forbidden 기준 누락 | `rg -n "Phase 13-B|composition boundary guardrail|read-only projection|adapter import|allowed|forbidden|ExplorerWorkspacePreviewScreen|ExplorerWorkspace shell|production-visible UX diff" docs/ux/explorer_workspace_unification.md docs/logs/CHANGELOG.md` | 기록 확인됨 |
+| 코드/플랫폼/dependency 변경 없음 확인 | `lib`, 플랫폼 경로, `pubspec.yaml`, `pubspec.lock` 변경이 없어야 함 | production code 또는 dependency 변경 발생 | `git diff --name-only -- lib android ios macos windows linux web pubspec.yaml pubspec.lock` | 출력 없음 |
+| 변경 파일 확인 | 테스트 파일과 문서 2개만 변경되어야 함 | 허용 범위 밖 파일 변경 | `git diff --name-only` | 테스트 파일 1개와 문서 2개 |
+| whitespace 검증 | diff에 whitespace 오류가 없어야 함 | trailing whitespace 또는 patch formatting 오류 | `git diff --check` | 출력 없음 |
+| Git 상태 확인 | Phase 13-B 브랜치에서 변경 범위가 명확해야 함 | 잘못된 브랜치 또는 예상 외 파일 변경 | `git status --short --branch` | `fix/explorer-workspace-phase13b-composition-boundary-guardrail-test`, 파일 3개 변경 |

@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 2026-05-31 Phase 13-B composition boundary guardrail test 현행화
+
+- Phase 13-B를 production code 변경이 아니라 `test/ui/explorer_workspace_phase4e_composition_boundary_test.dart`의 test guardrail fix 단계로 기록했다.
+- Phase 13-A에서 문서화한 allowed / forbidden 기준을 테스트에 반영해, `explorer_workspace/` 전체 production source blanket ban을 read-only projection/adapter import 허용 정책으로 현행화한다.
+- `WordExplorerScreen` 내부의 `explorer_workspace_contract.dart`, `word_explorer_workspace_projection_adapter.dart`, `ExplorerWorkspaceState`, `ExplorerWorkspaceLayoutPreset`, `ExplorerWorkspaceTransitionOrigin` 참조는 allowed boundary로 유지한다.
+- `ExplorerWorkspacePreviewScreen`, `ExplorerWorkspacePreviewInteractionHost`, `ExplorerWorkspacePreviewInput`, `ExplorerWorkspaceHistoryEntry`, `explorer_workspace.dart`, preview screen/interaction host import, `ExplorerWorkspace shell` mount, route/owner/Provider/Repository/Navigator/persistence authority 유입은 forbidden boundary로 유지한다.
+- 이번 단계에서는 `lib/`, 플랫폼, dependency, DB, repository/provider/navigator/route production code를 수정하지 않는다.
+- 추가 production-visible UX diff는 하지 않는다. UI 기반 테스트도 수행 대상이 아니며 클라이언트 UI 확인 대상이 없다.
+- 명령어 기반 확인 결과, 개별 composition boundary test는 `+6: All tests passed!`로 통과했고 전체 `flutter test --reporter compact`는 `+228: All tests passed!`로 통과했다.
+- 문서 반영 검색은 확인되었고, `lib/`, 플랫폼, dependency 파일 변경은 없으며 변경 파일은 테스트 파일 1개와 문서 2개로 제한되었다. `git diff --check`도 출력 없음으로 확인했다.
+
 ## 2026-05-31 Phase 13-A composition boundary guardrail 재정의 audit
 
 - Phase 13-A를 구현이나 test fix가 아니라 docs/audit 단계로 기록했다. 목적은 Phase 4-E production import guardrail과 Phase 7 이후 read-only projection/adapter import 허용 흐름의 충돌을 문서 기준으로 재정의하는 것이다.
