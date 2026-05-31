@@ -5921,3 +5921,79 @@ Phase 13-C 이후 추가 production-visible UX diff를 재개하려면 별도 Ph
 | 변경 파일 확인 | 문서 2개만 변경되어야 함 | 허용 범위 밖 파일 변경 | `git diff --name-only` | `docs/logs/CHANGELOG.md`, `docs/ux/explorer_workspace_unification.md` |
 | whitespace 검증 | diff에 whitespace 오류가 없어야 함 | trailing whitespace 또는 patch formatting 오류 | `git diff --check` | 출력 없음 |
 | Git 상태 확인 | Phase 13-C 브랜치에서 변경 범위가 명확해야 함 | 잘못된 브랜치 또는 예상 외 파일 변경 | `git status --short --branch` | `docs/explorer-workspace-phase13c-termination-audit`, 문서 2개 변경 |
+
+### 17.81 Phase 14-A minimum production-visible UX diff candidate selection audit
+
+Phase 14의 목적은 Phase 13에서 composition boundary guardrail green 상태를 확보한 뒤, 추가 production-visible UX diff를 재개해도 되는지 판단하는 것이다. Phase 14-A는 구현 단계가 아니라 minimum production-visible UX diff candidate selection audit 단계다. 이번 단계에서는 후보를 선정하고 금지선을 다시 고정할 뿐, production-visible UX diff를 만들지 않는다.
+
+#### 17.81.1 유지 금지선
+
+Phase 14-A와 Phase 14-B 후보 검토에서 유지해야 할 금지선은 다음과 같다.
+
+- ExplorerWorkspace shell mount 금지
+- route wiring / route registration 변경 금지
+- `HomeScreen -> WordExplorerScreen` 진입 구조 변경 금지
+- owner/controller/coordinator migration 금지
+- Provider / Repository / Navigator / persistence authority migration 금지
+- DTO/model/public API 추가 금지
+- projection result persistence/history/source-of-truth 사용 금지
+- `ExplorerWorkspaceState` projection visible UI source-of-truth 사용 금지
+- route collapse 금지
+- canonical owner migration 금지
+- Level 3 production-visible consumer 승격 금지
+
+#### 17.81.2 Phase 14 최소 후보 선정 기준
+
+Phase 14에서 검토할 최소 후보는 다음 기준을 모두 만족해야 한다.
+
+- 기존 `WordExplorerScreen` 내부 변경이어야 한다.
+- read-only UX diff여야 한다.
+- rollback 가능한 최소 단위여야 한다.
+- ExplorerWorkspace shell mount 없이 가능해야 한다.
+- route 변경 없이 가능해야 한다.
+- owner/controller/coordinator migration 없이 가능해야 한다.
+- Provider / Repository / Navigator / persistence authority migration 없이 가능해야 한다.
+- DTO/model/public API 추가 없이 가능해야 한다.
+- `ExplorerWorkspaceState` projection을 visible UI source-of-truth로 사용하지 않아야 한다.
+- 전체 `flutter test` green을 유지할 수 있어야 한다.
+- UI 기반 확인 방법이 사람이 이해할 수 있는 형태여야 한다.
+
+#### 17.81.3 1순위 후보 평가
+
+1순위 후보는 `WordExplorerScreen` detail pane 상단 read-only context strip의 표시 가독성 개선이다. 이 후보는 Phase 12-B에서 도입한 context strip의 후속 최소 개선으로 다룬다.
+
+Phase 14-A에서는 이 후보를 구현하지 않고 후보로만 기록한다. 후보 평가는 다음과 같다.
+
+| 평가 항목 | 판단 |
+| --- | --- |
+| 기존 private/local state 사용 가능성 | 가능 후보다. Phase 12-B context strip은 기존 `WordExplorerScreen` 내부 `_centerWordId`, `_selectedWordId`를 읽는 read-only 표시로 제한되어 있었다. Phase 14-B 후보도 이 범위를 유지해야 한다. |
+| projection visible source-of-truth 미사용 가능성 | 가능 후보다. `ExplorerWorkspaceState` projection을 visible UI source-of-truth로 쓰지 않고, 기존 `WordExplorerScreen` 내부 상태만 읽는 방식이어야 한다. |
+| route 변경 없음 여부 | 가능 후보다. `HomeScreen -> WordExplorerScreen` 진입 구조, route wiring, route registration을 변경하지 않아야 한다. |
+| owner/controller/coordinator 변경 없음 여부 | 가능 후보다. graph center, selected word, detail panel, explorer history ownership은 계속 `WordExplorerScreen`에 남아야 한다. |
+| Provider / Repository / Navigator / persistence authority 변경 없음 여부 | 가능 후보다. 가독성 개선은 read-only display refinement로 제한해야 하며, authority migration이나 persistence/history 사용을 추가하지 않아야 한다. |
+| DTO/model/public API 추가 없음 여부 | 가능 후보다. 표시 구조 조정은 기존 private/local 값과 기존 UI 구성 안에서 처리할 수 있어야 한다. |
+
+따라서 Phase 14-A 기준의 우선 후보는 `WordExplorerScreen` detail pane 상단 read-only context strip 표시 가독성 개선 하나로 제한한다. 다른 production-visible UX diff 후보는 Phase 14-A 범위에 포함하지 않는다.
+
+#### 17.81.4 Phase 14-B 진입 조건
+
+Phase 14-B로 진입하려면 다음 조건이 충족되어야 한다.
+
+- Phase 14-A 문서/audit에서 후보와 금지선이 명확히 정리되어야 한다.
+- 구현 후보가 하나로 제한되어야 한다.
+- 금지선 침범이 없어야 한다.
+- 테스트 조건과 UI 확인 방법이 명확해야 한다.
+- Phase 14-B는 별도 feature 브랜치에서 진행해야 한다.
+
+#### 17.81.5 Phase 14-A 명령어 기반 확인 체크리스트
+
+Phase 14-A의 command 기반 확인은 문서 반영 확인과 path-level diff 확인으로 제한한다. 이번 단계는 docs/audit only 변경이며 `lib/`, `test/`, production code 변경이 없으므로 전체 `flutter test` 실행은 필수로 보지 않는다.
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 | 실제 결과 |
+| --- | --- | --- | --- | --- |
+| 현재 브랜치와 상태 확인 | Phase 14-A docs 브랜치에서 HEAD와 origin/main이 `8c01358bb90224082da0a388b0c9a5eefc132ff4`로 일치해야 함 | 기준 브랜치 또는 기준 커밋 불일치 | `git status --short --branch`, `git branch --list`, `git rev-parse HEAD`, `git rev-parse origin/main`, `git log -1 --oneline` | 브랜치 `docs/explorer-workspace-phase14a-minimum-ux-diff-candidate-audit`, HEAD `8c01358bb90224082da0a388b0c9a5eefc132ff4`, origin/main `8c01358bb90224082da0a388b0c9a5eefc132ff4`, 최신 커밋 `8c01358 docs: ExplorerWorkspace Phase 13-C 종료 audit 정리`, 변경 파일 문서 2개 확인 |
+| 문서 반영 검색 | Phase 14-A, minimum production-visible UX diff, candidate selection audit, 금지선, `WordExplorerScreen`, context strip, Phase 14-B 기록이 두 문서에 있어야 함 | 목적, 후보, 금지선, 진입 조건 누락 | `rg -n "Phase 14-A|minimum production-visible UX diff|candidate selection audit|ExplorerWorkspace shell|route wiring|owner/controller/coordinator|Provider / Repository / Navigator / persistence|DTO/model/public API|ExplorerWorkspaceState|visible UI source-of-truth|WordExplorerScreen|context strip|Phase 14-B" docs/ux/explorer_workspace_unification.md docs/logs/CHANGELOG.md` | 요청한 `rg` 검색 정상 매칭 확인 |
+| 변경 파일 확인 | 문서 2개만 변경되어야 함 | 허용 범위 밖 파일 변경 | `git diff --name-only` | `docs/logs/CHANGELOG.md`, `docs/ux/explorer_workspace_unification.md` 2개만 변경됨 |
+| 금지 경로 변경 없음 확인 | `lib`, `test`, 플랫폼 경로, `pubspec.yaml`, `pubspec.lock` 변경이 없어야 함 | production code, UI 구현, test, dependency 변경 발생 | `git diff --name-only -- lib test android ios macos windows linux web pubspec.yaml pubspec.lock` | 출력 없음 |
+| whitespace 검증 | diff에 whitespace 오류가 없어야 함 | trailing whitespace 또는 patch formatting 오류 | `git diff --check` | 출력 없음 |
+| 전체 flutter test 판단 | 문서/audit only 변경이면 미실행 가능하며 사유를 보고해야 함 | 문서 외 변경이 있는데 test를 생략함 | `flutter test --reporter compact` 실행 여부 판단 | 문서/audit only 변경이며 `lib/`, `test`, production code 변경이 없으므로 전체 `flutter test --reporter compact` 미실행 |

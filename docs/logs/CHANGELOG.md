@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## 2026-05-31 Phase 14-A minimum production-visible UX diff candidate selection audit
+
+- Phase 14-A를 docs/audit only 단계로 기록했다. 목적은 Phase 13 composition boundary guardrail green 이후 추가 production-visible UX diff 재개 가능성을 판단하기 위한 minimum production-visible UX diff candidate selection audit를 수행하는 것이다.
+- 이번 단계에서는 구현을 하지 않는다.
+- 이번 단계에서는 production-visible UX diff를 수행하지 않는다.
+- 유지 금지선은 ExplorerWorkspace shell mount 금지, route wiring / route registration 변경 금지, `HomeScreen -> WordExplorerScreen` 진입 구조 변경 금지, owner/controller/coordinator migration 금지, Provider / Repository / Navigator / persistence authority migration 금지, DTO/model/public API 추가 금지, projection result persistence/history/source-of-truth 사용 금지, `ExplorerWorkspaceState` projection visible UI source-of-truth 사용 금지, route collapse 금지, canonical owner migration 금지, Level 3 production-visible consumer 승격 금지로 정리했다.
+- Phase 14-A의 우선 후보는 `WordExplorerScreen` detail pane 상단 read-only context strip 표시 가독성 개선 하나로 제한했다.
+- 이 후보는 Phase 12-B에서 도입한 context strip의 후속 최소 개선으로 기록하되, Phase 14-A에서는 구현하지 않고 후보로만 남긴다.
+- 후보 평가는 기존 private/local state 사용 가능성, `ExplorerWorkspaceState` projection visible UI source-of-truth 미사용 가능성, route/owner/authority 변경 없음 여부를 기준으로 정리했다.
+- Phase 14-B는 후보가 하나로 제한되고 금지선, 테스트 조건, UI 확인 방법이 명확해진 뒤 별도 feature 브랜치에서 진행해야 한다.
+- 전체 `flutter test`는 문서/audit only 변경이면 미실행 가능하며, 미실행 시 사유를 명확히 기록한다.
+
 ## 2026-05-31 Phase 13-C termination audit
 
 - Phase 13-C를 구현, test fix, UX 변경 단계가 아니라 Phase 13 전체 종료 가능 여부를 판단하는 termination audit 단계로 기록했다.
