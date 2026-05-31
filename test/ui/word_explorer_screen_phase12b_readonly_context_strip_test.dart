@@ -44,18 +44,31 @@ void main() {
     });
 
     test('reads only existing WordExplorer owner state for visible text', () {
+      expect(contextStripSource, contains('fallbackWordId: _centerWordId'));
       expect(
         contextStripSource,
-        contains('final centerWordId = _centerWordId.trim();'),
+        contains('_centerDisplaySeed.representativeSpelling'),
+      );
+      expect(
+        contextStripSource,
+        contains('_centerDisplaySeed.displayStrongNumber'),
+      );
+      expect(
+        contextStripSource,
+        contains('_centerDisplaySeed.representativeTransliteration'),
       );
       expect(
         contextStripSource,
         contains('final selectedWordId = _selectedWordId?.trim();'),
       );
+      expect(
+        contextStripSource,
+        contains('final displayItem = _selectedWordDisplayItem;'),
+      );
       expect(contextStripSource, contains("'선택 없음'"));
       expect(
         contextStripSource,
-        contains("'중심 단어: \$centerWordId · \$selectedLabel'"),
+        contains("'중심 단어: \$centerLabel · \$selectedLabel'"),
       );
     });
 

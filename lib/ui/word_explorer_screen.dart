@@ -319,11 +319,14 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
   }
 
   Widget _buildDetailPaneContextStrip() {
-    final centerWordId = _centerWordId.trim();
-    final selectedWordId = _selectedWordId?.trim();
-    final selectedLabel = selectedWordId == null || selectedWordId.isEmpty
-        ? '선택 없음'
-        : '선택: $selectedWordId';
+    final centerLabel = _buildDetailPaneContextWordLabel(
+      fallbackWordId: _centerWordId,
+      representativeSpelling: _centerDisplaySeed.representativeSpelling,
+      displayStrongNumber: _centerDisplaySeed.displayStrongNumber,
+      representativeTransliteration:
+          _centerDisplaySeed.representativeTransliteration,
+    );
+    final selectedLabel = _buildDetailPaneContextSelectedLabel();
 
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -332,7 +335,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         child: Text(
-          '중심 단어: $centerWordId · $selectedLabel',
+          '중심 단어: $centerLabel · $selectedLabel',
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: Theme.of(context).textTheme.labelMedium?.copyWith(
@@ -341,6 +344,66 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
         ),
       ),
     );
+  }
+
+  String _buildDetailPaneContextSelectedLabel() {
+    final selectedWordId = _selectedWordId?.trim();
+    if (selectedWordId == null || selectedWordId.isEmpty) {
+      return '선택 없음';
+    }
+
+    final displayItem = _selectedWordDisplayItem;
+    if (displayItem == null) {
+      return '선택: $selectedWordId';
+    }
+
+    final selectedWordLabel = _buildDetailPaneContextWordLabel(
+      fallbackWordId: selectedWordId,
+      representativeSpelling: displayItem.representativeSpelling,
+      displayStrongNumber: displayItem.displayStrongNumber,
+      representativeTransliteration: _firstNonEmptyText(
+        displayItem.transliterations,
+      ),
+    );
+
+    return '선택: $selectedWordLabel';
+  }
+
+  String _buildDetailPaneContextWordLabel({
+    required String fallbackWordId,
+    required String? representativeSpelling,
+    required String? displayStrongNumber,
+    required String? representativeTransliteration,
+  }) {
+    final normalizedFallbackWordId = fallbackWordId.trim();
+    final normalizedRepresentativeSpelling = (representativeSpelling ?? '')
+        .trim();
+    final normalizedStrongNumber = formatWordDisplayStrong(
+      displayStrongNumber ?? '',
+    );
+    final normalizedTransliteration = (representativeTransliteration ?? '')
+        .trim();
+    final primaryLabel = normalizedRepresentativeSpelling.isNotEmpty
+        ? normalizedRepresentativeSpelling
+        : normalizedFallbackWordId;
+    final labelSegments = <String>[
+      primaryLabel,
+      if (normalizedStrongNumber.isNotEmpty) normalizedStrongNumber,
+      if (normalizedTransliteration.isNotEmpty) normalizedTransliteration,
+    ].where((segment) => segment.isNotEmpty);
+
+    return labelSegments.join(' · ');
+  }
+
+  String _firstNonEmptyText(List<String> values) {
+    for (final value in values) {
+      final normalizedValue = value.trim();
+      if (normalizedValue.isNotEmpty) {
+        return normalizedValue;
+      }
+    }
+
+    return '';
   }
 
   Future<void> _selectWord(

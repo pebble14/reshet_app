@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 2026-05-31 Phase 14-B WordExplorerScreen context strip 표시 가독성 개선
+
+- Phase 14-B를 production-visible UX diff 단계로 기록했다. 변경 목적은 기존 `WordExplorerScreen` detail pane 상단 read-only context strip을 raw word id 중심 표시에서 대표 표기 / Strong 번호 / transliteration 중심의 사람이 읽기 쉬운 표시로 개선하는 것이다.
+- 변경 범위는 `lib/ui/word_explorer_screen.dart` 내부 private helper 기반 표시 조합, Phase 12-B guardrail 테스트 현행화, Phase 14-B source-level 가독성 테스트 추가, 관련 UX 문서 반영으로 제한했다.
+- 중심 단어 표시는 기존 `_centerDisplaySeed`의 대표 표기, Strong 번호, transliteration 값을 우선 사용하고, 값이 부족하면 기존 `_centerWordId` fallback을 유지한다.
+- 선택 단어 표시는 기존 `_selectedWordDisplayItem`의 대표 표기, Strong 번호, 첫 번째 비어 있지 않은 transliteration 값을 우선 사용하고, 선택 단어 display item이 없으면 기존 `_selectedWordId` fallback을 유지한다. 선택이 없으면 `선택 없음`을 유지한다.
+- 빈 값은 표시 segment에서 제외해 빈 괄호, 중복 구분자, 의미 없는 공백이 생기지 않도록 했다.
+- 새 repository read, 새 DB query, route wiring 변경, Navigator 변경, Provider / Repository / persistence authority 변경, DTO/model/public API 추가, `ExplorerWorkspaceState` projection visible UI source-of-truth 사용, `ExplorerWorkspace` shell mount는 수행하지 않았다.
+- 테스트 결과 `flutter test test/ui/word_explorer_screen_phase12b_readonly_context_strip_test.dart --reporter expanded`는 `+4: All tests passed!`, `flutter test test/ui/word_explorer_screen_phase14b_context_strip_readability_test.dart --reporter expanded`는 `+5: All tests passed!`, `flutter test test/ui/explorer_workspace_phase4e_composition_boundary_test.dart --reporter expanded`는 `+6: All tests passed!`, 전체 `flutter test --reporter compact`는 `+233: All tests passed!`로 통과했다.
+- 변경 범위 확인 결과 tracked 변경 파일 4개와 untracked 신규 테스트 파일 1개가 모두 허용 파일 안에 있었다. 플랫폼 경로와 `pubspec.yaml`, `pubspec.lock` 변경은 없고, `git diff --check`는 whitespace 오류 없이 문서 2개의 줄바꿈 경고만 출력했다.
+
 ## 2026-05-31 Phase 14-A minimum production-visible UX diff candidate selection audit
 
 - Phase 14-A를 docs/audit only 단계로 기록했다. 목적은 Phase 13 composition boundary guardrail green 이후 추가 production-visible UX diff 재개 가능성을 판단하기 위한 minimum production-visible UX diff candidate selection audit를 수행하는 것이다.

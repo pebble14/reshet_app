@@ -5997,3 +5997,73 @@ Phase 14-A의 command 기반 확인은 문서 반영 확인과 path-level diff �
 | 금지 경로 변경 없음 확인 | `lib`, `test`, 플랫폼 경로, `pubspec.yaml`, `pubspec.lock` 변경이 없어야 함 | production code, UI 구현, test, dependency 변경 발생 | `git diff --name-only -- lib test android ios macos windows linux web pubspec.yaml pubspec.lock` | 출력 없음 |
 | whitespace 검증 | diff에 whitespace 오류가 없어야 함 | trailing whitespace 또는 patch formatting 오류 | `git diff --check` | 출력 없음 |
 | 전체 flutter test 판단 | 문서/audit only 변경이면 미실행 가능하며 사유를 보고해야 함 | 문서 외 변경이 있는데 test를 생략함 | `flutter test --reporter compact` 실행 여부 판단 | 문서/audit only 변경이며 `lib/`, `test`, production code 변경이 없으므로 전체 `flutter test --reporter compact` 미실행 |
+
+### 17.82 Phase 14-B WordExplorerScreen context strip 표시 가독성 개선
+
+Phase 14-B는 Phase 14-A에서 선정한 단일 후보를 구현하는 production-visible UX diff 단계다. 목적은 기존 `HomeScreen -> WordExplorerScreen` 진입 경로 안에서 `WordExplorerScreen` detail pane 상단 read-only context strip 표시를 raw word id 중심에서 사람이 읽기 쉬운 대표 표기 / Strong 번호 / transliteration 조합으로 개선하는 것이다.
+
+이번 변경은 `WordExplorerScreen` 내부 표시 개선으로만 제한한다. `ExplorerWorkspace` shell mount, route wiring 변경, owner/controller/coordinator migration, Provider / Repository / Navigator / persistence authority migration, DTO/model/public API 추가, `ExplorerWorkspaceState` projection visible UI source-of-truth 사용, 새 repository read, 새 DB query는 수행하지 않았다.
+
+#### 17.82.1 실제 UX 변경 내용
+
+기존 context strip은 `중심 단어: <centerWordId> · 선택: <selectedWordId>` 또는 `선택 없음`처럼 word id 중심으로 표시했다.
+
+Phase 14-B 이후 context strip은 기존 `WordExplorerScreen` owner state 안에 이미 있는 표시값을 우선 사용한다.
+
+- 중심 단어 표시는 `_centerDisplaySeed.representativeSpelling`, `_centerDisplaySeed.displayStrongNumber`, `_centerDisplaySeed.representativeTransliteration`을 조합한다.
+- 선택 단어 표시는 `_selectedWordDisplayItem.representativeSpelling`, `_selectedWordDisplayItem.displayStrongNumber`, `_selectedWordDisplayItem.transliterations`의 첫 번째 비어 있지 않은 값을 조합한다.
+- 대표 표기가 없으면 기존 word id fallback을 유지한다.
+- Strong 번호가 없으면 생략한다.
+- transliteration이 없으면 생략한다.
+- 선택 단어가 없으면 기존과 같이 `선택 없음`을 유지한다.
+- 빈 값 때문에 빈 괄호, 중복 구분자, 의미 없는 공백이 생기지 않도록 비어 있지 않은 segment만 ` · `로 연결한다.
+
+예상 표시 형태는 다음과 같다.
+
+```text
+중심 단어: 대표표기 · Strong번호 · transliteration · 선택: 대표표기 · Strong번호 · transliteration
+중심 단어: 대표표기 · Strong번호 · transliteration · 선택 없음
+중심 단어: wordId · 선택: wordId
+```
+
+#### 17.82.2 유지 금지선 확인
+
+| 항목 | Phase 14-B 결과 |
+| --- | --- |
+| `ExplorerWorkspace` shell mount | 없음 |
+| route wiring / route registration 변경 | 없음 |
+| `HomeScreen -> WordExplorerScreen` 진입 구조 변경 | 없음 |
+| owner/controller/coordinator migration | 없음 |
+| Provider / Repository / Navigator / persistence authority migration | 없음 |
+| DTO/model/public API 추가 | 없음 |
+| projection result persistence/history/source-of-truth 사용 | 없음 |
+| `ExplorerWorkspaceState` projection visible UI source-of-truth 사용 | 없음 |
+| route collapse | 없음 |
+| canonical owner migration | 없음 |
+| Level 3 production-visible consumer 승격 | 없음 |
+| 새 repository read | 없음 |
+| 새 DB query | 없음 |
+
+#### 17.82.3 CodeX 수행: 명령어 기반 수동 테스트
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 | 실제 결과 |
+| --- | --- | --- | --- | --- |
+| Phase 12-B context strip guardrail 유지 | context strip이 detail pane 안에 read-only로 존재하고 기존 `WordExplorerScreen` 내부 상태 기반 표시 기준을 유지해야 함 | route/owner/authority marker 유입, projection visible UI 입력 사용, strip 위치 이탈 | `flutter test test/ui/word_explorer_screen_phase12b_readonly_context_strip_test.dart --reporter expanded` | `+4: All tests passed!` |
+| Phase 14-B context strip 표시 가독성 검증 | 중심/선택 단어 표시가 가능한 경우 대표 표기 / Strong 번호 / transliteration 기반으로 구성되고, 선택 없음과 id fallback이 유지되어야 함 | 선택 없음 누락, id fallback 누락, 빈 segment 구분자 출력 가능성, 새 repository/route/authority marker 유입 | `flutter test test/ui/word_explorer_screen_phase14b_context_strip_readability_test.dart --reporter expanded` | `+5: All tests passed!` |
+| composition boundary 유지 | production import tree가 read-only projection boundary만 허용하고 preview/shell/route/owner 유입을 차단해야 함 | `ExplorerWorkspace` preview composition mount, route/default home 변경, owner migration marker 유입 | `flutter test test/ui/explorer_workspace_phase4e_composition_boundary_test.dart --reporter expanded` | `+6: All tests passed!` |
+| 전체 테스트 | Phase 14-B 변경 후 전체 테스트가 통과해야 함 | 변경 범위 밖 회귀, source-level guardrail 실패, repository/data test 실패 | `flutter test --reporter compact` | `+233: All tests passed!` |
+| 변경 범위 확인 | tracked 변경 파일은 허용 파일 안에 있어야 함 | 플랫폼, dependency, 허용 외 production 파일 변경 | `git diff --name-only` | `docs/logs/CHANGELOG.md`, `docs/ux/explorer_workspace_unification.md`, `lib/ui/word_explorer_screen.dart`, `test/ui/word_explorer_screen_phase12b_readonly_context_strip_test.dart` 출력. 문서 2개는 `LF will be replaced by CRLF` 줄바꿈 경고가 함께 출력됨 |
+| 신규 테스트 파일 확인 | untracked 신규 테스트 파일도 허용 파일 안에 있어야 함 | 허용 외 신규 파일 생성 | `git status --short --branch`, `git ls-files --others --exclude-standard` | `test/ui/word_explorer_screen_phase14b_context_strip_readability_test.dart`가 untracked 신규 파일로 확인됨 |
+| 금지 경로/위험 변경 확인 | 플랫폼 경로와 `pubspec.yaml`, `pubspec.lock` 변경이 없어야 함 | dependency 변경 또는 플랫폼별 설정 변경 | `git diff --name-only -- android ios macos windows linux web pubspec.yaml pubspec.lock` | 출력 없음 |
+| whitespace 확인 | diff에 whitespace 오류가 없어야 함 | trailing whitespace 또는 patch formatting 오류 | `git diff --check` | whitespace 오류 없음. 문서 2개는 `LF will be replaced by CRLF` 줄바꿈 경고가 출력됨 |
+
+#### 17.82.4 클라이언트 수행: UI 기반 수동 테스트
+
+CodeX는 UI 테스트를 수행하지 않는다. 아래 절차는 클라이언트가 production-visible UX diff를 확인하기 위한 기준이다.
+
+| 테스트 목적 | 시작 화면 | 조작 순서 | 입력할 테스트 데이터 | 기대되는 화면 변화 | 실패 시 확인할 증상 | 테스트 완료 판단 기준 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 중심 단어 context strip 가독성 확인 | `HomeScreen` | 앱을 실행하고 HomeScreen에서 사람이 식별 가능한 단어를 Explorer로 연 뒤 detail pane 상단 context strip을 확인한다. | Home 기본 목록 또는 검색 결과에서 대표 표기와 Strong 번호가 보이는 단어 | 중심 단어가 가능한 경우 word id만이 아니라 대표 표기 / Strong 번호 / transliteration 조합으로 표시된다. | 중심 단어가 raw id만 표시되거나 빈 괄호, 중복 구분자, 의미 없는 공백이 보임 | 중심 단어 context가 이전보다 읽기 쉬운 표시로 보이고 detail pane 레이아웃 겹침이 없음 |
+| 선택 단어 context strip 갱신 확인 | `WordExplorerScreen` | 그래프에서 다른 노드를 선택하고 context strip의 선택 영역을 확인한다. | 그래프에 표시되는 사람이 식별 가능한 다른 단어 노드 | 선택 단어가 가능한 경우 대표 표기 / Strong 번호 / transliteration 조합으로 갱신된다. | 선택 영역이 갱신되지 않거나 raw id만 표시되거나 detail panel의 선택 단어와 어긋남 | 선택한 노드와 detail panel, context strip 선택 표시가 같은 단어를 가리킴 |
+| 선택 없음 상태 유지 확인 | `WordExplorerScreen` | 선택이 없는 초기 상태 또는 선택 해제 가능한 흐름에서 context strip을 확인한다. | 별도 id 입력 없음 | 선택 단어 영역이 `선택 없음`으로 유지된다. | 선택 없음 상태에서 빈 문자열, 빈 구분자, 이전 선택 단어가 남음 | 선택 없음 상태가 명확히 표시되고 center 표시가 유지됨 |
+| fallback 확인 | `WordExplorerScreen` | 대표 표기 또는 Strong 번호가 부족한 단어를 Explorer에서 확인한다. | 대표 표기 일부가 비어 있는 단어가 있을 경우 해당 단어 | 표시 가능한 값이 부족하면 기존 word id fallback이 유지되고 Strong 번호/transliteration은 비어 있으면 생략된다. | 빈 괄호, 중복 구분자, 공백만 있는 segment가 보임 | 표시 가능한 값만 보이고 부족한 값은 생략되며 word id fallback이 남음 |
