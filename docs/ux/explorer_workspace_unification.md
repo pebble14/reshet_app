@@ -6850,3 +6850,119 @@ Phase 16-E 문서 정리 결과 projection/source-of-truth boundary가 충분히
 | whitespace 검증 | diff에 whitespace 오류가 없어야 함 | trailing whitespace 또는 patch formatting 오류 | `git diff --check` |
 
 Phase 16-E는 docs/design only이며 `lib/`, `test/`, DB, dependency, platform 파일 변경이 없으면 `flutter test`는 실행하지 않는다. 변경 파일 범위가 허용된 두 문서 밖으로 벗어나면 작업을 중단하고 보고한다.
+
+### 17.92 Phase 16-F ExplorerWorkspace selection owner boundary design
+
+Phase 16-F는 `selection owner boundary design`을 문서상 고정하는 docs/design only 단계다.
+
+이번 Phase는 selection owner migration이 아니다. selection owner 이전, controller 도입, production 동작 변경을 수행하지 않는다. Phase 16-F만으로 `ExplorerWorkspaceState` 또는 `ExplorerWorkspace`가 selection owner로 승격되는 것은 승인되지 않는다.
+
+#### 17.92.1 Phase 16-F 성격
+
+| 항목 | Phase 16-F 판단 |
+| --- | --- |
+| 단계 성격 | docs/design only |
+| 구현 범위 | 구현 없음 |
+| selection owner migration | 아님 |
+| selection controller 도입 | 아님 |
+| production 동작 변경 승인 | 없음 |
+| `ExplorerWorkspaceState` selection source-of-truth 승격 | 아님 |
+| `ExplorerWorkspace` selection controller화 | 아님 |
+
+Phase 16-F의 목적은 현재 production에서 선택된 단어를 실제로 결정하는 주체와 projection representation의 경계를 분리하는 것이다. 이 단계는 Phase 16-E의 projection/source-of-truth boundary를 유지한 상태에서 selection owner boundary만 문서상 정리한다.
+
+#### 17.92.2 현재 production selection owner
+
+현재 production selection owner는 `WordExplorerScreen` 내부 상태로 해석한다.
+
+| 항목 | 현재 production 해석 | Phase 16-F 유지 기준 |
+| --- | --- | --- |
+| `_selectedWordId` | 현재 선택 단어 id의 production visible UI source-of-truth다. | `ExplorerWorkspaceState.selectedWordId`로 소유권을 이전하지 않는다. |
+| `_selectedWordDisplayItem` | 현재 detail pane 표시 대상의 production visible UI source-of-truth다. | `ExplorerWorkspaceState.detailTargetWordId`로 소유권을 이전하지 않는다. |
+
+`_selectedWordId`와 `_selectedWordDisplayItem`은 관련되어 있지만 동일 개념으로 병합하지 않는다. `_selectedWordId`는 선택 단어 id를 나타내고, `_selectedWordDisplayItem`은 detail pane이 표시할 수 있는 선택 단어 표시 payload를 나타낸다.
+
+Phase 16-F는 이 소유권을 `ExplorerWorkspaceState` 또는 `ExplorerWorkspace`로 이전하지 않는다. `WordGraphScreen`의 selection callback이 `WordExplorerScreen`의 `_selectWord(...)` 흐름으로 연결될 수 있지만, 현재 production selection 결정과 상태 보유 위치는 `WordExplorerScreen` 내부 상태로 유지한다.
+
+#### 17.92.3 `ExplorerWorkspaceState` selection boundary
+
+`ExplorerWorkspaceState.selectedWordId` 계열 값은 selection owner state가 아니라 projection representation이다.
+
+`ExplorerWorkspaceState.detailTargetWordId` 계열 값은 detail target owner state가 아니라 projection representation이다.
+
+`ExplorerWorkspaceState`는 selection event를 발생시키는 controller가 아니다. 또한 selection mutation, history mutation, detail target 결정, graph center 변경을 소유하지 않는다.
+
+따라서 `ExplorerWorkspaceState.selectedWordId` 또는 `ExplorerWorkspaceState.detailTargetWordId`를 기준으로 production selection, detail target, graph center, navigation history를 변경하는 사용은 Phase 16-F에서 승인되지 않는다.
+
+#### 17.92.4 selection owner와 다른 owner boundary 구분
+
+Phase 16-F에서는 다음 owner/authority를 selection owner와 혼동하지 않는다.
+
+| 경계 | Phase 16-F 해석 |
+| --- | --- |
+| selection owner | 현재 선택 단어 id와 선택 표시 payload를 보유하는 `WordExplorerScreen` 내부 상태다. |
+| detail target owner | detail pane 표시 대상 결정과 연결되지만 selection owner와 동일시하지 않는다. |
+| graph center owner | center 변경과 연결될 수 있지만 selection owner와 동일시하지 않는다. |
+| navigation history owner | selection 변경 기록과 연결될 수 있지만 selection owner와 동일시하지 않는다. |
+| repository/read owner | 선택 표시 payload를 읽는 흐름과 연결되지만 selection owner와 동일시하지 않는다. |
+| persistence authority | projection 또는 history snapshot을 저장/복원하는 authority로 승격하지 않는다. |
+| route state owner | route state 결정 주체로 selection owner를 승격하지 않는다. |
+
+selection 변경이 detail target 표시와 연결될 수 있지만, selection owner와 detail target owner를 동일시하지 않는다.
+
+selection 변경이 graph center 변경으로 이어질 수 있지만, selection owner와 graph center owner를 동일시하지 않는다.
+
+selection 변경이 history mutation과 연결될 수 있지만, selection owner와 navigation history owner를 동일시하지 않는다.
+
+projection state를 기준으로 selection, detail, center, history mutation을 결정하는 사용은 승인되지 않는다.
+
+#### 17.92.5 Phase 16-F 이후에도 승인되지 않은 항목
+
+Phase 16-F 이후에도 아래 항목은 승인되지 않은 상태로 유지한다.
+
+- `ExplorerWorkspace` shell mount
+- route wiring / route registration change
+- `HomeScreen -> WordExplorerScreen` 진입 구조 변경
+- selection owner migration
+- detail target owner migration
+- graph center owner migration
+- navigation history owner migration
+- repository/read owner migration
+- persistence authority migration
+- `ExplorerWorkspaceState` selection source-of-truth usage
+- `ExplorerWorkspaceState` detail target source-of-truth usage
+- projection result 기반 selection/history/detail/center mutation
+- 신규 repository read
+- 신규 DB query
+- 신규 DTO/model/public API 추가
+- `lib/` 변경
+- `test/` 변경
+- DB 변경
+- dependency 변경
+- platform 파일 변경
+
+#### 17.92.6 Phase 16-G 후보
+
+Phase 16-G의 1차 후보는 `Phase 16-G graph center owner boundary design`이다.
+
+대안 후보는 `Phase 16-G detail target owner boundary design`이다.
+
+또 다른 대안 후보는 `Phase 16-G selection guardrail design`이다.
+
+Phase 16-F에서 selection owner boundary가 충분히 명확해지면 Phase 16-G는 `graph center owner boundary design`으로 진행할 수 있다.
+
+반대로 selection과 detail target, graph center, history mutation 구분이 충분히 명확하지 않으면 Phase 16-G는 `selection guardrail design`을 우선한다.
+
+#### 17.92.7 Phase 16-F 명령어 기반 확인 체크리스트
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 |
+| --- | --- | --- | --- |
+| Phase 16-F 문서 변경 범위 확인 | `docs/ux/explorer_workspace_unification.md`, `docs/logs/CHANGELOG.md`만 변경되어야 함 | 허용 범위 밖 파일 변경 | `git diff -- docs/ux/explorer_workspace_unification.md docs/logs/CHANGELOG.md`, `git status --short --branch` |
+| selection owner boundary 문서 반영 확인 | `WordExplorerScreen` 내부 상태가 현재 production selection owner로 문서화되어야 함 | owner가 `ExplorerWorkspaceState` 또는 `ExplorerWorkspace`로 이전된 것처럼 기록됨 | 문서 반영 검색 결과에서 `WordExplorerScreen`, `selection owner`, `_selectedWordId`, `_selectedWordDisplayItem` 확인 |
+| `_selectedWordId`와 `_selectedWordDisplayItem` 역할 구분 확인 | `_selectedWordId`는 선택 단어 id, `_selectedWordDisplayItem`은 detail pane 표시 대상 payload로 구분되어야 함 | 두 항목이 동일 개념처럼 병합됨 | 문서 반영 검색 결과에서 두 항목의 정의 확인 |
+| `ExplorerWorkspaceState` selection boundary 확인 | `ExplorerWorkspaceState`는 selection owner가 아니라 projection representation으로 문서화되어야 함 | `ExplorerWorkspaceState`를 selection source-of-truth처럼 읽을 수 있는 표현 잔존 | `rg -n "selection|selectedWord|_selectedWordId|_selectedWordDisplayItem|detailTargetWordId|ExplorerWorkspaceState|source-of-truth|projection|owner" docs/ux/explorer_workspace_unification.md docs/logs/CHANGELOG.md` |
+| owner boundary 분리 확인 | selection owner, detail target owner, graph center owner, navigation history owner가 혼동되지 않아야 함 | selection과 detail/center/history owner를 동일시하는 표현 | 문서 반영 검색 결과에서 `detail target owner`, `graph center owner`, `navigation history owner` 확인 |
+| Phase 16-E boundary 충돌 확인 | Phase 16-E projection/source-of-truth boundary와 충돌하는 표현이 없어야 함 | projection state 기반 mutation 또는 source-of-truth usage 승인처럼 기록됨 | 문서 반영 검색 결과에서 `projection`, `source-of-truth`, `승인되지 않는다` 확인 |
+| whitespace 검증 | diff에 whitespace 오류가 없어야 함 | trailing whitespace 또는 patch formatting 오류 | `git diff --check` |
+
+Phase 16-F는 docs/design only이며 `lib/`, `test/`, DB, dependency, platform 파일 변경이 없으면 `flutter test`는 실행하지 않는다. 변경 파일 범위가 허용된 두 문서 밖으로 벗어나면 작업을 중단하고 보고한다.

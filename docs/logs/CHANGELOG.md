@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## 2026-06-02 Phase 16-F ExplorerWorkspace selection owner boundary design
+
+- Phase 16-F를 `selection owner boundary design` docs/design only 단계로 진행했다.
+- 현재 production selection owner는 `WordExplorerScreen` 내부 상태로 문서화했다.
+- `_selectedWordId`는 현재 선택 단어 id의 production visible UI source-of-truth로, `_selectedWordDisplayItem`은 현재 detail pane 표시 대상의 production visible UI source-of-truth로 구분했다.
+- `ExplorerWorkspaceState.selectedWordId` / `detailTargetWordId` 계열 값은 owner state가 아니라 projection representation으로 정리했다.
+- selection owner와 detail target owner, graph center owner, navigation history owner를 분리했다.
+- `ExplorerWorkspaceState`는 selection event controller가 아니며 selection mutation, history mutation, detail target 결정, graph center 변경을 소유하지 않는다고 명시했다.
+- selection owner migration, shell mount, route wiring, projection result 기반 selection/history/detail/center mutation은 승인되지 않은 상태로 유지한다.
+- `lib/`, `test/`, DB, dependency, platform 파일 변경은 수행하지 않았다.
+- Phase 16-G의 1차 후보는 `graph center owner boundary design`으로 두고, 대안 후보는 `detail target owner boundary design` 또는 `selection guardrail design`으로 정리했다.
+
 ## 2026-06-01 Phase 16-E ExplorerWorkspace projection/source-of-truth boundary design
 
 - Phase 16-E를 `projection/source-of-truth boundary design` docs/design only 단계로 진행했다.
