@@ -6425,3 +6425,80 @@ Phase 15 전체에서 금지선 위반은 확인되지 않았고, 문서 최신�
 | 전체 flutter test 판단 | Phase 15-C는 docs/audit only 변경이며 lib/test/production code 변경이 없으므로 전체 flutter test를 실행하지 않아야 함 | 문서 외 변경이 있는데 전체 테스트를 생략함 | 변경 파일 범위 확인 후 실행 여부 판단 |
 
 Phase 15-C는 docs/audit only 변경이며 lib/test/production code 변경이 없으므로 전체 flutter test는 실행하지 않는다. Phase 15-B에서 전체 flutter test --reporter compact는 +237: All tests passed!로 이미 확인되었다.
+
+### 17.87 Phase 16-A ExplorerWorkspace production transition readiness audit
+
+Phase 16-A는 구현, test fix, UX 변경, shell mount 단계가 아니다. 이번 단계는 `ExplorerWorkspace` production transition readiness를 문서상 점검하는 docs/audit only 단계다.
+
+Phase 14-B와 Phase 15-B에서 작은 production-visible UX diff는 성공했지만, 이는 `ExplorerWorkspace` shell mount, route 전환, owner migration 승인으로 해석하지 않는다. Phase 16-A의 결론은 전환 구현 승인이 아니라 전환 논의를 시작하기 위한 준비 조건, 차단 요소, owner 경계 확인으로 제한한다.
+
+#### 17.87.1 현재 production canonical route
+
+현재 production canonical route는 계속 다음 구조로 유지한다.
+
+```text
+main.dart -> HomeScreen -> WordExplorerScreen
+```
+
+Phase 16-A에서는 이 구조를 변경하지 않는다. `HomeScreen -> WordExplorerScreen` 진입 구조, route wiring, route registration은 모두 현행 상태를 유지한다.
+
+#### 17.87.2 현재 ExplorerWorkspace 해석
+
+현재 `ExplorerWorkspace`는 production owner가 아니라 다음 성격으로 해석한다.
+
+```text
+preview / read-only / projection boundary
+```
+
+`ExplorerWorkspaceState`도 production visible UI source-of-truth가 아니라 projection/contract boundary로 해석한다. `ExplorerWorkspaceState`를 persistence, history, selection, detail target의 canonical source-of-truth로 승격하지 않는다.
+
+#### 17.87.3 production transition 전 owner 경계
+
+production transition 논의 전에 아래 owner 경계를 먼저 정리해야 한다.
+
+| owner 경계 | 정리 필요성 | 섞일 경우 위험 |
+| --- | --- | --- |
+| route owner | production entry와 화면 전환 책임이 어디에 있는지 고정해야 함 | `HomeScreen -> WordExplorerScreen` canonical route와 `ExplorerWorkspace` route가 동시에 owner처럼 해석될 수 있음 |
+| repository/read owner | 단어/그래프 read 시점과 책임을 분리해야 함 | repository read 시점과 owner가 중복되어 새 repository read 또는 새 DB query가 암묵적으로 추가될 수 있음 |
+| selection owner | 선택 단어의 canonical owner를 분리해야 함 | `WordExplorerScreen`과 `ExplorerWorkspaceState`가 동시에 selection/source-of-truth처럼 해석될 위험이 있음 |
+| graph center owner | 중심 단어 변경과 그래프 중심 owner를 분리해야 함 | graph center가 route state, projection state, repository read state 사이에서 중복될 수 있음 |
+| detail target owner | detail pane 대상 단어의 owner를 분리해야 함 | detail target이 projection 결과와 `WordExplorerScreen` 내부 state 사이에서 어긋날 수 있음 |
+| navigation history owner | 화면 route history와 explorer internal history를 분리해야 함 | Navigator route history와 Explorer internal history가 섞일 위험이 있음 |
+| persistence authority | 저장 대상과 저장 시점을 명확히 해야 함 | projection state가 persistence/source-of-truth처럼 오해될 위험이 있음 |
+| projection/source-of-truth boundary | projection snapshot과 canonical state를 분리해야 함 | rollback이 어려워지고 preview/read-only 경계가 production owner로 오해될 수 있음 |
+
+이 경계가 정리되지 않은 상태에서 shell mount나 route 전환을 진행하면 rollback 범위가 넓어지고, route owner, selection owner, repository/read owner, persistence authority가 한 번에 이동한 것처럼 보일 위험이 있다.
+
+#### 17.87.4 Phase 16-A 판단 질문
+
+Phase 16-A 종료 시 아래 질문에 답할 수 있어야 한다.
+
+1. `ExplorerWorkspace` production transition 논의를 계속해도 되는가?
+2. 현재 전환을 막는 owner/blocker는 무엇인가?
+3. 유지해야 할 guardrail은 무엇인가?
+4. 향후 재정의가 필요한 guardrail은 무엇인가?
+5. `HomeScreen -> WordExplorerScreen` canonical route를 언제까지 유지해야 하는가?
+6. `ExplorerWorkspaceState`를 projection boundary로 계속 둘 것인가, source-of-truth 후보로 검토할 것인가?
+7. Phase 16-B는 구현 후보가 아니라 추가 audit로 가야 하는가?
+
+#### 17.87.5 Phase 16-B 후보
+
+Phase 16-B의 1차 후보는 `production transition blocker inventory`로 기록한다.
+
+이 후보는 구현 단계가 아니라 추가 audit 단계다. Phase 16-B가 진행된다면 production transition을 막는 route owner, repository/read owner, selection owner, graph center owner, detail target owner, navigation history owner, persistence authority, projection/source-of-truth boundary의 blocker 목록을 먼저 정리해야 한다.
+
+#### 17.87.6 Phase 16-A 명령어 기반 확인 체크리스트
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 |
+| --- | --- | --- | --- |
+| 기준 git 상태 확인 | `main == origin/main`, HEAD `f54a446ec6ccb581e5143ce5e44819181e47b080`, working tree clean, local branch `main` only 상태에서 시작해야 함 | 기준 커밋 또는 브랜치 상태 불일치 | `git status --short --branch`, `git branch --list`, `git rev-parse HEAD`, `git rev-parse origin/main`, `git log -1 --oneline` |
+| 변경 파일 확인 | `docs/ux/explorer_workspace_unification.md`, `docs/logs/CHANGELOG.md` 두 파일만 변경되어야 함 | 허용 범위 밖 파일 변경 | `git diff --name-only` |
+| 금지 경로 변경 없음 확인 | `lib`, `test`, 플랫폼 경로, `pubspec.yaml`, `pubspec.lock` 변경이 없어야 함 | production code, test code, dependency, 플랫폼 파일 변경 발생 | `git diff --name-only -- lib test android ios macos windows linux web pubspec.yaml pubspec.lock` |
+| 문서 반영 검색 | Phase 16-A, production transition readiness audit, canonical route, preview/read-only/projection boundary, owner 경계, Phase 16-B 후보가 두 문서에서 확인되어야 함 | readiness 목적, owner 경계, blocker inventory 기록 누락 | `rg -n "Phase 16-A|production transition readiness audit|transition readiness|HomeScreen -> WordExplorerScreen|canonical route|preview/read-only/projection boundary|ExplorerWorkspaceState|source-of-truth|route owner|repository/read owner|selection owner|graph center owner|detail target owner|navigation history owner|persistence authority|production transition blocker inventory|shell mount|route wiring|owner migration" docs/ux/explorer_workspace_unification.md docs/logs/CHANGELOG.md` |
+| production route marker 유지 확인 | `main.dart -> HomeScreen -> WordExplorerScreen` canonical route가 문서상 유지되어야 함 | canonical route 변경 또는 route transition 승인처럼 기록됨 | 문서 반영 검색 결과에서 canonical route 유지 문구 확인 |
+| ExplorerWorkspace shell mount 없음 확인 | `ExplorerWorkspace` shell mount가 승인되지 않았다고 기록되어야 함 | shell mount 승인 또는 production owner 승격처럼 기록됨 | 문서 반영 검색 결과에서 shell mount 금지 문구 확인 |
+| owner/repository/Navigator/persistence migration marker 없음 확인 | owner migration, repository/read owner 이동, Navigator history owner 이동, persistence authority migration이 승인되지 않아야 함 | owner 또는 authority migration이 승인된 것처럼 기록됨 | 문서 반영 검색 결과에서 각 owner 경계와 금지선 유지 문구 확인 |
+| whitespace 검증 | diff에 whitespace 오류가 없어야 함 | trailing whitespace 또는 patch formatting 오류 | `git diff --check` |
+| 전체 flutter test 실행 여부 판단 | Phase 16-A는 docs/audit only이며 `lib/`, `test/`, production code 변경이 없으면 전체 `flutter test --reporter compact`는 실행하지 않는다 | 문서 외 변경이 있는데 전체 테스트를 생략함 | 변경 파일 범위 확인 후 실행 여부 판단 |
+
+Phase 16-A는 docs/audit only이며 `lib/`, `test/`, production code 변경이 없으면 전체 `flutter test --reporter compact`는 실행하지 않는다. 변경 파일 범위가 문서 밖으로 벗어나면 작업을 중단하고 보고한다.
