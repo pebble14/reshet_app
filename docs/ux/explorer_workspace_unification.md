@@ -6657,3 +6657,73 @@ Phase 16-C 종료 시 아래 질문에 답할 수 있어야 한다.
 | 전체 flutter test 실행 여부 판단 | Phase 16-C는 docs/audit only이며 `lib/`, `test/`, production code 변경이 없으면 전체 `flutter test --reporter compact`는 실행하지 않는다 | 문서 외 변경이 있는데 전체 테스트를 생략함 | 변경 파일 범위 확인 후 실행 여부 판단 |
 
 Phase 16-C는 docs/audit only이며 `lib/`, `test/`, production code 변경이 없으면 전체 `flutter test --reporter compact`는 실행하지 않는다. 변경 파일 범위가 문서 밖으로 벗어나면 작업을 중단하고 보고한다.
+
+### 17.90 Phase 16-D ExplorerWorkspace route owner boundary design
+
+Phase 16-D는 현재 production canonical route인 `main.dart -> HomeScreen -> WordExplorerScreen`를 유지한 상태에서, 이후 ExplorerWorkspace transition을 논의하기 위한 route owner boundary를 문서상 정의하는 docs/design only 단계다.
+
+이번 Phase는 route wiring 구현 단계가 아니다. ExplorerWorkspace shell mount 단계가 아니며, `HomeScreen -> WordExplorerScreen` 진입 구조 변경 단계도 아니다. owner/controller/coordinator migration을 수행하지 않고, `ExplorerWorkspaceState`를 route state source-of-truth로 승격하지 않는다.
+
+#### 17.90.1 route owner boundary
+
+| 경계 | Phase 16-D 해석 | 유지 기준 |
+| --- | --- | --- |
+| `MaterialApp` / `main.dart` | 앱 최상위 entry configuration이다. 현재 `home`은 `HomeScreen`이다. | Phase 16-D에서는 변경하지 않는다. |
+| `HomeScreen` | 현재 production route entry owner에 가장 가까운 위치다. Explorer 진입 여부와 `WordExplorerScreen` push를 결정하는 위치다. | 현재 route owner boundary로 문서상 해석하되, 구현 변경은 하지 않는다. |
+| `Navigator` / `MaterialPageRoute` | 현재 route transition mechanism이다. | mechanism 변경과 Navigator authority migration은 수행하지 않는다. |
+| `WordExplorerScreen` | 현재 Explorer production route target이다. `initialWordId`를 받아 Explorer split view를 구성하는 현재 production 대상이다. | 현재 `WordRepository`, center, selection, detail target, navigation history를 직접 보유하는 production visible owner로 유지한다. |
+| `ExplorerWorkspace` | 현재 route owner가 아니며 production shell도 아니다. | preview / read-only / projection boundary로만 유지한다. |
+| `ExplorerWorkspaceState` | route state source-of-truth가 아니며 production visible UI source-of-truth도 아니다. | projection / contract state로만 해석한다. |
+
+이 boundary는 현재 production entry와 ExplorerWorkspace preview boundary를 동시에 보존하기 위한 문서상 guardrail이다. `ExplorerWorkspace`가 production shell 또는 route owner로 승격되었다는 의미가 아니며, `ExplorerWorkspaceState`를 source-of-truth로 사용하는 승인도 아니다.
+
+#### 17.90.2 유지 금지선
+
+Phase 16-D에서는 아래 작업을 금지선으로 유지한다.
+
+- ExplorerWorkspace shell mount 금지
+- route wiring / route registration 변경 금지
+- `HomeScreen -> WordExplorerScreen` 진입 구조 변경 금지
+- route collapse 금지
+- canonical owner migration 금지
+- Navigator authority migration 금지
+- Provider / Repository / persistence authority migration 금지
+- `ExplorerWorkspaceState` source-of-truth 승격 금지
+- projection result persistence/history/source-of-truth usage 금지
+- 신규 repository read 금지
+- 신규 DB query 금지
+- 신규 DTO/model/public API 추가 금지
+- `lib/` 변경 금지
+- `test/` 변경 금지
+- dependency 변경 금지
+
+#### 17.90.3 Phase 16-D 결론
+
+Phase 16-D는 route owner boundary를 문서상 고정하는 단계로 종료할 수 있다.
+이 단계만으로 ExplorerWorkspace transition 구현은 승인되지 않는다.
+후속 phase에서는 projection/source-of-truth boundary 또는 route owner guardrail을 별도로 다룬 뒤에만 구현 가능성을 논의할 수 있다.
+
+#### 17.90.4 Phase 16-E 후보
+
+Phase 16-E의 1차 후보는 `Phase 16-E projection/source-of-truth boundary design`이다.
+
+대안 후보는 `Phase 16-E route owner guardrail design`이다.
+
+Phase 16-D 직후에는 `ExplorerWorkspaceState`가 route state source-of-truth로 오해되는 위험을 먼저 줄이는 것이 중요하므로 Phase 16-E의 1차 후보는 projection/source-of-truth boundary design이 자연스럽다.
+
+#### 17.90.5 Phase 16-D 명령어 기반 확인 체크리스트
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 |
+| --- | --- | --- | --- |
+| 기준 git 상태 확인 | HEAD `d1e7230fc50efedf47ce3e2e3ca44a59cff558f3`, latest commit `docs: ExplorerWorkspace Phase 16-C 전환 순서 audit 정리`, `main == origin/main`, working tree clean, local branch `main` only 상태에서 시작해야 함 | 기준 커밋, 브랜치, working tree 상태 불일치 | `git status --short --branch`, `git branch --list`, `git rev-parse HEAD`, `git rev-parse origin/main`, `git log -1 --oneline` |
+| 변경 파일 확인 | `docs/ux/explorer_workspace_unification.md`, `docs/logs/CHANGELOG.md` 두 파일만 변경되어야 함 | 허용 범위 밖 파일 변경 | `git diff --name-only` |
+| 금지 경로 변경 없음 확인 | `lib`, `test`, 플랫폼 경로, `pubspec.yaml`, `pubspec.lock` 변경이 없어야 함 | production code, test code, dependency, 플랫폼 파일 변경 발생 | `git diff --name-only -- lib test android ios macos windows linux web pubspec.yaml pubspec.lock` |
+| route owner boundary 문서 반영 검색 | Phase 16-D, route owner boundary, route target, 금지선이 두 문서에서 확인되어야 함 | boundary 누락 또는 docs/design only 성격 누락 | `rg -n "Phase 16-D|route owner boundary|HomeScreen -> WordExplorerScreen|production route entry owner|Explorer production route target|preview / read-only / projection boundary|preview/read-only/projection boundary|ExplorerWorkspaceState|source-of-truth|shell mount|route wiring|owner migration" docs/ux/explorer_workspace_unification.md docs/logs/CHANGELOG.md` |
+| canonical route 유지 문구 확인 | `HomeScreen -> WordExplorerScreen` canonical route 유지가 명시되어야 함 | route 전환 승인처럼 해석되는 문구 | 문서 반영 검색 결과에서 `HomeScreen -> WordExplorerScreen`, `canonical route` 확인 |
+| `ExplorerWorkspace` preview/read-only/projection boundary 유지 문구 확인 | `ExplorerWorkspace`가 preview/read-only/projection boundary로 유지된다고 기록되어야 함 | production owner 또는 shell로 승격된 것처럼 기록됨 | 문서 반영 검색 결과에서 `preview / read-only / projection boundary` 또는 `preview/read-only/projection boundary` 확인 |
+| `ExplorerWorkspaceState` source-of-truth 미승격 문구 확인 | `ExplorerWorkspaceState`를 route state source-of-truth 또는 production visible UI source-of-truth로 승격하지 않는다고 기록되어야 함 | projection state를 canonical owner처럼 기록함 | 문서 반영 검색 결과에서 `ExplorerWorkspaceState`, `source-of-truth` 확인 |
+| shell mount / route wiring / owner migration 금지 문구 확인 | shell mount, route wiring, owner migration 금지가 유지되어야 함 | 금지 항목 누락 또는 구현 허용처럼 기록됨 | 문서 반영 검색 결과에서 `shell mount`, `route wiring`, `owner migration` 확인 |
+| whitespace 검증 | diff에 whitespace 오류가 없어야 함 | trailing whitespace 또는 patch formatting 오류 | `git diff --check` |
+| 전체 flutter test 실행 여부 판단 | Phase 16-D는 docs/design only이며 `lib/`, `test/`, production code 변경이 없으면 전체 `flutter test --reporter compact`는 실행하지 않는다 | 문서 외 변경이 있는데 전체 테스트를 생략함 | 변경 파일 범위 확인 후 실행 여부 판단 |
+
+Phase 16-D는 docs/design only이며 `lib/`, `test/`, production code 변경이 없으면 전체 `flutter test --reporter compact`는 실행하지 않는다. 변경 파일 범위가 문서 밖으로 벗어나면 작업을 중단하고 보고한다.

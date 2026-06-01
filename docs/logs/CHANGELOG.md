@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## 2026-06-01 Phase 16-D ExplorerWorkspace route owner boundary design
+
+- Phase 16-D를 `route owner boundary design` docs/design only 단계로 진행했다.
+- 현재 production canonical route는 `main.dart -> HomeScreen -> WordExplorerScreen`로 유지한다.
+- `HomeScreen`은 현재 production route entry owner에 가장 가까운 위치로 문서화했다.
+- `WordExplorerScreen`은 현재 Explorer production route target으로 문서화했다.
+- `ExplorerWorkspace`는 route owner가 아니며 preview/read-only/projection boundary로 유지한다.
+- `ExplorerWorkspaceState`는 route state source-of-truth가 아니며 production visible UI source-of-truth로 승격하지 않는다고 명시했다.
+- ExplorerWorkspace shell mount, route wiring, route registration, route collapse, canonical owner migration, Navigator authority migration, owner/controller/coordinator migration은 금지선으로 유지한다.
+- Provider / Repository / persistence authority migration, 신규 repository read, 신규 DB query, 신규 DTO/model/public API 추가, `lib/`, `test/`, dependency 변경은 수행하지 않았다.
+- Phase 16-E의 1차 후보는 `Phase 16-E projection/source-of-truth boundary design`으로 두고, 대안 후보는 `Phase 16-E route owner guardrail design`으로 정리했다.
+
 ## 2026-06-01 Phase 16-C ExplorerWorkspace transition path sequencing audit
 
 - Phase 16-C를 `transition path sequencing audit` docs/audit only 단계로 진행했다.
