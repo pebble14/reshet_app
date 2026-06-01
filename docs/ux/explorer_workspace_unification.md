@@ -6966,3 +6966,128 @@ Phase 16-F에서 selection owner boundary가 충분히 명확해지면 Phase 16-
 | whitespace 검증 | diff에 whitespace 오류가 없어야 함 | trailing whitespace 또는 patch formatting 오류 | `git diff --check` |
 
 Phase 16-F는 docs/design only이며 `lib/`, `test/`, DB, dependency, platform 파일 변경이 없으면 `flutter test`는 실행하지 않는다. 변경 파일 범위가 허용된 두 문서 밖으로 벗어나면 작업을 중단하고 보고한다.
+
+### 17.93 Phase 16-G ExplorerWorkspace graph center owner boundary design
+
+Phase 16-G는 `graph center owner boundary design`을 문서상 고정하는 docs/design only 단계다.
+
+이번 Phase는 graph center owner migration이 아니다. `_centerWordId` 소유권을 이전하지 않고, `ExplorerWorkspaceState.centerWordId`를 production source-of-truth로 승격하지 않으며, `ExplorerWorkspace`를 graph center controller 또는 production shell로 만들지 않는다.
+
+#### 17.93.1 Phase 16-G 성격
+
+| 항목 | Phase 16-G 판단 |
+| --- | --- |
+| 단계 성격 | docs/design only |
+| 구현 범위 | 구현 없음 |
+| graph center owner migration | 아님 |
+| `ExplorerWorkspace` shell mount 승인 | 없음 |
+| route wiring 승인 | 없음 |
+| owner/controller/coordinator migration 승인 | 없음 |
+| source-of-truth migration 승인 | 없음 |
+
+Phase 16-G의 목적은 현재 production에서 graph center를 실제로 결정하는 주체와 projection representation의 경계를 분리하는 것이다. 이 단계는 Phase 16-E의 projection/source-of-truth boundary와 Phase 16-F의 selection owner boundary를 유지한 상태에서 graph center owner boundary만 문서상 정리한다.
+
+#### 17.93.2 현재 production graph center owner
+
+현재 production 기준 graph center owner는 `WordExplorerScreen` 내부 상태로 해석한다.
+
+| 항목 | 현재 production 해석 | Phase 16-G 유지 기준 |
+| --- | --- | --- |
+| `_centerWordId` | 현재 Explorer graph center의 production visible UI source-of-truth다. | `ExplorerWorkspaceState.centerWordId`로 소유권을 이전하지 않는다. |
+| `WordExplorerScreen` 내부 center 상태 갱신 흐름 | 현재 Explorer graph center 표시와 graph child 입력을 결정하는 production 흐름이다. | `ExplorerWorkspace` graph center controller화로 해석하지 않는다. |
+
+이 문서의 graph center owner 판단은 현재 production 기준으로만 제한한다. 이는 미래 최종 구조의 확정 owner 선언이 아니며, canonical owner migration 승인도 아니다.
+
+`ExplorerWorkspace`는 graph center controller가 아니다.
+
+`ExplorerWorkspace`는 production shell이 아니다.
+
+Phase 16-G는 owner migration이 아니라 owner boundary design이다.
+
+#### 17.93.3 `ExplorerWorkspaceState.centerWordId` boundary
+
+`ExplorerWorkspaceState.centerWordId`는 graph center owner state가 아니다.
+
+`ExplorerWorkspaceState.centerWordId`는 production visible UI source-of-truth가 아니다.
+
+`ExplorerWorkspaceState.centerWordId`는 route state source-of-truth가 아니다.
+
+`ExplorerWorkspaceState.centerWordId`는 projection representation이다.
+
+따라서 `ExplorerWorkspaceState.centerWordId`를 기준으로 production graph center, route state, navigation history, persistence, rollback, selection, detail target을 결정하는 사용은 Phase 16-G에서 승인되지 않는다.
+
+#### 17.93.4 graph center owner와 다른 owner boundary 구분
+
+Phase 16-G에서는 다음 owner/authority를 graph center owner와 병합하지 않는다.
+
+| 경계 | Phase 16-G 해석 |
+| --- | --- |
+| graph center owner | 현재 production 기준 Explorer graph center를 보유하는 `WordExplorerScreen` 내부 상태다. |
+| selection owner | 선택 단어 id와 선택 표시 payload를 보유하는 경계이며 graph center owner와 동일시하지 않는다. |
+| detail target owner | detail pane 표시 대상 결정과 연결될 수 있지만 graph center owner와 동일시하지 않는다. |
+| navigation history owner | center 변경 기록과 연결될 수 있지만 graph center owner와 동일시하지 않는다. |
+| repository/read owner | graph/detail 표시 데이터 read 흐름과 연결되지만 graph center owner와 동일시하지 않는다. |
+| route state owner | route state 결정 주체로 graph center owner를 승격하지 않는다. |
+| persistence authority | projection 또는 history snapshot을 저장/복원하는 authority로 graph center owner를 승격하지 않는다. |
+| rollback authority | 복원 판단과 연결될 수 있지만 graph center owner와 동일시하지 않는다. |
+
+selection 변경이 center 변경으로 이어질 수 있지만, selection owner와 graph center owner는 동일하지 않다.
+
+center 변경이 history mutation과 연결될 수 있지만, graph center owner와 navigation history owner는 동일하지 않다.
+
+detail target 갱신이 selection 또는 center 흐름과 함께 발생할 수 있지만, detail target owner와 graph center owner는 동일하지 않다.
+
+projection result를 기준으로 selection, detail, center, history mutation을 결정하는 사용은 승인되지 않는다.
+
+#### 17.93.5 현재 production 흐름 설명
+
+현재 production 흐름에서 `WordGraphScreen.onSelectWordId`는 `WordExplorerScreen`의 `_selectWord(...)`로 연결된다.
+
+`_selectWord(...)`는 selection/detail 상태를 갱신하고, 필요 시 center/history 상태 갱신을 동반할 수 있다.
+
+하지만 하나의 흐름에서 여러 상태가 갱신된다는 사실은 owner 개념을 병합한다는 뜻이 아니다. Phase 16-G는 이 흐름을 graph center owner migration, selection owner migration, navigation history owner migration, detail target owner migration의 근거로 사용하지 않는다.
+
+#### 17.93.6 Phase 16-G 이후에도 승인되지 않은 항목
+
+Phase 16-G 이후에도 아래 항목은 승인되지 않은 상태로 유지한다. 아래 금지선은 not approved 상태다.
+
+- `ExplorerWorkspace` shell mount
+- route wiring / route registration change
+- `HomeScreen -> WordExplorerScreen` 진입 구조 변경
+- route collapse
+- canonical owner migration
+- Navigator authority migration
+- owner/controller/coordinator migration
+- Provider / Repository / Navigator / persistence authority migration
+- `ExplorerWorkspaceState` production source-of-truth usage
+- `ExplorerWorkspaceState` route state source-of-truth usage
+- `ExplorerWorkspaceState` selection source-of-truth usage
+- `ExplorerWorkspaceState` detail target source-of-truth usage
+- `ExplorerWorkspaceState.centerWordId` graph center source-of-truth usage
+- projection result persistence/history/source-of-truth usage
+- projection result 기반 selection/detail/center/history mutation
+- Level 3 production-visible consumer 승격
+- 새 repository read
+- 새 DB query
+- 신규 DTO/model/public API 추가
+- 신규 test 추가
+- 기존 test 수정
+- `lib/` 변경
+- `test/` 변경
+- DB 변경
+- dependency 변경
+- platform 파일 변경
+- `pubspec.yaml` 변경
+- `pubspec.lock` 변경
+
+#### 17.93.7 Phase 16-G 명령어 기반 확인 체크리스트
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 |
+| --- | --- | --- | --- |
+| Phase 16-G 문서 변경 범위 확인 | `docs/ux/explorer_workspace_unification.md`, `docs/logs/CHANGELOG.md`만 변경되어야 함 | 허용 범위 밖 파일 변경 | `git diff --name-status`, `git diff --name-only` |
+| graph center owner boundary 문서 반영 확인 | 현재 production 기준 graph center owner가 `WordExplorerScreen` 내부 상태로 문서화되어야 함 | owner가 `ExplorerWorkspaceState` 또는 `ExplorerWorkspace`로 이전된 것처럼 기록됨 | 문서 반영 검색 결과에서 `graph center owner`, `WordExplorerScreen`, `_centerWordId` 확인 |
+| `ExplorerWorkspaceState.centerWordId` boundary 확인 | `ExplorerWorkspaceState.centerWordId`는 graph center owner state가 아니라 projection representation으로 문서화되어야 함 | source-of-truth 승격 또는 route state owner처럼 기록됨 | `rg -n "Phase 16-G|graph center owner|_centerWordId|ExplorerWorkspaceState\\.centerWordId|projection representation|not approved" docs/ux/explorer_workspace_unification.md docs/logs/CHANGELOG.md` |
+| owner boundary 분리 확인 | graph center owner, selection owner, detail target owner, navigation history owner가 혼동되지 않아야 함 | center/selection/detail/history owner를 동일시하는 표현 | 문서 반영 검색 결과에서 각 owner 구분 문구 확인 |
+| 금지선 유지 확인 | shell mount, route wiring, owner migration, projection result 기반 mutation, `lib/`, `test/`, DB, dependency, platform 변경이 승인되지 않은 상태로 남아야 함 | 구현 승인처럼 읽히는 문구 또는 금지 영역 변경 | 문서 반영 검색과 `git diff --name-only` 확인 |
+
+Phase 16-G는 docs/design only이며 `lib/`, `test/`, DB, dependency, platform 파일 변경이 없으면 `flutter test`는 실행하지 않는다. 변경 파일 범위가 허용된 두 문서 밖으로 벗어나면 작업을 중단하고 보고한다.

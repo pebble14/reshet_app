@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 2026-06-02 Phase 16-G ExplorerWorkspace graph center owner boundary design
+
+- Phase 16-G를 `ExplorerWorkspace graph center owner boundary design` docs/design only 단계로 진행했다.
+- 현재 production 기준 graph center owner는 `WordExplorerScreen` 내부 상태로 문서화했다.
+- `_centerWordId`는 현재 Explorer graph center의 production visible UI source-of-truth로 정리했다.
+- `ExplorerWorkspaceState.centerWordId`는 graph center owner state가 아니라 projection representation으로 고정했다.
+- `ExplorerWorkspace`는 graph center controller가 아니며 production shell도 아니라고 명시했다.
+- graph center owner와 selection owner, detail target owner, navigation history owner를 분리했다.
+- shell mount, route wiring, owner migration, projection result 기반 selection/detail/center/history mutation은 not approved 상태로 유지한다.
+- `lib/`, `test/`, DB, dependency, platform, `pubspec.yaml`, `pubspec.lock` 변경은 수행하지 않았다.
+
 ## 2026-06-02 Phase 16-F ExplorerWorkspace selection owner boundary design
 
 - Phase 16-F를 `selection owner boundary design` docs/design only 단계로 진행했다.
