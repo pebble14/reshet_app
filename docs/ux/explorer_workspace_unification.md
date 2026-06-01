@@ -6578,3 +6578,82 @@ Phase 16-B 종료 시 아래 질문에 답할 수 있어야 한다.
 | 전체 flutter test 실행 여부 판단 | Phase 16-B는 docs/audit only이며 `lib/`, `test`, production code 변경이 없으면 전체 `flutter test --reporter compact`는 실행하지 않는다 | 문서 외 변경이 있는데 전체 테스트를 생략함 | 변경 파일 범위 확인 후 실행 여부 판단 |
 
 Phase 16-B는 docs/audit only이며 `lib/`, `test/`, production code 변경이 없으면 전체 `flutter test --reporter compact`는 실행하지 않는다. 변경 파일 범위가 문서 밖으로 벗어나면 작업을 중단하고 보고한다.
+
+### 17.89 Phase 16-C ExplorerWorkspace transition path sequencing audit
+
+Phase 16-C는 구현, test fix, UX 변경, shell mount 단계가 아니다. 이번 단계는 Phase 16-B에서 정리한 blocker inventory를 기반으로 production transition 경로의 처리 순서를 문서상 정리하는 docs/audit only 단계다.
+
+Phase 16-C의 목적은 `ExplorerWorkspace` production transition을 승인하는 것이 아니라, 어떤 blocker를 어떤 순서로 다뤄야 하는지 sequencing하는 것이다. Phase 16-C 종료 후에도 바로 production transition 구현으로 가지 않는 것을 기본값으로 둔다.
+
+현재 production canonical route는 계속 `main.dart -> HomeScreen -> WordExplorerScreen`로 유지한다. `ExplorerWorkspace`는 production shell이나 owner가 아니라 preview/read-only/projection boundary로 유지하며, `ExplorerWorkspaceState`는 production visible UI source-of-truth로 승격하지 않는다.
+
+#### 17.89.1 transition sequencing
+
+| 순서 | sequencing 항목 | 선행 조건 | 이 단계에서 판단할 것 | 아직 금지되는 작업 | 다음 단계 후보 | 확인 위치 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 1 | route owner sequencing | 현재 production canonical route가 `main.dart -> HomeScreen -> WordExplorerScreen`이며 `HomeScreen`의 `Navigator.push`와 `MaterialPageRoute`가 `WordExplorerScreen` 진입을 소유한다는 사실을 유지한다. | `ExplorerWorkspace` shell 또는 route가 production entry owner로 해석되지 않도록 route owner boundary를 어디에 고정할지 판단한다. | shell mount, route wiring, route registration 변경, `HomeScreen -> WordExplorerScreen` 진입 구조 변경을 금지한다. | `Phase 16-D route owner boundary design`으로 route owner boundary를 문서상 고정한다. | `lib/main.dart`, `lib/ui/home_screen.dart`, `test/ui/explorer_workspace_phase4e_composition_boundary_test.dart`, Phase 16-B blocker inventory |
+| 2 | projection/source-of-truth sequencing | route owner boundary가 먼저 문서상 고정되어야 한다. `ExplorerWorkspaceState`는 현재 projection/contract boundary이며 production visible UI source-of-truth가 아니다. | projection state를 canonical owner로 승격할지 여부를 판단하기 전까지 projection과 source-of-truth를 어떻게 분리할지 판단한다. | `ExplorerWorkspaceState`를 production visible UI source-of-truth로 사용하거나 projection state를 canonical owner로 사용하는 변경을 금지한다. | source-of-truth boundary design과 projection guardrail 재정의 후보를 분리한다. | `lib/ui/explorer_workspace/explorer_workspace_contract.dart`, `lib/ui/explorer_workspace/word_explorer_workspace_projection_adapter.dart`, `lib/ui/word_explorer_screen.dart`, Phase 16-B blocker inventory |
+| 3 | selection owner sequencing | projection/source-of-truth boundary가 먼저 분리되어야 한다. 현재 selection owner는 `WordExplorerScreen`의 `_selectedWordId`, `_selectedWordDisplayItem`과 연결되어 있다. | projection state가 selection owner처럼 해석되어 owner가 중복되지 않도록 selection owner boundary를 어디에 둘지 판단한다. | selection owner migration, projection 기반 selection source-of-truth 사용, `ExplorerWorkspaceState` selection owner 승격을 금지한다. | selection owner boundary design 또는 guardrail test 후보로 넘긴다. | `lib/ui/word_explorer_screen.dart`, `lib/ui/explorer_workspace/explorer_workspace_contract.dart`, `test/ui/word_explorer_screen_phase12b_readonly_context_strip_test.dart`, `test/ui/word_explorer_screen_phase14b_context_strip_readability_test.dart` |
+| 4 | graph center owner sequencing | selection owner가 먼저 정리되어야 한다. graph center는 `WordExplorerScreen`의 `_centerWordId`와 `WordGraphScreen`의 internal center 상태 사이에 분산된 상태로 해석될 수 있다. | center 변경 authority를 projection, route, graph internal state 사이에서 어떻게 분리할지 판단한다. | center owner migration, route state 기반 center 승격, projection 기반 center source-of-truth 사용을 금지한다. | graph center owner boundary design과 center transition guardrail 후보를 검토한다. | `lib/ui/word_explorer_screen.dart`, `lib/ui/word_graph_screen.dart`, `lib/ui/explorer_workspace/word_explorer_workspace_projection_adapter.dart`, Phase 16-B blocker inventory |
+| 5 | detail target owner sequencing | selection owner와 graph center owner의 해석이 먼저 분리되어야 한다. detail pane target은 `WordExplorerScreen`의 selected display item 기준으로 동작하고 detail route는 `WordDetailScreen`에서 별도 reread한다. | detail pane target과 detail route read context를 분리한 뒤 projection state 승격 여부를 판단한다. | detail target owner migration, `ExplorerWorkspaceState.detailTargetWordId` canonical 승격, detail route read context 변경을 금지한다. | detail target owner boundary design과 detail route reread 정책 검토로 넘긴다. | `lib/ui/word_explorer_screen.dart`, `lib/ui/word_detail_screen.dart`, `lib/ui/explorer_workspace/explorer_workspace_contract.dart`, Phase 16-B blocker inventory |
+| 6 | navigation history owner sequencing | center/detail target owner가 먼저 정리되어야 한다. Explorer internal history와 Flutter `Navigator` route history는 별도다. | history owner를 통합할지, 대체할지, 계속 분리할지 판단하기 위한 boundary를 문서화한다. | navigation history owner migration, Navigator history 대체, Explorer internal history를 route history로 승격하는 변경을 금지한다. | navigation history owner boundary design과 rollback 단위 검토로 넘긴다. | `lib/ui/word_explorer_screen.dart`, `lib/ui/home_screen.dart`, `test/ui/explorer_workspace_phase4e_composition_boundary_test.dart`, Phase 16-B blocker inventory |
+| 7 | repository/read owner sequencing | route, selection, center, detail, history boundary가 먼저 정리되어야 한다. 기존 화면들은 각자의 `WordRepository` read 책임을 보유한다. | repository/read owner 이동이 필요한지, 필요한 경우 read 시점과 owner를 어떤 phase로 분리할지 판단한다. | repository/read owner migration, 새 repository read, 새 DB query, Provider / Repository authority migration을 금지한다. | repository/read owner migration order design을 별도 implementation 전 design phase로 둔다. | `lib/ui/home_screen.dart`, `lib/ui/word_explorer_screen.dart`, `lib/ui/word_graph_screen.dart`, `lib/ui/word_detail_screen.dart`, Phase 16-B blocker inventory |
+| 8 | persistence authority sequencing | route, source-of-truth, history boundary가 먼저 정리되어야 한다. 현재 projection/history snapshot은 production persistence source-of-truth가 아니다. | persistence 대상과 restore authority를 projection/history/source-of-truth 사이에서 어떻게 분리할지 판단한다. | projection result persistence, history snapshot source-of-truth 사용, persistence authority migration을 금지한다. | persistence authority design, persistence guardrail test 후보, 제한된 implementation phase 후보를 분리한다. | `lib/ui/explorer_workspace/explorer_workspace_contract.dart`, `lib/ui/word_explorer_screen.dart`, Phase 16-A/16-B 기록 |
+| 9 | guardrail redefinition sequencing | 앞선 owner boundary별로 유지할 금지선과 바뀔 가능성이 있는 금지선을 먼저 구분해야 한다. 기존 guardrail은 preview-only/projection boundary를 보호한다. | 기존 guardrail 중 유지, 재정의, 신규 추가 대상이 무엇인지 목록화한다. | 신규 test 파일 추가, 기존 test 수정, guardrail 의미를 약화하는 production 구현을 금지한다. | guardrail redefinition design과 source-level guardrail test 후보를 별도 phase로 넘긴다. | `test/ui/explorer_workspace_phase4e_composition_boundary_test.dart`, `test/ui/word_explorer_screen_phase12b_readonly_context_strip_test.dart`, `test/ui/word_explorer_screen_phase14b_context_strip_readability_test.dart`, `test/ui/word_explorer_screen_phase15b_empty_state_readability_test.dart` |
+| 10 | rollback boundary sequencing | 모든 sequencing 항목에서 다중 owner를 한 번에 이동하지 않는 원칙이 유지되어야 한다. | 각 후속 phase가 rollback 가능한 최소 단위인지, 어떤 owner boundary를 건드리는지 판단한다. | 다중 owner 동시 이동, route collapse, canonical owner migration, Level 3 production-visible consumer 승격을 금지한다. | owner migration order design 또는 rollback boundary design을 후속 문서 단계로 둔다. | Phase 16-A 기록, Phase 16-B blocker inventory, `docs/logs/CHANGELOG.md`, `test/ui/explorer_workspace_phase4e_composition_boundary_test.dart` |
+
+이 순서는 route owner를 먼저 고정한 뒤 projection/source-of-truth 해석을 분리하고, selection, graph center, detail target, navigation history를 순차적으로 정리한 다음 repository/read와 persistence authority를 다루는 구조다. repository/read owner를 먼저 옮기면 새 repository read 또는 새 DB query가 암묵적으로 추가될 위험이 있으므로 후순위로 둔다. rollback boundary는 마지막 항목이지만 모든 후속 phase의 최소 변경 단위 판단 기준으로 유지한다.
+
+#### 17.89.2 단계 유형 분류
+
+| sequencing 항목 | 단계 유형 | 판단 |
+| --- | --- | --- |
+| route owner sequencing | design documentation required | production canonical route를 유지한 채 route owner boundary를 문서상 고정해야 하므로 구현보다 설계 문서화가 먼저다. |
+| projection/source-of-truth sequencing | design documentation required + guardrail test required | `ExplorerWorkspaceState`의 projection/contract boundary와 production visible UI source-of-truth 미승격을 문서화하고, 후속 phase에서 guardrail 재정의 필요성을 판단해야 한다. |
+| selection owner sequencing | design documentation required + guardrail test required | `_selectedWordId`, `_selectedWordDisplayItem` owner와 projection state 해석이 중복되지 않도록 boundary design과 guardrail 후보가 필요하다. |
+| graph center owner sequencing | design documentation required + guardrail test required + implementation phase required | center authority가 `WordExplorerScreen`, `WordGraphScreen`, projection 사이에 걸쳐 있어 설계와 guardrail 후 별도 구현 phase가 필요하다. |
+| detail target owner sequencing | design documentation required + guardrail test required + implementation phase required | detail pane target과 `WordDetailScreen` reread context가 분리되어야 하므로 설계와 guardrail 후 제한된 구현 phase가 필요하다. |
+| navigation history owner sequencing | design documentation required + guardrail test required + implementation phase required | Explorer internal history와 Navigator route history가 별도이므로 history owner design, guardrail, 구현 phase를 분리해야 한다. |
+| repository/read owner sequencing | design documentation required + implementation phase required | repository/read owner 이동은 새 repository read 또는 새 DB query 위험이 있어 구현 전 별도 design phase가 필요하다. |
+| persistence authority sequencing | design documentation required + guardrail test required + implementation phase required | projection/history snapshot을 persistence source-of-truth처럼 쓰지 않도록 설계, guardrail, 구현 phase를 분리해야 한다. |
+| guardrail redefinition sequencing | audit only + design documentation required + guardrail test required | Phase 16-C에서는 목록화까지만 수행하고, 실제 test 수정은 후속 guardrail phase에서 다룬다. |
+| rollback boundary sequencing | audit only + design documentation required | 다중 owner를 한 번에 이동하지 않는 원칙을 audit 기준으로 고정하고, 후속 설계 문서에서 최소 rollback 단위를 판단한다. |
+
+#### 17.89.3 Phase 16-D 후보
+
+Phase 16-D의 1차 후보는 `Phase 16-D route owner boundary design`으로 둔다. 이 후보는 production shell mount나 route wiring 변경이 아니라, 현재 `main.dart -> HomeScreen -> WordExplorerScreen` canonical route를 유지한 상태에서 route owner boundary를 문서상 고정하는 design 단계다.
+
+대안 후보는 `Phase 16-D owner migration order design`이다. 이 대안도 바로 구현 단계가 아니라 route owner, projection/source-of-truth, selection owner, graph center owner, detail target owner, navigation history owner, repository/read owner, persistence authority의 이동 순서를 문서상 설계하는 단계로 제한한다.
+
+#### 17.89.4 Phase 16-C 종료 판단 질문
+
+Phase 16-C 종료 시 아래 질문에 답할 수 있어야 한다.
+
+1. production transition blocker들은 어떤 순서로 다뤄야 하는가?
+2. 가장 먼저 다뤄야 할 owner boundary는 무엇인가?
+3. 어떤 항목은 audit only로 충분한가?
+4. 어떤 항목은 design documentation이 필요한가?
+5. 어떤 항목은 guardrail test가 필요한가?
+6. 어떤 항목은 실제 implementation phase가 필요한가?
+7. Phase 16-D는 어떤 주제로 시작해야 하는가?
+8. 아직 production shell mount가 금지되어야 하는가?
+
+#### 17.89.5 Phase 16-C 명령어 기반 확인 체크리스트
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 |
+| --- | --- | --- | --- |
+| 기준 git 상태 확인 | HEAD `f050ed346a2bb01587c5e8dc57f7bf0d199fc285`, latest commit `docs: ExplorerWorkspace Phase 16-B 전환 blocker inventory 정리`, `main == origin/main`, working tree clean, local branch `main` only 상태에서 시작해야 함 | 기준 커밋, 브랜치, working tree 상태 불일치 | `git status --short --branch`, `git branch --list`, `git rev-parse HEAD`, `git rev-parse origin/main`, `git log -1 --oneline` |
+| 변경 파일 확인 | `docs/ux/explorer_workspace_unification.md`, `docs/logs/CHANGELOG.md` 두 파일만 변경되어야 함 | 허용 범위 밖 파일 변경 | `git diff --name-only` |
+| 금지 경로 변경 없음 확인 | `lib`, `test`, 플랫폼 경로, `pubspec.yaml`, `pubspec.lock` 변경이 없어야 함 | production code, test code, dependency, 플랫폼 파일 변경 발생 | `git diff --name-only -- lib test android ios macos windows linux web pubspec.yaml pubspec.lock` |
+| transition sequencing 문서 반영 검색 | Phase 16-C, transition path sequencing audit, sequencing 항목, 금지선이 두 문서에서 확인되어야 함 | sequencing 항목 누락 또는 docs/audit only 성격 누락 | `rg -n "Phase 16-C|transition path sequencing audit|route owner sequencing|projection/source-of-truth sequencing|selection owner sequencing|graph center owner sequencing|detail target owner sequencing|navigation history owner sequencing|repository/read owner sequencing|persistence authority sequencing|guardrail redefinition sequencing|rollback boundary sequencing" docs/ux/explorer_workspace_unification.md docs/logs/CHANGELOG.md` |
+| sequencing 항목 10개 반영 확인 | route owner부터 rollback boundary까지 10개 항목이 모두 기록되어야 함 | 항목 누락, 순서 변경, blocker 의미 축소 | transition sequencing 표에서 10개 항목 확인 |
+| 단계 유형 분류 반영 확인 | `audit only`, `design documentation required`, `guardrail test required`, `implementation phase required`가 기록되어야 함 | 유형 누락 또는 구현 승인처럼 해석되는 문구 | 문서 반영 검색 결과와 단계 유형 분류 표 확인 |
+| canonical route 유지 문구 확인 | `HomeScreen -> WordExplorerScreen` canonical route 유지가 명시되어야 함 | route 전환 승인처럼 해석되는 문구 | 문서 반영 검색 결과에서 `HomeScreen -> WordExplorerScreen`, `canonical route` 확인 |
+| `ExplorerWorkspace` preview/read-only/projection boundary 유지 문구 확인 | `ExplorerWorkspace`가 preview/read-only/projection boundary로 유지된다고 기록되어야 함 | production owner 또는 shell로 승격된 것처럼 기록됨 | 문서 반영 검색 결과에서 `preview/read-only/projection boundary` 확인 |
+| `ExplorerWorkspaceState` source-of-truth 미승격 문구 확인 | `ExplorerWorkspaceState`를 production visible UI source-of-truth로 승격하지 않는다고 기록되어야 함 | projection state를 canonical owner처럼 기록함 | 문서 반영 검색 결과에서 `ExplorerWorkspaceState`, `source-of-truth` 확인 |
+| shell mount / route wiring / owner migration 금지 문구 확인 | shell mount, route wiring, owner migration 금지가 유지되어야 함 | 금지 항목 누락 또는 구현 허용처럼 기록됨 | 문서 반영 검색 결과에서 `shell mount`, `route wiring`, `owner migration` 확인 |
+| Phase 16-D 후보 문구 확인 | `Phase 16-D route owner boundary design`과 `Phase 16-D owner migration order design` 후보가 기록되어야 함 | Phase 16-D가 바로 구현 단계처럼 기록됨 | 문서 반영 검색 결과에서 `Phase 16-D`, `route owner boundary design`, `owner migration order design` 확인 |
+| whitespace 검증 | diff에 whitespace 오류가 없어야 함 | trailing whitespace 또는 patch formatting 오류 | `git diff --check` |
+| 전체 flutter test 실행 여부 판단 | Phase 16-C는 docs/audit only이며 `lib/`, `test/`, production code 변경이 없으면 전체 `flutter test --reporter compact`는 실행하지 않는다 | 문서 외 변경이 있는데 전체 테스트를 생략함 | 변경 파일 범위 확인 후 실행 여부 판단 |
+
+Phase 16-C는 docs/audit only이며 `lib/`, `test/`, production code 변경이 없으면 전체 `flutter test --reporter compact`는 실행하지 않는다. 변경 파일 범위가 문서 밖으로 벗어나면 작업을 중단하고 보고한다.
