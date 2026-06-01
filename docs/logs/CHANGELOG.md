@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 2026-06-01 Phase 16-B ExplorerWorkspace production transition blocker inventory
+
+- Phase 16-B를 `production transition blocker inventory` docs/audit only 단계로 진행했다.
+- 이번 단계는 구현, UX 변경, shell mount, route wiring 단계가 아니다.
+- 현재 production canonical route는 `main.dart -> HomeScreen -> WordExplorerScreen`로 유지한다.
+- `ExplorerWorkspace`는 production owner가 아니라 preview/read-only/projection boundary로 유지한다.
+- `ExplorerWorkspaceState`는 production visible UI source-of-truth로 승격하지 않는다.
+- route owner blocker, repository/read owner blocker, selection owner blocker, graph center owner blocker, detail target owner blocker, navigation history owner blocker, persistence authority blocker, projection/source-of-truth blocker, guardrail redefinition blocker, rollback boundary blocker를 문서상 정리했다.
+- Phase 16-C 후보는 `transition path sequencing audit` 또는 `owner migration order design` 계열로 제안한다.
+- 변경 범위는 docs/audit only이며 `lib/`, `test/`, 플랫폼, dependency 파일은 변경하지 않는다.
+
 ## 2026-06-01 Phase 16-A ExplorerWorkspace production transition readiness audit
 
 - Phase 16-A를 `ExplorerWorkspace production transition readiness audit`로 시작했다.
