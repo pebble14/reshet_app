@@ -6727,3 +6727,126 @@ Phase 16-D 직후에는 `ExplorerWorkspaceState`가 route state source-of-truth�
 | 전체 flutter test 실행 여부 판단 | Phase 16-D는 docs/design only이며 `lib/`, `test/`, production code 변경이 없으면 전체 `flutter test --reporter compact`는 실행하지 않는다 | 문서 외 변경이 있는데 전체 테스트를 생략함 | 변경 파일 범위 확인 후 실행 여부 판단 |
 
 Phase 16-D는 docs/design only이며 `lib/`, `test/`, production code 변경이 없으면 전체 `flutter test --reporter compact`는 실행하지 않는다. 변경 파일 범위가 문서 밖으로 벗어나면 작업을 중단하고 보고한다.
+
+### 17.91 Phase 16-E ExplorerWorkspace projection/source-of-truth boundary design
+
+Phase 16-E는 `projection/source-of-truth boundary design`을 문서상 고정하는 docs/design only 단계다.
+
+이번 Phase는 state owner migration이 아니다. owner/controller/coordinator migration을 수행하지 않고, route wiring이나 ExplorerWorkspace shell mount를 변경하지 않는다. Phase 16-E만으로 ExplorerWorkspace production transition 구현은 승인되지 않는다.
+
+#### 17.91.1 Phase 16-E 성격
+
+| 항목 | Phase 16-E 판단 |
+| --- | --- |
+| 단계 성격 | docs/design only |
+| 구현 범위 | 구현 없음 |
+| state owner migration | 아님 |
+| production transition 구현 승인 | 아님 |
+| `ExplorerWorkspaceState` production source-of-truth 승격 | 아님 |
+| route state source-of-truth 변경 | 없음 |
+| persistence/history/source-of-truth usage 승인 | 없음 |
+
+Phase 16-E의 목적은 `ExplorerWorkspaceState`를 production visible UI source-of-truth로 승격하는 것이 아니라, 현재 production visible UI source-of-truth가 무엇인지와 projection / contract representation이 어디까지인지 문서상 분리하는 것이다.
+
+#### 17.91.2 현재 production visible UI source-of-truth
+
+현재 production 구조에서 `WordExplorerScreen` 내부 상태는 Explorer production visible UI source-of-truth로 해석한다. Phase 16-E에서는 이 소유권을 `ExplorerWorkspaceState`로 이전하지 않는다.
+
+현재 production 구조 기준으로 source-of-truth로 해석하는 항목은 다음과 같다.
+
+| 항목 | 현재 production 해석 | Phase 16-E 유지 기준 |
+| --- | --- | --- |
+| `_centerWordId` | 현재 Explorer graph center의 production visible UI source-of-truth다. | `ExplorerWorkspaceState`로 이전하지 않는다. |
+| `_selectedWordId` | 현재 선택 단어 id의 production visible UI source-of-truth다. | projection 기반 selection source-of-truth로 승격하지 않는다. |
+| `_selectedWordDisplayItem` | 현재 detail pane 선택 표시 대상의 production visible UI source-of-truth다. | detail target owner를 이전하지 않는다. |
+| `_history` | 현재 Explorer 내부 navigation history 표시와 이동 판단의 production visible UI source-of-truth다. | route history 또는 projection history로 승격하지 않는다. |
+| detail loading state | 현재 detail pane loading 표시 판단의 production visible UI source-of-truth다. | projection state로 이전하지 않는다. |
+| detail error state | 현재 detail pane error 표시 판단의 production visible UI source-of-truth다. | projection state로 이전하지 않는다. |
+| detail unavailable state | 현재 detail pane unavailable 표시 판단의 production visible UI source-of-truth다. | projection state로 이전하지 않는다. |
+| `WordRepository` read result | 현재 production read 결과이며 detail/graph 표시 판단의 입력 source-of-truth로 해석한다. | 신규 repository read 또는 repository/read owner migration을 수행하지 않는다. |
+
+이 목록은 현재 production 구조 기준의 해석이다. 장기 최종 구조 확정이나 owner migration 승인으로 해석하지 않는다.
+
+#### 17.91.3 `_readOnlyWorkspaceProjection` boundary
+
+`_readOnlyWorkspaceProjection`은 production source-of-truth가 아니다.
+
+`_readOnlyWorkspaceProjection`은 `WordExplorerScreen` 내부 production 상태를 `ExplorerWorkspaceState` 형태로 읽기 위해 사용하는 read-only projection entry다. 이 entry는 `_centerWordId`, `_selectedWordId`, `_selectedWordDisplayItem`, `_history`, detail 상태, repository read 결과의 소유권을 갖지 않는다.
+
+`_readOnlyWorkspaceProjection` 결과를 persistence, navigation history, rollback, route state, selection owner, graph center owner, detail target owner의 source-of-truth로 사용하지 않는다.
+
+#### 17.91.4 `WordExplorerWorkspaceProjectionAdapter.project(...)` boundary
+
+`WordExplorerWorkspaceProjectionAdapter.project(...)`는 source-of-truth adapter가 아니다.
+
+`WordExplorerWorkspaceProjectionAdapter.project(...)`는 production 상태를 `ExplorerWorkspaceState` 형태로 변환하는 projection adapter다. adapter는 production 상태를 결정하거나 소유하지 않는다. adapter 결과는 production visible UI state, route state, persistence state, navigation history state를 대체하지 않는다.
+
+Phase 16-E에서는 adapter를 owner, controller, coordinator, repository/read authority, persistence authority로 승격하지 않는다.
+
+#### 17.91.5 `ExplorerWorkspaceState` boundary
+
+`ExplorerWorkspaceState`는 projection / contract representation이다.
+
+`ExplorerWorkspaceState`는 다음 항목이 아니다.
+
+- production visible UI source-of-truth
+- route state source-of-truth
+- persistence source-of-truth
+- navigation history source-of-truth
+- selection owner
+- graph center owner
+- detail target owner
+- navigation history owner
+- repository/read owner
+- persistence authority
+- rollback authority
+
+따라서 `ExplorerWorkspaceState`의 `centerWordId`, `selectedWordId`, `detailTargetWordId`, `history` 계열 값은 현재 production owner state를 읽은 projection representation으로만 해석한다. 이 값들을 기준으로 route, repository read, persistence restore, rollback, history mutation을 결정하는 사용은 Phase 16-E에서 승인되지 않는다.
+
+#### 17.91.6 Phase 16-E 이후에도 승인되지 않은 항목
+
+Phase 16-E 이후에도 아래 항목은 승인되지 않은 상태로 유지한다.
+
+- `ExplorerWorkspace` shell mount
+- route wiring / route registration change
+- `HomeScreen -> WordExplorerScreen` 진입 구조 변경
+- route collapse
+- canonical owner migration
+- Navigator authority migration
+- owner/controller/coordinator migration
+- Provider / Repository / Navigator / persistence authority migration
+- `ExplorerWorkspaceState` production source-of-truth usage
+- `ExplorerWorkspaceState` route state source-of-truth usage
+- projection result persistence/history/source-of-truth usage
+- Level 3 production-visible consumer 승격
+- 신규 repository read
+- 신규 DB query
+- 신규 DTO/model/public API 추가
+- `lib/` 변경
+- `test/` 변경
+- DB 변경
+- dependency 변경
+- platform 파일 변경
+
+#### 17.91.7 Phase 16-F 후보
+
+Phase 16-F의 1차 후보는 `Phase 16-F selection owner boundary design`이다.
+
+대안 후보는 `Phase 16-F projection guardrail design`이다.
+
+Phase 16-E 문서 정리 결과 projection/source-of-truth boundary가 충분히 명확하면 Phase 16-F는 `selection owner boundary design`으로 진행할 수 있다.
+
+반대로 `ExplorerWorkspaceState`가 source-of-truth처럼 오해될 여지가 남아 있으면 Phase 16-F는 `projection guardrail design`을 우선한다.
+
+#### 17.91.8 Phase 16-E 명령어 기반 확인 체크리스트
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 |
+| --- | --- | --- | --- |
+| Phase 16-E 문서 변경 범위 확인 | `docs/ux/explorer_workspace_unification.md`, `docs/logs/CHANGELOG.md`만 변경되어야 함 | 허용 범위 밖 파일 변경 | `git status --short --branch`, `git diff -- docs/ux/explorer_workspace_unification.md docs/logs/CHANGELOG.md` |
+| projection/source-of-truth boundary 문서 반영 검색 | `ExplorerWorkspaceState`가 projection / contract representation이며 production source-of-truth가 아니라고 확인되어야 함 | `ExplorerWorkspaceState`를 source-of-truth처럼 읽을 수 있는 표현 잔존 | `rg -n "ExplorerWorkspaceState|source-of-truth|source of truth|projection|read-only|contract representation|WordExplorerScreen|_readOnlyWorkspaceProjection|WordExplorerWorkspaceProjectionAdapter" docs/ux/explorer_workspace_unification.md docs/logs/CHANGELOG.md` |
+| 현재 production visible UI source-of-truth 확인 | `WordExplorerScreen` 내부 상태와 `WordRepository` read result가 현재 production 구조 기준 source-of-truth로 문서화되어야 함 | production owner를 projection state로 이전한 것처럼 기록됨 | 문서 반영 검색 결과에서 `WordExplorerScreen`, `_centerWordId`, `_selectedWordId`, `_selectedWordDisplayItem`, `_history`, `WordRepository` 확인 |
+| projection entry와 adapter 역할 확인 | `_readOnlyWorkspaceProjection`과 `WordExplorerWorkspaceProjectionAdapter.project(...)`가 projection boundary로 기록되어야 함 | entry 또는 adapter가 상태를 소유하는 것처럼 기록됨 | 문서 반영 검색 결과에서 `_readOnlyWorkspaceProjection`, `WordExplorerWorkspaceProjectionAdapter.project(...)` 확인 |
+| 금지선 유지 확인 | shell mount, route wiring, owner migration, persistence/history/source-of-truth usage가 미승인으로 남아야 함 | 금지 항목 누락 또는 승인처럼 읽히는 문구 | 문서 반영 검색 결과에서 `승인되지 않은 상태`, `shell mount`, `route wiring`, `owner/controller/coordinator migration`, `projection result persistence/history/source-of-truth usage` 확인 |
+| whitespace 검증 | diff에 whitespace 오류가 없어야 함 | trailing whitespace 또는 patch formatting 오류 | `git diff --check` |
+
+Phase 16-E는 docs/design only이며 `lib/`, `test/`, DB, dependency, platform 파일 변경이 없으면 `flutter test`는 실행하지 않는다. 변경 파일 범위가 허용된 두 문서 밖으로 벗어나면 작업을 중단하고 보고한다.

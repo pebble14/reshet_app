@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## 2026-06-01 Phase 16-E ExplorerWorkspace projection/source-of-truth boundary design
+
+- Phase 16-E를 `projection/source-of-truth boundary design` docs/design only 단계로 진행했다.
+- 현재 production visible UI source-of-truth는 `WordExplorerScreen` 내부 상태로 문서화했다.
+- `_centerWordId`, `_selectedWordId`, `_selectedWordDisplayItem`, `_history`, detail loading/error/unavailable state, `WordRepository` read result를 현재 production 구조 기준 source-of-truth로 정리했다.
+- `ExplorerWorkspaceState`는 production visible UI source-of-truth가 아니라 projection / contract representation으로 문서화했다.
+- `_readOnlyWorkspaceProjection`은 source-of-truth가 아니라 read-only projection entry로 정리했다.
+- `WordExplorerWorkspaceProjectionAdapter.project(...)`는 source-of-truth adapter가 아니라 projection adapter로 정리했다.
+- `ExplorerWorkspaceState`가 selection, center, detail, history, repository/read, persistence authority, rollback authority가 아님을 명시했다.
+- owner migration, route wiring, shell mount, projection result persistence/history/source-of-truth usage는 승인되지 않은 상태로 유지한다.
+- `lib/`, `test/`, DB, dependency, platform 파일 변경은 수행하지 않았다.
+- Phase 16-F의 1차 후보는 `selection owner boundary design`으로 두고, 대안 후보는 `projection guardrail design`으로 정리했다.
+
 ## 2026-06-01 Phase 16-D ExplorerWorkspace route owner boundary design
 
 - Phase 16-D를 `route owner boundary design` docs/design only 단계로 진행했다.
