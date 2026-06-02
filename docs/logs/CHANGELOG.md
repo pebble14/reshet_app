@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2026-06-02 Phase 16-M ExplorerWorkspace implementation entry / guardrail redefinition audit
+
+- Phase 16-M은 `ExplorerWorkspace implementation entry / guardrail redefinition audit` docs/audit only 단계다.
+- 이번 단계는 구현 단계가 아니다.
+- Phase 16-D/E/F/G/H/I/J/K/L의 owner/authority boundary를 종합했다.
+- `ExplorerWorkspace` shell mount, route wiring, owner migration, `ExplorerWorkspaceState` source-of-truth 승격은 아직 승인하지 않는다.
+- Phase 17-A 후보를 implementation candidate selection audit 또는 guardrail/test 후보 선정으로 제한한다.
+- 문서 외 변경, 구현 변경, `lib/`, `test/`, DB, dependency, platform, `pubspec.yaml`, `pubspec.lock` 변경은 수행하지 않았다.
+
 ## 2026-06-02 Phase 16-L ExplorerWorkspace rollback authority boundary design
 
 - Phase 16-L은 `ExplorerWorkspace rollback authority boundary design` docs/design only 단계다.

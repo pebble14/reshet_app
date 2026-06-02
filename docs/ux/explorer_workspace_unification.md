@@ -7896,3 +7896,172 @@ Phase 16-L 이후에도 아래 항목은 승인되지 않은 상태로 유지한
 | 금지선 유지 확인 | shell mount, route wiring, owner migration, persistence authority migration, rollback authority migration, projection result 기반 rollback/restore, history snapshot 기반 rollback/restore, `lib/`, `test/`, DB, dependency, platform, pubspec 변경이 승인되지 않은 상태로 남아야 함 | 구현 승인처럼 읽히는 문구 또는 금지 영역 변경 | 문서 반영 검색과 `git diff --name-only` 확인 |
 
 Phase 16-L은 docs/design only이며 `lib/`, `test/`, DB, dependency, platform 파일 변경이 없으면 `flutter test`는 실행하지 않는다. 변경 파일 범위가 허용된 두 문서 밖으로 벗어나면 작업을 중단하고 보고한다.
+
+### 17.99 Phase 16-M ExplorerWorkspace implementation entry / guardrail redefinition audit
+
+Phase 16-M은 `ExplorerWorkspace implementation entry / guardrail redefinition audit` docs/audit only 단계다.
+
+이번 Phase는 implementation 단계가 아니다. `ExplorerWorkspace` production shell mount, route wiring, owner/controller/coordinator migration, `ExplorerWorkspaceState` source-of-truth 승격, 신규 test 추가, 기존 test 수정, `lib/` 변경을 승인하지 않는다.
+
+구현 진입 가능성 검토와 구현 승인은 동일하지 않다.
+
+guardrail redefinition 필요성 검토와 test 추가 승인은 동일하지 않다.
+
+Phase 17-A 후보 선정 준비와 Phase 17 구현 착수는 동일하지 않다.
+
+#### 17.99.1 Phase 16-M 성격
+
+| 항목 | Phase 16-M 판단 |
+| --- | --- |
+| 단계 성격 | docs/audit only |
+| 구현 범위 | 구현 없음 |
+| implementation approval | 없음 |
+| guardrail test 추가 승인 | 없음 |
+| `ExplorerWorkspace` shell mount 승인 | 없음 |
+| route wiring 승인 | 없음 |
+| owner/controller/coordinator migration 승인 | 없음 |
+| `ExplorerWorkspaceState` source-of-truth 승격 | 없음 |
+| 신규 test 추가 / 기존 test 수정 | 없음 |
+| `lib/` 변경 | 없음 |
+
+Phase 16-M의 목적은 Phase 16-D부터 Phase 16-L까지 문서상 고정한 owner/authority boundary를 기준으로 구현 진입 가능 여부와 guardrail redefinition 필요성을 audit하는 것이다. 이 audit은 Phase 17-A 후보 선정 준비를 위한 문서 판단이며, Phase 17 구현 착수 또는 구현 승인으로 해석하지 않는다.
+
+`ExplorerWorkspaceState`는 계속 projection representation으로 유지된다.
+
+`ExplorerWorkspace`는 아직 production shell이 아니다.
+
+`ExplorerWorkspace`는 route owner, selection owner, graph center owner, detail target owner, navigation history owner, repository/read owner, persistence authority, rollback authority가 아니다.
+
+#### 17.99.2 Phase 16-D/E/F/G/H/I/J/K/L boundary 종합
+
+Phase 16-M은 기존 Phase 16-D/E/F/G/H/I/J/K/L의 결론을 다음 방식으로 종합한다.
+
+| 이전 Phase | Phase 16-M 종합 |
+| --- | --- |
+| Phase 16-D | route owner boundary 유지 |
+| Phase 16-E | projection/source-of-truth boundary 유지 |
+| Phase 16-F | selection owner boundary 유지 |
+| Phase 16-G | graph center owner boundary 유지 |
+| Phase 16-H | detail target owner boundary 유지 |
+| Phase 16-I | navigation history owner boundary 유지 |
+| Phase 16-J | repository/read owner boundary 유지 |
+| Phase 16-K | persistence authority boundary 유지 |
+| Phase 16-L | rollback authority boundary 유지 |
+
+이 종합은 기존 boundary를 구현 승인으로 승격하지 않는다. Phase 16-D/E/F/G/H/I/J/K/L에서 고정한 owner/authority boundary는 구현 진입 판단의 기준으로 사용할 수 있지만, 각 boundary의 owner migration 또는 authority migration을 자동 승인하지 않는다.
+
+#### 17.99.3 구현 진입 가능성 분류
+
+Phase 16-M에서 구현 진입 가능성은 다음처럼 분류한다.
+
+바로 승인하지 않는 구현:
+
+- `ExplorerWorkspace` production shell mount
+- `HomeScreen -> ExplorerWorkspace` route wiring
+- `WordExplorerScreen` owner migration
+- `ExplorerWorkspaceState` production source-of-truth 승격
+- projection result 기반 selection/detail/center/history/read mutation
+- projection result 기반 persistence/restore/rollback
+- 새 repository read
+- 새 DB query
+- persistence/rollback 기능 추가
+- Level 3 production-visible consumer 승격
+
+Phase 17-A 후보로 검토 가능한 항목:
+
+- implementation candidate selection audit
+- guardrail redefinition audit
+- preview/projection boundary 보호 test 후보 선정
+- `ExplorerWorkspaceState` projection contract 보강 후보 검토
+- production-visible UX diff 후보 audit
+- shell mount 전 선행 guardrail/test 설계
+- hidden probe / preview-only boundary 보호 강화
+
+Phase 17-A 후보는 구현 자체가 아니라 구현 후보 선정 audit으로 제한한다. Phase 17-B 이후에만 별도 승인 하에 guardrail test 또는 preview/projection boundary 보호 구현을 검토할 수 있다.
+
+`ExplorerWorkspace` production shell mount는 Phase 17-A의 직접 구현 후보로 올리지 않는다.
+
+route wiring 변경은 Phase 17-A의 직접 구현 후보로 올리지 않는다.
+
+owner migration은 Phase 17-A의 직접 구현 후보로 올리지 않는다.
+
+#### 17.99.4 guardrail redefinition audit 판단
+
+기존 preview/projection guardrail은 Phase 17 진입 전 재정의 필요성을 audit할 수 있다. 다만 guardrail redefinition 필요성 검토는 test 추가 승인과 동일하지 않다.
+
+현재 guardrail 판단 기준은 다음과 같이 유지한다.
+
+- `ExplorerWorkspaceState`는 selected/center/detail/layout/origin 값을 담는 projection representation이다.
+- `WordExplorerWorkspaceProjectionAdapter.project(...)`는 source-of-truth adapter가 아니라 read-only projection adapter다.
+- `_readOnlyWorkspaceProjection`은 현재 owner state를 읽어 projection snapshot을 만드는 흐름이며 mutation/read/persistence/rollback을 수행하지 않는다.
+- hidden probe와 preview-only boundary는 production route, production shell, repository/read owner, Navigator owner, persistence authority, rollback authority로 확장하지 않는다.
+- Level 3 production-visible consumer 승격은 아직 승인하지 않는다.
+
+Phase 17-A에서는 guardrail/test 구현이 아니라 guardrail/test 후보를 선정하는 audit만 수행할 수 있다.
+
+#### 17.99.5 Phase 16-M 이후에도 승인되지 않은 항목
+
+Phase 16-M 이후에도 아래 항목은 승인되지 않은 상태로 유지한다. 아래 금지선은 not approved 상태다.
+
+- `ExplorerWorkspace` shell mount
+- route wiring / route registration change
+- `HomeScreen -> WordExplorerScreen` 진입 구조 변경
+- route collapse
+- canonical owner migration
+- Navigator authority migration
+- owner/controller/coordinator migration
+- Provider / Repository / Navigator / persistence authority migration
+- `WordRepository` owner migration
+- repository/read owner migration
+- persistence authority migration
+- rollback authority migration
+- `ExplorerWorkspaceState` production source-of-truth usage
+- `ExplorerWorkspaceState` route state source-of-truth usage
+- `ExplorerWorkspaceState` selection source-of-truth usage
+- `ExplorerWorkspaceState` detail target source-of-truth usage
+- `ExplorerWorkspaceState.centerWordId` graph center source-of-truth usage
+- `ExplorerWorkspaceState.history` navigation history source-of-truth usage
+- `ExplorerWorkspaceState` repository/read result source-of-truth usage
+- `ExplorerWorkspaceState` loading/error/unavailable source-of-truth usage
+- `ExplorerWorkspaceState` persistence source-of-truth usage
+- `ExplorerWorkspaceState` rollback source-of-truth usage
+- projection result persistence/history/source-of-truth usage
+- projection result 기반 selection/detail/center/history/read mutation
+- projection result 기반 repository read
+- projection result 기반 DB query
+- projection result 기반 persistence
+- projection result 기반 restore
+- projection result 기반 rollback 승인
+- history snapshot 기반 persistence
+- history snapshot 기반 restore
+- history snapshot 기반 rollback
+- `ExplorerWorkspaceHistoryEntry` 기반 restore/rollback
+- `WordNavigationHistoryController` rollback authority 승격
+- Level 3 production-visible consumer 승격
+- 새 rollback 기능 추가
+- 새 restore 기능 추가
+- 새 persistence 기능 추가
+- 새 repository read
+- 새 DB query
+- 신규 DTO/model/public API 추가
+- 신규 test 추가
+- 기존 test 수정
+- `lib/` 변경
+- `test/` 변경
+- DB 변경
+- 플랫폼 파일 변경
+- dependency 변경
+- `pubspec.yaml` 변경
+- `pubspec.lock` 변경
+
+#### 17.99.6 Phase 16-M 명령어 기반 확인 체크리스트
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 |
+| --- | --- | --- | --- |
+| Phase 16-M 문서 변경 범위 확인 | `docs/ux/explorer_workspace_unification.md`, `docs/logs/CHANGELOG.md`만 변경되어야 함 | 허용 범위 밖 파일 변경 | `git diff --name-status`, `git diff --name-only` |
+| docs/audit only 성격 확인 | Phase 16-M이 implementation 단계가 아니며 구현 승인과 분리되어야 함 | shell mount, route wiring, owner migration 승인처럼 읽힘 | 문서 반영 검색 결과에서 `Phase 16-M`, `docs/audit only`, `implementation entry`, `guardrail redefinition` 확인 |
+| 기존 boundary 종합 확인 | Phase 16-D/E/F/G/H/I/J/K/L owner/authority boundary가 유지되어야 함 | 이전 Phase 결론이 owner/authority migration 승인처럼 기록됨 | 문서 반영 검색 결과에서 Phase 16-D부터 Phase 16-L까지의 연결 확인 |
+| Phase 17-A 후보 제한 확인 | Phase 17-A 후보가 implementation candidate selection audit 또는 guardrail/test 후보 선정으로 제한되어야 함 | Phase 17-A가 shell mount, route wiring, owner migration 직접 구현 후보처럼 기록됨 | 문서 반영 검색 결과에서 `Phase 17-A`, `candidate selection`, `guardrail/test` 확인 |
+| 금지선 유지 확인 | shell mount, route wiring, owner migration, source-of-truth 승격, projection result 기반 mutation/read/persistence/rollback, `lib/`, `test/`, DB, dependency, platform, pubspec 변경이 승인되지 않은 상태로 남아야 함 | 구현 승인처럼 읽히는 문구 또는 금지 영역 변경 | 문서 반영 검색과 `git diff --name-only` 확인 |
+
+Phase 16-M은 docs/audit only이며 `lib/`, `test/`, DB, dependency, platform 파일 변경이 없으면 `flutter test`는 실행하지 않는다. 변경 파일 범위가 허용된 두 문서 밖으로 벗어나면 작업을 중단하고 보고한다.
