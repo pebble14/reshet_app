@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 2026-06-02 Phase 16-K ExplorerWorkspace persistence authority boundary design
+
+- Phase 16-K를 `ExplorerWorkspace persistence authority boundary design` docs/design only 단계로 진행했다.
+- 이번 단계는 persistence authority migration이 아니다.
+- 현재 production persistence authority는 `ExplorerWorkspace`에 없다고 정리했다.
+- `ExplorerWorkspaceState`, projection result, `_history`, history snapshot 계열 값은 persistence source-of-truth 또는 restore authority가 아니라고 정리했다.
+- `ExplorerWorkspaceHistoryEntry` 계열 표현은 persistence API나 restore controller가 아니며, `WordNavigationHistoryController`는 in-memory back/forward controller라고 정리했다.
+- navigation history owner와 persistence authority를 분리했다.
+- route/selection/detail/center/history/repository-read owner와 persistence authority를 분리했다.
+- 문서 외 변경, 구현 변경, `lib/`, `test/`, DB, dependency, platform, `pubspec.yaml`, `pubspec.lock` 변경은 수행하지 않았다.
+
 ## 2026-06-02 Phase 16-J ExplorerWorkspace repository/read owner boundary design
 
 - Phase 16-J를 `ExplorerWorkspace repository/read owner boundary design` docs/design only 단계로 진행했다.

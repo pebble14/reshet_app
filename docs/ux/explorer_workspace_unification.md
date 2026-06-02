@@ -7542,3 +7542,174 @@ Phase 16-J 이후에도 아래 항목은 승인되지 않은 상태로 유지한
 | 금지선 유지 확인 | shell mount, route wiring, owner migration, projection result 기반 read/query/mutation/rollback, `lib/`, `test/`, DB, dependency, platform, pubspec 변경이 승인되지 않은 상태로 남아야 함 | 구현 승인처럼 읽히는 문구 또는 금지 영역 변경 | 문서 반영 검색과 `git diff --name-only` 확인 |
 
 Phase 16-J는 docs/design only이며 `lib/`, `test/`, DB, dependency, platform 파일 변경이 없으면 `flutter test`는 실행하지 않는다. 변경 파일 범위가 허용된 두 문서 밖으로 벗어나면 작업을 중단하고 보고한다.
+
+### 17.97 Phase 16-K ExplorerWorkspace persistence authority boundary design
+
+Phase 16-K는 `persistence authority boundary design`을 문서상 고정하는 docs/design only 단계다.
+
+이번 Phase는 persistence authority migration이 아니다. 새 persistence 기능이나 새 restore 기능을 추가하지 않고, rollback authority migration을 시작하지 않으며, `ExplorerWorkspace` shell mount, route wiring, owner/controller/coordinator migration, source-of-truth migration을 승인하지 않는다.
+
+#### 17.97.1 Phase 16-K 성격
+
+| 항목 | Phase 16-K 판단 |
+| --- | --- |
+| 단계 성격 | docs/design only |
+| 구현 범위 | 구현 없음 |
+| persistence authority migration | 아님 |
+| rollback authority migration | 아님 |
+| 새 persistence 기능 / 새 restore 기능 승인 | 없음 |
+| `ExplorerWorkspace` shell mount 승인 | 없음 |
+| route wiring 승인 | 없음 |
+| owner/controller/coordinator migration 승인 | 없음 |
+| source-of-truth migration 승인 | 없음 |
+| production state persist/restore 승인 | 없음 |
+
+Phase 16-K의 목적은 현재 production에서 Explorer 상태를 저장/복원하는 persistence authority가 존재하는지와 `ExplorerWorkspaceState`, projection result, `_history`, history snapshot 계열 값을 persistence source-of-truth 또는 restore authority로 사용할 수 있는지 여부를 문서상 분리하는 것이다. 이 단계는 Phase 16-D의 route owner boundary와 route wiring 금지선, Phase 16-E의 projection/source-of-truth boundary, Phase 16-F의 selection owner boundary, Phase 16-G의 graph center owner boundary, Phase 16-H의 detail target owner boundary, Phase 16-I의 navigation history owner boundary, Phase 16-J의 repository/read owner boundary를 유지한 상태에서 persistence authority boundary만 문서상 정리한다.
+
+#### 17.97.2 현재 production persistence authority 판단
+
+현재 production persistence authority는 `ExplorerWorkspace`에 없다.
+
+| 항목 | 현재 production 해석 | Phase 16-K 유지 기준 |
+| --- | --- | --- |
+| `ExplorerWorkspace` | preview/read-only/projection boundary로 유지되는 workspace 표현이다. | persistence controller, restore controller, production shell로 승격하지 않는다. |
+| `ExplorerWorkspaceState` | selected/center/detail/layout/origin 값을 담는 projection representation이다. | persistence source-of-truth로 사용하지 않는다. |
+| projection result | 현재 owner state를 읽어 만든 read-only projection 결과다. | production state persist/restore 근거로 사용하지 않는다. |
+| `_history` | navigation history owner state일 수 있고 back/forward 판단에 사용된다. | persistence authority로 승격하지 않는다. |
+| history snapshot 계열 값 | history 표시와 navigation 판단을 위한 표현이다. | production state restore authority로 사용하지 않는다. |
+| `ExplorerWorkspaceHistoryEntry` 계열 표현 | `ExplorerWorkspaceState` snapshot을 감싸는 표현이다. | persistence API나 restore controller로 해석하지 않는다. |
+| `WordNavigationHistoryController` | in-memory back/forward controller다. | persistence authority로 해석하지 않는다. |
+
+`ExplorerWorkspace`는 persistence controller가 아니다.
+
+`ExplorerWorkspace`는 restore controller가 아니다.
+
+`ExplorerWorkspace`는 production shell이 아니다.
+
+Phase 16-K는 persistence authority migration이 아니라 persistence authority boundary design이다.
+
+#### 17.97.3 `ExplorerWorkspaceState` persistence boundary
+
+`ExplorerWorkspaceState`는 persistence source-of-truth가 아니다.
+
+`ExplorerWorkspaceState`는 production visible UI source-of-truth가 아니다.
+
+`ExplorerWorkspaceState`는 projection representation이다.
+
+projection result는 persistence source-of-truth가 아니다.
+
+따라서 `ExplorerWorkspaceState` 또는 projection result를 근거로 production selection/detail/center/history/read state를 저장/복원하는 것은 Phase 16-K에서 승인되지 않는다.
+
+`ExplorerWorkspaceState.history` 계열 값 또는 history snapshot 표현을 근거로 production state를 persist/restore하는 것도 승인되지 않는다.
+
+#### 17.97.4 persistence authority와 다른 owner boundary 구분
+
+Phase 16-K에서는 다음 owner/authority를 persistence authority와 병합하지 않는다.
+
+| 경계 | Phase 16-K 해석 |
+| --- | --- |
+| route state owner | Explorer route 진입과 route transition을 다루는 책임이며 persistence authority와 동일시하지 않는다. |
+| selection owner | 어떤 단어가 선택되었는지를 결정하는 책임이며 persistence authority와 동일시하지 않는다. |
+| detail target owner | detail pane이 어떤 단어/표시 항목을 보여줄지를 결정하는 책임이며 persistence authority와 동일시하지 않는다. |
+| graph center owner | graph center를 어떤 단어로 둘지를 결정하는 책임이며 persistence authority와 동일시하지 않는다. |
+| navigation history owner | 이동 기록과 back/forward 판단을 결정하는 책임이며 persistence authority와 동일시하지 않는다. |
+| repository/read owner | detail 표시를 위한 read 요청, read 결과, loading/error/unavailable 상태 흐름을 다루는 책임이며 persistence authority와 동일시하지 않는다. |
+| persistence authority | production state를 저장/복원할 권한이며 현재 `ExplorerWorkspace`에 존재하지 않는다. |
+| rollback authority | projection 결과나 history 표현을 근거로 production 상태를 되돌리는 권한이며 persistence authority와 동일시하지 않는다. |
+
+navigation history owner와 persistence authority는 동일하지 않다.
+
+`_history`가 back/forward 판단에 사용될 수 있어도 persistence authority로 승격하지 않는다.
+
+history snapshot 또는 `ExplorerWorkspaceHistoryEntry` 계열 표현을 근거로 production state를 persist/restore하는 것은 승인되지 않는다.
+
+persistence authority가 없다는 사실은 route owner, selection owner, detail target owner, graph center owner, navigation history owner, repository/read owner의 현재 production 책임을 변경하지 않는다.
+
+하나의 navigation/history/read 흐름 안에서 여러 상태가 함께 갱신될 수 있어도 persistence authority가 승인된 것으로 해석하지 않는다.
+
+#### 17.97.5 현재 production 흐름 설명
+
+현재 production 흐름에서 `WordExplorerScreen`은 `_centerWordId`, `_selectedWordId`, `_selectedWordDisplayItem`, detail loading/error/unavailable 상태, `_history`, `_repository`를 내부 상태와 private instance로 보유한다.
+
+`_readOnlyWorkspaceProjection`은 현재 owner state를 `ExplorerWorkspaceState`로 읽어내는 projection 흐름이다. 이 projection은 state 저장, state 복원, repository read, DB query, rollback 판단을 수행하지 않는다.
+
+`_selectWord(...)`, `_initializeExplorerBootstrap()`, `_refreshSelectedWord(...)` 흐름에서는 selection/detail/center/history/read 상태 갱신이 함께 일어날 수 있다. 하지만 하나의 흐름 안에서 여러 상태가 함께 갱신되어도 persistence authority가 승인된 것으로 해석하지 않는다.
+
+`_applyHistoryEntry(...)`, `_pushHistoryEntry(...)`, `_replaceCurrentHistoryEntry(...)`, `_createHistoryEntry(...)`는 현재 navigation history owner 흐름을 설명하는 reference다. 이 흐름은 history 표시와 back/forward 판단을 위한 것이며 production state persistence 또는 restore authority 승인을 뜻하지 않는다.
+
+#### 17.97.6 Phase 16-D/E/F/G/H/I/J와의 연결
+
+Phase 16-K는 기존 Phase 16-D/E/F/G/H/I/J의 금지선과 boundary를 다음 방식으로 유지한다.
+
+| 이전 Phase | Phase 16-K 연결 방식 |
+| --- | --- |
+| Phase 16-D | route owner boundary와 route wiring 금지선을 유지한다. |
+| Phase 16-E | projection/source-of-truth boundary를 유지한다. |
+| Phase 16-F | selection owner boundary와 persistence authority를 분리한다. |
+| Phase 16-G | graph center owner boundary와 persistence authority를 분리한다. |
+| Phase 16-H | detail target owner boundary와 persistence authority를 분리한다. |
+| Phase 16-I | navigation history owner boundary와 persistence authority를 분리한다. |
+| Phase 16-J | repository/read owner boundary와 persistence authority를 분리한다. |
+
+#### 17.97.7 Phase 16-K 이후에도 승인되지 않은 항목
+
+Phase 16-K 이후에도 아래 항목은 승인되지 않은 상태로 유지한다. 아래 금지선은 not approved 상태다.
+
+- `ExplorerWorkspace` shell mount
+- route wiring / route registration change
+- `HomeScreen -> WordExplorerScreen` 진입 구조 변경
+- route collapse
+- canonical owner migration
+- Navigator authority migration
+- owner/controller/coordinator migration
+- Provider / Repository / Navigator / persistence authority migration
+- `WordRepository` owner migration
+- repository/read owner migration
+- persistence authority migration
+- rollback authority migration
+- `ExplorerWorkspaceState` production source-of-truth usage
+- `ExplorerWorkspaceState` route state source-of-truth usage
+- `ExplorerWorkspaceState` selection source-of-truth usage
+- `ExplorerWorkspaceState` detail target source-of-truth usage
+- `ExplorerWorkspaceState.centerWordId` graph center source-of-truth usage
+- `ExplorerWorkspaceState.history` navigation history source-of-truth usage
+- `ExplorerWorkspaceState` repository/read result source-of-truth usage
+- `ExplorerWorkspaceState` loading/error/unavailable source-of-truth usage
+- `ExplorerWorkspaceState` persistence source-of-truth usage
+- projection result persistence/history/source-of-truth usage
+- projection result 기반 selection/detail/center/history/read mutation
+- projection result 기반 repository read
+- projection result 기반 DB query
+- projection result 기반 persistence
+- projection result 기반 restore
+- projection result 기반 rollback 승인
+- history snapshot 기반 persistence
+- history snapshot 기반 restore
+- Level 3 production-visible consumer 승격
+- 새 persistence 기능 추가
+- 새 restore 기능 추가
+- 새 repository read
+- 새 DB query
+- 신규 DTO/model/public API 추가
+- 신규 test 추가
+- 기존 test 수정
+- `lib/` 변경
+- `test/` 변경
+- DB 변경
+- 플랫폼 파일 변경
+- dependency 변경
+- `pubspec.yaml` 변경
+- `pubspec.lock` 변경
+
+#### 17.97.8 Phase 16-K 명령어 기반 확인 체크리스트
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 |
+| --- | --- | --- | --- |
+| Phase 16-K 문서 변경 범위 확인 | `docs/ux/explorer_workspace_unification.md`, `docs/logs/CHANGELOG.md`만 변경되어야 함 | 허용 범위 밖 파일 변경 | `git diff --name-status`, `git diff --name-only` |
+| persistence authority boundary 문서 반영 확인 | 현재 production persistence authority가 `ExplorerWorkspace`에 없다고 문서화되어야 함 | `ExplorerWorkspace`가 persistence controller 또는 restore controller처럼 기록됨 | 문서 반영 검색 결과에서 `Phase 16-K`, `persistence authority`, `ExplorerWorkspace` 확인 |
+| projection/source-of-truth 분리 확인 | `ExplorerWorkspaceState`와 projection result가 persistence source-of-truth가 아니라고 기록되어야 함 | projection result 기반 persistence/restore 승인처럼 읽힘 | 문서 반영 검색 결과에서 `ExplorerWorkspaceState`, `projection representation`, `projection result`, `persistence source-of-truth` 확인 |
+| history 계열 boundary 확인 | `_history`, history snapshot, `ExplorerWorkspaceHistoryEntry`, `WordNavigationHistoryController`가 persistence authority 또는 restore authority가 아니라고 기록되어야 함 | history 표현을 production state restore authority처럼 기록 | 문서 반영 검색 결과에서 `_history`, `history snapshot`, `ExplorerWorkspaceHistoryEntry`, `WordNavigationHistoryController` 확인 |
+| owner boundary 분리 확인 | route state owner, selection owner, detail target owner, graph center owner, navigation history owner, repository/read owner, persistence authority, rollback authority가 혼동되지 않아야 함 | history/read 흐름의 동시 갱신을 persistence authority 승인처럼 해석 | 문서 반영 검색 결과에서 각 owner/authority 구분 문구 확인 |
+| 금지선 유지 확인 | shell mount, route wiring, owner migration, persistence authority migration, rollback authority migration, projection result 기반 persistence/restore, history snapshot 기반 persistence/restore, `lib/`, `test/`, DB, dependency, platform, pubspec 변경이 승인되지 않은 상태로 남아야 함 | 구현 승인처럼 읽히는 문구 또는 금지 영역 변경 | 문서 반영 검색과 `git diff --name-only` 확인 |
+
+Phase 16-K는 docs/design only이며 `lib/`, `test/`, DB, dependency, platform 파일 변경이 없으면 `flutter test`는 실행하지 않는다. 변경 파일 범위가 허용된 두 문서 밖으로 벗어나면 작업을 중단하고 보고한다.
