@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## 2026-06-02 Phase 16-J ExplorerWorkspace repository/read owner boundary design
+
+- Phase 16-J를 `ExplorerWorkspace repository/read owner boundary design` docs/design only 단계로 진행했다.
+- 이번 단계는 repository/read owner migration이 아니다.
+- 현재 production repository/read owner는 `WordExplorerScreen` 내부 흐름으로 문서화했다.
+- `WordRepository`는 현재 `WordExplorerScreen` 내부에서 직접 보유된다고 정리했다.
+- `_loadSplitViewDisplayItem(...)`, `_selectWord(...)`, `_initializeExplorerBootstrap()`, `_refreshSelectedWord(...)`의 read 흐름을 현재 production 기준으로 정리했다.
+- `_isDetailLoading`, `_detailError`, `_detailUnavailableMessage`는 현재 `WordExplorerScreen` 내부 상태로 정리했다.
+- `ExplorerWorkspaceState`는 read result/loading/error/unavailable source-of-truth가 아니라 projection representation으로 고정했다.
+- selection/detail/center/history/route owner와 repository-read owner를 분리했다.
+- 문서 외 변경, 구현 변경, `lib/`, `test/`, DB, dependency, platform, `pubspec.yaml`, `pubspec.lock` 변경은 수행하지 않았다.
+
 ## 2026-06-02 Phase 16-I ExplorerWorkspace navigation history owner boundary design
 
 - Phase 16-I를 `ExplorerWorkspace navigation history owner boundary design` docs/design only 단계로 진행했다.

@@ -7375,3 +7375,170 @@ Phase 16-I 이후에도 아래 항목은 승인되지 않은 상태로 유지한
 | 금지선 유지 확인 | shell mount, route wiring, owner migration, projection result 기반 mutation/rollback, `lib/`, `test/`, DB, dependency, platform, pubspec 변경이 승인되지 않은 상태로 남아야 함 | 구현 승인처럼 읽히는 문구 또는 금지 영역 변경 | 문서 반영 검색과 `git diff --name-only` 확인 |
 
 Phase 16-I는 docs/design only이며 `lib/`, `test/`, DB, dependency, platform 파일 변경이 없으면 `flutter test`는 실행하지 않는다. 변경 파일 범위가 허용된 두 문서 밖으로 벗어나면 작업을 중단하고 보고한다.
+
+### 17.96 Phase 16-J ExplorerWorkspace repository/read owner boundary design
+
+Phase 16-J는 `repository/read owner boundary design`을 문서상 고정하는 docs/design only 단계다.
+
+이번 Phase는 repository/read owner migration이 아니다. `WordRepository` owner migration을 시작하지 않고, 새 repository read나 새 DB query를 추가하지 않으며, `ExplorerWorkspace`를 repository/read controller, read result source-of-truth, loading/error/unavailable state owner로 승격하지 않는다.
+
+#### 17.96.1 Phase 16-J 성격
+
+| 항목 | Phase 16-J 판단 |
+| --- | --- |
+| 단계 성격 | docs/design only |
+| 구현 범위 | 구현 없음 |
+| repository/read owner migration | 아님 |
+| `WordRepository` owner migration | 아님 |
+| 새 repository read / 새 DB query 승인 | 없음 |
+| `ExplorerWorkspace` shell mount 승인 | 없음 |
+| route wiring 승인 | 없음 |
+| owner/controller/coordinator migration 승인 | 없음 |
+| source-of-truth migration 승인 | 없음 |
+| rollback authority migration 승인 | 없음 |
+
+Phase 16-J의 목적은 현재 production에서 detail 표시를 위한 repository/read를 실제로 수행하는 주체와 projection representation의 경계를 분리하는 것이다. 이 단계는 Phase 16-D의 route owner boundary와 route wiring 금지선, Phase 16-E의 projection/source-of-truth boundary, Phase 16-F의 selection owner boundary, Phase 16-G의 graph center owner boundary, Phase 16-H의 detail target owner boundary, Phase 16-I의 navigation history owner boundary를 유지한 상태에서 repository/read owner boundary만 문서상 정리한다.
+
+#### 17.96.2 현재 production repository/read owner
+
+현재 production repository/read owner는 `WordExplorerScreen` 내부 흐름으로 해석한다.
+
+| 항목 | 현재 production 해석 | Phase 16-J 유지 기준 |
+| --- | --- | --- |
+| `WordRepository` | 현재 `WordExplorerScreen` 내부에서 직접 보유된다. | `ExplorerWorkspace`, `ExplorerWorkspaceState`, Provider, 별도 controller로 소유권을 이전하지 않는다. |
+| `_repository` | `WordExplorerScreen` 내부 private repository instance다. | repository/read owner migration의 근거로 사용하지 않는다. |
+| `_loadSplitViewDisplayItem(...)` | 현재 split view detail read 흐름에 속한다. | `ExplorerWorkspace` read API나 projection 기반 read 흐름으로 이전하지 않는다. |
+| `_selectWord(...)` | selection, optional graph center 변경, split view detail read 결과, detail loading/error/unavailable 상태, history 갱신이 함께 발생할 수 있는 현재 production 흐름이다. | 하나의 흐름 안에서 여러 상태가 갱신되어도 owner 개념을 병합하지 않는다. |
+| `_initializeExplorerBootstrap()` | 초기 Explorer 진입에서 graph center 표시 seed와 split view detail read를 수행하는 현재 production 흐름이다. | route owner 또는 `ExplorerWorkspaceState` source-of-truth migration으로 해석하지 않는다. |
+| `_refreshSelectedWord(...)` | edit/detail route 복귀 뒤 선택 단어의 split view detail read를 다시 수행하고 detail 상태를 갱신하는 현재 production 흐름이다. | 새 repository read 추가나 read controller 승격으로 해석하지 않는다. |
+| `_isDetailLoading` | 현재 detail loading 표시의 `WordExplorerScreen` 내부 상태다. | `ExplorerWorkspaceState`로 이전하지 않는다. |
+| `_detailError` | 현재 detail error 표시의 `WordExplorerScreen` 내부 상태다. | `ExplorerWorkspaceState`로 이전하지 않는다. |
+| `_detailUnavailableMessage` | 현재 detail unavailable 표시의 `WordExplorerScreen` 내부 상태다. | `ExplorerWorkspaceState`로 이전하지 않는다. |
+
+이 문서의 repository/read owner 판단은 현재 production 기준으로만 제한한다. 이는 미래 최종 구조의 확정 owner 선언이 아니며, canonical owner migration 승인도 아니다.
+
+`ExplorerWorkspace`는 repository/read controller가 아니다.
+
+`ExplorerWorkspace`는 read result source-of-truth가 아니다.
+
+`ExplorerWorkspace`는 loading/error/unavailable state owner가 아니다.
+
+Phase 16-J는 owner migration이 아니라 repository/read owner boundary design이다.
+
+#### 17.96.3 `ExplorerWorkspaceState` repository/read boundary
+
+`ExplorerWorkspaceState`는 repository/read result owner state가 아니다.
+
+`ExplorerWorkspaceState`는 detail loading/error/unavailable source-of-truth가 아니다.
+
+`ExplorerWorkspaceState`는 production visible UI source-of-truth가 아니다.
+
+`ExplorerWorkspaceState`는 projection representation이다.
+
+따라서 `ExplorerWorkspaceState` 또는 projection result를 근거로 새 repository read, 새 DB query, read result persistence, read rollback을 수행하는 것은 Phase 16-J에서 승인되지 않는다.
+
+#### 17.96.4 repository/read owner와 다른 owner boundary 구분
+
+Phase 16-J에서는 다음 owner/authority를 repository/read owner와 병합하지 않는다.
+
+| 경계 | Phase 16-J 해석 |
+| --- | --- |
+| selection owner | 어떤 단어가 선택되었는지를 결정하는 책임이며 repository/read owner와 동일시하지 않는다. |
+| detail target owner | detail pane이 어떤 단어/표시 항목을 보여줄지를 결정하는 책임이며 repository/read owner와 동일시하지 않는다. |
+| graph center owner | graph center를 어떤 단어로 둘지를 결정하는 책임이며 repository/read owner와 동일시하지 않는다. |
+| navigation history owner | 이동 기록과 back/forward 판단을 결정하는 책임이며 repository/read owner와 동일시하지 않는다. |
+| repository/read owner | detail 표시를 위한 read 요청, read 결과, loading/error/unavailable 상태 흐름을 다루는 현재 `WordExplorerScreen` 내부 책임이다. |
+| route state owner | Explorer route 진입과 route transition을 다루는 책임이며 repository/read owner와 동일시하지 않는다. |
+| persistence authority | 상태를 저장/복원하는 권한이며 repository/read owner로 승격하지 않는다. |
+| rollback authority | projection 결과나 history 표현을 근거로 production 상태를 되돌리는 권한이며 repository/read owner와 동일시하지 않는다. |
+
+selection 변경이 repository/read 요청으로 이어질 수 있지만, selection owner와 repository/read owner는 동일하지 않다.
+
+detail target 갱신이 repository/read 결과와 연결될 수 있지만, detail target owner와 repository/read owner는 동일하지 않다.
+
+graph center 변경이 repository/read 흐름과 같은 `_selectWord(...)` 흐름에서 발생할 수 있지만, graph center owner와 repository/read owner는 동일하지 않다.
+
+navigation history mutation이 repository/read 결과 처리와 같은 흐름에서 발생할 수 있지만, navigation history owner와 repository/read owner는 동일하지 않다.
+
+detail loading/error/unavailable 상태는 현재 production 기준 `WordExplorerScreen` 내부 상태이며 `ExplorerWorkspaceState`로 이전하지 않는다.
+
+하나의 `_selectWord(...)` 흐름 안에서 selection/detail/center/history/read 상태 갱신이 함께 일어날 수 있어도 owner 개념을 병합해서는 안 된다.
+
+#### 17.96.5 현재 production 흐름 설명
+
+현재 production 흐름에서 `WordGraphScreen.onSelectWordId`와 `WordGraphScreen.onChangeCenterWordId`는 `WordExplorerScreen`의 `_selectWord(...)`로 연결될 수 있다.
+
+`_selectWord(...)`는 `_isDetailLoading`을 true로 전환하고 `_detailError`, `_detailUnavailableMessage`를 초기화한 뒤 `_loadSplitViewDisplayItem(...)`을 통해 split view detail display item을 읽는다. read 결과가 있으면 `_selectedWordId`, `_selectedWordDisplayItem`, `_isDetailLoading`, `_detailUnavailableMessage`와 필요 시 `_centerWordId`, `_centerDisplaySeed`, `_history`를 갱신한다. read 실패는 `_detailError`, `_isDetailLoading`, `_detailUnavailableMessage` 상태로 처리한다.
+
+`_initializeExplorerBootstrap()`은 초기 진입 word id를 기준으로 graph center 표시 seed read와 split view detail read를 수행하고, 결과를 `_centerWordId`, `_centerDisplaySeed`, `_selectedWordId`, `_selectedWordDisplayItem`, `_isDetailLoading`, `_detailError`, `_detailUnavailableMessage`, `_history` 흐름에 반영한다.
+
+`_refreshSelectedWord(...)`는 edit/detail route 복귀 뒤 `_loadSplitViewDisplayItem(...)`으로 현재 선택 단어의 split view detail display item을 다시 읽고, `_selectedWordId`, `_selectedWordDisplayItem`, `_detailUnavailableMessage`, `_isDetailLoading`, 필요 시 `_centerWordId`, `_centerDisplaySeed`, `_graphRevision`, `_history`를 갱신한다.
+
+이 흐름들은 현재 production repository/read owner가 `WordExplorerScreen` 내부 흐름임을 확인하기 위한 reference다. Phase 16-J는 이 흐름을 `ExplorerWorkspace` repository/read controller 승격, `ExplorerWorkspaceState` read result source-of-truth 승격, `WordRepository` owner migration의 근거로 사용하지 않는다.
+
+#### 17.96.6 Phase 16-D/E/F/G/H/I와의 연결
+
+Phase 16-J는 기존 Phase 16-D/E/F/G/H/I의 금지선과 boundary를 다음 방식으로 유지한다.
+
+| 이전 Phase | Phase 16-J 연결 방식 |
+| --- | --- |
+| Phase 16-D | route owner boundary와 route wiring 금지선을 유지한다. |
+| Phase 16-E | projection/source-of-truth boundary를 유지한다. |
+| Phase 16-F | selection owner boundary와 repository/read owner를 분리한다. |
+| Phase 16-G | graph center owner boundary와 repository/read owner를 분리한다. |
+| Phase 16-H | detail target owner boundary와 repository/read owner를 분리한다. |
+| Phase 16-I | navigation history owner boundary와 repository/read owner를 분리한다. |
+
+#### 17.96.7 Phase 16-J 이후에도 승인되지 않은 항목
+
+Phase 16-J 이후에도 아래 항목은 승인되지 않은 상태로 유지한다. 아래 금지선은 not approved 상태다.
+
+- `ExplorerWorkspace` shell mount
+- route wiring / route registration change
+- `HomeScreen -> WordExplorerScreen` 진입 구조 변경
+- route collapse
+- canonical owner migration
+- Navigator authority migration
+- owner/controller/coordinator migration
+- Provider / Repository / Navigator / persistence authority migration
+- `WordRepository` owner migration
+- repository/read owner migration
+- `ExplorerWorkspaceState` production source-of-truth usage
+- `ExplorerWorkspaceState` route state source-of-truth usage
+- `ExplorerWorkspaceState` selection source-of-truth usage
+- `ExplorerWorkspaceState` detail target source-of-truth usage
+- `ExplorerWorkspaceState.centerWordId` graph center source-of-truth usage
+- `ExplorerWorkspaceState.history` navigation history source-of-truth usage
+- `ExplorerWorkspaceState` repository/read result source-of-truth usage
+- `ExplorerWorkspaceState` loading/error/unavailable source-of-truth usage
+- projection result persistence/history/source-of-truth usage
+- projection result 기반 selection/detail/center/history/read mutation
+- projection result 기반 repository read
+- projection result 기반 DB query
+- projection result 기반 rollback 승인
+- Level 3 production-visible consumer 승격
+- 새 repository read
+- 새 DB query
+- 신규 DTO/model/public API 추가
+- 신규 test 추가
+- 기존 test 수정
+- `lib/` 변경
+- `test/` 변경
+- DB 변경
+- 플랫폼 파일 변경
+- dependency 변경
+- `pubspec.yaml` 변경
+- `pubspec.lock` 변경
+
+#### 17.96.8 Phase 16-J 명령어 기반 확인 체크리스트
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 |
+| --- | --- | --- | --- |
+| Phase 16-J 문서 변경 범위 확인 | `docs/ux/explorer_workspace_unification.md`, `docs/logs/CHANGELOG.md`만 변경되어야 함 | 허용 범위 밖 파일 변경 | `git diff --name-status`, `git diff --name-only` |
+| repository/read owner boundary 문서 반영 확인 | 현재 production 기준 repository/read owner가 `WordExplorerScreen` 내부 흐름으로 문서화되어야 함 | owner가 `ExplorerWorkspaceState`, `ExplorerWorkspace`, Provider, 별도 controller로 이전된 것처럼 기록됨 | 문서 반영 검색 결과에서 `Phase 16-J`, `repository/read owner`, `WordExplorerScreen`, `WordRepository`, `_repository` 확인 |
+| split view detail read 흐름 확인 | `_loadSplitViewDisplayItem(...)`, `_selectWord(...)`, `_initializeExplorerBootstrap()`, `_refreshSelectedWord(...)`가 현재 production read 흐름 reference로 기록되어야 함 | 새 repository read 또는 새 DB query 승인처럼 읽힘 | 문서 반영 검색 결과에서 각 메서드명 확인 |
+| detail loading/error/unavailable owner 확인 | `_isDetailLoading`, `_detailError`, `_detailUnavailableMessage`는 `WordExplorerScreen` 내부 상태로 문서화되어야 함 | `ExplorerWorkspaceState` loading/error/unavailable source-of-truth 승격처럼 기록됨 | 문서 반영 검색 결과에서 각 상태명과 `ExplorerWorkspaceState` boundary 확인 |
+| owner boundary 분리 확인 | selection owner, detail target owner, graph center owner, navigation history owner, repository/read owner, route state owner, rollback authority가 혼동되지 않아야 함 | selection/detail/center/history/read/route owner를 동일시하는 표현 | 문서 반영 검색 결과에서 각 owner 구분 문구 확인 |
+| 금지선 유지 확인 | shell mount, route wiring, owner migration, projection result 기반 read/query/mutation/rollback, `lib/`, `test/`, DB, dependency, platform, pubspec 변경이 승인되지 않은 상태로 남아야 함 | 구현 승인처럼 읽히는 문구 또는 금지 영역 변경 | 문서 반영 검색과 `git diff --name-only` 확인 |
+
+Phase 16-J는 docs/design only이며 `lib/`, `test/`, DB, dependency, platform 파일 변경이 없으면 `flutter test`는 실행하지 않는다. 변경 파일 범위가 허용된 두 문서 밖으로 벗어나면 작업을 중단하고 보고한다.
