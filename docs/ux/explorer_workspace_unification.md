@@ -8065,3 +8065,194 @@ Phase 16-M 이후에도 아래 항목은 승인되지 않은 상태로 유지한
 | 금지선 유지 확인 | shell mount, route wiring, owner migration, source-of-truth 승격, projection result 기반 mutation/read/persistence/rollback, `lib/`, `test/`, DB, dependency, platform, pubspec 변경이 승인되지 않은 상태로 남아야 함 | 구현 승인처럼 읽히는 문구 또는 금지 영역 변경 | 문서 반영 검색과 `git diff --name-only` 확인 |
 
 Phase 16-M은 docs/audit only이며 `lib/`, `test/`, DB, dependency, platform 파일 변경이 없으면 `flutter test`는 실행하지 않는다. 변경 파일 범위가 허용된 두 문서 밖으로 벗어나면 작업을 중단하고 보고한다.
+
+### 17.100 Phase 16-N ExplorerWorkspace Phase 16 termination audit
+
+Phase 16-N은 `ExplorerWorkspace Phase 16 termination audit` docs/audit only 단계다.
+
+이번 Phase는 Phase 16 전체 종료 가능 여부를 판단하고, Phase 16에서 고정한 owner/authority boundary와 아직 승인되지 않은 금지선을 최종 정리하는 termination audit이다.
+
+Phase 16-N은 구현 단계가 아니다.
+
+Phase 16-N은 Phase 17-A 구현 착수 단계가 아니다.
+
+Phase 16-N은 `ExplorerWorkspace` shell mount 승인 단계가 아니다.
+
+Phase 16-N은 route wiring 승인 단계가 아니다.
+
+Phase 16-N은 owner/controller/coordinator migration 승인 단계가 아니다.
+
+Phase 16-N은 `ExplorerWorkspaceState` source-of-truth 승격 단계가 아니다.
+
+Phase 16-N은 projection result 기반 mutation/read/persistence/rollback 승인 단계가 아니다.
+
+#### 17.100.1 Phase 16-N 성격
+
+| 항목 | Phase 16-N 판단 |
+| --- | --- |
+| 단계 성격 | docs/audit only |
+| audit 범위 | Phase 16 전체 종료 가능 여부 |
+| 구현 범위 | 구현 없음 |
+| Phase 17-A 구현 착수 | 없음 |
+| `ExplorerWorkspace` shell mount 승인 | 없음 |
+| route wiring 승인 | 없음 |
+| owner/controller/coordinator migration 승인 | 없음 |
+| `ExplorerWorkspaceState` source-of-truth 승격 | 없음 |
+| projection result 기반 mutation/read/persistence/rollback 승인 | 없음 |
+| 신규 test 추가 / 기존 test 수정 | 없음 |
+| `lib/`, `test/`, DB, dependency, platform, pubspec 변경 | 없음 |
+
+Phase 16-N의 목적은 Phase 16-A부터 Phase 16-M까지의 audit/boundary 흐름을 종합해 Phase 16을 종료 가능한 boundary/audit phase로 볼 수 있는지 판단하는 것이다. 이 판단은 production transition 구현 승인이나 Phase 17-A 구현 착수 승인으로 해석하지 않는다.
+
+#### 17.100.2 Phase 16-A부터 Phase 16-N까지의 흐름 종합
+
+| Phase | Phase 16-N 종합 |
+| --- | --- |
+| Phase 16-A | production transition readiness audit |
+| Phase 16-B | production transition blocker inventory |
+| Phase 16-C | transition path sequencing audit |
+| Phase 16-D | route owner boundary |
+| Phase 16-E | projection/source-of-truth boundary |
+| Phase 16-F | selection owner boundary |
+| Phase 16-G | graph center owner boundary |
+| Phase 16-H | detail target owner boundary |
+| Phase 16-I | navigation history owner boundary |
+| Phase 16-J | repository/read owner boundary |
+| Phase 16-K | persistence authority boundary |
+| Phase 16-L | rollback authority boundary |
+| Phase 16-M | implementation entry / guardrail redefinition audit |
+| Phase 16-N | Phase 16 termination audit |
+
+Phase 16-A/B/C는 production transition 논의를 구현으로 옮기기 전에 readiness, blocker, sequencing을 문서상 정리했다.
+
+Phase 16-D/E/F/G/H/I/J/K/L은 route, projection/source-of-truth, selection, graph center, detail target, navigation history, repository/read, persistence, rollback owner/authority boundary를 각각 분리해 고정했다.
+
+Phase 16-M은 이 boundary를 기준으로 implementation entry와 guardrail redefinition 필요성을 audit했지만, 구현 승인 또는 guardrail test 추가 승인으로 승격하지 않았다.
+
+Phase 16-N은 위 흐름을 Phase 16 전체 종료 audit으로 종합한다. Phase 16-N은 새 owner를 추가하지 않고, 기존 boundary를 production owner migration으로 승격하지 않는다.
+
+#### 17.100.3 Phase 16 종료 판단
+
+Phase 16은 `ExplorerWorkspace` production transition을 위한 boundary/audit phase로 종료 가능하다.
+
+Phase 16은 구현 phase가 아니었다.
+
+`ExplorerWorkspace` shell mount는 Phase 16에서 승인되지 않았다.
+
+route wiring / route registration change는 Phase 16에서 승인되지 않았다.
+
+`HomeScreen -> WordExplorerScreen` 진입 구조 변경은 Phase 16에서 승인되지 않았다.
+
+owner/controller/coordinator migration은 Phase 16에서 승인되지 않았다.
+
+`ExplorerWorkspaceState` production source-of-truth 승격은 Phase 16에서 승인되지 않았다.
+
+projection result 기반 production mutation/read/persistence/restore/rollback은 Phase 16에서 승인되지 않았다.
+
+새 repository read, 새 DB query, 신규 DTO/model/public API 추가는 Phase 16에서 승인되지 않았다.
+
+신규 test 추가, 기존 test 수정, `lib/`, `test/`, DB, dependency, platform, `pubspec.yaml`, `pubspec.lock` 변경은 Phase 16-N에서 수행하지 않는다.
+
+#### 17.100.4 Phase 17-A 후보 제한
+
+Phase 17-A는 implementation candidate selection audit으로 시작한다.
+
+Phase 17-A는 구현 착수 단계가 아니다.
+
+Phase 17-A는 `ExplorerWorkspace` production shell mount 단계가 아니다.
+
+Phase 17-A는 `HomeScreen -> ExplorerWorkspace` route wiring 단계가 아니다.
+
+Phase 17-A는 owner migration 단계가 아니다.
+
+Phase 17-A에서는 구현 후보를 선정하되, 직접 구현은 별도 Phase 17-B 이후 별도 승인으로 분리한다.
+
+Phase 17-A 후보군은 아래 범위로 제한한다.
+
+- implementation candidate selection audit
+- guardrail/test 후보 선정
+- preview/projection boundary 보호 후보 선정
+- production-visible UX diff 후보 재검토
+- shell mount 전 선행 조건 audit
+- hidden probe / preview-only boundary 보호 강화 후보 검토
+- `ExplorerWorkspaceState` projection contract 보강 후보 검토
+
+Phase 17-A의 직접 구현 후보에서 제외할 항목은 다음과 같다.
+
+- `ExplorerWorkspace` production shell mount
+- `HomeScreen -> ExplorerWorkspace` route wiring
+- `WordExplorerScreen` owner migration
+- `ExplorerWorkspaceState` production source-of-truth 승격
+- repository/read owner migration
+- persistence authority migration
+- rollback authority migration
+- projection result 기반 production mutation
+- 새 repository read
+- 새 DB query
+
+#### 17.100.5 Phase 16-N 이후에도 승인되지 않은 항목
+
+Phase 16-N 이후에도 아래 항목은 승인되지 않은 상태로 유지한다. 아래 금지선은 not approved 상태다.
+
+- `ExplorerWorkspace` shell mount
+- route wiring / route registration change
+- `HomeScreen -> WordExplorerScreen` 진입 구조 변경
+- route collapse
+- canonical owner migration
+- Navigator authority migration
+- owner/controller/coordinator migration
+- Provider / Repository / Navigator / persistence authority migration
+- `WordRepository` owner migration
+- repository/read owner migration
+- persistence authority migration
+- rollback authority migration
+- `ExplorerWorkspaceState` production source-of-truth usage
+- `ExplorerWorkspaceState` route state source-of-truth usage
+- `ExplorerWorkspaceState` selection source-of-truth usage
+- `ExplorerWorkspaceState` detail target source-of-truth usage
+- `ExplorerWorkspaceState.centerWordId` graph center source-of-truth usage
+- `ExplorerWorkspaceState.history` navigation history source-of-truth usage
+- `ExplorerWorkspaceState` repository/read result source-of-truth usage
+- `ExplorerWorkspaceState` loading/error/unavailable source-of-truth usage
+- `ExplorerWorkspaceState` persistence source-of-truth usage
+- `ExplorerWorkspaceState` rollback source-of-truth usage
+- projection result persistence/history/source-of-truth usage
+- projection result 기반 selection/detail/center/history/read mutation
+- projection result 기반 repository read
+- projection result 기반 DB query
+- projection result 기반 persistence
+- projection result 기반 restore
+- projection result 기반 rollback 승인
+- history snapshot 기반 persistence
+- history snapshot 기반 restore
+- history snapshot 기반 rollback
+- `ExplorerWorkspaceHistoryEntry` 기반 restore/rollback
+- `WordNavigationHistoryController` rollback authority 승격
+- Level 3 production-visible consumer 승격
+- 새 rollback 기능 추가
+- 새 restore 기능 추가
+- 새 persistence 기능 추가
+- 새 repository read
+- 새 DB query
+- 신규 DTO/model/public API 추가
+- 신규 test 추가
+- 기존 test 수정
+- `lib/` 변경
+- `test/` 변경
+- DB 변경
+- 플랫폼 파일 변경
+- dependency 변경
+- `pubspec.yaml` 변경
+- `pubspec.lock` 변경
+
+#### 17.100.6 Phase 16-N 명령어 기반 확인 체크리스트
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 |
+| --- | --- | --- | --- |
+| Phase 16-N 문서 변경 범위 확인 | `docs/ux/explorer_workspace_unification.md`, `docs/logs/CHANGELOG.md`만 변경되어야 함 | 허용 범위 밖 파일 변경 | `git diff --name-status`, `git diff --name-only` |
+| docs/audit only 성격 확인 | Phase 16-N이 implementation 단계가 아니며 Phase 17-A 구현 착수와 분리되어야 함 | shell mount, route wiring, owner migration, source-of-truth 승격 승인처럼 읽힘 | 문서 반영 검색 결과에서 `Phase 16-N`, `termination audit`, `docs/audit only` 확인 |
+| Phase 16-A부터 Phase 16-M까지의 흐름 종합 확인 | Phase 16 전체가 readiness, blocker, sequencing, owner/authority boundary, implementation entry audit 흐름으로 정리되어야 함 | Phase 16 일부 흐름 누락 또는 구현 승인처럼 기록됨 | 문서 반영 검색 결과에서 Phase 16-A부터 Phase 16-M까지의 연결 확인 |
+| Phase 17-A 후보 제한 확인 | Phase 17-A가 implementation candidate selection audit으로 제한되어야 함 | Phase 17-A가 production shell mount, route wiring, owner migration 직접 구현 후보처럼 기록됨 | 문서 반영 검색 결과에서 `Phase 17-A`, `implementation candidate selection audit` 확인 |
+| 금지선 유지 확인 | shell mount, route wiring, owner migration, source-of-truth 승격, projection result 기반 mutation/read/persistence/rollback, `lib/`, `test/`, DB, dependency, platform, pubspec 변경이 승인되지 않은 상태로 남아야 함 | 구현 승인처럼 읽히는 문구 또는 금지 영역 변경 | 문서 반영 검색과 `git diff --name-only` 확인 |
+
+Phase 16-N은 docs/audit only이며 `lib/`, `test/`, DB, dependency, platform 파일 변경이 없으면 `flutter test`는 실행하지 않는다. 변경 파일 범위가 허용된 두 문서 밖으로 벗어나면 작업을 중단하고 보고한다.
