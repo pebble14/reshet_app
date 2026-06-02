@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 2026-06-02 Phase 16-I ExplorerWorkspace navigation history owner boundary design
+
+- Phase 16-I를 `ExplorerWorkspace navigation history owner boundary design` docs/design only 단계로 진행했다.
+- 이번 단계는 navigation history owner migration이 아니다.
+- 현재 production navigation history owner는 `WordExplorerScreen` 내부 상태로 문서화했다.
+- `_history`는 Explorer 내부 navigation history 표시와 back/forward 이동 판단의 production visible UI source-of-truth로 정리했다.
+- `ExplorerWorkspaceState.history` 계열 값은 projection representation으로 고정했다.
+- selection/detail/center/repository-read/route owner와 navigation history owner를 분리했다.
+- `ExplorerWorkspace`는 navigation history controller, rollback authority, production shell이 아니라고 정리했다.
+- 문서 외 변경, 구현 변경, `lib/`, `test/`, DB, dependency, platform, `pubspec.yaml`, `pubspec.lock` 변경은 수행하지 않았다.
+
 ## 2026-06-02 Phase 16-H ExplorerWorkspace detail target owner boundary design
 
 - Phase 16-H를 `ExplorerWorkspace detail target owner boundary design` docs/design only 단계로 진행했다.

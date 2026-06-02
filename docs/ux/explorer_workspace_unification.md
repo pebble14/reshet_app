@@ -7231,3 +7231,147 @@ Phase 16-H 이후에도 아래 항목은 승인되지 않은 상태로 유지한
 | 금지선 유지 확인 | shell mount, route wiring, owner migration, projection result 기반 mutation, `lib/`, `test/`, DB, dependency, platform, pubspec 변경이 승인되지 않은 상태로 남아야 함 | 구현 승인처럼 읽히는 문구 또는 금지 영역 변경 | 문서 반영 검색과 `git diff --name-only` 확인 |
 
 Phase 16-H는 docs/design only이며 `lib/`, `test/`, DB, dependency, platform 파일 변경이 없으면 `flutter test`는 실행하지 않는다. 변경 파일 범위가 허용된 두 문서 밖으로 벗어나면 작업을 중단하고 보고한다.
+
+### 17.95 Phase 16-I ExplorerWorkspace navigation history owner boundary design
+
+Phase 16-I는 `navigation history owner boundary design`을 문서상 고정하는 docs/design only 단계다.
+
+이번 Phase는 navigation history owner migration이 아니다. `_history` 소유권을 이전하지 않고, `ExplorerWorkspaceState.history` 계열 값을 production source-of-truth로 승격하지 않으며, `ExplorerWorkspace`를 navigation history controller, rollback authority, production shell로 만들지 않는다.
+
+#### 17.95.1 Phase 16-I 성격
+
+| 항목 | Phase 16-I 판단 |
+| --- | --- |
+| 단계 성격 | docs/design only |
+| 구현 범위 | 구현 없음 |
+| navigation history owner migration | 아님 |
+| `ExplorerWorkspace` shell mount 승인 | 없음 |
+| route wiring 승인 | 없음 |
+| owner/controller/coordinator migration 승인 | 없음 |
+| source-of-truth migration 승인 | 없음 |
+| rollback authority migration 승인 | 없음 |
+
+Phase 16-I의 목적은 현재 production에서 navigation history를 실제로 결정하는 주체와 projection representation의 경계를 분리하는 것이다. 이 단계는 Phase 16-D의 route owner boundary와 route wiring 금지선, Phase 16-E의 projection/source-of-truth boundary, Phase 16-F의 selection owner boundary, Phase 16-G의 graph center owner boundary, Phase 16-H의 detail target owner boundary를 유지한 상태에서 navigation history owner boundary만 문서상 정리한다.
+
+#### 17.95.2 현재 production navigation history owner
+
+현재 production navigation history owner는 `WordExplorerScreen` 내부 상태로 해석한다.
+
+| 항목 | 현재 production 해석 | Phase 16-I 유지 기준 |
+| --- | --- | --- |
+| `_history` | 현재 Explorer 내부 navigation history 표시와 back/forward 이동 판단의 production visible UI source-of-truth다. | `ExplorerWorkspaceState.history`로 소유권을 이전하지 않는다. |
+| `WordExplorerScreen` 내부 history 갱신 흐름 | 현재 Explorer 내부 이동 기록과 back/forward 판단을 결정하는 production 흐름이다. | `ExplorerWorkspace` navigation history controller화로 해석하지 않는다. |
+
+이 문서의 navigation history owner 판단은 현재 production 기준으로만 제한한다. 이는 미래 최종 구조의 확정 owner 선언이 아니며, canonical owner migration 승인도 아니다.
+
+`ExplorerWorkspace`는 navigation history controller가 아니다.
+
+`ExplorerWorkspace`는 rollback authority가 아니다.
+
+`ExplorerWorkspace`는 production shell이 아니다.
+
+Phase 16-I는 owner migration이 아니라 navigation history owner boundary design이다.
+
+#### 17.95.3 `ExplorerWorkspaceState.history` boundary
+
+`ExplorerWorkspaceState.history` 계열 값은 navigation history owner state가 아니다.
+
+`ExplorerWorkspaceState.history` 계열 값은 production visible UI source-of-truth가 아니다.
+
+`ExplorerWorkspaceState.history` 계열 값은 route state source-of-truth가 아니다.
+
+`ExplorerWorkspaceState.history` 계열 값은 projection representation이다.
+
+따라서 `ExplorerWorkspaceState.history` 계열 값이나 projection result를 근거로 production history를 mutate, persist, rollback하는 것은 Phase 16-I에서 승인되지 않는다.
+
+#### 17.95.4 navigation history owner와 다른 owner boundary 구분
+
+Phase 16-I에서는 다음 owner/authority를 navigation history owner와 병합하지 않는다.
+
+| 경계 | Phase 16-I 해석 |
+| --- | --- |
+| selection owner | 어떤 단어가 선택되었는지를 결정하는 책임이며 navigation history owner와 동일시하지 않는다. |
+| detail target owner | detail pane이 어떤 단어/표시 항목을 보여줄지를 결정하는 책임이며 navigation history owner와 동일시하지 않는다. |
+| graph center owner | graph center를 어떤 단어로 둘지를 결정하는 책임이며 navigation history owner와 동일시하지 않는다. |
+| navigation history owner | 현재 production 기준 Explorer 내부 이동 기록과 back/forward 판단을 보유하는 `WordExplorerScreen` 내부 상태다. |
+| repository/read owner | detail 표시를 위한 read 결과와 loading/error/unavailable 상태를 다루는 책임이며 navigation history owner와 동일시하지 않는다. |
+| route state owner | Explorer route 진입과 route transition을 다루는 책임이며 navigation history owner와 동일시하지 않는다. |
+| persistence authority | 상태를 저장/복원하는 권한이며 navigation history owner로 승격하지 않는다. |
+| rollback authority | projection 결과나 history 표현을 근거로 production 상태를 되돌리는 권한이며 navigation history owner와 동일시하지 않는다. |
+
+selection 변경이 history mutation으로 이어질 수 있지만, selection owner와 navigation history owner는 동일하지 않다.
+
+detail target 갱신이 history mutation과 같은 흐름에서 발생할 수 있지만, detail target owner와 navigation history owner는 동일하지 않다.
+
+graph center 변경이 history mutation과 연결될 수 있지만, graph center owner와 navigation history owner는 동일하지 않다.
+
+repository/read 결과가 detail 표시 흐름에 영향을 줄 수 있지만, repository/read owner와 navigation history owner는 동일하지 않다.
+
+projection result를 기준으로 production history mutation, persistence, rollback을 결정하는 사용은 승인되지 않는다.
+
+#### 17.95.5 현재 production 흐름 설명
+
+현재 production 흐름에서 `WordGraphScreen.onSelectWordId`는 `WordExplorerScreen`의 `_selectWord(...)`로 연결될 수 있다.
+
+`_selectWord(...)` 흐름 안에서 selection, detail target, graph center, navigation history 상태 갱신이 함께 일어날 수 있다.
+
+하지만 하나의 `_selectWord(...)` 흐름 안에서 selection/detail/center/history 상태 갱신이 함께 일어날 수 있어도 owner 개념을 병합해서는 안 된다. Phase 16-I는 이 흐름을 navigation history owner migration, selection owner migration, detail target owner migration, graph center owner migration, repository/read owner migration의 근거로 사용하지 않는다.
+
+#### 17.95.6 Phase 16-D/E/F/G/H와의 연결
+
+Phase 16-I는 기존 Phase 16-D/E/F/G/H의 금지선과 boundary를 다음 방식으로 유지한다.
+
+| 이전 Phase | Phase 16-I 연결 방식 |
+| --- | --- |
+| Phase 16-D | route owner boundary와 route wiring 금지선을 유지한다. |
+| Phase 16-E | projection/source-of-truth boundary를 유지한다. |
+| Phase 16-F | selection owner boundary와 navigation history owner를 분리한다. |
+| Phase 16-G | graph center owner boundary와 navigation history owner를 분리한다. |
+| Phase 16-H | detail target owner boundary와 navigation history owner를 분리한다. |
+
+#### 17.95.7 Phase 16-I 이후에도 승인되지 않은 항목
+
+Phase 16-I 이후에도 아래 항목은 승인되지 않은 상태로 유지한다. 아래 금지선은 not approved 상태다.
+
+- `ExplorerWorkspace` shell mount
+- route wiring / route registration change
+- `HomeScreen -> WordExplorerScreen` 진입 구조 변경
+- route collapse
+- canonical owner migration
+- Navigator authority migration
+- owner/controller/coordinator migration
+- Provider / Repository / Navigator / persistence authority migration
+- `ExplorerWorkspaceState` production source-of-truth usage
+- `ExplorerWorkspaceState` route state source-of-truth usage
+- `ExplorerWorkspaceState` selection source-of-truth usage
+- `ExplorerWorkspaceState` detail target source-of-truth usage
+- `ExplorerWorkspaceState.centerWordId` graph center source-of-truth usage
+- `ExplorerWorkspaceState.history` navigation history source-of-truth usage
+- projection result persistence/history/source-of-truth usage
+- projection result 기반 selection/detail/center/history mutation
+- projection result 기반 rollback 승인
+- Level 3 production-visible consumer 승격
+- 새 repository read
+- 새 DB query
+- 신규 DTO/model/public API 추가
+- 신규 test 추가
+- 기존 test 수정
+- `lib/` 변경
+- `test/` 변경
+- DB 변경
+- 플랫폼 파일 변경
+- dependency 변경
+- `pubspec.yaml` 변경
+- `pubspec.lock` 변경
+
+#### 17.95.8 Phase 16-I 명령어 기반 확인 체크리스트
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 |
+| --- | --- | --- | --- |
+| Phase 16-I 문서 변경 범위 확인 | `docs/ux/explorer_workspace_unification.md`, `docs/logs/CHANGELOG.md`만 변경되어야 함 | 허용 범위 밖 파일 변경 | `git diff --name-status`, `git diff --name-only` |
+| navigation history owner boundary 문서 반영 확인 | 현재 production 기준 navigation history owner가 `WordExplorerScreen` 내부 상태로 문서화되어야 함 | owner가 `ExplorerWorkspaceState` 또는 `ExplorerWorkspace`로 이전된 것처럼 기록됨 | 문서 반영 검색 결과에서 `navigation history owner`, `WordExplorerScreen`, `_history` 확인 |
+| `_history`와 `ExplorerWorkspaceState.history` 역할 구분 확인 | `_history`는 production visible UI source-of-truth, `ExplorerWorkspaceState.history` 계열 값은 projection representation으로 구분되어야 함 | 두 항목이 동일 owner state처럼 병합됨 | 문서 반영 검색 결과에서 두 항목의 정의 확인 |
+| owner boundary 분리 확인 | selection owner, detail target owner, graph center owner, navigation history owner, repository/read owner, route state owner가 혼동되지 않아야 함 | selection/detail/center/history/read/route owner를 동일시하는 표현 | 문서 반영 검색 결과에서 각 owner 구분 문구 확인 |
+| 금지선 유지 확인 | shell mount, route wiring, owner migration, projection result 기반 mutation/rollback, `lib/`, `test/`, DB, dependency, platform, pubspec 변경이 승인되지 않은 상태로 남아야 함 | 구현 승인처럼 읽히는 문구 또는 금지 영역 변경 | 문서 반영 검색과 `git diff --name-only` 확인 |
+
+Phase 16-I는 docs/design only이며 `lib/`, `test/`, DB, dependency, platform 파일 변경이 없으면 `flutter test`는 실행하지 않는다. 변경 파일 범위가 허용된 두 문서 밖으로 벗어나면 작업을 중단하고 보고한다.
