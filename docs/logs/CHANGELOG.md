@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 2026-06-02 Phase 16-L ExplorerWorkspace rollback authority boundary design
+
+- Phase 16-L은 `ExplorerWorkspace rollback authority boundary design` docs/design only 단계다.
+- 이번 단계는 rollback authority migration이 아니다.
+- 현재 production rollback authority는 `ExplorerWorkspace`에 없다고 정리했다.
+- `ExplorerWorkspaceState`, projection result, `_history`, history snapshot, `ExplorerWorkspaceHistoryEntry`, `WordNavigationHistoryController`는 rollback source-of-truth 또는 rollback/restore authority가 아니라고 정리했다.
+- navigation history owner와 rollback authority를 분리했다.
+- persistence authority와 rollback authority를 분리했다.
+- back/forward navigation은 rollback authority가 아니라고 정리했다.
+- 문서 외 변경, 구현 변경, `lib/`, `test/`, DB, dependency, platform, `pubspec.yaml`, `pubspec.lock` 변경은 수행하지 않았다.
+
 ## 2026-06-02 Phase 16-K ExplorerWorkspace persistence authority boundary design
 
 - Phase 16-K를 `ExplorerWorkspace persistence authority boundary design` docs/design only 단계로 진행했다.
