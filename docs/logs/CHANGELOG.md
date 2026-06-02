@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 2026-06-02 Phase 17-A ExplorerWorkspace implementation candidate selection audit
+
+- Phase 17-A를 docs/audit only로 시작했다.
+- Phase 16 boundary 기준으로 Phase 17-B 이후 구현 후보군을 분류했다.
+- shell mount, route wiring, owner migration은 직접 구현 후보에서 제외했다.
+- `ExplorerWorkspaceState` production source-of-truth 승격을 제외했다.
+- projection result 기반 production mutation/read/persistence/restore/rollback을 제외했다.
+- `lib/`, `test/`, DB, dependency, platform, `pubspec.yaml`, `pubspec.lock` 변경은 수행하지 않았다.
+- 실제 구현은 수행하지 않았다.
+
 ## 2026-06-02 Phase 16-N ExplorerWorkspace Phase 16 termination audit
 
 - Phase 16-N은 `ExplorerWorkspace Phase 16 termination audit` docs/audit only 단계다.

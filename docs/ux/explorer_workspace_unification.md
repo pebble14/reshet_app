@@ -8256,3 +8256,106 @@ Phase 16-N 이후에도 아래 항목은 승인되지 않은 상태로 유지한
 | 금지선 유지 확인 | shell mount, route wiring, owner migration, source-of-truth 승격, projection result 기반 mutation/read/persistence/rollback, `lib/`, `test/`, DB, dependency, platform, pubspec 변경이 승인되지 않은 상태로 남아야 함 | 구현 승인처럼 읽히는 문구 또는 금지 영역 변경 | 문서 반영 검색과 `git diff --name-only` 확인 |
 
 Phase 16-N은 docs/audit only이며 `lib/`, `test/`, DB, dependency, platform 파일 변경이 없으면 `flutter test`는 실행하지 않는다. 변경 파일 범위가 허용된 두 문서 밖으로 벗어나면 작업을 중단하고 보고한다.
+
+### 17.101 Phase 17-A ExplorerWorkspace implementation candidate selection audit
+
+Phase 17-A는 `ExplorerWorkspace implementation candidate selection audit` docs/audit only 단계다.
+
+Phase 17-A는 구현 착수 단계가 아니다.
+
+Phase 17-A는 `ExplorerWorkspace` shell mount 단계가 아니다.
+
+Phase 17-A는 route wiring 단계가 아니다.
+
+Phase 17-A는 owner migration 단계가 아니다.
+
+Phase 17-A의 목적은 Phase 16 boundary를 기준으로 Phase 17-B 이후 실행 가능한 최소 구현 후보를 분류하는 것이다.
+
+이번 audit은 구현 후보군을 분류하지만, 그 자체가 구현 승인 또는 production transition 승인으로 해석되지 않는다.
+
+#### 17.101.1 Phase 17-A 성격
+
+| 항목 | Phase 17-A 판단 |
+| --- | --- |
+| 단계 성격 | docs/audit only |
+| 목적 | Phase 16 boundary 기준 최소 구현 후보 분류 |
+| 구현 착수 | 없음 |
+| shell mount | 없음 |
+| route wiring | 없음 |
+| owner migration | 없음 |
+| `ExplorerWorkspaceState` source-of-truth 승격 | 없음 |
+| projection result 기반 production mutation/read/persistence/restore/rollback | 없음 |
+| `lib/`, `test/`, DB, dependency, platform, pubspec 변경 | 없음 |
+
+#### 17.101.2 구현 후보군 분류
+
+| 후보군 | Phase 16 boundary 충돌 여부 | production route 변경 여부 | `WordExplorerScreen` owner 이동 여부 | `ExplorerWorkspaceState` source-of-truth 오해 가능성 | projection result production mutation/read/persistence/rollback 사용 여부 | Phase 17-B 후보 가능성 |
+| --- | --- | --- | --- | --- | --- | --- |
+| A. guardrail/test 후보 | boundary 보호 목적이면 충돌 없음 | 없음 | 없음 | source-of-truth 금지선을 테스트 대상으로 명시하면 낮음 | 사용 금지를 검증 대상으로 삼음 | 가능 |
+| B. preview/projection boundary 보호 후보 | preview/read-only boundary 보호 목적이면 충돌 없음 | 없음 | 없음 | projection representation을 명시하면 낮음 | read-only projection 외 사용 금지 | 가능 |
+| C. production-visible UX diff 후보 | 작고 rollback 가능한 `WordExplorerScreen` 내부 UX diff로 제한할 때만 충돌 없음 | 없음 | 없음 | `ExplorerWorkspaceState`를 visible source-of-truth로 쓰면 충돌 | projection result를 UX 상태 결정에 쓰면 충돌 | 제한적 가능 |
+| D. shell mount 전 선행 조건 audit 후보 | audit only이면 충돌 없음 | 없음 | 없음 | source-of-truth 승격 전제처럼 쓰면 충돌 | production read/write 전제처럼 쓰면 충돌 | 가능 |
+| E. hidden probe / preview-only boundary 보호 후보 | hidden probe가 preview-only boundary에 남으면 충돌 없음 | 없음 | 없음 | probe 결과를 production UI source로 쓰면 충돌 | probe 결과를 mutation/read/persistence/rollback에 쓰면 충돌 | 가능 |
+| F. `ExplorerWorkspaceState` projection contract 보강 후보 | projection contract 보강이면 충돌 없음 | 없음 | 없음 | source-of-truth가 아님을 contract로 고정해야 함 | production mutation/read/persistence/rollback 입력 금지 | 가능 |
+
+#### 17.101.3 후보군별 판단
+
+A. guardrail/test 후보는 Phase 16 boundary를 보호하는 방향으로만 Phase 17-B 후보가 될 수 있다. 이 후보는 production route를 변경하지 않고, `WordExplorerScreen` owner를 이동시키지 않으며, `ExplorerWorkspaceState`를 source-of-truth로 승격하지 않는 조건을 검증 대상으로 삼아야 한다.
+
+B. preview/projection boundary 보호 후보는 `ExplorerWorkspace`와 projection adapter가 read-only boundary로 남는지 확인하는 범위로 제한할 때 Phase 17-B 후보가 될 수 있다. projection result는 production mutation/read/persistence/rollback에 사용하지 않는다.
+
+C. production-visible UX diff 후보는 Phase 17-A에서 직접 구현하지 않는다. 이후 후보로 검토하더라도 production route 비변경, `WordExplorerScreen` owner 유지, `ExplorerWorkspaceState` 비-source-of-truth, projection result 비사용 조건을 동시에 만족해야 한다.
+
+D. shell mount 전 선행 조건 audit 후보는 shell mount 자체가 아니다. 이 후보는 shell mount 전에 필요한 guardrail, route owner boundary, repository/read owner boundary, source-of-truth boundary가 문서와 테스트로 보호되는지 확인하는 audit 후보로만 유지한다.
+
+E. hidden probe / preview-only boundary 보호 후보는 hidden probe와 preview-only host가 production route, production shell, repository/read owner, Navigator owner, persistence authority, rollback authority로 확장되지 않도록 보호하는 후보다. probe 결과는 production UI state나 production read/write 입력이 아니다.
+
+F. `ExplorerWorkspaceState` projection contract 보강 후보는 `ExplorerWorkspaceState`가 selected/center/detail/layout/origin/history 계열 값을 담는 projection representation이라는 점을 더 명확히 고정하는 후보다. 이 contract는 source-of-truth contract가 아니며, production mutation/read/persistence/restore/rollback contract가 아니다.
+
+#### 17.101.4 Phase 17-A 직접 구현 후보 제외 항목
+
+Phase 17-A의 직접 구현 후보에서 아래 항목은 제외한다.
+
+- `ExplorerWorkspace` production shell mount
+- `HomeScreen -> ExplorerWorkspace` route wiring
+- `WordExplorerScreen` owner migration
+- `ExplorerWorkspaceState` production source-of-truth 승격
+- repository/read owner migration
+- persistence authority migration
+- rollback authority migration
+- projection result 기반 production mutation/read/persistence/restore/rollback
+- 새 repository read
+- 새 DB query
+- 신규 DTO/model/public API
+- `lib/`, `test/`, DB, dependency, platform, pubspec 변경
+
+#### 17.101.5 Phase 17-B 이후 최소 후보
+
+Phase 17-B 최소 후보는 shell mount나 route wiring이 아니라, production route 비변경, `ExplorerWorkspaceState` 비-source-of-truth, projection read-only boundary를 고정하는 guardrail/test 후보 중 하나로 제한하는 것이 가장 안전하다.
+
+이 문장은 확정 구현 승인이 아니다. Phase 17-B 이후 실제 구현은 별도 승인과 별도 변경 범위 확인 이후에만 검토한다.
+
+#### 17.101.6 Phase sequencing 금지선
+
+Phase 17-A에서는 shell mount, route wiring, owner migration을 금지한다.
+
+Phase 17-B는 guardrail/test 후보 구현 전용으로 제한하는 경우에 한해 검토 가능하다.
+
+Phase 17-C 이후에는 guardrail 결과를 바탕으로 shell mount 선행 조건을 재검토할 수 있다.
+
+owner migration은 shell mount와 route wiring보다 더 늦은 별도 phase에서만 검토 가능하다.
+
+#### 17.101.7 Phase 17-A 명령어 기반 확인 체크리스트
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 |
+| --- | --- | --- | --- |
+| 현재 브랜치와 변경 상태 확인 | Phase 17-A docs 브랜치에서 허용 파일만 변경되어야 함 | 다른 브랜치에서 작업하거나 허용 범위 밖 변경 발생 | `git status --short --branch` |
+| 변경 파일 범위 확인 | `docs/ux/explorer_workspace_unification.md`, `docs/logs/CHANGELOG.md`만 변경되어야 함 | `lib/`, `test/`, DB, dependency, platform, pubspec 변경 포함 | `git diff --name-only` |
+| UX audit 문서 변경 확인 | Phase 17-A 섹션이 추가되어야 함 | Phase 17-A가 구현 승인처럼 기록됨 | `docs/ux/explorer_workspace_unification.md` 변경 확인 |
+| changelog 변경 확인 | Phase 17-A changelog 항목이 추가되어야 함 | 실제 구현 또는 금지선 변경처럼 기록됨 | `docs/logs/CHANGELOG.md` 변경 확인 |
+| `lib/` 변경 없음 확인 | `lib/` 하위 변경이 없어야 함 | shell mount, route wiring, owner migration 구현 포함 | `git diff --name-only` |
+| `test/` 변경 없음 확인 | 신규 test 추가 또는 기존 test 수정이 없어야 함 | Phase 17-A가 guardrail 구현 단계로 변질 | `git diff --name-only` |
+| DB 변경 없음 확인 | DB schema, migration, SQL 변경이 없어야 함 | 새 DB query 또는 data boundary 변경 포함 | `git diff --name-only` |
+| pubspec/dependency/platform 변경 없음 확인 | `pubspec.yaml`, `pubspec.lock`, dependency, platform 파일 변경이 없어야 함 | dependency 또는 platform 설정 변경 포함 | `git diff --name-only` |
+
+Phase 17-A는 docs/audit only이며 `lib/`, `test/`, DB, dependency, platform 파일 변경이 없으면 `flutter test`는 실행하지 않는다. 변경 파일 범위가 허용된 두 문서 밖으로 벗어나면 작업을 중단하고 보고한다.
