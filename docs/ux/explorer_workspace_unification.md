@@ -7091,3 +7091,143 @@ Phase 16-G 이후에도 아래 항목은 승인되지 않은 상태로 유지한
 | 금지선 유지 확인 | shell mount, route wiring, owner migration, projection result 기반 mutation, `lib/`, `test/`, DB, dependency, platform 변경이 승인되지 않은 상태로 남아야 함 | 구현 승인처럼 읽히는 문구 또는 금지 영역 변경 | 문서 반영 검색과 `git diff --name-only` 확인 |
 
 Phase 16-G는 docs/design only이며 `lib/`, `test/`, DB, dependency, platform 파일 변경이 없으면 `flutter test`는 실행하지 않는다. 변경 파일 범위가 허용된 두 문서 밖으로 벗어나면 작업을 중단하고 보고한다.
+
+### 17.94 Phase 16-H ExplorerWorkspace detail target owner boundary design
+
+Phase 16-H는 `detail target owner boundary design`을 문서상 고정하는 docs/design only 단계다.
+
+이번 Phase는 detail target owner migration이 아니다. `_selectedWordDisplayItem` 소유권을 이전하지 않고, `ExplorerWorkspaceState.detailTargetWordId` 계열 값을 production source-of-truth로 승격하지 않으며, `ExplorerWorkspace`를 detail target controller 또는 production shell로 만들지 않는다.
+
+#### 17.94.1 Phase 16-H 성격
+
+| 항목 | Phase 16-H 판단 |
+| --- | --- |
+| 단계 성격 | docs/design only |
+| 구현 범위 | 구현 없음 |
+| detail target owner migration | 아님 |
+| `ExplorerWorkspace` shell mount 승인 | 없음 |
+| route wiring 승인 | 없음 |
+| owner/controller/coordinator migration 승인 | 없음 |
+| source-of-truth migration 승인 | 없음 |
+
+Phase 16-H의 목적은 현재 production에서 detail pane 표시 대상을 실제로 결정하는 주체와 projection representation의 경계를 분리하는 것이다. 이 단계는 Phase 16-D의 route owner boundary와 route wiring 금지선, Phase 16-E의 projection/source-of-truth boundary, Phase 16-F의 selection owner boundary, Phase 16-G의 graph center owner boundary를 유지한 상태에서 detail target owner boundary만 문서상 정리한다.
+
+#### 17.94.2 현재 production detail target owner
+
+현재 production detail target owner는 `WordExplorerScreen` 내부 상태로 해석한다.
+
+| 항목 | 현재 production 해석 | Phase 16-H 유지 기준 |
+| --- | --- | --- |
+| `_selectedWordDisplayItem` | 현재 detail pane 표시 대상의 production visible UI source-of-truth다. | `ExplorerWorkspaceState.detailTargetWordId`로 소유권을 이전하지 않는다. |
+| `_selectedWordId` | 현재 선택 단어 id의 production visible UI source-of-truth다. | `_selectedWordDisplayItem`과 동일 개념으로 병합하지 않는다. |
+| `WordExplorerScreen` 내부 detail 상태 갱신 흐름 | 현재 Explorer detail pane 표시 대상을 결정하는 production 흐름이다. | `ExplorerWorkspace` detail target controller화로 해석하지 않는다. |
+
+`_selectedWordId`와 `_selectedWordDisplayItem`은 관련되어 있지만 동일 개념으로 병합하지 않는다. `_selectedWordId`는 어떤 단어가 선택되었는지를 나타내는 selection state이고, `_selectedWordDisplayItem`은 detail pane이 현재 보여줄 표시 항목을 나타내는 detail target state다.
+
+이 문서의 detail target owner 판단은 현재 production 기준으로만 제한한다. 이는 미래 최종 구조의 확정 owner 선언이 아니며, canonical owner migration 승인도 아니다.
+
+`ExplorerWorkspace`는 detail target controller가 아니다.
+
+`ExplorerWorkspace`는 production shell이 아니다.
+
+Phase 16-H는 owner migration이 아니라 detail target owner boundary design이다.
+
+#### 17.94.3 `ExplorerWorkspaceState.detailTargetWordId` boundary
+
+`ExplorerWorkspaceState.detailTargetWordId` 계열 값은 detail target owner state가 아니다.
+
+`ExplorerWorkspaceState.detailTargetWordId` 계열 값은 production visible UI source-of-truth가 아니다.
+
+`ExplorerWorkspaceState.detailTargetWordId` 계열 값은 route state source-of-truth가 아니다.
+
+`ExplorerWorkspaceState.detailTargetWordId` 계열 값은 projection representation이다.
+
+따라서 `ExplorerWorkspaceState.detailTargetWordId` 계열 값을 기준으로 production detail target, selection, graph center, navigation history, repository/read, persistence, rollback을 결정하는 사용은 Phase 16-H에서 승인되지 않는다.
+
+#### 17.94.4 detail target owner와 다른 owner boundary 구분
+
+Phase 16-H에서는 다음 owner/authority를 detail target owner와 병합하지 않는다.
+
+| 경계 | Phase 16-H 해석 |
+| --- | --- |
+| selection owner | 어떤 단어가 선택되었는지를 결정하는 경계이며 detail target owner와 동일시하지 않는다. |
+| detail target owner | 현재 production 기준 detail pane 표시 대상을 보유하는 `WordExplorerScreen` 내부 상태다. |
+| graph center owner | graph center를 어떤 단어로 둘지를 결정하는 경계이며 detail target owner와 동일시하지 않는다. |
+| navigation history owner | 이동 기록과 back/forward 판단을 결정하는 경계이며 detail target owner와 동일시하지 않는다. |
+| repository/read owner | detail 표시를 위한 read 결과와 loading/error/unavailable 상태를 다루는 경계이며 detail target owner와 동일시하지 않는다. |
+| route state owner | route state 결정 주체로 detail target owner를 승격하지 않는다. |
+| persistence authority | projection 또는 history snapshot을 저장/복원하는 authority로 detail target owner를 승격하지 않는다. |
+| rollback authority | 복원 판단과 연결될 수 있지만 detail target owner와 동일시하지 않는다. |
+
+selection 변경이 detail target 갱신으로 이어질 수 있지만, selection owner와 detail target owner는 동일하지 않다.
+
+detail target 갱신이 repository/read 결과와 연결될 수 있지만, detail target owner와 repository/read owner는 동일하지 않다.
+
+detail target 갱신이 graph center 변경 또는 history mutation과 같은 흐름에서 발생할 수 있지만, detail target owner와 graph center owner, navigation history owner는 동일하지 않다.
+
+projection result를 기준으로 selection, detail, center, history mutation을 결정하는 사용은 승인되지 않는다.
+
+#### 17.94.5 현재 production 흐름 설명
+
+현재 production 흐름에서 `WordGraphScreen.onSelectWordId`는 `WordExplorerScreen`의 `_selectWord(...)`로 연결될 수 있다.
+
+`_selectWord(...)` 흐름 안에서 selection, detail target, graph center, navigation history 상태 갱신이 함께 일어날 수 있다.
+
+하지만 하나의 `_selectWord(...)` 흐름 안에서 selection/detail/center/history 상태 갱신이 함께 일어날 수 있어도 owner 개념을 병합해서는 안 된다. Phase 16-H는 이 흐름을 detail target owner migration, selection owner migration, graph center owner migration, navigation history owner migration, repository/read owner migration의 근거로 사용하지 않는다.
+
+#### 17.94.6 Phase 16-D/E/F/G와의 연결
+
+Phase 16-H는 기존 Phase 16-D/E/F/G의 금지선과 boundary를 다음 방식으로 유지한다.
+
+| 이전 Phase | Phase 16-H 연결 방식 |
+| --- | --- |
+| Phase 16-D | route owner boundary와 route wiring 금지선을 유지한다. |
+| Phase 16-E | projection/source-of-truth boundary를 유지한다. |
+| Phase 16-F | selection owner boundary와 detail target owner를 분리한다. |
+| Phase 16-G | graph center owner boundary와 detail target owner를 분리한다. |
+
+#### 17.94.7 Phase 16-H 이후에도 승인되지 않은 항목
+
+Phase 16-H 이후에도 아래 항목은 승인되지 않은 상태로 유지한다. 아래 금지선은 not approved 상태다.
+
+- `ExplorerWorkspace` shell mount
+- route wiring / route registration change
+- `HomeScreen -> WordExplorerScreen` 진입 구조 변경
+- route collapse
+- canonical owner migration
+- Navigator authority migration
+- owner/controller/coordinator migration
+- Provider / Repository / Navigator / persistence authority migration
+- `ExplorerWorkspaceState` production source-of-truth usage
+- `ExplorerWorkspaceState` route state source-of-truth usage
+- `ExplorerWorkspaceState` selection source-of-truth usage
+- `ExplorerWorkspaceState` detail target source-of-truth usage
+- `ExplorerWorkspaceState.centerWordId` graph center source-of-truth usage
+- projection result persistence/history/source-of-truth usage
+- projection result 기반 selection/detail/center/history mutation
+- Level 3 production-visible consumer 승격
+- 새 repository read
+- 새 DB query
+- 신규 DTO/model/public API 추가
+- 신규 test 추가
+- 기존 test 수정
+- `lib/` 변경
+- `test/` 변경
+- DB 변경
+- 플랫폼 파일 변경
+- dependency 변경
+- `pubspec.yaml` 변경
+- `pubspec.lock` 변경
+
+#### 17.94.8 Phase 16-H 명령어 기반 확인 체크리스트
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 |
+| --- | --- | --- | --- |
+| Phase 16-H 문서 변경 범위 확인 | `docs/ux/explorer_workspace_unification.md`, `docs/logs/CHANGELOG.md`만 변경되어야 함 | 허용 범위 밖 파일 변경 | `git diff --name-status`, `git diff --name-only` |
+| detail target owner boundary 문서 반영 확인 | 현재 production 기준 detail target owner가 `WordExplorerScreen` 내부 상태로 문서화되어야 함 | owner가 `ExplorerWorkspaceState` 또는 `ExplorerWorkspace`로 이전된 것처럼 기록됨 | 문서 반영 검색 결과에서 `detail target owner`, `WordExplorerScreen`, `_selectedWordDisplayItem` 확인 |
+| `_selectedWordId`와 `_selectedWordDisplayItem` 역할 구분 확인 | `_selectedWordId`는 selection state, `_selectedWordDisplayItem`은 detail target state로 구분되어야 함 | 두 항목이 동일 개념처럼 병합됨 | 문서 반영 검색 결과에서 두 항목의 정의 확인 |
+| `ExplorerWorkspaceState.detailTargetWordId` boundary 확인 | `ExplorerWorkspaceState.detailTargetWordId` 계열 값은 detail target owner state가 아니라 projection representation으로 문서화되어야 함 | source-of-truth 승격 또는 route state owner처럼 기록됨 | `rg -n "Phase 16-H|detail target owner|_selectedWordDisplayItem|_selectedWordId|ExplorerWorkspaceState\\.detailTargetWordId|projection representation" docs/ux/explorer_workspace_unification.md docs/logs/CHANGELOG.md` |
+| owner boundary 분리 확인 | selection owner, detail target owner, graph center owner, navigation history owner, repository/read owner가 혼동되지 않아야 함 | selection/detail/center/history/read owner를 동일시하는 표현 | 문서 반영 검색 결과에서 각 owner 구분 문구 확인 |
+| 금지선 유지 확인 | shell mount, route wiring, owner migration, projection result 기반 mutation, `lib/`, `test/`, DB, dependency, platform, pubspec 변경이 승인되지 않은 상태로 남아야 함 | 구현 승인처럼 읽히는 문구 또는 금지 영역 변경 | 문서 반영 검색과 `git diff --name-only` 확인 |
+
+Phase 16-H는 docs/design only이며 `lib/`, `test/`, DB, dependency, platform 파일 변경이 없으면 `flutter test`는 실행하지 않는다. 변경 파일 범위가 허용된 두 문서 밖으로 벗어나면 작업을 중단하고 보고한다.

@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 2026-06-02 Phase 16-H ExplorerWorkspace detail target owner boundary design
+
+- Phase 16-H를 `ExplorerWorkspace detail target owner boundary design` docs/design only 단계로 진행했다.
+- 이번 단계는 detail target owner migration이 아니다.
+- 현재 production detail target owner를 `WordExplorerScreen` 내부 상태로 문서화했다.
+- `_selectedWordDisplayItem`은 detail pane 표시 대상의 production visible UI source-of-truth로 정리했다.
+- `_selectedWordId`와 `_selectedWordDisplayItem`은 관련되지만 동일 개념으로 병합하지 않는다고 정리했다.
+- `ExplorerWorkspaceState.detailTargetWordId` 계열 값은 projection representation으로 고정했다.
+- selection/detail/center/history/repository-read owner를 분리했다.
+- shell mount, route wiring, owner migration, `lib/`, `test/`, DB, dependency, platform, `pubspec.yaml`, `pubspec.lock` 변경은 수행하지 않았다.
+
 ## 2026-06-02 Phase 16-G ExplorerWorkspace graph center owner boundary design
 
 - Phase 16-G를 `ExplorerWorkspace graph center owner boundary design` docs/design only 단계로 진행했다.
