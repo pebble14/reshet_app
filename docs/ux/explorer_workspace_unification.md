@@ -8359,3 +8359,82 @@ owner migration은 shell mount와 route wiring보다 더 늦은 별도 phase에�
 | pubspec/dependency/platform 변경 없음 확인 | `pubspec.yaml`, `pubspec.lock`, dependency, platform 파일 변경이 없어야 함 | dependency 또는 platform 설정 변경 포함 | `git diff --name-only` |
 
 Phase 17-A는 docs/audit only이며 `lib/`, `test/`, DB, dependency, platform 파일 변경이 없으면 `flutter test`는 실행하지 않는다. 변경 파일 범위가 허용된 두 문서 밖으로 벗어나면 작업을 중단하고 보고한다.
+
+### 17.102 Phase 17-B ExplorerWorkspace transition guardrail minimum slice
+
+Phase 17-B는 `ExplorerWorkspace transition guardrail/test minimum slice selection` 이후의 test-only guardrail minimum slice 단계다.
+
+이번 Phase는 production shell mount 단계가 아니다.
+
+이번 Phase는 route wiring 단계가 아니다.
+
+이번 Phase는 owner migration 단계가 아니다.
+
+이번 Phase는 production-visible UX diff 단계가 아니다.
+
+이번 Phase의 목적은 production route transition 금지선을 테스트로 고정하는 것이다.
+
+#### 17.102.1 Phase 17-B 성격
+
+| 항목 | Phase 17-B 판단 |
+| --- | --- |
+| 단계 성격 | test-only guardrail minimum slice |
+| 신규 테스트 | `test/ui/explorer_workspace_phase17b_transition_guardrail_minimum_slice_test.dart` |
+| production route 변경 | 없음 |
+| shell mount | 없음 |
+| route wiring | 없음 |
+| owner migration | 없음 |
+| `ExplorerWorkspaceState` source-of-truth 승격 | 없음 |
+| production-visible UX diff | 없음 |
+| 신규 public API / DTO / model / repository read / DB query | 없음 |
+
+#### 17.102.2 고정한 production boundary
+
+Phase 17-B guardrail은 아래 boundary를 고정한다.
+
+- production route는 `main.dart -> HomeScreen -> WordExplorerScreen` 흐름을 유지한다.
+- `lib/main.dart`는 production home으로 `HomeScreen`을 유지한다.
+- `lib/ui/home_screen.dart`는 `WordExplorerScreen`을 import하는 production explorer entry를 유지한다.
+- `HomeScreen` 기본 explorer 진입은 `WordExplorerScreen(initialWordId: normalizedWordId)` 생성 흐름을 유지한다.
+- `ExplorerWorkspace`는 production shell 또는 route target이 아니다.
+- preview entrypoint, preview screen, preview host는 production 경로에 연결되지 않는다.
+- `ExplorerWorkspace` named route wiring은 production 경로에 추가되지 않는다.
+
+#### 17.102.3 false positive 방지 기준
+
+Phase 17-B guardrail은 production entry files와 `HomeScreen` route wiring에 한정한다.
+
+`WordExplorerScreen`이 `explorer_workspace_contract.dart` 또는 `word_explorer_workspace_projection_adapter.dart`를 import하는 것은 Phase 7 이후 허용된 read-only projection boundary로 유지한다.
+
+preview-only 파일이 별도 entrypoint로 존재하는 것 자체는 실패 조건으로 삼지 않는다.
+
+#### 17.102.4 유지 금지선
+
+Phase 17-B에서는 아래 항목을 수행하지 않았다.
+
+- `ExplorerWorkspace` production shell mount
+- `HomeScreen -> ExplorerWorkspace` route wiring
+- `WordExplorerScreen` owner migration
+- `ExplorerWorkspaceState` production source-of-truth 승격
+- repository/read owner migration
+- persistence authority migration
+- rollback authority migration
+- projection result 기반 production mutation/read/persistence/restore/rollback
+- 새 repository read
+- 새 DB query
+- 신규 DTO/model/public API
+- production-visible UX diff
+- `lib/` 변경
+- production 코드 변경
+
+#### 17.102.5 명령어 기반 확인 체크리스트
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 |
+| --- | --- | --- | --- |
+| Phase 17-B 신규 guardrail 테스트 확인 | 신규 테스트가 통과해야 함 | production route, shell mount, preview 연결, named route wiring guardrail 실패 | `flutter test test/ui/explorer_workspace_phase17b_transition_guardrail_minimum_slice_test.dart` |
+| production route 비변경 확인 | `main.dart -> HomeScreen -> WordExplorerScreen` 흐름이 유지되어야 함 | `HomeScreen` home 변경 또는 `WordExplorerScreen` 진입 변경 | 신규 guardrail 테스트와 source diff 확인 |
+| production shell mount 없음 확인 | `ExplorerWorkspace`가 production shell 또는 route target으로 mount되지 않아야 함 | `ExplorerWorkspace(` 또는 shell import가 production entry에 유입 | 신규 guardrail 테스트와 `git diff --name-only` |
+| preview 연결 없음 확인 | preview entrypoint, preview screen, preview host가 production 경로에 연결되지 않아야 함 | preview-only surface가 `main.dart` 또는 `HomeScreen`에 유입 | 신규 guardrail 테스트 |
+| 금지선 유지 확인 | owner/source-of-truth/repository/persistence/rollback/DB/API/UX diff가 없어야 함 | `lib/` 변경, 신규 read/query/API, production-visible UX diff 포함 | `git diff --name-only`, `git diff --check`, 테스트 결과 확인 |
+
+Phase 17-B는 test-only guardrail 단계이므로 production-visible UI 확인은 사용자가 수행하는 UI 테스트 대상이 아니다. 이번 Phase의 완료 여부는 명령어 기반 테스트와 변경 파일 범위 확인으로 판단한다.

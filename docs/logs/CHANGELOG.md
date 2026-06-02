@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## 2026-06-02 Phase 17-B ExplorerWorkspace transition guardrail minimum slice
+
+- Phase 17-B를 test-only guardrail minimum slice로 진행했다.
+- `test/ui/explorer_workspace_phase17b_transition_guardrail_minimum_slice_test.dart`를 추가했다.
+- production route가 `main.dart -> HomeScreen -> WordExplorerScreen` 흐름을 유지하는지 고정했다.
+- `HomeScreen` 기본 explorer 진입이 `WordExplorerScreen(initialWordId: normalizedWordId)` 생성 흐름을 유지하는지 고정했다.
+- `ExplorerWorkspace`는 production shell 또는 route target으로 mount하지 않았다.
+- preview entrypoint, preview screen, preview host, named route wiring은 production 경로에 연결하지 않았다.
+- `ExplorerWorkspace` production shell mount, `HomeScreen -> ExplorerWorkspace` route wiring, `WordExplorerScreen` owner migration, `ExplorerWorkspaceState` source-of-truth 승격은 수행하지 않았다.
+- repository/read owner migration, persistence authority migration, rollback authority migration은 수행하지 않았다.
+- 신규 public API, DTO, model, repository read, DB query는 추가하지 않았다.
+- production-visible UX diff는 발생시키지 않았다.
+
 ## 2026-06-02 Phase 17-A ExplorerWorkspace implementation candidate selection audit
 
 - Phase 17-A를 docs/audit only로 시작했다.
