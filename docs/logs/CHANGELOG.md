@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2026-06-03 Phase 18-D HomeScreen left target feedback boundary
+
+- Phase 18-D는 large-screen 좌측 control surface에서 현재 우측 `WordExplorerScreen` target을 current target feedback으로 표시한 minimum slice다.
+- default Strong list와 search result list 모두 기존 `HomeScreen` private state인 `_largeScreenExplorerWordId`와 각 item의 `wordId` 비교만으로 feedback 기준을 계산한다.
+- `ListTile.selected`와 `selectedTileColor`는 Flutter UI feedback 구현 수단으로만 사용하며, selection owner 이전이나 left selection source 도입으로 해석하지 않는다.
+- small-screen 기존 `return homePane;` route/detail 흐름은 유지했다.
+- Strong Rail, 좌측 단어 추가 버튼, scroll/jump behavior는 구현하지 않았다.
+- `WordExplorerScreen` owner state, repository/read owner, `ExplorerWorkspaceState` production source-of-truth 금지선, 새 DB query / 새 repository read / 신규 DTO/model/public API 금지선을 유지했다.
+
 ## 2026-06-03 Phase 18-C HomeScreen left control surface boundary
 
 - Phase 18-C는 large-screen `HomeScreen` split shell의 좌측 pane이 단순히 좁아진 목록인지, 장기 left control surface 후보인지 실제 코드 기준으로 조사하고 최소 production-visible UX diff를 적용한 단계다.

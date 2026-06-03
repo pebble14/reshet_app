@@ -629,8 +629,18 @@ class _HomeScreenState extends State<HomeScreen> {
           itemCount: items.length,
           itemBuilder: (context, index) {
             final item = items[index];
+            final showLargeScreenTargetFeedback = _isLargeScreenWidth(
+              MediaQuery.of(context).size.width,
+            );
+            final isCurrentLargeScreenTarget =
+                showLargeScreenTargetFeedback &&
+                item.wordId == _largeScreenExplorerWordId;
 
             return ListTile(
+              selected: isCurrentLargeScreenTarget,
+              selectedTileColor: Theme.of(
+                context,
+              ).colorScheme.primaryContainer.withValues(alpha: 0.35),
               title: Text(
                 _buildDefaultStrongListTitle(item),
                 maxLines: 1,
@@ -897,8 +907,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                       _buildSearchResultSummary(item);
                                   final subtitleText =
                                       item.subtitleMeaning ?? '';
+                                  final isCurrentLargeScreenTarget =
+                                      isLargeScreen &&
+                                      wordId == _largeScreenExplorerWordId;
 
                                   return ListTile(
+                                    selected: isCurrentLargeScreenTarget,
+                                    selectedTileColor: Theme.of(context)
+                                        .colorScheme
+                                        .primaryContainer
+                                        .withValues(alpha: 0.35),
                                     title: Text.rich(
                                       _buildWordTitle(
                                         strong: displayStrong,

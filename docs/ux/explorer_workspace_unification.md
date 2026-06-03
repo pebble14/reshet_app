@@ -8479,3 +8479,17 @@ persistent search/control area는 새 DB query, 새 repository read, 신규 DTO/
 Strong Rail 실제 구현은 보류한다. Strong 번호 중심 초협폭 rail은 source-of-truth, selected/center authority, scroll/jump state, search/list와 graph/detail 사이의 continuity rule이 필요하다. 현재 Phase 18-C에서는 이 authority를 새로 만들거나 `ExplorerWorkspaceState`로 승격하지 않는다. 다음 단계에서는 Strong Rail behavior, selection rule, jump behavior, keyboard access, navigation continuity를 별도 후보로 먼저 정의해야 한다.
 
 유지한 금지선은 `ExplorerWorkspace` production shell mount 금지, `ExplorerWorkspaceState` production source-of-truth 승격 금지, `WordExplorerScreen` owner state migration 금지, repository/read owner migration 금지, 새 DB query 금지, 새 repository read 금지, 신규 DTO/model/public API 금지, projection result 기반 production mutation/read/persistence/restore/rollback 금지다.
+
+### 17.106 Phase 18-D HomeScreen left target feedback boundary
+
+Phase 18-D는 large-screen 좌측 control surface에서 현재 우측 `WordExplorerScreen` target을 current target feedback으로 표시하는 production-visible UX minimum slice다.
+
+이번 단계는 selection owner 이전이 아니다. 좌측 list/search 결과는 target owner나 selection source가 아니며, 기존 `HomeScreen` private state인 `_largeScreenExplorerWordId`와 각 item의 `wordId` 비교 결과를 시각적으로 보여주는 범위에 머문다.
+
+적용 범위는 default Strong list와 search result list 모두다. 두 목록 모두 large-screen에서만 current target feedback을 표시하고, small-screen에서는 기존 `return homePane;` 및 list → detail route 흐름을 유지한다.
+
+이 feedback은 Strong Rail 구현 이전의 안전한 중간 단계다. Strong Rail, 좌측 단어 추가 버튼, scroll/jump behavior, keyboard access, navigation continuity rule은 이번 단계에서 구현하지 않는다.
+
+`ListTile.selected`와 `selectedTileColor`는 Flutter의 기존 list feedback 속성을 사용한 구현 수단이다. 이를 selection owner 이전, left selection source 도입, `WordExplorerScreen` owner migration으로 해석하지 않는다.
+
+유지한 금지선은 `ExplorerWorkspace` production shell mount 금지, `ExplorerWorkspaceState` production source-of-truth 승격 금지, `WordExplorerScreen` owner state migration 금지, repository/read owner migration 금지, 새 DB query 금지, 새 repository read 금지, 신규 DTO/model/public API 금지, projection result 기반 production mutation/read/persistence/restore/rollback 금지다.
