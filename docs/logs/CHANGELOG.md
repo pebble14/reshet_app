@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2026-06-03 Phase 18-A HomeScreen large-screen split shell
+
+- Phase 18-A는 PC/태블릿 large width에서 `HomeScreen`을 유지한 채 우측에 `WordExplorerScreen` 기반 Explorer pane을 함께 표시하는 첫 production-visible 전환 slice로 진행했다.
+- large-screen 기본 Explorer target은 실제 DB에 존재하는 `H0001_0000`을 private constant로 두었고, 추후 H7568 데이터 입력 후 같은 constant만 교체할 수 있게 했다.
+- `HomeScreen`의 기존 검색/목록 pane은 좌측에 유지하고, large-screen 목록 선택은 우측 Explorer pane target을 갱신하도록 했다.
+- small width에서는 기존 detail/route 진입 흐름을 유지했다.
+- small width의 graph/detail은 후속 responsive workspace 정책에서 하나의 workspace 안의 표시 영역으로 재정리해야 하는 follow-up으로 기록했다.
+- `ExplorerWorkspace` production shell mount, `ExplorerWorkspaceState` source-of-truth 승격, `WordExplorerScreen` owner migration, repository/read owner migration은 수행하지 않았다.
+
 ## 2026-06-02 Phase 17-B ExplorerWorkspace transition guardrail minimum slice
 
 - Phase 17-B를 test-only guardrail minimum slice로 진행했다.

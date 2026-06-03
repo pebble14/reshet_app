@@ -56,6 +56,8 @@ class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
 
   static const double _defaultStrongListItemExtent = 56.0;
+  static const double _largeScreenSplitBreakpoint = 900.0;
+  static const String _largeScreenDefaultExplorerWordId = 'H0001_0000';
   static const Duration _strongJumpDebounceDuration = Duration(
     milliseconds: 300,
   );
@@ -69,6 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<List<HomeSearchResultDisplayItem>>? _searchWordsFuture;
   List<HomeDefaultStrongListItem> _currentDefaultStrongItems = const [];
   bool _isShowingDefaultStrongList = true;
+  String _largeScreenExplorerWordId = _largeScreenDefaultExplorerWordId;
 
   Future<List<HomeDefaultStrongListItem>> _createDefaultStrongListFuture() {
     return _repository.getStrongWordsMap();
@@ -650,8 +653,8 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               onTap: () async {
                 final width = MediaQuery.of(context).size.width;
-                if (width >= 900) {
-                  await _openDefaultStrongWordExplorer(item.wordId);
+                if (_isLargeScreenWidth(width)) {
+                  _showWordInLargeScreenExplorerPane(item.wordId);
                   return;
                 }
 
@@ -662,6 +665,24 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       },
     );
+  }
+
+  bool _isLargeScreenWidth(double width) {
+    return width >= _largeScreenSplitBreakpoint;
+  }
+
+  void _showWordInLargeScreenExplorerPane(String wordId) {
+    final normalizedWordId = wordId.trim();
+    if (normalizedWordId.isEmpty) {
+      _showWordNavigationUnavailableSnackBar();
+      return;
+    }
+
+    if (_largeScreenExplorerWordId == normalizedWordId) return;
+
+    setState(() {
+      _largeScreenExplorerWordId = normalizedWordId;
+    });
   }
 
   void _showWordNavigationUnavailableSnackBar() {
@@ -691,6 +712,8 @@ class _HomeScreenState extends State<HomeScreen> {
     _refreshWords();
   }
 
+  // large-screen pane 전환 이후에도 기존 explorer route entry guardrail을 보존한다.
+  // ignore: unused_element
   Future<void> _openDefaultStrongWordExplorer(String wordId) async {
     final normalizedWordId = wordId.trim();
     if (normalizedWordId.isEmpty) {
@@ -781,138 +804,167 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : Column(
-              children: [
-                // ✅ 검색창
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: _searchController,
-                          decoration: const InputDecoration(
-                            labelText: '검색 (표기/의미/스트롱 번호)',
-                            border: OutlineInputBorder(),
-                            isDense: true,
+          : LayoutBuilder(
+              builder: (context, constraints) {
+                final homePane = Column(
+                  children: [
+                    // ✅ 검색창
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: _searchController,
+                              decoration: const InputDecoration(
+                                labelText: '검색 (표기/의미/스트롱 번호)',
+                                border: OutlineInputBorder(),
+                                isDense: true,
+                              ),
+                              onChanged: _handleSearchChanged,
+                              onSubmitted: (_) => _runSearch(),
+                            ),
                           ),
-                          onChanged: _handleSearchChanged,
-                          onSubmitted: (_) => _runSearch(),
-                        ),
+                          const SizedBox(width: 8),
+                          IconButton(
+                            onPressed: _runSearch,
+                            icon: const Icon(Icons.search),
+                            tooltip: '검색',
+                          ),
+                          IconButton(
+                            onPressed: _clearSearch,
+                            icon: const Icon(Icons.clear),
+                            tooltip: '초기화',
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: 8),
-                      IconButton(
-                        onPressed: _runSearch,
-                        icon: const Icon(Icons.search),
-                        tooltip: '검색',
-                      ),
-                      IconButton(
-                        onPressed: _clearSearch,
-                        icon: const Icon(Icons.clear),
-                        tooltip: '초기화',
-                      ),
-                    ],
-                  ),
-                ),
+                    ),
 
-                // ✅ 결과 리스트
-                Expanded(
-                  child: _isShowingDefaultStrongList
-                      ? _buildDefaultStrongListView()
-                      : FutureBuilder<List<HomeSearchResultDisplayItem>>(
-                          future: _searchWordsFuture,
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return const Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            }
+                    // ✅ 결과 리스트
+                    Expanded(
+                      child: _isShowingDefaultStrongList
+                          ? _buildDefaultStrongListView()
+                          : FutureBuilder<List<HomeSearchResultDisplayItem>>(
+                              future: _searchWordsFuture,
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                }
 
-                            if (snapshot.hasError) {
-                              return Center(
-                                child: Text('에러 발생: ${snapshot.error}'),
-                              );
-                            }
+                                if (snapshot.hasError) {
+                                  return Center(
+                                    child: Text('에러 발생: ${snapshot.error}'),
+                                  );
+                                }
 
-                            final words = snapshot.data ?? [];
+                                final words = snapshot.data ?? [];
 
-                            if (words.isEmpty) {
-                              return const Center(child: Text('검색 결과 없음'));
-                            }
+                                if (words.isEmpty) {
+                                  return const Center(child: Text('검색 결과 없음'));
+                                }
 
-                            Widget buildWordTile(
-                              BuildContext context,
-                              int index,
-                            ) {
-                              final item = words[index];
-                              final wordId = item.wordId;
-                              final displayStrong =
-                                  item.displayStrongNumber ?? '';
-                              final displaySummary = _buildSearchResultSummary(
-                                item,
-                              );
-                              final subtitleText = item.subtitleMeaning ?? '';
+                                Widget buildWordTile(
+                                  BuildContext context,
+                                  int index,
+                                ) {
+                                  final item = words[index];
+                                  final wordId = item.wordId;
+                                  final displayStrong =
+                                      item.displayStrongNumber ?? '';
+                                  final displaySummary =
+                                      _buildSearchResultSummary(item);
+                                  final subtitleText =
+                                      item.subtitleMeaning ?? '';
 
-                              return ListTile(
-                                title: Text.rich(
-                                  _buildWordTitle(
-                                    strong: displayStrong,
-                                    summary: displaySummary,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                subtitle: subtitleText.isEmpty
-                                    ? null
-                                    : Text(
-                                        subtitleText,
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
+                                  return ListTile(
+                                    title: Text.rich(
+                                      _buildWordTitle(
+                                        strong: displayStrong,
+                                        summary: displaySummary,
                                       ),
-                                trailing: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    // 상세
-                                    IconButton(
-                                      icon: const Icon(Icons.article_outlined),
-                                      tooltip: '상세',
-                                      onPressed: () => _openWordDetail(wordId),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
-                                    // 그래프
-                                    IconButton(
-                                      icon: const Icon(Icons.hub_outlined),
-                                      tooltip: '그래프',
-                                      onPressed: () => _openWordGraph(wordId),
+                                    subtitle: subtitleText.isEmpty
+                                        ? null
+                                        : Text(
+                                            subtitleText,
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                    trailing: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        // 상세
+                                        IconButton(
+                                          icon: const Icon(
+                                            Icons.article_outlined,
+                                          ),
+                                          tooltip: '상세',
+                                          onPressed: () =>
+                                              _openWordDetail(wordId),
+                                        ),
+                                        // 그래프
+                                        IconButton(
+                                          icon: const Icon(Icons.hub_outlined),
+                                          tooltip: '그래프',
+                                          onPressed: () =>
+                                              _openWordGraph(wordId),
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
-                                // 탭은 기본적으로 상세로
-                                onTap: () async {
-                                  final width = MediaQuery.of(
-                                    context,
-                                  ).size.width;
+                                    // 탭은 기본적으로 상세로
+                                    onTap: () async {
+                                      final width = MediaQuery.of(
+                                        context,
+                                      ).size.width;
 
-                                  // 넓은 화면(데스크탑/태블릿)에서는 스플릿뷰
-                                  if (width >= 900) {
-                                    await _openWordExplorer(wordId);
-                                    return;
-                                  }
+                                      // 넓은 화면(데스크탑/태블릿)에서는 스플릿뷰
+                                      if (_isLargeScreenWidth(width)) {
+                                        _showWordInLargeScreenExplorerPane(
+                                          wordId,
+                                        );
+                                        return;
+                                      }
 
-                                  await _openWordDetail(wordId);
-                                },
-                              );
-                            }
+                                      await _openWordDetail(wordId);
+                                    },
+                                  );
+                                }
 
-                            return ListView.builder(
-                              controller: _listScrollController,
-                              itemCount: words.length,
-                              itemBuilder: buildWordTile,
-                            );
-                          },
-                        ),
-                ),
-              ],
+                                return ListView.builder(
+                                  controller: _listScrollController,
+                                  itemCount: words.length,
+                                  itemBuilder: buildWordTile,
+                                );
+                              },
+                            ),
+                    ),
+                  ],
+                );
+
+                if (!_isLargeScreenWidth(constraints.maxWidth)) {
+                  return homePane;
+                }
+
+                return Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Expanded(flex: 3, child: homePane),
+                    const VerticalDivider(width: 1),
+                    Expanded(
+                      flex: 5,
+                      child: WordExplorerScreen(
+                        key: ValueKey(_largeScreenExplorerWordId),
+                        initialWordId: _largeScreenExplorerWordId,
+                      ),
+                    ),
+                  ],
+                );
+              },
             ),
     );
   }
@@ -955,10 +1007,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _openWordDetail(String wordId) {
     return _openDefaultStrongWordDetail(wordId);
-  }
-
-  Future<void> _openWordExplorer(String wordId) {
-    return _openDefaultStrongWordExplorer(wordId);
   }
 
   Future<void> _openWordGraph(String wordId) {

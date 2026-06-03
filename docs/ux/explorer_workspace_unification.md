@@ -8438,3 +8438,18 @@ Phase 17-B에서는 아래 항목을 수행하지 않았다.
 | 금지선 유지 확인 | owner/source-of-truth/repository/persistence/rollback/DB/API/UX diff가 없어야 함 | `lib/` 변경, 신규 read/query/API, production-visible UX diff 포함 | `git diff --name-only`, `git diff --check`, 테스트 결과 확인 |
 
 Phase 17-B는 test-only guardrail 단계이므로 production-visible UI 확인은 사용자가 수행하는 UI 테스트 대상이 아니다. 이번 Phase의 완료 여부는 명령어 기반 테스트와 변경 파일 범위 확인으로 판단한다.
+
+### 17.103 Phase 18-A HomeScreen large-screen split shell responsive follow-up
+
+Phase 18-A는 PC/태블릿 large width에서 `HomeScreen`을 유지한 채 우측에 `WordExplorerScreen` 기반 Explorer pane을 함께 표시하는 첫 production-visible 전환 slice다.
+
+이번 Phase에서 해제한 범위는 large-screen `HomeScreen` layout 안에서 Graph/Detail Area를 함께 mount하는 데 한정한다. `ExplorerWorkspace` production shell mount, `ExplorerWorkspaceState` source-of-truth 승격, `WordExplorerScreen` owner migration, repository/read owner migration은 수행하지 않는다.
+
+small width에서는 이번 Phase의 범위를 확장하지 않고 기존 detail/route 진입 흐름을 유지한다. 따라서 small-screen에서 단어 선택 시 split pane이 아니라 기존 상세 화면으로 이동하는 동작은 Phase 18-A의 실패 조건이 아니다.
+
+다만 장기 UX 목표에서는 graph와 detail을 완전히 분리된 별도 화면으로 다루지 않는다. 후속 responsive workspace 정책에서는 graph/detail을 하나의 workspace 안에서 표시 영역이 조정되는 surface로 재정리해야 한다.
+
+Phase 18-A의 small width guardrail은 아래 두 가지를 함께 고정한다.
+
+- small width에서는 embedded Explorer pane이 `HomeScreen` body에 mount되지 않는다.
+- 기존 route/detail 진입 흐름은 후속 responsive workspace 정책 전까지 유지한다.
