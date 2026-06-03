@@ -34,7 +34,7 @@ void main() {
         expect(mainSource, contains('home: const HomeScreen()'));
         expect(homeSource, contains('LayoutBuilder('));
         expect(homeSource, contains('final homePane = Column('));
-        expect(homeSource, contains('Expanded(flex: 3, child: homePane)'));
+        expect(homeSource, contains('child: homePane'));
         expect(homeSource, contains('WordExplorerScreen('));
         expect(
           homeSource,

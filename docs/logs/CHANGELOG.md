@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2026-06-03 Phase 18-B HomeScreen left control pane narrowing
+
+- Phase 18-B는 Strong Rail 완성이 아니라 large-screen `HomeScreen` split shell의 좌측 Home pane을 더 좁은 control pane 방향으로 조정한 minimum slice다.
+- large width에서 좌측 Home search/list pane은 `flex: 3`에서 `flex: 2`로 줄이고, 우측 `WordExplorerScreen` Graph/Detail Area는 `flex: 5`에서 `flex: 6`으로 넓혔다.
+- small-screen 기존 route/detail 흐름과 `return homePane;` branch는 유지했다.
+- `WordExplorerScreen` owner state, repository/read owner, `ExplorerWorkspaceState` production source-of-truth는 변경하지 않았다.
+- large-screen 임시 default target은 private constant `H0001_0000`으로 유지했다.
+
 ## 2026-06-03 Phase 18-A HomeScreen large-screen split shell
 
 - Phase 18-A는 PC/태블릿 large width에서 `HomeScreen`을 유지한 채 우측에 `WordExplorerScreen` 기반 Explorer pane을 함께 표시하는 첫 production-visible 전환 slice로 진행했다.

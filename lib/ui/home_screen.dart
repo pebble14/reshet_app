@@ -953,10 +953,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 return Row(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Expanded(flex: 3, child: homePane),
+                    Expanded(flex: 2, child: homePane),
                     const VerticalDivider(width: 1),
                     Expanded(
-                      flex: 5,
+                      flex: 6,
                       child: WordExplorerScreen(
                         key: ValueKey(_largeScreenExplorerWordId),
                         initialWordId: _largeScreenExplorerWordId,

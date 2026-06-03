@@ -8453,3 +8453,13 @@ Phase 18-A의 small width guardrail은 아래 두 가지를 함께 고정한다.
 
 - small width에서는 embedded Explorer pane이 `HomeScreen` body에 mount되지 않는다.
 - 기존 route/detail 진입 흐름은 후속 responsive workspace 정책 전까지 유지한다.
+
+### 17.104 Phase 18-B HomeScreen left control pane narrowing
+
+Phase 18-B는 Strong Rail 완성이 아니다. 이번 단계는 Phase 18-A에서 도입한 large-screen `HomeScreen` split shell을 장기 PC/태블릿 UX 방향에 맞게 한 단계 조정하는 left control pane narrowing minimum slice다.
+
+large width에서 좌측 Home search/list pane은 `flex: 3`에서 `flex: 2`로 줄이고, 우측 `WordExplorerScreen` Graph/Detail Area는 `flex: 5`에서 `flex: 6`으로 넓힌다. 검색/list 구조, small-screen route/detail 흐름, `WordExplorerScreen` owner state는 유지한다.
+
+이번 단계에서는 초협폭 rail UI, Strong 번호 전용 rail, 좌측 단어 추가 버튼, create flow public API, `WordGraphScreen` 내부 create flow 이동을 구현하지 않는다.
+
+`ExplorerWorkspace` production shell mount, `ExplorerWorkspaceState` production source-of-truth 승격, repository/read owner migration, 새 repository read, 새 DB query, DTO/model/public API 추가는 수행하지 않는다. large-screen 임시 default target은 `H0001_0000`으로 유지한다.
