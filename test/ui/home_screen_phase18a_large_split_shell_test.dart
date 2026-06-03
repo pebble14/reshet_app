@@ -64,7 +64,7 @@ void main() {
     test('does not mount the explorer pane in the small-width branch', () {
       final smallWidthBranch = _sourceBetween(
         homeSource,
-        'if (!_isLargeScreenWidth(constraints.maxWidth)) {',
+        'if (!isLargeScreen) {',
         'return Row(',
       );
 
@@ -151,8 +151,11 @@ void main() {
       );
       expect(
         homeSource,
-        contains('if (!_isLargeScreenWidth(constraints.maxWidth))'),
+        contains(
+          'final isLargeScreen = _isLargeScreenWidth(constraints.maxWidth);',
+        ),
       );
+      expect(homeSource, contains('if (!isLargeScreen)'));
       expect(homeSource, contains('return homePane;'));
       expect(
         homeSource,

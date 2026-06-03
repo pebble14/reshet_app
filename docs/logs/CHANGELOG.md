@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2026-06-03 Phase 18-C HomeScreen left control surface boundary
+
+- Phase 18-C는 large-screen `HomeScreen` split shell의 좌측 pane이 단순히 좁아진 목록인지, 장기 left control surface 후보인지 실제 코드 기준으로 조사하고 최소 production-visible UX diff를 적용한 단계다.
+- 좌측 pane의 현재 책임은 `HomeScreen` 내부 검색 입력, 기본 Strong 목록, 검색 결과 목록, large-screen target 갱신으로 확인했다.
+- large-screen에서 검색 입력 영역을 `homeSearchControlArea`로 분리하고 상단 control surface처럼 보이도록 배경과 하단 경계를 추가했다. 기존 목록은 그 아래에 유지했다.
+- 단어 추가 흐름은 `WordGraphScreen` 내부 `_showCreateWordFlow()`와 graph app bar의 `Icons.note_add`에 묶여 있어 좌측 pane으로 이동하지 않았다.
+- Strong Rail은 별도 source-of-truth, selection authority, read boundary 정리가 필요하므로 Phase 18-C에서는 구현하지 않고 후보/보류 대상으로 기록했다.
+- small-screen 기존 `return homePane;` route/detail 흐름, `WordExplorerScreen` owner state, repository/read owner, `ExplorerWorkspaceState` production source-of-truth 금지선, 새 DB query / 신규 DTO/model/public API 금지선을 유지했다.
+
 ## 2026-06-03 Phase 18-B HomeScreen left control pane narrowing
 
 - Phase 18-B는 Strong Rail 완성이 아니라 large-screen `HomeScreen` split shell의 좌측 Home pane을 더 좁은 control pane 방향으로 조정한 minimum slice다.

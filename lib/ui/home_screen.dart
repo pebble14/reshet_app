@@ -806,39 +806,58 @@ class _HomeScreenState extends State<HomeScreen> {
           ? const Center(child: CircularProgressIndicator())
           : LayoutBuilder(
               builder: (context, constraints) {
+                final isLargeScreen = _isLargeScreenWidth(constraints.maxWidth);
+                final homeSearchControlArea = Padding(
+                  padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _searchController,
+                          decoration: const InputDecoration(
+                            labelText: '검색 (표기/의미/스트롱 번호)',
+                            border: OutlineInputBorder(),
+                            isDense: true,
+                          ),
+                          onChanged: _handleSearchChanged,
+                          onSubmitted: (_) => _runSearch(),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      IconButton(
+                        onPressed: _runSearch,
+                        icon: const Icon(Icons.search),
+                        tooltip: '검색',
+                      ),
+                      IconButton(
+                        onPressed: _clearSearch,
+                        icon: const Icon(Icons.clear),
+                        tooltip: '초기화',
+                      ),
+                    ],
+                  ),
+                );
+
                 final homePane = Column(
                   children: [
                     // ✅ 검색창
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              controller: _searchController,
-                              decoration: const InputDecoration(
-                                labelText: '검색 (표기/의미/스트롱 번호)',
-                                border: OutlineInputBorder(),
-                                isDense: true,
-                              ),
-                              onChanged: _handleSearchChanged,
-                              onSubmitted: (_) => _runSearch(),
+                    if (isLargeScreen)
+                      DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: Theme.of(context)
+                              .colorScheme
+                              .surfaceContainerHighest
+                              .withValues(alpha: 0.35),
+                          border: Border(
+                            bottom: BorderSide(
+                              color: Theme.of(context).dividerColor,
                             ),
                           ),
-                          const SizedBox(width: 8),
-                          IconButton(
-                            onPressed: _runSearch,
-                            icon: const Icon(Icons.search),
-                            tooltip: '검색',
-                          ),
-                          IconButton(
-                            onPressed: _clearSearch,
-                            icon: const Icon(Icons.clear),
-                            tooltip: '초기화',
-                          ),
-                        ],
-                      ),
-                    ),
+                        ),
+                        child: homeSearchControlArea,
+                      )
+                    else
+                      homeSearchControlArea,
 
                     // ✅ 결과 리스트
                     Expanded(
@@ -946,7 +965,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 );
 
-                if (!_isLargeScreenWidth(constraints.maxWidth)) {
+                if (!isLargeScreen) {
                   return homePane;
                 }
 

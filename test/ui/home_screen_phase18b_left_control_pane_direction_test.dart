@@ -19,7 +19,7 @@ void main() {
       wordExplorerSource = _readText(wordExplorerSourcePath);
       smallWidthBranch = _sourceBetween(
         homeSource,
-        'if (!_isLargeScreenWidth(constraints.maxWidth)) {',
+        'if (!isLargeScreen) {',
         'return Row(',
       );
       largeWidthBranch = _sourceBetween(

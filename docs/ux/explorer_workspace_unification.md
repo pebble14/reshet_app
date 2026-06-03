@@ -8463,3 +8463,19 @@ large width에서 좌측 Home search/list pane은 `flex: 3`에서 `flex: 2`로 �
 이번 단계에서는 초협폭 rail UI, Strong 번호 전용 rail, 좌측 단어 추가 버튼, create flow public API, `WordGraphScreen` 내부 create flow 이동을 구현하지 않는다.
 
 `ExplorerWorkspace` production shell mount, `ExplorerWorkspaceState` production source-of-truth 승격, repository/read owner migration, 새 repository read, 새 DB query, DTO/model/public API 추가는 수행하지 않는다. large-screen 임시 default target은 `H0001_0000`으로 유지한다.
+
+### 17.105 Phase 18-C HomeScreen left control surface boundary
+
+Phase 18-C의 목적은 Phase 18-B 이후 좁아진 large-screen 좌측 pane을 단순 Home list 축소로 둘지, 장기 left control surface 후보로 다룰 수 있는지 실제 코드 기준으로 확인하는 것이다. 이번 단계는 full Strong Rail 구현이나 ownership migration 단계가 아니다.
+
+현재 좌측 pane의 production 책임은 `HomeScreen` 내부에 있다. `TextField`, 검색/초기화 `IconButton`, 기본 Strong 목록, 검색 결과 목록, large-screen 목록 선택 시 `_largeScreenExplorerWordId` 갱신을 같은 owner가 처리한다. 이 책임은 `WordExplorerScreen`, `ExplorerWorkspaceState`, repository owner로 이동하지 않는다.
+
+left control surface의 장기 책임 후보는 persistent search entry, Strong anchor 접근, workspace orientation, 단어 생성 진입점 후보를 포함할 수 있다. 다만 Phase 18-C에서 안전하게 구현 가능한 범위는 기존 search/list state와 read 흐름을 유지한 채 large-screen 상단 검색 control area를 시각적으로 분리하는 것에 한정한다.
+
+persistent search/control area는 새 DB query, 새 repository read, 신규 DTO/model/public API 없이 구현 가능하다고 판단했다. 이에 large-screen에서 검색 입력 영역을 `homeSearchControlArea`로 분리하고 배경과 하단 경계를 부여해 좌측 pane의 상단 control surface로 보이게 했다. small-screen에서는 기존 `homePane` 흐름을 유지한다.
+
+단어 추가 접근점은 Phase 18-C에서 구현하지 않는다. 현재 단어 추가 버튼은 `WordGraphScreen` graph app bar의 `Icons.note_add`이며, 실제 흐름은 private `_showCreateWordFlow()` 내부에서 duplicate check, create write, edit seed read, `WordEditScreen.fromSeed`, relation option, graph refresh를 처리한다. 이 흐름을 좌측 pane에서 직접 호출하려면 public/route-level entry 또는 owner 경계 재정의가 필요하므로 현재 금지선 안에서는 추천하지 않는다.
+
+Strong Rail 실제 구현은 보류한다. Strong 번호 중심 초협폭 rail은 source-of-truth, selected/center authority, scroll/jump state, search/list와 graph/detail 사이의 continuity rule이 필요하다. 현재 Phase 18-C에서는 이 authority를 새로 만들거나 `ExplorerWorkspaceState`로 승격하지 않는다. 다음 단계에서는 Strong Rail behavior, selection rule, jump behavior, keyboard access, navigation continuity를 별도 후보로 먼저 정의해야 한다.
+
+유지한 금지선은 `ExplorerWorkspace` production shell mount 금지, `ExplorerWorkspaceState` production source-of-truth 승격 금지, `WordExplorerScreen` owner state migration 금지, repository/read owner migration 금지, 새 DB query 금지, 새 repository read 금지, 신규 DTO/model/public API 금지, projection result 기반 production mutation/read/persistence/restore/rollback 금지다.
