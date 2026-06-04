@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2026-06-04 Phase 18-F ExplorerWorkspace left control boundary guardrail/docs 보강
+
+- Phase 18-F는 Phase 18-A~E에서 정리한 large-screen `HomeScreen` 좌측 control surface boundary를 source guard와 문서 기준으로 고정한 단계다.
+- 신규 source guard `test/ui/home_screen_phase18f_left_control_boundary_guardrail_test.dart`를 추가해 `_largeScreenExplorerWordId` 기반 retarget/current target feedback, `WordExplorerScreen` owner state 비소유, `ExplorerWorkspaceState` 비-source-of-truth, small-screen route/detail 흐름 유지를 확인했다.
+- create/edit/write 금지 기준은 전역 문자열 금지가 아니라 `HomeScreen` 좌측 control surface와 large-screen split shell 경로에 한정했다. 기존 `WordGraphScreen._showCreateWordFlow()`, `WordEditScreen.fromSeed`, `Icons.note_add` 흐름은 `WordGraphScreen` 내부에 남을 수 있다.
+- Strong Rail, keyboard access, search/list continuity 관련 검증도 전역 부재가 아니라 production `HomeScreen`과 `ExplorerWorkspace` production-adjacent surface에 새 구현이 추가되지 않는지 확인하는 source guard로 제한했다.
+- 기존 strong jump helper는 기본 Strong 목록 scroll helper 범위를 넘지 않고 Explorer retarget, repository read, Navigator route, `ExplorerWorkspaceState` source-of-truth 흐름으로 확장되지 않는다고 고정했다.
+- 이번 Phase에서는 `lib/`, DB, dependency, repository/read contract, DTO/model/public API 변경을 수행하지 않았고 main 병합도 수행하지 않는다.
+
 ## 2026-06-04 Phase 18-E HomeScreen left control action boundary audit
 
 - Phase 18-E는 `left control surface action boundary audit`를 수행한 docs/audit-only 단계다.

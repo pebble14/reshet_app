@@ -8613,3 +8613,26 @@ default Strong list와 search result list는 아래 범위에서는 같은 contr
 #### 유지 금지선
 
 Phase 18-E는 `ExplorerWorkspace` production shell mount, `ExplorerWorkspaceState` production source-of-truth 승격, `WordExplorerScreen` owner migration, repository/read owner migration, 새 repository read, 새 DB query, 신규 DTO/model/public API 추가, persistence/restore/rollback authority migration, projection result 기반 production mutation/read/persistence/restore/rollback을 승인하지 않는다.
+
+### 17.108 Phase 18-F ExplorerWorkspace left control boundary guardrail/docs 보강
+
+Phase 18-F는 Phase 18-A~E에서 정리한 large-screen `HomeScreen` 좌측 control surface boundary를 source guard와 문서 기준으로 고정하는 guardrail/docs 단계다. 이번 단계는 새 UX 구현, production UI polish, Strong Rail 구현, scroll/jump behavior 구현, keyboard access 구현, search/list continuity 구현 단계가 아니다.
+
+#### source guard 고정 기준
+
+Phase 18-F source guard는 아래 경계를 확인한다.
+
+- large-screen 좌측 control surface는 `_largeScreenExplorerWordId` 기반 current target feedback과 retarget request surface 범위만 가진다.
+- `HomeScreen`은 `WordExplorerScreen` 내부 owner state인 center, selected, detail, history 상태를 직접 소유하지 않는다.
+- `ExplorerWorkspaceState`는 `HomeScreen` production source-of-truth로 사용되지 않는다.
+- small-screen에서는 기존 `return homePane;` 및 list → detail route 흐름을 유지한다.
+- default Strong list와 search result list는 current target feedback 기준을 공유할 수 있지만 selection owner, graph/detail owner, repository/read owner로 확장되지 않는다.
+- 좌측 control surface와 large-screen split shell 경로는 `WordGraphScreen._showCreateWordFlow()`, `WordEditScreen.fromSeed`, `Icons.note_add` 기반 create/edit/write entry를 직접 열지 않는다.
+- 기존 strong jump helper는 기본 Strong 목록 scroll helper 범위를 넘지 않으며 Explorer retarget, repository read, Navigator route, `ExplorerWorkspaceState` source-of-truth 흐름으로 확장되지 않는다.
+- Strong Rail, keyboard access, search/list continuity 관련 production 구현은 `HomeScreen` 또는 `ExplorerWorkspace` production-adjacent surface에 추가하지 않는다.
+
+#### 유지 범위와 금지선
+
+이번 단계에서 허용한 변경은 `test/` source guard 추가와 `docs/ux/explorer_workspace_unification.md`, `docs/logs/CHANGELOG.md` 기록 보강에 한정한다. `lib/` production code, DB, dependency, repository/read contract, DTO/model/public API는 변경하지 않는다.
+
+Phase 18-F는 `ExplorerWorkspace` production shell mount, `ExplorerWorkspaceState` production source-of-truth 승격, `WordExplorerScreen` owner migration, repository/read owner migration, persistence/restore/rollback authority migration, projection result 기반 production mutation/read/persistence/restore/rollback을 승인하지 않는다.
