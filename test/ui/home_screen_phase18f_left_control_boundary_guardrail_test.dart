@@ -289,10 +289,18 @@ void main() {
     );
 
     test(
-      'Strong Rail keyboard and search continuity remain outside production HomeScreen implementation',
+      'Level 1 retarget rail stays outside keyboard and search continuity ownership',
       () {
-        expect(homeSource, isNot(contains('StrongRail')));
-        expect(homeSource, isNot(contains('Strong Rail')));
+        expect(
+          homeSource,
+          contains('Widget _buildStrongLevelOneRetargetRail()'),
+        );
+        expect(
+          leftPaneAndSplitSource,
+          contains('child: _buildStrongLevelOneRetargetRail()'),
+        );
+        expect(homeSource, isNot(contains('class StrongRail')));
+        expect(homeSource, isNot(contains('StrongRailController')));
         expect(explorerWorkspaceSource, contains("title: 'StrongRail'"));
         expect(explorerWorkspaceSource, isNot(contains('class StrongRail')));
         expect(explorerWorkspaceSource, isNot(contains('StrongRail(')));

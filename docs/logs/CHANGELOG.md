@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 2026-06-05 Phase 18-G Strong Rail Level 1 retarget-only minimum slice
+
+- Phase 18-G는 large-screen `HomeScreen` 좌측 control surface 내부에 얇은 Strong Rail을 도입한 Level 1 retarget-only minimum slice다.
+- Strong Rail은 기존 default Strong list future를 재사용해 Strong 번호 중심 compact item을 표시하며, tap action은 `_showWordInLargeScreenExplorerPane(item.wordId)` 호출로 제한했다.
+- search mode에서는 기존 검색 결과 list surface를 유지하고, rail 도입으로 검색 결과 list가 default Strong list로 전환되거나 초기화되지 않도록 source guard를 추가했다.
+- small-screen `return homePane;` 및 list → detail route 흐름은 유지했다.
+- Phase 18-F guard test는 Strong Rail production 부재 전제만 Phase 18-G 기준으로 보정했고, keyboard access, search/list continuity, owner/source-of-truth, read/query/API 금지선은 유지했다.
+- 이번 Phase에서는 새 DB query, 새 repository read, 신규 DTO/model/public API, dependency 변경, `ExplorerWorkspace` production shell mount, `ExplorerWorkspaceState` source-of-truth 승격, `WordExplorerScreen` owner migration, persistence/restore/rollback authority migration을 수행하지 않았다.
+- main 병합과 origin/main push는 수행하지 않는다.
+
 ## 2026-06-04 Phase 18-F ExplorerWorkspace left control boundary guardrail/docs 보강
 
 - Phase 18-F는 Phase 18-A~E에서 정리한 large-screen `HomeScreen` 좌측 control surface boundary를 source guard와 문서 기준으로 고정한 단계다.

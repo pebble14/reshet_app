@@ -283,7 +283,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     _currentDefaultStrongItems = const [];
-    _defaultStrongListFuture = null;
     _searchWordsFuture = _createSearchWordsFuture();
   }
 
@@ -602,6 +601,94 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Widget _buildStrongLevelOneRetargetRail() {
+    final theme = Theme.of(context);
+
+    return FutureBuilder<List<HomeDefaultStrongListItem>>(
+      future: _defaultStrongListFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+          );
+        }
+
+        if (snapshot.hasError) {
+          return Center(
+            child: Icon(
+              Icons.error_outline,
+              color: theme.colorScheme.error,
+              size: 20,
+            ),
+          );
+        }
+
+        final items = snapshot.data ?? const <HomeDefaultStrongListItem>[];
+        if (items.isEmpty) {
+          return const SizedBox.shrink();
+        }
+
+        return ListView.builder(
+          itemCount: items.length,
+          itemBuilder: (context, index) {
+            final item = items[index];
+            final displayStrong = _formatDisplayStrong(
+              item.displayStrongNumber,
+            );
+            final isCurrentLargeScreenTarget =
+                item.wordId == _largeScreenExplorerWordId;
+            final foregroundColor = isCurrentLargeScreenTarget
+                ? theme.colorScheme.onPrimaryContainer
+                : theme.colorScheme.onSurfaceVariant;
+            final borderColor = isCurrentLargeScreenTarget
+                ? theme.colorScheme.primary
+                : theme.colorScheme.outlineVariant.withValues(alpha: 0.55);
+            final backgroundColor = isCurrentLargeScreenTarget
+                ? theme.colorScheme.primaryContainer.withValues(alpha: 0.55)
+                : Colors.transparent;
+
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(6),
+                onTap: () {
+                  _showWordInLargeScreenExplorerPane(item.wordId);
+                },
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: backgroundColor,
+                    border: Border.all(color: borderColor),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: SizedBox(
+                    height: 38,
+                    child: Center(
+                      child: Text(
+                        displayStrong,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.labelMedium?.copyWith(
+                          color: foregroundColor,
+                          fontWeight: isCurrentLargeScreenTarget
+                              ? FontWeight.w700
+                              : FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   /// 화면을 그리는 메서드
   /// _isLoading 값에 따라 로딩 화면 또는 본문 화면 표시
   Widget _buildDefaultStrongListView() {
@@ -848,6 +935,121 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 );
 
+                final Widget homeWordListSurface = _isShowingDefaultStrongList
+                    ? _buildDefaultStrongListView()
+                    : FutureBuilder<List<HomeSearchResultDisplayItem>>(
+                        future: _searchWordsFuture,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+
+                          if (snapshot.hasError) {
+                            return Center(
+                              child: Text('에러 발생: ${snapshot.error}'),
+                            );
+                          }
+
+                          final words = snapshot.data ?? [];
+
+                          if (words.isEmpty) {
+                            return const Center(child: Text('검색 결과 없음'));
+                          }
+
+                          Widget buildWordTile(
+                            BuildContext context,
+                            int index,
+                          ) {
+                            final item = words[index];
+                            final wordId = item.wordId;
+                            final displayStrong =
+                                item.displayStrongNumber ?? '';
+                            final displaySummary = _buildSearchResultSummary(
+                              item,
+                            );
+                            final subtitleText = item.subtitleMeaning ?? '';
+                            final isCurrentLargeScreenTarget =
+                                isLargeScreen &&
+                                wordId == _largeScreenExplorerWordId;
+
+                            return ListTile(
+                              selected: isCurrentLargeScreenTarget,
+                              selectedTileColor: Theme.of(context)
+                                  .colorScheme
+                                  .primaryContainer
+                                  .withValues(alpha: 0.35),
+                              title: Text.rich(
+                                _buildWordTitle(
+                                  strong: displayStrong,
+                                  summary: displaySummary,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              subtitle: subtitleText.isEmpty
+                                  ? null
+                                  : Text(
+                                      subtitleText,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  // 상세
+                                  IconButton(
+                                    icon: const Icon(Icons.article_outlined),
+                                    tooltip: '상세',
+                                    onPressed: () => _openWordDetail(wordId),
+                                  ),
+                                  // 그래프
+                                  IconButton(
+                                    icon: const Icon(Icons.hub_outlined),
+                                    tooltip: '그래프',
+                                    onPressed: () => _openWordGraph(wordId),
+                                  ),
+                                ],
+                              ),
+                              // 탭은 기본적으로 상세로
+                              onTap: () async {
+                                final width = MediaQuery.of(context).size.width;
+
+                                // 넓은 화면(데스크탑/태블릿)에서는 스플릿뷰
+                                if (_isLargeScreenWidth(width)) {
+                                  _showWordInLargeScreenExplorerPane(wordId);
+                                  return;
+                                }
+
+                                await _openWordDetail(wordId);
+                              },
+                            );
+                          }
+
+                          return ListView.builder(
+                            controller: _listScrollController,
+                            itemCount: words.length,
+                            itemBuilder: buildWordTile,
+                          );
+                        },
+                      );
+
+                final Widget homeLeftControlListSurface = isLargeScreen
+                    ? Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          SizedBox(
+                            width: 72,
+                            child: _buildStrongLevelOneRetargetRail(),
+                          ),
+                          const VerticalDivider(width: 1),
+                          Expanded(child: homeWordListSurface),
+                        ],
+                      )
+                    : homeWordListSurface;
+
                 final homePane = Column(
                   children: [
                     // ✅ 검색창
@@ -870,116 +1072,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       homeSearchControlArea,
 
                     // ✅ 결과 리스트
-                    Expanded(
-                      child: _isShowingDefaultStrongList
-                          ? _buildDefaultStrongListView()
-                          : FutureBuilder<List<HomeSearchResultDisplayItem>>(
-                              future: _searchWordsFuture,
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return const Center(
-                                    child: CircularProgressIndicator(),
-                                  );
-                                }
-
-                                if (snapshot.hasError) {
-                                  return Center(
-                                    child: Text('에러 발생: ${snapshot.error}'),
-                                  );
-                                }
-
-                                final words = snapshot.data ?? [];
-
-                                if (words.isEmpty) {
-                                  return const Center(child: Text('검색 결과 없음'));
-                                }
-
-                                Widget buildWordTile(
-                                  BuildContext context,
-                                  int index,
-                                ) {
-                                  final item = words[index];
-                                  final wordId = item.wordId;
-                                  final displayStrong =
-                                      item.displayStrongNumber ?? '';
-                                  final displaySummary =
-                                      _buildSearchResultSummary(item);
-                                  final subtitleText =
-                                      item.subtitleMeaning ?? '';
-                                  final isCurrentLargeScreenTarget =
-                                      isLargeScreen &&
-                                      wordId == _largeScreenExplorerWordId;
-
-                                  return ListTile(
-                                    selected: isCurrentLargeScreenTarget,
-                                    selectedTileColor: Theme.of(context)
-                                        .colorScheme
-                                        .primaryContainer
-                                        .withValues(alpha: 0.35),
-                                    title: Text.rich(
-                                      _buildWordTitle(
-                                        strong: displayStrong,
-                                        summary: displaySummary,
-                                      ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    subtitle: subtitleText.isEmpty
-                                        ? null
-                                        : Text(
-                                            subtitleText,
-                                            maxLines: 2,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                    trailing: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        // 상세
-                                        IconButton(
-                                          icon: const Icon(
-                                            Icons.article_outlined,
-                                          ),
-                                          tooltip: '상세',
-                                          onPressed: () =>
-                                              _openWordDetail(wordId),
-                                        ),
-                                        // 그래프
-                                        IconButton(
-                                          icon: const Icon(Icons.hub_outlined),
-                                          tooltip: '그래프',
-                                          onPressed: () =>
-                                              _openWordGraph(wordId),
-                                        ),
-                                      ],
-                                    ),
-                                    // 탭은 기본적으로 상세로
-                                    onTap: () async {
-                                      final width = MediaQuery.of(
-                                        context,
-                                      ).size.width;
-
-                                      // 넓은 화면(데스크탑/태블릿)에서는 스플릿뷰
-                                      if (_isLargeScreenWidth(width)) {
-                                        _showWordInLargeScreenExplorerPane(
-                                          wordId,
-                                        );
-                                        return;
-                                      }
-
-                                      await _openWordDetail(wordId);
-                                    },
-                                  );
-                                }
-
-                                return ListView.builder(
-                                  controller: _listScrollController,
-                                  itemCount: words.length,
-                                  itemBuilder: buildWordTile,
-                                );
-                              },
-                            ),
-                    ),
+                    Expanded(child: homeLeftControlListSurface),
                   ],
                 );
 

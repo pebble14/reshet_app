@@ -8636,3 +8636,24 @@ Phase 18-F source guard는 아래 경계를 확인한다.
 이번 단계에서 허용한 변경은 `test/` source guard 추가와 `docs/ux/explorer_workspace_unification.md`, `docs/logs/CHANGELOG.md` 기록 보강에 한정한다. `lib/` production code, DB, dependency, repository/read contract, DTO/model/public API는 변경하지 않는다.
 
 Phase 18-F는 `ExplorerWorkspace` production shell mount, `ExplorerWorkspaceState` production source-of-truth 승격, `WordExplorerScreen` owner migration, repository/read owner migration, persistence/restore/rollback authority migration, projection result 기반 production mutation/read/persistence/restore/rollback을 승인하지 않는다.
+
+### 17.109 Phase 18-G Strong Rail Level 1 retarget-only minimum slice
+
+Phase 18-G는 large-screen `HomeScreen` 좌측 control surface 내부에 얇은 Strong Rail을 도입하는 Level 1 retarget-only minimum slice다. 이번 단계의 Strong Rail은 새 navigation owner, selection owner, graph/detail owner, repository/read owner가 아니다. 기존 default Strong list 데이터를 재사용해 compact Strong 번호 item을 표시하고, item tap은 기존 large-screen Explorer target retarget request만 수행한다.
+
+#### 구현 범위
+
+- Strong Rail은 large-screen `HomeScreen` branch의 좌측 control surface 내부에만 mount한다.
+- small-screen에서는 기존 `return homePane;` 및 list → detail route 흐름을 유지한다.
+- rail data는 기존 default Strong list future를 재사용한다. search mode의 기존 검색 결과 list surface는 default Strong list로 전환하지 않는다.
+- rail item은 Strong 번호 중심 compact item으로 표시한다.
+- rail item의 current feedback은 `item.wordId == _largeScreenExplorerWordId` 비교만 사용한다.
+- rail item tap action boundary는 `_showWordInLargeScreenExplorerPane(item.wordId)` 호출로 제한한다.
+- Phase 18-F source guard는 Strong Rail production 부재 전제만 Phase 18-G 기준으로 보정하고, owner/source-of-truth 금지선은 유지한다.
+- Phase 18-G 전용 source guard는 rail future 재사용, large-screen mount, small-screen route 흐름, retarget-only tap, search mode list 유지, read/query/API 금지선을 확인한다.
+
+#### 금지선
+
+Phase 18-G는 keyboard access, search/list continuity, rail tap 기반 list scroll/jump, search result list 초기화, default/search list 전환, 좌측 단어 추가 버튼, `WordGraphScreen._showCreateWordFlow()` 좌측 호출을 승인하지 않는다.
+
+Phase 18-G는 `ExplorerWorkspace` production shell mount, `ExplorerWorkspaceState` production source-of-truth 승격, `WordExplorerScreen` owner migration, `HomeScreen`의 `WordExplorerScreen` center/selected/detail/history owner state 소유, repository/read owner migration, 새 repository read, 새 DB query, 신규 DTO/model/public API 추가, dependency 변경, persistence/restore/rollback authority migration, projection result 기반 production mutation/read/persistence/restore/rollback을 승인하지 않는다.
