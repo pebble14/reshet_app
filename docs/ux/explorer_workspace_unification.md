@@ -8493,3 +8493,123 @@ Phase 18-D는 large-screen 좌측 control surface에서 현재 우측 `WordExplo
 `ListTile.selected`와 `selectedTileColor`는 Flutter의 기존 list feedback 속성을 사용한 구현 수단이다. 이를 selection owner 이전, left selection source 도입, `WordExplorerScreen` owner migration으로 해석하지 않는다.
 
 유지한 금지선은 `ExplorerWorkspace` production shell mount 금지, `ExplorerWorkspaceState` production source-of-truth 승격 금지, `WordExplorerScreen` owner state migration 금지, repository/read owner migration 금지, 새 DB query 금지, 새 repository read 금지, 신규 DTO/model/public API 금지, projection result 기반 production mutation/read/persistence/restore/rollback 금지다.
+
+### 17.107 Phase 18-E HomeScreen left control action boundary audit
+
+Phase 18-E는 `left control surface action boundary audit`를 수행하는 docs/audit-only 단계다. 이번 단계는 production code 변경, `lib/` 변경, `test/` 변경, DB 변경, dependency 변경, Strong Rail 구현, 좌측 단어 추가 버튼 구현, scroll/jump behavior 구현, keyboard access 구현, search/list continuity 구현을 승인하지 않는다.
+
+#### Phase 18-A~D 기준 현재 책임
+
+Phase 18-A~D까지 large-screen 좌측 control surface가 맡은 production 책임은 `HomeScreen` private 범위 안의 search/list/target feedback 책임으로 제한된다.
+
+현재 책임은 아래와 같다.
+
+- 검색 입력과 검색 실행/초기화 control
+- 기본 Strong 목록 표시
+- 검색 결과 목록 표시
+- large-screen 목록 item tap을 우측 `WordExplorerScreen` target 변경 요청으로 변환
+- `_largeScreenExplorerWordId` 기준 current target feedback 표시
+- small-screen에서는 기존 `return homePane;` 및 list → detail route 흐름 유지
+
+이 책임은 selection owner, graph center owner, detail target owner, navigation history owner, repository/read owner, persistence authority, rollback authority가 아니다.
+
+#### 허용 가능한 action 후보
+
+Phase 18-E 기준으로 좌측 control surface가 안전하게 맡을 수 있는 action 후보는 기존 `HomeScreen` private state와 기존 read 흐름 안에서 끝나는 항목으로 제한한다.
+
+허용 가능한 후보는 아래와 같다.
+
+- current target feedback 표시의 시각적 정리
+- large-screen에서 기존 list item tap을 `_showWordInLargeScreenExplorerPane(...)`로 보내는 retarget request surface 유지
+- 검색 입력, 검색 실행, 검색 초기화의 control surface 표현 정리
+- default Strong list와 search result list가 같은 current target feedback 기준을 공유한다는 guardrail/docs 보강
+- small-screen route/detail 흐름을 보존하는 source guard 보강
+
+이 후보들은 새 DB query, 새 repository read, 신규 DTO/model/public API 없이 가능해야 한다.
+
+#### 아직 금지해야 할 action 후보
+
+아래 action은 Phase 18-E 기준에서 좌측 control surface로 옮기면 안 된다.
+
+- Strong Rail 실제 구현
+- 좌측 단어 추가 버튼 구현
+- `WordGraphScreen._showCreateWordFlow()`를 좌측 pane에서 직접 호출하는 흐름
+- graph center, selected word, detail target, history를 좌측 list가 소유하는 흐름
+- scroll/jump behavior 구현
+- keyboard access 구현
+- search/list continuity rule 구현
+- repository/read owner migration
+- `ExplorerWorkspaceState`를 production source-of-truth로 사용하는 흐름
+- projection result 기반 production mutation/read/persistence/restore/rollback
+
+#### Strong Rail 선결 조건
+
+Strong Rail을 실제 구현하려면 먼저 아래 owner/source-of-truth/action boundary를 정의해야 한다.
+
+- Strong Rail이 표시 source인지, target request surface인지, selection surface인지 구분
+- Strong 번호 anchor source와 list item source의 관계
+- 현재 우측 target과 rail highlight의 관계
+- rail tap이 search/list scroll만 수행하는지, Explorer target 변경까지 수행하는지에 대한 action boundary
+- small-screen route/detail 흐름과 large-screen retarget 흐름의 분기 규칙
+- `ExplorerWorkspaceState`나 `WordExplorerScreen` owner state를 우회하지 않는 guardrail
+
+이 정의 전에는 Strong Rail을 production UI로 구현하지 않는다.
+
+#### 좌측 add action 선결 조건
+
+현재 단어 추가 action은 `WordGraphScreen` graph app bar의 `Icons.note_add`에서 `WordGraphScreen._showCreateWordFlow()`로 진입한다. 이 흐름은 duplicate check, create write, edit seed read, `WordEditScreen.fromSeed`, relation option, graph refresh를 포함하며 `WordGraphScreen` owner와 repository/write 흐름에 묶여 있다.
+
+좌측 add action을 구현하려면 아래 선결 조건이 필요하다.
+
+- 좌측 pane에서 호출 가능한 public entry 또는 route-level entry 정의
+- 생성된 단어가 어느 graph center와 relation option을 갖는지 결정하는 owner boundary
+- create write, edit seed read, post-save payload read, relation create의 repository/write owner 유지 규칙
+- 취소/rollback 성격의 discard 흐름을 어느 owner가 처리하는지에 대한 boundary
+- `WordGraphScreen._showCreateWordFlow()` private 흐름을 직접 이동하지 않는 대체 contract
+
+이 선결 조건 없이는 좌측 단어 추가 버튼을 구현하지 않는다.
+
+#### Strong anchor/jump behavior 선결 조건
+
+현재 `HomeScreen`에는 기본 Strong 목록에서만 동작하는 strong jump 관련 private 상태와 메서드가 있다. `_strongJumpDebounceTimer`, `_currentDefaultStrongItems`, `_isShowingDefaultStrongList`, `_jumpToStrongInDefaultList(...)`, `_scrollToDefaultStrongIndex(...)`는 기본 Strong 목록 scroll helper 성격이다.
+
+Strong anchor/jump behavior를 확장하려면 아래 조건을 먼저 정의해야 한다.
+
+- scroll state owner가 `HomeScreen` private list controller인지 별도 rail state인지
+- jump action이 scroll-only인지 Explorer target retarget까지 포함하는지
+- 검색 결과 목록과 기본 Strong 목록 사이에서 jump action이 어떤 continuity rule을 따르는지
+- search mode일 때 Strong anchor 입력이 검색 결과를 유지하는지 기본 Strong 목록으로 복귀하는지
+- current target feedback과 jump focus/highlight가 같은 의미인지 다른 의미인지
+- small-screen route/detail 흐름에 jump behavior가 영향을 주지 않는 guardrail
+
+이 정의 전에는 scroll/jump behavior, keyboard access, search/list continuity를 구현하지 않는다.
+
+#### default Strong list와 search result list의 공통 책임 범위
+
+default Strong list와 search result list는 아래 범위에서는 같은 control surface 책임으로 묶을 수 있다.
+
+- item의 `wordId`를 기준으로 large-screen Explorer target 변경 요청을 보낸다.
+- `_largeScreenExplorerWordId`와 item `wordId` 비교로 current target feedback을 표시한다.
+- 기존 repository/read 흐름을 유지한 채 display item을 렌더링한다.
+
+다만 두 목록은 selection source, detail source-of-truth, graph center owner, repository/read owner로 묶이지 않는다. search result list의 ranking/read 흐름과 default Strong list의 strong order/read 흐름은 기존 repository boundary를 유지한다.
+
+#### HomeScreen private state 범위
+
+`HomeScreen` private state 범위에서 가능한 action은 `_largeScreenExplorerWordId` 갱신, current target feedback, search input state, 기본 Strong 목록 scroll helper, 기존 list tap 분기 정도다.
+
+불가능한 action은 `WordExplorerScreen` 내부 `_centerWordId`, `_selectedWordId`, `_selectedWordDisplayItem`, `_history`, detail loading/error/unavailable state, repository/read result를 직접 소유하거나 이동하는 것이다. 이 값들은 현재 `WordExplorerScreen` owner boundary 안에 있다.
+
+#### Phase 18-F 후보와 추천 순서
+
+| 추천 순서 | 후보 | 위험도 | 이유 |
+| --- | --- | --- | --- |
+| 1 | Phase 18-F guardrail/docs 보강 | 낮음 | `lib/` 변경 없이 Phase 18-A~E boundary를 source guard 또는 문서 기준으로 고정할 수 있다. |
+| 2 | Phase 18-F HomeScreen private feedback polish | 중간 | current target feedback의 시각적 명확성 개선은 가능하지만 production UI diff이므로 small-screen guard와 owner boundary 검증이 필요하다. |
+| 3 | Phase 18-F Strong anchor/jump design audit | 중간~높음 | Strong Rail 구현 전 선결 조건을 더 구체화할 수 있으나 scroll state, target state, continuity rule을 잘못 섞으면 owner 혼동 위험이 크다. |
+
+추천 순서는 guardrail/docs 보강을 먼저 수행한 뒤, 필요한 경우 HomeScreen private feedback polish를 검토하고, Strong anchor/jump는 별도 design audit로 분리하는 것이다.
+
+#### 유지 금지선
+
+Phase 18-E는 `ExplorerWorkspace` production shell mount, `ExplorerWorkspaceState` production source-of-truth 승격, `WordExplorerScreen` owner migration, repository/read owner migration, 새 repository read, 새 DB query, 신규 DTO/model/public API 추가, persistence/restore/rollback authority migration, projection result 기반 production mutation/read/persistence/restore/rollback을 승인하지 않는다.

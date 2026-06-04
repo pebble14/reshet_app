@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 2026-06-04 Phase 18-E HomeScreen left control action boundary audit
+
+- Phase 18-E는 `left control surface action boundary audit`를 수행한 docs/audit-only 단계다.
+- Phase 18-A~D까지 large-screen 좌측 control surface가 맡은 현재 책임을 검색 입력/초기화, 기본 Strong 목록, 검색 결과 목록, large-screen Explorer target 갱신, current target feedback으로 정리했다.
+- 허용 가능한 action 후보는 기존 `HomeScreen` private state와 기존 read 흐름 안에서 처리 가능한 retarget feedback, search control 정리, guardrail/docs 보강으로 제한했다.
+- Strong Rail, 좌측 단어 추가 버튼, scroll/jump behavior, keyboard access, search/list continuity rule은 owner/source-of-truth/action boundary 정의 전까지 금지 후보로 유지했다.
+- 좌측 add action은 현재 `WordGraphScreen._showCreateWordFlow()`와 repository/write/edit/relation 흐름에 묶여 있어 public entry, route-level entry, owner boundary 정의가 선행되어야 한다고 기록했다.
+- default Strong list와 search result list는 current target feedback과 retarget request surface 범위에서는 같은 control surface 책임으로 묶을 수 있지만, selection owner나 repository/read owner로 확장하지 않는다고 정리했다.
+- 다음 Phase 18-F 후보는 docs/guardrail 보강, HomeScreen private feedback polish, Strong anchor/jump design audit 순서로 정리했다.
+- 이번 Phase에서는 `lib/`, `test/`, DB, dependency, production code 변경을 수행하지 않았고 main 병합도 수행하지 않는다.
+
 ## 2026-06-03 Phase 18-D HomeScreen left target feedback boundary
 
 - Phase 18-D는 large-screen 좌측 control surface에서 현재 우측 `WordExplorerScreen` target을 current target feedback으로 표시한 minimum slice다.
