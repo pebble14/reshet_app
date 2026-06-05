@@ -1,5 +1,25 @@
 # CHANGELOG
 
+## 2026-06-05 Phase 18-K graph selection Strong Rail passive sync minimum slice
+
+- Phase 18-K는 large-screen `HomeScreen` 우측 `WordExplorerScreen` 내부 graph selection을 좌측 Strong Rail에 passive하게 반영하는 minimum slice다.
+- `WordExplorerScreen`에 optional `onSelectedStrongWordChanged` callback을 추가했고, 기존 route usage와 standalone usage는 callback 없이 유지한다.
+- `HomeScreen`은 callback에서 rail-local passive selected state만 갱신하며, `_largeScreenExplorerWordId` 변경, `_showWordInLargeScreenExplorerPane(...)` 호출, `WordExplorerScreen` remount를 수행하지 않는다.
+- selected display item의 display Strong 번호가 비어 있으면 passive selected state를 clear한다. 이 처리는 retarget이 아니며, Strong Rail이 과거 passive highlight/jump 상태를 계속 유지하지 않도록 하기 위한 최소 처리다.
+- Strong Rail feedback은 `_largeScreenExplorerWordId` 기준 target feedback과 graph selected display Strong 기준 passive selected feedback을 분리했다. target feedback은 primary 계열로 유지하고, passive selected feedback은 secondary 계열 보조 표시와 rail-local jump로만 처리한다.
+- `_selectWord(...)`에 selection request token stale guard를 추가해 빠른 graph node 선택에서 과거 async selection 결과가 늦게 도착해 callback/state를 되돌리는 상황을 막았다. selection clear도 token을 무효화하고 passive state clear callback을 보낸다.
+- 이번 Phase에서는 새 DB query, 새 repository read, 신규 DTO/model, dependency 변경, `ExplorerWorkspace` production shell mount, `ExplorerWorkspaceState` production source-of-truth 승격, `WordExplorerScreen` owner migration, 좌측 create/edit/write entry, keyboard access, search/list continuity 구현을 수행하지 않았다.
+- 명령어 기반 테스트 결과:
+  - `flutter test test/ui/home_screen_phase18k_graph_selection_rail_passive_sync_test.dart --reporter expanded`: 통과, `+7`.
+  - `flutter test test/ui/home_screen_phase18f_left_control_boundary_guardrail_test.dart --reporter expanded`: 통과, `+8`.
+  - `flutter test test/ui/home_screen_phase18g_strong_rail_retarget_boundary_test.dart --reporter expanded`: 통과, `+5`.
+  - `flutter test test/ui/home_screen_phase18i_strong_rail_local_jump_boundary_test.dart --reporter expanded`: 통과, `+5`.
+  - `flutter test test/ui/home_screen_phase18a_large_split_shell_test.dart test/ui/home_screen_phase18b_left_control_pane_direction_test.dart test/ui/home_screen_phase18c_left_control_surface_boundary_test.dart test/ui/home_screen_phase18d_left_target_feedback_boundary_test.dart test/ui/home_screen_phase18f_left_control_boundary_guardrail_test.dart test/ui/home_screen_phase18g_strong_rail_retarget_boundary_test.dart test/ui/home_screen_phase18i_strong_rail_local_jump_boundary_test.dart --reporter expanded`: 통과, `+45`.
+  - `dart analyze lib/ui/home_screen.dart lib/ui/word_explorer_screen.dart test/ui/home_screen_phase18k_graph_selection_rail_passive_sync_test.dart`: 기존 `home_screen.dart`의 `_dbMessage` 미사용 warning 1건과 `print` 사용 info 4건으로 exit code 1.
+  - `flutter analyze --no-fatal-infos --no-fatal-warnings lib/ui/home_screen.dart lib/ui/word_explorer_screen.dart test/ui/home_screen_phase18k_graph_selection_rail_passive_sync_test.dart`: 같은 기존 warning/info 5건을 보고하고 exit code 0.
+- UI 수동 테스트 대상 데이터는 `data/reshet_work.db` 기준으로 `H0001_0000` 중심 단어 `H1 / אָב / 아브 / 아버지`, 연결 단어 `H2 / אַב / 아브 / 아버지`, `H85 / אַבְרָהָם / 아브라함/아베라함`, Strong 번호 없는 연결 단어 `אַבָּא / 아빠 / 아버지`를 사용한다.
+- main 병합과 origin/main push는 수행하지 않는다.
+
 ## 2026-06-05 Phase 18-J stale HomeScreen source guard cleanup
 
 - Phase 18-J는 Phase 18-C/18-D 시점의 과거 HomeScreen source guard가 Phase 18-G/I 이후 허용된 production Strong Rail 존재 자체를 금지하던 stale 기준을 정리한 cleanup 단계다.

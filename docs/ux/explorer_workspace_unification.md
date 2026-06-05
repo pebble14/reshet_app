@@ -8696,3 +8696,34 @@ Phase 18-J는 Phase 18-C/18-D 시점의 과거 HomeScreen source guard를 Phase 
 Phase 18-J는 `ExplorerWorkspace` production shell mount, `ExplorerWorkspaceState` production source-of-truth 승격, `WordExplorerScreen` owner migration, `HomeScreen`의 graph/detail/selected/history owner 승격, repository/read owner migration, 새 repository read, 새 DB query, 신규 DTO/model/public API 추가, dependency 변경, graph selection sync, keyboard access, search/list continuity, 좌측 create/edit/write entry, `WordGraphScreen._showCreateWordFlow()` 좌측 호출, Strong Rail tap 이외 retarget 확장을 승인하지 않는다.
 
 이번 단계는 source guard와 문서 기록만 정리하므로 production UX 변경과 클라이언트 UI 재테스트 대상이 아니다.
+
+### 17.112 Phase 18-K graph selection Strong Rail passive sync minimum slice
+
+Phase 18-K는 large-screen `HomeScreen` 우측 `WordExplorerScreen` 내부 graph selection을 좌측 Strong Rail에 passive하게 반영하는 minimum slice다. 이번 단계의 sync는 rail-local jump 또는 passive selected feedback에 한정하며, 우측 Explorer target retarget이나 `WordExplorerScreen` remount가 아니다.
+
+#### 구현 범위
+
+- `WordExplorerScreen`은 optional `onSelectedStrongWordChanged` callback으로 확정된 selected word의 `wordId`와 display Strong 번호를 알릴 수 있다.
+- callback은 route usage와 standalone usage를 깨지 않는 optional contract이며, 신규 DTO/model을 추가하지 않는다.
+- `HomeScreen`은 callback을 받아 rail-local passive selected state만 갱신한다.
+- display Strong 번호가 비어 있으면 `HomeScreen`은 passive selected state를 clear한다. 이 처리는 retarget이 아니며 `_largeScreenExplorerWordId`를 변경하지 않는다.
+- display Strong 번호가 있으면 `HomeScreen`은 기존 Strong Rail 목록 cache에서 해당 Strong 위치로 rail-local jump를 시도하고, 찾을 수 없는 경우 사용자 feedback 없이 passive state만 유지한다.
+
+#### feedback 기준
+
+- target feedback은 계속 `_largeScreenExplorerWordId`와 rail item `wordId` 비교를 기준으로 한다.
+- passive selected feedback은 graph selected word에서 전달된 display Strong 번호와 rail item display Strong 번호 비교를 기준으로 한다.
+- 같은 rail item이 target이면서 passive selected일 수 있다.
+- target feedback은 primary container/border 기준으로 유지하고, passive selected feedback은 secondary 계열 보조 표시로만 취급한다. passive selected feedback은 target feedback을 대체하지 않는다.
+
+#### stale guard
+
+`WordExplorerScreen._selectWord(...)`는 selection request token을 사용해 async detail load 이후 현재 요청이 아닌 결과를 버린다. 이 guard는 빠른 graph node 선택에서 과거 selection callback이 늦게 도착해 Strong Rail을 과거 위치로 되돌리는 상황을 막기 위한 최소 범위다.
+
+selection clear도 token을 무효화하고 빈 Strong callback으로 passive selected feedback을 clear한다. 이 처리는 selection owner, center owner, detail owner, history owner를 `HomeScreen`으로 옮기지 않으며, history/center ownership migration으로 확장하지 않는다.
+
+#### 유지 금지선
+
+Phase 18-K는 graph selection이 `_largeScreenExplorerWordId`를 변경하거나 `_showWordInLargeScreenExplorerPane(...)`를 호출하는 흐름을 승인하지 않는다. graph selection은 `WordExplorerScreen` key 또는 `initialWordId`를 변경하지 않으며 remount를 유발하지 않는다.
+
+이번 단계는 `HomeScreen`의 graph/detail/selected/history owner 승격, `ExplorerWorkspace` production shell mount, `ExplorerWorkspaceState` production source-of-truth 승격, 새 DB query, 새 repository read, 신규 DTO/model 추가, dependency 변경, persistence/restore/rollback authority migration, projection result 기반 production mutation/read/persistence/restore/rollback, 좌측 create/edit/write entry, keyboard access, search/list continuity 구현을 승인하지 않는다.

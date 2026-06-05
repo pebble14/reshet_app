@@ -158,8 +158,14 @@ resolveExplorerBootstrapCenterTooltipDisplayForTesting({
 
 class WordExplorerScreen extends StatefulWidget {
   final String initialWordId;
+  final void Function(String wordId, String displayStrongNumber)?
+  onSelectedStrongWordChanged;
 
-  const WordExplorerScreen({super.key, required this.initialWordId});
+  const WordExplorerScreen({
+    super.key,
+    required this.initialWordId,
+    this.onSelectedStrongWordChanged,
+  });
 
   @override
   State<WordExplorerScreen> createState() => _WordExplorerScreenState();
@@ -181,6 +187,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
   WordNavigationHistoryEntry<_ExplorerHistorySnapshot>?
   _availableNextHistoryEntry;
   int _historyNavigationValidationToken = 0;
+  int _selectionRequestToken = 0;
 
   final WordNavigationHistoryController<_ExplorerHistorySnapshot> _history =
       WordNavigationHistoryController<_ExplorerHistorySnapshot>();
@@ -410,6 +417,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
     String selectedWordId, {
     bool changeCenterWord = false,
   }) async {
+    final selectionRequestToken = ++_selectionRequestToken;
     final normalizedSelectedWordId = selectedWordId.trim();
     final shouldChangeCenterWord = changeCenterWord;
 
@@ -427,7 +435,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
         normalizedSelectedWordId,
       );
 
-      if (!mounted) return;
+      if (!mounted || selectionRequestToken != _selectionRequestToken) return;
 
       final resolvedSelectedWordId = selectedDisplayItem == null
           ? null
@@ -463,8 +471,12 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
           );
         }
       });
+      _notifySelectedStrongWordChanged(
+        selectedWordId: normalizedSelectedWordId,
+        selectedDisplayItem: selectedDisplayItem,
+      );
     } catch (e) {
-      if (!mounted) return;
+      if (!mounted || selectionRequestToken != _selectionRequestToken) return;
 
       setState(() {
         _detailError = '상세 정보를 불러오지 못했습니다: $e';
@@ -472,6 +484,21 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
         _detailUnavailableMessage = null;
       });
     }
+  }
+
+  void _notifySelectedStrongWordChanged({
+    required String selectedWordId,
+    required WordDetailLikeDisplayItem? selectedDisplayItem,
+  }) {
+    final callback = widget.onSelectedStrongWordChanged;
+    if (callback == null) return;
+
+    final normalizedSelectedWordId = selectedWordId.trim();
+    final displayStrongNumber = formatWordDisplayStrong(
+      (selectedDisplayItem?.displayStrongNumber ?? '').trim(),
+    );
+
+    callback(normalizedSelectedWordId, displayStrongNumber);
   }
 
   Future<WordDetailLikeDisplayItem?> _loadSplitViewDisplayItem(
@@ -703,6 +730,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
       return;
     }
 
+    _selectionRequestToken++;
     setState(() {
       _selectedWordId = null;
       _selectedWordDisplayItem = null;
@@ -717,6 +745,10 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
         selectedWordId: null,
       );
     });
+    _notifySelectedStrongWordChanged(
+      selectedWordId: '',
+      selectedDisplayItem: null,
+    );
   }
 
   List<Widget> _buildHistoryActions() {

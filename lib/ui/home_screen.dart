@@ -75,6 +75,8 @@ class _HomeScreenState extends State<HomeScreen> {
   List<HomeDefaultStrongListItem> _currentStrongRailItems = const [];
   bool _isShowingDefaultStrongList = true;
   String _largeScreenExplorerWordId = _largeScreenDefaultExplorerWordId;
+  String? _passiveSelectedStrongWordId;
+  String? _passiveSelectedDisplayStrongNumber;
 
   Future<List<HomeDefaultStrongListItem>> _createDefaultStrongListFuture() {
     return _repository.getStrongWordsMap();
@@ -320,6 +322,39 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     _scrollToStrongRailIndex(targetIndex);
+  }
+
+  void _handleExplorerSelectedStrongWordChanged(
+    String wordId,
+    String displayStrongNumber,
+  ) {
+    final normalizedWordId = wordId.trim();
+    final normalizedDisplayStrong = _formatDisplayStrong(displayStrongNumber);
+
+    if (normalizedDisplayStrong.isEmpty) {
+      if (_passiveSelectedStrongWordId == null &&
+          _passiveSelectedDisplayStrongNumber == null) {
+        return;
+      }
+
+      setState(() {
+        _passiveSelectedStrongWordId = null;
+        _passiveSelectedDisplayStrongNumber = null;
+      });
+      return;
+    }
+
+    if (_passiveSelectedStrongWordId != normalizedWordId ||
+        _passiveSelectedDisplayStrongNumber != normalizedDisplayStrong) {
+      setState(() {
+        _passiveSelectedStrongWordId = normalizedWordId.isEmpty
+            ? null
+            : normalizedWordId;
+        _passiveSelectedDisplayStrongNumber = normalizedDisplayStrong;
+      });
+    }
+
+    _jumpToStrongInRail(normalizedDisplayStrong, showNotFoundFeedback: false);
   }
 
   String _buildDefaultStrongListTitle(HomeDefaultStrongListItem item) {
@@ -719,14 +754,23 @@ class _HomeScreenState extends State<HomeScreen> {
             );
             final isCurrentLargeScreenTarget =
                 item.wordId == _largeScreenExplorerWordId;
+            final isPassiveSelectedStrong =
+                _passiveSelectedDisplayStrongNumber != null &&
+                displayStrong == _passiveSelectedDisplayStrongNumber;
             final foregroundColor = isCurrentLargeScreenTarget
                 ? theme.colorScheme.onPrimaryContainer
+                : isPassiveSelectedStrong
+                ? theme.colorScheme.secondary
                 : theme.colorScheme.onSurfaceVariant;
             final borderColor = isCurrentLargeScreenTarget
                 ? theme.colorScheme.primary
+                : isPassiveSelectedStrong
+                ? theme.colorScheme.secondary
                 : theme.colorScheme.outlineVariant.withValues(alpha: 0.55);
             final backgroundColor = isCurrentLargeScreenTarget
                 ? theme.colorScheme.primaryContainer.withValues(alpha: 0.55)
+                : isPassiveSelectedStrong
+                ? theme.colorScheme.secondaryContainer.withValues(alpha: 0.28)
                 : Colors.transparent;
 
             return Padding(
@@ -744,18 +788,37 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   child: SizedBox(
                     height: 38,
-                    child: Center(
-                      child: Text(
-                        displayStrong,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.labelMedium?.copyWith(
-                          color: foregroundColor,
-                          fontWeight: isCurrentLargeScreenTarget
-                              ? FontWeight.w700
-                              : FontWeight.w600,
+                    child: Stack(
+                      children: [
+                        Center(
+                          child: Text(
+                            displayStrong,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.labelMedium?.copyWith(
+                              color: foregroundColor,
+                              fontWeight: isCurrentLargeScreenTarget
+                                  ? FontWeight.w700
+                                  : FontWeight.w600,
+                            ),
+                          ),
                         ),
-                      ),
+                        if (isPassiveSelectedStrong)
+                          Positioned(
+                            right: 5,
+                            bottom: 5,
+                            child: SizedBox(
+                              width: 6,
+                              height: 6,
+                              child: DecoratedBox(
+                                decoration: BoxDecoration(
+                                  color: theme.colorScheme.secondary,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
                   ),
                 ),
@@ -857,6 +920,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
     setState(() {
       _largeScreenExplorerWordId = normalizedWordId;
+      _passiveSelectedStrongWordId = null;
+      _passiveSelectedDisplayStrongNumber = null;
     });
   }
 
@@ -1168,6 +1233,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: WordExplorerScreen(
                         key: ValueKey(_largeScreenExplorerWordId),
                         initialWordId: _largeScreenExplorerWordId,
+                        onSelectedStrongWordChanged:
+                            _handleExplorerSelectedStrongWordChanged,
                       ),
                     ),
                   ],
