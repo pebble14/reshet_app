@@ -8677,3 +8677,22 @@ Phase 18-I는 large-screen `HomeScreen` 좌측 control surface에 이미 mount�
 Phase 18-I의 검색 입력 기반 rail local jump는 `_largeScreenExplorerWordId`를 변경하지 않고, `_showWordInLargeScreenExplorerPane(...)`을 호출하지 않으며, `WordExplorerScreen` remount를 발생시키지 않는다. 또한 `_setVisibleWordListFuture(...)`, `_searchWordsFuture`, `_isShowingDefaultStrongList`를 변경하지 않으므로 search result list를 초기화하거나 default Strong list로 전환하지 않는다.
 
 Phase 18-I는 graph selection 연동, `WordExplorerScreen` constructor callback 추가, `WordGraphScreen` callback 변경, 새 DB query, 새 repository read, 신규 DTO/model/public API 추가, dependency 변경, `ExplorerWorkspace` production shell mount, `ExplorerWorkspaceState` production source-of-truth 승격, `WordExplorerScreen` owner migration, `HomeScreen`의 graph/detail owner 승격, 좌측 단어 추가 버튼, keyboard access, search/list continuity 구현을 승인하지 않는다.
+
+### 17.111 Phase 18-J stale HomeScreen source guard cleanup
+
+Phase 18-J는 Phase 18-C/18-D 시점의 과거 HomeScreen source guard를 Phase 18-G/I 이후 production reality에 맞게 보정하는 cleanup 단계다. 이번 단계는 새 UX 구현 단계가 아니며, production `lib/` code를 변경하지 않는다.
+
+#### guard 보정 기준
+
+- Strong Rail은 Phase 18-G 이후 large-screen `HomeScreen` 좌측 control surface 내부에 허용된 production surface다.
+- Phase 18-C/18-D의 "Strong Rail production 존재 자체 금지" guard는 stale 기준이므로 제거한다.
+- Strong Rail source guard는 존재 금지가 아니라 owner/source/read/query/API 확장 금지 기준으로 해석한다.
+- rail source는 기존 default Strong list future를 재사용하는 retarget/local jump surface 범위를 넘지 않는다.
+- rail tap은 Phase 18-G 기준인 `_showWordInLargeScreenExplorerPane(item.wordId)` retarget request로만 유지한다.
+- rail local jump는 Phase 18-I 기준인 rail-local scroll/index cache 동작으로만 유지하며 Explorer target을 변경하지 않는다.
+
+#### 유지 금지선
+
+Phase 18-J는 `ExplorerWorkspace` production shell mount, `ExplorerWorkspaceState` production source-of-truth 승격, `WordExplorerScreen` owner migration, `HomeScreen`의 graph/detail/selected/history owner 승격, repository/read owner migration, 새 repository read, 새 DB query, 신규 DTO/model/public API 추가, dependency 변경, graph selection sync, keyboard access, search/list continuity, 좌측 create/edit/write entry, `WordGraphScreen._showCreateWordFlow()` 좌측 호출, Strong Rail tap 이외 retarget 확장을 승인하지 않는다.
+
+이번 단계는 source guard와 문서 기록만 정리하므로 production UX 변경과 클라이언트 UI 재테스트 대상이 아니다.

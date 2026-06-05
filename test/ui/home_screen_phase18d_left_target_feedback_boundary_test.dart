@@ -15,6 +15,7 @@ void main() {
     late String smallWidthBranch;
     late String homeScreenWidgetSource;
     late String wordExplorerFieldSource;
+    late String retargetRailSource;
 
     setUpAll(() {
       homeSource = _readText(homeSourcePath);
@@ -48,6 +49,11 @@ void main() {
         wordExplorerSource,
         'class _WordExplorerScreenState extends State<WordExplorerScreen> {',
         'void initState() {',
+      );
+      retargetRailSource = _sourceBetween(
+        homeSource,
+        'Widget _buildStrongLevelOneRetargetRail()',
+        'Widget _buildDefaultStrongListView()',
       );
     });
 
@@ -119,10 +125,9 @@ void main() {
     });
 
     test('does not promote workspace, explorer, or repository ownership', () {
+      expect(homeSource, contains('Widget _buildStrongLevelOneRetargetRail()'));
       expect(homeSource, isNot(contains('ExplorerWorkspace(')));
       expect(homeSource, isNot(contains('ExplorerWorkspaceState')));
-      expect(homeSource, isNot(contains('StrongRail')));
-      expect(homeSource, isNot(contains('Strong Rail')));
       expect(homeSource, isNot(contains('_showCreateWordFlow')));
       expect(homeSource, isNot(contains('Icons.note_add')));
       expect(wordExplorerFieldSource, contains('late String _centerWordId;'));
@@ -133,6 +138,36 @@ void main() {
       );
       expect(homeSource, isNot(contains('late String _centerWordId;')));
       expect(homeSource, isNot(contains('String? _selectedWordId;')));
+      expect(
+        homeSource,
+        isNot(contains('WordDetailLikeDisplayItem? _selectedWordDisplayItem')),
+      );
+      expect(homeSource, isNot(contains('bool _isDetailLoading')));
+      expect(homeSource, isNot(contains('String? _detailError')));
+      expect(homeSource, isNot(contains('String? _detailUnavailableMessage')));
+      expect(
+        homeSource,
+        isNot(
+          contains('WordNavigationHistoryController<_ExplorerHistorySnapshot>'),
+        ),
+      );
+
+      for (final forbiddenRailBoundary in [
+        '_repository.',
+        'DatabaseService.',
+        'DataSource',
+        'DTO',
+        'typedef ',
+        'class ',
+        'WordExplorerScreen(',
+        'ExplorerWorkspaceState',
+        'late String _centerWordId',
+        'String? _selectedWordId',
+        'WordDetailLikeDisplayItem? _selectedWordDisplayItem',
+        '_history',
+      ]) {
+        expect(retargetRailSource, isNot(contains(forbiddenRailBoundary)));
+      }
     });
 
     test('does not add reads, queries, DTOs, models, or public API', () {

@@ -15,6 +15,7 @@ void main() {
     late String smallWidthBranch;
     late String largeWidthBranch;
     late String wordExplorerFieldSource;
+    late String retargetRailSource;
 
     setUpAll(() {
       homeSource = _readText(homeSourcePath);
@@ -39,6 +40,11 @@ void main() {
         wordExplorerSource,
         'class _WordExplorerScreenState extends State<WordExplorerScreen> {',
         'void initState() {',
+      );
+      retargetRailSource = _sourceBetween(
+        homeSource,
+        'Widget _buildStrongLevelOneRetargetRail()',
+        'Widget _buildDefaultStrongListView()',
       );
     });
 
@@ -105,9 +111,8 @@ void main() {
       expect(wordGraphSource, contains('WordEditScreen.fromSeed'));
     });
 
-    test('does not implement Strong Rail or promote workspace state', () {
-      expect(homeSource, isNot(contains('StrongRail')));
-      expect(homeSource, isNot(contains('Strong Rail')));
+    test('keeps Strong Rail outside owner and source-of-truth promotion', () {
+      expect(homeSource, contains('Widget _buildStrongLevelOneRetargetRail()'));
       expect(homeSource, isNot(contains('ExplorerWorkspace(')));
       expect(homeSource, isNot(contains('ExplorerWorkspaceState')));
       expect(wordExplorerFieldSource, contains('late String _centerWordId;'));
@@ -116,6 +121,23 @@ void main() {
         wordExplorerFieldSource,
         contains('final WordRepository _repository'),
       );
+
+      for (final forbiddenRailBoundary in [
+        '_repository.',
+        'DatabaseService.',
+        'DataSource',
+        'DTO',
+        'typedef ',
+        'class ',
+        'WordExplorerScreen(',
+        'ExplorerWorkspaceState',
+        'late String _centerWordId',
+        'String? _selectedWordId',
+        'WordDetailLikeDisplayItem? _selectedWordDisplayItem',
+        '_history',
+      ]) {
+        expect(retargetRailSource, isNot(contains(forbiddenRailBoundary)));
+      }
     });
 
     test('does not add reads, queries, DTOs, models, or public API', () {

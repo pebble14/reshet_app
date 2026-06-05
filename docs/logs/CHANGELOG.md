@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## 2026-06-05 Phase 18-J stale HomeScreen source guard cleanup
+
+- Phase 18-J는 Phase 18-C/18-D 시점의 과거 HomeScreen source guard가 Phase 18-G/I 이후 허용된 production Strong Rail 존재 자체를 금지하던 stale 기준을 정리한 cleanup 단계다.
+- `test/ui/home_screen_phase18c_left_control_surface_boundary_test.dart`와 `test/ui/home_screen_phase18d_left_target_feedback_boundary_test.dart`에서 `StrongRail` / `Strong Rail` 전역 부재 assertion을 제거하고, rail source가 owner/source-of-truth, repository/read, DB query, DTO/model/public API, graph/detail/selected/history owner로 확장되지 않는지 확인하도록 보정했다.
+- Strong Rail은 large-screen `HomeScreen` 좌측 control surface 내부의 허용된 production surface로 유지하되, rail tap retarget-only boundary와 rail local jump가 Explorer target을 변경하지 않는 boundary는 유지했다.
+- 이번 Phase에서는 production UX 변경, `lib/` production code 변경, graph selection sync, `WordExplorerScreen` callback 추가, `WordGraphScreen` callback 변경, 새 DB query, 새 repository read, 신규 DTO/model/public API, dependency 변경을 수행하지 않았다.
+- 명령어 기반 테스트 결과:
+  - `flutter test test/ui/home_screen_phase18c_left_control_surface_boundary_test.dart test/ui/home_screen_phase18d_left_target_feedback_boundary_test.dart --reporter expanded`: 통과, `+13`.
+  - `flutter test test/ui/home_screen_phase18f_left_control_boundary_guardrail_test.dart --reporter expanded`: 통과, `+8`.
+  - `flutter test test/ui/home_screen_phase18g_strong_rail_retarget_boundary_test.dart --reporter expanded`: 통과, `+5`.
+  - `flutter test test/ui/home_screen_phase18i_strong_rail_local_jump_boundary_test.dart --reporter expanded`: 통과, `+5`.
+  - `flutter test test/ui/home_screen_phase18a_large_split_shell_test.dart test/ui/home_screen_phase18b_left_control_pane_direction_test.dart test/ui/home_screen_phase18c_left_control_surface_boundary_test.dart test/ui/home_screen_phase18d_left_target_feedback_boundary_test.dart test/ui/home_screen_phase18f_left_control_boundary_guardrail_test.dart test/ui/home_screen_phase18g_strong_rail_retarget_boundary_test.dart test/ui/home_screen_phase18i_strong_rail_local_jump_boundary_test.dart --reporter expanded`: 통과, `+45`.
+  - `dart analyze test/ui/home_screen_phase18c_left_control_surface_boundary_test.dart test/ui/home_screen_phase18d_left_target_feedback_boundary_test.dart`: 통과, `No issues found!`.
+- UI 수동 테스트는 새로 요구하지 않는다. production code 변경이 없으므로 UI 재테스트 대상이 아니다.
+- main 병합과 origin/main push는 수행하지 않는다.
+
 ## 2026-06-05 Phase 18-I Strong Rail local jump minimum slice
 
 - Phase 18-I는 large-screen 검색창의 Strong 번호 형식 입력을 Strong Rail 내부 local jump로 연결한 최소 슬라이스다.
