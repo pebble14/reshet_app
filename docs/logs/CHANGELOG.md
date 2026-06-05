@@ -1,5 +1,24 @@
 # CHANGELOG
 
+## 2026-06-05 Phase 18-I Strong Rail local jump minimum slice
+
+- Phase 18-I는 large-screen 검색창의 Strong 번호 형식 입력을 Strong Rail 내부 local jump로 연결한 최소 슬라이스다.
+- rail jump는 `_strongRailScrollController`, `_strongRailListItemExtent`, `_currentStrongRailItems` 기반 helper로 분리했고, 기존 `_jumpToStrongInDefaultList(...)`와 `_scrollToDefaultStrongIndex(...)`는 default Strong list helper로 유지했다.
+- `_currentStrongRailItems`는 rail builder가 받은 기존 default Strong list future 결과를 rail-local index lookup cache로만 보관하며, 새 repository read나 DB query를 추가하지 않았다.
+- 검색 입력 기반 rail jump는 `_largeScreenExplorerWordId`를 변경하지 않고 `_showWordInLargeScreenExplorerPane(...)`을 호출하지 않으며, `WordExplorerScreen` remount를 발생시키지 않는다.
+- rail jump는 `_setVisibleWordListFuture(...)`, `_searchWordsFuture`, `_isShowingDefaultStrongList`를 변경하지 않으므로 search result list 초기화나 default Strong list 전환을 수행하지 않는다.
+- Phase 18-F guard는 default Strong jump helper와 rail local jump helper 검증 범위를 분리하도록 보정했고, Phase 18-G rail tap retarget-only boundary는 유지했다.
+- 이번 Phase에서는 graph selection 연동, `WordExplorerScreen` constructor callback 추가, `WordGraphScreen` callback 변경, 새 DB query, 새 repository read, 신규 DTO/model/public API, dependency 변경, `ExplorerWorkspace` production shell mount, `ExplorerWorkspaceState` source-of-truth 승격, `WordExplorerScreen` owner migration, 좌측 단어 추가 버튼, keyboard access, search/list continuity 구현을 수행하지 않았다.
+- 명령어 기반 테스트 결과:
+  - `flutter test test/ui/home_screen_phase18i_strong_rail_local_jump_boundary_test.dart`: 통과, `+5`.
+  - `flutter test test/ui/home_screen_phase18g_strong_rail_retarget_boundary_test.dart`: 통과, `+5`.
+  - `flutter test test/ui/home_screen_phase18f_left_control_boundary_guardrail_test.dart`: 통과, `+8`.
+  - `flutter test test/ui/home_screen_phase18a_large_split_shell_test.dart test/ui/home_screen_phase18b_left_control_pane_direction_test.dart test/ui/home_screen_phase18c_left_control_surface_boundary_test.dart test/ui/home_screen_phase18d_left_target_feedback_boundary_test.dart test/ui/home_screen_phase18f_left_control_boundary_guardrail_test.dart test/ui/home_screen_phase18g_strong_rail_retarget_boundary_test.dart test/ui/home_screen_phase18i_strong_rail_local_jump_boundary_test.dart`: 실행했으나 Phase 18-C/18-D의 과거 pre-rail guard가 Phase 18-G 이후 존재하는 Strong Rail 자체를 금지해 `+43 -2`로 실패했다. 이번 Phase에서는 해당 historical guard를 임의로 완화하지 않았다.
+  - `dart analyze lib/ui/home_screen.dart test/ui/home_screen_phase18f_left_control_boundary_guardrail_test.dart test/ui/home_screen_phase18g_strong_rail_retarget_boundary_test.dart test/ui/home_screen_phase18i_strong_rail_local_jump_boundary_test.dart`: 기존 `home_screen.dart`의 `_dbMessage` 미사용 warning 1건과 `print` 사용 info 4건으로 실패했다.
+  - `dart analyze test/ui/home_screen_phase18f_left_control_boundary_guardrail_test.dart test/ui/home_screen_phase18i_strong_rail_local_jump_boundary_test.dart`: 통과, `No issues found!`.
+  - `flutter analyze --no-fatal-infos --no-fatal-warnings lib/ui/home_screen.dart test/ui/home_screen_phase18f_left_control_boundary_guardrail_test.dart test/ui/home_screen_phase18i_strong_rail_local_jump_boundary_test.dart`: 종료 코드 0, 기존 lint 5건을 non-fatal로 보고했다.
+- main 병합과 origin/main push는 수행하지 않는다.
+
 ## 2026-06-05 Phase 18-G Strong Rail Level 1 retarget-only minimum slice
 
 - Phase 18-G는 large-screen `HomeScreen` 좌측 control surface 내부에 얇은 Strong Rail을 도입한 Level 1 retarget-only minimum slice다.

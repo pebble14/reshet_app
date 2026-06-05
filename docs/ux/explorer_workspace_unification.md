@@ -8657,3 +8657,23 @@ Phase 18-G는 large-screen `HomeScreen` 좌측 control surface 내부에 얇은 
 Phase 18-G는 keyboard access, search/list continuity, rail tap 기반 list scroll/jump, search result list 초기화, default/search list 전환, 좌측 단어 추가 버튼, `WordGraphScreen._showCreateWordFlow()` 좌측 호출을 승인하지 않는다.
 
 Phase 18-G는 `ExplorerWorkspace` production shell mount, `ExplorerWorkspaceState` production source-of-truth 승격, `WordExplorerScreen` owner migration, `HomeScreen`의 `WordExplorerScreen` center/selected/detail/history owner state 소유, repository/read owner migration, 새 repository read, 새 DB query, 신규 DTO/model/public API 추가, dependency 변경, persistence/restore/rollback authority migration, projection result 기반 production mutation/read/persistence/restore/rollback을 승인하지 않는다.
+
+### 17.110 Phase 18-I Strong Rail local jump minimum slice
+
+Phase 18-I는 large-screen `HomeScreen` 좌측 control surface에 이미 mount된 Strong Rail의 local jump를 최소 범위로 추가하는 단계다. 검색창에 Strong 번호 형식의 입력이 들어오면 large-screen에서는 기존 default Strong list scroll helper가 아니라 Strong Rail 내부 scroll 위치만 이동한다. 이 단계는 graph selection sync가 아니며, 그래프에서 단어를 선택했을 때 Rail이 이동하거나 highlight되는 동작은 포함하지 않는다.
+
+#### 구현 범위
+
+- Strong Rail local jump는 `HomeScreen` private state 안의 rail 전용 scroll mechanism으로만 처리한다.
+- rail scroll은 `_strongRailScrollController`와 rail item extent 기준 offset helper를 사용한다.
+- rail index lookup은 기존 default Strong list future로부터 rail builder가 받은 item 목록을 `_currentStrongRailItems`에 보관해 수행한다.
+- `_currentStrongRailItems`는 rail-local jump index lookup cache일 뿐이며 default list/search result list의 source-of-truth가 아니다.
+- `_normalizeStrongInput`, `_findStrongIndex`, `_formatDisplayStrong` 같은 순수 helper는 재사용할 수 있다.
+- 기존 `_jumpToStrongInDefaultList(...)`와 `_scrollToDefaultStrongIndex(...)`는 default Strong list helper로 유지하고, rail local jump는 별도 helper로 분리한다.
+- rail item tap의 current/target feedback은 Phase 18-G 기준인 `item.wordId == _largeScreenExplorerWordId` 비교를 유지한다.
+
+#### 금지선
+
+Phase 18-I의 검색 입력 기반 rail local jump는 `_largeScreenExplorerWordId`를 변경하지 않고, `_showWordInLargeScreenExplorerPane(...)`을 호출하지 않으며, `WordExplorerScreen` remount를 발생시키지 않는다. 또한 `_setVisibleWordListFuture(...)`, `_searchWordsFuture`, `_isShowingDefaultStrongList`를 변경하지 않으므로 search result list를 초기화하거나 default Strong list로 전환하지 않는다.
+
+Phase 18-I는 graph selection 연동, `WordExplorerScreen` constructor callback 추가, `WordGraphScreen` callback 변경, 새 DB query, 새 repository read, 신규 DTO/model/public API 추가, dependency 변경, `ExplorerWorkspace` production shell mount, `ExplorerWorkspaceState` production source-of-truth 승격, `WordExplorerScreen` owner migration, `HomeScreen`의 graph/detail owner 승격, 좌측 단어 추가 버튼, keyboard access, search/list continuity 구현을 승인하지 않는다.

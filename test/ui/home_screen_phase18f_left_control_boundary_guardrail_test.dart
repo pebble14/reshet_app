@@ -23,7 +23,9 @@ void main() {
     late String largeRetargetRequestSource;
     late String smallWidthBranch;
     late String largeSplitShellSource;
-    late String strongJumpHelperSource;
+    late String strongSearchChangedSource;
+    late String defaultStrongJumpHelperSource;
+    late String railLocalJumpHelperSource;
 
     setUpAll(() {
       homeSource = _readText(homeSourcePath);
@@ -76,9 +78,19 @@ void main() {
         'return Row(',
         'void _runSearch() {',
       );
-      strongJumpHelperSource = _sourceBetween(
+      strongSearchChangedSource = _sourceBetween(
         homeSource,
         'void _handleSearchChanged(String value) {',
+        'void _jumpToStrongInDefaultList(',
+      );
+      defaultStrongJumpHelperSource = _sourceBetween(
+        homeSource,
+        'void _jumpToStrongInDefaultList(',
+        'void _jumpToStrongInRail(',
+      );
+      railLocalJumpHelperSource = _sourceBetween(
+        homeSource,
+        'void _jumpToStrongInRail(',
         'String _buildDefaultStrongListTitle(HomeDefaultStrongListItem item)',
       );
     });
@@ -256,35 +268,81 @@ void main() {
     });
 
     test(
-      'strong jump helper stays within default list scroll helper scope',
+      'strong jump helpers keep default list and rail local scopes separated',
       () {
         expect(
-          strongJumpHelperSource,
-          contains('_jumpToStrongInDefaultList(normalizedStrong'),
+          strongSearchChangedSource,
+          contains('_jumpToStrongInRail(normalizedStrong'),
         );
         expect(
-          strongJumpHelperSource,
+          strongSearchChangedSource,
+          contains('_jumpToStrongInDefaultList('),
+        );
+        expect(strongSearchChangedSource, contains('normalizedStrong,'));
+
+        expect(
+          defaultStrongJumpHelperSource,
           contains('_scrollToDefaultStrongIndex(targetIndex);'),
         );
         expect(
-          strongJumpHelperSource,
+          defaultStrongJumpHelperSource,
           contains('_showStrongJumpNotFoundSnackBar(normalizedStrong);'),
         );
         expect(
-          strongJumpHelperSource,
+          defaultStrongJumpHelperSource,
+          isNot(contains('_scrollToStrongRailIndex')),
+        );
+        expect(
+          defaultStrongJumpHelperSource,
+          isNot(contains('_strongRailScrollController')),
+        );
+        expect(
+          defaultStrongJumpHelperSource,
+          isNot(contains('_currentStrongRailItems')),
+        );
+
+        expect(
+          railLocalJumpHelperSource,
+          contains('_scrollToStrongRailIndex(targetIndex);'),
+        );
+        expect(railLocalJumpHelperSource, contains('_currentStrongRailItems'));
+        expect(
+          railLocalJumpHelperSource,
+          isNot(contains('_scrollToDefaultStrongIndex')),
+        );
+        expect(
+          railLocalJumpHelperSource,
+          isNot(contains('_listScrollController')),
+        );
+
+        for (final jumpHelperSource in [
+          defaultStrongJumpHelperSource,
+          railLocalJumpHelperSource,
+        ]) {
+          expect(
+            jumpHelperSource,
+            isNot(contains('_showWordInLargeScreenExplorerPane')),
+          );
+          expect(
+            jumpHelperSource,
+            isNot(contains('_largeScreenExplorerWordId')),
+          );
+          expect(jumpHelperSource, isNot(contains('Navigator.push')));
+          expect(jumpHelperSource, isNot(contains('_repository.')));
+          expect(jumpHelperSource, isNot(contains('WordExplorerScreen(')));
+          expect(jumpHelperSource, isNot(contains('ExplorerWorkspaceState')));
+        }
+
+        expect(
+          strongSearchChangedSource,
           isNot(contains('_showWordInLargeScreenExplorerPane')),
         );
         expect(
-          strongJumpHelperSource,
+          strongSearchChangedSource,
           isNot(contains('_largeScreenExplorerWordId')),
         );
-        expect(strongJumpHelperSource, isNot(contains('Navigator.push')));
-        expect(strongJumpHelperSource, isNot(contains('_repository.')));
-        expect(strongJumpHelperSource, isNot(contains('WordExplorerScreen(')));
-        expect(
-          strongJumpHelperSource,
-          isNot(contains('ExplorerWorkspaceState')),
-        );
+        expect(strongSearchChangedSource, isNot(contains('Navigator.push')));
+        expect(strongSearchChangedSource, isNot(contains('_repository.')));
       },
     );
 

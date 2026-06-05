@@ -56,6 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
 
   static const double _defaultStrongListItemExtent = 56.0;
+  static const double _strongRailListItemExtent = 46.0;
   static const double _largeScreenSplitBreakpoint = 900.0;
   static const String _largeScreenDefaultExplorerWordId = 'H0001_0000';
   static const Duration _strongJumpDebounceDuration = Duration(
@@ -65,11 +66,13 @@ class _HomeScreenState extends State<HomeScreen> {
   static const String _firstRunBrandIntroSeenKey = 'first_run_brand_intro_seen';
 
   final ScrollController _listScrollController = ScrollController();
+  final ScrollController _strongRailScrollController = ScrollController();
   Timer? _strongJumpDebounceTimer;
 
   Future<List<HomeDefaultStrongListItem>>? _defaultStrongListFuture;
   Future<List<HomeSearchResultDisplayItem>>? _searchWordsFuture;
   List<HomeDefaultStrongListItem> _currentDefaultStrongItems = const [];
+  List<HomeDefaultStrongListItem> _currentStrongRailItems = const [];
   bool _isShowingDefaultStrongList = true;
   String _largeScreenExplorerWordId = _largeScreenDefaultExplorerWordId;
 
@@ -185,23 +188,71 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  double _calculateStrongRailOffset(int targetIndex) {
+    return targetIndex * _strongRailListItemExtent;
+  }
+
+  void _scrollToStrongRailIndex(int targetIndex) {
+    void animateToIndex() {
+      if (!_strongRailScrollController.hasClients) {
+        return;
+      }
+
+      final maxScrollExtent =
+          _strongRailScrollController.position.maxScrollExtent;
+      final targetOffset = _calculateStrongRailOffset(targetIndex);
+      final clampedOffset = targetOffset.clamp(0.0, maxScrollExtent).toDouble();
+
+      _strongRailScrollController.animateTo(
+        clampedOffset,
+        duration: const Duration(milliseconds: 220),
+        curve: Curves.easeInOut,
+      );
+    }
+
+    if (_strongRailScrollController.hasClients) {
+      animateToIndex();
+      return;
+    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+
+      animateToIndex();
+    });
+  }
+
   void _cancelPendingStrongJump() {
     _strongJumpDebounceTimer?.cancel();
     _strongJumpDebounceTimer = null;
   }
 
-  bool _canRunAutoStrongJump(String input) {
-    return _isShowingDefaultStrongList &&
+  bool _isCurrentLayoutLargeScreen() {
+    final mediaQuery = MediaQuery.maybeOf(context);
+    if (mediaQuery == null) {
+      return false;
+    }
+
+    return _isLargeScreenWidth(mediaQuery.size.width);
+  }
+
+  bool _canRunAutoStrongRailJump(String input) {
+    return _isCurrentLayoutLargeScreen() &&
+        _currentStrongRailItems.isNotEmpty &&
+        _isStrongJumpInput(input);
+  }
+
+  bool _canRunAutoDefaultStrongJump(String input) {
+    return !_isCurrentLayoutLargeScreen() &&
+        _isShowingDefaultStrongList &&
         _currentDefaultStrongItems.isNotEmpty &&
         _isStrongJumpInput(input);
   }
 
   void _handleSearchChanged(String value) {
     _cancelPendingStrongJump();
-
-    if (!_isShowingDefaultStrongList) {
-      return;
-    }
 
     final scheduledInput = value.trim();
     if (!_isStrongJumpInput(scheduledInput)) {
@@ -220,12 +271,18 @@ class _HomeScreenState extends State<HomeScreen> {
         return;
       }
 
-      if (!_canRunAutoStrongJump(currentInput)) {
+      final normalizedStrong = _normalizeStrongInput(currentInput);
+      if (_canRunAutoStrongRailJump(currentInput)) {
+        _jumpToStrongInRail(normalizedStrong, showNotFoundFeedback: false);
         return;
       }
 
-      final normalizedStrong = _normalizeStrongInput(currentInput);
-      _jumpToStrongInDefaultList(normalizedStrong, showNotFoundFeedback: false);
+      if (_canRunAutoDefaultStrongJump(currentInput)) {
+        _jumpToStrongInDefaultList(
+          normalizedStrong,
+          showNotFoundFeedback: false,
+        );
+      }
     });
   }
 
@@ -245,6 +302,24 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     _scrollToDefaultStrongIndex(targetIndex);
+  }
+
+  void _jumpToStrongInRail(
+    String normalizedStrong, {
+    bool showNotFoundFeedback = true,
+  }) {
+    final targetIndex = _findStrongIndex(
+      _currentStrongRailItems,
+      normalizedStrong,
+    );
+    if (targetIndex < 0) {
+      if (showNotFoundFeedback) {
+        _showStrongJumpNotFoundSnackBar(normalizedStrong);
+      }
+      return;
+    }
+
+    _scrollToStrongRailIndex(targetIndex);
   }
 
   String _buildDefaultStrongListTitle(HomeDefaultStrongListItem item) {
@@ -628,11 +703,14 @@ class _HomeScreenState extends State<HomeScreen> {
         }
 
         final items = snapshot.data ?? const <HomeDefaultStrongListItem>[];
+        _currentStrongRailItems = items;
         if (items.isEmpty) {
           return const SizedBox.shrink();
         }
 
         return ListView.builder(
+          controller: _strongRailScrollController,
+          itemExtent: _strongRailListItemExtent,
           itemCount: items.length,
           itemBuilder: (context, index) {
             final item = items[index];
@@ -1146,6 +1224,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void dispose() {
     _cancelPendingStrongJump();
+    _strongRailScrollController.dispose();
     _listScrollController.dispose();
     _searchController.dispose();
     super.dispose();
