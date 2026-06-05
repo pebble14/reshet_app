@@ -8727,3 +8727,69 @@ selection clear도 token을 무효화하고 빈 Strong callback으로 passive se
 Phase 18-K는 graph selection이 `_largeScreenExplorerWordId`를 변경하거나 `_showWordInLargeScreenExplorerPane(...)`를 호출하는 흐름을 승인하지 않는다. graph selection은 `WordExplorerScreen` key 또는 `initialWordId`를 변경하지 않으며 remount를 유발하지 않는다.
 
 이번 단계는 `HomeScreen`의 graph/detail/selected/history owner 승격, `ExplorerWorkspace` production shell mount, `ExplorerWorkspaceState` production source-of-truth 승격, 새 DB query, 새 repository read, 신규 DTO/model 추가, dependency 변경, persistence/restore/rollback authority migration, projection result 기반 production mutation/read/persistence/restore/rollback, 좌측 create/edit/write entry, keyboard access, search/list continuity 구현을 승인하지 않는다.
+
+### 17.113 Phase 18-L Search / Strong Jump role separation audit
+
+Phase 18-L은 `Search / Strong Jump role separation audit`를 수행한 read-only audit 단계다. 이번 단계에서는 production code, test code, DB, dependency, 문서 외 파일을 변경하지 않고, Phase 18-K 이후 `HomeScreen`의 일반 검색 입력과 Strong Rail local jump 입력 역할을 실제 코드 기준으로 확인했다.
+
+#### 확인한 현재 결합 상태
+
+- 현재 일반 검색과 Strong jump는 같은 `_searchController`, 같은 `TextField`, 같은 입력 surface를 공유한다.
+- 같은 입력 surface는 large-screen 상단 control surface의 `TextField`이며, `labelText`는 현재 `검색 (표기/의미/스트롱 번호)`다.
+- Strong 번호 형식 입력의 `onChanged` 경로는 `_handleSearchChanged(...)`에서 시작해 `_isStrongJumpInput(...)`, debounce, `_normalizeStrongInput(...)`, `_canRunAutoStrongRailJump(...)`, `_jumpToStrongInRail(...)`로 이어진다.
+- 일반 검색 실행 경로는 `_runSearch(...)`, `_setVisibleWordListFuture(...)`, `_createSearchWordsFuture(...)`를 통해 기존 `_repository.searchStrongExactMap(...)` 또는 `_repository.searchWordsMap(...)`를 사용한다.
+- 일반 검색 후보 item tap은 large-screen에서 `_showWordInLargeScreenExplorerPane(wordId)`를 호출해 `_largeScreenExplorerWordId`를 갱신하고, `WordExplorerScreen(key: ValueKey(_largeScreenExplorerWordId), initialWordId: _largeScreenExplorerWordId)` remount로 우측 Explorer retarget을 수행한다.
+
+#### rail-local jump 경계 확인
+
+Strong-like 입력의 `onChanged` 기반 rail-local jump 경로는 일반 검색 실행/retarget 경로와 분리되어 있다.
+
+- `_jumpToStrongInRail(...)`은 `_currentStrongRailItems`에서 display Strong 번호 index를 찾고 `_scrollToStrongRailIndex(...)`만 호출한다.
+- `_scrollToStrongRailIndex(...)`는 `_strongRailScrollController`와 `_strongRailListItemExtent` 기반으로 Strong Rail scroll 위치만 이동한다.
+- 이 경로는 `_largeScreenExplorerWordId`를 변경하지 않는다.
+- 이 경로는 `_showWordInLargeScreenExplorerPane(...)`를 호출하지 않는다.
+- 이 경로는 `_searchWordsFuture`, `_setVisibleWordListFuture(...)`, `_isShowingDefaultStrongList`를 변경하지 않는다.
+- 이 경로는 검색 결과 목록 초기화, default/search list 전환, `WordExplorerScreen` key 변경, Explorer pane remount를 유발하지 않는다.
+
+#### 위험 지점
+
+현재 위험 지점은 역할이 다른 두 입력 의미가 같은 입력란을 공유한다는 점이다. Strong-like query를 입력하는 동안 `onChanged` 경로는 rail-local jump로 분리되어 있지만, 같은 입력란에서 submit 또는 검색 button을 실행하면 `_runSearch(...)` 경로로 들어갈 수 있다. 이 경우 Strong 번호 입력이 일반 검색 실행으로 해석되어 검색 결과 목록 전환을 유발할 수 있다.
+
+따라서 Phase 18-L audit 결론은 "rail-local jump helper 자체는 retarget/list 전환과 분리되어 있으나, 입력 surface/controller 공유가 UX 역할 혼동을 만들 수 있다"로 정리한다.
+
+#### Phase 18-M 최소 구현 후보
+
+Phase 18-M은 아직 확정 구현 단계가 아니며, 아래 항목은 최소 구현 후보로만 기록한다. 구현 여부와 정확한 범위는 별도 Phase에서 다시 확정해야 한다.
+
+포함 후보:
+
+- large-screen `HomeScreen` control surface 한정으로 일반 검색 field와 Strong/스트롱 compact field를 분리한다.
+- Strong/스트롱 field label 후보는 `Strong/스트롱`으로 둔다.
+- Strong/스트롱 field placeholder 기본 후보는 `H1 또는 G26`으로 둔다.
+- 폭 부족 시 placeholder 축약 후보는 `H1, G26`으로 둔다.
+- Strong/스트롱 field 입력은 rail-local jump만 수행한다.
+- 일반 검색 field는 기존 검색 후보 목록 표시와 검색 후보 item tap의 Explorer retarget 흐름을 유지한다.
+
+제외 후보:
+
+- small-screen 흐름 변경
+- 새 DB query
+- 새 repository read/API
+- 신규 DTO/model
+- dependency 변경
+- keyboard access
+- search ranking 개선
+- recent search / persistence
+- 좌측 create/edit/write entry 추가
+- graph/detail/history owner migration
+- `ExplorerWorkspace` production shell mount
+- `ExplorerWorkspaceState` production source-of-truth 승격
+
+#### Phase 18-M guardrail/test 후보
+
+Phase 18-M을 별도 구현 Phase로 진행할 경우 guardrail 후보는 아래 범위로 제한한다.
+
+- Strong/스트롱 field handler source에 `_showWordInLargeScreenExplorerPane(...)`, `_largeScreenExplorerWordId =`, `_searchWordsFuture`, `_setVisibleWordListFuture(...)`, `_isShowingDefaultStrongList =`, `WordExplorerScreen(`, `Navigator.push`, `_repository.`가 포함되지 않아야 한다.
+- 일반 검색 field는 기존 `_runSearch(...)`, `_clearSearch(...)`, `_createSearchWordsFuture(...)`, 검색 결과 list surface, 검색 후보 item tap retarget 경로를 유지해야 한다.
+- small-screen branch는 기존 `return homePane;` 흐름과 기존 검색 field 흐름을 유지해야 한다.
+- 새 DB query, 새 repository read/API, 신규 DTO/model, dependency 변경이 없어야 한다.

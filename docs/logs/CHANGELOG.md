@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## 2026-06-05 Phase 18-L Search / Strong Jump role separation audit
+
+- Phase 18-L은 `Search / Strong Jump role separation audit`를 수행한 read-only audit 문서화 단계다. 이번 작업에서는 production code, test code, DB, dependency를 변경하지 않았다.
+- 현재 일반 검색과 Strong jump는 같은 `_searchController`, 같은 `TextField`, 같은 입력 surface를 공유하는 것으로 정리했다.
+- Strong-like 입력의 `onChanged` 경로는 `_handleSearchChanged(...)`에서 `_jumpToStrongInRail(...)`로 이어지는 rail-local jump 경로로 분리되어 있다.
+- `_jumpToStrongInRail(...)` 경로는 `_largeScreenExplorerWordId`를 변경하지 않고, `_showWordInLargeScreenExplorerPane(...)`를 호출하지 않으며, 검색 결과 목록 초기화, default/search list 전환, Explorer pane remount를 유발하지 않는다고 기록했다.
+- 현재 위험 지점은 같은 입력란에서 Strong-like query 입력 후 submit 또는 search button 경로가 `_runSearch(...)`로 들어갈 수 있다는 점으로 정리했다.
+- Phase 18-M은 확정 구현이 아니라 최소 구현 후보로만 기록했다. 후보 방향은 large-screen `HomeScreen` control surface에서 일반 검색 field와 `Strong/스트롱` compact field를 분리하고, Strong/스트롱 field는 rail-local jump 전용으로 제한하는 것이다.
+- 일반 검색 field는 기존 검색 후보 목록과 검색 후보 item tap의 Explorer retarget 흐름을 유지하는 후보로 기록했다.
+- Phase 18-M 최소 구현 후보는 새 DB query, 새 repository read/API, 신규 DTO/model, dependency 변경 없이 가능하다고 audit 결과를 정리했다.
+- small-screen 흐름 변경, keyboard access, search ranking 개선, recent search/persistence, 좌측 create/edit/write entry, graph/detail/history owner migration, `ExplorerWorkspace` production shell mount, `ExplorerWorkspaceState` production source-of-truth 승격은 제외 후보로 유지했다.
+- 명령어 기반 확인은 문서 diff, 변경 파일 목록, 브랜치 상태 확인으로 제한한다.
+- main 병합과 origin/main push는 수행하지 않는다.
+
 ## 2026-06-05 Phase 18-K graph selection Strong Rail passive sync minimum slice
 
 - Phase 18-K는 large-screen `HomeScreen` 우측 `WordExplorerScreen` 내부 graph selection을 좌측 Strong Rail에 passive하게 반영하는 minimum slice다.
