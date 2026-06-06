@@ -8999,3 +8999,23 @@ small-screen `homePane → detail route`는 즉시 유지한다. small-screen에
 Phase 20-A는 production code, test/guardrail, DB/data/sql, dependency, `pubspec.yaml`, `pubspec.lock`, route redirect, standalone route 제거, UI를 변경하지 않는다. large-screen 상단 검색, 좌측 일반 검색 입력 부재, small-screen 기존 home flow, search submit 비-retarget, `Strong/스트롱` rail-local jump, graph selection passive sync, `WordExplorerScreen` graph/detail/selected/history owner 유지, `ExplorerWorkspace` production shell mount 금지, `ExplorerWorkspaceState` source-of-truth 승격 금지의 Phase 19 경계를 유지한다.
 
 Phase 20-A는 docs/audit-only이므로 Flutter test와 전체 analyze를 재실행하지 않는다. 기존 전체 analyze의 `47 issues found`, exit code `1`은 선행 기술 부채이며 Phase 20-A에서 새로 발생한 문제가 아니다.
+
+### 17.120 Phase 20-B Search Result Surface Contract Audit active boundary
+
+Phase 20-B는 Phase 20-A에서 확인한 large-screen 검색 결과/default Strong 목록의 좌측 surface 역할 충돌을 검색 결과 surface 계약 관점에서 구체화한 read-only docs/audit 단계다. 상세 source 근거와 판단은 `docs/ux/explorer_workspace_phase20b_search_result_surface_contract_audit.md`에 reference/context 기록으로 남긴다.
+
+현재 일반 검색 query, `_runSearch(...)`, `_clearSearch(...)`, `_searchWordsFuture`, `_isShowingDefaultStrongList`는 계속 `HomeScreen` private state가 소유한다. large-screen 일반 검색 입력은 workspace 상단 `homeWorkspaceSearchSurface`에 있고, 검색 결과와 default Strong 목록은 같은 좌측 `homeWordListSurface`를 공유한다. small-screen은 기존 `homePane` 안에서 일반 검색 입력과 default/search 목록을 함께 유지한다.
+
+현재 공유 구조에는 역할 충돌이 있다. 검색 결과는 특정 query에 종속된 semantic candidate/result entry지만 default Strong 목록은 empty-query browse/discovery 후보이다. 두 목록이 같은 좌측 surface를 공유하면서 좌측 `homePane`은 Strong Rail 기반 persistent navigation/orientation 보조와 global search result/default browse 표시를 함께 담당한다.
+
+large-screen 검색 결과 surface는 `query-bound transient result surface` 후보로 정의한다. 검색 submit은 result surface 갱신 또는 표시까지만 허용하며 submit만으로 `_largeScreenExplorerWordId`를 변경하거나 `_showWordInLargeScreenExplorerPane(...)`를 호출하지 않는다. 명시적 검색 후보 item 본문 tap은 기존 `_showWordInLargeScreenExplorerPane(wordId)` Explorer retarget 경로를 유지해야 한다. exact presentation, open/close lifecycle, dismiss, focus 복귀, search state owner 이동은 Phase 20-B에서 확정하거나 구현하지 않는다.
+
+default Strong 목록은 search result가 아니라 `browse/discovery surface` 후보로 정의한다. Strong Rail은 persistent navigation/orientation 보조이고 default Strong 목록은 empty-query browse/discovery 후보이므로 같은 Strong data를 사용해도 역할은 같지 않다. Phase 20-B에서는 default Strong 목록의 삭제, 축소, 이동 또는 대체를 결론 내리지 않으며 small-screen 기존 home browse/default 목록 역할을 유지한다.
+
+`Strong/스트롱` 입력은 좌측 rail-local jump 전용으로 유지하고 `_runSearch(...)`, 검색 결과/default 목록 전환, Explorer retarget/remount와 결합하지 않는다. graph selection passive sync도 `_largeScreenExplorerWordId`를 변경하거나 `_showWordInLargeScreenExplorerPane(...)`를 호출하지 않는다. `WordExplorerScreen`은 graph center, selected word, detail target, history의 production owner로 유지한다.
+
+Phase 20-B는 production code, test code, DB/data/sql, dependency, `pubspec.yaml`, `pubspec.lock`, UI와 route를 변경하지 않는다. large-screen transient search result surface 구현, `ExplorerWorkspace` production shell mount, `ExplorerWorkspaceState` production source-of-truth 승격, small-screen `homePane → detail route` 변경을 수행하지 않는다. 검색 결과/default 목록은 현재 좌측 control surface에 유지한다.
+
+Phase 20-C 이후 후보는 large-screen query-bound transient result surface 최소 presentation, large-screen 검색 결과 presentation과 현재 공유 목록 surface의 responsive 분리, query/loading/no-result/clear/dismiss lifecycle 설계, 명시적 후보 tap retarget과 focus 복귀 계약, 관련 guardrail 보강, default Strong browse/discovery surface 별도 설계다. 각 후보는 별도 설계와 승인 없이 구현하지 않는다.
+
+Phase 20-B는 UI를 변경하지 않으므로 Codex는 UI 수동 테스트를 수행하지 않는다. 후속 구현 phase에서는 large-screen submit 비-retarget, 명시적 후보 item tap retarget, default browse/search result 역할 분리, Strong rail-local jump, graph passive sync, small-screen 기존 detail route를 클라이언트 UI 체크리스트로 확인해야 한다.

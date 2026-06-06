@@ -1,5 +1,20 @@
 # CHANGELOG
 
+## 2026-06-06 Phase 20-B Search Result Surface Contract Audit
+
+- Phase 20-A에서 확인한 large-screen 검색 결과/default Strong 목록의 좌측 surface 역할 충돌을 검색 결과 surface 계약 관점에서 구체화하는 read-only docs/audit를 진행했다.
+- 현재 일반 검색 state와 목록 전환은 `HomeScreen` private state가 소유하고, large-screen 일반 검색 입력은 workspace 상단에 있으며, 검색 결과와 default Strong 목록은 같은 좌측 `homeWordListSurface`를 공유한다는 production 경계를 확인했다.
+- 검색 결과는 특정 query에 종속된 semantic candidate/result entry이고 default Strong 목록은 empty-query browse/discovery 후보이므로, 같은 좌측 surface를 공유하는 현재 구조가 persistent navigation/orientation 보조와 global result/default browse 표시 책임을 함께 맡는 역할 충돌을 기록했다.
+- large-screen 검색 결과 surface를 `query-bound transient result surface` 후보로 정의했다. 검색 submit은 result 갱신 또는 표시까지만 허용하고, submit만으로 Explorer를 retarget하지 않으며, large-screen 검색 후보 item 본문 tap과 같은 사용자의 명시적 선택 동작에서만 기존 Explorer retarget 경로를 사용한다는 계약을 고정했다.
+- default Strong 목록은 search result가 아니라 `browse/discovery surface` 후보로 정의했다. Phase 20-B에서는 삭제, 축소, 이동 또는 대체를 결론 내리지 않고 역할 재정의 대상으로만 기록했다.
+- large-screen transient result surface의 exact presentation, lifecycle, dismiss/focus 복귀, search state owner 이동과 실제 surface 이동 구현은 Phase 20-C 이후 별도 설계·승인 후보로 넘겼다.
+- `Strong/스트롱` rail-local jump, graph selection passive sync, `WordExplorerScreen` graph/detail/selected/history owner, `ExplorerWorkspace` production mount 금지, `ExplorerWorkspaceState` source-of-truth 승격 금지 계약을 유지했다.
+- small-screen 일반 검색 입력과 검색 결과 item tap의 기존 `homePane → detail route` 흐름을 유지하며 Phase 20-B에서 변경하지 않았다.
+- production code, test code, DB/data/sql, dependency, `pubspec.yaml`, `pubspec.lock`, UI와 route는 변경하지 않았다.
+- Phase 20-B는 UI 변경이 없으므로 Codex가 UI 수동 테스트를 수행하지 않았다. Phase 20-C 이후 구현 시 사용할 클라이언트 UI 체크리스트 후보를 상세 감사 문서에 기록했다.
+- 전체 `flutter analyze --no-fatal-infos --no-fatal-warnings`는 기존 `47 issues found`, exit code `1` 선행 기술 부채와 섞지 않기 위해 실행하지 않았다.
+- 상세 감사 기록은 `docs/ux/explorer_workspace_phase20b_search_result_surface_contract_audit.md`에 추가했고, active boundary 요약은 `docs/ux/explorer_workspace_unification.md`에 반영했다.
+
 ## 2026-06-06 Phase 20-A Surface & Navigation Role Audit
 
 - Phase 19 이후 large-screen workspace의 상단 검색 surface, 좌측 control surface, graph/detail standalone route와 small-screen flow의 장기 역할을 실제 production source 기준으로 확인한 read-only docs/audit를 진행했다.
