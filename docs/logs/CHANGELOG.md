@@ -1,5 +1,25 @@
 # CHANGELOG
 
+## 2026-06-06 Phase 19-C 상단 검색 surface guardrail hardening 및 종료 audit
+
+- Phase 19-B 이후 large-screen 상단 검색 surface, 좌측 control surface, Strong Rail, 우측 Explorer owner 경계가 다시 섞이지 않도록 guardrail과 문서를 보강했다.
+- `test/ui/home_screen_phase18m_search_strong_jump_role_separation_test.dart`의 넓은 stale source slice를 `homeSearchControlArea`, `homeStrongControlArea`, `homeWorkspaceSearchSurface`, `homePane`별 검사로 보정했다.
+- Phase 18-M guard에서 Strong changed/submitted/run handler를 각각 분리해 `_runSearch(...)`, 검색 결과/default 목록 전환, Explorer retarget/remount, repository read와 결합되지 않는 경계를 고정했다.
+- `test/ui/home_screen_phase19c_top_search_surface_guardrail_hardening_test.dart`를 추가해 large-screen 상단 검색 mount, 좌측 Strong/Rail/list 유지, small-screen 기존 흐름, search submit 비-retarget, graph passive sync, `WordExplorerScreen` owner, `ExplorerWorkspace` production mount 금지, `ExplorerWorkspaceState` source-of-truth 승격 금지를 확인한다.
+- production code, DB, repository read/API, DTO/model, dependency, UX 기능은 변경하지 않았다.
+- keyboard access, command palette, search ranking, recent search, persistence, AppBar write action과 상단 검색 surface 결합은 구현하지 않았다.
+- 명령어 기반 검증 결과:
+  - Phase 19-B 신규 guardrail 단독 실행: 통과, `+7`, `All tests passed!`.
+  - Phase 18-C/M 및 Phase 19-B source guard 묶음: 통과, `+21`, `All tests passed!`.
+  - Phase 18-N runtime widget guardrail 단독 실행: 통과, `+3`, `All tests passed!`.
+  - Phase 17-B/C 및 Phase 18-A/B/C/D/F/G/I/K/M/N, Phase 19-B guardrail 묶음: 통과, `+82`, `All tests passed!`.
+  - Phase 19-C 신규 guardrail 단독 실행: 통과, `+7`, `All tests passed!`.
+  - 보정한 Phase 18-M 및 신규 Phase 19-C guardrail 묶음: 통과, `+13`, `All tests passed!`.
+  - 전체 `flutter analyze --no-fatal-infos --no-fatal-warnings`: 기존 `tool/verify_graph_batch_context.dart`, `tool/verify_graph_center_context.dart` API 불일치 error 13건과 기존 warning/info를 포함해 `47 issues found`, exit code `1`. Phase 19-C 신규 문제는 확인되지 않았다.
+- Phase 19-B UI 수동 테스트는 클라이언트 기준으로 통과했다. Phase 19-C는 production UI 변경이 없으므로 Codex는 UI 수동 테스트를 수행하지 않았으며 재확인은 필요하지 않다고 판단했다.
+- 승인된 Phase 19 목표와 검증 기준이 충족되어 Phase 19는 종료 가능하다고 판단했다.
+- 커밋, main 병합, origin push는 수행하지 않았다.
+
 ## 2026-06-06 Phase 19-B 상단 검색 surface presentation 최소 구현
 
 - large-screen `HomeScreen`에서 일반 검색 입력을 좌측 control surface 내부에서 좌우 split 전체 위의 workspace 상단 surface로 시각 재배치했다.

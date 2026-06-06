@@ -9,8 +9,13 @@ void main() {
     late String homeSource;
     late String homeStateFieldSource;
     late String strongJumpHandlerSource;
+    late String strongJumpSubmittedHandlerSource;
+    late String runStrongRailJumpSource;
     late String passiveSelectedHandlerSource;
-    late String searchControlAreaSource;
+    late String homeSearchControlAreaSource;
+    late String homeStrongControlAreaSource;
+    late String homeWorkspaceSearchSurfaceSource;
+    late String homePaneSource;
     late String runSearchSource;
     late String smallWidthBranch;
 
@@ -24,6 +29,16 @@ void main() {
       strongJumpHandlerSource = _sourceBetween(
         homeSource,
         'void _handleStrongRailJumpChanged(String value) {',
+        'void _handleStrongRailJumpSubmitted(String value) {',
+      );
+      strongJumpSubmittedHandlerSource = _sourceBetween(
+        homeSource,
+        'void _handleStrongRailJumpSubmitted(String value) {',
+        'void _runStrongRailJump(String input, {required bool showNotFoundFeedback}) {',
+      );
+      runStrongRailJumpSource = _sourceBetween(
+        homeSource,
+        'void _runStrongRailJump(String input, {required bool showNotFoundFeedback}) {',
         'void _jumpToStrongInDefaultList(',
       );
       passiveSelectedHandlerSource = _sourceBetween(
@@ -31,10 +46,25 @@ void main() {
         'void _handleExplorerSelectedStrongWordChanged(',
         'String _buildDefaultStrongListTitle(HomeDefaultStrongListItem item)',
       );
-      searchControlAreaSource = _sourceBetween(
+      homeSearchControlAreaSource = _sourceBetween(
         homeSource,
         'final homeSearchControlArea = Padding(',
+        'final homeStrongControlArea = Padding(',
+      );
+      homeStrongControlAreaSource = _sourceBetween(
+        homeSource,
+        'final homeStrongControlArea = Padding(',
+        'final homeWorkspaceSearchSurface = DecoratedBox(',
+      );
+      homeWorkspaceSearchSurfaceSource = _sourceBetween(
+        homeSource,
+        'final homeWorkspaceSearchSurface = DecoratedBox(',
         'final Widget homeWordListSurface =',
+      );
+      homePaneSource = _sourceBetween(
+        homeSource,
+        'final homePane = Column(',
+        'if (!isLargeScreen) {',
       );
       runSearchSource = _sourceBetween(
         homeSource,
@@ -66,64 +96,110 @@ void main() {
     });
 
     test(
-      'large-screen control surface separates search field and strong field',
+      'large-screen mounts search above workspace and Strong on the left',
       () {
-        expect(searchControlAreaSource, contains('child: isLargeScreen'));
         expect(
-          searchControlAreaSource,
+          homeSearchControlAreaSource,
           contains('controller: _searchController'),
         );
         expect(
-          searchControlAreaSource,
-          contains('controller: _strongJumpController'),
+          homeSearchControlAreaSource,
+          isNot(contains('controller: _strongJumpController')),
         );
-        expect(searchControlAreaSource, contains("labelText: 'Strong/스트롱'"));
-        expect(searchControlAreaSource, contains("hintText: 'H1 또는 G26'"));
-        expect(searchControlAreaSource, contains('onChanged: (_) =>'));
         expect(
-          searchControlAreaSource,
+          homeSearchControlAreaSource,
           contains('_cancelPendingStrongJump(),'),
         );
         expect(
-          searchControlAreaSource,
+          homeSearchControlAreaSource,
+          contains('onSubmitted: (_) => _runSearch()'),
+        );
+        expect(homeSearchControlAreaSource, contains('onPressed: _runSearch'));
+        expect(
+          homeSearchControlAreaSource,
+          contains('onPressed: _clearSearch'),
+        );
+
+        expect(
+          homeStrongControlAreaSource,
+          contains('controller: _strongJumpController'),
+        );
+        expect(
+          homeStrongControlAreaSource,
+          isNot(contains('controller: _searchController')),
+        );
+        expect(
+          homeStrongControlAreaSource,
+          contains("labelText: 'Strong/스트롱'"),
+        );
+        expect(homeStrongControlAreaSource, contains("hintText: 'H1 또는 G26'"));
+        expect(
+          homeStrongControlAreaSource,
           contains('onChanged: _handleStrongRailJumpChanged'),
         );
         expect(
-          searchControlAreaSource,
+          homeStrongControlAreaSource,
           contains('onSubmitted: _handleStrongRailJumpSubmitted'),
         );
+        expect(homeStrongControlAreaSource, isNot(contains('_runSearch')));
         expect(
-          searchControlAreaSource,
-          contains('onSubmitted: (_) => _runSearch()'),
+          homeWorkspaceSearchSurfaceSource,
+          contains('child: homeSearchControlArea'),
         );
-        expect(searchControlAreaSource, contains('onPressed: _runSearch'));
-        expect(searchControlAreaSource, contains('onPressed: _clearSearch'));
+        expect(
+          _appearsBefore(
+            homePaneSource,
+            'if (isLargeScreen)',
+            'child: homeStrongControlArea',
+          ),
+          isTrue,
+        );
+        expect(
+          _appearsBefore(
+            homePaneSource,
+            'child: homeStrongControlArea',
+            'else',
+          ),
+          isTrue,
+        );
+        expect(
+          _appearsBefore(homePaneSource, 'else', 'homeSearchControlArea'),
+          isTrue,
+        );
       },
     );
 
-    test('strong field handler remains rail-local and search-independent', () {
+    test('Strong handlers remain rail-local and search-independent', () {
       expect(
         strongJumpHandlerSource,
         contains('_strongJumpController.text.trim()'),
       );
-      expect(strongJumpHandlerSource, contains('_jumpToStrongInRail('));
+      expect(strongJumpHandlerSource, contains('_runStrongRailJump('));
       expect(strongJumpHandlerSource, isNot(contains('_searchController')));
+      expect(
+        strongJumpSubmittedHandlerSource,
+        contains('_runStrongRailJump(value, showNotFoundFeedback: true);'),
+      );
+      expect(runStrongRailJumpSource, contains('_jumpToStrongInRail('));
 
-      for (final forbiddenStrongHandlerSource in [
-        '_showWordInLargeScreenExplorerPane',
-        '_largeScreenExplorerWordId =',
-        '_runSearch',
-        '_setVisibleWordListFuture',
-        '_searchWordsFuture',
-        '_isShowingDefaultStrongList =',
-        'WordExplorerScreen(',
-        'Navigator.push',
-        '_repository.',
+      for (final source in [
+        strongJumpHandlerSource,
+        strongJumpSubmittedHandlerSource,
+        runStrongRailJumpSource,
       ]) {
-        expect(
-          strongJumpHandlerSource,
-          isNot(contains(forbiddenStrongHandlerSource)),
-        );
+        for (final forbiddenStrongHandlerSource in [
+          '_showWordInLargeScreenExplorerPane',
+          '_largeScreenExplorerWordId =',
+          '_runSearch',
+          '_setVisibleWordListFuture',
+          '_searchWordsFuture',
+          '_isShowingDefaultStrongList =',
+          'WordExplorerScreen(',
+          'Navigator.push',
+          '_repository.',
+        ]) {
+          expect(source, isNot(contains(forbiddenStrongHandlerSource)));
+        }
       }
     });
 
@@ -137,11 +213,13 @@ void main() {
       expect(smallWidthBranch, contains('return homePane;'));
       expect(smallWidthBranch, isNot(contains('WordExplorerScreen(')));
       expect(smallWidthBranch, isNot(contains('ExplorerWorkspace(')));
-      expect(searchControlAreaSource, contains(': Row('));
+      expect(homeSearchControlAreaSource, contains('child: isLargeScreen'));
       expect(
-        searchControlAreaSource,
+        homeSearchControlAreaSource,
         contains('onChanged: _handleSearchChanged'),
       );
+      expect(smallWidthBranch, isNot(contains('homeWorkspaceSearchSurface')));
+      expect(smallWidthBranch, isNot(contains('homeStrongControlArea')));
     });
 
     test('graph selection passive sync does not become retarget navigation', () {
@@ -180,4 +258,18 @@ String _sourceBetween(String source, String startMarker, String endMarker) {
   expect(end, greaterThan(start), reason: 'Missing $endMarker after marker.');
 
   return source.substring(start, end);
+}
+
+bool _appearsBefore(String source, String firstPattern, String secondPattern) {
+  final firstIndex = source.indexOf(firstPattern);
+  final secondIndex = source.indexOf(secondPattern);
+
+  expect(firstIndex, greaterThanOrEqualTo(0), reason: 'Missing $firstPattern');
+  expect(
+    secondIndex,
+    greaterThanOrEqualTo(0),
+    reason: 'Missing $secondPattern',
+  );
+
+  return firstIndex < secondIndex;
 }

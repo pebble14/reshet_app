@@ -8942,3 +8942,40 @@ Phase 19-B는 DB, repository read/API, DTO/model, dependency, `WordExplorerScree
 - Phase 19-B 신규 guardrail은 large-screen 상단 검색 mount, 좌측 Strong/Rail/list 유지, search submit 비-retarget, 명시적 후보 item retarget, Strong/passive sync 경계, small-screen 흐름, owner 금지선을 확인한다.
 - Phase 19-B 변경 파일 대상 analyze: exit code `0`. 기존 `HomeScreen` warning/info 5건만 확인했고 신규 오류는 없다.
 - 전체 `flutter analyze --no-fatal-infos --no-fatal-warnings`: 기존 `tool/verify_graph_batch_context.dart`, `tool/verify_graph_center_context.dart` API 불일치 error 13건과 기존 warning/info를 포함해 `47 issues found`, exit code `1`. 이번 범위에서 수정하지 않았다.
+
+### 17.118 Phase 19-C 상단 검색 surface guardrail hardening 및 종료 audit
+
+Phase 19-C는 Phase 19-B 이후 large-screen 상단 검색 surface, 좌측 control surface, Strong Rail, 우측 Explorer owner 경계가 다시 섞이지 않도록 source guard를 보강하고 Phase 19 종료 가능 여부를 판단한 guardrail/docs 단계다. production code, DB, repository read/API, DTO/model, dependency, UX 기능은 변경하지 않았다.
+
+#### 최종 active boundary
+
+- large-screen 일반 검색 입력은 좌우 split 전체 위의 `homeWorkspaceSearchSurface`에 mount된다.
+- large-screen 좌측 `homePane`에는 일반 검색 입력이 남지 않으며 `Strong/스트롱` 입력, Strong Rail, default/search 목록, current target feedback, passive selected Strong feedback을 유지한다.
+- small-screen 일반 검색 입력은 기존 `homePane` 흐름을 유지하고 검색 후보 item tap은 detail route를 연다.
+- 일반 검색 submit은 검색 목록 상태만 변경하며 `_largeScreenExplorerWordId`를 변경하거나 `_showWordInLargeScreenExplorerPane(...)`를 호출하지 않는다.
+- `Strong/스트롱` changed/submitted/run handler는 `_jumpToStrongInRail(...)` rail-local 경로로 제한하며 `_runSearch(...)`, 검색 결과/default 목록 전환, Explorer retarget/remount와 결합하지 않는다.
+- graph selection passive sync는 rail-local passive feedback 및 jump로 제한하며 `_largeScreenExplorerWordId`를 변경하거나 `_showWordInLargeScreenExplorerPane(...)`를 호출하지 않는다.
+- `WordExplorerScreen`은 graph center, selected word, detail target, history의 production owner로 유지된다.
+- `ExplorerWorkspace` production shell mount와 `ExplorerWorkspaceState` production source-of-truth 승격은 금지 상태를 유지한다.
+
+#### guardrail 보강
+
+- `test/ui/home_screen_phase18m_search_strong_jump_role_separation_test.dart`의 Phase 19-B 이전 넓은 source slice를 `homeSearchControlArea`, `homeStrongControlArea`, `homeWorkspaceSearchSurface`, `homePane`별 검사로 교체했다.
+- 같은 guard에서 Strong changed/submitted/run handler를 각각 분리해 검색 실행, 목록 전환, Explorer retarget, repository read와 결합되지 않는 경계를 고정했다.
+- `test/ui/home_screen_phase19c_top_search_surface_guardrail_hardening_test.dart`를 추가해 Phase 19 최종 active boundary와 production mount 금지선을 전용 source guard로 고정했다.
+
+#### 명령어 기반 검증 결과
+
+- Phase 19-B 신규 guardrail 단독 실행: 통과, `+7`, `All tests passed!`.
+- Phase 18-C/M 및 Phase 19-B source guard 묶음: 통과, `+21`, `All tests passed!`.
+- Phase 18-N runtime widget guardrail 단독 실행: 통과, `+3`, `All tests passed!`.
+- Phase 17-B/C 및 Phase 18-A/B/C/D/F/G/I/K/M/N, Phase 19-B guardrail 묶음: 통과, `+82`, `All tests passed!`.
+- Phase 19-C 신규 guardrail 단독 실행: 통과, `+7`, `All tests passed!`.
+- 보정한 Phase 18-M 및 신규 Phase 19-C guardrail 묶음: 통과, `+13`, `All tests passed!`.
+- 전체 `flutter analyze --no-fatal-infos --no-fatal-warnings`: 기존 `tool/verify_graph_batch_context.dart`, `tool/verify_graph_center_context.dart` API 불일치 error 13건과 기존 warning/info를 포함해 `47 issues found`, exit code `1`. Phase 19-C 신규 문제는 확인되지 않았으며 기존 기술 부채로 분리한다.
+
+#### Phase 19 종료 판단
+
+Phase 19의 목표였던 large-screen 일반 검색 입력의 owner-preserving 상단 surface 재배치와 상단 검색/좌측 control/Strong Rail/Explorer owner 경계 고정은 완료되었다. Phase 19-B UI 수동 테스트는 클라이언트 기준으로 통과했고 Phase 19-C는 production UI를 변경하지 않았다. 따라서 현재 승인 범위와 검증 기준에서는 Phase 19를 종료할 수 있다.
+
+keyboard access, command palette, search ranking, recent search, persistence, AppBar write action 결합, `ExplorerWorkspace` production mount, `ExplorerWorkspaceState` source-of-truth 승격은 Phase 19 종료 범위에 포함하지 않으며 별도 설계와 승인 없이는 진행하지 않는다.
