@@ -54,6 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   /// 검색 입력 컨트롤러
   final TextEditingController _searchController = TextEditingController();
+  final TextEditingController _strongJumpController = TextEditingController();
 
   static const double _defaultStrongListItemExtent = 56.0;
   static const double _strongRailListItemExtent = 46.0;
@@ -286,6 +287,48 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       }
     });
+  }
+
+  void _handleStrongRailJumpChanged(String value) {
+    _cancelPendingStrongJump();
+
+    final scheduledInput = value.trim();
+    if (!_isStrongJumpInput(scheduledInput)) {
+      return;
+    }
+
+    _strongJumpDebounceTimer = Timer(_strongJumpDebounceDuration, () {
+      _strongJumpDebounceTimer = null;
+
+      if (!mounted) {
+        return;
+      }
+
+      final currentInput = _strongJumpController.text.trim();
+      if (currentInput != scheduledInput) {
+        return;
+      }
+
+      _runStrongRailJump(currentInput, showNotFoundFeedback: false);
+    });
+  }
+
+  void _handleStrongRailJumpSubmitted(String value) {
+    _cancelPendingStrongJump();
+    _runStrongRailJump(value, showNotFoundFeedback: true);
+  }
+
+  void _runStrongRailJump(String input, {required bool showNotFoundFeedback}) {
+    final trimmedInput = input.trim();
+    if (!_canRunAutoStrongRailJump(trimmedInput)) {
+      return;
+    }
+
+    final normalizedStrong = _normalizeStrongInput(trimmedInput);
+    _jumpToStrongInRail(
+      normalizedStrong,
+      showNotFoundFeedback: showNotFoundFeedback,
+    );
   }
 
   void _jumpToStrongInDefaultList(
@@ -1049,33 +1092,85 @@ class _HomeScreenState extends State<HomeScreen> {
                 final isLargeScreen = _isLargeScreenWidth(constraints.maxWidth);
                 final homeSearchControlArea = Padding(
                   padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: _searchController,
-                          decoration: const InputDecoration(
-                            labelText: '검색 (표기/의미/스트롱 번호)',
-                            border: OutlineInputBorder(),
-                            isDense: true,
-                          ),
-                          onChanged: _handleSearchChanged,
-                          onSubmitted: (_) => _runSearch(),
+                  child: isLargeScreen
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: TextField(
+                                    controller: _searchController,
+                                    decoration: const InputDecoration(
+                                      labelText: '검색 (표기/의미/스트롱 번호)',
+                                      border: OutlineInputBorder(),
+                                      isDense: true,
+                                    ),
+                                    onChanged: (_) =>
+                                        _cancelPendingStrongJump(),
+                                    onSubmitted: (_) => _runSearch(),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                IconButton(
+                                  onPressed: _runSearch,
+                                  icon: const Icon(Icons.search),
+                                  tooltip: '검색',
+                                ),
+                                IconButton(
+                                  onPressed: _clearSearch,
+                                  icon: const Icon(Icons.clear),
+                                  tooltip: '초기화',
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: SizedBox(
+                                width: 168,
+                                child: TextField(
+                                  controller: _strongJumpController,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Strong/스트롱',
+                                    hintText: 'H1 또는 G26',
+                                    border: OutlineInputBorder(),
+                                    isDense: true,
+                                  ),
+                                  onChanged: _handleStrongRailJumpChanged,
+                                  onSubmitted: _handleStrongRailJumpSubmitted,
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                      : Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                controller: _searchController,
+                                decoration: const InputDecoration(
+                                  labelText: '검색 (표기/의미/스트롱 번호)',
+                                  border: OutlineInputBorder(),
+                                  isDense: true,
+                                ),
+                                onChanged: _handleSearchChanged,
+                                onSubmitted: (_) => _runSearch(),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            IconButton(
+                              onPressed: _runSearch,
+                              icon: const Icon(Icons.search),
+                              tooltip: '검색',
+                            ),
+                            IconButton(
+                              onPressed: _clearSearch,
+                              icon: const Icon(Icons.clear),
+                              tooltip: '초기화',
+                            ),
+                          ],
                         ),
-                      ),
-                      const SizedBox(width: 8),
-                      IconButton(
-                        onPressed: _runSearch,
-                        icon: const Icon(Icons.search),
-                        tooltip: '검색',
-                      ),
-                      IconButton(
-                        onPressed: _clearSearch,
-                        icon: const Icon(Icons.clear),
-                        tooltip: '초기화',
-                      ),
-                    ],
-                  ),
                 );
 
                 final Widget homeWordListSurface = _isShowingDefaultStrongList
@@ -1293,6 +1388,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _cancelPendingStrongJump();
     _strongRailScrollController.dispose();
     _listScrollController.dispose();
+    _strongJumpController.dispose();
     _searchController.dispose();
     super.dispose();
   }

@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## 2026-06-06 Phase 18-M Search / Strong Jump 역할 분리 구현
+
+- Phase 18-M은 large-screen `HomeScreen` control surface에서 일반 검색 입력과 `Strong/스트롱` rail-local jump 입력을 분리한 최소 구현 단계다.
+- `_searchController`와 분리된 `_strongJumpController`를 추가하고, large-screen control surface에 `Strong/스트롱` compact field를 추가했다.
+- 일반 검색 field는 기존 `_runSearch(...)`, `_clearSearch(...)`, 검색 후보 목록, 검색 후보 item tap의 우측 Explorer retarget 흐름을 유지한다.
+- `Strong/스트롱` field는 기존 `_jumpToStrongInRail(...)` rail-local helper만 호출하며, `_largeScreenExplorerWordId` 변경, `_showWordInLargeScreenExplorerPane(...)` 호출, `_runSearch(...)` 결합, 검색 결과/default list 전환, `WordExplorerScreen` remount를 유발하지 않는다.
+- small-screen branch는 기존 `homePane` 반환 흐름과 기존 검색 field 흐름을 유지한다.
+- 새 DB query, 새 repository read/API, 신규 DTO/model, dependency 변경은 없다.
+- 명령어 기반 테스트 결과:
+  - `flutter test test/ui/home_screen_phase18m_search_strong_jump_role_separation_test.dart --reporter expanded`: 통과, `+6`.
+  - `flutter test test/ui/home_screen_phase18f_left_control_boundary_guardrail_test.dart test/ui/home_screen_phase18g_strong_rail_retarget_boundary_test.dart test/ui/home_screen_phase18i_strong_rail_local_jump_boundary_test.dart test/ui/home_screen_phase18k_graph_selection_rail_passive_sync_test.dart test/ui/home_screen_phase18m_search_strong_jump_role_separation_test.dart --reporter expanded`: 통과, `+31`.
+  - `flutter analyze --no-fatal-infos --no-fatal-warnings lib/ui/home_screen.dart test/ui/home_screen_phase18m_search_strong_jump_role_separation_test.dart`: exit code 0. 기존 `_dbMessage` unused warning 1건과 기존 `print` info 4건을 보고했다.
+  - `git diff -- pubspec.yaml pubspec.lock`: 변경 없음.
+- UI 테스트는 수행하지 않았으며, 클라이언트 확인 대상으로 large-screen 일반 검색 후보 흐름, 검색 후보 item retarget, `Strong/스트롱` 입력의 rail-local jump, small-screen 기존 검색 흐름을 남겼다.
+- 커밋, main 병합, origin push는 수행하지 않았다.
+
 ## 2026-06-05 Phase 18-L Search / Strong Jump role separation audit
 
 - Phase 18-L은 `Search / Strong Jump role separation audit`를 수행한 read-only audit 문서화 단계다. 이번 작업에서는 production code, test code, DB, dependency를 변경하지 않았다.

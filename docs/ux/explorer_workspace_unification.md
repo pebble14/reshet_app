@@ -8793,3 +8793,37 @@ Phase 18-M을 별도 구현 Phase로 진행할 경우 guardrail 후보는 아래
 - 일반 검색 field는 기존 `_runSearch(...)`, `_clearSearch(...)`, `_createSearchWordsFuture(...)`, 검색 결과 list surface, 검색 후보 item tap retarget 경로를 유지해야 한다.
 - small-screen branch는 기존 `return homePane;` 흐름과 기존 검색 field 흐름을 유지해야 한다.
 - 새 DB query, 새 repository read/API, 신규 DTO/model, dependency 변경이 없어야 한다.
+
+### 17.114 Phase 18-M Search / Strong Jump role separation implementation
+
+Phase 18-M은 large-screen `HomeScreen` control surface에서 일반 검색 입력과 `Strong/스트롱` rail-local jump 입력을 분리한 최소 구현 단계다. 이 단계는 Phase 18-L에서 확인한 입력 surface/controller 공유 위험을 해소하되, graph/detail/selected/history authority와 data read boundary는 변경하지 않는다.
+
+#### 구현 범위
+
+- `HomeScreen`에 `_searchController`와 분리된 `_strongJumpController`를 추가했다.
+- large-screen control surface에서는 일반 검색 field와 `Strong/스트롱` compact field를 분리했다.
+- 일반 검색 field는 기존 `_runSearch(...)`, `_clearSearch(...)`, 검색 후보 목록, 검색 후보 item tap의 Explorer retarget 흐름을 유지한다.
+- `Strong/스트롱` field label은 `Strong/스트롱`으로 두고 placeholder는 `H1 또는 G26`으로 둔다.
+- `Strong/스트롱` field 입력은 `_handleStrongRailJumpChanged(...)`, `_handleStrongRailJumpSubmitted(...)`, `_runStrongRailJump(...)`를 거쳐 기존 `_jumpToStrongInRail(...)` rail-local helper만 호출한다.
+- large-screen 일반 검색 field의 `onChanged`는 pending Strong jump timer 취소만 수행하고, Strong Rail local jump를 수행하지 않는다.
+- small-screen branch는 기존 `homePane` 반환 흐름과 기존 `_handleSearchChanged(...)` 기반 검색 field 흐름을 유지한다.
+
+#### 유지한 금지선
+
+- `Strong/스트롱` 입력은 `_largeScreenExplorerWordId`를 변경하지 않는다.
+- `Strong/스트롱` 입력은 `_showWordInLargeScreenExplorerPane(...)`를 호출하지 않는다.
+- `Strong/스트롱` 입력은 `_runSearch(...)`, `_setVisibleWordListFuture(...)`, `_searchWordsFuture`, `_isShowingDefaultStrongList` 변경과 결합하지 않는다.
+- `Strong/스트롱` 입력은 `WordExplorerScreen` remount, `Navigator.push`, repository read/API 호출을 유발하지 않는다.
+- 새 DB query, 새 repository read/API, 신규 DTO/model, dependency 변경은 없다.
+- `HomeScreen` graph/detail/selected/history owner 승격, `WordExplorerScreen` owner migration, `ExplorerWorkspace` production shell mount, `ExplorerWorkspaceState` source-of-truth 승격은 수행하지 않았다.
+
+#### 명령어 기반 검증 결과
+
+- `flutter test test/ui/home_screen_phase18m_search_strong_jump_role_separation_test.dart --reporter expanded`: 통과, `+6`.
+- `flutter test test/ui/home_screen_phase18f_left_control_boundary_guardrail_test.dart test/ui/home_screen_phase18g_strong_rail_retarget_boundary_test.dart test/ui/home_screen_phase18i_strong_rail_local_jump_boundary_test.dart test/ui/home_screen_phase18k_graph_selection_rail_passive_sync_test.dart test/ui/home_screen_phase18m_search_strong_jump_role_separation_test.dart --reporter expanded`: 통과, `+31`.
+- `flutter analyze --no-fatal-infos --no-fatal-warnings lib/ui/home_screen.dart test/ui/home_screen_phase18m_search_strong_jump_role_separation_test.dart`: exit code 0. 기존 `_dbMessage` unused warning 1건과 기존 `print` info 4건을 보고했다.
+- `git diff -- pubspec.yaml pubspec.lock`: 변경 없음.
+
+#### UI 수동 테스트 기준
+
+UI 수동 테스트는 클라이언트가 Windows Desktop 앱에서 수행한다. 창 너비를 900px 이상으로 둔 뒤 일반 검색창에 `H1`을 입력하고 검색 버튼을 눌렀을 때 좌측 목록이 검색 후보 목록으로 전환되어야 하며, 후보 item을 누르기 전까지 우측 Explorer는 retarget되지 않아야 한다. 검색 후보 item을 클릭하면 우측 Explorer가 해당 후보로 retarget되어야 한다. `Strong/스트롱` 입력란에 `G26`을 입력하면 Strong Rail 위치/feedback만 변하고, 우측 Explorer retarget, 검색 결과/default list 전환, 우측 Explorer remount가 발생하지 않아야 한다. 창 너비를 900px 미만으로 줄인 뒤 기존 검색 입력에서 `H1`을 입력하면 기존 small-screen 흐름이 유지되어야 한다.
