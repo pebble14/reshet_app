@@ -8869,3 +8869,23 @@ Phase 18-N은 `lib/` production code, DB, repository read/API, DTO/model, depend
 | graph selection → Strong Rail passive selected/jump | 선택 단어의 Strong 번호 위치로 Rail이 이동하고 secondary passive selected feedback만 표시된다. 우측 Explorer target은 유지된다. | primary target feedback이 바뀌거나 Explorer가 remount/retarget되는지 확인한다. | `H1 / אָב / 아브 / 아버지` Explorer graph에서 `H2 / אַב / 아브 / 아버지` 또는 `H85 / אַבְרָהָם / 아브라함/아베라함` node를 선택한다. |
 | Strong 번호 없는 graph node 선택 | 기존 passive selected feedback이 clear되고 우측 Explorer target은 유지된다. | 이전 passive 표시가 남거나 Explorer target이 바뀌는지 확인한다. | graph에서 `אַבָּא / 아빠 / 아버지` node를 선택하고 Rail의 secondary passive 표시가 사라지는지 확인한다. |
 | small-screen 검색/detail route | embedded Explorer와 `Strong/스트롱` field 없이 기존 검색 후보 목록이 표시되고 후보 tap이 detail route를 연다. | embedded Explorer가 나타나거나 후보 tap이 large-screen retarget처럼 동작하는지 확인한다. | 창을 900px 미만으로 줄이고 일반 검색 field에 `H1`을 검색한 뒤 후보 item 본문을 클릭한다. |
+
+### 17.116 Phase 19-A 상단 검색/명령 surface read-only audit active boundary
+
+Phase 19-A는 상단 검색/명령 surface와 좌측 control surface의 장기 역할을 재정의하기 위한 read-only UX/architecture audit 단계다. 상세 source 근거와 감사 결과는 `docs/ux/explorer_workspace_phase19a_top_search_command_surface_audit.md`에 reference/context 기록으로 남긴다. 이번 단계는 production code, test code, DB, repository read/API, DTO/model, dependency를 변경하지 않으며 상단 surface 구현을 승인하지 않는다.
+
+현재 일반 검색 입력은 `HomeScreen`의 `Scaffold.body > LayoutBuilder > homeSearchControlArea > homePane` 경로에 mount된다. large-screen에서 `homePane`은 좌측 `Expanded(flex: 2)`에 위치하므로 현재 일반 검색 입력은 좌측 control surface 상단에 있으며, 좌우 전체 workspace를 가로지르는 상단 surface는 아니다.
+
+일반 검색 query, `_runSearch(...)`, `_clearSearch(...)`, `_searchWordsFuture`, `_isShowingDefaultStrongList`, default/search 목록 전환은 계속 `HomeScreen` private state가 소유한다. 검색 결과/default 목록은 좌측 surface에 유지한다. 상단 검색/명령 surface 후보는 이 기존 state와 handler를 시각적으로 노출하는 owner-preserving presentation candidate로만 평가할 수 있다.
+
+상단 search submit은 검색 결과 목록 전환까지만 수행해야 하며, submit 자체가 `_showWordInLargeScreenExplorerPane(...)`를 호출하거나 `_largeScreenExplorerWordId`를 변경해서는 안 된다. 우측 Explorer retarget request는 기존과 같이 명시적 검색 후보 item tap 또는 Strong Rail item tap에서만 발생한다.
+
+`Strong/스트롱` 입력은 좌측 Strong Rail local jump 전용으로 유지한다. `_runSearch(...)`, 검색 결과/default 목록 전환, Explorer retarget/remount, repository read/API와 결합하지 않는다. graph selection passive sync도 Strong Rail passive selected feedback과 rail-local jump로만 유지하며 `_largeScreenExplorerWordId`를 변경하거나 `_showWordInLargeScreenExplorerPane(...)`를 호출하지 않는다.
+
+일반 검색 입력을 large-screen 상단 surface 후보로 시각 재배치하는 것은 `HomeScreen` 내부 build composition 변경 후보로 평가할 수 있으며, `WordExplorerScreen` owner state migration 없이 가능하다. 그러나 Phase 19-A는 이를 구현하지 않으며, 구현이 필요하면 Phase 19-B 이후 별도 설계·승인 대상으로 분리한다.
+
+좌측 control surface의 유지 역할은 Strong Rail 및 Strong anchor orientation, `Strong/스트롱` rail-local jump, default Strong 목록, 일반 검색 실행 후 검색 후보 목록, explicit 후보 item 선택, current target feedback, graph selection 기반 passive selected Strong feedback이다. 좌측 surface는 graph/detail/selected/history owner, repository owner, create/edit/write owner가 아니다.
+
+Phase 19-A의 “명령 surface” 표현은 장기 UX 개념으로만 사용한다. keyboard command, command palette, recent search, persistence, search ranking 개선을 승인하지 않는다. AppBar의 DB 초기화/실행 취소 같은 write action과 상단 검색/명령 surface 역할을 결합하지 않으며, 좌측 또는 상단 surface에 create/edit/write entry를 추가하지 않는다.
+
+Phase 19-A는 `WordExplorerScreen` production owner state migration, `ExplorerWorkspace` production shell mount, `ExplorerWorkspaceState` production source-of-truth 승격, graph selection 기반 Explorer retarget, 새 DB query, 새 repository read/API, 신규 DTO/model, dependency 변경을 승인하지 않는다.

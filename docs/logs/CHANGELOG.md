@@ -1,5 +1,24 @@
 # CHANGELOG
 
+## 2026-06-06 Phase 19-A 상단 검색/명령 surface read-only audit
+
+- Phase 19-A는 상단 검색/명령 surface와 좌측 control surface의 장기 역할을 재정의하기 위한 read-only UX/architecture audit 단계다. production code, test code, DB, repository read/API, DTO/model, dependency는 변경하지 않았다.
+- 현재 일반 검색 입력은 `HomeScreen`의 `Scaffold.body > LayoutBuilder > homeSearchControlArea > homePane` 경로에 mount되며, large-screen에서는 좌측 `Expanded(flex: 2)` 안에 위치하는 좌측 control surface 상단 입력임을 확인했다.
+- 일반 검색 query, `_runSearch(...)`, `_clearSearch(...)`, `_searchWordsFuture`, `_isShowingDefaultStrongList`, default/search 목록 전환은 `HomeScreen` private state가 계속 소유한다. 검색 결과/default 목록은 좌측 surface에 유지하는 경계로 기록했다.
+- 일반 검색 입력을 large-screen 상단 검색/명령 surface 후보로 시각 재배치하는 것은 `HomeScreen` 내부 owner-preserving presentation 변경 후보로 평가할 수 있으며, `WordExplorerScreen` owner state migration 없이 가능하다고 판단했다. Phase 19-A는 이를 구현하지 않고 Phase 19-B 이후 별도 후보로 분리했다.
+- 상단 search submit 자체는 Explorer retarget을 수행하지 않으며, 우측 Explorer retarget request는 기존 명시적 검색 후보 item tap 또는 Strong Rail item tap에서만 발생해야 한다고 기록했다.
+- `Strong/스트롱` 입력은 좌측 Strong Rail local jump 전용으로 유지하고, 일반 검색 실행, 검색 결과/default 목록 전환, Explorer retarget/remount와 결합하지 않는 경계를 유지했다.
+- graph selection passive sync는 Strong Rail passive selected feedback과 rail-local jump만 수행하며, `_largeScreenExplorerWordId` 변경 또는 `_showWordInLargeScreenExplorerPane(...)` 호출로 확장하지 않는 경계를 유지했다.
+- 좌측 control surface 유지 역할은 Strong Rail/orientation, `Strong/스트롱` local jump, default Strong 목록, 검색 후보 목록, explicit 후보 item 선택, current target feedback, passive selected Strong feedback으로 정리했다.
+- “명령 surface”는 장기 UX 개념으로만 기록했다. keyboard command, command palette, recent search, persistence, search ranking 개선을 승인하지 않으며 AppBar의 DB 초기화/실행 취소 같은 write action과 결합하지 않는다.
+- `WordExplorerScreen` owner state migration, `ExplorerWorkspace` production shell mount, `ExplorerWorkspaceState` production source-of-truth 승격, 새 DB query, 새 repository read/API, 신규 DTO/model, dependency 변경, 좌측 또는 상단 create/edit/write entry 추가는 없다.
+- 상세 감사 기록은 `docs/ux/explorer_workspace_phase19a_top_search_command_surface_audit.md`에 추가했고, active boundary 요약은 `docs/ux/explorer_workspace_unification.md`에 반영했다.
+- 명령어 기반 검증 결과:
+  - Phase 17-B/C 및 Phase 18-A/B/C/D/F/G/I/K/M/N guardrail 묶음: 통과, `+74`, `All tests passed!`.
+  - `flutter analyze --no-fatal-infos --no-fatal-warnings`: 기존 `tool/verify_graph_batch_context.dart`, `tool/verify_graph_center_context.dart` API 불일치 error 13건과 기존 warning/info를 포함해 `47 issues found`, exit code `1`. Phase 19-A 범위에서 수정하지 않았다.
+- UI 테스트는 Codex가 수행하지 않는다. Phase 19-A는 production UI 변경이 없으며, 기존 Phase 18 역할 경계를 확인하는 클라이언트 회귀 체크리스트를 감사 문서에 기록했다.
+- 커밋, main 병합, origin push는 수행하지 않았다.
+
 ## 2026-06-06 Phase 18-N Phase 18 종료 전 guardrail hardening
 
 - Phase 18-N은 Phase 19 이동 전 Phase 18 종료 조건을 보강한 guardrail/docs 단계다. production 기능과 `lib/` code는 변경하지 않았다.
