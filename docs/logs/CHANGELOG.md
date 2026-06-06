@@ -1,5 +1,31 @@
 # CHANGELOG
 
+## 2026-06-06 Phase 20-C large-screen transient search result surface 최소 구현
+
+- large-screen `HomeScreen`의 상단 일반 검색 입력 아래에 같은 widget tree 기반 inline attached transient search result panel을 추가했다. `OverlayEntry`, route-level overlay, global focus manager는 도입하지 않았다.
+- transient panel은 기존 `_searchWordsFuture`를 재사용해 loading, 오류, 검색 결과 없음, 검색 후보 목록을 표시한다.
+- 검색 state owner는 계속 `_HomeScreenState` private state다. `_searchController`, `_runSearch(...)`, `_searchWordsFuture`, `_isShowingDefaultStrongList` 책임과 기존 검색 repository/API 의미를 이동하거나 변경하지 않았다.
+- non-empty query submit은 large-screen transient panel을 열거나 갱신할 수 있지만 `_largeScreenExplorerWordId`를 변경하거나 `_showWordInLargeScreenExplorerPane(...)`를 호출하지 않는다.
+- transient panel의 명시적 검색 후보 item 본문 tap은 기존 `_showWordInLargeScreenExplorerPane(wordId)` 경로로 Explorer를 retarget한 뒤 panel을 닫는다.
+- `검색 결과 닫기`는 panel presentation만 닫고 Explorer target, query, search future, 좌측 검색 결과 목록을 유지한다. 기존 `초기화`는 default Strong 목록 상태로 복귀하고 panel을 닫지만 Explorer target은 유지한다.
+- 기존 좌측 `homeWordListSurface`의 검색 결과/default Strong 목록, Strong Rail을 삭제, 축소, 이동하지 않았다. large-screen transient panel과 좌측 검색 결과의 중복 표시는 Phase 20-C 점진 전환 상태로 허용한다.
+- `Strong/스트롱` rail-local jump, graph selection passive sync, `WordExplorerScreen` graph/detail/selected/history owner, `ExplorerWorkspace` production mount 금지, `ExplorerWorkspaceState` source-of-truth 승격 금지를 유지했다.
+- small-screen에는 transient panel을 적용하지 않고 기존 `homePane → detail route` 흐름을 유지했다.
+- DB, repository read/API, DTO/model, dependency, `pubspec.yaml`, `pubspec.lock`은 변경하지 않았다.
+- `test/ui/home_screen_phase20c_transient_search_result_surface_guardrail_test.dart`를 추가해 inline panel, owner, submit 비-retarget, 후보 tap retarget 후 dismiss, dismiss/clear 비-retarget, Strong/passive sync 비결합, 좌측 중복 목록, small-screen 흐름, workspace 금지선을 source 기준으로 확인한다.
+- `test/ui/home_screen_phase20c_transient_search_result_surface_runtime_test.dart`를 추가해 격리 복사 DB에서 `H2`, `G26`, `PHASE20C_RESULT_NOT_FOUND_20260606` 데이터를 사용하여 submit, dismiss, clear, 후보 선택, no-result, small-screen detail route를 runtime으로 확인한다.
+- 명령어 기반 검증 결과:
+  - Phase 20-C 신규 source guardrail: 통과, `+9`, `All tests passed!`.
+  - Phase 20-C 신규 실제 DB 기반 runtime widget guardrail: 통과, `+3`, `All tests passed!`.
+  - 기존 Phase 19-B/19-C guardrail: 통과, `+14`, `All tests passed!`.
+  - 기존 Phase 18-N 실제 DB 기반 runtime guardrail: 통과, `+3`, `All tests passed!`.
+  - 기존 Phase 17-B/C, Phase 18-K/M owner·passive sync·Strong 분리 guardrail: 통과, `+26`, `All tests passed!`.
+  - Phase 20-C 변경 파일 대상 analyze: exit code `0`. 기존 `HomeScreen` warning/info 5건만 확인했고 신규 오류는 없다.
+- 전체 `flutter analyze --no-fatal-infos --no-fatal-warnings` 실제 실행 결과는 기존 기준과 동일한 `47 issues found`, exit code `1`이다. error 13건은 기존 `tool/verify_graph_batch_context.dart`, `tool/verify_graph_center_context.dart` API 불일치이며 Phase 20-C 변경과 분리해 이번 범위에서 수정하지 않았다.
+- Codex는 UI 기반 수동 테스트를 수행하지 않았다. 클라이언트는 large-screen `H2` submit 비-retarget, 후보 tap retarget 후 panel 닫힘, dismiss/초기화 비-retarget, `G26` Strong rail-local jump, 좌측 중복 목록/default Strong 유지, small-screen `H2` detail route를 확인해야 한다.
+- 상세 구현·검증 기록은 `docs/ux/explorer_workspace_phase20c_transient_search_result_surface_minimum_slice.md`에 추가했고 active boundary 요약은 `docs/ux/explorer_workspace_unification.md`에 반영했다.
+- 커밋, main 병합, origin push는 수행하지 않았다.
+
 ## 2026-06-06 Phase 20-B Search Result Surface Contract Audit
 
 - Phase 20-A에서 확인한 large-screen 검색 결과/default Strong 목록의 좌측 surface 역할 충돌을 검색 결과 surface 계약 관점에서 구체화하는 read-only docs/audit를 진행했다.

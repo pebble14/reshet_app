@@ -75,6 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<HomeDefaultStrongListItem> _currentDefaultStrongItems = const [];
   List<HomeDefaultStrongListItem> _currentStrongRailItems = const [];
   bool _isShowingDefaultStrongList = true;
+  bool _isLargeScreenTransientSearchResultVisible = false;
   String _largeScreenExplorerWordId = _largeScreenDefaultExplorerWordId;
   String? _passiveSelectedStrongWordId;
   String? _passiveSelectedDisplayStrongNumber;
@@ -1034,6 +1035,117 @@ class _HomeScreenState extends State<HomeScreen> {
     _refreshWords();
   }
 
+  Widget _buildLargeScreenTransientSearchResultSurface() {
+    final theme = Theme.of(context);
+
+    return DecoratedBox(
+      key: const Key('large-screen-transient-search-result-surface'),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainer,
+        border: Border(bottom: BorderSide(color: theme.dividerColor)),
+      ),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxHeight: 320),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 4, 8, 4),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text('검색 결과', style: theme.textTheme.titleSmall),
+                  ),
+                  IconButton(
+                    key: const Key(
+                      'dismiss-large-screen-transient-search-result-surface',
+                    ),
+                    onPressed: _dismissLargeScreenTransientSearchResultSurface,
+                    icon: const Icon(Icons.close),
+                    tooltip: '검색 결과 닫기',
+                  ),
+                ],
+              ),
+            ),
+            Flexible(
+              child: FutureBuilder<List<HomeSearchResultDisplayItem>>(
+                future: _searchWordsFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      key: Key('large-screen-transient-search-result-loading'),
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+
+                  if (snapshot.hasError) {
+                    return Center(child: Text('에러 발생: ${snapshot.error}'));
+                  }
+
+                  final words =
+                      snapshot.data ?? const <HomeSearchResultDisplayItem>[];
+                  if (words.isEmpty) {
+                    return const Center(
+                      key: Key('large-screen-transient-search-result-empty'),
+                      child: Text('검색 결과 없음'),
+                    );
+                  }
+
+                  return ListView.builder(
+                    key: const Key('large-screen-transient-search-result-list'),
+                    shrinkWrap: true,
+                    itemCount: words.length,
+                    itemBuilder: (context, index) {
+                      final item = words[index];
+                      final wordId = item.wordId;
+                      final displaySummary = _buildSearchResultSummary(item);
+                      final subtitleText = item.subtitleMeaning ?? '';
+
+                      return ListTile(
+                        key: ValueKey(
+                          'large-screen-transient-search-result-$wordId',
+                        ),
+                        title: Text.rich(
+                          _buildWordTitle(
+                            strong: item.displayStrongNumber ?? '',
+                            summary: displaySummary,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        subtitle: subtitleText.isEmpty
+                            ? null
+                            : Text(
+                                subtitleText,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                        onTap: () {
+                          _showWordInLargeScreenExplorerPane(wordId);
+                          _dismissLargeScreenTransientSearchResultSurface();
+                        },
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _dismissLargeScreenTransientSearchResultSurface() {
+    if (!_isLargeScreenTransientSearchResultVisible) {
+      return;
+    }
+
+    setState(() {
+      _isLargeScreenTransientSearchResultVisible = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
@@ -1333,6 +1445,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Column(
                         children: [
                           homeWorkspaceSearchSurface,
+                          if (_isLargeScreenTransientSearchResultVisible)
+                            _buildLargeScreenTransientSearchResultSurface(),
                           Expanded(
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1369,6 +1483,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (keyword.isEmpty) {
       setState(() {
         _isShowingDefaultStrongList = true;
+        _isLargeScreenTransientSearchResultVisible = false;
         _setVisibleWordListFuture();
       });
       return;
@@ -1376,6 +1491,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
     setState(() {
       _isShowingDefaultStrongList = false;
+      _isLargeScreenTransientSearchResultVisible =
+          _isCurrentLayoutLargeScreen();
       _setVisibleWordListFuture();
     });
   }
@@ -1386,6 +1503,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _searchController.clear();
     setState(() {
       _isShowingDefaultStrongList = true;
+      _isLargeScreenTransientSearchResultVisible = false;
       _setVisibleWordListFuture();
     });
   }

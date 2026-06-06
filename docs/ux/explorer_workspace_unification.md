@@ -9019,3 +9019,23 @@ Phase 20-B는 production code, test code, DB/data/sql, dependency, `pubspec.yaml
 Phase 20-C 이후 후보는 large-screen query-bound transient result surface 최소 presentation, large-screen 검색 결과 presentation과 현재 공유 목록 surface의 responsive 분리, query/loading/no-result/clear/dismiss lifecycle 설계, 명시적 후보 tap retarget과 focus 복귀 계약, 관련 guardrail 보강, default Strong browse/discovery surface 별도 설계다. 각 후보는 별도 설계와 승인 없이 구현하지 않는다.
 
 Phase 20-B는 UI를 변경하지 않으므로 Codex는 UI 수동 테스트를 수행하지 않는다. 후속 구현 phase에서는 large-screen submit 비-retarget, 명시적 후보 item tap retarget, default browse/search result 역할 분리, Strong rail-local jump, graph passive sync, small-screen 기존 detail route를 클라이언트 UI 체크리스트로 확인해야 한다.
+
+### 17.121 Phase 20-C large-screen transient search result surface 최소 구현 active boundary
+
+Phase 20-C는 large-screen 상단 일반 검색 입력 아래에 query-bound transient search result surface를 같은 widget tree 안의 inline attached panel로 최소 구현한 단계다. 상세 구현, 검증 결과, 클라이언트 UI 체크리스트는 `docs/ux/explorer_workspace_phase20c_transient_search_result_surface_minimum_slice.md`에 reference/context 기록으로 남긴다.
+
+검색 state owner는 계속 `_HomeScreenState` private state다. `_searchController`, `_runSearch(...)`, `_searchWordsFuture`, `_isShowingDefaultStrongList`의 책임과 기존 검색 repository/API 의미는 이동하거나 변경하지 않는다. 새 `_isLargeScreenTransientSearchResultVisible` state는 panel presentation 표시 여부만 소유하며 query, result data, Explorer target의 source-of-truth가 아니다.
+
+non-empty query submit은 기존 search list 전환과 future 갱신을 수행하면서 large-screen transient panel을 열거나 갱신할 수 있다. 검색 submit만으로 `_largeScreenExplorerWordId`를 변경하거나 `_showWordInLargeScreenExplorerPane(...)`를 호출하지 않는다. transient panel의 명시적 검색 후보 item 본문 tap만 기존 `_showWordInLargeScreenExplorerPane(wordId)` 경로로 Explorer를 retarget하고, 이후 panel presentation을 닫는다.
+
+`검색 결과 닫기`는 transient panel presentation만 닫고 Explorer target, query, search future, 좌측 검색 결과 목록을 유지한다. 기존 `초기화`는 `_clearSearch()` 흐름과 일관되게 default Strong 목록 상태로 복귀하고 panel을 닫지만 Explorer target은 변경하지 않는다.
+
+Phase 20-C는 기존 좌측 `homeWordListSurface`의 검색 결과/default Strong 목록을 삭제, 축소, 이동하지 않는다. large-screen 상단 transient panel과 좌측 검색 결과 중복 표시는 점진 전환 상태로 허용한다. default Strong 목록과 Strong Rail은 좌측에 유지하며 좌측 surface의 최종 browse/discovery 재정의와 중복 제거 여부는 후속 설계 대상으로 남긴다.
+
+`Strong/스트롱` 입력은 rail-local jump 전용으로 유지하며 `_runSearch(...)`, transient panel lifecycle, 검색 결과/default 목록 전환, Explorer retarget/remount와 결합하지 않는다. graph selection passive sync도 `_largeScreenExplorerWordId`를 변경하거나 `_showWordInLargeScreenExplorerPane(...)`를 호출하지 않는다.
+
+small-screen에는 transient panel을 mount하지 않으며 기존 `homePane → detail route` 흐름을 유지한다. `WordExplorerScreen`은 graph center, selected word, detail target, history의 production owner로 유지한다. production `ExplorerWorkspace` mount와 `ExplorerWorkspaceState` source-of-truth 승격은 금지 상태를 유지한다.
+
+Phase 20-C는 DB, repository read/API, DTO/model, dependency, `pubspec.yaml`, `pubspec.lock`을 변경하지 않았다. 신규 source guardrail `+9`, 신규 실제 DB 기반 runtime widget guardrail `+3`, 기존 Phase 19-B/19-C guardrail `+14`, 기존 Phase 18-N runtime guardrail `+3`, 기존 Phase 17-B/C 및 Phase 18-K/M owner·passive sync·Strong 분리 guardrail `+26`이 통과했다. 변경 파일 대상 analyze는 기존 `HomeScreen` warning/info 5건만 보고하고 exit code `0`이며 Phase 20-C 신규 오류는 없다. 전체 analyze도 실제 실행했으며 기존 기준과 동일한 `47 issues found`, exit code `1`이다. error 13건은 기존 `tool/verify_graph_batch_context.dart`, `tool/verify_graph_center_context.dart` API 불일치이므로 이번 범위와 분리한다.
+
+Codex는 UI 기반 수동 테스트를 수행했다고 보고하지 않는다. 클라이언트는 large-screen `H2` submit 비-retarget, 후보 tap retarget 후 panel 닫힘, dismiss/초기화 비-retarget, `G26` Strong rail-local jump, 좌측 중복 목록과 default Strong 유지, small-screen `H2` detail route를 확인해야 한다. 클라이언트 UI 확인 전에는 Phase 20-C의 최종 UX 승인 또는 후속 중복 제거를 선언하지 않는다.
