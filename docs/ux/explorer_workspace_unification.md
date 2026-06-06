@@ -8979,3 +8979,23 @@ Phase 19-C는 Phase 19-B 이후 large-screen 상단 검색 surface, 좌측 contr
 Phase 19의 목표였던 large-screen 일반 검색 입력의 owner-preserving 상단 surface 재배치와 상단 검색/좌측 control/Strong Rail/Explorer owner 경계 고정은 완료되었다. Phase 19-B UI 수동 테스트는 클라이언트 기준으로 통과했고 Phase 19-C는 production UI를 변경하지 않았다. 따라서 현재 승인 범위와 검증 기준에서는 Phase 19를 종료할 수 있다.
 
 keyboard access, command palette, search ranking, recent search, persistence, AppBar write action 결합, `ExplorerWorkspace` production mount, `ExplorerWorkspaceState` source-of-truth 승격은 Phase 19 종료 범위에 포함하지 않으며 별도 설계와 승인 없이는 진행하지 않는다.
+
+### 17.119 Phase 20-A Surface & Navigation Role Audit active boundary
+
+Phase 20-A는 Phase 19 이후 large-screen workspace의 상단 검색 surface, 좌측 control surface, graph/detail standalone route와 small-screen flow의 장기 역할을 실제 production source 기준으로 확인한 read-only docs/audit 단계다. 상세 source 근거와 판단은 `docs/ux/explorer_workspace_phase20a_surface_navigation_role_audit.md`에 reference/context 기록으로 남긴다.
+
+현재 large-screen 일반 검색 입력은 좌우 split 전체 위의 `homeWorkspaceSearchSurface`에 있고, 좌측 `homePane`에는 `Strong/스트롱` rail-local jump 입력, Strong Rail, default/search 목록, current Explorer target feedback, graph selection passive feedback이 있다. 상단 검색 입력과 좌측 Strong 입력의 역할은 분리되어 있지만, query-specific 검색 결과와 default Strong 전체 목록이 좌측에 계속 표시되어 좌측 surface가 persistent navigation/orientation 보조와 global discovery/result 표시를 함께 담당하는 역할 충돌이 있다.
+
+large-screen 일반 검색 결과를 상단 검색에 딸린 transient result surface로 표현하는 방향은 후속 구현 후보로 검토할 수 있다. 이 후보는 query와 결과의 interaction context를 가깝게 하고 좌측 control surface를 Strong 기반 navigation 보조 역할로 좁힐 수 있다. 다만 Phase 20-A에서는 result surface 이동, exact presentation, state owner 이동, submit 기반 Explorer retarget을 구현하거나 확정하지 않는다. 검색 결과/default 목록은 현재 좌측 surface에 유지한다.
+
+default Strong 전체 목록은 Strong Rail과 같은 persistent navigation으로 보기보다 browse/discovery 성격이 강하다. large-screen에서 계속 필요하다면 명시적 browse/discovery surface로 재정의하는 장기 전환 후보가 적절하다. Phase 20-A에서는 default Strong 목록의 제거, 이동, 축소를 확정하지 않으며 small-screen 기존 home flow에서는 즉시 유지한다.
+
+large-screen `HomeScreen`의 default/search 목록 상세·그래프 아이콘은 embedded `WordExplorerScreen`이 존재하는 상태에서도 `WordDetailScreen` 또는 `WordGraphScreen` standalone route를 연다. `WordExplorerScreen` 내부 full detail route, `WordDetailScreen`의 graph route, callback 없는 `WordGraphScreen`의 자체 graph route 탐색과 create 후 replacement도 존재한다. large-screen standalone route를 줄이는 방향은 pane 중심 continuity를 위한 장기 전환 후보지만, small-screen/mobile flow와 full detail/standalone graph 역할 때문에 전역 제거는 아직 부적절하다.
+
+후속 후보 순서는 form factor/action intent별 route inventory 고정, large-screen pane action 설계, `HomeScreen` large-screen standalone entry부터 workspace-aware redirect 후보 검토, `WordExplorerScreen` full detail 역할 분리, detail/graph standalone 내부 의존성 감사, small-screen 유지 상태의 large-screen 전용 전환 검토, route/internal history와 repository refresh 경계 설계 이후 제거 가능성 재검토 순으로 둔다. 각 항목은 별도 설계와 승인이 필요하며 이동 또는 제거 확정이 아니다.
+
+small-screen `homePane → detail route`는 즉시 유지한다. small-screen에는 embedded Explorer와 Strong Rail이 없고 현재 detail route가 primary reading surface 역할을 하므로 large-screen pane 방향을 그대로 적용하지 않는다. 장기적으로 search, detail, graph, return path의 semantic continuity를 보존하는 `mobile Explorer presentation`으로 재정의할 수 있는지는 별도 audit 대상으로 남긴다.
+
+Phase 20-A는 production code, test/guardrail, DB/data/sql, dependency, `pubspec.yaml`, `pubspec.lock`, route redirect, standalone route 제거, UI를 변경하지 않는다. large-screen 상단 검색, 좌측 일반 검색 입력 부재, small-screen 기존 home flow, search submit 비-retarget, `Strong/스트롱` rail-local jump, graph selection passive sync, `WordExplorerScreen` graph/detail/selected/history owner 유지, `ExplorerWorkspace` production shell mount 금지, `ExplorerWorkspaceState` source-of-truth 승격 금지의 Phase 19 경계를 유지한다.
+
+Phase 20-A는 docs/audit-only이므로 Flutter test와 전체 analyze를 재실행하지 않는다. 기존 전체 analyze의 `47 issues found`, exit code `1`은 선행 기술 부채이며 Phase 20-A에서 새로 발생한 문제가 아니다.
