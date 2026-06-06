@@ -271,3 +271,19 @@ Phase 19-A는 production UI를 변경하지 않으므로 신규 UI 차이를 검
 일반 검색 입력을 장기적으로 상단 검색/명령 surface에 시각 재배치하는 후보는 owner migration 없이 검토할 수 있다. 단, 상단 surface는 기존 `HomeScreen` 검색 state를 노출하는 presentation candidate로 제한하고, 검색 결과/default 목록과 explicit 후보 선택 surface는 좌측에 유지해야 한다.
 
 `Strong/스트롱` 입력과 Strong Rail은 좌측 orientation/local jump 역할로 유지한다. “명령 surface”는 장기 UX 개념일 뿐이며 keyboard command, command palette, recent search, persistence, write action 구현 승인이 아니다.
+
+## 17. Phase 19-B 구현 반영 참고
+
+Phase 19-A에서 평가한 owner-preserving presentation 후보는 Phase 19-B에서 최소 구현으로 반영되었다. 이 절은 Phase 19-A 감사 결론을 변경하지 않고 후속 구현 상태를 연결하는 `reference/context` 기록이다.
+
+- large-screen 일반 검색 입력은 좌측 `homePane` 내부에서 좌우 split 전체 위의 `homeWorkspaceSearchSurface`로 시각 재배치되었다.
+- 일반 검색 입력은 기존 `_searchController`, `_runSearch(...)`, `_clearSearch(...)`를 그대로 사용하며 검색 state owner는 계속 `HomeScreen`이다.
+- `_searchWordsFuture`, `_isShowingDefaultStrongList`, default/search 목록은 좌측 control surface에 유지된다.
+- 좌측 `homePane`에는 `Strong/스트롱` 입력, Strong Rail, 목록, current target feedback, passive selected Strong feedback이 유지된다.
+- 상단 search submit 자체는 Explorer retarget을 수행하지 않는다.
+- 검색 후보 item tap과 Strong Rail item tap의 기존 명시적 large-screen Explorer retarget 경로는 유지된다.
+- `Strong/스트롱` rail-local jump와 graph selection passive sync 경로는 변경하지 않았다.
+- small-screen 검색 입력과 검색 후보 item tap의 detail route 흐름은 변경하지 않았다.
+- DB, repository read/API, DTO/model, dependency, `WordExplorerScreen` owner state, `ExplorerWorkspace` production mount, `ExplorerWorkspaceState` source-of-truth는 변경하지 않았다.
+
+상세 active boundary와 구현 검증 기록은 `docs/ux/explorer_workspace_unification.md`의 `17.117 Phase 19-B 상단 검색 surface presentation 최소 구현`을 따른다.

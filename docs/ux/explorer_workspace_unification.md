@@ -8889,3 +8889,56 @@ Phase 19-A는 상단 검색/명령 surface와 좌측 control surface의 장기 �
 Phase 19-A의 “명령 surface” 표현은 장기 UX 개념으로만 사용한다. keyboard command, command palette, recent search, persistence, search ranking 개선을 승인하지 않는다. AppBar의 DB 초기화/실행 취소 같은 write action과 상단 검색/명령 surface 역할을 결합하지 않으며, 좌측 또는 상단 surface에 create/edit/write entry를 추가하지 않는다.
 
 Phase 19-A는 `WordExplorerScreen` production owner state migration, `ExplorerWorkspace` production shell mount, `ExplorerWorkspaceState` production source-of-truth 승격, graph selection 기반 Explorer retarget, 새 DB query, 새 repository read/API, 신규 DTO/model, dependency 변경을 승인하지 않는다.
+
+### 17.117 Phase 19-B 상단 검색 surface presentation 최소 구현
+
+Phase 19-B는 large-screen `HomeScreen`에서 일반 검색 입력을 좌측 control surface 내부가 아니라 좌우 split 전체 위의 workspace 상단 surface로 시각 재배치한 owner-preserving presentation 단계다.
+
+large-screen production mount 구조는 다음과 같다.
+
+```text
+HomeScreen
+└─ Scaffold.body
+   └─ LayoutBuilder
+      └─ large-screen outer Row
+         └─ Expanded
+            └─ Column
+               ├─ homeWorkspaceSearchSurface
+               │  └─ homeSearchControlArea
+               │     └─ _searchController 기반 일반 검색 입력
+               └─ Expanded
+                  └─ Row
+                     ├─ homePane
+                     │  ├─ homeStrongControlArea
+                     │  │  └─ _strongJumpController 기반 Strong/스트롱 입력
+                     │  └─ Strong Rail + default/search 목록
+                     └─ WordExplorerScreen
+```
+
+이번 변경은 `HomeScreen.build()` 내부 widget composition만 조정했다. 일반 검색 state와 handler는 계속 `HomeScreen` private state가 소유하며 `_searchController`, `_runSearch(...)`, `_clearSearch(...)`, `_searchWordsFuture`, `_isShowingDefaultStrongList` 책임은 이동하지 않았다.
+
+좌측 control surface에는 다음 역할을 유지한다.
+
+- `Strong/스트롱` rail-local jump 입력
+- Strong Rail 및 Strong anchor orientation
+- default Strong 목록 또는 일반 검색 실행 후 검색 후보 목록
+- 명시적 후보 item 선택과 기존 large-screen Explorer retarget request
+- current Explorer target feedback
+- graph selection 기반 passive selected Strong feedback
+
+상단 search submit은 기존 `_runSearch(...)`만 호출하고 검색 후보/default 목록 전환까지만 수행한다. submit 자체는 `_largeScreenExplorerWordId`를 변경하거나 `_showWordInLargeScreenExplorerPane(...)`를 호출하지 않는다. 검색 후보 item tap과 Strong Rail item tap의 기존 명시적 Explorer retarget 경로는 유지한다.
+
+`Strong/스트롱` 입력은 기존 `_handleStrongRailJumpChanged(...)`, `_handleStrongRailJumpSubmitted(...)`, `_jumpToStrongInRail(...)` 경로를 유지하며 일반 검색 실행, 목록 전환, Explorer retarget/remount와 결합하지 않는다. graph selection passive sync도 기존 rail-local passive feedback 및 jump 경로만 유지한다.
+
+small-screen은 기존 `homePane` 안의 일반 검색 입력과 검색 후보 item tap의 detail route 흐름을 유지한다. 별도 `Strong/스트롱` 입력, Strong Rail, embedded `WordExplorerScreen`을 추가하지 않았다.
+
+Phase 19-B는 DB, repository read/API, DTO/model, dependency, `WordExplorerScreen` owner state, `ExplorerWorkspace` production mount, `ExplorerWorkspaceState` source-of-truth를 변경하지 않는다. 좌측 또는 상단 create/edit/write entry, keyboard access, command palette, search ranking, recent search, persistence도 추가하지 않았다.
+
+명령어 기반 검증 결과:
+
+- Phase 19-B 신규 guardrail 단독 실행: 통과, `+7`, `All tests passed!`.
+- 기존 Phase 18-N runtime widget guardrail 단독 실행: 통과, `+3`, `All tests passed!`.
+- Phase 17-B/C 및 Phase 18-A/B/C/D/F/G/I/K/M/N, Phase 19-B guardrail 묶음: 통과, `+82`, `All tests passed!`.
+- Phase 19-B 신규 guardrail은 large-screen 상단 검색 mount, 좌측 Strong/Rail/list 유지, search submit 비-retarget, 명시적 후보 item retarget, Strong/passive sync 경계, small-screen 흐름, owner 금지선을 확인한다.
+- Phase 19-B 변경 파일 대상 analyze: exit code `0`. 기존 `HomeScreen` warning/info 5건만 확인했고 신규 오류는 없다.
+- 전체 `flutter analyze --no-fatal-infos --no-fatal-warnings`: 기존 `tool/verify_graph_batch_context.dart`, `tool/verify_graph_center_context.dart` API 불일치 error 13건과 기존 warning/info를 포함해 `47 issues found`, exit code `1`. 이번 범위에서 수정하지 않았다.

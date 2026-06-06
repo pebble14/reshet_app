@@ -1093,54 +1093,30 @@ class _HomeScreenState extends State<HomeScreen> {
                 final homeSearchControlArea = Padding(
                   padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
                   child: isLargeScreen
-                      ? Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                      ? Row(
                           children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: TextField(
-                                    controller: _searchController,
-                                    decoration: const InputDecoration(
-                                      labelText: '검색 (표기/의미/스트롱 번호)',
-                                      border: OutlineInputBorder(),
-                                      isDense: true,
-                                    ),
-                                    onChanged: (_) =>
-                                        _cancelPendingStrongJump(),
-                                    onSubmitted: (_) => _runSearch(),
-                                  ),
+                            Expanded(
+                              child: TextField(
+                                controller: _searchController,
+                                decoration: const InputDecoration(
+                                  labelText: '검색 (표기/의미/스트롱 번호)',
+                                  border: OutlineInputBorder(),
+                                  isDense: true,
                                 ),
-                                const SizedBox(width: 8),
-                                IconButton(
-                                  onPressed: _runSearch,
-                                  icon: const Icon(Icons.search),
-                                  tooltip: '검색',
-                                ),
-                                IconButton(
-                                  onPressed: _clearSearch,
-                                  icon: const Icon(Icons.clear),
-                                  tooltip: '초기화',
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: SizedBox(
-                                width: 168,
-                                child: TextField(
-                                  controller: _strongJumpController,
-                                  decoration: const InputDecoration(
-                                    labelText: 'Strong/스트롱',
-                                    hintText: 'H1 또는 G26',
-                                    border: OutlineInputBorder(),
-                                    isDense: true,
-                                  ),
-                                  onChanged: _handleStrongRailJumpChanged,
-                                  onSubmitted: _handleStrongRailJumpSubmitted,
-                                ),
+                                onChanged: (_) => _cancelPendingStrongJump(),
+                                onSubmitted: (_) => _runSearch(),
                               ),
+                            ),
+                            const SizedBox(width: 8),
+                            IconButton(
+                              onPressed: _runSearch,
+                              icon: const Icon(Icons.search),
+                              tooltip: '검색',
+                            ),
+                            IconButton(
+                              onPressed: _clearSearch,
+                              icon: const Icon(Icons.clear),
+                              tooltip: '초기화',
                             ),
                           ],
                         )
@@ -1171,6 +1147,38 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ],
                         ),
+                );
+
+                final homeStrongControlArea = Padding(
+                  padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: SizedBox(
+                      width: 168,
+                      child: TextField(
+                        controller: _strongJumpController,
+                        decoration: const InputDecoration(
+                          labelText: 'Strong/스트롱',
+                          hintText: 'H1 또는 G26',
+                          border: OutlineInputBorder(),
+                          isDense: true,
+                        ),
+                        onChanged: _handleStrongRailJumpChanged,
+                        onSubmitted: _handleStrongRailJumpSubmitted,
+                      ),
+                    ),
+                  ),
+                );
+
+                final homeWorkspaceSearchSurface = DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surfaceContainerHighest
+                        .withValues(alpha: 0.35),
+                    border: Border(
+                      bottom: BorderSide(color: Theme.of(context).dividerColor),
+                    ),
+                  ),
+                  child: homeSearchControlArea,
                 );
 
                 final Widget homeWordListSurface = _isShowingDefaultStrongList
@@ -1290,7 +1298,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 final homePane = Column(
                   children: [
-                    // ✅ 검색창
+                    // ✅ 좌측 Strong rail-local jump 입력
                     if (isLargeScreen)
                       DecoratedBox(
                         decoration: BoxDecoration(
@@ -1304,7 +1312,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                         ),
-                        child: homeSearchControlArea,
+                        child: homeStrongControlArea,
                       )
                     else
                       homeSearchControlArea,
@@ -1321,15 +1329,29 @@ class _HomeScreenState extends State<HomeScreen> {
                 return Row(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Expanded(flex: 2, child: homePane),
-                    const VerticalDivider(width: 1),
                     Expanded(
-                      flex: 6,
-                      child: WordExplorerScreen(
-                        key: ValueKey(_largeScreenExplorerWordId),
-                        initialWordId: _largeScreenExplorerWordId,
-                        onSelectedStrongWordChanged:
-                            _handleExplorerSelectedStrongWordChanged,
+                      child: Column(
+                        children: [
+                          homeWorkspaceSearchSurface,
+                          Expanded(
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Expanded(flex: 2, child: homePane),
+                                const VerticalDivider(width: 1),
+                                Expanded(
+                                  flex: 6,
+                                  child: WordExplorerScreen(
+                                    key: ValueKey(_largeScreenExplorerWordId),
+                                    initialWordId: _largeScreenExplorerWordId,
+                                    onSelectedStrongWordChanged:
+                                        _handleExplorerSelectedStrongWordChanged,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],

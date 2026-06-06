@@ -1,5 +1,27 @@
 # CHANGELOG
 
+## 2026-06-06 Phase 19-B 상단 검색 surface presentation 최소 구현
+
+- large-screen `HomeScreen`에서 일반 검색 입력을 좌측 control surface 내부에서 좌우 split 전체 위의 workspace 상단 surface로 시각 재배치했다.
+- 변경은 `HomeScreen.build()` 내부 widget composition에 한정했다. `_searchController`, `_runSearch(...)`, `_clearSearch(...)`, `_searchWordsFuture`, `_isShowingDefaultStrongList`는 계속 `HomeScreen` private state가 소유한다.
+- large-screen 좌측 control surface에는 `Strong/스트롱` rail-local jump 입력, Strong Rail, default Strong 목록 또는 검색 후보 목록, current Explorer target feedback, graph selection 기반 passive selected Strong feedback을 유지했다.
+- 상단 search submit은 기존 검색 목록 전환만 수행하며 Explorer retarget을 수행하지 않는다. 검색 후보 item tap과 Strong Rail item tap의 기존 명시적 large-screen Explorer retarget 경로는 유지했다.
+- `Strong/스트롱` 입력 handler와 rail-local jump 경로, graph selection passive sync 경로는 변경하지 않았다.
+- small-screen은 기존 일반 검색 입력, 검색 후보 목록, 후보 item tap의 detail route 흐름을 유지했다.
+- `test/ui/home_screen_phase18c_left_control_surface_boundary_test.dart`의 stale mount 기준을 Phase 19-B에 맞게 보정하고, large-screen 좌측에 일반 검색 입력이 남지 않으며 Strong 입력만 유지되는 경계를 명시했다.
+- `test/ui/home_screen_phase19b_top_search_surface_presentation_test.dart`를 추가해 large-screen 상단 검색 mount, 좌측 Strong/Rail/list 유지, search submit 비-retarget, 명시적 후보 item retarget, owner 및 Phase 18 금지선, small-screen 흐름을 확인한다.
+- DB, repository read/API, DTO/model, dependency, `WordExplorerScreen` owner state, `ExplorerWorkspace` production mount, `ExplorerWorkspaceState` source-of-truth, 좌측/상단 create/edit/write entry는 변경하지 않았다.
+- keyboard access, command palette, search ranking, recent search, persistence, AppBar write action과 검색 surface 결합은 구현하지 않았다.
+- 명령어 기반 검증 결과:
+  - Phase 18-C/M 및 Phase 19-B 관련 source guardrail: 통과, `+21`, `All tests passed!`.
+  - Phase 19-B 신규 guardrail 단독 실행: 통과, `+7`, `All tests passed!`.
+  - 기존 Phase 18-N runtime widget guardrail 단독 실행: 통과, `+3`, `All tests passed!`.
+  - Phase 17-B/C 및 Phase 18-A/B/C/D/F/G/I/K/M/N, Phase 19-B guardrail 묶음: 통과, `+82`, `All tests passed!`.
+  - Phase 19-B 변경 파일 대상 analyze: exit code `0`. 기존 `HomeScreen` warning/info 5건만 확인했고 신규 오류는 없다.
+  - 전체 `flutter analyze --no-fatal-infos --no-fatal-warnings`: 기존 `tool/verify_graph_batch_context.dart`, `tool/verify_graph_center_context.dart` API 불일치 error 13건과 기존 warning/info를 포함해 `47 issues found`, exit code `1`. 이번 범위에서 수정하지 않았다.
+- UI 테스트는 Codex가 수행하지 않는다. large-screen 상단 검색 위치, 좌측 Strong/Rail/list 유지, 검색 후보 item retarget, search submit 비-retarget, Strong rail-local jump, graph passive sync, small-screen detail route를 클라이언트 체크리스트로 확인한다.
+- 커밋, main 병합, origin push는 수행하지 않았다.
+
 ## 2026-06-06 Phase 19-A 상단 검색/명령 surface read-only audit
 
 - Phase 19-A는 상단 검색/명령 surface와 좌측 control surface의 장기 역할을 재정의하기 위한 read-only UX/architecture audit 단계다. production code, test code, DB, repository read/API, DTO/model, dependency는 변경하지 않았다.

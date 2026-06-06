@@ -12,6 +12,10 @@ void main() {
     late String wordGraphSource;
     late String wordExplorerSource;
     late String leftPaneControlSource;
+    late String homeSearchControlAreaSource;
+    late String homeStrongControlAreaSource;
+    late String homeWorkspaceSearchSurfaceSource;
+    late String largeHomePaneHeaderSource;
     late String smallWidthBranch;
     late String largeWidthBranch;
     late String wordExplorerFieldSource;
@@ -25,6 +29,31 @@ void main() {
         homeSource,
         'final isLargeScreen = _isLargeScreenWidth(',
         'if (!isLargeScreen) {',
+      );
+      homeSearchControlAreaSource = _sourceBetween(
+        leftPaneControlSource,
+        'final homeSearchControlArea = Padding(',
+        'final homeStrongControlArea = Padding(',
+      );
+      homeStrongControlAreaSource = _sourceBetween(
+        leftPaneControlSource,
+        'final homeStrongControlArea = Padding(',
+        'final homeWorkspaceSearchSurface = DecoratedBox(',
+      );
+      homeWorkspaceSearchSurfaceSource = _sourceBetween(
+        leftPaneControlSource,
+        'final homeWorkspaceSearchSurface = DecoratedBox(',
+        'final Widget homeWordListSurface =',
+      );
+      final homePaneSource = _sourceBetween(
+        homeSource,
+        'final homePane = Column(',
+        'if (!isLargeScreen) {',
+      );
+      largeHomePaneHeaderSource = _sourceBetween(
+        homePaneSource,
+        'if (isLargeScreen)',
+        'else',
       );
       smallWidthBranch = _sourceBetween(
         homeSource,
@@ -48,20 +77,69 @@ void main() {
       );
     });
 
-    test('separates search controls as a persistent large-screen surface', () {
-      expect(leftPaneControlSource, contains('final homeSearchControlArea'));
-      expect(leftPaneControlSource, contains('if (isLargeScreen)'));
-      expect(leftPaneControlSource, contains('DecoratedBox('));
-      expect(leftPaneControlSource, contains('surfaceContainerHighest'));
-      expect(leftPaneControlSource, contains('BorderSide('));
-      expect(
-        leftPaneControlSource,
-        contains('color: Theme.of(context).dividerColor'),
-      );
-      expect(leftPaneControlSource, contains('child: homeSearchControlArea'));
-      expect(leftPaneControlSource, contains('else'));
-      expect(leftPaneControlSource, contains('homeSearchControlArea'));
-    });
+    test(
+      'moves general search to workspace top and keeps Strong control on left',
+      () {
+        expect(
+          homeSearchControlAreaSource,
+          contains('controller: _searchController'),
+        );
+        expect(
+          homeSearchControlAreaSource,
+          isNot(contains('controller: _strongJumpController')),
+        );
+        expect(
+          homeStrongControlAreaSource,
+          contains('controller: _strongJumpController'),
+        );
+        expect(
+          homeStrongControlAreaSource,
+          isNot(contains('controller: _searchController')),
+        );
+        expect(
+          homeWorkspaceSearchSurfaceSource,
+          contains('child: homeSearchControlArea'),
+        );
+        expect(
+          largeHomePaneHeaderSource,
+          contains('child: homeStrongControlArea'),
+        );
+        expect(
+          largeHomePaneHeaderSource,
+          isNot(contains('homeSearchControlArea')),
+        );
+      },
+    );
+
+    test(
+      'keeps workspace search and left Strong surfaces visually separated',
+      () {
+        expect(leftPaneControlSource, contains('final homeSearchControlArea'));
+        expect(leftPaneControlSource, contains('final homeStrongControlArea'));
+        expect(
+          leftPaneControlSource,
+          contains('final homeWorkspaceSearchSurface'),
+        );
+        expect(leftPaneControlSource, contains('if (isLargeScreen)'));
+        expect(leftPaneControlSource, contains('DecoratedBox('));
+        expect(leftPaneControlSource, contains('surfaceContainerHighest'));
+        expect(leftPaneControlSource, contains('BorderSide('));
+        expect(
+          leftPaneControlSource,
+          contains('color: Theme.of(context).dividerColor'),
+        );
+        expect(
+          homeWorkspaceSearchSurfaceSource,
+          contains('child: homeSearchControlArea'),
+        );
+        expect(
+          largeHomePaneHeaderSource,
+          contains('child: homeStrongControlArea'),
+        );
+        expect(leftPaneControlSource, contains('else'));
+        expect(leftPaneControlSource, contains('homeSearchControlArea'));
+      },
+    );
 
     test('keeps existing search and list responsibilities in HomeScreen', () {
       expect(leftPaneControlSource, contains('controller: _searchController'));
