@@ -8757,9 +8757,9 @@ Strong-like 입력의 `onChanged` 기반 rail-local jump 경로는 일반 검색
 
 따라서 Phase 18-L audit 결론은 "rail-local jump helper 자체는 retarget/list 전환과 분리되어 있으나, 입력 surface/controller 공유가 UX 역할 혼동을 만들 수 있다"로 정리한다.
 
-#### Phase 18-M 최소 구현 후보
+#### Phase 18-M 당시 최소 구현 후보
 
-Phase 18-M은 아직 확정 구현 단계가 아니며, 아래 항목은 최소 구현 후보로만 기록한다. 구현 여부와 정확한 범위는 별도 Phase에서 다시 확정해야 한다.
+아래 항목은 Phase 18-L audit 시점에 기록한 역사적 후보 범위다. 이후 Phase 18-M에서 일반 검색 field와 `Strong/스트롱` compact field 분리를 완료했으며, 현재 구현 기준은 `17.114 Phase 18-M Search / Strong Jump role separation implementation`과 `17.115 Phase 18-N Phase 18 종료 전 guardrail hardening`을 따른다.
 
 포함 후보:
 
@@ -8785,9 +8785,9 @@ Phase 18-M은 아직 확정 구현 단계가 아니며, 아래 항목은 최소 
 - `ExplorerWorkspace` production shell mount
 - `ExplorerWorkspaceState` production source-of-truth 승격
 
-#### Phase 18-M guardrail/test 후보
+#### Phase 18-M 당시 guardrail/test 후보
 
-Phase 18-M을 별도 구현 Phase로 진행할 경우 guardrail 후보는 아래 범위로 제한한다.
+아래 guardrail 후보는 Phase 18-L audit 시점의 역사적 기록이며, Phase 18-M 구현과 Phase 18-N runtime guardrail에서 실제 검증 기준으로 반영했다.
 
 - Strong/스트롱 field handler source에 `_showWordInLargeScreenExplorerPane(...)`, `_largeScreenExplorerWordId =`, `_searchWordsFuture`, `_setVisibleWordListFuture(...)`, `_isShowingDefaultStrongList =`, `WordExplorerScreen(`, `Navigator.push`, `_repository.`가 포함되지 않아야 한다.
 - 일반 검색 field는 기존 `_runSearch(...)`, `_clearSearch(...)`, `_createSearchWordsFuture(...)`, 검색 결과 list surface, 검색 후보 item tap retarget 경로를 유지해야 한다.
@@ -8827,3 +8827,45 @@ Phase 18-M은 large-screen `HomeScreen` control surface에서 일반 검색 입�
 #### UI 수동 테스트 기준
 
 UI 수동 테스트는 클라이언트가 Windows Desktop 앱에서 수행한다. 창 너비를 900px 이상으로 둔 뒤 일반 검색창에 `H1`을 입력하고 검색 버튼을 눌렀을 때 좌측 목록이 검색 후보 목록으로 전환되어야 하며, 후보 item을 누르기 전까지 우측 Explorer는 retarget되지 않아야 한다. 검색 후보 item을 클릭하면 우측 Explorer가 해당 후보로 retarget되어야 한다. `Strong/스트롱` 입력란에 `G26`을 입력하면 Strong Rail 위치/feedback만 변하고, 우측 Explorer retarget, 검색 결과/default list 전환, 우측 Explorer remount가 발생하지 않아야 한다. 창 너비를 900px 미만으로 줄인 뒤 기존 검색 입력에서 `H1`을 입력하면 기존 small-screen 흐름이 유지되어야 한다.
+
+### 17.115 Phase 18-N Phase 18 종료 전 guardrail hardening
+
+Phase 18-N은 Phase 19로 이동하기 전 Phase 18 종료 조건을 보강하는 guardrail/docs 단계다. production 기능과 동작은 변경하지 않으며, Phase 18-G~M에서 확정한 Search, Strong Jump, Strong Rail, graph passive sync 역할 경계를 기존 source guard와 runtime widget guard로 함께 확인한다.
+
+#### 최종 역할 경계
+
+- 일반 검색 field는 `_searchController`, `_runSearch(...)`, 기존 검색 후보 목록, 검색 후보 item tap의 우측 Explorer retarget 흐름을 담당한다.
+- `Strong/스트롱` field는 Strong Rail 내부 local jump만 담당하며, 검색 결과/default list 전환과 우측 Explorer retarget/remount를 수행하지 않는다.
+- Strong Rail item tap은 `_showWordInLargeScreenExplorerPane(item.wordId)` retarget request만 수행한다.
+- graph selection passive sync는 Strong Rail passive selected feedback과 rail-local jump만 수행하며, `_largeScreenExplorerWordId`를 변경하거나 Explorer를 retarget/remount하지 않는다.
+- Strong 번호가 없는 selected word는 passive selected state clear로 처리한다.
+- small-screen은 기존 검색 결과 item tap의 detail route 흐름을 유지한다.
+
+#### runtime guardrail 범위와 한계
+
+`test/ui/home_screen_phase18n_runtime_guardrail_test.dart`는 production `HomeScreen`을 격리 복사 DB에서 mount해 일반 검색 submit, Strong Rail local jump, 검색 목록 유지, Explorer element/key/initial target 유지, passive callback 이후 Explorer 비-retarget, small-screen detail route 흐름을 확인한다.
+
+graph node는 `WordGraphScreen` 내부 `CustomPaint`와 계산된 좌표 기반 `GestureDetector`로 렌더되므로 production key를 추가하지 않고 안정적인 특정 node 직접 탭을 수행하는 것은 이번 Phase 범위를 넘는다. Phase 18-N runtime guard는 mounted `WordExplorerScreen`의 production `onSelectedStrongWordChanged` callback을 실제 호출해 `HomeScreen` passive sync 경계를 확인하고, graph selection callback 연결과 async stale guard는 기존 Phase 18-K source guard로 유지한다.
+
+#### 유지 금지선
+
+Phase 18-N은 `lib/` production code, DB, repository read/API, DTO/model, dependency를 변경하지 않는다. Strong Rail/Search/graph selection/passive sync 동작 변경, `ExplorerWorkspace` production shell mount, `ExplorerWorkspaceState` production source-of-truth 승격, keyboard access, search ranking, recent search/persistence 구현을 수행하지 않는다.
+
+#### 명령어 기반 검증 결과
+
+- `flutter test test/ui/home_screen_phase18n_runtime_guardrail_test.dart --reporter expanded`: 통과, `+3`.
+- Phase 17-B/C, Phase 18-A/B/C/D/F/G/I/K/M, Phase 18-N guardrail 묶음: 통과, `+74`.
+- `flutter test --reporter compact`: 전체 통과, `+311`.
+- `flutter analyze --no-fatal-infos --no-fatal-warnings test/ui/home_screen_phase18n_runtime_guardrail_test.dart`: 통과, `No issues found!`.
+- `flutter analyze --no-fatal-infos --no-fatal-warnings`: 기존 `tool/verify_graph_batch_context.dart`, `tool/verify_graph_center_context.dart` API 불일치 error 13건과 기존 warning/info를 포함해 `47 issues found`, exit code `1`.
+
+#### UI 수동 테스트 체크리스트
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 |
+| --- | --- | --- | --- |
+| large-screen 일반 검색 `H1` | 좌측 목록이 `H1` 검색 후보 목록으로 전환되고, 후보 tap 전까지 우측 Explorer target은 유지된다. | 목록이 기본 Strong 목록으로 남거나 입력만으로 Explorer가 바뀌는지 확인한다. | Windows Desktop 창을 900px 이상으로 두고 일반 검색 field에 `H1`을 입력한 뒤 Enter 또는 검색 버튼을 누른다. |
+| 일반 검색 후보 item tap | 선택한 후보로 우측 Explorer가 retarget된다. | 우측 Explorer가 유지되거나 detail route가 별도로 열리는지 확인한다. | `H1 / אָב / 아브 / 아버지` 후보 item 본문을 클릭하고 우측 Explorer 중심/상세가 해당 단어로 바뀌는지 확인한다. |
+| `Strong/스트롱` 입력 `G26` | Strong Rail 위치만 `G26`으로 이동하며 검색 결과/default list와 우측 Explorer target/remount는 유지된다. | 좌측 목록 전환, 우측 Explorer 초기화/retarget, 검색 실행이 발생하는지 확인한다. | large-screen `Strong/스트롱` field에 `G26`을 입력하고 Enter를 누른 뒤 Rail 위치와 기존 화면 상태를 비교한다. |
+| graph selection → Strong Rail passive selected/jump | 선택 단어의 Strong 번호 위치로 Rail이 이동하고 secondary passive selected feedback만 표시된다. 우측 Explorer target은 유지된다. | primary target feedback이 바뀌거나 Explorer가 remount/retarget되는지 확인한다. | `H1 / אָב / 아브 / 아버지` Explorer graph에서 `H2 / אַב / 아브 / 아버지` 또는 `H85 / אַבְרָהָם / 아브라함/아베라함` node를 선택한다. |
+| Strong 번호 없는 graph node 선택 | 기존 passive selected feedback이 clear되고 우측 Explorer target은 유지된다. | 이전 passive 표시가 남거나 Explorer target이 바뀌는지 확인한다. | graph에서 `אַבָּא / 아빠 / 아버지` node를 선택하고 Rail의 secondary passive 표시가 사라지는지 확인한다. |
+| small-screen 검색/detail route | embedded Explorer와 `Strong/스트롱` field 없이 기존 검색 후보 목록이 표시되고 후보 tap이 detail route를 연다. | embedded Explorer가 나타나거나 후보 tap이 large-screen retarget처럼 동작하는지 확인한다. | 창을 900px 미만으로 줄이고 일반 검색 field에 `H1`을 검색한 뒤 후보 item 본문을 클릭한다. |

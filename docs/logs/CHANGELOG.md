@@ -1,5 +1,20 @@
 # CHANGELOG
 
+## 2026-06-06 Phase 18-N Phase 18 종료 전 guardrail hardening
+
+- Phase 18-N은 Phase 19 이동 전 Phase 18 종료 조건을 보강한 guardrail/docs 단계다. production 기능과 `lib/` code는 변경하지 않았다.
+- active UX 문서의 Phase 18-L `Phase 18-M 최소 구현 후보` 표현을 역사적 audit 후보로 명확히 구분하고, 현재 기준은 Phase 18-M 완료 구현과 Phase 18-N 최종 역할 경계를 따르도록 정리했다.
+- `test/ui/home_screen_phase18n_runtime_guardrail_test.dart`를 추가해 격리 복사 DB에서 production `HomeScreen`을 mount하고 large-screen 일반 검색 submit, `Strong/스트롱` rail-local jump, 검색 목록 유지, Explorer 비-retarget/remount, passive callback 경계, small-screen 검색 결과 item의 detail route 흐름을 runtime으로 확인한다.
+- graph node 직접 탭은 `CustomPaint`와 계산 좌표 기반 구조상 production key 추가 없이 안정적으로 고정하기 어려워 이번 runtime guard 범위에서 제외했다. graph selection callback 연결과 async stale guard는 기존 Phase 18-K source guard를 유지하고, 새 runtime guard는 mounted `WordExplorerScreen`의 production passive callback 이후 `HomeScreen` 경계를 확인한다.
+- UI 테스트는 Codex가 수행하지 않으며, large-screen 일반 검색 `H1`, 검색 후보 item retarget, `Strong/스트롱` 입력 `G26`, graph selection passive selected/jump, Strong 번호 없는 node의 passive clear, small-screen 검색/detail route를 클라이언트 체크리스트로 남겼다.
+- 새 DB query, 새 repository read/API, 신규 DTO/model, dependency 변경, Strong Rail/Search/graph selection/passive sync 동작 변경, `ExplorerWorkspace` production shell mount, `ExplorerWorkspaceState` production source-of-truth 승격은 없다.
+- 명령어 기반 검증 결과:
+  - `flutter test test/ui/home_screen_phase18n_runtime_guardrail_test.dart --reporter expanded`: 통과, `+3`.
+  - Phase 17-B/C, Phase 18-A/B/C/D/F/G/I/K/M, Phase 18-N guardrail 묶음: 통과, `+74`.
+  - `flutter test --reporter compact`: 전체 통과, `+311`.
+  - `flutter analyze --no-fatal-infos --no-fatal-warnings test/ui/home_screen_phase18n_runtime_guardrail_test.dart`: 통과, `No issues found!`.
+  - `flutter analyze --no-fatal-infos --no-fatal-warnings`: 기존 `tool/verify_graph_batch_context.dart`, `tool/verify_graph_center_context.dart` API 불일치 error 13건과 기존 warning/info를 포함해 `47 issues found`, exit code `1`.
+
 ## 2026-06-06 Phase 18-M Search / Strong Jump 역할 분리 구현
 
 - Phase 18-M은 large-screen `HomeScreen` control surface에서 일반 검색 입력과 `Strong/스트롱` rail-local jump 입력을 분리한 최소 구현 단계다.
