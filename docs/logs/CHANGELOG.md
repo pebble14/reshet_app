@@ -1,5 +1,25 @@
 # CHANGELOG
 
+## 2026-06-07 Phase 20-F large-screen 좌측 Strong Rail compact surface 정리
+
+- large-screen 좌측 control surface에서 default Strong browse/discovery 목록도 표시하지 않도록 `homeLeftControlListSurface` composition을 Strong Rail-only로 좁혔다.
+- large-screen 좌측 surface 폭은 클라이언트 UI 확인 결과를 반영해 유지보수 가능한 상수 `_largeScreenStrongControlSurfaceWidth = 160.0`으로 고정하고, Strong 입력과 Rail item의 공통 좌우 padding은 `_largeScreenStrongControlHorizontalPadding = 12.0`으로 정렬했다. Strong 입력의 기존 고정 `168` 폭 wrapper는 제거했으며, 160px surface 안에서 좌우 padding을 제외한 136px content 폭을 사용한다.
+- 160px compact surface에서 `Strong/스트롱` label이 잘리는 클라이언트 UI 확인 결과를 반영해 Strong 입력 label을 항상 floating 표시하도록 조정했다. hint `H1 또는 G26`과 `G26`, `H7225` 입력값 계약은 유지한다.
+- large-screen default/query-bound mode 모두 좌측 `homeWordListSurface`를 mount하지 않는다. query-bound 결과는 계속 상단 transient result surface에 귀속한다.
+- small-screen branch는 기존 shared `homeWordListSurface`를 유지하므로 default Strong 목록, 검색 결과 목록, item tap의 detail route 흐름은 변경하지 않았다.
+- Phase 20-E의 default Strong 목록 유지 계약은 앱 전체 목록 삭제 금지 및 small-screen browse/default 흐름 유지 계약으로 재정의했다. large-screen에서는 Phase 20-F 이후 default Strong 목록을 표시하지 않는다.
+- `_searchController`, `_runSearch(...)`, `_searchWordsFuture`, `_isShowingDefaultStrongList` owner와 의미, 검색 submit 비-retarget, transient 후보 tap retarget, Strong 입력의 rail-local jump, Strong Rail tap retarget, graph passive sync 비-retarget 경계를 유지했다.
+- production `ExplorerWorkspace` mount와 `ExplorerWorkspaceState` production source-of-truth 승격 금지 상태를 유지했다.
+- 명령어 기반 검증 결과:
+  - 수정된 Phase 18-B/C/G/I, Phase 19-B/C, Phase 20-C source guardrail과 Phase 18-F/K/M, Phase 17-B/C 경계 guardrail 묶음: 통과, `+82`, `All tests passed!`.
+  - Phase 20-C 및 Phase 18-N 실제 DB 기반 runtime guardrail 묶음: 통과, `+6`, `All tests passed!`.
+  - 최종 관련 source/runtime guardrail 묶음: 통과, `+88`, `All tests passed!`.
+  - 변경 파일 대상 `dart analyze`: 신규 error 없음. 기존 `home_screen.dart` warning 1건과 info 4건으로 `5 issues found`, exit code `1`.
+- 전체 analyze는 기존 `47 issues found`, exit code `1` 기술 부채와 섞지 않기 위해 실행하지 않았다.
+- dependency, `pubspec.yaml`, `pubspec.lock`, DB/data/sql, repository/data source, DTO/model, route 변경은 없다.
+- `docs/logs/FEATURE_STATUS.md`와 Phase 20-D 감사 문서는 변경하지 않았다.
+- Codex는 UI 기반 수동 테스트를 수행했다고 보고하지 않는다. 클라이언트 UI 체크리스트는 `docs/ux/explorer_workspace_unification.md`의 Phase 20-F active boundary에 기록했다.
+
 ## 2026-06-07 Phase 20-E large-screen 좌측 검색 결과 중복 표시 제거
 
 - large-screen `homeLeftControlListSurface` composition에서 Strong Rail은 항상 유지하고 `_isShowingDefaultStrongList`가 `true`일 때만 divider와 `homeWordListSurface`를 mount하도록 변경했다.

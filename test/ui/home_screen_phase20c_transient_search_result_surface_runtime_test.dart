@@ -68,6 +68,27 @@ void main() {
           explorerFinder,
         );
         final searchField = find.widgetWithText(TextField, '검색 (표기/의미/스트롱 번호)');
+        final strongField = find.widgetWithText(TextField, 'Strong/스트롱');
+
+        expect(_strongRailListFinder(), findsOneWidget);
+        expect(_defaultStrongListFinder(), findsNothing);
+        expect(tester.getSize(_strongRailListFinder()).width, 160.0);
+        expect(tester.getSize(strongField).width, 136.0);
+        expect(
+          tester
+              .widget<TextField>(strongField)
+              .decoration
+              ?.floatingLabelBehavior,
+          FloatingLabelBehavior.always,
+        );
+
+        await tester.enterText(strongField, 'H7225');
+        await _pumpStrongJumpAnimation(tester);
+
+        expect(tester.widget<TextField>(strongField).controller?.text, 'H7225');
+        expect(tester.takeException(), isNull);
+        expect(_strongRailListFinder(), findsOneWidget);
+        expect(_defaultStrongListFinder(), findsNothing);
 
         await tester.enterText(searchField, 'H2');
         await tester.tap(find.byTooltip('검색'));
@@ -102,7 +123,6 @@ void main() {
           initialExplorer.initialWordId,
         );
 
-        final strongField = find.widgetWithText(TextField, 'Strong/스트롱');
         await tester.enterText(strongField, 'G26');
         await _pumpStrongJumpAnimation(tester);
 
@@ -138,16 +158,13 @@ void main() {
         await tester.pump();
         await _pumpUntil(
           tester,
-          () =>
-              _strongRailListFinder().evaluate().length == 1 &&
-              _defaultStrongListFinder().evaluate().length == 1,
-          reason:
-              'clear must restore the Strong Rail and default browse list.',
+          () => _strongRailListFinder().evaluate().length == 1,
+          reason: 'clear must restore the Strong Rail.',
         );
 
         expect(_transientSurfaceFinder(), findsNothing);
         expect(_strongRailListFinder(), findsOneWidget);
-        expect(_defaultStrongListFinder(), findsOneWidget);
+        expect(_defaultStrongListFinder(), findsNothing);
         expect(tester.element(explorerFinder), same(initialExplorerElement));
         expect(
           tester.widget<WordExplorerScreen>(explorerFinder).initialWordId,
@@ -228,14 +245,12 @@ void main() {
       await tester.pumpWidget(const MaterialApp(home: HomeScreen()));
       await _pumpUntil(
         tester,
-        () =>
-            find
-                .widgetWithText(TextField, '검색 (표기/의미/스트롱 번호)')
-                .evaluate()
-                .length ==
-            1,
-        reason: 'small-screen search field must render after DB bootstrap.',
+        () => _defaultStrongListFinder().evaluate().length == 1,
+        reason: 'small-screen default Strong list must render after bootstrap.',
       );
+
+      expect(_defaultStrongListFinder(), findsOneWidget);
+      expect(_strongRailListFinder(), findsNothing);
 
       final searchField = find.widgetWithText(TextField, '검색 (표기/의미/스트롱 번호)');
       await tester.enterText(searchField, 'H2');

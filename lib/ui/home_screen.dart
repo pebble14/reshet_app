@@ -58,6 +58,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   static const double _defaultStrongListItemExtent = 56.0;
   static const double _strongRailListItemExtent = 46.0;
+  static const double _largeScreenStrongControlSurfaceWidth = 160.0;
+  static const double _largeScreenStrongControlHorizontalPadding = 12.0;
   static const double _largeScreenSplitBreakpoint = 900.0;
   static const String _largeScreenDefaultExplorerWordId = 'H0001_0000';
   static const Duration _strongJumpDebounceDuration = Duration(
@@ -818,7 +820,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 : Colors.transparent;
 
             return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+              padding: const EdgeInsets.symmetric(
+                horizontal: _largeScreenStrongControlHorizontalPadding,
+                vertical: 4,
+              ),
               child: InkWell(
                 borderRadius: BorderRadius.circular(6),
                 onTap: () {
@@ -1262,23 +1267,23 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
 
                 final homeStrongControlArea = Padding(
-                  padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: SizedBox(
-                      width: 168,
-                      child: TextField(
-                        controller: _strongJumpController,
-                        decoration: const InputDecoration(
-                          labelText: 'Strong/스트롱',
-                          hintText: 'H1 또는 G26',
-                          border: OutlineInputBorder(),
-                          isDense: true,
-                        ),
-                        onChanged: _handleStrongRailJumpChanged,
-                        onSubmitted: _handleStrongRailJumpSubmitted,
-                      ),
+                  padding: const EdgeInsets.fromLTRB(
+                    _largeScreenStrongControlHorizontalPadding,
+                    12,
+                    _largeScreenStrongControlHorizontalPadding,
+                    8,
+                  ),
+                  child: TextField(
+                    controller: _strongJumpController,
+                    decoration: const InputDecoration(
+                      labelText: 'Strong/스트롱',
+                      hintText: 'H1 또는 G26',
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                      border: OutlineInputBorder(),
+                      isDense: true,
                     ),
+                    onChanged: _handleStrongRailJumpChanged,
+                    onSubmitted: _handleStrongRailJumpSubmitted,
                   ),
                 );
 
@@ -1395,19 +1400,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
 
                 final Widget homeLeftControlListSurface = isLargeScreen
-                    ? Row(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          SizedBox(
-                            width: 72,
-                            child: _buildStrongLevelOneRetargetRail(),
-                          ),
-                          if (_isShowingDefaultStrongList) ...[
-                            const VerticalDivider(width: 1),
-                            Expanded(child: homeWordListSurface),
-                          ],
-                        ],
-                      )
+                    ? SizedBox.expand(child: _buildStrongLevelOneRetargetRail())
                     : homeWordListSurface;
 
                 final homePane = Column(
@@ -1453,7 +1446,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                Expanded(flex: 2, child: homePane),
+                                SizedBox(
+                                  width: _largeScreenStrongControlSurfaceWidth,
+                                  child: homePane,
+                                ),
                                 const VerticalDivider(width: 1),
                                 Expanded(
                                   flex: 6,

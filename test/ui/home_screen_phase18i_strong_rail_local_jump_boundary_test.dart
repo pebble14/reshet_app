@@ -244,7 +244,7 @@ void main() {
         );
         expect(
           homeLeftControlListSurfaceSource,
-          contains('Expanded(child: homeWordListSurface)'),
+          isNot(contains('Expanded(child: homeWordListSurface)')),
         );
 
         for (final forbiddenListSurfaceMutation in [

@@ -264,7 +264,7 @@ void main() {
       },
     );
 
-    test('deduplicates large-screen results and keeps shared small flow', () {
+    test('keeps large-screen Rail-only and shared small-screen list flow', () {
       expect(
         homeWordListSurfaceSource,
         contains(
@@ -293,19 +293,11 @@ void main() {
       );
       expect(
         homeLeftControlListSurfaceSource,
-        contains('if (_isShowingDefaultStrongList) ...['),
+        isNot(contains('if (_isShowingDefaultStrongList) ...[')),
       );
       expect(
         homeLeftControlListSurfaceSource,
-        contains('Expanded(child: homeWordListSurface)'),
-      );
-      expect(
-        _appearsBefore(
-          homeLeftControlListSurfaceSource,
-          'if (_isShowingDefaultStrongList) ...[',
-          'Expanded(child: homeWordListSurface)',
-        ),
-        isTrue,
+        isNot(contains('Expanded(child: homeWordListSurface)')),
       );
       expect(
         homeLeftControlListSurfaceSource,

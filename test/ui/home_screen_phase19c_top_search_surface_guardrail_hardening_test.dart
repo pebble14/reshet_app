@@ -131,7 +131,7 @@ void main() {
         _appearsBefore(
           largeWorkspaceSource,
           'homeWorkspaceSearchSurface',
-          'Expanded(flex: 2, child: homePane)',
+          '_largeScreenStrongControlSurfaceWidth',
         ),
         isTrue,
       );
@@ -145,49 +145,50 @@ void main() {
       );
     });
 
-    test(
-      'large-screen left control keeps Strong, Rail, and word lists only',
-      () {
-        expect(
-          homeStrongControlAreaSource,
-          contains('controller: _strongJumpController'),
-        );
-        expect(
-          homeStrongControlAreaSource,
-          isNot(contains('controller: _searchController')),
-        );
-        expect(
-          largeHomePaneHeaderSource,
-          contains('child: homeStrongControlArea'),
-        );
-        expect(
-          largeHomePaneHeaderSource,
-          isNot(contains('homeSearchControlArea')),
-        );
-        expect(
-          homeLeftControlListSurfaceSource,
-          contains('child: _buildStrongLevelOneRetargetRail()'),
-        );
-        expect(
-          homeLeftControlListSurfaceSource,
-          contains('Expanded(child: homeWordListSurface)'),
-        );
-        expect(
-          homeWordListSurfaceSource,
-          contains(
-            'final Widget homeWordListSurface = _isShowingDefaultStrongList',
-          ),
-        );
-        expect(
-          homeWordListSurfaceSource,
-          contains('_buildDefaultStrongListView()'),
-        );
-        expect(
-          homeWordListSurfaceSource,
-          contains('FutureBuilder<List<HomeSearchResultDisplayItem>>'),
-        );
-      },
-    );
+    test('large-screen left control keeps Strong and compact Rail only', () {
+      expect(
+        homeStrongControlAreaSource,
+        contains('controller: _strongJumpController'),
+      );
+      expect(
+        homeStrongControlAreaSource,
+        isNot(contains('controller: _searchController')),
+      );
+      expect(
+        largeHomePaneHeaderSource,
+        contains('child: homeStrongControlArea'),
+      );
+      expect(
+        largeHomePaneHeaderSource,
+        isNot(contains('homeSearchControlArea')),
+      );
+      expect(
+        homeLeftControlListSurfaceSource,
+        contains('child: _buildStrongLevelOneRetargetRail()'),
+      );
+      expect(
+        homeLeftControlListSurfaceSource,
+        isNot(contains('Expanded(child: homeWordListSurface)')),
+      );
+      expect(
+        homeLeftControlListSurfaceSource,
+        isNot(contains('_isShowingDefaultStrongList')),
+      );
+      expect(
+        homeWordListSurfaceSource,
+        contains(
+          'final Widget homeWordListSurface = _isShowingDefaultStrongList',
+        ),
+      );
+      expect(
+        homeWordListSurfaceSource,
+        contains('_buildDefaultStrongListView()'),
+      );
+      expect(
+        homeWordListSurfaceSource,
+        contains('FutureBuilder<List<HomeSearchResultDisplayItem>>'),
+      );
+    });
 
     test('small-screen keeps general search in the existing homePane flow', () {
       expect(smallWidthBranch, contains('return homePane;'));

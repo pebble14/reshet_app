@@ -39,11 +39,20 @@ void main() {
       );
     });
 
-    test('narrows the large-screen Home pane after Phase 18-A', () {
-      expect(largeWidthBranch, contains('Expanded(flex: 2, child: homePane)'));
+    test('keeps the large-screen Home pane at the compact control width', () {
+      expect(
+        homeSource,
+        contains(
+          'static const double _largeScreenStrongControlSurfaceWidth = 160.0;',
+        ),
+      );
       expect(
         largeWidthBranch,
-        isNot(contains('Expanded(flex: 3, child: homePane)')),
+        contains('width: _largeScreenStrongControlSurfaceWidth'),
+      );
+      expect(
+        largeWidthBranch,
+        isNot(contains('Expanded(flex: 2, child: homePane)')),
       );
     });
 

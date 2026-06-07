@@ -167,8 +167,15 @@ void main() {
       expect(smallWidthBranch, isNot(contains('DecoratedBox(')));
     });
 
-    test('keeps Phase 18-B large-screen pane proportions and remount key', () {
-      expect(largeWidthBranch, contains('Expanded(flex: 2, child: homePane)'));
+    test('keeps compact left surface and Explorer remount key', () {
+      expect(
+        largeWidthBranch,
+        contains('width: _largeScreenStrongControlSurfaceWidth'),
+      );
+      expect(
+        largeWidthBranch,
+        isNot(contains('Expanded(flex: 2, child: homePane)')),
+      );
       expect(largeWidthBranch, contains('flex: 6'));
       expect(
         largeWidthBranch,

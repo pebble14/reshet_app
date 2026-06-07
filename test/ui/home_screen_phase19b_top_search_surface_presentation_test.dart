@@ -127,7 +127,7 @@ void main() {
           _appearsBefore(
             largeWorkspaceSource,
             'homeWorkspaceSearchSurface',
-            'Expanded(flex: 2, child: homePane)',
+            '_largeScreenStrongControlSurfaceWidth',
           ),
           isTrue,
         );
@@ -142,7 +142,7 @@ void main() {
       },
     );
 
-    test('left control surface keeps Strong input, Rail, and word lists', () {
+    test('left control surface keeps Strong input and compact Rail only', () {
       expect(
         homeStrongControlAreaSource,
         contains('controller: _strongJumpController'),
@@ -150,6 +150,15 @@ void main() {
       expect(
         homeStrongControlAreaSource,
         isNot(contains('controller: _searchController')),
+      );
+      expect(
+        homeStrongControlAreaSource,
+        contains('_largeScreenStrongControlHorizontalPadding'),
+      );
+      expect(homeStrongControlAreaSource, isNot(contains('width: 168')));
+      expect(
+        homeStrongControlAreaSource,
+        contains('floatingLabelBehavior: FloatingLabelBehavior.always'),
       );
       expect(
         largeHomePaneHeaderSource,
@@ -165,7 +174,11 @@ void main() {
       );
       expect(
         homeLeftControlListSurfaceSource,
-        contains('Expanded(child: homeWordListSurface)'),
+        isNot(contains('Expanded(child: homeWordListSurface)')),
+      );
+      expect(
+        homeLeftControlListSurfaceSource,
+        isNot(contains('_isShowingDefaultStrongList')),
       );
       expect(
         homeWordListSurfaceSource,

@@ -49,6 +49,16 @@ void main() {
     });
 
     test('rail reuses the existing default Strong list future only', () {
+      expect(
+        homeSource,
+        contains(
+          'static const double _largeScreenStrongControlHorizontalPadding = 12.0;',
+        ),
+      );
+      expect(
+        retargetRailSource,
+        contains('horizontal: _largeScreenStrongControlHorizontalPadding'),
+      );
       expect(retargetRailSource, contains('future: _defaultStrongListFuture'));
       expect(
         retargetRailSource,
@@ -82,7 +92,7 @@ void main() {
       );
       expect(
         homeLeftControlListSurfaceSource,
-        contains('Expanded(child: homeWordListSurface)'),
+        isNot(contains('Expanded(child: homeWordListSurface)')),
       );
       expect(
         homeLeftControlListSurfaceSource,
@@ -132,46 +142,49 @@ void main() {
       },
     );
 
-    test('search mode keeps the existing search result list surface', () {
-      expect(
-        visibleListFutureSource,
-        contains('_searchWordsFuture = _createSearchWordsFuture();'),
-      );
-      expect(
-        visibleListFutureSource,
-        isNot(contains('_defaultStrongListFuture = null;')),
-      );
-      expect(
-        visibleListFutureSource,
-        isNot(contains('_isShowingDefaultStrongList = true')),
-      );
-      expect(
-        homeWordListSurfaceSource,
-        contains(
-          'final Widget homeWordListSurface = _isShowingDefaultStrongList',
-        ),
-      );
-      expect(
-        homeWordListSurfaceSource,
-        contains('? _buildDefaultStrongListView()'),
-      );
-      expect(
-        homeWordListSurfaceSource,
-        contains(': FutureBuilder<List<HomeSearchResultDisplayItem>>'),
-      );
-      expect(
-        homeLeftControlListSurfaceSource,
-        contains('Expanded(child: homeWordListSurface)'),
-      );
-      expect(
-        homeLeftControlListSurfaceSource,
-        isNot(contains('_isShowingDefaultStrongList =')),
-      );
-      expect(
-        homeLeftControlListSurfaceSource,
-        isNot(contains('_setVisibleWordListFuture')),
-      );
-    });
+    test(
+      'shared small-screen flow keeps the existing search result surface',
+      () {
+        expect(
+          visibleListFutureSource,
+          contains('_searchWordsFuture = _createSearchWordsFuture();'),
+        );
+        expect(
+          visibleListFutureSource,
+          isNot(contains('_defaultStrongListFuture = null;')),
+        );
+        expect(
+          visibleListFutureSource,
+          isNot(contains('_isShowingDefaultStrongList = true')),
+        );
+        expect(
+          homeWordListSurfaceSource,
+          contains(
+            'final Widget homeWordListSurface = _isShowingDefaultStrongList',
+          ),
+        );
+        expect(
+          homeWordListSurfaceSource,
+          contains('? _buildDefaultStrongListView()'),
+        );
+        expect(
+          homeWordListSurfaceSource,
+          contains(': FutureBuilder<List<HomeSearchResultDisplayItem>>'),
+        );
+        expect(
+          homeLeftControlListSurfaceSource,
+          isNot(contains('Expanded(child: homeWordListSurface)')),
+        );
+        expect(
+          homeLeftControlListSurfaceSource,
+          isNot(contains('_isShowingDefaultStrongList =')),
+        );
+        expect(
+          homeLeftControlListSurfaceSource,
+          isNot(contains('_setVisibleWordListFuture')),
+        );
+      },
+    );
 
     test(
       'rail current feedback is visual and based only on Explorer target id',

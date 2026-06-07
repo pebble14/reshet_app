@@ -9087,3 +9087,37 @@ Codex는 UI 기반 수동 테스트를 수행했다고 보고하지 않는다. �
 | small-screen 검색과 후보 tap | 기존 `homePane` 검색 결과 목록이 표시되고 후보 tap이 detail route를 연다. | 검색 결과 목록 미표시, transient panel 또는 embedded Explorer 표시, detail route 미진입 | 창 너비를 900px 미만으로 줄이고 `H2`를 검색한 뒤 후보 본문을 클릭한다. |
 | `Strong/스트롱` 입력 | Strong Rail 위치/feedback만 변하며 일반 검색 결과와 transient panel lifecycle에는 영향을 주지 않는다. | 일반 검색 실행, transient panel open/close, Explorer retarget | large-screen `Strong/스트롱` 입력에 `G26`을 입력하고 panel, rail, Explorer 상태를 비교한다. |
 | Strong Rail item tap | 기존 `_showWordInLargeScreenExplorerPane(...)` 경로로 Explorer가 retarget된다. | Explorer target 유지 또는 standalone route 이동 | large-screen Strong Rail의 식별 가능한 Strong 번호 item을 클릭하고 우측 Explorer target 변화를 확인한다. |
+
+### 17.124 Phase 20-F large-screen 좌측 Strong Rail compact surface active boundary
+
+Phase 20-F는 Phase 20-E 이후 large-screen 좌측 control surface에 남아 있던 default Strong browse/discovery 목록도 미표시로 전환하고, 좌측 surface를 Strong 입력과 Strong Rail 중심의 compact navigation surface로 좁힌 구현 단계다.
+
+large-screen `homeLeftControlListSurface`는 default/query-bound mode와 관계없이 Strong Rail만 mount한다. large-screen에서는 shared `homeWordListSurface`를 mount하지 않으므로 query-bound 검색 결과 목록과 default Strong browse/discovery 목록 모두 좌측에 표시하지 않는다. query-bound 검색 결과는 계속 상단 일반 검색 입력 아래의 transient result surface에 귀속한다.
+
+large-screen 좌측 surface 폭은 클라이언트 UI 확인 결과를 반영해 `_largeScreenStrongControlSurfaceWidth = 160.0`으로 고정한다. Strong 입력과 Rail item은 `_largeScreenStrongControlHorizontalPadding = 12.0`을 공유한다. Strong 입력은 별도 고정 폭 wrapper를 사용하지 않고 160px surface의 좌우 padding을 제외한 136px content 폭을 사용한다. `Strong/스트롱` label은 compact 폭에서 잘리지 않도록 항상 floating 표시한다. 이 계약은 `H1 또는 G26` hint, `G26`, `H7225` 같은 입력값과 Strong Rail 번호를 안정적으로 표시하면서 불필요한 목록 영역을 줄이는 조정 기준이다.
+
+small-screen branch는 계속 `homeLeftControlListSurface = homeWordListSurface`와 `return homePane` 흐름을 사용한다. 따라서 small-screen default Strong 목록, 검색 결과 목록, item tap의 `WordDetailScreen` detail route 흐름은 유지된다. Phase 20-E의 default Strong 목록 유지 계약은 Phase 20-F 이후 앱 전체 목록 삭제 금지와 small-screen browse/default 흐름 유지 계약으로 해석하며, large-screen 표시 유지 계약으로 해석하지 않는다.
+
+검색 state owner와 실행 의미는 변경하지 않는다. `_searchController`, `_runSearch(...)`, `_searchWordsFuture`, `_isShowingDefaultStrongList`는 계속 `_HomeScreenState` private state에 있고, 검색 submit만으로 Explorer를 retarget하지 않는다. transient 후보 item의 명시적 tap만 기존 `_showWordInLargeScreenExplorerPane(wordId)` 경로로 Explorer를 retarget한다.
+
+`Strong/스트롱` 입력은 rail-local jump 전용이며 일반 검색이나 transient panel lifecycle과 결합하지 않는다. Strong Rail item tap은 기존 Explorer retarget 경로를 유지한다. graph passive sync는 `_largeScreenExplorerWordId`를 변경하거나 `_showWordInLargeScreenExplorerPane(...)`를 호출하지 않는다. production `ExplorerWorkspace` mount와 `ExplorerWorkspaceState` production source-of-truth 승격 금지 상태도 유지한다.
+
+Phase 20-F source guardrail은 large-screen Rail-only compact surface, 160px 고정 폭, Strong 입력 always-floating label, shared small-screen 목록, 검색/Strong/passive sync/workspace owner 경계를 확인한다. 실제 DB 기반 runtime guardrail은 large-screen Strong 입력 136px content 폭과 always-floating label, Strong Rail 160px 폭, `H7225` 입력 보존, 초기/default/query/clear 상태에서 좌측 default/search 목록 미표시, transient 후보 tap retarget과 small-screen default/search/detail 흐름 유지를 확인한다.
+
+명령어 기반 검증에서 수정된 Phase 18-B/C/G/I, Phase 19-B/C, Phase 20-C source guardrail과 Phase 18-F/K/M, Phase 17-B/C 경계 guardrail 묶음은 `+82`, 실제 DB 기반 Phase 20-C/18-N runtime guardrail 묶음은 `+6`으로 모두 통과했다. 최종 관련 source/runtime guardrail 묶음도 `+88`, `All tests passed!`로 통과했다. 변경 파일 대상 `dart analyze`는 신규 error 없이 기존 `home_screen.dart` warning/info 5건만 확인했으며 exit code는 `1`이다. 전체 analyze는 기존 `47 issues found`, exit code `1` 기술 부채와 섞지 않기 위해 실행하지 않는다.
+
+Phase 20-F는 dependency, `pubspec.yaml`, `pubspec.lock`, DB/data/sql, repository/data source, DTO/model, route를 변경하지 않는다.
+
+#### 클라이언트 UI 기반 수동 테스트 체크리스트
+
+Codex는 UI 기반 수동 테스트를 수행했다고 보고하지 않는다. 클라이언트는 Windows Desktop 앱에서 아래 항목을 확인한다.
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 |
+| --- | --- | --- | --- |
+| large-screen 앱 진입 | 좌측에 default Strong browse/discovery 목록이 없고 Strong 입력과 Strong Rail만 160px compact surface 안에 표시된다. `Strong/스트롱` label은 항상 floating 표시되고, `H1 또는 G26`, `G26`, `H7225`와 Rail 번호가 잘리지 않는다. | default Strong 목록 표시, 넓은 빈 목록 영역, 입력 label/hint/value 또는 Rail 번호 잘림 | 창 너비를 900px 이상으로 두고 앱에 진입한 뒤 좌측 surface 폭과 Strong 입력/Rail 표시를 확인하고 `G26`, `H7225`를 입력해 본다. |
+| large-screen 일반 검색 submit | 상단 transient panel에 `H2` 결과가 표시되고 좌측에는 query-bound 검색 결과 목록이 나타나지 않으며 Explorer target은 유지된다. | 좌측 검색 결과 목록 표시, transient panel 미표시, submit 즉시 Explorer retarget | 상단 일반 검색 입력에 `H2`를 입력하고 Enter 또는 검색 버튼을 사용한 뒤 상단 panel, 좌측 surface, 우측 Explorer를 비교한다. |
+| large-screen clear | transient panel이 닫히고 좌측 default Strong 목록은 나타나지 않으며 Strong Rail과 Explorer target은 유지된다. | default Strong 목록 복귀, Strong Rail 소실, Explorer target 변경 | `H2` 검색 후 `초기화`를 누르고 상단 panel, 좌측 Rail, 우측 Explorer를 확인한다. |
+| large-screen `Strong/스트롱` 입력 | `G26` 입력이 Strong Rail 위치/feedback에만 영향을 주고 일반 검색 결과나 transient panel을 열거나 닫지 않으며 Explorer를 retarget하지 않는다. | 일반 검색 실행, transient panel open/close, Explorer retarget | transient panel이 닫힌 상태와 열린 상태에서 각각 `G26`을 입력하고 panel, Rail, Explorer 상태를 비교한다. |
+| large-screen Strong Rail item tap | 식별 가능한 Strong 번호 item tap이 기존 경로로 우측 Explorer를 retarget한다. | Explorer target 유지, standalone route 이동, 일반 검색/transient panel lifecycle 변경 | Strong Rail의 식별 가능한 번호 item을 클릭하고 우측 Explorer target 변화를 확인한다. |
+| small-screen 앱 진입 | 기존 default Strong browse/discovery 목록이 표시되고 large-screen Strong Rail 또는 embedded Explorer가 나타나지 않는다. | default Strong 목록 미표시, Strong Rail 또는 embedded Explorer 표시 | 창 너비를 900px 미만으로 줄여 앱에 진입하고 기존 목록을 확인한다. |
+| small-screen 검색과 후보 tap | `H2` 검색 결과 목록이 기존 `homePane`에 표시되고 후보 tap이 detail route를 연다. | 검색 결과 목록 미표시, transient panel 또는 embedded Explorer 표시, detail route 미진입 | small-screen에서 `H2`를 검색한 뒤 식별 가능한 후보 본문을 클릭하고 detail 화면 이동을 확인한다. |
