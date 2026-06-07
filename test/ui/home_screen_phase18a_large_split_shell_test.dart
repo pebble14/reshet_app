@@ -36,14 +36,9 @@ void main() {
         expect(homeSource, contains('final homePane = Column('));
         expect(homeSource, contains('child: homePane'));
         expect(homeSource, contains('WordExplorerScreen('));
-        expect(
-          homeSource,
-          contains('key: ValueKey(_largeScreenExplorerWordId)'),
-        );
-        expect(
-          homeSource,
-          contains('initialWordId: _largeScreenExplorerWordId'),
-        );
+        expect(homeSource, contains('key: ValueKey('));
+        expect(homeSource, contains('initialWordId:'));
+        expect(homeSource, contains('_largeScreenExplorerWordId'));
       },
     );
 

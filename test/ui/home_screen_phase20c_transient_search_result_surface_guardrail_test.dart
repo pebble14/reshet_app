@@ -90,7 +90,7 @@ void main() {
       );
     });
 
-    test('mounts an inline attached result panel only in large workspace', () {
+    test('mounts a local floating result panel only in large workspace', () {
       expect(
         largeWorkspaceSource,
         contains('if (_isLargeScreenTransientSearchResultVisible)'),
@@ -103,18 +103,29 @@ void main() {
         _appearsBefore(
           largeWorkspaceSource,
           'homeWorkspaceSearchSurface',
-          '_buildLargeScreenTransientSearchResultSurface()',
+          'Stack(',
         ),
         isTrue,
       );
       expect(
         _appearsBefore(
           largeWorkspaceSource,
-          '_buildLargeScreenTransientSearchResultSurface()',
+          'Positioned.fill(',
           'WordExplorerScreen(',
         ),
         isTrue,
       );
+      expect(
+        _appearsBefore(
+          largeWorkspaceSource,
+          'WordExplorerScreen(',
+          '_buildLargeScreenTransientSearchResultSurface()',
+        ),
+        isTrue,
+      );
+      expect(largeWorkspaceSource, contains('top: 0'));
+      expect(largeWorkspaceSource, contains('left: 0'));
+      expect(largeWorkspaceSource, contains('right: 0'));
       expect(
         smallWidthBranch,
         isNot(contains('_buildLargeScreenTransientSearchResultSurface()')),
@@ -123,6 +134,7 @@ void main() {
       for (final forbiddenPresentation in [
         'OverlayEntry',
         'Overlay.of',
+        'Portal',
         'showDialog',
         'showModalBottomSheet',
         'Navigator.push',

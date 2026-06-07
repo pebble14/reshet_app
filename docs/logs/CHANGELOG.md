@@ -1,5 +1,22 @@
 # CHANGELOG
 
+## 2026-06-07 Phase 20-G 검색 결과 floating panel 전환
+
+- large-screen transient 검색 결과 panel이 `Column`의 일반 child로 들어가던 구조를 `homeWorkspaceSearchSurface + Expanded(Stack(...))` 구조로 전환했다.
+- base layout은 `Stack` 안의 `Positioned.fill(child: Row(...))`로 유지하며, 좌측 Strong Rail compact surface와 우측 `WordExplorerScreen` graph/detail 영역은 panel 표시 여부와 무관하게 같은 위치와 크기를 유지한다.
+- transient 검색 결과 panel은 `Positioned(top: 0, left: 0, right: 0)`로 base layout 위에 떠 있는 local floating surface로 배치했다. `OverlayEntry`, route-level overlay, portal 구조는 도입하지 않았다.
+- panel은 상단 일반 검색 입력 바로 아래의 `Expanded` 영역 최상단에 붙어 나타나며, 기존 surface color를 유지하되 `Material` elevation, shadow, 하단 radius를 적용해 floating surface로 읽히게 조정했다.
+- `_searchController`, `_runSearch(...)`, `_searchWordsFuture`, `_isShowingDefaultStrongList` owner와 의미는 유지했다. 검색 submit은 Explorer retarget을 수행하지 않고, transient 후보 item tap만 기존 `_showWordInLargeScreenExplorerPane(wordId)` 경로로 Explorer를 retarget한 뒤 panel을 닫는다.
+- small-screen branch는 기존 `return homePane` 흐름과 shared `homeWordListSurface`를 유지하므로 default/search 목록과 `WordDetailScreen` detail route 흐름을 변경하지 않았다.
+- repository read/query, data source, DB schema, DTO/model/public API, dependency, `pubspec.yaml`, `pubspec.lock` 변경은 없다.
+- 명령어 기반 검증 결과:
+  - Phase 20-G 신규 source guardrail 단독 실행: 통과, `+4`, `All tests passed!`.
+  - Phase 20-G/20-C/19/18/17 관련 source guardrail 묶음: 통과, `+99`, `All tests passed!`.
+  - Phase 20-C 및 Phase 18-N 실제 DB 기반 runtime guardrail 묶음: 통과, `+6`, `All tests passed!`.
+  - 변경 파일 대상 `dart analyze`: 신규 error 없음. 기존 `home_screen.dart` warning 1건과 info 4건으로 `5 issues found`, exit code `1`.
+- `docs/logs/FEATURE_STATUS.md`는 최신 Phase 20 active boundary를 기록하는 핵심 문서가 아니므로 변경하지 않았다. Phase 20-G active boundary와 클라이언트 UI 체크리스트는 `docs/ux/explorer_workspace_unification.md`에 기록했다.
+- Codex는 UI 기반 수동 테스트를 수행했다고 보고하지 않는다. 클라이언트는 large-screen panel open/close 시 좌측 Strong Rail과 우측 Explorer graph/detail layout이 움직이지 않는지, submit 비-retarget, 후보 tap retarget, small-screen detail route를 확인해야 한다.
+
 ## 2026-06-07 Phase 20-F large-screen 좌측 Strong Rail compact surface 정리
 
 - large-screen 좌측 control surface에서 default Strong browse/discovery 목록도 표시하지 않도록 `homeLeftControlListSurface` composition을 Strong Rail-only로 좁혔다.

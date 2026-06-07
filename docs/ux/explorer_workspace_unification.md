@@ -9121,3 +9121,37 @@ Codex는 UI 기반 수동 테스트를 수행했다고 보고하지 않는다. �
 | large-screen Strong Rail item tap | 식별 가능한 Strong 번호 item tap이 기존 경로로 우측 Explorer를 retarget한다. | Explorer target 유지, standalone route 이동, 일반 검색/transient panel lifecycle 변경 | Strong Rail의 식별 가능한 번호 item을 클릭하고 우측 Explorer target 변화를 확인한다. |
 | small-screen 앱 진입 | 기존 default Strong browse/discovery 목록이 표시되고 large-screen Strong Rail 또는 embedded Explorer가 나타나지 않는다. | default Strong 목록 미표시, Strong Rail 또는 embedded Explorer 표시 | 창 너비를 900px 미만으로 줄여 앱에 진입하고 기존 목록을 확인한다. |
 | small-screen 검색과 후보 tap | `H2` 검색 결과 목록이 기존 `homePane`에 표시되고 후보 tap이 detail route를 연다. | 검색 결과 목록 미표시, transient panel 또는 embedded Explorer 표시, detail route 미진입 | small-screen에서 `H2`를 검색한 뒤 식별 가능한 후보 본문을 클릭하고 detail 화면 이동을 확인한다. |
+
+### 17.125 Phase 20-G large-screen 검색 결과 floating panel active boundary
+
+Phase 20-G는 Phase 20-F 이후 large-screen transient 검색 결과 panel이 기존 UI를 아래로 밀어내던 layout 참여 문제를 수정한 구현 단계다.
+
+large-screen workspace composition은 `homeWorkspaceSearchSurface + Expanded(Stack(...))` 계열 구조를 사용한다. `Stack`의 base child는 기존 좌측 Strong Rail compact surface와 우측 `WordExplorerScreen` graph/detail 영역을 포함하는 `Row`이며, 이 base `Row`는 `Positioned.fill(...)`로 항상 같은 크기와 위치를 유지한다.
+
+transient 검색 결과 panel은 같은 `HomeScreen` large-screen widget tree 내부에서 `Positioned(top: 0, left: 0, right: 0)`로 base layout 위에 배치한다. 따라서 panel open/close 여부는 좌측 Strong Rail compact surface와 우측 Explorer graph/detail 영역의 layout height, position, size 계산에 참여하지 않는다. `OverlayEntry`, route-level overlay, portal 구조는 사용하지 않는다.
+
+panel은 상단 일반 검색 입력 아래의 workspace body 최상단에 붙어 나타난다. 기존 Phase 20-C~F의 surface color와 max height는 유지하되, `Material` elevation, shadow, 하단 radius를 적용해 floating surface로 읽히게 한다. panel 내부 loading, error, no-result, candidate list는 기존 `_searchWordsFuture`를 그대로 사용한다.
+
+검색 state owner와 실행 의미는 변경하지 않는다. `_searchController`, `_runSearch(...)`, `_searchWordsFuture`, `_isShowingDefaultStrongList`는 계속 `_HomeScreenState` private state에 있고, `_runSearch(...)`는 검색 future와 panel presentation state만 갱신한다. 검색 submit만으로 `_largeScreenExplorerWordId`를 바꾸거나 `_showWordInLargeScreenExplorerPane(...)`를 호출하지 않는다.
+
+transient 후보 item tap만 사용자의 명시적 Explorer retarget request로 해석한다. 후보 tap은 기존 `_showWordInLargeScreenExplorerPane(wordId)` 경로를 호출한 뒤 panel을 닫는다. `Strong/스트롱` 입력은 rail-local jump 전용으로 유지하며 일반 검색, transient panel lifecycle, Explorer retarget/remount와 결합하지 않는다. Strong Rail item tap은 기존 Explorer retarget 경로를 유지하고, graph passive sync는 `_largeScreenExplorerWordId`를 변경하거나 `_showWordInLargeScreenExplorerPane(...)`를 호출하지 않는다.
+
+small-screen branch는 계속 `return homePane` 흐름을 사용한다. small-screen default Strong 목록, 검색 결과 목록, item tap의 `WordDetailScreen` detail route 흐름은 Phase 20-G에서 변경하지 않는다.
+
+Phase 20-G는 dependency, `pubspec.yaml`, `pubspec.lock`, DB/data/sql, repository/data source, DTO/model/public API, route를 변경하지 않는다. `docs/logs/FEATURE_STATUS.md`는 최신 Phase 20 active boundary를 기록하는 핵심 문서가 아니므로 변경하지 않는다.
+
+Phase 20-G source guardrail은 base `Row`가 transient panel 조건 밖에 있고 panel이 local `Stack`/`Positioned` floating surface로만 mount되는지, submit 비-retarget과 후보 tap retarget 경로, small-screen `homePane` 흐름을 확인한다. 실제 DB 기반 runtime guardrail은 large-screen panel open/close 전후 Strong Rail `Rect`와 Explorer `Rect`가 유지되고, submit 비-retarget, 후보 tap retarget, small-screen detail route가 유지됨을 확인한다.
+
+명령어 기반 검증에서 Phase 20-G 신규 source guardrail은 `+4`, 관련 Phase 20-G/20-C/19/18/17 source guardrail 묶음은 `+99`, Phase 20-C 및 Phase 18-N 실제 DB 기반 runtime guardrail 묶음은 `+6`으로 모두 통과했다. 변경 파일 대상 `dart analyze`는 신규 error 없이 기존 `home_screen.dart` warning/info 5건만 확인했으며 exit code는 `1`이다.
+
+#### 클라이언트 UI 기반 수동 테스트 체크리스트
+
+Codex는 UI 기반 수동 테스트를 수행했다고 보고하지 않는다. 클라이언트는 Windows Desktop 앱에서 아래 항목을 확인한다.
+
+| 테스트 시나리오 | 테스트 목적 | 시작 화면 | 조작 순서와 테스트 데이터 | 기대되는 화면 변화 | 실패 시 확인할 증상 | 완료 판단 기준 |
+| --- | --- | --- | --- | --- | --- | --- |
+| large-screen 검색 panel open | floating panel open 시 base layout 안정성 확인 | 창 너비 900px 이상 large-screen `HomeScreen` | 상단 일반 검색창에 `H2`를 입력하고 Enter 또는 검색 버튼을 사용한다. | 검색 결과 panel이 검색창 아래에 붙어 나타나며 좌측 Strong Rail 위치와 폭이 변하지 않고 우측 Explorer graph/detail 영역이 아래로 밀리지 않으며 크기도 변하지 않는다. | panel 표시 순간 Explorer 영역이 아래로 이동함, 좌측 Strong Rail 높이/위치가 흔들림, 검색창 아래에 layout 여백이 새로 생김 | panel이 열린 상태에서도 Strong Rail과 Explorer graph/detail의 위치와 크기가 검색 전과 같음 |
+| large-screen 검색 panel close | floating panel close 시 base layout 안정성 확인 | `H2` 검색 결과 panel이 열린 large-screen `HomeScreen` | 검색어를 지우거나 `검색 결과 닫기` 또는 기존 닫힘 조건을 수행한다. | panel이 사라져도 좌측 Strong Rail과 우측 Explorer graph/detail layout이 움직이지 않는다. | panel이 닫힐 때 Explorer 영역이 위로 튐, 좌측 Rail 위치가 변함 | panel open 전, open 중, close 후의 Strong Rail과 Explorer layout이 같은 위치와 크기로 보임 |
+| 검색 submit 비-retarget 유지 | submit과 Explorer retarget 분리 확인 | large-screen `HomeScreen`에서 우측 Explorer가 기존 단어를 표시 중인 상태 | 상단 일반 검색창에 `H2`를 입력한 뒤 Enter 또는 검색 버튼만 수행한다. | 검색 결과 panel만 열리고 우측 Explorer graph/detail target은 바뀌지 않는다. | submit 순간 우측 Explorer가 첫 검색 결과로 이동함 | 후보 item을 클릭하기 전까지 우측 Explorer target이 유지됨 |
+| 검색 후보 item tap retarget 유지 | 명시적 후보 선택의 기존 retarget 경로 확인 | `H2` 검색 결과 panel이 열린 large-screen `HomeScreen` | panel의 식별 가능한 후보 item 본문을 클릭한다. | 클릭한 후보 단어가 우측 Explorer graph/detail에 표시되고 panel은 닫힌다. | panel은 열리지만 item 클릭이 무시됨, 다른 단어로 이동함, graph/detail이 passive sync처럼 자동 변경됨 | 클릭한 후보와 우측 Explorer target이 일치하고 submit만으로는 이동하지 않음 |
+| small-screen 회귀 확인 | large-screen floating panel 변경이 small-screen 흐름에 영향이 없는지 확인 | 창 너비 900px 미만 small-screen `HomeScreen` | 기존 homePane에서 `H2`를 검색하고 검색 결과 목록의 후보 item을 클릭한다. | small-screen에는 large-screen floating panel과 embedded Explorer가 나타나지 않고 기존 검색 결과 목록에서 `WordDetailScreen` detail route로 진입한다. | small-screen 검색 결과 목록이 사라짐, detail route 진입이 깨짐, large-screen 전용 floating panel이 small-screen에 나타남 | small-screen default/search 목록과 후보 tap detail route 흐름이 Phase 20-F 이전과 동일하게 동작함 |

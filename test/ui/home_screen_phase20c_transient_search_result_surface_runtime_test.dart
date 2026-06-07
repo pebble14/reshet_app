@@ -74,6 +74,8 @@ void main() {
         expect(_defaultStrongListFinder(), findsNothing);
         expect(tester.getSize(_strongRailListFinder()).width, 160.0);
         expect(tester.getSize(strongField).width, 136.0);
+        final initialStrongRailRect = tester.getRect(_strongRailListFinder());
+        final initialExplorerRect = tester.getRect(explorerFinder);
         expect(
           tester
               .widget<TextField>(strongField)
@@ -100,6 +102,8 @@ void main() {
 
         expect(_transientSurfaceFinder(), findsOneWidget);
         expect(tester.element(explorerFinder), same(initialExplorerElement));
+        expect(tester.getRect(_strongRailListFinder()), initialStrongRailRect);
+        expect(tester.getRect(explorerFinder), initialExplorerRect);
         expect(
           tester.widget<WordExplorerScreen>(explorerFinder).initialWordId,
           initialExplorer.initialWordId,
@@ -117,6 +121,8 @@ void main() {
         expect(_transientSurfaceFinder(), findsNothing);
         expect(_strongRailListFinder(), findsOneWidget);
         expect(_leftSearchCandidateTiles(), findsNothing);
+        expect(tester.getRect(_strongRailListFinder()), initialStrongRailRect);
+        expect(tester.getRect(explorerFinder), initialExplorerRect);
         expect(tester.element(explorerFinder), same(initialExplorerElement));
         expect(
           tester.widget<WordExplorerScreen>(explorerFinder).initialWordId,
@@ -129,6 +135,8 @@ void main() {
         expect(_transientSurfaceFinder(), findsNothing);
         expect(_strongRailListFinder(), findsOneWidget);
         expect(_leftSearchCandidateTiles(), findsNothing);
+        expect(tester.getRect(_strongRailListFinder()), initialStrongRailRect);
+        expect(tester.getRect(explorerFinder), initialExplorerRect);
         expect(tester.element(explorerFinder), same(initialExplorerElement));
         expect(
           tester.widget<WordExplorerScreen>(explorerFinder).initialWordId,
@@ -148,6 +156,8 @@ void main() {
         expect(_transientSurfaceFinder(), findsOneWidget);
         expect(_strongRailListFinder(), findsOneWidget);
         expect(_leftSearchCandidateTiles(), findsNothing);
+        expect(tester.getRect(_strongRailListFinder()), initialStrongRailRect);
+        expect(tester.getRect(explorerFinder), initialExplorerRect);
         expect(tester.element(explorerFinder), same(initialExplorerElement));
         expect(
           tester.widget<WordExplorerScreen>(explorerFinder).initialWordId,
@@ -165,6 +175,8 @@ void main() {
         expect(_transientSurfaceFinder(), findsNothing);
         expect(_strongRailListFinder(), findsOneWidget);
         expect(_defaultStrongListFinder(), findsNothing);
+        expect(tester.getRect(_strongRailListFinder()), initialStrongRailRect);
+        expect(tester.getRect(explorerFinder), initialExplorerRect);
         expect(tester.element(explorerFinder), same(initialExplorerElement));
         expect(
           tester.widget<WordExplorerScreen>(explorerFinder).initialWordId,

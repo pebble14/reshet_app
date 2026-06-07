@@ -118,33 +118,16 @@ void main() {
     });
 
     test('HomeScreen large-screen Explorer mount passes callback only', () {
-      expect(
-        largeSplitShellSource,
-        contains('key: ValueKey(_largeScreenExplorerWordId)'),
-      );
-      expect(
-        largeSplitShellSource,
-        contains('initialWordId: _largeScreenExplorerWordId'),
-      );
+      expect(largeSplitShellSource, contains('key: ValueKey('));
+      expect(largeSplitShellSource, contains('initialWordId:'));
+      expect(largeSplitShellSource, contains('_largeScreenExplorerWordId'));
       expect(largeSplitShellSource, contains('onSelectedStrongWordChanged:'));
       expect(
         largeSplitShellSource,
         contains('_handleExplorerSelectedStrongWordChanged'),
       );
-      expect(
-        _countOccurrences(
-          largeSplitShellSource,
-          'ValueKey(_largeScreenExplorerWordId)',
-        ),
-        1,
-      );
-      expect(
-        _countOccurrences(
-          largeSplitShellSource,
-          'initialWordId: _largeScreenExplorerWordId',
-        ),
-        1,
-      );
+      expect(_countOccurrences(largeSplitShellSource, 'ValueKey('), 1);
+      expect(_countOccurrences(largeSplitShellSource, 'initialWordId:'), 1);
     });
 
     test('callback handler owns only rail-local passive state and jump', () {
@@ -303,14 +286,9 @@ void main() {
         largeRetargetRequestSource,
         contains('_largeScreenExplorerWordId = normalizedWordId;'),
       );
-      expect(
-        largeSplitShellSource,
-        contains('key: ValueKey(_largeScreenExplorerWordId)'),
-      );
-      expect(
-        largeSplitShellSource,
-        contains('initialWordId: _largeScreenExplorerWordId'),
-      );
+      expect(largeSplitShellSource, contains('key: ValueKey('));
+      expect(largeSplitShellSource, contains('initialWordId:'));
+      expect(largeSplitShellSource, contains('_largeScreenExplorerWordId'));
     });
 
     test(

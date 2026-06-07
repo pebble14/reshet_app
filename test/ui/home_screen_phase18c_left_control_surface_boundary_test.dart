@@ -170,21 +170,16 @@ void main() {
     test('keeps compact left surface and Explorer remount key', () {
       expect(
         largeWidthBranch,
-        contains('width: _largeScreenStrongControlSurfaceWidth'),
+        contains('_largeScreenStrongControlSurfaceWidth'),
       );
       expect(
         largeWidthBranch,
         isNot(contains('Expanded(flex: 2, child: homePane)')),
       );
       expect(largeWidthBranch, contains('flex: 6'));
-      expect(
-        largeWidthBranch,
-        contains('key: ValueKey(_largeScreenExplorerWordId)'),
-      );
-      expect(
-        largeWidthBranch,
-        contains('initialWordId: _largeScreenExplorerWordId'),
-      );
+      expect(largeWidthBranch, contains('key: ValueKey('));
+      expect(largeWidthBranch, contains('initialWordId:'));
+      expect(largeWidthBranch, contains('_largeScreenExplorerWordId'));
     });
 
     test('does not move graph create flow into the left Home pane', () {

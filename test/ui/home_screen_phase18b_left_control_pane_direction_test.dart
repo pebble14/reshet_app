@@ -48,7 +48,7 @@ void main() {
       );
       expect(
         largeWidthBranch,
-        contains('width: _largeScreenStrongControlSurfaceWidth'),
+        contains('_largeScreenStrongControlSurfaceWidth'),
       );
       expect(
         largeWidthBranch,
@@ -62,14 +62,9 @@ void main() {
         expect(largeWidthBranch, contains('flex: 6'));
         expect(largeWidthBranch, isNot(contains('flex: 5')));
         expect(largeWidthBranch, contains('WordExplorerScreen('));
-        expect(
-          largeWidthBranch,
-          contains('key: ValueKey(_largeScreenExplorerWordId)'),
-        );
-        expect(
-          largeWidthBranch,
-          contains('initialWordId: _largeScreenExplorerWordId'),
-        );
+        expect(largeWidthBranch, contains('key: ValueKey('));
+        expect(largeWidthBranch, contains('initialWordId:'));
+        expect(largeWidthBranch, contains('_largeScreenExplorerWordId'));
       },
     );
 

@@ -1043,12 +1043,16 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildLargeScreenTransientSearchResultSurface() {
     final theme = Theme.of(context);
 
-    return DecoratedBox(
+    return Material(
       key: const Key('large-screen-transient-search-result-surface'),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainer,
-        border: Border(bottom: BorderSide(color: theme.dividerColor)),
+      color: theme.colorScheme.surfaceContainer,
+      elevation: 8,
+      shadowColor: theme.shadowColor.withValues(alpha: 0.18),
+      shape: RoundedRectangleBorder(
+        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(12)),
+        side: BorderSide(color: theme.dividerColor.withValues(alpha: 0.72)),
       ),
+      clipBehavior: Clip.antiAlias,
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxHeight: 320),
         child: Column(
@@ -1440,26 +1444,43 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Column(
                         children: [
                           homeWorkspaceSearchSurface,
-                          if (_isLargeScreenTransientSearchResultVisible)
-                            _buildLargeScreenTransientSearchResultSurface(),
                           Expanded(
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                            child: Stack(
                               children: [
-                                SizedBox(
-                                  width: _largeScreenStrongControlSurfaceWidth,
-                                  child: homePane,
-                                ),
-                                const VerticalDivider(width: 1),
-                                Expanded(
-                                  flex: 6,
-                                  child: WordExplorerScreen(
-                                    key: ValueKey(_largeScreenExplorerWordId),
-                                    initialWordId: _largeScreenExplorerWordId,
-                                    onSelectedStrongWordChanged:
-                                        _handleExplorerSelectedStrongWordChanged,
+                                Positioned.fill(
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    children: [
+                                      SizedBox(
+                                        width:
+                                            _largeScreenStrongControlSurfaceWidth,
+                                        child: homePane,
+                                      ),
+                                      const VerticalDivider(width: 1),
+                                      Expanded(
+                                        flex: 6,
+                                        child: WordExplorerScreen(
+                                          key: ValueKey(
+                                            _largeScreenExplorerWordId,
+                                          ),
+                                          initialWordId:
+                                              _largeScreenExplorerWordId,
+                                          onSelectedStrongWordChanged:
+                                              _handleExplorerSelectedStrongWordChanged,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
+                                if (_isLargeScreenTransientSearchResultVisible)
+                                  Positioned(
+                                    top: 0,
+                                    left: 0,
+                                    right: 0,
+                                    child:
+                                        _buildLargeScreenTransientSearchResultSurface(),
+                                  ),
                               ],
                             ),
                           ),

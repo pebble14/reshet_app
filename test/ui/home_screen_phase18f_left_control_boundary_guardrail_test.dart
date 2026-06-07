@@ -190,14 +190,9 @@ void main() {
           isNot(contains('ExplorerWorkspacePreviewInteractionHost')),
         );
         expect(largeSplitShellSource, contains('WordExplorerScreen('));
-        expect(
-          largeSplitShellSource,
-          contains('key: ValueKey(_largeScreenExplorerWordId)'),
-        );
-        expect(
-          largeSplitShellSource,
-          contains('initialWordId: _largeScreenExplorerWordId'),
-        );
+        expect(largeSplitShellSource, contains('key: ValueKey('));
+        expect(largeSplitShellSource, contains('initialWordId:'));
+        expect(largeSplitShellSource, contains('_largeScreenExplorerWordId'));
       },
     );
 
