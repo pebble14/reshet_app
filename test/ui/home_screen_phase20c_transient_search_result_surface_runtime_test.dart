@@ -83,11 +83,8 @@ void main() {
           tester.widget<WordExplorerScreen>(explorerFinder).initialWordId,
           initialExplorer.initialWordId,
         );
-        expect(
-          _leftSearchCandidateTiles().evaluate().isNotEmpty,
-          isTrue,
-          reason: 'Phase 20-C must keep the duplicate left search result list.',
-        );
+        expect(_strongRailListFinder(), findsOneWidget);
+        expect(_leftSearchCandidateTiles(), findsNothing);
 
         await tester.tap(
           find.byKey(
@@ -97,6 +94,8 @@ void main() {
         await tester.pump();
 
         expect(_transientSurfaceFinder(), findsNothing);
+        expect(_strongRailListFinder(), findsOneWidget);
+        expect(_leftSearchCandidateTiles(), findsNothing);
         expect(tester.element(explorerFinder), same(initialExplorerElement));
         expect(
           tester.widget<WordExplorerScreen>(explorerFinder).initialWordId,
@@ -108,6 +107,8 @@ void main() {
         await _pumpStrongJumpAnimation(tester);
 
         expect(_transientSurfaceFinder(), findsNothing);
+        expect(_strongRailListFinder(), findsOneWidget);
+        expect(_leftSearchCandidateTiles(), findsNothing);
         expect(tester.element(explorerFinder), same(initialExplorerElement));
         expect(
           tester.widget<WordExplorerScreen>(explorerFinder).initialWordId,
@@ -125,6 +126,8 @@ void main() {
         await _pumpStrongJumpAnimation(tester);
 
         expect(_transientSurfaceFinder(), findsOneWidget);
+        expect(_strongRailListFinder(), findsOneWidget);
+        expect(_leftSearchCandidateTiles(), findsNothing);
         expect(tester.element(explorerFinder), same(initialExplorerElement));
         expect(
           tester.widget<WordExplorerScreen>(explorerFinder).initialWordId,
@@ -133,8 +136,18 @@ void main() {
 
         await tester.tap(find.byTooltip('초기화'));
         await tester.pump();
+        await _pumpUntil(
+          tester,
+          () =>
+              _strongRailListFinder().evaluate().length == 1 &&
+              _defaultStrongListFinder().evaluate().length == 1,
+          reason:
+              'clear must restore the Strong Rail and default browse list.',
+        );
 
         expect(_transientSurfaceFinder(), findsNothing);
+        expect(_strongRailListFinder(), findsOneWidget);
+        expect(_defaultStrongListFinder(), findsOneWidget);
         expect(tester.element(explorerFinder), same(initialExplorerElement));
         expect(
           tester.widget<WordExplorerScreen>(explorerFinder).initialWordId,
@@ -274,6 +287,20 @@ Finder _leftSearchCandidateTiles() {
       description: 'left search result ListView',
     ),
     matching: find.byType(ListTile),
+  );
+}
+
+Finder _strongRailListFinder() {
+  return find.byWidgetPredicate(
+    (widget) => widget is ListView && widget.itemExtent == 46.0,
+    description: 'Strong Rail ListView',
+  );
+}
+
+Finder _defaultStrongListFinder() {
+  return find.byWidgetPredicate(
+    (widget) => widget is ListView && widget.itemExtent == 56.0,
+    description: 'default Strong browse/discovery ListView',
   );
 }
 

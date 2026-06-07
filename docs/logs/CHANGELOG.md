@@ -1,5 +1,28 @@
 # CHANGELOG
 
+## 2026-06-07 Phase 20-E large-screen 좌측 검색 결과 중복 표시 제거
+
+- large-screen `homeLeftControlListSurface` composition에서 Strong Rail은 항상 유지하고 `_isShowingDefaultStrongList`가 `true`일 때만 divider와 `homeWordListSurface`를 mount하도록 변경했다.
+- query-bound mode에서는 large-screen 좌측 검색 결과 목록을 표시하지 않으며 검색 결과는 상단 transient result surface에만 표시한다.
+- default Strong browse/discovery 목록은 default mode에서 유지하고 clear 후 비동기 default future 갱신이 완료되면 Strong Rail 옆에 복귀한다.
+- small-screen은 같은 `homeWordListSurface`와 기존 `homePane → detail route` 검색 결과 흐름을 유지한다.
+- `_searchController`, `_runSearch(...)`, `_searchWordsFuture`, `_isShowingDefaultStrongList` owner와 `_runSearch(...)` 의미, repository read/query 로직은 변경하지 않았다.
+- 검색 submit 비-retarget, transient 후보 item tap의 기존 Explorer retarget 후 dismiss, `Strong/스트롱` rail-local jump, Strong Rail item tap retarget, graph passive sync 비-retarget 경계를 유지했다.
+- Phase 20-C source guardrail의 좌측 duplicate 유지 assertion을 large-screen default mode 조건부 목록 mount와 shared small-screen 흐름 유지 assertion으로 교체했다.
+- Phase 20-C 실제 DB 기반 runtime guardrail은 large-screen query-bound 좌측 후보 미표시, Strong Rail 유지, dismiss 후 중복 미표시, clear 후 default Strong 목록 복귀, transient 후보 tap retarget, small-screen detail route 유지를 확인하도록 보강했다.
+- runtime guardrail 첫 실행은 clear 직후 비동기 default future 재생성 완료 전 Strong Rail을 즉시 확인해 `+2 -1`로 실패했다. production 변경이 아니라 guard timing 문제로 확인했고, default Strong과 Strong Rail 복귀를 기다리도록 보정한 뒤 최종 `+3`, `All tests passed!`를 확인했다.
+- 명령어 기반 검증 결과:
+  - Phase 20-C 조정 source guardrail: 통과, `+9`, `All tests passed!`.
+  - Phase 20-C 실제 DB 기반 runtime guardrail 최종 실행: 통과, `+3`, `All tests passed!`.
+  - Phase 19-C, Phase 18-M/K, Phase 17-B/C source guardrail 묶음: 통과, `+33`, `All tests passed!`.
+  - Phase 18-N 실제 DB 기반 runtime guardrail: 통과, `+3`, `All tests passed!`.
+  - 최종 관련 source/runtime guardrail 묶음: 통과, `+48`, `All tests passed!`.
+  - 변경 파일 대상 analyze: exit code `0`, 기존 `HomeScreen` warning/info 5건만 확인.
+- 전체 `flutter analyze --no-fatal-infos --no-fatal-warnings`는 기존 `47 issues found`, exit code `1` 기술 부채와 섞지 않기 위해 실행하지 않았다.
+- 신규 dependency, `OverlayEntry`, route-level overlay, DB/data/sql, repository/data source, DTO/model, `pubspec.yaml`, `pubspec.lock` 변경은 없다.
+- `docs/logs/FEATURE_STATUS.md`, Phase 20-D 감사 문서, Phase 19/18/17 guardrail 파일은 변경하지 않았다.
+- Codex는 UI 기반 수동 테스트를 수행했다고 보고하지 않는다. 클라이언트 UI 체크리스트는 `docs/ux/explorer_workspace_unification.md`의 Phase 20-E active boundary에 기록했다.
+
 ## 2026-06-07 Phase 20-D 좌측 control surface browse/discovery 역할 분리 audit
 
 - Phase 20-C 이후 large-screen 좌측 control surface에 함께 남아 있는 query-bound 검색 결과 목록, default Strong 목록, Strong Rail의 역할을 실제 production source와 guardrail 기준으로 분리하는 docs/audit-only 작업을 진행했다.

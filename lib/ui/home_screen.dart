@@ -1402,8 +1402,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             width: 72,
                             child: _buildStrongLevelOneRetargetRail(),
                           ),
-                          const VerticalDivider(width: 1),
-                          Expanded(child: homeWordListSurface),
+                          if (_isShowingDefaultStrongList) ...[
+                            const VerticalDivider(width: 1),
+                            Expanded(child: homeWordListSurface),
+                          ],
                         ],
                       )
                     : homeWordListSurface;

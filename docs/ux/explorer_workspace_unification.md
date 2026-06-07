@@ -9055,3 +9055,35 @@ Phase 20-E 최소 구현 후보는 `homeLeftControlListSurface` responsive compo
 Phase 20-C source/runtime guardrail은 좌측 duplicate 검색 결과 유지 상태를 명시적으로 고정하고 있다. Phase 20-E 구현 시에는 해당 duplicate 유지 assertion만 새 active boundary에 맞게 재정의하고, default Strong 목록과 small-screen detail route 유지 assertion은 계속 방어해야 한다.
 
 Phase 20-D는 production code, test code, DB/data/sql, repository read/API, DTO/model, dependency, `pubspec.yaml`, `pubspec.lock`, route, UI를 변경하지 않는다. Phase 20-C 중복 상태·small-screen source guardrail `+9`와 검색/Strong/passive sync/workspace owner source guardrail `+33`이 통과했다. production `ExplorerWorkspace` mount와 `ExplorerWorkspaceState` production source-of-truth 승격 금지 상태를 유지한다. docs/audit-only 단계이므로 Codex는 UI 테스트를 수행했다고 보고하지 않으며, 전체 analyze는 기존 `47 issues found`, exit code `1` 기술 부채와 섞지 않기 위해 실행하지 않는다.
+
+### 17.123 Phase 20-E large-screen 좌측 검색 결과 중복 표시 제거 active boundary
+
+Phase 20-E는 Phase 20-D에서 확정한 역할 분리에 따라 large-screen 좌측 control surface의 query-bound search result duplicate presentation만 제거한 최소 구현 단계다.
+
+large-screen `homeLeftControlListSurface`는 Strong Rail을 항상 유지한다. `_isShowingDefaultStrongList`가 `true`인 default mode에서만 divider와 `homeWordListSurface`를 Strong Rail 옆에 mount하므로 default Strong browse/discovery 목록은 유지된다. query-bound mode에서는 좌측 `homeWordListSurface`를 mount하지 않으며 검색 결과는 상단 transient result surface에만 표시한다.
+
+small-screen branch는 계속 `homeLeftControlListSurface = homeWordListSurface`와 `return homePane` 흐름을 사용한다. 따라서 small-screen 검색 결과 목록과 item tap의 `WordDetailScreen` detail route 흐름은 유지된다.
+
+검색 state owner와 실행 의미는 변경하지 않는다. `_searchController`, `_runSearch(...)`, `_searchWordsFuture`, `_isShowingDefaultStrongList`는 계속 `_HomeScreenState` private state에 있고, `_runSearch(...)`는 검색 future와 presentation state만 갱신하며 Explorer를 retarget하지 않는다. large-screen transient 후보 item의 명시적 tap만 기존 `_showWordInLargeScreenExplorerPane(wordId)` 경로로 Explorer를 retarget한 뒤 panel을 닫는다.
+
+`Strong/스트롱` 입력은 rail-local jump 전용이고 Strong Rail item tap은 기존 Explorer retarget 경로를 유지한다. graph passive sync는 rail-local passive feedback과 jump만 수행하며 `_largeScreenExplorerWordId`를 변경하거나 `_showWordInLargeScreenExplorerPane(...)`를 호출하지 않는다. production `ExplorerWorkspace` mount와 `ExplorerWorkspaceState` production source-of-truth 승격 금지 상태도 유지한다.
+
+Phase 20-E source guardrail은 shared `homeWordListSurface`와 small-screen detail route를 유지하면서 large-screen 목록 mount가 default Strong mode 조건부임을 확인한다. 실제 DB 기반 runtime guardrail은 large-screen query submit 후 transient panel과 Strong Rail은 유지되고 좌측 query-bound 후보는 없으며, clear 후 default Strong browse/discovery 목록이 복귀하고, transient 후보 tap은 Explorer를 retarget하며, small-screen detail route가 유지됨을 확인한다.
+
+명령어 기반 검증 결과는 Phase 20-C 조정 source guardrail `+9`, 실제 DB 기반 runtime guardrail 최종 `+3`, Phase 19-C·18-M/K·17-B/C source guardrail 묶음 `+33`, Phase 18-N runtime guardrail `+3`으로 모두 통과했고 최종 관련 source/runtime 묶음도 `+48`, `All tests passed!`로 통과했다. 변경 파일 대상 analyze는 exit code `0`이며 기존 `HomeScreen` warning/info 5건만 확인했다. 전체 `flutter analyze --no-fatal-infos --no-fatal-warnings`는 기존 `47 issues found`, exit code `1` 기술 부채와 섞지 않기 위해 실행하지 않는다.
+
+Phase 20-E는 repository read/query, DB/data/sql, DTO/model, dependency, `pubspec.yaml`, `pubspec.lock`, route-level overlay, `OverlayEntry`를 변경하거나 추가하지 않는다.
+
+#### 클라이언트 UI 기반 수동 테스트 체크리스트
+
+Codex는 UI 기반 수동 테스트를 수행했다고 보고하지 않는다. 클라이언트는 Windows Desktop 앱에서 아래 항목을 확인한다.
+
+| 테스트 시나리오 | 기대 결과 | 실패 시 관찰 포인트 | 실제 확인 방법 |
+| --- | --- | --- | --- |
+| large-screen 일반 검색 submit | 상단 transient panel에 결과가 표시되고 좌측 control surface에는 query-bound 검색 결과가 중복 표시되지 않으며 Explorer target은 유지된다. | 좌측 검색 후보 목록 표시, transient panel 미표시, submit 즉시 Explorer retarget | 창 너비를 900px 이상으로 두고 상단 검색 입력에 `H2`를 입력한 뒤 Enter 또는 검색 버튼을 사용한다. |
+| large-screen transient 후보 클릭 | 선택 후보로 Explorer pane이 retarget되고 transient panel이 닫힌다. | Explorer target 유지, submit 시점 조기 retarget, 후보 선택 후 panel 잔류 | `H2` transient 결과의 후보 본문을 클릭하고 우측 Explorer와 panel 상태를 확인한다. |
+| large-screen 검색 결과 닫기 | Explorer target과 Strong Rail은 유지되고 transient panel만 닫히며 좌측 query-bound 결과는 나타나지 않는다. | Explorer target 변경, 좌측 검색 결과 재표시, Strong Rail 소실 | `H2` 검색 후 `검색 결과 닫기`를 누르고 우측 Explorer와 좌측 rail을 확인한다. |
+| large-screen clear | transient panel이 닫히고 default Strong browse/discovery 목록이 Strong Rail 옆에 복귀하며 Explorer target은 유지된다. | default Strong 목록 미복귀, Explorer target 변경, Strong Rail 소실 | `H2` 검색 후 `초기화`를 누르고 좌측 default Strong 목록과 우측 Explorer를 확인한다. |
+| small-screen 검색과 후보 tap | 기존 `homePane` 검색 결과 목록이 표시되고 후보 tap이 detail route를 연다. | 검색 결과 목록 미표시, transient panel 또는 embedded Explorer 표시, detail route 미진입 | 창 너비를 900px 미만으로 줄이고 `H2`를 검색한 뒤 후보 본문을 클릭한다. |
+| `Strong/스트롱` 입력 | Strong Rail 위치/feedback만 변하며 일반 검색 결과와 transient panel lifecycle에는 영향을 주지 않는다. | 일반 검색 실행, transient panel open/close, Explorer retarget | large-screen `Strong/스트롱` 입력에 `G26`을 입력하고 panel, rail, Explorer 상태를 비교한다. |
+| Strong Rail item tap | 기존 `_showWordInLargeScreenExplorerPane(...)` 경로로 Explorer가 retarget된다. | Explorer target 유지 또는 standalone route 이동 | large-screen Strong Rail의 식별 가능한 Strong 번호 item을 클릭하고 우측 Explorer target 변화를 확인한다. |

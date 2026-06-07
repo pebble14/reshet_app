@@ -15,6 +15,7 @@ void main() {
     late String transientSurfaceSource;
     late String dismissSource;
     late String homeWordListSurfaceSource;
+    late String homeLeftControlListSurfaceSource;
     late String smallWidthBranch;
     late String largeWorkspaceSource;
     late String runSearchSource;
@@ -46,6 +47,11 @@ void main() {
         homeSource,
         'final Widget homeWordListSurface =',
         'final Widget homeLeftControlListSurface =',
+      );
+      homeLeftControlListSurfaceSource = _sourceBetween(
+        homeSource,
+        'final Widget homeLeftControlListSurface =',
+        'final homePane = Column(',
       );
       smallWidthBranch = _sourceBetween(
         homeSource,
@@ -258,7 +264,7 @@ void main() {
       },
     );
 
-    test('keeps left duplicate lists and small-screen detail route', () {
+    test('deduplicates large-screen results and keeps shared small flow', () {
       expect(
         homeWordListSurfaceSource,
         contains(
@@ -280,6 +286,30 @@ void main() {
       expect(
         homeWordListSurfaceSource,
         contains('await _openWordDetail(wordId);'),
+      );
+      expect(
+        homeLeftControlListSurfaceSource,
+        contains('child: _buildStrongLevelOneRetargetRail()'),
+      );
+      expect(
+        homeLeftControlListSurfaceSource,
+        contains('if (_isShowingDefaultStrongList) ...['),
+      );
+      expect(
+        homeLeftControlListSurfaceSource,
+        contains('Expanded(child: homeWordListSurface)'),
+      );
+      expect(
+        _appearsBefore(
+          homeLeftControlListSurfaceSource,
+          'if (_isShowingDefaultStrongList) ...[',
+          'Expanded(child: homeWordListSurface)',
+        ),
+        isTrue,
+      );
+      expect(
+        homeLeftControlListSurfaceSource,
+        contains(': homeWordListSurface;'),
       );
       expect(smallWidthBranch, contains('return homePane;'));
       expect(smallWidthBranch, isNot(contains('WordExplorerScreen(')));
