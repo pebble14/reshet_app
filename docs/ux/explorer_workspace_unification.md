@@ -9039,3 +9039,19 @@ small-screen에는 transient panel을 mount하지 않으며 기존 `homePane →
 Phase 20-C는 DB, repository read/API, DTO/model, dependency, `pubspec.yaml`, `pubspec.lock`을 변경하지 않았다. 신규 source guardrail `+9`, 신규 실제 DB 기반 runtime widget guardrail `+3`, 기존 Phase 19-B/19-C guardrail `+14`, 기존 Phase 18-N runtime guardrail `+3`, 기존 Phase 17-B/C 및 Phase 18-K/M owner·passive sync·Strong 분리 guardrail `+26`이 통과했다. 변경 파일 대상 analyze는 기존 `HomeScreen` warning/info 5건만 보고하고 exit code `0`이며 Phase 20-C 신규 오류는 없다. 전체 analyze도 실제 실행했으며 기존 기준과 동일한 `47 issues found`, exit code `1`이다. error 13건은 기존 `tool/verify_graph_batch_context.dart`, `tool/verify_graph_center_context.dart` API 불일치이므로 이번 범위와 분리한다.
 
 Codex는 UI 기반 수동 테스트를 수행했다고 보고하지 않는다. 클라이언트는 large-screen `H2` submit 비-retarget, 후보 tap retarget 후 panel 닫힘, dismiss/초기화 비-retarget, `G26` Strong rail-local jump, 좌측 중복 목록과 default Strong 유지, small-screen `H2` detail route를 확인해야 한다. 클라이언트 UI 확인 전에는 Phase 20-C의 최종 UX 승인 또는 후속 중복 제거를 선언하지 않는다.
+
+### 17.122 Phase 20-D 좌측 control surface browse/discovery 역할 분리 audit active boundary
+
+Phase 20-D는 Phase 20-C 이후 large-screen 좌측 control surface에 함께 남아 있는 query-bound 검색 결과 목록, default Strong 목록, Strong Rail의 역할을 실제 production source와 guardrail 기준으로 분리한 docs/audit-only 단계다. 상세 source 근거와 판단은 `docs/ux/explorer_workspace_phase20d_left_control_browse_discovery_role_audit.md`에 `reference/context` 기록으로 남긴다.
+
+large-screen query-bound search result는 상단 일반 검색 입력 아래의 transient result surface에 귀속한다. 좌측 `homeWordListSurface`에 남은 query-bound search result list는 Phase 20-C 최소 구현 이후 유지된 transition/legacy duplicate presentation으로 분류한다. Phase 20-D에서는 이를 제거하지 않지만, 최종 large-screen 검색 결과 surface로 취급하지 않는다.
+
+default Strong 목록은 search result 또는 검색 결과 없음 fallback이 아니라 empty-query browse/discovery surface 후보로 분류한다. Strong Rail은 Strong 번호 중심 compact navigation/orientation surface이고, default Strong 목록은 전체 목록형 정보와 상세/그래프 action을 제공하는 browse/discovery 후보이므로 같은 `_defaultStrongListFuture`를 사용해도 역할은 같지 않다. Phase 20-D에서 default Strong 목록의 삭제, 축소, 이동, 대체 또는 Strong Rail과의 장기 병합을 확정하지 않는다.
+
+large-screen 좌측 목록과 small-screen 목록은 현재 같은 `homeWordListSurface` builder/composition을 공유한다. 그러나 large-screen query-bound 결과는 상단 transient surface에 귀속되고 small-screen 검색 결과 목록은 `homePane → detail route`의 primary surface이므로 UX 의미는 다를 수 있다. small-screen 기존 흐름은 유지한다.
+
+Phase 20-E 최소 구현 후보는 `homeLeftControlListSurface` responsive composition에서 large-screen query-bound 목록 presentation만 분리하거나 제거하는 범위로 제한한다. Phase 20-E에서도 `_searchController`, `_runSearch(...)`, `_searchWordsFuture`, `_isShowingDefaultStrongList` owner와 의미, default Strong 목록, Strong Rail, small-screen `homePane → detail route`, 검색 submit 비-retarget, graph passive sync 비-retarget을 우선 변경하지 않는 방향이 안전하다.
+
+Phase 20-C source/runtime guardrail은 좌측 duplicate 검색 결과 유지 상태를 명시적으로 고정하고 있다. Phase 20-E 구현 시에는 해당 duplicate 유지 assertion만 새 active boundary에 맞게 재정의하고, default Strong 목록과 small-screen detail route 유지 assertion은 계속 방어해야 한다.
+
+Phase 20-D는 production code, test code, DB/data/sql, repository read/API, DTO/model, dependency, `pubspec.yaml`, `pubspec.lock`, route, UI를 변경하지 않는다. Phase 20-C 중복 상태·small-screen source guardrail `+9`와 검색/Strong/passive sync/workspace owner source guardrail `+33`이 통과했다. production `ExplorerWorkspace` mount와 `ExplorerWorkspaceState` production source-of-truth 승격 금지 상태를 유지한다. docs/audit-only 단계이므로 Codex는 UI 테스트를 수행했다고 보고하지 않으며, 전체 analyze는 기존 `47 issues found`, exit code `1` 기술 부채와 섞지 않기 위해 실행하지 않는다.

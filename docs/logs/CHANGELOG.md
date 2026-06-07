@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## 2026-06-07 Phase 20-D 좌측 control surface browse/discovery 역할 분리 audit
+
+- Phase 20-C 이후 large-screen 좌측 control surface에 함께 남아 있는 query-bound 검색 결과 목록, default Strong 목록, Strong Rail의 역할을 실제 production source와 guardrail 기준으로 분리하는 docs/audit-only 작업을 진행했다.
+- large-screen query-bound search result는 상단 transient result surface에 귀속하고, 좌측 query-bound search result list는 Phase 20-C 이후 남은 transition/legacy duplicate presentation으로 분류했다.
+- default Strong 목록은 search result 또는 검색 결과 없음 fallback이 아니라 empty-query browse/discovery surface 후보로 분류했다. Strong Rail은 compact navigation/orientation이고 default Strong 목록은 전체 목록형 browse/discovery 후보이므로 같은 default Strong future를 사용해도 역할은 같지 않다고 정리했다.
+- large-screen 좌측 목록과 small-screen 목록은 현재 같은 `homeWordListSurface`를 공유하지만 UX 의미는 다를 수 있다고 기록했다. small-screen `homePane → detail route` 검색 결과 흐름은 유지한다.
+- Phase 20-C source/runtime guardrail이 large-screen transient panel과 좌측 검색 결과 중복 상태를 명시적으로 허용하고 고정한다는 점을 확인했다.
+- Phase 20-E 최소 구현 후보는 `homeLeftControlListSurface` responsive composition에서 large-screen query-bound 목록 presentation만 분리하거나 제거하는 범위로 제한했다.
+- Phase 20-E에서도 검색 owner, `_runSearch(...)` 의미, default Strong 목록, Strong Rail, small-screen 흐름, 검색 submit 비-retarget, graph passive sync 비-retarget을 우선 변경하지 않는 방향이 안전하다고 정리했다.
+- default Strong 목록의 삭제, 축소, 이동, 대체, Strong Rail과의 장기 병합, small-screen 재설계, 검색 owner 이동은 Phase 20-D에서 확정하지 않았다.
+- production code, test code, DB/data/sql, repository read/API, DTO/model, dependency, `pubspec.yaml`, `pubspec.lock`, route, UI는 변경하지 않았다.
+- production `ExplorerWorkspace` mount와 `ExplorerWorkspaceState` production source-of-truth 승격 금지 상태를 유지했다.
+- Phase 20-C 중복 상태·small-screen source guardrail은 통과, `+9`, `All tests passed!`였고 검색/Strong/passive sync/workspace owner source guardrail 묶음은 통과, `+33`, `All tests passed!`였다.
+- Phase 20-D는 docs/audit-only이므로 Codex는 UI 테스트를 수행했다고 보고하지 않았다. 전체 `flutter analyze --no-fatal-infos --no-fatal-warnings`는 기존 `47 issues found`, exit code `1` 기술 부채와 섞지 않기 위해 실행하지 않았다.
+- 상세 감사 기록은 `docs/ux/explorer_workspace_phase20d_left_control_browse_discovery_role_audit.md`에 추가했고 active boundary 요약은 `docs/ux/explorer_workspace_unification.md`에 반영했다.
+
 ## 2026-06-06 Phase 20-C large-screen transient search result surface 최소 구현
 
 - large-screen `HomeScreen`의 상단 일반 검색 입력 아래에 같은 widget tree 기반 inline attached transient search result panel을 추가했다. `OverlayEntry`, route-level overlay, global focus manager는 도입하지 않았다.
