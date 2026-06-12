@@ -12,6 +12,7 @@ void main() {
     late String strongJumpSubmittedHandlerSource;
     late String runStrongRailJumpSource;
     late String passiveSelectedHandlerSource;
+    late String largeScreenSearchChangedSource;
     late String homeSearchControlAreaSource;
     late String homeStrongControlAreaSource;
     late String homeWorkspaceSearchSurfaceSource;
@@ -45,6 +46,11 @@ void main() {
         homeSource,
         'void _handleExplorerSelectedStrongWordChanged(',
         'String _buildDefaultStrongListTitle(HomeDefaultStrongListItem item)',
+      );
+      largeScreenSearchChangedSource = _sourceBetween(
+        homeSource,
+        'void _handleLargeScreenSearchChanged(String value) {',
+        'KeyEventResult _handleLargeScreenTransientSearchResultKeyEvent(',
       );
       homeSearchControlAreaSource = _sourceBetween(
         homeSource,
@@ -108,7 +114,11 @@ void main() {
         );
         expect(
           homeSearchControlAreaSource,
-          contains('_cancelPendingStrongJump(),'),
+          contains('onChanged: _handleLargeScreenSearchChanged'),
+        );
+        expect(
+          largeScreenSearchChangedSource,
+          contains('_cancelPendingStrongJump();'),
         );
         expect(
           homeSearchControlAreaSource,

@@ -9155,3 +9155,40 @@ Codex는 UI 기반 수동 테스트를 수행했다고 보고하지 않는다. �
 | 검색 submit 비-retarget 유지 | submit과 Explorer retarget 분리 확인 | large-screen `HomeScreen`에서 우측 Explorer가 기존 단어를 표시 중인 상태 | 상단 일반 검색창에 `H2`를 입력한 뒤 Enter 또는 검색 버튼만 수행한다. | 검색 결과 panel만 열리고 우측 Explorer graph/detail target은 바뀌지 않는다. | submit 순간 우측 Explorer가 첫 검색 결과로 이동함 | 후보 item을 클릭하기 전까지 우측 Explorer target이 유지됨 |
 | 검색 후보 item tap retarget 유지 | 명시적 후보 선택의 기존 retarget 경로 확인 | `H2` 검색 결과 panel이 열린 large-screen `HomeScreen` | panel의 식별 가능한 후보 item 본문을 클릭한다. | 클릭한 후보 단어가 우측 Explorer graph/detail에 표시되고 panel은 닫힌다. | panel은 열리지만 item 클릭이 무시됨, 다른 단어로 이동함, graph/detail이 passive sync처럼 자동 변경됨 | 클릭한 후보와 우측 Explorer target이 일치하고 submit만으로는 이동하지 않음 |
 | small-screen 회귀 확인 | large-screen floating panel 변경이 small-screen 흐름에 영향이 없는지 확인 | 창 너비 900px 미만 small-screen `HomeScreen` | 기존 homePane에서 `H2`를 검색하고 검색 결과 목록의 후보 item을 클릭한다. | small-screen에는 large-screen floating panel과 embedded Explorer가 나타나지 않고 기존 검색 결과 목록에서 `WordDetailScreen` detail route로 진입한다. | small-screen 검색 결과 목록이 사라짐, detail route 진입이 깨짐, large-screen 전용 floating panel이 small-screen에 나타남 | small-screen default/search 목록과 후보 tap detail route 흐름이 Phase 20-F 이전과 동일하게 동작함 |
+
+### 17.126 Phase 20-H large-screen floating 검색 panel polish active boundary
+
+Phase 20-H는 Phase 20-G의 local `Stack` / `Positioned` floating 검색 결과 panel 구조를 유지하면서 닫힘 조건, keyboard dismiss, empty query, 표시 범위 안정성을 보강한 구현 단계다.
+
+panel이 열린 동안 base `Positioned.fill(child: Row(...))` 위와 panel 아래에 투명 dismiss layer를 mount한다. Explorer 또는 Strong Rail 영역의 첫 외부 클릭은 dismiss layer에서 panel close로 소비되며, 같은 클릭으로 Explorer target 변경이나 Strong Rail 이동을 수행하지 않는다. panel open/close 여부는 계속 base Row의 위치와 크기 계산에 참여하지 않는다.
+
+large-screen workspace의 local `Focus.onKeyEvent` 경계는 descendant primary focus에서 bubbling되는 ESC key down만 감지한다. 초기 구현은 `Focus(canRequestFocus: false)` 조상 경계만 두어 Enter submit 후 primary focus가 검색 field descendant 경로를 벗어나면 ESC를 받을 수 없었다. 이를 보정하기 위해 large-screen 검색 field가 소유하는 `_largeScreenSearchFocusNode`를 추가하고, Enter submit 또는 검색 버튼으로 panel을 연 직후 `_runLargeScreenSearch()` presentation wrapper가 검색 focus를 post-frame 복귀시킨다. `_runSearch(...)` 의미는 변경하지 않는다.
+
+focus 복귀는 non-empty large-screen 검색 submit으로 panel이 열린 직후에만 수행한다. `autofocus`와 불필요한 `unfocus`는 사용하지 않으며 입력 중 focus를 임의로 이동시키지 않는다. panel 내부 result list scroll 후에도 검색 focus 경로를 유지하므로 검색창을 다시 클릭하지 않고 ESC를 사용할 수 있다. ESC handler 자체는 panel presentation만 닫으며 검색어 삭제, 검색 결과 future 초기화, Explorer retarget, Strong Rail 이동, small-screen 흐름 변경을 수행하지 않는다.
+
+large-screen 일반 검색 입력이 empty가 되면 stale 검색 결과 panel이 남지 않도록 panel presentation을 닫는다. 이 동작은 `_runSearch(...)` 의미나 검색 owner를 변경하지 않는다. `_searchController`, `_searchWordsFuture`, `_isShowingDefaultStrongList`는 계속 `_HomeScreenState` private state가 소유하며 검색 submit은 Explorer를 retarget하지 않는다.
+
+panel 표시 범위는 기존 `ConstrainedBox(maxHeight: 320)`을 유지한다. 결과 목록은 기존 `Flexible` 내부 `ListView.builder`로 scroll하며 숫자, surface color, elevation, radius 등 Phase 20-G 디자인 계약을 과도하게 변경하지 않는다.
+
+transient 후보 item tap만 기존 `_showWordInLargeScreenExplorerPane(wordId)` 경로로 Explorer를 retarget한 뒤 panel을 닫는다. small-screen은 계속 `return homePane`과 기존 검색 결과 목록의 `WordDetailScreen` detail route 흐름을 사용한다.
+
+Phase 20-H는 `OverlayEntry`, route-level overlay, portal 구조, 신규 dependency, DB/API/repository, DTO/model/public API, Explorer graph/detail owner state, Strong Rail 구조를 변경하지 않는다.
+
+명령어 기반 검증에서 Phase 20-H 신규 source guard는 `+7`, Phase 20-H ESC 보정 직접 관련 source/runtime 묶음은 `+46`, 전체 `flutter test`는 `+352`로 모두 통과했다. 전체 `dart analyze`는 이번 변경 범위 밖의 기존 `tool/verify_graph_*` error를 포함해 총 47건과 exit code `1`을 보고했다. 변경 Dart 파일 대상 analyze는 Phase 20-G 기준과 동일한 기존 `home_screen.dart` warning 1건과 info 4건만 확인했으며 Phase 20-H 신규 진단은 없다.
+
+#### 클라이언트 UI 기반 수동 테스트 체크리스트
+
+Codex는 UI 기반 수동 테스트를 수행했다고 보고하지 않는다. 클라이언트는 Windows Desktop 앱에서 아래 항목을 확인한다.
+
+| 테스트 시나리오 | 테스트 목적 | 시작 화면 | 조작 순서와 테스트 데이터 | 기대되는 화면 변화 | 실패 시 확인할 증상 | 완료 판단 기준 |
+| --- | --- | --- | --- | --- | --- | --- |
+| large-screen 검색 panel 표시 | non-empty 검색 submit의 panel 표시 확인 | 창 너비 900px 이상 large-screen `HomeScreen` | 상단 일반 검색창에 `H2`를 입력하고 Enter 또는 검색 버튼을 사용한다. | floating 검색 결과 panel이 검색창 아래에 표시되고 Explorer target은 유지된다. | panel 미표시, submit 순간 Explorer target 변경 | panel은 열리지만 후보 item을 클릭하기 전까지 Explorer target이 유지됨 |
+| Explorer 영역 외부 클릭 dismiss | 첫 외부 클릭 소비와 Explorer target 유지 확인 | `H2` 검색 결과 panel이 열린 large-screen 화면 | panel 아래 우측 Explorer graph/detail 영역을 한 번 클릭한다. | panel만 닫히고 Explorer target은 바뀌지 않는다. | panel 유지, 같은 클릭으로 graph/detail target 또는 selection 변경 | 첫 클릭으로 panel만 닫히고 Explorer 내용이 유지됨 |
+| Strong Rail 영역 외부 클릭 dismiss | 첫 외부 클릭 소비와 Rail 이동 방지 확인 | `H2` 검색 결과 panel이 열린 large-screen 화면 | panel 아래 좌측 Strong Rail 영역을 한 번 클릭한다. | panel만 닫히고 Strong Rail 위치와 Explorer target이 유지된다. | Rail 이동 또는 Explorer retarget이 panel close와 동시에 발생 | 첫 클릭으로 panel만 닫히고 Rail과 Explorer가 유지됨 |
+| Enter submit 직후 ESC dismiss | 검색창 재클릭 없이 ESC가 panel close만 수행하는지 확인 | large-screen `HomeScreen` | 검색창에 `H2`를 입력하고 Enter로 panel을 연 뒤 다른 곳을 클릭하지 않고 ESC를 누른다. | panel만 닫히고 검색어 `H2`, Explorer target, Strong Rail 위치가 유지된다. | ESC 무반응, 검색창 재클릭 필요, 검색어 삭제, Explorer retarget | Enter submit 직후 ESC 한 번으로 panel만 닫힘 |
+| 검색 버튼·panel scroll 후 ESC dismiss | 검색 버튼과 panel interaction 후에도 ESC 경로가 유지되는지 확인 | large-screen `HomeScreen` | 검색창에 `H`를 입력하고 검색 버튼으로 panel을 연 뒤 결과 목록을 scroll하고 검색창 재클릭 없이 ESC를 누른다. | panel만 닫히고 검색어 `H`, Explorer target, Strong Rail 위치가 유지된다. | 검색 버튼 또는 scroll 후 ESC 무반응, 검색어 삭제, Explorer retarget | 검색 버튼과 panel scroll 후에도 ESC 한 번으로 panel만 닫힘 |
+| 검색어 empty dismiss | stale panel 방지 확인 | 검색 결과 panel이 열린 large-screen 화면 | 검색창의 검색어를 전체 삭제한다. | floating panel이 즉시 닫힌다. | 이전 검색 결과가 stale panel로 남음 | 검색창이 empty가 되는 즉시 panel이 사라짐 |
+| 많은 검색 결과 bounds/scroll | 기존 320px 상한과 내부 scroll 확인 | large-screen `HomeScreen` | 검색창에 `H`를 입력하고 검색한 뒤 panel 내부를 scroll한다. | panel이 Explorer graph/detail을 과도하게 덮지 않고 결과 목록 내부만 scroll된다. | panel이 320px 상한을 넘어 확장되거나 내부 scroll 불가 | panel 높이가 제한되고 내부 결과를 scroll할 수 있음 |
+| 반복 open/close layout 안정성 | base Row 위치와 크기 유지 확인 | large-screen `HomeScreen` | 검색 submit, 외부 클릭, ESC, empty 입력을 반복한다. | Strong Rail과 Explorer graph/detail 위치와 크기가 흔들리지 않는다. | open/close 때 Rail 또는 Explorer가 이동하거나 크기 변경 | 반복 전후 base layout이 같은 위치와 크기로 보임 |
+| 검색 후보 item tap retarget | 기존 명시적 retarget 경로 유지 확인 | `H2` 검색 결과 panel이 열린 large-screen 화면 | 식별 가능한 후보 item 본문을 클릭한다. | 해당 후보로 Explorer가 retarget되고 panel이 닫힌다. | submit만으로 retarget, item tap 무시, standalone route 이동 | item tap만 Explorer를 retarget함 |
+| small-screen 회귀 확인 | 기존 homePane과 detail route 유지 확인 | 창 너비 900px 미만 small-screen `HomeScreen` | `H2`를 검색하고 식별 가능한 후보 item 본문을 클릭한다. | 기존 검색 결과 목록에서 `WordDetailScreen` detail route로 진입한다. | floating panel 또는 embedded Explorer 표시, detail route 미진입 | small-screen 기존 흐름이 유지됨 |

@@ -9,6 +9,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../domain/expression/home_word_display_summary.dart';
 import '../domain/home/home_default_strong_list_item.dart';
@@ -55,6 +56,9 @@ class _HomeScreenState extends State<HomeScreen> {
   /// 검색 입력 컨트롤러
   final TextEditingController _searchController = TextEditingController();
   final TextEditingController _strongJumpController = TextEditingController();
+  final FocusNode _largeScreenSearchFocusNode = FocusNode(
+    debugLabel: 'large-screen-search',
+  );
 
   static const double _defaultStrongListItemExtent = 56.0;
   static const double _strongRailListItemExtent = 46.0;
@@ -1155,6 +1159,46 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  void _handleLargeScreenSearchChanged(String value) {
+    _cancelPendingStrongJump();
+
+    if (value.trim().isEmpty) {
+      _dismissLargeScreenTransientSearchResultSurface();
+    }
+  }
+
+  void _runLargeScreenSearch() {
+    _runSearch();
+
+    if (!_isLargeScreenTransientSearchResultVisible) {
+      return;
+    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted ||
+          !_isLargeScreenTransientSearchResultVisible ||
+          !_isCurrentLayoutLargeScreen()) {
+        return;
+      }
+
+      _largeScreenSearchFocusNode.requestFocus();
+    });
+  }
+
+  KeyEventResult _handleLargeScreenTransientSearchResultKeyEvent(
+    FocusNode node,
+    KeyEvent event,
+  ) {
+    if (!_isLargeScreenTransientSearchResultVisible ||
+        event is! KeyDownEvent ||
+        event.logicalKey != LogicalKeyboardKey.escape) {
+      return KeyEventResult.ignored;
+    }
+
+    _dismissLargeScreenTransientSearchResultSurface();
+    return KeyEventResult.handled;
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
@@ -1219,18 +1263,19 @@ class _HomeScreenState extends State<HomeScreen> {
                             Expanded(
                               child: TextField(
                                 controller: _searchController,
+                                focusNode: _largeScreenSearchFocusNode,
                                 decoration: const InputDecoration(
                                   labelText: '검색 (표기/의미/스트롱 번호)',
                                   border: OutlineInputBorder(),
                                   isDense: true,
                                 ),
-                                onChanged: (_) => _cancelPendingStrongJump(),
-                                onSubmitted: (_) => _runSearch(),
+                                onChanged: _handleLargeScreenSearchChanged,
+                                onSubmitted: (_) => _runLargeScreenSearch(),
                               ),
                             ),
                             const SizedBox(width: 8),
                             IconButton(
-                              onPressed: _runSearch,
+                              onPressed: _runLargeScreenSearch,
                               icon: const Icon(Icons.search),
                               tooltip: '검색',
                             ),
@@ -1441,50 +1486,66 @@ class _HomeScreenState extends State<HomeScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Expanded(
-                      child: Column(
-                        children: [
-                          homeWorkspaceSearchSurface,
-                          Expanded(
-                            child: Stack(
-                              children: [
-                                Positioned.fill(
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.stretch,
-                                    children: [
-                                      SizedBox(
-                                        width:
-                                            _largeScreenStrongControlSurfaceWidth,
-                                        child: homePane,
-                                      ),
-                                      const VerticalDivider(width: 1),
-                                      Expanded(
-                                        flex: 6,
-                                        child: WordExplorerScreen(
-                                          key: ValueKey(
-                                            _largeScreenExplorerWordId,
-                                          ),
-                                          initialWordId:
-                                              _largeScreenExplorerWordId,
-                                          onSelectedStrongWordChanged:
-                                              _handleExplorerSelectedStrongWordChanged,
+                      child: Focus(
+                        canRequestFocus: false,
+                        onKeyEvent:
+                            _handleLargeScreenTransientSearchResultKeyEvent,
+                        child: Column(
+                          children: [
+                            homeWorkspaceSearchSurface,
+                            Expanded(
+                              child: Stack(
+                                children: [
+                                  Positioned.fill(
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      children: [
+                                        SizedBox(
+                                          width:
+                                              _largeScreenStrongControlSurfaceWidth,
+                                          child: homePane,
                                         ),
+                                        const VerticalDivider(width: 1),
+                                        Expanded(
+                                          flex: 6,
+                                          child: WordExplorerScreen(
+                                            key: ValueKey(
+                                              _largeScreenExplorerWordId,
+                                            ),
+                                            initialWordId:
+                                                _largeScreenExplorerWordId,
+                                            onSelectedStrongWordChanged:
+                                                _handleExplorerSelectedStrongWordChanged,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  if (_isLargeScreenTransientSearchResultVisible)
+                                    Positioned.fill(
+                                      child: GestureDetector(
+                                        key: const Key(
+                                          'large-screen-transient-search-result-outside-dismiss-layer',
+                                        ),
+                                        behavior: HitTestBehavior.opaque,
+                                        onTap:
+                                            _dismissLargeScreenTransientSearchResultSurface,
                                       ),
-                                    ],
-                                  ),
-                                ),
-                                if (_isLargeScreenTransientSearchResultVisible)
-                                  Positioned(
-                                    top: 0,
-                                    left: 0,
-                                    right: 0,
-                                    child:
-                                        _buildLargeScreenTransientSearchResultSurface(),
-                                  ),
-                              ],
+                                    ),
+                                  if (_isLargeScreenTransientSearchResultVisible)
+                                    Positioned(
+                                      top: 0,
+                                      left: 0,
+                                      right: 0,
+                                      child:
+                                          _buildLargeScreenTransientSearchResultSurface(),
+                                    ),
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ],
@@ -1548,6 +1609,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _strongRailScrollController.dispose();
     _listScrollController.dispose();
     _strongJumpController.dispose();
+    _largeScreenSearchFocusNode.dispose();
     _searchController.dispose();
     super.dispose();
   }

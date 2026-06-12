@@ -1,5 +1,24 @@
 # CHANGELOG
 
+## 2026-06-13 Phase 20-H large-screen floating 검색 panel polish
+
+- large-screen floating 검색 결과 panel이 열린 동안 `Stack` 내부의 base `Row` 위와 panel 아래에 투명 dismiss layer를 배치했다. Explorer 또는 Strong Rail 영역의 첫 외부 클릭은 panel close로 소비되며 Explorer retarget이나 Strong Rail 이동을 동시에 수행하지 않는다.
+- large-screen workspace에 local `Focus.onKeyEvent` 경계와 검색 전용 `_largeScreenSearchFocusNode`를 추가했다. Enter submit 또는 검색 버튼으로 panel을 연 직후 검색 focus를 post-frame 복귀시켜 검색창 재클릭 없이 ESC key down을 받을 수 있게 했다. ESC handler 자체는 panel presentation만 닫고 검색어, 검색 future, Explorer target, Strong Rail 상태를 변경하지 않는다.
+- 초기 구현은 `Focus(canRequestFocus: false)` 조상 경계만 두어 Enter submit 후 primary focus가 검색 field descendant 경로를 벗어나면 ESC가 전달되지 않았다. `_runSearch(...)`는 변경하지 않고 large-screen presentation wrapper `_runLargeScreenSearch()`에서만 panel open 후 focus를 복귀하도록 보정했다.
+- large-screen 일반 검색 입력이 empty가 되면 stale 검색 결과 panel이 남지 않도록 panel presentation만 닫는다. `_searchController`, `_runSearch(...)`, `_searchWordsFuture`, `_isShowingDefaultStrongList` owner와 검색 submit 의미는 변경하지 않았다.
+- 기존 `ConstrainedBox(maxHeight: 320)`, `Flexible`, 내부 `ListView.builder` 계약을 유지하고 Phase 20-H source/runtime guard로 최대 높이와 내부 scroll을 고정했다.
+- 검색 submit 비-retarget, transient 후보 item tap의 기존 `_showWordInLargeScreenExplorerPane(wordId)` retarget 경로, base `Positioned.fill(child: Row(...))`, small-screen `homePane → detail route` 흐름을 유지했다.
+- `OverlayEntry`, route-level overlay, portal 구조, 신규 dependency, DB/API/repository, DTO/model/public API, Explorer owner state, Strong Rail 구조 변경은 없다.
+- `test/ui/home_screen_phase20h_floating_search_panel_polish_guardrail_test.dart`를 추가하고 `test/ui/home_screen_phase20c_transient_search_result_surface_runtime_test.dart`를 제한적으로 보강했다.
+- Phase 18-M 역할 분리 guard는 large-screen 검색 changed 경로가 전용 handler로 이동한 사실과 해당 handler의 Strong jump debounce 취소 유지를 확인하도록 최소 보정했다.
+- 명령어 기반 검증 결과:
+  - Phase 20-H 신규 source guard 단독 실행: 통과, `+7`, `All tests passed!`.
+  - Phase 20-H ESC 보정 직접 관련 source/runtime 묶음: 통과, `+46`, `All tests passed!`.
+  - 전체 `flutter test`: 통과, `+352`, `All tests passed!`.
+  - 전체 `dart analyze`: exit code `1`, 총 47건. 이번 변경 범위 밖의 기존 `tool/verify_graph_*` error 13건을 포함하며 Phase 20-H 변경 파일 신규 진단은 없다.
+  - 변경 Dart 파일 대상 `dart analyze`: Phase 20-G 기준과 동일한 기존 `home_screen.dart` warning 1건과 info 4건, 총 5건, exit code `1`.
+- Codex는 UI 기반 수동 테스트를 수행했다고 보고하지 않는다. 클라이언트는 Enter submit 또는 검색 버튼으로 panel을 연 직후와 panel 내부 scroll 후 검색창 재클릭 없이 ESC가 동작하는지, 외부 클릭, empty 입력, 반복 open/close, submit 비-retarget, 후보 tap retarget, small-screen detail route를 확인해야 한다.
+
 ## 2026-06-07 Phase 20-G 검색 결과 floating panel 전환
 
 - large-screen transient 검색 결과 panel이 `Column`의 일반 child로 들어가던 구조를 `homeWorkspaceSearchSurface + Expanded(Stack(...))` 구조로 전환했다.

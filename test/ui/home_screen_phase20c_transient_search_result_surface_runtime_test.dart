@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:reshet_app/database/database_service.dart';
@@ -250,6 +251,217 @@ void main() {
       await _disposeRuntimeApp(tester);
     });
 
+    testWidgets(
+      'large-screen outside click, empty input, and bounds keep polish contracts',
+      (tester) async {
+        _setSurfaceSize(tester, const Size(1440, 1000));
+        await tester.pumpWidget(const MaterialApp(home: HomeScreen()));
+        await _pumpUntil(
+          tester,
+          () => find.byType(WordExplorerScreen).evaluate().length == 1,
+          reason: 'large-screen Explorer pane must mount after DB bootstrap.',
+        );
+        await _waitForExplorerBootstrap(tester);
+
+        final explorerFinder = find.byType(WordExplorerScreen);
+        final searchField = find.byType(TextField).first;
+        final initialExplorer = tester.widget<WordExplorerScreen>(
+          explorerFinder,
+        );
+        final initialExplorerRect = tester.getRect(explorerFinder);
+        final initialStrongRailRect = tester.getRect(_strongRailListFinder());
+        final initialStrongRailScrollOffset = tester
+            .state<ScrollableState>(_scrollableInside(_strongRailListFinder()))
+            .position
+            .pixels;
+        const panelQuery = 'H';
+
+        Future<void> openPanelWithSubmit() async {
+          await tester.enterText(searchField, panelQuery);
+          await tester.testTextInput.receiveAction(TextInputAction.done);
+          await _pumpUntil(
+            tester,
+            () => _transientCandidateTiles().evaluate().isNotEmpty,
+            reason:
+                '$panelQuery submit must open the transient candidate panel.',
+          );
+        }
+
+        void expectBaseLayoutAndTargetUnchanged() {
+          expect(
+            tester.getRect(_strongRailListFinder()),
+            initialStrongRailRect,
+          );
+          expect(tester.getRect(explorerFinder), initialExplorerRect);
+          expect(
+            tester.widget<WordExplorerScreen>(explorerFinder).initialWordId,
+            initialExplorer.initialWordId,
+          );
+        }
+
+        await openPanelWithSubmit();
+
+        expect(
+          tester.getSize(_transientSurfaceFinder()).height,
+          lessThanOrEqualTo(320.0),
+        );
+        final resultScrollable = _scrollableInside(
+          find.byKey(const Key('large-screen-transient-search-result-list')),
+        );
+        expect(
+          tester
+              .state<ScrollableState>(resultScrollable)
+              .position
+              .maxScrollExtent,
+          greaterThan(0.0),
+        );
+        expect(_outsideDismissLayerFinder(), findsOneWidget);
+
+        await tester.tapAt(
+          Offset(
+            initialExplorerRect.center.dx,
+            initialExplorerRect.bottom - 20,
+          ),
+        );
+        await tester.pump();
+
+        expect(_transientSurfaceFinder(), findsNothing);
+        expectBaseLayoutAndTargetUnchanged();
+
+        await openPanelWithSubmit();
+        await tester.tapAt(
+          Offset(
+            initialStrongRailRect.center.dx,
+            initialStrongRailRect.bottom - 20,
+          ),
+        );
+        await tester.pump();
+
+        expect(_transientSurfaceFinder(), findsNothing);
+        expectBaseLayoutAndTargetUnchanged();
+        expect(
+          tester
+              .state<ScrollableState>(
+                _scrollableInside(_strongRailListFinder()),
+              )
+              .position
+              .pixels,
+          initialStrongRailScrollOffset,
+        );
+
+        await openPanelWithSubmit();
+        await tester.enterText(searchField, '');
+        await tester.pump();
+
+        expect(_transientSurfaceFinder(), findsNothing);
+        expect(tester.widget<TextField>(searchField).controller?.text, isEmpty);
+        expectBaseLayoutAndTargetUnchanged();
+
+        await _disposeRuntimeApp(tester);
+      },
+    );
+
+    testWidgets(
+      'large-screen Enter submit supports immediate escape without search refocus click',
+      (tester) async {
+        _setSurfaceSize(tester, const Size(1440, 1000));
+        await tester.pumpWidget(const MaterialApp(home: HomeScreen()));
+        await _pumpUntil(
+          tester,
+          () => find.byType(WordExplorerScreen).evaluate().length == 1,
+          reason: 'large-screen Explorer pane must mount after DB bootstrap.',
+        );
+        await _waitForExplorerBootstrap(tester);
+
+        final explorerFinder = find.byType(WordExplorerScreen);
+        final initialExplorerWordId = tester
+            .widget<WordExplorerScreen>(explorerFinder)
+            .initialWordId;
+        final searchField = find.byType(TextField).first;
+
+        await tester.enterText(searchField, 'H2');
+        await tester.testTextInput.receiveAction(TextInputAction.done);
+        await _pumpUntil(
+          tester,
+          () => _transientCandidateTiles().evaluate().isNotEmpty,
+          reason: 'Enter submit must open the transient candidate panel.',
+        );
+
+        expect(
+          tester.widget<TextField>(searchField).focusNode?.hasFocus,
+          isTrue,
+        );
+
+        await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+        await tester.pump();
+
+        expect(_transientSurfaceFinder(), findsNothing);
+        expect(tester.widget<TextField>(searchField).controller?.text, 'H2');
+        expect(
+          tester.widget<WordExplorerScreen>(explorerFinder).initialWordId,
+          initialExplorerWordId,
+        );
+
+        await _disposeRuntimeApp(tester);
+      },
+    );
+
+    testWidgets(
+      'large-screen search button and panel scroll support immediate escape',
+      (tester) async {
+        _setSurfaceSize(tester, const Size(1440, 1000));
+        await tester.pumpWidget(const MaterialApp(home: HomeScreen()));
+        await _pumpUntil(
+          tester,
+          () => find.byType(WordExplorerScreen).evaluate().length == 1,
+          reason: 'large-screen Explorer pane must mount after DB bootstrap.',
+        );
+        await _waitForExplorerBootstrap(tester);
+
+        final explorerFinder = find.byType(WordExplorerScreen);
+        final initialExplorerWordId = tester
+            .widget<WordExplorerScreen>(explorerFinder)
+            .initialWordId;
+        final searchField = find.byType(TextField).first;
+        final resultList = find.byKey(
+          const Key('large-screen-transient-search-result-list'),
+        );
+
+        await tester.enterText(searchField, 'H');
+        await tester.tap(find.byTooltip('검색'));
+        await _pumpUntil(
+          tester,
+          () => _transientCandidateTiles().evaluate().isNotEmpty,
+          reason: 'search button must open the transient candidate panel.',
+        );
+
+        expect(
+          tester.widget<TextField>(searchField).focusNode?.hasFocus,
+          isTrue,
+        );
+
+        await tester.drag(resultList, const Offset(0, -120));
+        await tester.pump();
+
+        expect(
+          tester.widget<TextField>(searchField).focusNode?.hasFocus,
+          isTrue,
+        );
+
+        await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+        await tester.pump();
+
+        expect(_transientSurfaceFinder(), findsNothing);
+        expect(tester.widget<TextField>(searchField).controller?.text, 'H');
+        expect(
+          tester.widget<WordExplorerScreen>(explorerFinder).initialWordId,
+          initialExplorerWordId,
+        );
+
+        await _disposeRuntimeApp(tester);
+      },
+    );
+
     testWidgets('small-screen keeps search result detail route flow', (
       tester,
     ) async {
@@ -301,6 +513,16 @@ Finder _transientCandidateTiles() {
     of: _transientSurfaceFinder(),
     matching: find.byType(ListTile),
   );
+}
+
+Finder _outsideDismissLayerFinder() {
+  return find.byKey(
+    const Key('large-screen-transient-search-result-outside-dismiss-layer'),
+  );
+}
+
+Finder _scrollableInside(Finder parent) {
+  return find.descendant(of: parent, matching: find.byType(Scrollable)).first;
 }
 
 Finder _leftSearchCandidateTiles() {
