@@ -9313,3 +9313,17 @@ large-screen embedded Explorer가 여는 full-detail `WordDetailScreen` route만
 Delete와 graph action 정책은 변경하지 않는다. `WordDetailDeletedResult`, `_confirmDelete()`, `WordDetailGraphRequestedResult`, embedded graph center retarget, 일반/null 복귀 refresh, embedded pane action 노출, `WordInfoPanel`, `WordEditScreen`, DB schema/API/repository/domain/dependency는 기존 계약을 유지한다.
 
 Phase 20-Q UI 테스트는 기존 실데이터를 수정하거나 삭제하지 않는다. Codex가 백업 후 생성한 `PHASE20Q_EDIT_TARGET`, `PHASE20Q_DELETE_TARGET`, `PHASE20Q_GRAPH_TARGET` 테스트 전용 데이터만 사용하며, 클라이언트 UI 테스트 완료 후 테스트 데이터 정리 또는 백업 복구와 DB clean 확인을 마쳐야 커밋할 수 있다. 상세 구현·검증·UI 체크리스트는 `docs/ux/explorer_workspace_phase20q_detail_edit_caller_result.md`에 기록한다.
+
+### 17.136 Phase 20-R delete 이동 전 선행 조건 감사 active boundary
+
+Phase 20-R은 `WordDetailScreen`의 delete 실행 책임을 large-screen embedded Explorer로 이동할 수 있는지 실제 production source 기준으로 교차검증한 docs/audit-only 단계다. 상세 감사 기록은 `docs/ux/explorer_workspace_phase20r_delete_precondition_audit.md`에 `reference/context` 기록으로 남긴다.
+
+현재 delete 실행 owner는 `WordDetailScreen`으로 유지한다. `_confirmDelete()`는 `countRelationsForWord(_wordId)` relation count 조회, confirm dialog, `_isDeleting` 진행 상태, `DeleteWordCommand(wordId: _wordId)`와 `WordWriteService.execute(...)`, `WordGraphDataCache.clear()`, route local 성공/실패 snackbar와 `WordDetailDeletedResult(wordId: _wordId)` 반환을 한 흐름으로 소유한다.
+
+Embedded Explorer는 delete 실행 owner가 아니라 delete 후 복구 owner다. `WordExplorerScreen._openSelectedWordDetail()`은 `WordDetailDeletedResult`를 해석하고, non-center 선택 단어 삭제 시 center를 유지한 채 selection/detail을 비우며, center 단어 삭제 시 유효한 이전 history와 다음 history 순서로 복구한다. 유효한 history가 없으면 Explorer host에 `true`를 반환한다. 일반/null 복귀는 `_refreshSelectedWord(...)`, edit result는 `_openEditSelectedWord()`, graph result는 `_selectWord(..., changeCenterWord: true)` 경로를 유지한다.
+
+`WordDetailDeletedResult`는 현행 유지한다. 다만 Explorer caller가 result의 `wordId`를 검증하지 않는 점과 center 삭제 후 유효한 history가 없을 때 typed result가 아닌 `true`를 host로 반환하는 계약은 delete 이동 전 후속 재검토 항목이다.
+
+`HomeScreen._openDefaultStrongWordDetail(...)`과 small-screen은 기본 `WordDetailScreen` route를 계속 사용한다. Home caller는 typed delete result를 별도로 해석하지 않고 route 복귀 후 `_refreshWords()`를 수행한다. Small-screen에는 embedded Explorer delete 대체 경로가 없으므로 기본 detail route delete를 유지한다.
+
+Phase 20-R에서는 embedded detail pane delete 버튼 추가, delete 실행 owner 이동, `_confirmDelete()`, `DeleteWordCommand`, `WordDetailDeletedResult`, delete/edit/graph action, full-detail route, small-screen/Home detail route, center/selection/history 정책, production Dart 코드, test, DB, repository/domain/database/dependency와 `pubspec.yaml`, `pubspec.lock`을 변경하지 않는다. Relation count, confirm, write/cache invalidation, feedback, center/non-center 복구 검증, Home/small-screen 보존, result contract와 테스트 데이터 백업·생성·복구 정책을 모두 확정하고 별도 구현 승인을 받은 이후에만 delete 이동을 검토한다.

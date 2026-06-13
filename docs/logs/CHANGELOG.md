@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 2026-06-14 Phase 20-R delete 이동 전 선행 조건 감사
+
+- `WordDetailScreen`에서 large-screen embedded Explorer로 delete 실행 책임을 이동할 수 있는지 실제 production source 기준으로 교차검증한 docs/audit-only 작업을 진행했다.
+- 현재 `WordDetailScreen._confirmDelete()`가 `countRelationsForWord(_wordId)`, confirm dialog, `_isDeleting`, `DeleteWordCommand`, `WordWriteService.execute(...)`, `WordGraphDataCache.clear()`, 성공/실패 snackbar와 `WordDetailDeletedResult` 반환을 소유함을 기록했다.
+- Embedded Explorer는 delete 실행 owner가 아니라 delete 후 복구 owner로 유지한다. Non-center 선택 단어 삭제 시 selection/detail을 비우고, center 단어 삭제 시 이전 history, 다음 history 순서로 복구하며 유효한 history가 없으면 host에 `true`를 반환한다.
+- `WordDetailDeletedResult`는 현행 유지하되 Explorer caller의 delete result `wordId` 검증 부재와 center 삭제 후 host `true` 반환 계약을 후속 재검토 항목으로 기록했다.
+- `HomeScreen`과 small-screen에는 embedded Explorer delete 대체 경로가 없으므로 기본 `WordDetailScreen` route delete를 유지한다. Embedded detail pane delete 버튼 추가와 full-detail route 축소 또는 제거도 보류한다.
+- Relation count, confirm, write/cache invalidation, feedback, center/non-center 복구 검증, Home/small-screen 보존, result contract와 테스트 데이터 백업·생성·복구 정책을 모두 확정하고 별도 구현 승인을 받은 이후에만 delete 이동을 검토한다.
+- 상세 감사 기록은 `docs/ux/explorer_workspace_phase20r_delete_precondition_audit.md`에 추가하고 active boundary를 `docs/ux/explorer_workspace_unification.md`에 반영했다. Production Dart 코드, test, DB, route, delete flow, repository/domain/database/dependency, `pubspec.yaml`, `pubspec.lock`은 변경하지 않았다.
+
 ## 2026-06-14 Phase 20-Q detail edit action caller result 분기
 
 - `WordDetailRouteResult`에 edit 요청 단어의 `wordId`를 포함하는 `WordDetailEditRequestedResult`를 추가했다.
