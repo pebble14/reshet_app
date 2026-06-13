@@ -13,14 +13,18 @@ import 'word_graph_cache.dart';
 import 'word_graph_screen.dart';
 import 'word_info_panel.dart';
 
+enum WordDetailGraphActionMode { standaloneRoute, returnToCaller }
+
 class WordDetailScreen extends StatefulWidget {
   final String wordId;
   final WordDetailLikeDisplayItem initialDisplayItem;
+  final WordDetailGraphActionMode graphActionMode;
 
   const WordDetailScreen({
     super.key,
     required this.wordId,
     required this.initialDisplayItem,
+    this.graphActionMode = WordDetailGraphActionMode.standaloneRoute,
   });
 
   @override
@@ -99,6 +103,11 @@ class _WordDetailScreenState extends State<WordDetailScreen> {
     if (!mounted) return;
     if (!centerWordExists) {
       _showWordNavigationUnavailableSnackBar();
+      return;
+    }
+
+    if (widget.graphActionMode == WordDetailGraphActionMode.returnToCaller) {
+      Navigator.pop(context, WordDetailGraphRequestedResult(wordId: _wordId));
       return;
     }
 

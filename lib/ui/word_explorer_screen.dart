@@ -670,6 +670,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
         builder: (_) => WordDetailScreen(
           wordId: selectedWordId,
           initialDisplayItem: selectedDisplayItem,
+          graphActionMode: WordDetailGraphActionMode.returnToCaller,
         ),
       ),
     );
@@ -678,6 +679,11 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
 
     if (detailResult is WordDetailDeletedResult) {
       await _handleDeletedSelectedWord(wasCenterWord: wasCenterWord);
+      return;
+    }
+
+    if (detailResult is WordDetailGraphRequestedResult) {
+      await _selectWord(detailResult.wordId, changeCenterWord: true);
       return;
     }
 

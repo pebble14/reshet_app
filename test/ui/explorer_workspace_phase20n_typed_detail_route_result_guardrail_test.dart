@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('Phase 20-N typed detail route result guardrail', () {
     late String routeResultSource;
+    late String detailWidgetSource;
     late String confirmDeleteSource;
     late String openGraphSource;
     late String openSelectedWordDetailSource;
@@ -19,6 +20,11 @@ void main() {
       final detailSource = File(
         'lib/ui/word_detail_screen.dart',
       ).readAsStringSync();
+      detailWidgetSource = _sourceBetween(
+        detailSource,
+        'class WordDetailScreen extends StatefulWidget {',
+        'class _WordDetailScreenState extends State<WordDetailScreen> {',
+      );
       confirmDeleteSource = _sourceBetween(
         detailSource,
         'Future<void> _confirmDelete() async {',
@@ -123,7 +129,13 @@ void main() {
       expect(embeddedDetailPanelSource, isNot(contains('onShowGraph:')));
     });
 
-    test('keeps detail graph action on standalone graph route', () {
+    test('keeps default detail graph action on standalone graph route', () {
+      expect(
+        detailWidgetSource,
+        contains(
+          'this.graphActionMode = WordDetailGraphActionMode.standaloneRoute',
+        ),
+      );
       expect(openGraphSource, contains('Navigator.push('));
       expect(
         openGraphSource,

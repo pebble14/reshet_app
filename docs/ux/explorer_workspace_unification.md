@@ -9268,3 +9268,13 @@ Phase 20-N은 `WordDetailScreen` delete 성공 route result contract를 암묵�
 `WordDetailScreen`의 delete 실행 위치와 확인 dialog의 bool 계약, edit/delete/graph action, standalone `WordGraphScreen` push, small-screen detail route는 변경하지 않는다. embedded detail pane에는 delete 또는 graph action을 추가하지 않으며, Explorer host의 별도 bool result와 center/selection/history 정책도 변경하지 않는다.
 
 Phase 20-N에서는 DB/API/repository/DTO/domain model/dependency를 변경하지 않는다. Phase 20-M guardrail은 typed result 현행 계약에 맞춰 갱신하고, Phase 20-N guardrail은 typed delete result와 기존 delete/refresh/graph/small-screen 경계를 고정한다.
+
+### 17.133 Phase 20-O large-screen full-detail graph request result active boundary
+
+Phase 20-O는 Phase 20-N의 typed detail route result 기반 위에서 caller별 graph action 정책을 분리한 최소 route/caller contract 변경 단계다. `WordDetailGraphRequestedResult`는 graph 이동을 요청한 단어의 `wordId`를 포함한다.
+
+large-screen embedded Explorer가 여는 full-detail `WordDetailScreen` route만 `returnToCaller` graph action mode를 사용한다. 이 route에서 `그래프 보기`를 실행하면 새 standalone graph route를 push하지 않고 `WordDetailGraphRequestedResult`를 caller에 반환한다. `WordExplorerScreen`은 해당 result를 받아 기존 `_selectWord(..., changeCenterWord: true)` 경로로 요청 단어를 embedded graph center와 selection에 반영하며, 기존 center 변경 history 정책을 그대로 사용한다.
+
+`WordDetailScreen`의 기본 graph action mode는 `standaloneRoute`다. 따라서 small-screen과 일반 detail caller의 `그래프 보기`는 기존처럼 `WordGraphScreen(centerWordId: _wordId)`를 push한다. graph action은 mode 분기 전에 기존 단어 존재 확인을 수행하며, 단어를 찾을 수 없는 경우 기존 unavailable snackbar 정책을 유지한다.
+
+Phase 20-O는 delete/edit route와 result, delete 처리, 일반/null 복귀 refresh, embedded pane action 노출, standalone graph 내부 navigation, graph create 후 replacement, DB/API/repository/DTO/domain model/dependency, `HomeScreen`, `WordGraphScreen` production source를 변경하지 않는다. `ExplorerWorkspace` class production 전환, small-screen mobile ExplorerWorkspace 구현, center/selection/history 정책 재설계도 수행하지 않는다.

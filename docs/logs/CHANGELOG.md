@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2026-06-13 Phase 20-O large-screen full-detail graph action caller result 분기
+
+- Phase 20-N의 typed detail route result 기반 위에서 large-screen embedded Explorer가 연 full-detail route의 `그래프 보기` action을 caller result로 분기했다.
+- `WordDetailGraphRequestedResult`는 요청 단어의 `wordId`를 포함하며, `WordExplorerScreen`은 이 result를 받아 기존 `_selectWord(..., changeCenterWord: true)` 경로로 embedded graph center와 selection을 retarget한다.
+- `WordDetailScreen`의 기본 graph action mode는 `standaloneRoute`로 유지한다. 따라서 small-screen과 일반 detail caller의 `그래프 보기`는 기존 standalone `WordGraphScreen` push 동작을 유지한다.
+- 기존 단어 존재 확인과 unavailable snackbar, delete/edit route 및 delete result, 일반/null 복귀 refresh, embedded pane action 노출, graph 내부 navigation과 center/selection/history 정책은 변경하지 않았다.
+- DB/API/repository/DTO/domain model/dependency와 `HomeScreen`, `WordGraphScreen` production source를 변경하지 않고, Phase 20-N guardrail을 기본 mode 계약에 맞춰 현행화하고 Phase 20-O source guardrail을 추가했다.
+
 ## 2026-06-13 Phase 20-N WordDetailScreen route result 계약 명시화
 
 - `WordDetailScreen`의 delete 성공 route result를 암묵적 `bool?` 신호에서 `WordDetailRouteResult` 기반 typed contract로 전환했다.
