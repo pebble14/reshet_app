@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## 2026-06-13 Phase 20-L 반응형 ExplorerWorkspace 목표 구조 감사
+
+- ChatGPT가 제안한 Responsive ExplorerWorkspace 목표 구조 초안을 실제 로컬 production source와 기존 UX authority 문서 기준으로 교차검증한 docs/audit-only 작업을 진행했다.
+- Reshet의 장기 UX를 큰 화면의 병렬형 workspace와 작은 화면의 단계형 viewer/flow로 표현되는 하나의 responsive semantic workspace로 보는 방향이 기존 authority와 충돌하지 않음을 확인했다.
+- production에서 실제 mount되는 것은 `ExplorerWorkspace` class가 아니라 `HomeScreen` large-screen branch 내부의 embedded `WordExplorerScreen`이며, `ExplorerWorkspace` class와 state는 현재 preview-only composition/projection 경계임을 명시했다.
+- `WordDetailScreen`은 small-screen과 large-screen이 공유하는 active 안정 route이며, 현재 과도기적 fallback으로 확정하지 않고 장기 responsive workspace detail/action surface 흡수 후보로만 기록했다.
+- 큰 화면과 작은 화면의 기능 동일성은 목표 원칙으로 한정하고, 현재 embedded detail pane의 delete/graph action 부재와 small-screen의 embedded Explorer/Strong Rail 부재 등 action 및 surface 노출 차이를 기록했다.
+- 공통 상태 후보와 책임이 현재 `HomeScreen`, `WordExplorerScreen`, `WordGraphScreen`, `WordDetailScreen`, cache, Navigator 및 caller별 result contract에 분산되어 있음을 기록했다. refresh는 단일 상태가 아니라 owner별 reread, graph reload, cache invalidation 동작으로 분류했다.
+- graph action의 단순 진입 정책 변경은 중간 위험, standalone graph 내부 navigation과 create 후 replacement까지 흡수하는 작업은 높은 위험으로 분리했다. delete 책임 이동과 mobile ExplorerWorkspace는 높은 위험, `WordDetailScreen` 제거는 매우 높은 위험으로 기록했다.
+- Phase 20-L에서는 production Dart 코드, route, test guard, DB/API/repository, DTO/model/public API, dependency, refresh/delete/graph/detail 동작, center/selection/history 정책, `FEATURE_STATUS.md`를 변경하지 않았다.
+- 상세 감사 기록은 `docs/ux/explorer_workspace_phase20l_responsive_target_architecture_audit.md`에 추가했고 active boundary는 `docs/ux/explorer_workspace_unification.md`에 반영했다.
+
 ## 2026-06-13 Phase 20-K embedded full-detail 역할 감사
 
 - embedded Explorer detail pane의 `상세 화면에서 열기` action은 dormant가 아니라 large-screen에서 실제 호출 가능한 active `WordDetailScreen` route임을 재확인한 docs/audit-only 작업을 진행했다.

@@ -9232,3 +9232,19 @@ small-screen `HomeScreen` detail route와 large-screen embedded full-detail rout
 full-detail action 제거 또는 route 통합 전에는 embedded pane의 delete/graph 대체 action, delete 결과 contract, center/selection/history 복구, edit와 graph refresh owner, small-screen detail route 보존, large-screen detail → graph 정책, standalone graph 내부 navigation을 먼저 설계하고 승인해야 한다.
 
 Phase 20-K에서는 embedded full-detail route, `WordDetailScreen` 역할, delete/graph/detail route 흐름, Explorer refresh, `ValueKey(_largeScreenExplorerWordId)` retarget, history/selection/center 정책, production Dart 코드, test guard, DB/API/repository, DTO/model/public API를 변경하지 않는다. 전체 `flutter test`와 `flutter analyze`는 필수 완료 조건으로 삼지 않으며 기존 `tool/verify_graph_*` analyzer 오류는 범위 밖 기술부채로 구분한다.
+
+### 17.130 Phase 20-L 반응형 ExplorerWorkspace 목표 구조 감사 active boundary
+
+Phase 20-L은 ChatGPT가 제안한 Responsive ExplorerWorkspace 목표 구조 초안을 실제 로컬 production source와 기존 UX authority 문서 기준으로 교차검증한 docs/audit-only 단계다. 상세 감사 기록은 `docs/ux/explorer_workspace_phase20l_responsive_target_architecture_audit.md`에 남긴다.
+
+Reshet의 장기 UX를 큰 화면의 병렬형 workspace와 작은 화면의 단계형 viewer/flow로 표현되는 하나의 responsive semantic workspace로 보는 방향은 `workspace_ux_architecture.md`와 `responsive_layout_policy.md`의 authority에 부합한다. 다만 production에서 실제 mount되는 것은 `ExplorerWorkspace` class가 아니라 `HomeScreen` large-screen branch 내부의 embedded `WordExplorerScreen`이다. `ExplorerWorkspace` class와 `ExplorerWorkspaceState`는 현재 preview-only composition/projection 경계이며 production canonical owner가 아니다.
+
+현재 large-screen은 상단 검색, Strong Rail, embedded `WordExplorerScreen`의 graph/detail 병렬 구성을 제공한다. 현재 small-screen은 계속 `return homePane`과 `HomeScreen → WordDetailScreen → WordGraphScreen` route 흐름을 사용한다. 큰 화면과 작은 화면이 같은 semantic workspace 기능을 form factor에 맞게 표현해야 한다는 것은 목표 원칙이지만, 현재 구현에서는 embedded detail pane에 delete/graph action이 없고 small-screen에는 embedded Explorer와 Strong Rail이 없는 등 action과 surface 노출 차이가 있다.
+
+`WordDetailScreen`은 현재 small-screen과 large-screen이 공유하는 active 안정 route다. detail 전용 reread/edit, delete, standalone graph 진입, delete 성공 route result 반환을 소유하므로 현재 과도기적 fallback으로 확정하지 않는다. 장기적으로 responsive workspace 내부 detail/action surface에 일부 책임을 흡수하는 후보는 검토할 수 있지만, 대체 UX와 state/result 계약을 먼저 설계하고 승인해야 한다.
+
+responsive workspace 공통 상태 후보는 현재 단일 owner에 모여 있지 않다. search state와 large-screen target은 `HomeScreen`, center/selection/detail target/internal history는 주로 `WordExplorerScreen`, graph data와 viewport 및 graph local state는 `WordGraphScreen`과 cache, detail route 표시와 delete result는 `WordDetailScreen`, route history와 result 전달은 Navigator 및 caller별 계약에 분산되어 있다. refresh도 단일 상태가 아니라 Home/Explorer/Detail/Graph의 owner별 reread, graph reload, cache invalidation 동작이다.
+
+detail 표시와 embedded edit 진입은 비교적 낮거나 낮음~중간 위험의 후속 후보이고, edit 후 refresh 계약과 graph action의 단순 진입 정책 변경은 중간 위험이다. standalone graph 내부 navigation과 create 후 replacement 흡수, delete 책임 이동, small-screen mobile ExplorerWorkspace는 높은 위험이며, `WordDetailScreen` 제거는 매우 높은 위험으로 분류한다.
+
+Phase 20-L에서는 production `ExplorerWorkspace` mount, production Dart 코드, route, test guard, DB/API/repository, DTO/model/public API, dependency, embedded refresh, delete/graph/detail 흐름, center/selection/history 정책, `FEATURE_STATUS.md`를 변경하지 않는다. 전체 `flutter test`와 `flutter analyze`는 docs/audit-only 완료 조건으로 삼지 않는다.
