@@ -15,6 +15,7 @@ import '../domain/expression/home_word_display_summary.dart';
 import '../domain/home/home_default_strong_list_item.dart';
 import '../domain/home/home_search_result_display_item.dart';
 import '../database/database_service.dart';
+import 'word_detail_route_result.dart';
 import 'word_detail_screen.dart';
 import '../data/repositories/word_repository.dart';
 import 'word_graph_cache.dart';
@@ -993,7 +994,7 @@ class _HomeScreenState extends State<HomeScreen> {
       return;
     }
 
-    await Navigator.push(
+    await Navigator.push<WordDetailRouteResult>(
       context,
       MaterialPageRoute(
         builder: (_) =>

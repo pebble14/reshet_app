@@ -6,6 +6,7 @@ import '../domain/word/word_detail_like_display_item.dart';
 import '../domain/word/word_edit_save_result.dart';
 import 'explorer_workspace/explorer_workspace_contract.dart';
 import 'explorer_workspace/word_explorer_workspace_projection_adapter.dart';
+import 'word_detail_route_result.dart';
 import 'word_detail_screen.dart';
 import 'word_edit_screen.dart';
 import 'word_graph_screen.dart';
@@ -663,7 +664,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
 
     final wasCenterWord = _centerWordId == selectedWordId;
 
-    final wasDeleted = await Navigator.push<bool?>(
+    final detailResult = await Navigator.push<WordDetailRouteResult>(
       context,
       MaterialPageRoute(
         builder: (_) => WordDetailScreen(
@@ -675,7 +676,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
 
     if (!mounted || selectedWordId.isEmpty) return;
 
-    if (wasDeleted == true) {
+    if (detailResult is WordDetailDeletedResult) {
       await _handleDeletedSelectedWord(wasCenterWord: wasCenterWord);
       return;
     }

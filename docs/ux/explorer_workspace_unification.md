@@ -9258,3 +9258,13 @@ embedded full-detail action은 단순히 동일한 상세 정보를 다시 보�
 `WordExplorerScreen._openSelectedWordDetail()`의 `Navigator.push<bool?>` 및 `WordDetailScreen` route, delete result 분기, 일반 복귀 후 `_refreshSelectedWord(...)`, center/selection/history 복구 계약은 변경하지 않았다. `WordDetailScreen`의 edit/delete/graph action, large-screen과 small-screen의 detail/graph route 동작도 변경하지 않았다.
 
 Phase 20-M에서는 `ExplorerWorkspace` class production 변경, owner state 이동, refresh/delete/graph/detail route behavior 변경, route result contract 변경, DB/API/repository, DTO/model/public API, dependency, large-scale responsive/mobile ExplorerWorkspace 구현을 수행하지 않는다. `WordInfoPanel` widget test와 source guard는 새 action 문구·tooltip 및 embedded/full-detail 경계를 고정한다.
+
+### 17.132 Phase 20-N WordDetailScreen typed route result active boundary
+
+Phase 20-N은 `WordDetailScreen` delete 성공 route result contract를 암묵적 `bool?` 신호에서 명시적 `WordDetailRouteResult` typed contract로 전환한 내부 refactor 단계다. `WordDetailDeletedResult`는 삭제된 `wordId`를 포함하며, 향후 caller별 refresh/result 정책을 명확히 구분하기 위한 기반이다.
+
+`WordExplorerScreen._openSelectedWordDetail()`은 `WordDetailDeletedResult`를 받은 경우에만 기존 `_handleDeletedSelectedWord(...)` 경로를 수행한다. `null` 또는 delete result가 아닌 일반 복귀에서는 기존 `_refreshSelectedWord(...)` 경로를 유지한다. `HomeScreen` detail caller는 typed push를 사용하지만 result를 별도로 해석하지 않고 기존 `_refreshWords()` 동작을 유지한다.
+
+`WordDetailScreen`의 delete 실행 위치와 확인 dialog의 bool 계약, edit/delete/graph action, standalone `WordGraphScreen` push, small-screen detail route는 변경하지 않는다. embedded detail pane에는 delete 또는 graph action을 추가하지 않으며, Explorer host의 별도 bool result와 center/selection/history 정책도 변경하지 않는다.
+
+Phase 20-N에서는 DB/API/repository/DTO/domain model/dependency를 변경하지 않는다. Phase 20-M guardrail은 typed result 현행 계약에 맞춰 갱신하고, Phase 20-N guardrail은 typed delete result와 기존 delete/refresh/graph/small-screen 경계를 고정한다.

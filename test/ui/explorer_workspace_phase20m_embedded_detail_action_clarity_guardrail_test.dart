@@ -40,9 +40,15 @@ void main() {
     });
 
     test('keeps full-detail route result and refresh contracts unchanged', () {
-      expect(openSelectedWordDetailSource, contains('Navigator.push<bool?>('));
+      expect(
+        openSelectedWordDetailSource,
+        contains('Navigator.push<WordDetailRouteResult>('),
+      );
       expect(openSelectedWordDetailSource, contains('WordDetailScreen('));
-      expect(openSelectedWordDetailSource, contains('if (wasDeleted == true)'));
+      expect(
+        openSelectedWordDetailSource,
+        contains('if (detailResult is WordDetailDeletedResult)'),
+      );
       expect(
         openSelectedWordDetailSource,
         contains('_handleDeletedSelectedWord(wasCenterWord: wasCenterWord)'),

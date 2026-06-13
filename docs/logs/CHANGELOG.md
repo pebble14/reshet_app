@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2026-06-13 Phase 20-N WordDetailScreen route result 계약 명시화
+
+- `WordDetailScreen`의 delete 성공 route result를 암묵적 `bool?` 신호에서 `WordDetailRouteResult` 기반 typed contract로 전환했다.
+- delete 성공은 삭제된 `wordId`를 포함한 `WordDetailDeletedResult`를 반환하며, `WordExplorerScreen`은 해당 타입일 때만 기존 delete handling 경로를 수행한다.
+- `null` 또는 delete result가 아닌 일반 복귀는 기존 `_refreshSelectedWord(...)` 경로를 유지하고, `HomeScreen` caller는 typed push 이후 기존처럼 결과를 해석하지 않고 목록을 refresh한다.
+- delete UX, edit/graph action, standalone graph route, small-screen detail route, embedded pane action 노출, center/selection/history 정책은 변경하지 않았다.
+- DB/API/repository/DTO/domain model/dependency 변경 없이 Phase 20-M guardrail을 현행화하고 Phase 20-N typed route result guardrail을 추가했다.
+
 ## 2026-06-13 Phase 20-M large-screen embedded detail action surface 최소 UX 개선
 
 - large-screen embedded Explorer detail pane의 full-detail action 문구를 `상세 화면에서 열기`에서 `상세 작업 화면 열기`로 변경했다.

@@ -7,6 +7,7 @@ import '../domain/word/word_detail_like_display_item.dart';
 import '../domain/word/word_edit_save_result.dart';
 import '../domain/word/word_write_models.dart';
 import '../domain/word/word_write_service.dart';
+import 'word_detail_route_result.dart';
 import 'word_edit_screen.dart';
 import 'word_graph_cache.dart';
 import 'word_graph_screen.dart';
@@ -154,7 +155,7 @@ class _WordDetailScreenState extends State<WordDetailScreen> {
         context,
       ).showSnackBar(const SnackBar(content: Text('단어가 삭제되었습니다.')));
 
-      Navigator.pop(context, true);
+      Navigator.pop(context, WordDetailDeletedResult(wordId: _wordId));
     } catch (e) {
       if (!mounted) return;
       setState(() => _isDeleting = false);
