@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2026-06-13 Phase 20-P detail route 책임 경계 감사
+
+- Phase 20-N/O 이후 `WordDetailScreen`에 남은 책임과 large-screen embedded Explorer가 이미 흡수한 책임을 실제 로컬 production source 기준으로 교차검증한 docs/audit-only 작업을 진행했다.
+- `WordDetailScreen`이 detail 전용 reread, detail edit와 local refresh, delete 전체 실행 흐름, 기본 standalone graph route, typed route result, local snackbar를 계속 소유함을 기록했다.
+- Embedded Explorer가 direct edit, `WordDetailDeletedResult`와 `WordDetailGraphRequestedResult` 해석, embedded graph center retarget, delete 후 center/selection/history 복구를 이미 소유함을 기록했다.
+- Edit는 delete보다 작은 단위의 Phase 20-Q 계약 감사 후보로 분류했지만 이번 Phase에서는 구현하지 않았다. Delete는 DB write, relation count, confirm dialog, graph cache clear, typed result, caller별 복구와 refresh, small-screen route가 연결된 높은 위험 후보로 분류하고 Phase 20-R precondition audit 이전에는 구현 대상으로 다루지 않는다.
+- 상세 감사 기록은 `docs/ux/explorer_workspace_phase20p_detail_route_responsibility_audit.md`에 추가하고 active boundary를 `docs/ux/explorer_workspace_unification.md`에 반영했다. Production Dart 코드, test, route, action 노출, DB/API/repository/domain/dependency, `pubspec.yaml`, `pubspec.lock`은 변경하지 않았다.
+
 ## 2026-06-13 Phase 20-O large-screen full-detail graph action caller result 분기
 
 - Phase 20-N의 typed detail route result 기반 위에서 large-screen embedded Explorer가 연 full-detail route의 `그래프 보기` action을 caller result로 분기했다.

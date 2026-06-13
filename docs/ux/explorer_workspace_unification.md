@@ -9278,3 +9278,15 @@ large-screen embedded Explorer가 여는 full-detail `WordDetailScreen` route만
 `WordDetailScreen`의 기본 graph action mode는 `standaloneRoute`다. 따라서 small-screen과 일반 detail caller의 `그래프 보기`는 기존처럼 `WordGraphScreen(centerWordId: _wordId)`를 push한다. graph action은 mode 분기 전에 기존 단어 존재 확인을 수행하며, 단어를 찾을 수 없는 경우 기존 unavailable snackbar 정책을 유지한다.
 
 Phase 20-O는 delete/edit route와 result, delete 처리, 일반/null 복귀 refresh, embedded pane action 노출, standalone graph 내부 navigation, graph create 후 replacement, DB/API/repository/DTO/domain model/dependency, `HomeScreen`, `WordGraphScreen` production source를 변경하지 않는다. `ExplorerWorkspace` class production 전환, small-screen mobile ExplorerWorkspace 구현, center/selection/history 정책 재설계도 수행하지 않는다.
+
+### 17.134 Phase 20-P detail route responsibility audit active boundary
+
+Phase 20-P는 Phase 20-N/O 이후 `WordDetailScreen`에 남은 책임과 large-screen embedded Explorer가 이미 흡수한 책임을 실제 production source 기준으로 교차검증한 docs/audit-only 단계다. 상세 근거와 후보 matrix는 `docs/ux/explorer_workspace_phase20p_detail_route_responsibility_audit.md`에 `reference/context` 기록으로 남긴다.
+
+`WordDetailScreen`은 현재 detail 전용 reread, detail edit와 local refresh, delete 관계 수 확인·confirm·write·graph cache clear·typed result 반환, 기본 standalone graph route, local snackbar와 unavailable handling을 소유한다. Small-screen과 일반 detail caller가 이 active route에 의존하므로 현재 제거 또는 축소 구현 대상으로 보지 않는다.
+
+Embedded Explorer는 direct edit, `WordDetailDeletedResult`와 `WordDetailGraphRequestedResult` 해석, embedded graph center retarget, delete 후 center/selection/history 복구를 이미 소유한다. Edit는 delete보다 작은 단위의 후속 감사 후보지만, detail/Explorer read context와 edit 후 refresh 계약을 Phase 20-Q에서 먼저 감사해야 한다. 이는 구현 승인이 아니며 Phase 20-P에서는 edit 책임을 이동하지 않는다.
+
+Delete 이동은 DB write, relation count, confirm dialog, graph cache clear, typed route result, center/selection/history 복구, caller refresh, small-screen route 보존이 연결된 높은 위험 후보다. Phase 20-R은 delete 이동 전 precondition audit 후보일 뿐이며 Phase 20-P에서는 delete를 구현 대상으로 다루지 않는다.
+
+Phase 20-P는 production Dart 코드, test, route, action 노출, edit/delete/graph 구현, DB/API/repository/domain/dependency, `pubspec.yaml`, `pubspec.lock`, center/selection/history 정책을 변경하지 않는다. UI 테스트, 전체 `flutter test`, 전체 `flutter analyze`는 docs/audit-only 완료 조건으로 삼지 않는다.
