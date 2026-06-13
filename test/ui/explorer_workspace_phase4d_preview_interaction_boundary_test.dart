@@ -213,10 +213,6 @@ void main() {
         isNot(contains('ExplorerWorkspacePreviewInteractionHost')),
       );
 
-      expect(
-        homeSource,
-        contains('WordExplorerScreen(initialWordId: normalizedWordId)'),
-      );
       expect(homeSource, isNot(contains('ExplorerWorkspacePreviewScreen')));
       expect(
         homeSource,

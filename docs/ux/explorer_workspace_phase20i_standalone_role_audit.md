@@ -7,6 +7,8 @@
 > 한국어 작업명: Explorer 단독 화면 역할 감사 및 workspace 통합 경계 정리
 >
 > 이 문서는 production Dart 코드, route, test guard, DB/API/repository, DTO/model/public API, large-screen 또는 small-screen 동작을 변경하지 않는다.
+>
+> 후속 상태: Phase 20-J에서 이 감사가 식별한 호출자 없는 `_openDefaultStrongWordExplorer(...)` helper와 직접 관련 stale source guard를 정리했다. 이 문서의 helper 존재 설명과 Phase 20-J 후보 문장은 Phase 20-I 당시의 감사 결과 및 후속 작업 근거로 유지한다.
 
 ## 감사 목적과 판정 기준
 

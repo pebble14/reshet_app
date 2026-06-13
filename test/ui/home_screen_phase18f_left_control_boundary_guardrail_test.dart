@@ -209,10 +209,6 @@ void main() {
         contains('await _openDefaultStrongWordDetail(item.wordId);'),
       );
       expect(homeSource, contains('await _openWordDetail(wordId);'));
-      expect(
-        homeSource,
-        contains('WordExplorerScreen(initialWordId: normalizedWordId)'),
-      );
     });
 
     test(

@@ -222,15 +222,11 @@ void main() {
       }
     });
 
-    test('production import tree and default route stay unchanged', () {
+    test('production import tree stays independent from preview surfaces', () {
       expect(mainSource, contains('home: const HomeScreen()'));
       expect(mainSource, isNot(contains('ExplorerWorkspacePreviewScreen')));
       expect(mainSource, isNot(contains('explorer_workspace_preview_screen')));
 
-      expect(
-        homeSource,
-        contains('WordExplorerScreen(initialWordId: normalizedWordId)'),
-      );
       expect(homeSource, isNot(contains('ExplorerWorkspacePreviewScreen')));
       expect(homeSource, isNot(contains('explorer_workspace_preview_screen')));
     });

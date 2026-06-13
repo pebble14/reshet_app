@@ -204,10 +204,6 @@ void main() {
           productionBoundarySources[mainSourcePath],
           isNot(contains('onGenerateRoute')),
         );
-        expect(
-          productionBoundarySources[homeSourcePath],
-          contains('WordExplorerScreen(initialWordId: normalizedWordId)'),
-        );
       },
     );
   });

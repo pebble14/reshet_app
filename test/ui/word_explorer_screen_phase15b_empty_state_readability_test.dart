@@ -5,16 +5,13 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('Phase 15-B WordExplorer empty state readability guardrail', () {
     const wordExplorerSourcePath = 'lib/ui/word_explorer_screen.dart';
-    const homeSourcePath = 'lib/ui/home_screen.dart';
 
     late String wordExplorerSource;
-    late String homeSource;
     late String detailPaneSource;
     late String emptyStateSource;
 
     setUpAll(() {
       wordExplorerSource = File(wordExplorerSourcePath).readAsStringSync();
-      homeSource = File(homeSourcePath).readAsStringSync();
       detailPaneSource = _extractBetween(
         wordExplorerSource,
         '  Widget _buildDetailPane() {',
@@ -94,16 +91,12 @@ void main() {
       }
     });
 
-    test('preserves context strip and HomeScreen entry guardrails', () {
+    test('preserves the existing context strip boundary', () {
       expect(
         wordExplorerSource,
         contains('  Widget _buildDetailPaneContextStrip() {'),
       );
       expect(wordExplorerSource, contains('_buildDetailPaneContextStrip()'));
-      expect(
-        homeSource,
-        contains('WordExplorerScreen(initialWordId: normalizedWordId)'),
-      );
     });
   });
 }

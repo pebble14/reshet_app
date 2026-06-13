@@ -109,10 +109,6 @@ void main() {
         wordExplorerWidgetContractSource,
         contains('this.onSelectedStrongWordChanged,'),
       );
-      expect(
-        homeSource,
-        contains('WordExplorerScreen(initialWordId: normalizedWordId)'),
-      );
       expect(wordExplorerWidgetContractSource, isNot(contains('DTO')));
       expect(wordExplorerWidgetContractSource, isNot(contains('typedef ')));
     });

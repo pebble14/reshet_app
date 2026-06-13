@@ -22,14 +22,12 @@ void main() {
       expect(mainSource, isNot(contains('main_explorer_workspace_preview')));
     });
 
-    test('keeps the default explorer entry owned by WordExplorerScreen', () {
+    test('keeps active Explorer ownership in WordExplorerScreen', () {
       expect(homeSource, contains("import 'word_explorer_screen.dart';"));
-      expect(homeSource, contains('Navigator.push'));
-      expect(homeSource, contains('MaterialPageRoute'));
-      expect(
-        homeSource,
-        contains('WordExplorerScreen(initialWordId: normalizedWordId)'),
-      );
+      expect(homeSource, contains('WordExplorerScreen('));
+      expect(homeSource, contains('key: ValueKey('));
+      expect(homeSource, contains('_largeScreenExplorerWordId'));
+      expect(homeSource, isNot(contains('_openDefaultStrongWordExplorer')));
     });
 
     test('does not mount ExplorerWorkspace from production entry files', () {

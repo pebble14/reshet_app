@@ -213,15 +213,11 @@ void main() {
       }
     });
 
-    test('production route defaults and owner remain unchanged', () {
+    test('production app home and owner remain unchanged', () {
       expect(mainSource, contains('home: const HomeScreen()'));
       expect(mainSource, isNot(contains('ExplorerWorkspacePreviewScreen')));
       expect(mainSource, isNot(contains('explorer_workspace_preview_screen')));
 
-      expect(
-        homeSource,
-        contains('WordExplorerScreen(initialWordId: normalizedWordId)'),
-      );
       expect(homeSource, isNot(contains('ExplorerWorkspacePreviewScreen')));
       expect(homeSource, isNot(contains('explorer_workspace_preview_screen')));
 

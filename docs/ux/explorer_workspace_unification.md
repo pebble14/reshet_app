@@ -9208,3 +9208,13 @@ small-screen은 계속 `return homePane` 흐름을 사용하며 default/search �
 Phase 20-J 우선 최소 구현 후보는 호출자가 없는 `_openDefaultStrongWordExplorer(...)` helper와 해당 source 문자열 존재만 고정하는 stale guard를 정리하는 단일 slice다. Phase 20-I에서는 helper, route, test guard를 변경하지 않는다. embedded Explorer full-detail route, `WordDetailScreen` 역할 이동, detail → graph redirect, standalone graph 내부 navigation, small-screen route, embedded retarget owner/history 변경은 판단 보류 또는 후속 별도 설계 대상으로 유지한다.
 
 Phase 20-I는 production Dart 코드, route, test guard, DB/API/repository, DTO/model/public API, dependency, large-screen/small-screen behavior를 변경하지 않는다. 클라이언트 UI 테스트는 수행하지 않으며 현재 역할 분류 확인 절차만 상세 감사 문서에 기록한다.
+
+### 17.128 Phase 20-J dormant standalone helper cleanup active boundary
+
+Phase 20-J는 Phase 20-I 감사에서 확인한 호출자 없는 `HomeScreen._openDefaultStrongWordExplorer(...)` helper와 해당 helper의 source 문자열 존재만 고정하던 stale guard를 정리한 최소 구현 단계다. helper 본체, 전용 compatibility/guardrail 주석, `ignore: unused_element`를 제거했으며 production에서 호출 가능한 Explorer route를 제거하지 않았다.
+
+large-screen primary flow는 계속 `HomeScreen` 내부 embedded `WordExplorerScreen`이다. Strong Rail과 transient 검색 후보 tap은 `_showWordInLargeScreenExplorerPane(...)`를 통해 `_largeScreenExplorerWordId`를 갱신하고, `ValueKey(_largeScreenExplorerWordId)` 변경으로 Explorer owner instance를 재생성한다.
+
+small-screen default/search 목록 본문 tap의 `WordDetailScreen` route, 목록 graph 아이콘의 `WordGraphScreen` route, embedded Explorer full-detail route, detail → graph route, standalone `WordGraphScreen` 내부 navigation은 유지한다. `WordExplorerScreen`의 graph center, selected word, detail target, internal history owner 정책도 변경하지 않는다.
+
+Phase 20-J에서는 route 통합, standalone 전체 제거, embedded retarget 구조 변경, owner/history continuity 변경, DB/API/repository, DTO/model/public API, dependency 변경을 수행하지 않는다. 상세 정리 기록은 `docs/ux/explorer_workspace_phase20j_dormant_standalone_helper_cleanup.md`에 남긴다.

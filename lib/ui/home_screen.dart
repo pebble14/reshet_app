@@ -1005,26 +1005,6 @@ class _HomeScreenState extends State<HomeScreen> {
     _refreshWords();
   }
 
-  // large-screen pane 전환 이후에도 기존 explorer route entry guardrail을 보존한다.
-  // ignore: unused_element
-  Future<void> _openDefaultStrongWordExplorer(String wordId) async {
-    final normalizedWordId = wordId.trim();
-    if (normalizedWordId.isEmpty) {
-      _showWordNavigationUnavailableSnackBar();
-      return;
-    }
-
-    await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => WordExplorerScreen(initialWordId: normalizedWordId),
-      ),
-    );
-
-    if (!mounted) return;
-    _refreshWords();
-  }
-
   Future<void> _openDefaultStrongWordGraph(String wordId) async {
     final centerWordExists = await _repository.wordExistsForGraphNavigation(
       wordId,

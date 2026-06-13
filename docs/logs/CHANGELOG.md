@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2026-06-13 Phase 20-J 호출자 없는 Explorer standalone helper 및 stale guard 정리
+
+- `HomeScreen._openDefaultStrongWordExplorer(...)`는 production 호출자가 없는 dormant compatibility/guardrail helper임을 재확인하고, helper 본체와 전용 주석 및 `ignore: unused_element`를 제거했다.
+- `WordExplorerScreen(initialWordId: normalizedWordId)` source 문자열 존재만 고정하던 stale assertion을 제거하거나 현재 active contract에 맞게 수정했다.
+- small-screen detail/graph route, large-screen embedded `WordExplorerScreen` mount와 `ValueKey(_largeScreenExplorerWordId)` retarget, Explorer history/selection/center owner, embedded full-detail route, detail → graph route, standalone graph navigation guard는 유지했다.
+- Phase 20-J는 route 통합이나 standalone 전체 제거가 아니라 dormant helper 및 직접 관련 stale source guard만 정리한 최소 구현 단계다.
+- DB/API/repository, DTO/model/public API, dependency, `FEATURE_STATUS.md`, Phase 20-I 감사 후속 상태 외 과거 Phase 문서, DB 문서는 변경하지 않았다.
+- 상세 정리 기록은 `docs/ux/explorer_workspace_phase20j_dormant_standalone_helper_cleanup.md`에 추가했고, Phase 20-I 감사 후속 상태와 unification active boundary를 갱신했다.
+
 ## 2026-06-13 Phase 20-I Explorer standalone 역할 감사
 
 - standalone graph/detail route와 embedded workspace pane의 현재 역할을 실제 로컬 production source 기준으로 분리한 docs/audit-only 작업을 진행했다.

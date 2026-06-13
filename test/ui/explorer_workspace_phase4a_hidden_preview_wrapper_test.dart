@@ -189,10 +189,6 @@ void main() {
       }
 
       expect(mainSource, contains('home: const HomeScreen()'));
-      expect(
-        homeSource,
-        contains('WordExplorerScreen(initialWordId: normalizedWordId)'),
-      );
     });
   });
 }

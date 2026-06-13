@@ -148,10 +148,6 @@ void main() {
       expect(mainSource, isNot(contains('_debugValidateHiddenVisualProbe')));
       expect(homeSource, isNot(contains('_debugValidateHiddenVisualProbe')));
       expect(mainSource, contains('home: const HomeScreen()'));
-      expect(
-        homeSource,
-        contains('WordExplorerScreen(initialWordId: normalizedWordId)'),
-      );
     });
   });
 }

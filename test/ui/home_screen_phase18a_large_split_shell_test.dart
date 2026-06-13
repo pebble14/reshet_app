@@ -42,18 +42,16 @@ void main() {
       },
     );
 
-    test('keeps small-screen navigation route entry available', () {
+    test('keeps small-screen detail and graph route entries available', () {
       expect(homeSource, contains('Navigator.push'));
       expect(homeSource, contains('MaterialPageRoute'));
-      expect(
-        homeSource,
-        contains('WordExplorerScreen(initialWordId: normalizedWordId)'),
-      );
       expect(homeSource, contains('await _openWordDetail(wordId);'));
       expect(
         homeSource,
         contains('await _openDefaultStrongWordDetail(item.wordId);'),
       );
+      expect(homeSource, contains('_openDefaultStrongWordGraph(item.wordId)'));
+      expect(homeSource, contains('WordGraphScreen(centerWordId: wordId)'));
     });
 
     test('does not mount the explorer pane in the small-width branch', () {

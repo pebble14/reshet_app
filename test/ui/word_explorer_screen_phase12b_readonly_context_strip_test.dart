@@ -5,16 +5,13 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('Phase 12-B WordExplorer read-only context strip guardrail', () {
     const wordExplorerSourcePath = 'lib/ui/word_explorer_screen.dart';
-    const homeSourcePath = 'lib/ui/home_screen.dart';
 
     late String wordExplorerSource;
-    late String homeSource;
     late String detailPaneSource;
     late String contextStripSource;
 
     setUpAll(() {
       wordExplorerSource = File(wordExplorerSourcePath).readAsStringSync();
-      homeSource = File(homeSourcePath).readAsStringSync();
       detailPaneSource = _extractBetween(
         wordExplorerSource,
         '  Widget _buildDetailPane() {',
@@ -119,11 +116,6 @@ void main() {
               '$forbiddenMarker.',
         );
       }
-
-      expect(
-        homeSource,
-        contains('WordExplorerScreen(initialWordId: normalizedWordId)'),
-      );
     });
   });
 }
