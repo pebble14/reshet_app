@@ -216,10 +216,19 @@ Phase 2-A에서는 구현하지 않는다.
 
 #### Detail edit
 
+기본/small-screen/`HomeScreen` detail edit:
+
 1. `WordDetailScreen._openEdit()`
 2. `WordEditScreen.fromSeed(...)`
 3. 저장 성공 시 `WordEditSaveResult`
 4. Detail 화면이 자체 reread 수행
+
+large-screen embedded Explorer가 연 full-detail route:
+
+1. `WordDetailScreen._openEdit()`이 `WordDetailEditRequestedResult` 반환
+2. `WordExplorerScreen._openSelectedWordDetail()`이 result 해석
+3. 기존 `WordExplorerScreen._openEditSelectedWord()` 재사용
+4. Explorer edit 정책에 따라 selected word, center seed, graph revision과 history snapshot 갱신
 
 #### Explorer edit
 
@@ -9290,3 +9299,17 @@ Embedded Explorer는 direct edit, `WordDetailDeletedResult`와 `WordDetailGraphR
 Delete 이동은 DB write, relation count, confirm dialog, graph cache clear, typed route result, center/selection/history 복구, caller refresh, small-screen route 보존이 연결된 높은 위험 후보다. Phase 20-R은 delete 이동 전 precondition audit 후보일 뿐이며 Phase 20-P에서는 delete를 구현 대상으로 다루지 않는다.
 
 Phase 20-P는 production Dart 코드, test, route, action 노출, edit/delete/graph 구현, DB/API/repository/domain/dependency, `pubspec.yaml`, `pubspec.lock`, center/selection/history 정책을 변경하지 않는다. UI 테스트, 전체 `flutter test`, 전체 `flutter analyze`는 docs/audit-only 완료 조건으로 삼지 않는다.
+
+### 17.135 Phase 20-Q detail edit caller result active boundary
+
+Phase 20-Q는 large-screen embedded Explorer가 연 full-detail route의 edit action 책임만 caller로 분기하는 최소 route/caller contract 변경 단계다. `WordDetailEditRequestedResult`는 edit를 요청한 단어의 `wordId`를 포함한다.
+
+`WordDetailScreen`의 기본 edit action mode는 `localRoute`다. 따라서 small-screen과 `HomeScreen` 기본 detail route는 기존처럼 detail 전용 edit seed를 읽고 `WordEditScreen.fromSeed(...)`를 열며, 저장 성공 후 detail local reread와 local snackbar를 수행한다.
+
+large-screen embedded Explorer가 여는 full-detail `WordDetailScreen` route만 `returnToCaller` edit action mode를 사용한다. 해당 route에서 `편집`을 실행하면 `WordDetailScreen`은 detail edit seed를 읽거나 edit route를 직접 열지 않고 `WordDetailEditRequestedResult`를 반환한다.
+
+`WordExplorerScreen._openSelectedWordDetail()`은 edit result를 받으면 기존 `_openEditSelectedWord()`를 재사용하고 즉시 반환한다. 따라서 Explorer 전용 edit seed, selected detail refresh, center word와 동일한 경우 center display seed 동기화, 변경 시 graph revision 증가, history snapshot replace와 Explorer context snackbar 정책을 유지하며 일반/null 복귀용 `_refreshSelectedWord(...)`를 추가 실행하지 않는다.
+
+Delete와 graph action 정책은 변경하지 않는다. `WordDetailDeletedResult`, `_confirmDelete()`, `WordDetailGraphRequestedResult`, embedded graph center retarget, 일반/null 복귀 refresh, embedded pane action 노출, `WordInfoPanel`, `WordEditScreen`, DB schema/API/repository/domain/dependency는 기존 계약을 유지한다.
+
+Phase 20-Q UI 테스트는 기존 실데이터를 수정하거나 삭제하지 않는다. Codex가 백업 후 생성한 `PHASE20Q_EDIT_TARGET`, `PHASE20Q_DELETE_TARGET`, `PHASE20Q_GRAPH_TARGET` 테스트 전용 데이터만 사용하며, 클라이언트 UI 테스트 완료 후 테스트 데이터 정리 또는 백업 복구와 DB clean 확인을 마쳐야 커밋할 수 있다. 상세 구현·검증·UI 체크리스트는 `docs/ux/explorer_workspace_phase20q_detail_edit_caller_result.md`에 기록한다.

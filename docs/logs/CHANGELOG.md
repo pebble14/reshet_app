@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 2026-06-14 Phase 20-Q detail edit action caller result 분기
+
+- `WordDetailRouteResult`에 edit 요청 단어의 `wordId`를 포함하는 `WordDetailEditRequestedResult`를 추가했다.
+- `WordDetailScreen`에 `WordDetailEditActionMode`를 추가하고 기본 mode를 `localRoute`로 유지했다. 따라서 small-screen과 `HomeScreen` 기본 detail edit는 기존 detail seed read, `WordEditScreen` local route, detail reread와 local snackbar 흐름을 유지한다.
+- large-screen embedded Explorer가 여는 full-detail route만 edit action을 caller result로 반환한다. 이 mode에서는 `WordDetailScreen`이 detail edit seed를 읽거나 edit route를 직접 열지 않는다.
+- `WordExplorerScreen`은 `WordDetailEditRequestedResult`를 받으면 새 edit flow를 만들지 않고 기존 `_openEditSelectedWord()`를 재사용한다. Explorer 전용 edit seed, selected detail refresh, center display seed 동기화, 변경 시 graph revision 증가, history snapshot replace와 Explorer context snackbar 정책을 유지한다.
+- UI 테스트 보호를 위해 기존 실데이터 수정·삭제를 금지하고, Codex가 생성한 `PHASE20Q_EDIT_TARGET`, `PHASE20Q_DELETE_TARGET`, `PHASE20Q_GRAPH_TARGET` 테스트 전용 데이터만 사용하는 체크리스트를 추가했다.
+- 클라이언트가 Phase 20-Q UI 수동 테스트를 모두 성공 확인했다. UI 테스트 완료 후 외부 백업으로 `reshet_work.db`를 복원하고 `PHASE20Q` 조회 0건, `PRAGMA integrity_check = ok`, 백업과 복원 DB SHA-256 일치, git 상태의 DB/백업 파일 비노출을 확인했다.
+- delete, graph action, small-screen, `HomeScreen` 기본 detail route, `WordEditScreen`, DB schema/API/repository/domain/dependency는 변경하지 않았다.
+
 ## 2026-06-13 Phase 20-P detail route 책임 경계 감사
 
 - Phase 20-N/O 이후 `WordDetailScreen`에 남은 책임과 large-screen embedded Explorer가 이미 흡수한 책임을 실제 로컬 production source 기준으로 교차검증한 docs/audit-only 작업을 진행했다.

@@ -13,17 +13,21 @@ import 'word_graph_cache.dart';
 import 'word_graph_screen.dart';
 import 'word_info_panel.dart';
 
+enum WordDetailEditActionMode { localRoute, returnToCaller }
+
 enum WordDetailGraphActionMode { standaloneRoute, returnToCaller }
 
 class WordDetailScreen extends StatefulWidget {
   final String wordId;
   final WordDetailLikeDisplayItem initialDisplayItem;
+  final WordDetailEditActionMode editActionMode;
   final WordDetailGraphActionMode graphActionMode;
 
   const WordDetailScreen({
     super.key,
     required this.wordId,
     required this.initialDisplayItem,
+    this.editActionMode = WordDetailEditActionMode.localRoute,
     this.graphActionMode = WordDetailGraphActionMode.standaloneRoute,
   });
 
@@ -73,6 +77,11 @@ class _WordDetailScreenState extends State<WordDetailScreen> {
   }
 
   Future<void> _openEdit() async {
+    if (widget.editActionMode == WordDetailEditActionMode.returnToCaller) {
+      Navigator.pop(context, WordDetailEditRequestedResult(wordId: _wordId));
+      return;
+    }
+
     final editSeed = await _repository.getWordEditSeedForDetailEdit(_wordId);
     if (!mounted) return;
     if (editSeed == null) {

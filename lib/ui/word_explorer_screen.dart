@@ -670,6 +670,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
         builder: (_) => WordDetailScreen(
           wordId: selectedWordId,
           initialDisplayItem: selectedDisplayItem,
+          editActionMode: WordDetailEditActionMode.returnToCaller,
           graphActionMode: WordDetailGraphActionMode.returnToCaller,
         ),
       ),
@@ -679,6 +680,11 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
 
     if (detailResult is WordDetailDeletedResult) {
       await _handleDeletedSelectedWord(wasCenterWord: wasCenterWord);
+      return;
+    }
+
+    if (detailResult is WordDetailEditRequestedResult) {
+      await _openEditSelectedWord();
       return;
     }
 
