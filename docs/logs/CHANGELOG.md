@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 2026-06-13 Phase 20-K embedded full-detail 역할 감사
+
+- embedded Explorer detail pane의 `상세 화면에서 열기` action은 dormant가 아니라 large-screen에서 실제 호출 가능한 active `WordDetailScreen` route임을 재확인한 docs/audit-only 작업을 진행했다.
+- `WordExplorerScreen._openSelectedWordDetail()`은 선택 단어의 `wordId`와 split-view `WordDetailLikeDisplayItem`을 전달하고, delete 성공 `true` route result를 분기하거나 일반 복귀 후 선택 단어를 다시 읽어 필요 시 center 표시와 graph를 갱신함을 기록했다.
+- embedded detail pane은 split-view 표시, Explorer 전용 edit, full-detail 진입을 제공하고, `WordDetailScreen`은 detail 전용 reread/edit, delete, standalone graph 진입, delete 성공 route result 반환을 추가로 소유하는 책임 차이를 정리했다.
+- 비중심 선택 삭제 후에는 center 유지와 selection 해제 및 graph/history 갱신을 수행하고, center 삭제 후에는 유효한 이전/다음 history 순서로 복구하며 양쪽 모두 없으면 Explorer host에 delete result를 전달하는 현재 동작을 기록했다.
+- small-screen `HomeScreen` detail route와 large-screen embedded full-detail route는 같은 `WordDetailScreen`을 공유하지만 caller 초기 read와 복귀 후 refresh 책임이 다르며, detail route의 standalone graph도 embedded graph와 다른 navigation 책임을 가진다는 경계를 정리했다.
+- full-detail action 제거 또는 route 통합 전에는 대체 delete/graph action, route result contract, center/selection/history 복구, refresh owner, form factor별 detail/graph 정책을 먼저 설계하고 승인해야 한다.
+- Phase 20-K에서는 production Dart 코드, route, test guard, DB/API/repository, DTO/model/public API, embedded Explorer refresh, delete/graph/detail 흐름, `FEATURE_STATUS.md`를 변경하지 않았다.
+- 상세 감사 기록은 `docs/ux/explorer_workspace_phase20k_embedded_full_detail_role_audit.md`에 추가했고 active boundary는 `docs/ux/explorer_workspace_unification.md`에 반영했다.
+
 ## 2026-06-13 Phase 20-J 호출자 없는 Explorer standalone helper 및 stale guard 정리
 
 - `HomeScreen._openDefaultStrongWordExplorer(...)`는 production 호출자가 없는 dormant compatibility/guardrail helper임을 재확인하고, helper 본체와 전용 주석 및 `ignore: unused_element`를 제거했다.

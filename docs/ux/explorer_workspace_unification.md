@@ -9218,3 +9218,17 @@ large-screen primary flow는 계속 `HomeScreen` 내부 embedded `WordExplorerSc
 small-screen default/search 목록 본문 tap의 `WordDetailScreen` route, 목록 graph 아이콘의 `WordGraphScreen` route, embedded Explorer full-detail route, detail → graph route, standalone `WordGraphScreen` 내부 navigation은 유지한다. `WordExplorerScreen`의 graph center, selected word, detail target, internal history owner 정책도 변경하지 않는다.
 
 Phase 20-J에서는 route 통합, standalone 전체 제거, embedded retarget 구조 변경, owner/history continuity 변경, DB/API/repository, DTO/model/public API, dependency 변경을 수행하지 않는다. 상세 정리 기록은 `docs/ux/explorer_workspace_phase20j_dormant_standalone_helper_cleanup.md`에 남긴다.
+
+### 17.129 Phase 20-K embedded full-detail 역할 감사 active boundary
+
+Phase 20-K는 embedded Explorer detail pane의 `상세 화면에서 열기` action과 `WordDetailScreen` route의 현재 책임 차이를 실제 로컬 production source 기준으로 분해한 docs/audit-only 단계다. 상세 감사 기록은 `docs/ux/explorer_workspace_phase20k_embedded_full_detail_role_audit.md`에 남긴다.
+
+embedded full-detail action은 dormant 경로가 아니라 large-screen embedded Explorer에서 실제 호출 가능한 active route다. `WordExplorerScreen._openSelectedWordDetail()`은 현재 선택 단어의 `wordId`와 split-view `WordDetailLikeDisplayItem`을 `WordDetailScreen`에 전달하고, delete 성공 `true` result를 분기하거나 일반 복귀 후 선택 단어를 다시 읽어 필요 시 center 표시와 graph를 갱신한다.
+
+embedded detail pane은 split-view 표시, Explorer 전용 edit, full-detail 진입을 제공한다. `WordDetailScreen`은 initial display를 먼저 표시한 뒤 detail 전용 context로 reread하며, detail 전용 edit, delete, standalone graph 진입, delete 성공 route result 반환을 추가로 소유한다. 비중심 선택 삭제 후에는 Explorer가 center를 유지하고 selection을 해제하며, center 삭제 후에는 유효한 이전 history, 다음 history 순서로 복구하고 양쪽 모두 없으면 host에 delete result를 전달한다.
+
+small-screen `HomeScreen` detail route와 large-screen embedded full-detail route는 같은 `WordDetailScreen`을 공유하지만 caller의 초기 read와 복귀 후 refresh 책임은 다르다. `WordDetailScreen`이 여는 callback 없는 standalone `WordGraphScreen`도 Explorer callback이 연결된 embedded graph와 다른 내부 navigation 책임을 유지한다.
+
+full-detail action 제거 또는 route 통합 전에는 embedded pane의 delete/graph 대체 action, delete 결과 contract, center/selection/history 복구, edit와 graph refresh owner, small-screen detail route 보존, large-screen detail → graph 정책, standalone graph 내부 navigation을 먼저 설계하고 승인해야 한다.
+
+Phase 20-K에서는 embedded full-detail route, `WordDetailScreen` 역할, delete/graph/detail route 흐름, Explorer refresh, `ValueKey(_largeScreenExplorerWordId)` retarget, history/selection/center 정책, production Dart 코드, test guard, DB/API/repository, DTO/model/public API를 변경하지 않는다. 전체 `flutter test`와 `flutter analyze`는 필수 완료 조건으로 삼지 않으며 기존 `tool/verify_graph_*` analyzer 오류는 범위 밖 기술부채로 구분한다.
