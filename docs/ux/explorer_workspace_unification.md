@@ -9192,3 +9192,19 @@ Codex는 UI 기반 수동 테스트를 수행했다고 보고하지 않는다. �
 | 반복 open/close layout 안정성 | base Row 위치와 크기 유지 확인 | large-screen `HomeScreen` | 검색 submit, 외부 클릭, ESC, empty 입력을 반복한다. | Strong Rail과 Explorer graph/detail 위치와 크기가 흔들리지 않는다. | open/close 때 Rail 또는 Explorer가 이동하거나 크기 변경 | 반복 전후 base layout이 같은 위치와 크기로 보임 |
 | 검색 후보 item tap retarget | 기존 명시적 retarget 경로 유지 확인 | `H2` 검색 결과 panel이 열린 large-screen 화면 | 식별 가능한 후보 item 본문을 클릭한다. | 해당 후보로 Explorer가 retarget되고 panel이 닫힌다. | submit만으로 retarget, item tap 무시, standalone route 이동 | item tap만 Explorer를 retarget함 |
 | small-screen 회귀 확인 | 기존 homePane과 detail route 유지 확인 | 창 너비 900px 미만 small-screen `HomeScreen` | `H2`를 검색하고 식별 가능한 후보 item 본문을 클릭한다. | 기존 검색 결과 목록에서 `WordDetailScreen` detail route로 진입한다. | floating panel 또는 embedded Explorer 표시, detail route 미진입 | small-screen 기존 흐름이 유지됨 |
+
+### 17.127 Phase 20-I Explorer standalone 역할 감사 active boundary
+
+Phase 20-I는 standalone graph/detail route와 embedded workspace pane의 현재 역할을 실제 로컬 production source 기준으로 분리한 docs/audit-only 단계다. 상세 감사 기록은 `docs/ux/explorer_workspace_phase20i_standalone_role_audit.md`에 남긴다.
+
+현재 production에서 `WordExplorerScreen` standalone route를 직접 생성하는 코드는 `HomeScreen._openDefaultStrongWordExplorer(...)` 하나지만, 이 helper는 호출자가 없는 dormant compatibility/guardrail 경로다. large-screen primary flow는 `HomeScreen` 내부 embedded `WordExplorerScreen`이며, Strong Rail item tap과 transient 검색 후보 본문 tap은 `_showWordInLargeScreenExplorerPane(...)`를 통해 해당 pane을 retarget한다.
+
+large-screen에서는 shared default/search 목록을 mount하지 않으므로 목록 builder 안의 detail/graph 아이콘 route helper는 현재 large-screen 실제 진입점이 아니다. large-screen에서 실제로 열리는 standalone 경로는 embedded Explorer detail pane의 full-detail action이 여는 `WordDetailScreen`과, 해당 detail route의 graph action이 여는 `WordGraphScreen`이다.
+
+small-screen은 계속 `return homePane` 흐름을 사용하며 default/search 목록 본문 tap의 `WordDetailScreen` route, 목록 graph 아이콘의 `WordGraphScreen` route, detail route의 graph action을 보존한다. small-screen에는 embedded Explorer가 없으므로 이 route 흐름은 즉시 제거하거나 large-screen workspace 전환과 함께 변경하지 않는다.
+
+`WordExplorerScreen`은 standalone과 embedded 사용 모두에서 graph center, selected word, detail target, internal history의 production owner다. large-screen embedded retarget은 `ValueKey(_largeScreenExplorerWordId)` 변경으로 새 Explorer instance를 생성하므로 기존 selection과 internal history가 초기화되는 현재 동작을 가진다. dormant standalone helper 정리와 embedded owner/history continuity 변경은 같은 작업으로 취급하지 않는다.
+
+Phase 20-J 우선 최소 구현 후보는 호출자가 없는 `_openDefaultStrongWordExplorer(...)` helper와 해당 source 문자열 존재만 고정하는 stale guard를 정리하는 단일 slice다. Phase 20-I에서는 helper, route, test guard를 변경하지 않는다. embedded Explorer full-detail route, `WordDetailScreen` 역할 이동, detail → graph redirect, standalone graph 내부 navigation, small-screen route, embedded retarget owner/history 변경은 판단 보류 또는 후속 별도 설계 대상으로 유지한다.
+
+Phase 20-I는 production Dart 코드, route, test guard, DB/API/repository, DTO/model/public API, dependency, large-screen/small-screen behavior를 변경하지 않는다. 클라이언트 UI 테스트는 수행하지 않으며 현재 역할 분류 확인 절차만 상세 감사 문서에 기록한다.

@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## 2026-06-13 Phase 20-I Explorer standalone 역할 감사
+
+- standalone graph/detail route와 embedded workspace pane의 현재 역할을 실제 로컬 production source 기준으로 분리한 docs/audit-only 작업을 진행했다.
+- `WordExplorerScreen` standalone route를 직접 생성하는 `HomeScreen._openDefaultStrongWordExplorer(...)`는 호출자가 없는 dormant compatibility/guardrail 경로이며, 현재 large-screen primary flow는 `HomeScreen` 내부 embedded `WordExplorerScreen`임을 확인했다.
+- large-screen에서는 shared default/search 목록이 mount되지 않으므로 해당 목록 builder에 남아 있는 detail/graph 아이콘 route helper는 현재 large-screen 실제 진입점이 아니다. embedded Explorer full-detail action의 `WordDetailScreen` route와 해당 detail route의 `WordGraphScreen` 진입은 active 경로로 분류했다.
+- small-screen `return homePane` 흐름의 default/search 목록 본문 tap → `WordDetailScreen`, 목록 graph 아이콘 → `WordGraphScreen`, detail → graph route는 보존 경로로 분류했다.
+- large-screen embedded Explorer retarget은 `ValueKey(_largeScreenExplorerWordId)` 변경으로 새 owner instance를 생성하므로 selection과 internal history를 초기화하는 현재 동작을 가진다는 점을 기록했다.
+- Phase 20-J 우선 최소 구현 후보는 호출자가 없는 `_openDefaultStrongWordExplorer(...)` dormant helper와 해당 source 문자열 존재만 고정하는 stale guard 정리로 제한했다. Phase 20-I에서는 helper, route, test guard를 변경하지 않았다.
+- embedded Explorer full-detail route, `WordDetailScreen` 역할 이동, detail → graph redirect, standalone graph 내부 navigation, small-screen route, embedded retarget owner/history continuity 변경은 판단 보류 또는 후속 별도 설계 대상으로 남겼다.
+- production Dart 코드, route, test guard, DB/API/repository, DTO/model/public API, dependency, large-screen/small-screen behavior는 변경하지 않았다.
+- 상세 감사 기록은 `docs/ux/explorer_workspace_phase20i_standalone_role_audit.md`에 추가했고 active boundary 요약은 `docs/ux/explorer_workspace_unification.md`에 반영했다. `docs/logs/FEATURE_STATUS.md`는 최신 Phase 20 active boundary 기록 문서가 아니므로 변경하지 않았다.
+- Phase 20-I는 UI 변경이 없는 docs/audit-only 단계이므로 Codex는 UI 테스트를 수행하지 않았다. 클라이언트가 필요 시 확인할 수 있는 역할 분리 UI 체크리스트만 상세 감사 문서에 기록했다.
+
 ## 2026-06-13 Phase 20-H large-screen floating 검색 panel polish
 
 - large-screen floating 검색 결과 panel이 열린 동안 `Stack` 내부의 base `Row` 위와 panel 아래에 투명 dismiss layer를 배치했다. Explorer 또는 Strong Rail 영역의 첫 외부 클릭은 panel close로 소비되며 Explorer retarget이나 Strong Rail 이동을 동시에 수행하지 않는다.
