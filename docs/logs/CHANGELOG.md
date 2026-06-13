@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2026-06-13 Phase 20-M large-screen embedded detail action surface 최소 UX 개선
+
+- large-screen embedded Explorer detail pane의 full-detail action 문구를 `상세 화면에서 열기`에서 `상세 작업 화면 열기`로 변경했다.
+- full-detail action에 `삭제·그래프 보기 등 전체 작업용 상세 화면을 엽니다.` tooltip을 추가해, 단순 상세 보기의 중복 진입이 아니라 전체 작업을 제공하는 active `WordDetailScreen` route임을 명확히 했다.
+- embedded detail pane은 계속 `편집`과 full-detail action만 제공하며 `삭제`, `그래프 보기` action을 직접 추가하지 않았다.
+- `WordExplorerScreen._openSelectedWordDetail()`의 full-detail route, delete result 처리, 일반 복귀 후 refresh와 center/selection/history 계약 및 `WordDetailScreen`의 edit/delete/graph action은 변경하지 않았다.
+- small-screen detail/graph route, DB/API/repository, DTO/model/public API, dependency는 변경하지 않았다.
+- `WordInfoPanel` widget test와 Phase 20-M source guard를 추가해 action 문구·tooltip과 embedded/full-detail 경계를 고정했다.
+
 ## 2026-06-13 Phase 20-L 반응형 ExplorerWorkspace 목표 구조 감사
 
 - ChatGPT가 제안한 Responsive ExplorerWorkspace 목표 구조 초안을 실제 로컬 production source와 기존 UX authority 문서 기준으로 교차검증한 docs/audit-only 작업을 진행했다.

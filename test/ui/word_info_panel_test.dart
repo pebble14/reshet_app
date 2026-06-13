@@ -98,5 +98,34 @@ void main() {
         expect(tester.takeException(), isNull);
       }
     });
+
+    testWidgets(
+      'clarifies the full-detail action without exposing delete or graph actions',
+      (tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: WordInfoPanel(
+                displayItem: WordDetailLikeDisplayItem(
+                  representativeSpelling: 'Phase 20-M 확인 단어',
+                ),
+                onEdit: () {},
+                onOpenDetail: () {},
+              ),
+            ),
+          ),
+        );
+
+        expect(find.text('편집'), findsOneWidget);
+        expect(find.text('상세 작업 화면 열기'), findsOneWidget);
+        expect(find.text('상세 화면에서 열기'), findsNothing);
+        expect(
+          find.byTooltip('삭제·그래프 보기 등 전체 작업용 상세 화면을 엽니다.'),
+          findsOneWidget,
+        );
+        expect(find.text('삭제'), findsNothing);
+        expect(find.text('그래프 보기'), findsNothing);
+      },
+    );
   });
 }

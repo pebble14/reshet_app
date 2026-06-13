@@ -9248,3 +9248,13 @@ responsive workspace 공통 상태 후보는 현재 단일 owner에 모여 있�
 detail 표시와 embedded edit 진입은 비교적 낮거나 낮음~중간 위험의 후속 후보이고, edit 후 refresh 계약과 graph action의 단순 진입 정책 변경은 중간 위험이다. standalone graph 내부 navigation과 create 후 replacement 흡수, delete 책임 이동, small-screen mobile ExplorerWorkspace는 높은 위험이며, `WordDetailScreen` 제거는 매우 높은 위험으로 분류한다.
 
 Phase 20-L에서는 production `ExplorerWorkspace` mount, production Dart 코드, route, test guard, DB/API/repository, DTO/model/public API, dependency, embedded refresh, delete/graph/detail 흐름, center/selection/history 정책, `FEATURE_STATUS.md`를 변경하지 않는다. 전체 `flutter test`와 `flutter analyze`는 docs/audit-only 완료 조건으로 삼지 않는다.
+
+### 17.131 Phase 20-M embedded detail action clarity active boundary
+
+Phase 20-M은 large-screen embedded Explorer detail pane의 full-detail action 의미를 명확히 한 production UX copy/tooltip 최소 개선 단계다. 기존 `상세 화면에서 열기` 문구를 `상세 작업 화면 열기`로 변경하고, `삭제·그래프 보기 등 전체 작업용 상세 화면을 엽니다.` tooltip을 추가했다.
+
+embedded full-detail action은 단순히 동일한 상세 정보를 다시 보는 중복 진입이 아니다. active `WordDetailScreen` route는 detail 전용 reread와 edit, delete, standalone graph 진입, delete 성공 route result 반환을 제공한다. embedded detail pane은 계속 split-view 표시와 Explorer 전용 edit 및 full-detail 진입만 제공하며, delete와 graph action을 직접 추가하지 않는다.
+
+`WordExplorerScreen._openSelectedWordDetail()`의 `Navigator.push<bool?>` 및 `WordDetailScreen` route, delete result 분기, 일반 복귀 후 `_refreshSelectedWord(...)`, center/selection/history 복구 계약은 변경하지 않았다. `WordDetailScreen`의 edit/delete/graph action, large-screen과 small-screen의 detail/graph route 동작도 변경하지 않았다.
+
+Phase 20-M에서는 `ExplorerWorkspace` class production 변경, owner state 이동, refresh/delete/graph/detail route behavior 변경, route result contract 변경, DB/API/repository, DTO/model/public API, dependency, large-scale responsive/mobile ExplorerWorkspace 구현을 수행하지 않는다. `WordInfoPanel` widget test와 source guard는 새 action 문구·tooltip 및 embedded/full-detail 경계를 고정한다.

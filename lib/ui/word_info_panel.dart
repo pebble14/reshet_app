@@ -92,10 +92,13 @@ class WordInfoPanel extends StatelessWidget {
                   label: const Text('편집'),
                 ),
               if (onOpenDetail != null)
-                OutlinedButton.icon(
-                  onPressed: onOpenDetail,
-                  icon: const Icon(Icons.open_in_new),
-                  label: const Text('상세 화면에서 열기'),
+                Tooltip(
+                  message: '삭제·그래프 보기 등 전체 작업용 상세 화면을 엽니다.',
+                  child: OutlinedButton.icon(
+                    onPressed: onOpenDetail,
+                    icon: const Icon(Icons.open_in_new),
+                    label: const Text('상세 작업 화면 열기'),
+                  ),
                 ),
               if (onShowGraph != null)
                 ElevatedButton.icon(
