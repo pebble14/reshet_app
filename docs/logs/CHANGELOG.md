@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 2026-06-14 Phase 20-S delete result wordId contract guard 추가
+
+- Phase 20-S는 delete 실행 owner 이동 없이 `WordExplorerScreen._openSelectedWordDetail()`의 `WordDetailDeletedResult.wordId` result contract guard만 추가했다.
+- Explorer caller는 `detailResult.wordId.trim()`과 route를 열 당시의 `selectedWordId.trim()`를 비교하고, 일치할 때만 기존 `_handleDeletedSelectedWord(wasCenterWord: wasCenterWord)`를 실행한다.
+- Mismatch이면 Explorer delete 복구를 실행하지 않고 현재 선택 단어를 `_refreshSelectedWord(...)`로 안전하게 refresh한 뒤 즉시 반환한다.
+- `WordDetailScreen._confirmDelete()`, `DeleteWordCommand` 호출 위치, `WordGraphDataCache.clear()` owner, embedded detail pane action, full-detail route, `HomeScreen`과 small-screen 기본 detail route를 변경하지 않았다.
+- Center 삭제 후 Explorer host `true` 반환 계약은 제거하지 않고 후속 재검토 항목으로 유지했다.
+- 신규 source guard test를 추가하고 Phase 20-O/Q 기존 source guard가 분기 마지막의 일반/null 복귀 refresh를 계속 검사하도록 현행화했다. 실제 DB delete UI 테스트와 실데이터 수정·삭제, repository/domain/database/dependency와 `pubspec.yaml`, `pubspec.lock` 변경은 수행하지 않았다.
+- 상세 구현 및 검증 기록은 `docs/ux/explorer_workspace_phase20s_delete_result_contract_guardrail.md`에 추가하고 active boundary를 `docs/ux/explorer_workspace_unification.md`에 반영했다.
+
 ## 2026-06-14 Phase 20-R delete 이동 전 선행 조건 감사
 
 - `WordDetailScreen`에서 large-screen embedded Explorer로 delete 실행 책임을 이동할 수 있는지 실제 production source 기준으로 교차검증한 docs/audit-only 작업을 진행했다.

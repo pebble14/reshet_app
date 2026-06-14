@@ -9327,3 +9327,13 @@ Embedded Explorer는 delete 실행 owner가 아니라 delete 후 복구 owner다
 `HomeScreen._openDefaultStrongWordDetail(...)`과 small-screen은 기본 `WordDetailScreen` route를 계속 사용한다. Home caller는 typed delete result를 별도로 해석하지 않고 route 복귀 후 `_refreshWords()`를 수행한다. Small-screen에는 embedded Explorer delete 대체 경로가 없으므로 기본 detail route delete를 유지한다.
 
 Phase 20-R에서는 embedded detail pane delete 버튼 추가, delete 실행 owner 이동, `_confirmDelete()`, `DeleteWordCommand`, `WordDetailDeletedResult`, delete/edit/graph action, full-detail route, small-screen/Home detail route, center/selection/history 정책, production Dart 코드, test, DB, repository/domain/database/dependency와 `pubspec.yaml`, `pubspec.lock`을 변경하지 않는다. Relation count, confirm, write/cache invalidation, feedback, center/non-center 복구 검증, Home/small-screen 보존, result contract와 테스트 데이터 백업·생성·복구 정책을 모두 확정하고 별도 구현 승인을 받은 이후에만 delete 이동을 검토한다.
+
+### 17.137 Phase 20-S delete result wordId contract guardrail active boundary
+
+Phase 20-S는 delete 실행 owner 이동 단계가 아니다. `WordExplorerScreen._openSelectedWordDetail()`의 `WordDetailDeletedResult` 처리 branch에 result contract guard만 추가한다. 상세 구현과 검증 기록은 `docs/ux/explorer_workspace_phase20s_delete_result_contract_guardrail.md`에 `migration/history` 및 `changelog/status` 기록으로 남긴다.
+
+Explorer caller는 `detailResult.wordId.trim()`과 route를 열 당시 캡처한 `selectedWordId.trim()`를 비교한다. 두 값이 일치할 때만 기존 `_handleDeletedSelectedWord(wasCenterWord: wasCenterWord)`를 실행한다. Mismatch이면 delete 복구를 실행하지 않고 route를 열 당시 선택 단어를 `_refreshSelectedWord(...)`로 안전하게 refresh한 뒤 즉시 반환한다.
+
+Delete 실행 owner는 계속 `WordDetailScreen._confirmDelete()`다. `DeleteWordCommand` 호출 위치, `WordGraphDataCache.clear()` owner, embedded detail pane action, full-detail route, `HomeScreen`과 small-screen 기본 detail route는 변경하지 않는다. Center 삭제 후 유효한 history가 없을 때 Explorer host에 `Navigator.pop(context, true)`를 실행하는 계약도 제거하지 않고 후속 재검토 항목으로 유지한다.
+
+Phase 20-O/Q 기존 source guard는 새 mismatch refresh가 아니라 분기 마지막의 일반/null 복귀 refresh를 계속 검사하도록 현행화한다. Phase 20-S에서는 실제 DB delete UI 테스트와 실데이터 수정·삭제를 수행하지 않는다. Repository/domain/database/dependency, `pubspec.yaml`, `pubspec.lock`도 변경하지 않는다.

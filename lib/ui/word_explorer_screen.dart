@@ -679,6 +679,18 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
     if (!mounted || selectedWordId.isEmpty) return;
 
     if (detailResult is WordDetailDeletedResult) {
+      final deletedWordId = detailResult.wordId.trim();
+      final expectedDeletedWordId = selectedWordId.trim();
+
+      if (deletedWordId != expectedDeletedWordId) {
+        await _refreshSelectedWord(
+          wordId: selectedWordId,
+          syncCenterWord: wasCenterWord,
+          refreshGraphIfChanged: true,
+        );
+        return;
+      }
+
       await _handleDeletedSelectedWord(wasCenterWord: wasCenterWord);
       return;
     }

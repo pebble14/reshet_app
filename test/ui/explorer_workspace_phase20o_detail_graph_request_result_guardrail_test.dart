@@ -147,7 +147,7 @@ void main() {
       final graphRequestIndex = openSelectedWordDetailSource.indexOf(
         'if (detailResult is WordDetailGraphRequestedResult)',
       );
-      final refreshIndex = openSelectedWordDetailSource.indexOf(
+      final refreshIndex = openSelectedWordDetailSource.lastIndexOf(
         'await _refreshSelectedWord(',
       );
 
