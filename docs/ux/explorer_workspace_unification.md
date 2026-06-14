@@ -9337,3 +9337,13 @@ Explorer caller는 `detailResult.wordId.trim()`과 route를 열 당시 캡처한
 Delete 실행 owner는 계속 `WordDetailScreen._confirmDelete()`다. `DeleteWordCommand` 호출 위치, `WordGraphDataCache.clear()` owner, embedded detail pane action, full-detail route, `HomeScreen`과 small-screen 기본 detail route는 변경하지 않는다. Center 삭제 후 유효한 history가 없을 때 Explorer host에 `Navigator.pop(context, true)`를 실행하는 계약도 제거하지 않고 후속 재검토 항목으로 유지한다.
 
 Phase 20-O/Q 기존 source guard는 새 mismatch refresh가 아니라 분기 마지막의 일반/null 복귀 refresh를 계속 검사하도록 현행화한다. Phase 20-S에서는 실제 DB delete UI 테스트와 실데이터 수정·삭제를 수행하지 않는다. Repository/domain/database/dependency, `pubspec.yaml`, `pubspec.lock`도 변경하지 않는다.
+
+### 17.138 Phase 20-T center delete 후 Explorer host `true` 반환 계약 감사 active boundary
+
+Phase 20-T는 center 단어 삭제 후 Explorer 내부에서 복구할 유효한 previous/next history가 없을 때 실행되는 `Navigator.pop(context, true)`의 실제 host와 수신·해석 경로를 production source 기준으로 확인하는 docs/audit-only 단계다. 상세 감사 기록은 `docs/ux/explorer_workspace_phase20t_center_delete_host_true_contract_audit.md`에 `reference/context` 및 docs/audit 기록으로 남긴다.
+
+현재 production에서 `WordExplorerScreen`을 생성하는 위치는 `HomeScreen` large-screen branch의 embedded child 한 곳이며, `Navigator.push`로 Explorer를 여는 production caller는 없다. `WordExplorerScreen`의 host callback은 passive Strong Rail feedback용 `onSelectedStrongWordChanged`뿐이고, `HomeScreen`에는 embedded Explorer의 bool `true` 결과를 수신하거나 refresh trigger로 해석하는 경로가 없다.
+
+따라서 center delete history 부재 시의 `Navigator.pop(context, true)`는 유지 가능한 안정 계약으로 확정하지 않는다. 현재 embedded host 구조에서 수신·해석 경로가 없고 nearest/enclosing Navigator route를 pop할 가능성이 있는 legacy fallback 위험으로 분류한다. `WordDetailDeletedResult` typed result는 삭제된 `wordId`를 포함하고 Explorer caller가 해석하지만, 이 bool fallback은 삭제 context가 없고 현재 host가 해석하지 않는 별도 경계다.
+
+Phase 20-T 1차 작업에서는 source guard를 추가하지 않는다. 위험한 legacy fallback 위치와 host 해석 부재를 감시할 guard는 후속 기대 계약이 승인된 뒤 재검토한다. `Navigator.pop(context, true)` 제거, typed result 통합, delete 실행 owner 이동, `WordDetailDeletedResult`, `_confirmDelete()`, `DeleteWordCommand`, `WordGraphDataCache.clear()`, production Dart, test, DB, dependency, `pubspec.yaml`, `pubspec.lock`은 변경하지 않는다. UI 기반 수동 테스트와 실제 DB delete 테스트도 수행하지 않는다.

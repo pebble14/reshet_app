@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 2026-06-14 Phase 20-T center delete 후 Explorer host `true` 반환 계약 감사
+
+- Center 단어 삭제 후 유효한 previous/next history가 없을 때 실행되는 `Navigator.pop(context, true)`의 실제 host와 수신·해석 경로를 로컬 production source 기준으로 감사했다.
+- 현재 production `WordExplorerScreen`은 `HomeScreen` large-screen branch의 embedded child로만 생성되며, `Navigator.push`로 Explorer를 여는 production caller는 없음을 확인했다.
+- `onSelectedStrongWordChanged`는 passive Strong Rail feedback용 callback이며, `HomeScreen`에는 embedded Explorer의 bool `true` 결과를 수신하거나 refresh trigger로 해석하는 경로가 없음을 기록했다.
+- Explorer bool pop을 안정 계약으로 확정하지 않고, 현재 embedded host 구조에서 수신·해석 경로가 없으며 nearest/enclosing Navigator route를 pop할 가능성이 있는 legacy fallback 위험으로 분류했다.
+- `WordDetailDeletedResult` typed result와 Explorer bool fallback의 경계 차이, Phase 20-S source guard의 존재 유지 검사 범위와 host 해석 검증 부재를 기록했다.
+- Phase 20-T 1차 작업은 docs/audit-only로 진행하고 source guard는 추가하지 않았다. 후속 기대 계약이 승인된 뒤 guard 필요성을 재검토한다.
+- `Navigator.pop(context, true)`, `WordDetailDeletedResult`, `_confirmDelete()`, `DeleteWordCommand`, `WordGraphDataCache.clear()`, production Dart, test, DB, dependency, `pubspec.yaml`, `pubspec.lock`은 변경하지 않았다. UI 테스트와 실제 DB delete 테스트도 수행하지 않았다.
+- 상세 감사 기록은 `docs/ux/explorer_workspace_phase20t_center_delete_host_true_contract_audit.md`에 추가하고 active boundary를 `docs/ux/explorer_workspace_unification.md`에 반영했다.
+
 ## 2026-06-14 Phase 20-S delete result wordId contract guard 추가
 
 - Phase 20-S는 delete 실행 owner 이동 없이 `WordExplorerScreen._openSelectedWordDetail()`의 `WordDetailDeletedResult.wordId` result contract guard만 추가했다.
