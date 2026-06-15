@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2026-06-15 Phase 20-V detail delete owner boundary source guard
+
+- Explorer full-detail route의 delete action을 caller-request result로 분기하는 최소 구현 가능성을 감사하고, production 구현 없이 source guard/docs-only로 종료했다.
+- Delete caller-request mode 또는 requested result만 추가하면 유효한 delete 동작이 완성되지 않으며, 의미 있는 구현에는 Explorer 또는 공통 delete executor로 relation count, confirm, write, cache clear와 feedback 책임을 이동해야 함을 기록했다.
+- 신규 Phase 20-V source guard를 추가해 `WordDetailScreen._confirmDelete()`의 relation count, `DeleteWordCommand`, `WordGraphDataCache.clear()`, completed `WordDetailDeletedResult` 반환 순서와 Explorer의 completed result 해석자 경계를 고정했다.
+- `WordDetailDeleteActionMode`, `deleteActionMode`, `WordDetailDeleteRequestedResult`, Explorer의 delete command 실행과 graph cache clear owner가 없음을 검사한다.
+- Production Dart 동작, Home/small-screen 기본 detail route, full-detail route, embedded detail pane action, Phase 20-U center empty-state/history, DB/repository/domain/dependency, `pubspec.yaml`, `pubspec.lock`은 변경하지 않았다.
+- UI 테스트, 실제 DB delete 테스트와 실데이터 수정·삭제는 수행하지 않았다. 상세 감사 기록은 `docs/ux/explorer_workspace_phase20v_detail_delete_caller_result_audit.md`에 추가하고 active boundary를 `docs/ux/explorer_workspace_unification.md`에 반영했다.
+
 ## 2026-06-15 Phase 20-U center delete bool fallback 최소 방어
 
 - Embedded `WordExplorerScreen`에서 center 단어 삭제 후 유효한 previous/next history가 모두 없을 때 `Navigator.pop(context, true)`로 enclosing Navigator route를 닫지 않도록 최소 방어를 추가했다.

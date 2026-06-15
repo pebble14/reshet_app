@@ -9355,3 +9355,13 @@ Phase 20-U는 Phase 20-T에서 확인한 embedded Explorer의 center delete bool
 `WordDetailDeletedResult`, route/result 계약, delete 실행 owner인 `WordDetailScreen._confirmDelete()`, `DeleteWordCommand` 호출 위치와 `WordGraphDataCache.clear()` owner는 변경하지 않는다. Production `WordExplorerScreen`은 계속 `HomeScreen` large-screen branch의 embedded child 한 곳에서만 생성한다.
 
 삭제된 center/history를 별도 empty-state로 재설계하는 작업은 Phase 20-U 범위가 아니다. 필요성이 확인되면 후속 Phase로 분리한다. UI 기반 수동 테스트, 실제 DB delete 테스트와 실데이터 수정·삭제는 수행하지 않는다.
+
+### 17.140 Phase 20-V detail delete caller-result 감사 active boundary
+
+Phase 20-V는 Explorer가 여는 full-detail `WordDetailScreen` route의 delete action을 edit/graph처럼 caller-request result로 분기할 수 있는지 감사하고, production 최소 구현을 진행하지 않는 source guard/docs-only 단계다. 상세 감사와 검증 기록은 `docs/ux/explorer_workspace_phase20v_detail_delete_caller_result_audit.md`에 `reference/context`, `migration/history`, `changelog/status` 기록으로 남긴다.
+
+Delete는 아직 caller-request mode로 분기하지 않는다. `WordDetailDeleteActionMode`, `deleteActionMode`, `WordDetailDeleteRequestedResult`는 도입하지 않는다. Delete 실행 owner는 계속 `WordDetailScreen._confirmDelete()`이며, relation count 조회, confirm dialog, 진행 상태, `DeleteWordCommand`, `WordGraphDataCache.clear()`, 성공·실패 feedback과 completed `WordDetailDeletedResult` 반환을 소유한다.
+
+Explorer full-detail route는 edit와 graph action mode만 caller-result로 전달한다. Explorer는 completed `WordDetailDeletedResult`의 `wordId`를 검증하고 delete 후 center/non-center 복구를 수행하는 결과 해석자이며 delete executor가 아니다. Explorer에 `DeleteWordCommand` 실행 경로, `WordWriteService` 또는 `WordGraphDataCache.clear()` owner를 추가하지 않는다.
+
+Phase 20-V에서는 production Dart 동작, Home/small-screen 기본 detail route, full-detail route, embedded detail pane action, Phase 20-U center empty-state/history, DB/repository/domain/dependency, `pubspec.yaml`, `pubspec.lock`을 변경하지 않는다. Delete owner 이동 또는 공통 delete executor 도입은 실행 surface, relation count와 confirm, 진행 상태, write/cache invalidation, feedback, completed result와 복구, Home/small-screen 보존, 테스트 데이터 정책을 설계하고 별도 승인받은 후속 Phase로 분리한다. UI 테스트, 실제 DB delete 테스트와 실데이터 수정·삭제는 수행하지 않는다.
