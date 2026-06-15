@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2026-06-15 Phase 20-U center delete bool fallback 최소 방어
+
+- Embedded `WordExplorerScreen`에서 center 단어 삭제 후 유효한 previous/next history가 모두 없을 때 `Navigator.pop(context, true)`로 enclosing Navigator route를 닫지 않도록 최소 방어를 추가했다.
+- 기존 fallback 한 지점에서 `_clearSelectedWordPanel(refreshGraph: true)`를 실행해 selection/detail을 정리하고 graph를 갱신하도록 했다.
+- Phase 20-S source guard를 현행화해 Explorer fallback의 bool pop 직접 호출 금지, panel clear 호출, 기존 delete owner와 typed result 유지, production Explorer의 Home large-screen embedded child 단일 사용 경계를 검사한다.
+- `WordDetailDeletedResult`, route/result 구조, `WordDetailScreen._confirmDelete()`, `DeleteWordCommand` 호출 위치, `WordGraphDataCache.clear()` owner, Home/small-screen 기본 detail route, repository/domain/database/dependency, `pubspec.yaml`, `pubspec.lock`은 변경하지 않았다.
+- Center/history empty-state 재설계는 수행하지 않았으며 필요 시 후속 Phase로 분리한다. UI 테스트, 실제 DB delete 테스트와 실데이터 수정·삭제도 수행하지 않았다.
+
 ## 2026-06-14 Phase 20-T center delete 후 Explorer host `true` 반환 계약 감사
 
 - Center 단어 삭제 후 유효한 previous/next history가 없을 때 실행되는 `Navigator.pop(context, true)`의 실제 host와 수신·해석 경로를 로컬 production source 기준으로 감사했다.

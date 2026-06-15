@@ -9347,3 +9347,11 @@ Phase 20-T는 center 단어 삭제 후 Explorer 내부에서 복구할 유효한
 따라서 center delete history 부재 시의 `Navigator.pop(context, true)`는 유지 가능한 안정 계약으로 확정하지 않는다. 현재 embedded host 구조에서 수신·해석 경로가 없고 nearest/enclosing Navigator route를 pop할 가능성이 있는 legacy fallback 위험으로 분류한다. `WordDetailDeletedResult` typed result는 삭제된 `wordId`를 포함하고 Explorer caller가 해석하지만, 이 bool fallback은 삭제 context가 없고 현재 host가 해석하지 않는 별도 경계다.
 
 Phase 20-T 1차 작업에서는 source guard를 추가하지 않는다. 위험한 legacy fallback 위치와 host 해석 부재를 감시할 guard는 후속 기대 계약이 승인된 뒤 재검토한다. `Navigator.pop(context, true)` 제거, typed result 통합, delete 실행 owner 이동, `WordDetailDeletedResult`, `_confirmDelete()`, `DeleteWordCommand`, `WordGraphDataCache.clear()`, production Dart, test, DB, dependency, `pubspec.yaml`, `pubspec.lock`은 변경하지 않는다. UI 기반 수동 테스트와 실제 DB delete 테스트도 수행하지 않는다.
+
+### 17.139 Phase 20-U center delete bool fallback 최소 방어 active boundary
+
+Phase 20-U는 Phase 20-T에서 확인한 embedded Explorer의 center delete bool fallback 위험을 최소 방어로 처리한다. Center 단어 삭제 후 유효한 previous/next history가 모두 없을 때 `Navigator.pop(context, true)`로 enclosing Navigator route를 닫지 않고, 기존 selection/detail 정리 경로인 `_clearSelectedWordPanel(refreshGraph: true)`를 실행한다.
+
+`WordDetailDeletedResult`, route/result 계약, delete 실행 owner인 `WordDetailScreen._confirmDelete()`, `DeleteWordCommand` 호출 위치와 `WordGraphDataCache.clear()` owner는 변경하지 않는다. Production `WordExplorerScreen`은 계속 `HomeScreen` large-screen branch의 embedded child 한 곳에서만 생성한다.
+
+삭제된 center/history를 별도 empty-state로 재설계하는 작업은 Phase 20-U 범위가 아니다. 필요성이 확인되면 후속 Phase로 분리한다. UI 기반 수동 테스트, 실제 DB delete 테스트와 실데이터 수정·삭제는 수행하지 않는다.

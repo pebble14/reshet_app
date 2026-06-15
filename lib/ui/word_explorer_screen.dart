@@ -743,7 +743,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
     }
 
     if (!mounted) return;
-    Navigator.pop(context, true);
+    _clearSelectedWordPanel(refreshGraph: true);
   }
 
   void _clearSelectedWordPanel({bool refreshGraph = false}) {

@@ -5,9 +5,12 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('Phase 20-S delete result contract guardrail', () {
     late String deletedResultBranchSource;
+    late String centerDeleteFallbackSource;
     late String confirmDeleteSource;
+    late String homeSource;
     late String homeDetailRouteSource;
     late String handleDeletedSelectedWordSource;
+    late String productionSource;
 
     setUpAll(() {
       final explorerSource = File(
@@ -29,6 +32,15 @@ void main() {
             'async {',
         'void _clearSelectedWordPanel({bool refreshGraph = false}) {',
       );
+      final nextHistoryIndex = handleDeletedSelectedWordSource.indexOf(
+        'final nextEntry = _history.nextEntry;',
+      );
+      if (nextHistoryIndex < 0) {
+        throw StateError('Cannot find center delete next history fallback');
+      }
+      centerDeleteFallbackSource = handleDeletedSelectedWordSource.substring(
+        nextHistoryIndex,
+      );
 
       final detailSource = File(
         'lib/ui/word_detail_screen.dart',
@@ -39,12 +51,19 @@ void main() {
         'void _showWordNavigationUnavailableSnackBar() {',
       );
 
-      final homeSource = File('lib/ui/home_screen.dart').readAsStringSync();
+      homeSource = File('lib/ui/home_screen.dart').readAsStringSync();
       homeDetailRouteSource = _sourceBetween(
         homeSource,
         'Future<void> _openDefaultStrongWordDetail(String wordId) async {',
         'Future<void> _openDefaultStrongWordGraph(String wordId) async {',
       );
+
+      productionSource = Directory('lib')
+          .listSync(recursive: true)
+          .whereType<File>()
+          .where((file) => file.path.endsWith('.dart'))
+          .map((file) => file.readAsStringSync())
+          .join('\n');
     });
 
     test(
@@ -119,20 +138,39 @@ void main() {
       );
     });
 
-    test('keeps home default detail route and explorer host bool result', () {
-      expect(
-        homeDetailRouteSource,
-        contains('Navigator.push<WordDetailRouteResult>('),
-      );
-      expect(homeDetailRouteSource, contains('WordDetailScreen('));
-      expect(homeDetailRouteSource, contains('_refreshWords();'));
-      expect(homeDetailRouteSource, isNot(contains('editActionMode:')));
-      expect(homeDetailRouteSource, isNot(contains('graphActionMode:')));
-      expect(
-        handleDeletedSelectedWordSource,
-        contains('Navigator.pop(context, true)'),
-      );
-    });
+    test(
+      'keeps home default detail route and guards embedded explorer fallback',
+      () {
+        expect(
+          homeDetailRouteSource,
+          contains('Navigator.push<WordDetailRouteResult>('),
+        );
+        expect(homeDetailRouteSource, contains('WordDetailScreen('));
+        expect(homeDetailRouteSource, contains('_refreshWords();'));
+        expect(homeDetailRouteSource, isNot(contains('editActionMode:')));
+        expect(homeDetailRouteSource, isNot(contains('graphActionMode:')));
+        expect(
+          centerDeleteFallbackSource,
+          isNot(contains('Navigator.pop(context, true)')),
+        );
+        expect(
+          centerDeleteFallbackSource,
+          contains('_clearSelectedWordPanel(refreshGraph: true);'),
+        );
+      },
+    );
+
+    test(
+      'keeps one home embedded explorer usage with no route push caller',
+      () {
+        expect(
+          'WordExplorerScreen('.allMatches(productionSource),
+          hasLength(2),
+        );
+        expect('WordExplorerScreen('.allMatches(homeSource), hasLength(1));
+        expect(homeSource, contains('child: WordExplorerScreen('));
+      },
+    );
   });
 }
 
