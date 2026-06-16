@@ -9393,3 +9393,13 @@ Phase 20-Y는 large-screen embedded Explorer 안에서 graph pane과 detail pane
 Strong Rail 선택으로 `HomeScreen`이 `ValueKey(_largeScreenExplorerWordId)`를 바꾸어 `WordExplorerScreen`을 remount해도 저장된 split fraction을 복원한다. `HomeScreen` large-screen retarget 방식, Strong Rail 동작, small-screen route, standalone graph/detail route, full-detail route, edit/delete/graph action ownership은 변경하지 않는다.
 
 Phase 20-Y에서는 DB/repository/domain/schema/dependency, `pubspec.yaml`, `pubspec.lock`, delete 실행 owner, embedded detail delete action, graph production path, detail read path를 변경하지 않는다. SQL 검증과 실제 DB delete UI 테스트, 실데이터 수정·삭제는 수행하지 않는다.
+
+### 17.143 Phase 20-Z delete action ownership policy note
+
+Phase 20-Z는 delete action ownership을 source 기준으로 재확인하고, 후속 Phase 21-A의 UX 기준을 정리한 docs-only 단계다. 현재 delete executor는 계속 `WordDetailScreen._confirmDelete()`이며, Explorer는 completed `WordDetailDeletedResult`를 해석하고 selected/detail/history를 복구하는 result interpreter다.
+
+`WordDetailScreen` delete는 최종 UX 정책이 아니라, graph/node delete 대체 경로가 large-screen과 small-screen 양쪽에 마련되기 전까지 small-screen/default route의 삭제 접근성을 보존하기 위한 transitional compatibility로 유지한다. `WordDetailScreen` delete 제거는 graph/node selected-word delete 대체 경로가 마련된 뒤 별도 production phase에서 검토한다.
+
+상위 UX 정책상 Windows large-screen과 Android small-screen은 서로 다른 기능 모델을 가지지 않는다. 같은 Explorer 기능 모델을 화면 크기에 맞게 다르게 표현하며, 화면 크기별 차이는 기능 차이가 아니라 presentation 차이다.
+
+상세 정보 계열은 정보 열람과 편집 진입에 집중한다. Graph/node action 계열은 노드 생성/삭제, 관계 추가/삭제/편집을 담당한다. 노드 삭제와 관계 추가는 center word가 아니라 selected word 기준으로 수행하며, selected word가 없으면 write action을 수행하지 않고 안내만 한다.

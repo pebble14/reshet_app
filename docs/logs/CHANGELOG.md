@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-06-17 Phase 20-Z delete action ownership 정책 정리
+
+- Phase 20-Z delete action ownership audit 결론을 문서화했다. 삭제는 최종적으로 상세 정보 계열이 아니라 graph/node selected-word action으로 이동하는 방향이며, 기존 `WordDetailScreen` delete는 대체 경로 마련 전 transitional compatibility로 유지한다.
+- Windows large-screen과 Android small-screen은 같은 Explorer 기능 모델을 화면 크기에 맞게 다르게 표현해야 하며, graph/node action 계열이 노드 생성/삭제와 관계 추가/삭제/편집을 담당한다는 Phase 21-A 기준을 기록했다.
+
 ## 2026-06-16 Phase 20-Y Explorer graph/detail 분할 조절 도입
 
 - Large-screen embedded Explorer의 graph/detail 고정 3:2 split을 draggable vertical divider 기반 resizable split으로 전환했다.
