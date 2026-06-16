@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-06-17 Phase 21-B relation create selected-word 기준 전환
+
+- `WordGraphScreen`의 관계 추가 기준을 center word에서 selected word로 전환했다.
+- selected word가 없으면 안내 snackbar만 표시하고 관계 검색/생성 흐름을 시작하지 않는다.
+- direct 관계 추가와 단어 생성 후 관계 추가 옵션의 duplicate check, relation dialog direction 기준, `createRelation` 기준 단어를 selected word로 통일했다.
+- relation edit/delete, node delete, detail delete, Home large/small shell, small-screen route, DB schema, repository/domain API, dependency는 변경하지 않았다.
+
 ## 2026-06-17 Phase 20-Z delete action ownership 정책 정리
 
 - Phase 20-Z delete action ownership audit 결론을 문서화했다. 삭제는 최종적으로 상세 정보 계열이 아니라 graph/node selected-word action으로 이동하는 방향이며, 기존 `WordDetailScreen` delete는 대체 경로 마련 전 transitional compatibility로 유지한다.

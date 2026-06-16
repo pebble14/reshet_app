@@ -289,7 +289,7 @@ class _SelectedNodeRelationEntry {
 class CreateWordPayload {
   final CanonicalWordWritePayload wordPayload;
 
-  /// true면 단어 저장 후 현재 중심 단어와 관계 추가를 이어서 진행
+  /// true면 단어 저장 후 현재 선택 단어와 관계 추가를 이어서 진행
   final bool createRelationAfterSave;
 
   CreateWordPayload({
@@ -616,7 +616,7 @@ class _CreateWordDialogState extends State<_CreateWordDialog> {
                       _createRelationAfterSave = value ?? false;
                     });
                   },
-                  title: const Text('저장 후 현재 중심 단어와 관계 추가'),
+                  title: const Text('저장 후 현재 선택 단어와 관계 추가'),
                 ),
               ],
             ),
@@ -4690,9 +4690,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   /// 1) 단어 입력
   /// 2) 중복 후보 경고
   /// 3) 단어 저장
-  /// 4) (옵션) 현재 중심 단어와 관계 추가
+  /// 4) (옵션) 현재 선택 단어와 관계 추가
   /// 5) 그래프 갱신
   Future<void> _showCreateWordFlow() async {
+    final relationSourceWordId = (_selectedWordId ?? '').trim();
     final payload = await _showCreateWordDialog();
     if (payload == null) return;
 
@@ -4776,8 +4777,14 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
     // 저장 후 관계 추가 옵션
     if (payload.createRelationAfterSave) {
-      if (createdWordPayload != null) {
+      if (relationSourceWordId.isEmpty) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('관계를 추가할 단어를 그래프에서 먼저 선택하세요.')),
+        );
+      } else if (createdWordPayload != null) {
         final relationPayload = await _showCreateRelationDialog(
+          sourceWordId: relationSourceWordId,
           otherWordId: createdWordPayload.wordId,
           otherWordDisplayLabel: _relationTargetDisplayLabel(
             wordId: createdWordPayload.wordId,
@@ -4787,7 +4794,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
         if (relationPayload != null) {
           final existing = await _repository.findExistingRelationIdBySignature(
-            _centerWordId,
+            relationSourceWordId,
             createdWordPayload.wordId,
             relationType: relationPayload.relationType,
             directionCode: relationPayload.directionCode,
@@ -4795,7 +4802,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
           if (existing == null) {
             await _repository.createRelation(
-              wordId1: _centerWordId,
+              wordId1: relationSourceWordId,
               wordId2: createdWordPayload.wordId,
               categoryCode: relationPayload.categoryCode,
               relationType: relationPayload.relationType,
@@ -4818,6 +4825,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       if (didCreateRelation && createdWordPayload != null) {
         WordGraphDataCache.invalidateMany([
           _centerWordId,
+          relationSourceWordId,
           createdWordPayload.wordId,
         ]);
       }
@@ -4934,8 +4942,9 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     );
   }
 
-  /// 새로 만든 단어와 현재 중심 단어 사이의 관계 생성 정보 입력
+  /// 기준 단어와 상대 단어 사이의 관계 생성 정보 입력
   Future<CreateRelationPayload?> _showCreateRelationDialog({
+    required String sourceWordId,
     required String otherWordId,
     required String otherWordDisplayLabel,
   }) async {
@@ -4952,8 +4961,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     String? selectedCategoryCode;
     String? selectedRelationType;
     final directionItems = _directionDropdownItems(
-      centerWordId: _centerWordId,
-      wordId1: _centerWordId,
+      centerWordId: sourceWordId,
+      wordId1: sourceWordId,
       wordId2: otherWordId,
     );
     String selectedDirectionCode = _normalizeDirectionCodeForEditor(
@@ -5148,12 +5157,22 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   /// 3) 중복 관계 검사 후 INSERT
   /// 4) 그래프 갱신
   Future<void> _showAddRelationFlow() async {
+    final relationSourceWordId = (_selectedWordId ?? '').trim();
+    if (relationSourceWordId.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('관계를 추가할 단어를 그래프에서 먼저 선택하세요.')),
+      );
+      return;
+    }
+
     // 1) 상대 단어 선택
-    final other = await _showSelectWordDialog();
+    final other = await _showSelectWordDialog(
+      sourceWordId: relationSourceWordId,
+    );
     if (other == null) return;
 
     // 자기 자신 선택 방지
-    if (other.wordId == _centerWordId) {
+    if (other.wordId == relationSourceWordId) {
       if (!mounted) return;
       ScaffoldMessenger.of(
         context,
@@ -5163,6 +5182,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
     // 2) 관계 입력
     final payload = await _showCreateRelationDialog(
+      sourceWordId: relationSourceWordId,
       otherWordId: other.wordId,
       otherWordDisplayLabel: _graphRelationSearchResultLabel(other),
     );
@@ -5170,7 +5190,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
     // 3) 중복 검사
     final existingId = await _repository.findExistingRelationIdBySignature(
-      _centerWordId,
+      relationSourceWordId,
       other.wordId,
       relationType: payload.relationType,
       directionCode: payload.directionCode,
@@ -5198,7 +5218,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
     // 4) INSERT
     await _repository.createRelation(
-      wordId1: _centerWordId,
+      wordId1: relationSourceWordId,
       wordId2: other.wordId,
       categoryCode: payload.categoryCode,
       relationType: payload.relationType,
@@ -5210,7 +5230,11 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     );
 
     // 5) 갱신
-    WordGraphDataCache.invalidateMany([_centerWordId, other.wordId]);
+    WordGraphDataCache.invalidateMany([
+      _centerWordId,
+      relationSourceWordId,
+      other.wordId,
+    ]);
     await _loadConnectedWords();
 
     if (!mounted) return;
@@ -5220,7 +5244,9 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   }
 
   /// 상대 단어를 검색해서 고르는 다이얼로그
-  Future<GraphRelationAddSearchResultItem?> _showSelectWordDialog() async {
+  Future<GraphRelationAddSearchResultItem?> _showSelectWordDialog({
+    required String sourceWordId,
+  }) async {
     final controller = TextEditingController();
     List<GraphRelationAddSearchResultItem> results = [];
 
@@ -5231,9 +5257,9 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
           builder: (context, setState) {
             Future<void> doSearch(String q) async {
               final r = await _repository.searchWords(q, limit: 200);
-              // 중심 단어는 결과에서 제외(혼동 방지)
+              // 기준 단어는 결과에서 제외(혼동 방지)
               final filtered = r
-                  .where((item) => item.wordId != _centerWordId)
+                  .where((item) => item.wordId != sourceWordId)
                   .toList();
               setState(() => results = filtered);
             }

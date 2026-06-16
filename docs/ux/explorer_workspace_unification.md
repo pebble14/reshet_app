@@ -9403,3 +9403,11 @@ Phase 20-Z는 delete action ownership을 source 기준으로 재확인하고, �
 상위 UX 정책상 Windows large-screen과 Android small-screen은 서로 다른 기능 모델을 가지지 않는다. 같은 Explorer 기능 모델을 화면 크기에 맞게 다르게 표현하며, 화면 크기별 차이는 기능 차이가 아니라 presentation 차이다.
 
 상세 정보 계열은 정보 열람과 편집 진입에 집중한다. Graph/node action 계열은 노드 생성/삭제, 관계 추가/삭제/편집을 담당한다. 노드 삭제와 관계 추가는 center word가 아니라 selected word 기준으로 수행하며, selected word가 없으면 write action을 수행하지 않고 안내만 한다.
+
+### 17.144 Phase 21-B relation create selected-word 기준 active boundary
+
+Phase 21-B는 `WordGraphScreen`의 관계 추가 기준을 center word에서 selected word로 전환한 small production slice다. Direct `관계 추가`와 단어 생성 후 관계 추가 옵션은 모두 현재 `_selectedWordId`를 기준 단어로 사용한다.
+
+Selected word가 없으면 `WordGraphScreen`은 안내 snackbar만 표시하고 관계 검색 dialog, relation input dialog, duplicate check, `createRelation(...)` write path를 시작하지 않는다. Relation input dialog의 방향 선택 기준, 상대 단어 검색 제외 기준, duplicate check, `createRelation(wordId1: ...)`, graph cache invalidation은 selected source word를 기준으로 맞춘다.
+
+Phase 21-B는 relation edit/delete, node delete, detail delete, `WordDetailScreen` transitional delete compatibility, Home large/small shell, small-screen route, large-screen embedded graph/detail split, DB schema, repository/domain API, dependency를 변경하지 않는다. Node delete selected-word action surface와 detail delete 제거는 별도 후속 production phase에서만 검토한다.
