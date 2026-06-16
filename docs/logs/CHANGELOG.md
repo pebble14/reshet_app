@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 2026-06-16 Phase 20-W full-detail route 역할 감사
+
+- Explorer full-detail route의 잔여 역할과 action ownership을 로컬 source 기준으로 감사하고 docs-only로 공식 기록을 추가했다.
+- Explorer full-detail route를 단순 “상세 보기”가 아니라 `편집`, `그래프 보기`, `삭제`를 제공하는 “상세 작업 화면”으로 정리했다.
+- Embedded detail pane은 `편집`과 `상세 작업 화면 열기`만 직접 제공하고, `삭제`와 `그래프 보기`는 직접 제공하지 않는 action 차이를 문서화했다.
+- Edit와 graph는 Explorer caller-result 경로를 사용하고, delete 실행 owner는 계속 `WordDetailScreen._confirmDelete()`이며 Explorer는 completed `WordDetailDeletedResult` 해석자라는 ownership을 정리했다.
+- Production code, test code, DB/repository/domain/dependency, `pubspec.yaml`, `pubspec.lock`은 변경하지 않았다.
+- 기존 Phase 20-M/O/Q/V guard가 필요한 경계를 이미 보호하므로 source guard 추가와 production UX 문구 개선은 필요 없다고 판단했다.
+- UI 테스트, DB/SQL 검증, 실데이터 수정/삭제는 수행하지 않았다. 상세 감사 기록은 `docs/ux/explorer_workspace_phase20w_full_detail_route_role_audit.md`에 추가하고 active boundary를 `docs/ux/explorer_workspace_unification.md`에 반영했다.
+
 ## 2026-06-15 Phase 20-V detail delete owner boundary source guard
 
 - Explorer full-detail route의 delete action을 caller-request result로 분기하는 최소 구현 가능성을 감사하고, production 구현 없이 source guard/docs-only로 종료했다.

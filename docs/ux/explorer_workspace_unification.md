@@ -9365,3 +9365,19 @@ Delete는 아직 caller-request mode로 분기하지 않는다. `WordDetailDelet
 Explorer full-detail route는 edit와 graph action mode만 caller-result로 전달한다. Explorer는 completed `WordDetailDeletedResult`의 `wordId`를 검증하고 delete 후 center/non-center 복구를 수행하는 결과 해석자이며 delete executor가 아니다. Explorer에 `DeleteWordCommand` 실행 경로, `WordWriteService` 또는 `WordGraphDataCache.clear()` owner를 추가하지 않는다.
 
 Phase 20-V에서는 production Dart 동작, Home/small-screen 기본 detail route, full-detail route, embedded detail pane action, Phase 20-U center empty-state/history, DB/repository/domain/dependency, `pubspec.yaml`, `pubspec.lock`을 변경하지 않는다. Delete owner 이동 또는 공통 delete executor 도입은 실행 surface, relation count와 confirm, 진행 상태, write/cache invalidation, feedback, completed result와 복구, Home/small-screen 보존, 테스트 데이터 정책을 설계하고 별도 승인받은 후속 Phase로 분리한다. UI 테스트, 실제 DB delete 테스트와 실데이터 수정·삭제는 수행하지 않는다.
+
+### 17.141 Phase 20-W full-detail route 역할 감사 active boundary
+
+Phase 20-W는 Phase 20-N/O/Q/V 이후 Explorer full-detail route의 잔여 역할과 action ownership을 감사한 docs-only 단계다. 상세 감사 기록은 `docs/ux/explorer_workspace_phase20w_full_detail_route_role_audit.md`에 `reference/context`, `migration/history`, `changelog/status` 기록으로 남긴다.
+
+Explorer embedded detail pane은 split-view 안에서 선택 단어의 상세 요약과 제한된 action을 제공하는 lightweight detail/action surface다. Embedded detail pane은 `편집`과 `상세 작업 화면 열기`를 직접 제공하지만, `삭제`와 `그래프 보기`는 직접 제공하지 않는다.
+
+Explorer full-detail route는 “상세 작업 화면”으로 유지한다. `WordExplorerScreen._openSelectedWordDetail()`은 `Navigator.push<WordDetailRouteResult>`로 `WordDetailScreen(...)`을 열고, 이 route는 `편집`, `그래프 보기`, `삭제` action을 제공한다.
+
+Explorer route에서 edit와 graph는 caller-result 경로를 사용한다. Edit는 `WordDetailEditRequestedResult`를 통해 Explorer의 `_openEditSelectedWord()`로 연결되고, graph는 `WordDetailGraphRequestedResult`를 통해 `_selectWord(..., changeCenterWord: true)`로 연결된다. Home 기본 route는 계속 `WordDetailScreen`의 local edit와 standalone graph route를 유지한다.
+
+Delete 실행 owner는 계속 `WordDetailScreen._confirmDelete()`다. Explorer는 completed `WordDetailDeletedResult`를 해석하고 center/non-center 복구를 수행하는 result 해석자이며 delete executor가 아니다. Explorer에 delete command 실행, common delete executor, `WordGraphDataCache.clear()` owner를 추가하지 않는다.
+
+현재 버튼 문구 `상세 작업 화면 열기`와 tooltip `삭제·그래프 보기 등 전체 작업용 상세 화면을 엽니다.`는 full-detail route의 역할 설명으로 충분하므로 production UX 변경을 하지 않는다. 기존 Phase 20-M/O/Q/V guard가 embedded action 제한, edit/graph caller mode, delete owner 유지, Explorer delete executor 부재, Home 기본 detail route 유지를 이미 보호하므로 Phase 20-W source guard 추가도 불필요하다.
+
+Delete owner 이동, full-detail route 제거, embedded delete 버튼 추가, common delete executor 설계, center delete empty-state/history 정리, production UX 문구 변경과 실제 DB delete 테스트는 Phase 20-W 범위가 아니며 후속 Phase로 분리한다. Phase 20-W에서는 production Dart, test, DB/repository/domain/dependency, `pubspec.yaml`, `pubspec.lock`을 변경하지 않으며 UI 테스트, DB/SQL 검증, 실데이터 수정·삭제를 수행하지 않는다.
