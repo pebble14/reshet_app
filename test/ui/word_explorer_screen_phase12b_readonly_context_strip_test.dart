@@ -25,10 +25,8 @@ void main() {
     });
 
     test('mounts the strip only inside the existing detail pane', () {
-      expect(
-        wordExplorerSource,
-        contains('Expanded(flex: 2, child: _buildDetailPane())'),
-      );
+      expect(wordExplorerSource, contains('width: splitMetrics.detailWidth'));
+      expect(wordExplorerSource, contains('child: _buildDetailPane()'));
       expect(detailPaneSource, contains('_buildDetailPaneContextStrip()'));
       expect(
         detailPaneSource,

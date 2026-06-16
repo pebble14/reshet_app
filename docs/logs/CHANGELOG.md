@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 2026-06-16 Phase 20-Y Explorer graph/detail 분할 조절 도입
+
+- Large-screen embedded Explorer의 graph/detail 고정 3:2 split을 draggable vertical divider 기반 resizable split으로 전환했다.
+- 기본 graph/detail 비율은 0.60/0.40으로 유지하고, graph/detail pane이 너무 좁아지지 않도록 최소 폭 clamp를 추가했다.
+- 사용자가 조절한 split fraction을 기존 `shared_preferences`에 `explorer_graph_detail_split_fraction` key로 저장하고, `WordExplorerScreen` remount 후에도 복원하도록 했다.
+- Drag 중에는 local state만 즉시 갱신하고, drag end/cancel 시점에만 persistence write를 수행하도록 했다.
+- `HomeScreen` large-screen retarget, Strong Rail 동작, small-screen route, standalone graph/detail route, full-detail route, edit/delete/graph action ownership은 변경하지 않았다.
+- DB/repository/domain/dependency, `pubspec.yaml`, `pubspec.lock`, graph production path와 detail read path는 변경하지 않았다.
+- Phase 20-Y source guard를 추가하고 관련 기존 guard를 resizable split 구조에 맞게 현행화했다. SQL 검증과 실제 DB delete UI 테스트, 실데이터 수정·삭제는 수행하지 않았다.
+
 ## 2026-06-16 Phase 20-W full-detail route 역할 감사
 
 - Explorer full-detail route의 잔여 역할과 action ownership을 로컬 source 기준으로 감사하고 docs-only로 공식 기록을 추가했다.

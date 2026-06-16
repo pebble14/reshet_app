@@ -1,4 +1,7 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../data/repositories/word_repository.dart';
 import '../domain/graph/graph_center_word_display_item.dart';
@@ -13,6 +16,13 @@ import 'word_graph_screen.dart';
 import 'word_info_panel.dart';
 import 'word_navigation_history.dart';
 
+const double _defaultGraphPaneFraction = 0.60;
+const double _graphDetailSplitDividerWidth = 12;
+const double _minGraphPaneWidth = 360;
+const double _minDetailPaneWidth = 280;
+const String _graphDetailSplitFractionPreferenceKey =
+    'explorer_graph_detail_split_fraction';
+
 class _ExplorerHistorySnapshot {
   final String centerWordId;
   final String? selectedWordId;
@@ -20,6 +30,18 @@ class _ExplorerHistorySnapshot {
   const _ExplorerHistorySnapshot({
     required this.centerWordId,
     required this.selectedWordId,
+  });
+}
+
+class _GraphDetailSplitMetrics {
+  final double usableWidth;
+  final double graphWidth;
+  final double detailWidth;
+
+  const _GraphDetailSplitMetrics({
+    required this.usableWidth,
+    required this.graphWidth,
+    required this.detailWidth,
   });
 }
 
@@ -183,6 +205,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
   bool _isDetailLoading = false;
   String? _detailError;
   String? _detailUnavailableMessage;
+  double _graphPaneFraction = _defaultGraphPaneFraction;
   WordNavigationHistoryEntry<_ExplorerHistorySnapshot>?
   _availablePreviousHistoryEntry;
   WordNavigationHistoryEntry<_ExplorerHistorySnapshot>?
@@ -208,6 +231,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
       ),
     );
     _refreshHistoryNavigationAvailability();
+    _restoreGraphPaneFraction();
     _initializeExplorerBootstrap();
   }
 
@@ -290,29 +314,189 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
 
     return Scaffold(
       appBar: AppBar(title: const Text('탐색')),
-      body: Row(
-        children: [
-          Expanded(
-            flex: 3,
-            child: WordGraphScreen(
-              key: ValueKey(_graphRevision),
-              centerWordId: _centerWordId,
-              selectedWordId: _selectedWordId,
-              appBarActionPrefix: _buildHistoryActions(),
-              onSelectWordId: (selectedWordId) async {
-                await _selectWord(selectedWordId);
-              },
-              onClearSelection: _clearSelectedWordPanel,
-              onChangeCenterWordId: (centerWordId) async {
-                await _selectWord(centerWordId, changeCenterWord: true);
-              },
+      body: _buildResizableExplorerBody(),
+    );
+  }
+
+  Widget _buildResizableExplorerBody() {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final splitMetrics = _resolveGraphDetailSplitMetrics(
+          constraints.maxWidth,
+        );
+
+        return Row(
+          children: [
+            SizedBox(
+              width: splitMetrics.graphWidth,
+              child: WordGraphScreen(
+                key: ValueKey(_graphRevision),
+                centerWordId: _centerWordId,
+                selectedWordId: _selectedWordId,
+                appBarActionPrefix: _buildHistoryActions(),
+                onSelectWordId: (selectedWordId) async {
+                  await _selectWord(selectedWordId);
+                },
+                onClearSelection: _clearSelectedWordPanel,
+                onChangeCenterWordId: (centerWordId) async {
+                  await _selectWord(centerWordId, changeCenterWord: true);
+                },
+              ),
             ),
+            _buildGraphDetailSplitDivider(splitMetrics.usableWidth),
+            SizedBox(
+              width: splitMetrics.detailWidth,
+              child: _buildDetailPane(),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  _GraphDetailSplitMetrics _resolveGraphDetailSplitMetrics(double maxWidth) {
+    if (!maxWidth.isFinite || maxWidth <= _graphDetailSplitDividerWidth) {
+      return const _GraphDetailSplitMetrics(
+        usableWidth: 0,
+        graphWidth: 0,
+        detailWidth: 0,
+      );
+    }
+
+    final usableWidth = maxWidth - _graphDetailSplitDividerWidth;
+    final graphWidth =
+        usableWidth * _clampGraphPaneFractionForWidth(usableWidth);
+    final detailWidth = math.max(0.0, usableWidth - graphWidth);
+
+    return _GraphDetailSplitMetrics(
+      usableWidth: usableWidth,
+      graphWidth: graphWidth,
+      detailWidth: detailWidth,
+    );
+  }
+
+  double _clampGraphPaneFractionForWidth(double usableWidth, [double? value]) {
+    if (!usableWidth.isFinite || usableWidth <= 0) {
+      return _defaultGraphPaneFraction;
+    }
+
+    final normalizedValue = _normalizeGraphPaneFraction(
+      value ?? _graphPaneFraction,
+    );
+    final minimumTotalWidth = _minGraphPaneWidth + _minDetailPaneWidth;
+    final minimumScale = math.min(1.0, usableWidth / minimumTotalWidth);
+    final minimumGraphWidth = _minGraphPaneWidth * minimumScale;
+    final minimumDetailWidth = _minDetailPaneWidth * minimumScale;
+    final minimumFraction = minimumGraphWidth / usableWidth;
+    final maximumFraction = (usableWidth - minimumDetailWidth) / usableWidth;
+
+    return normalizedValue.clamp(minimumFraction, maximumFraction).toDouble();
+  }
+
+  double _normalizeGraphPaneFraction(double value) {
+    if (!value.isFinite) {
+      return _defaultGraphPaneFraction;
+    }
+
+    return value.clamp(0.0, 1.0).toDouble();
+  }
+
+  Widget _buildGraphDetailSplitDivider(double usableWidth) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return MouseRegion(
+      cursor: SystemMouseCursors.resizeColumn,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onHorizontalDragUpdate: (details) {
+          _updateGraphPaneFraction(
+            usableWidth: usableWidth,
+            deltaWidth: details.delta.dx,
+          );
+        },
+        onHorizontalDragEnd: (_) async {
+          await _persistGraphPaneFractionForWidth(usableWidth);
+        },
+        onHorizontalDragCancel: () async {
+          await _persistGraphPaneFractionForWidth(usableWidth);
+        },
+        child: SizedBox(
+          width: _graphDetailSplitDividerWidth,
+          child: Center(
+            child: Container(width: 1, color: colorScheme.outlineVariant),
           ),
-          const VerticalDivider(width: 1),
-          Expanded(flex: 2, child: _buildDetailPane()),
-        ],
+        ),
       ),
     );
+  }
+
+  void _updateGraphPaneFraction({
+    required double usableWidth,
+    required double deltaWidth,
+  }) {
+    if (!usableWidth.isFinite || usableWidth <= 0) {
+      return;
+    }
+
+    final currentWidth = _graphPaneFraction * usableWidth;
+    final nextFraction = _clampGraphPaneFractionForWidth(
+      usableWidth,
+      (currentWidth + deltaWidth) / usableWidth,
+    );
+
+    if ((nextFraction - _graphPaneFraction).abs() < 0.0001) {
+      return;
+    }
+
+    setState(() {
+      _graphPaneFraction = nextFraction;
+    });
+  }
+
+  Future<void> _restoreGraphPaneFraction() async {
+    try {
+      final preferences = await SharedPreferences.getInstance();
+      final storedFraction = preferences.getDouble(
+        _graphDetailSplitFractionPreferenceKey,
+      );
+      if (!mounted || storedFraction == null) {
+        return;
+      }
+
+      final restoredFraction = _normalizeGraphPaneFraction(storedFraction);
+      if ((restoredFraction - _graphPaneFraction).abs() < 0.0001) {
+        return;
+      }
+
+      setState(() {
+        _graphPaneFraction = restoredFraction;
+      });
+    } catch (_) {
+      // Split persistence is a convenience layer; layout remains usable.
+    }
+  }
+
+  Future<void> _persistGraphPaneFractionForWidth(double usableWidth) async {
+    if (!usableWidth.isFinite || usableWidth <= 0) {
+      return;
+    }
+
+    final persistedFraction = _clampGraphPaneFractionForWidth(usableWidth);
+    if ((persistedFraction - _graphPaneFraction).abs() >= 0.0001 && mounted) {
+      setState(() {
+        _graphPaneFraction = persistedFraction;
+      });
+    }
+
+    try {
+      final preferences = await SharedPreferences.getInstance();
+      await preferences.setDouble(
+        _graphDetailSplitFractionPreferenceKey,
+        persistedFraction,
+      );
+    } catch (_) {
+      // Split persistence is a convenience layer; layout remains usable.
+    }
   }
 
   Widget _buildDetailPane() {

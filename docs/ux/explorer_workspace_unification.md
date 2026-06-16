@@ -9381,3 +9381,15 @@ Delete 실행 owner는 계속 `WordDetailScreen._confirmDelete()`다. Explorer�
 현재 버튼 문구 `상세 작업 화면 열기`와 tooltip `삭제·그래프 보기 등 전체 작업용 상세 화면을 엽니다.`는 full-detail route의 역할 설명으로 충분하므로 production UX 변경을 하지 않는다. 기존 Phase 20-M/O/Q/V guard가 embedded action 제한, edit/graph caller mode, delete owner 유지, Explorer delete executor 부재, Home 기본 detail route 유지를 이미 보호하므로 Phase 20-W source guard 추가도 불필요하다.
 
 Delete owner 이동, full-detail route 제거, embedded delete 버튼 추가, common delete executor 설계, center delete empty-state/history 정리, production UX 문구 변경과 실제 DB delete 테스트는 Phase 20-W 범위가 아니며 후속 Phase로 분리한다. Phase 20-W에서는 production Dart, test, DB/repository/domain/dependency, `pubspec.yaml`, `pubspec.lock`을 변경하지 않으며 UI 테스트, DB/SQL 검증, 실데이터 수정·삭제를 수행하지 않는다.
+
+### 17.142 Phase 20-Y Explorer graph/detail 분할 조절 active boundary
+
+Phase 20-Y는 large-screen embedded Explorer 안에서 graph pane과 detail pane 사이의 vertical divider를 드래그해 폭 비율을 조절할 수 있게 하는 production UX 변경 단계다.
+
+`WordExplorerScreen`의 기존 3:2 고정 `Expanded` split은 `LayoutBuilder` 기반 width 계산으로 전환한다. 기본 graph/detail 비율은 0.60/0.40으로 유지하고, graph 최소 360px, detail 최소 280px 기준의 clamp를 둔다. 실제 available width가 최소 폭 합보다 작으면 같은 비율로 최소 폭 기준을 축소해 overflow를 피한다.
+
+분할 비율은 `explorer_graph_detail_split_fraction` key로 기존 `shared_preferences`에 저장한다. Drag 중에는 local state를 즉시 갱신하고, drag end/cancel 시점에만 저장한다. 이 저장은 layout 편의 상태이며 `ExplorerWorkspaceState`, route history, semantic `layoutPreset`, graph center/selection/detail target owner로 승격하지 않는다.
+
+Strong Rail 선택으로 `HomeScreen`이 `ValueKey(_largeScreenExplorerWordId)`를 바꾸어 `WordExplorerScreen`을 remount해도 저장된 split fraction을 복원한다. `HomeScreen` large-screen retarget 방식, Strong Rail 동작, small-screen route, standalone graph/detail route, full-detail route, edit/delete/graph action ownership은 변경하지 않는다.
+
+Phase 20-Y에서는 DB/repository/domain/schema/dependency, `pubspec.yaml`, `pubspec.lock`, delete 실행 owner, embedded detail delete action, graph production path, detail read path를 변경하지 않는다. SQL 검증과 실제 DB delete UI 테스트, 실데이터 수정·삭제는 수행하지 않는다.
