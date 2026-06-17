@@ -11,14 +11,20 @@ Reshet 프로젝트는 SQLite 데이터베이스를 사용한다.
 
 | 경로 | 역할 |
 | --- | --- |
-| `data/reshet_seed.db` | 기준 seed DB |
-| `data/reshet_work.db` | 앱이 실제로 읽고 쓰는 작업 DB |
+| `data/reshet_seed.db` | 앱 최초 설치 상태와 reset 기준으로 사용하는 개발 기준 snapshot DB |
+| `data/reshet_work.db` | 개발자가 데이터를 입력/수정하며 관리하는 권위 있는 작업 DB |
 | `data/bbwdb_20260106.db` | `reshet_seed.db`가 없을 때 사용하는 legacy fallback |
+
+Windows 개발/테스트 경로는 repository root의 `data/` 디렉터리를 기준으로 유지한다.
+Android 앱은 `pubspec.yaml`에 선언된 `data/reshet_seed.db` asset을 앱 내부 `files/data/` 디렉터리로 복사하고, 같은 디렉터리의 `reshet_work.db`를 작업 DB로 사용한다.
+`data/reshet_seed.db`는 현재 개발 기준에서 `data/reshet_work.db`를 복사해 만든 snapshot이지만, 앱 공개 전까지 Git 미추적 로컬 private build asset으로 유지한다. 단, 완성 배포 DB를 뜻하지 않고 Hebrew Strong coverage 같은 콘텐츠 완성도는 별도 DB 완성도 phase에서 다룬다.
+`data/reshet_work.db`는 mutable local work DB이므로 Git 미추적 상태로 유지한다.
+clean clone에는 DB 파일이 포함되지 않으므로, Android full build와 fresh install smoke는 별도 private DB 준비 후 수행한다.
 
 검증 기준:
 
 - 주 기준 DB는 `data/reshet_work.db`
-- `data/reshet_seed.db`는 구조 차이 여부 확인용 참고 DB
+- `data/reshet_seed.db`는 앱 설치/reset baseline 재현성 확인용 snapshot DB
 - 아래 컬럼 메타데이터는 `PRAGMA table_info(...)` 기준으로 정리한다.
 
 실제 테이블:
@@ -111,6 +117,10 @@ H0001_0000
 현재 상태:
 
 - `reshet_work.db`에 migration으로 생성한다.
+- 현재 로컬 private `reshet_seed.db`는 `reshet_work.db` 기준 snapshot이므로 이 테이블을 포함한다.
+- 이전 Android 설치 DB나 legacy fallback처럼 이 테이블이 없거나 비어 있는 DB를 work DB로 열 때는
+  `DatabaseService.openDatabaseFile()`이 `word_expression_set` 테이블과 인덱스를
+  보장하고, 테이블이 비어 있을 때만 legacy expression slot에서 최소 backfill한다.
 - 현재 앱 read source는 아직 전면 normalized-only가 아니며, legacy `WORD_TABLE` 표현 컬럼과 일부 `NORMALIZED_WITH_FALLBACK` context가 공존한다.
 - 현재 앱 expression write path는 `word_expression_set`를 우선 갱신하고 `WORD_TABLE` expression slot을 compatibility projection으로 함께 유지하는 dual-write 구조를 사용한다.
 - `word_expression_set.id`는 surrogate key이다.

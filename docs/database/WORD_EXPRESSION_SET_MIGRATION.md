@@ -6,10 +6,17 @@
 
 현재 원칙:
 
-- migration은 앱 시작 시 자동 실행하지 않는다.
-- migration은 명시적 SQL 스크립트로만 실행한다.
-- `lib/` 아래 Dart 코드는 이번 단계에서 수정하지 않는다.
+- 기존 운영 migration 절차는 명시적 SQL 스크립트 기준을 유지한다.
+- 현재 로컬 private `data/reshet_seed.db`는 권위 있는 `data/reshet_work.db` 기준
+  개발 baseline snapshot이며 `word_expression_set` 테이블을 포함한다.
+- `data/reshet_seed.db`는 앱 공개 전까지 Git 미추적 로컬 private build asset으로 유지한다.
+- 앱 시작 시 `word_expression_set`가 없거나 비어 있는 기존 설치 work DB 또는 legacy DB를 열면,
+  `DatabaseService.openDatabaseFile()`이 graph/read baseline을 위해 동일한
+  create/backfill 규칙으로 테이블을 최소 보강한다.
+- 이 runtime baseline 보강은 기존 `word_expression_set` row가 있으면 재적재하지 않는다.
 - canonical read/write 규칙을 그대로 backfill 규칙으로 사용한다.
+- 이 snapshot은 완성 배포 DB 선언이 아니며, Hebrew Strong coverage 같은 콘텐츠 완성도는 별도 DB 완성도 phase에서 다룬다.
+- clean clone에는 DB 파일이 포함되지 않으므로, Android full build와 fresh install smoke는 별도 private DB 준비 후 수행한다.
 
 ---
 

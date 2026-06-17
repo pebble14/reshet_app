@@ -49,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
   /// true  → 로딩 중
   /// false → 준비 완료
   bool _isLoading = true;
-  String _dbMessage = '';
+  String? _dbErrorMessage;
 
   /// 홈 화면에서 사용할 Repository
   final WordRepository _repository = WordRepository();
@@ -465,8 +465,6 @@ class _HomeScreenState extends State<HomeScreen> {
       await DatabaseService.initialize();
       await DatabaseService.openDatabaseFile();
 
-      _dbMessage = await DatabaseService.getTestData();
-
       final tables = await DatabaseService.getTableList();
       print("테이블 목록:");
       for (var table in tables) {
@@ -479,13 +477,28 @@ class _HomeScreenState extends State<HomeScreen> {
       // DB 준비 완료 → 로딩 종료
       setState(() {
         _isLoading = false;
+        _dbErrorMessage = null;
         _setVisibleWordListFuture();
       });
 
       print('데이터베이스 연결 성공');
     } catch (e) {
       print('데이터베이스 연결 실패: $e');
+      if (!mounted) return;
+
+      setState(() {
+        _isLoading = false;
+        _dbErrorMessage = '데이터베이스 초기화 실패: $e';
+      });
     }
+  }
+
+  void _retryInitializeDatabase() {
+    setState(() {
+      _isLoading = true;
+      _dbErrorMessage = null;
+    });
+    unawaited(_initializeDatabase());
   }
 
   /// DB 초기화를 실행하기 전에 사용자에게 확인을 받는다.
@@ -959,6 +972,29 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Widget _buildDatabaseErrorView(String message) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.error_outline, size: 36),
+            const SizedBox(height: 12),
+            const Text('데이터베이스를 준비하지 못했습니다.', textAlign: TextAlign.center),
+            const SizedBox(height: 8),
+            Text(message, textAlign: TextAlign.center),
+            const SizedBox(height: 16),
+            OutlinedButton(
+              onPressed: _retryInitializeDatabase,
+              child: const Text('다시 시도'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   bool _isLargeScreenWidth(double width) {
     return width >= _largeScreenSplitBreakpoint;
   }
@@ -1233,6 +1269,8 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
+          : _dbErrorMessage != null
+          ? _buildDatabaseErrorView(_dbErrorMessage!)
           : LayoutBuilder(
               builder: (context, constraints) {
                 final isLargeScreen = _isLargeScreenWidth(constraints.maxWidth);

@@ -85,8 +85,9 @@ SDK 자체는 permissive 계열로 보이지만, SDK가 함께 제공하는 font
 
 ## 6. Icon / Font / Asset Provenance
 
-`pubspec.yaml` 기준 custom `assets:` 및 custom `fonts:` 섹션은 현재 활성화되어 있지 않다.
-별도 `assets/`, `fonts/`, `images/` 디렉터리도 현재 repository root에는 없다.
+`pubspec.yaml` 기준 custom `assets:` 섹션은 Android seed DB 복사를 위해 `data/reshet_seed.db`만 선언한다.
+custom `fonts:` 섹션은 현재 활성화되어 있지 않다.
+별도 `assets/`, `fonts/`, `images/` 디렉터리는 현재 repository root에는 없다.
 
 현재 확인된 resource는 Flutter template 또는 Flutter SDK bundled resource 중심이다.
 
@@ -95,6 +96,7 @@ SDK 자체는 permissive 계열로 보이지만, SDK가 함께 제공하는 font
 | Material Icons | `uses-material-design: true`, Flutter SDK bundled material font | CC BY 4.0 계열 license file 확인 | Review Required | attribution / notice 관리 필요 가능성 |
 | Roboto fonts | Flutter SDK bundled material fonts | Apache-2.0 | Allowed | SDK bundled resource로 관리 |
 | Cupertino Icons | `cupertino_icons` package | MIT | Allowed | package `LICENSE` 확인 |
+| Seed DB asset | `data/reshet_seed.db` | Project data | Allowed | `data/reshet_work.db` 기준 개발 baseline snapshot이며 앱 최초 설치/reset 기준 DB. 앱 공개 전까지 Git 미추적 로컬 private build asset으로 유지 |
 | Web icons / favicon | `web/icons/*`, `web/favicon.png` | Flutter template-derived 가능성 | Review Required | 일부 current SDK template hash와 일치 |
 | Android launcher icons | `android/app/src/main/res/mipmap-*` | Flutter template-derived 가능성 | Review Required | 일부 current SDK template hash와 일치 |
 | iOS app / launch assets | `ios/Runner/Assets.xcassets/*` | Flutter template-derived 가능성 | Review Required | provenance 기록 필요 |

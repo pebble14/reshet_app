@@ -13,6 +13,8 @@
 */
 
 import 'dart:io';
+import 'dart:typed_data';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:path/path.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -21,6 +23,9 @@ class DatabaseService {
 
   /// 초기 상태(골든) DB 파일명
   static const String _seedDbFileName = 'reshet_seed.db';
+
+  /// Android 앱 번들에 포함되는 초기 DB asset 경로
+  static const String _seedDbAssetPath = 'data/reshet_seed.db';
 
   /// 앱이 실제로 수정하는 작업용 DB 파일명
   static const String _workDbFileName = 'reshet_work.db';
@@ -269,14 +274,25 @@ class DatabaseService {
     ),
   ];
 
-  /// data 폴더 경로 (현재는 Windows/데스크탑 기준)
-  static String _dataDirPath() {
+  /// data 폴더 경로.
+  /// Windows/테스트는 기존 프로젝트 루트 data 폴더를 유지하고,
+  /// Android는 앱 전용 내부 저장소를 사용한다.
+  static Future<String> _dataDirPath() async {
+    if (Platform.isAndroid) {
+      final appRoot = Directory.systemTemp.parent;
+      return join(appRoot.path, 'files', 'data');
+    }
+
+    return _desktopDataDirPath();
+  }
+
+  static String _desktopDataDirPath() {
     final currentPath = Directory.current.path;
     return join(currentPath, 'data');
   }
 
-  static String _seedDbPath() {
-    final dataDir = _dataDirPath();
+  static Future<String> _seedDbPath() async {
+    final dataDir = await _dataDirPath();
     final seed = join(dataDir, _seedDbFileName);
     final legacy = join(dataDir, _legacySeedFileName);
 
@@ -287,8 +303,37 @@ class DatabaseService {
     return seed;
   }
 
-  static String _workDbPath() {
-    return join(_dataDirPath(), _workDbFileName);
+  static Future<String> _workDbPath() async {
+    return join(await _dataDirPath(), _workDbFileName);
+  }
+
+  static Future<File> _ensureSeedDbFile(String seedPath) async {
+    final seedFile = File(seedPath);
+    if (seedFile.existsSync()) {
+      return seedFile;
+    }
+
+    if (Platform.isAndroid) {
+      await _copyBundledSeedTo(seedPath);
+      return File(seedPath);
+    }
+
+    throw Exception('초기 DB(seed)를 찾을 수 없습니다: $seedPath');
+  }
+
+  static Future<void> _copyBundledSeedTo(String seedPath) async {
+    final seedFile = File(seedPath);
+    await Directory(dirname(seedPath)).create(recursive: true);
+
+    final seedBytes = await rootBundle.load(_seedDbAssetPath);
+    await seedFile.writeAsBytes(
+      Uint8List.view(
+        seedBytes.buffer,
+        seedBytes.offsetInBytes,
+        seedBytes.lengthInBytes,
+      ),
+      flush: true,
+    );
   }
 
   /*
@@ -313,16 +358,13 @@ class DatabaseService {
       return _database!;
     }
 
-    final seedPath = _seedDbPath();
-    final workPath = _workDbPath();
+    final seedPath = await _seedDbPath();
+    final workPath = await _workDbPath();
 
     // work DB가 없으면 seed를 복사하여 work 생성
     if (!File(workPath).existsSync()) {
-      final seedFile = File(seedPath);
-      if (!seedFile.existsSync()) {
-        throw Exception('초기 DB(seed)를 찾을 수 없습니다: $seedPath');
-      }
-      await File(workPath).create(recursive: true);
+      final seedFile = await _ensureSeedDbFile(seedPath);
+      await Directory(dirname(workPath)).create(recursive: true);
       await seedFile.copy(workPath);
     }
 
@@ -332,6 +374,7 @@ class DatabaseService {
     await _ensureWordRelationIndexes(_database!);
     await _ensureHistoryTable(_database!);
     await _ensureRelationLookupMetadata(_database!);
+    await _ensureWordExpressionSetSchema(_database!);
 
     return _database!;
   }
@@ -379,13 +422,9 @@ class DatabaseService {
   /// 작업용 DB를 초기(seed) 상태로 되돌린다.
   /// - backup=true면 data/backups에 현재 작업용 DB를 복사해 둔다.
   static Future<void> resetToSeed({bool backup = true}) async {
-    final seedPath = _seedDbPath();
-    final workPath = _workDbPath();
-
-    final seedFile = File(seedPath);
-    if (!seedFile.existsSync()) {
-      throw Exception('초기 DB(seed)를 찾을 수 없습니다: $seedPath');
-    }
+    final seedPath = await _seedDbPath();
+    final workPath = await _workDbPath();
+    final seedFile = await _ensureSeedDbFile(seedPath);
 
     // 열려있으면 닫기
     await closeDatabase();
@@ -393,7 +432,7 @@ class DatabaseService {
     // 백업
     final workFile = File(workPath);
     if (backup && workFile.existsSync()) {
-      final backupsDir = Directory(join(_dataDirPath(), 'backups'));
+      final backupsDir = Directory(join(await _dataDirPath(), 'backups'));
       if (!backupsDir.existsSync()) {
         backupsDir.createSync(recursive: true);
       }
@@ -410,6 +449,7 @@ class DatabaseService {
     if (workFile.existsSync()) {
       await workFile.delete();
     }
+    await Directory(dirname(workPath)).create(recursive: true);
     await seedFile.copy(workPath);
 
     // 다시 열기(이후 쿼리 즉시 가능)
@@ -419,6 +459,7 @@ class DatabaseService {
     await _ensureWordRelationIndexes(_database!);
     await _ensureHistoryTable(_database!);
     await _ensureRelationLookupMetadata(_database!);
+    await _ensureWordExpressionSetSchema(_database!);
   }
 
   /// WORD_RELATION v2 컬럼 보장
@@ -548,6 +589,147 @@ class DatabaseService {
       CREATE INDEX IF NOT EXISTS idx_change_history_undone
       ON CHANGE_HISTORY(undone_at, created_at)
     ''');
+  }
+
+  /// legacy seed/work DB에서도 현재 graph/read path가 요구하는
+  /// normalized expression baseline을 사용할 수 있게 보장한다.
+  static Future<void> _ensureWordExpressionSetSchema(Database db) async {
+    await db.transaction((txn) async {
+      await txn.execute('''
+        CREATE TABLE IF NOT EXISTS word_expression_set (
+          id INTEGER PRIMARY KEY,
+          word_id TEXT NOT NULL,
+          seq INTEGER NOT NULL,
+          is_representative INTEGER NOT NULL,
+          spelling TEXT NOT NULL,
+          transliteration TEXT,
+          pronunciation TEXT,
+          FOREIGN KEY (word_id) REFERENCES WORD_TABLE(id) ON DELETE CASCADE,
+          CHECK (seq >= 1),
+          CHECK (is_representative IN (0, 1)),
+          CHECK (LENGTH(TRIM(spelling)) > 0),
+          CHECK (transliteration IS NULL OR LENGTH(TRIM(transliteration)) > 0),
+          CHECK (pronunciation IS NULL OR LENGTH(TRIM(pronunciation)) > 0)
+        )
+      ''');
+
+      await txn.execute('''
+        CREATE UNIQUE INDEX IF NOT EXISTS ux_word_expression_set_word_seq
+        ON word_expression_set(word_id, seq)
+      ''');
+
+      await txn.execute('''
+        CREATE UNIQUE INDEX IF NOT EXISTS ux_word_expression_set_one_representative
+        ON word_expression_set(word_id)
+        WHERE is_representative = 1
+      ''');
+
+      final existingRows = await txn.rawQuery(
+        'SELECT COUNT(*) AS row_count FROM word_expression_set',
+      );
+      final existingRowCount = existingRows.first['row_count'] as int;
+      if (existingRowCount > 0) {
+        return;
+      }
+
+      await txn.execute('''
+        WITH legacy_slots AS (
+          SELECT
+            id AS word_id,
+            1 AS source_slot,
+            TRIM(COALESCE([표기1], '')) AS spelling,
+            TRIM(COALESCE([음역1], '')) AS transliteration,
+            TRIM(COALESCE([발음1], '')) AS pronunciation
+          FROM WORD_TABLE
+          UNION ALL
+          SELECT
+            id,
+            2,
+            TRIM(COALESCE([표기2], '')),
+            TRIM(COALESCE([음역2], '')),
+            TRIM(COALESCE([발음2], ''))
+          FROM WORD_TABLE
+          UNION ALL
+          SELECT
+            id,
+            3,
+            TRIM(COALESCE([표기3], '')),
+            TRIM(COALESCE([음역3], '')),
+            TRIM(COALESCE([발음3], ''))
+          FROM WORD_TABLE
+          UNION ALL
+          SELECT
+            id,
+            4,
+            TRIM(COALESCE([표기4], '')),
+            TRIM(COALESCE([음역4], '')),
+            TRIM(COALESCE([발음4], ''))
+          FROM WORD_TABLE
+          UNION ALL
+          SELECT
+            id,
+            5,
+            TRIM(COALESCE([표기5], '')),
+            TRIM(COALESCE([음역5], '')),
+            TRIM(COALESCE([발음5], ''))
+          FROM WORD_TABLE
+          UNION ALL
+          SELECT
+            id,
+            6,
+            TRIM(COALESCE([표기6], '')),
+            TRIM(COALESCE([음역6], '')),
+            TRIM(COALESCE([발음6], ''))
+          FROM WORD_TABLE
+        ),
+        expected_expression_set AS (
+          SELECT
+            word_id,
+            ROW_NUMBER() OVER (PARTITION BY word_id ORDER BY source_slot)
+              AS seq,
+            spelling,
+            NULLIF(transliteration, '') AS transliteration,
+            NULLIF(pronunciation, '') AS pronunciation
+          FROM legacy_slots
+          WHERE spelling <> ''
+        ),
+        backfill_source AS (
+          SELECT
+            word_id,
+            seq,
+            CASE WHEN seq = 1 THEN 1 ELSE 0 END AS is_representative,
+            spelling,
+            transliteration,
+            pronunciation
+          FROM expected_expression_set
+        )
+        INSERT INTO word_expression_set (
+          word_id,
+          seq,
+          is_representative,
+          spelling,
+          transliteration,
+          pronunciation
+        )
+        SELECT
+          word_id,
+          seq,
+          is_representative,
+          spelling,
+          transliteration,
+          pronunciation
+        FROM backfill_source
+      ''');
+
+      final backfilledRows = await txn.rawQuery(
+        'SELECT COUNT(*) AS row_count FROM word_expression_set',
+      );
+      // ignore: avoid_print
+      print(
+        '[DB] word_expression_set baseline 보강: '
+        '${backfilledRows.first['row_count']}건',
+      );
+    });
   }
 
   /// relation lookup 메타데이터 보정
