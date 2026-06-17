@@ -9411,3 +9411,13 @@ Phase 21-B는 `WordGraphScreen`의 관계 추가 기준을 center word에서 sel
 Selected word가 없으면 `WordGraphScreen`은 안내 snackbar만 표시하고 관계 검색 dialog, relation input dialog, duplicate check, `createRelation(...)` write path를 시작하지 않는다. Relation input dialog의 방향 선택 기준, 상대 단어 검색 제외 기준, duplicate check, `createRelation(wordId1: ...)`, graph cache invalidation은 selected source word를 기준으로 맞춘다.
 
 Phase 21-B는 relation edit/delete, node delete, detail delete, `WordDetailScreen` transitional delete compatibility, Home large/small shell, small-screen route, large-screen embedded graph/detail split, DB schema, repository/domain API, dependency를 변경하지 않는다. Node delete selected-word action surface와 detail delete 제거는 별도 후속 production phase에서만 검토한다.
+
+### 17.145 Phase 21-D selected-word node delete action surface active boundary
+
+Phase 21-D는 `WordGraphScreen`의 기존 graph action surface에 selected-word 기준 단어 삭제 action을 추가한 small production slice다. 삭제 대상은 center word가 아니라 현재 `_selectedWordId`이며, selected word가 없으면 안내 snackbar만 표시하고 relation count 조회나 delete write path를 시작하지 않는다.
+
+삭제 확인은 기존 detail delete 의미를 따른다. `WordRepository.countRelationsForWord(...)`로 연결 관계 수를 확인한 뒤 confirm dialog를 표시하고, 확인된 경우에만 `WordWriteService.execute(DeleteWordCommand(...))`와 `WordGraphDataCache.clear()`를 실행한다. 새 DB schema, repository write API, domain command, dependency는 추가하지 않았다.
+
+Peripheral selected word 삭제는 selection/detail을 clear하고 graph를 reload한다. Center selected word 삭제는 standalone graph route에서 `WordDetailDeletedResult`를 반환하고, embedded Explorer에서는 기존 `_handleDeletedSelectedWord(...)` 정책을 재사용하되 history fallback이 없으면 기존 strong list read API로 대체 center를 선택한다. `WordDetailScreen`에서 연 graph route가 현재 detail word를 삭제하면 detail route도 같은 deleted result로 닫는다.
+
+`WordDetailScreen._confirmDelete()`와 `WordInfoPanel` delete wiring은 transitional compatibility로 유지한다. Relation edit/delete action은 기존 graph relation detail dialog 경로를 유지하며, 이번 phase에서 ownership이나 동작을 재설계하지 않았다. DB/schema/repository/dependency 변경은 없다.

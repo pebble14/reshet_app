@@ -25,8 +25,12 @@ import '../domain/word/word_edit_save_result.dart';
 import '../domain/word/word_write_models.dart';
 import '../domain/word/word_write_service.dart';
 import 'word_expression_set.dart';
+import 'word_detail_route_result.dart';
 import 'word_graph_cache.dart';
 import 'word_edit_screen.dart';
+
+typedef WordGraphSelectedWordDeletedCallback =
+    Future<void> Function(String wordId, {required bool wasCenterWord});
 
 const double _centerNodeSize = 180.0;
 const double _centerNodeHalf = _centerNodeSize / 2;
@@ -677,6 +681,7 @@ class WordGraphScreen extends StatefulWidget {
   /// Compatibility fallback for callers that still consume a Word payload.
   final ValueChanged<Word>? onSelectWord;
   final VoidCallback? onClearSelection;
+  final WordGraphSelectedWordDeletedCallback? onDeletedSelectedWord;
 
   /// 스플릿뷰에서 이미 선택된 노드를 다시 클릭했을 때
   /// 부모가 중심 단어를 바꾸도록 알린다.
@@ -692,6 +697,7 @@ class WordGraphScreen extends StatefulWidget {
     this.onSelectWordId,
     this.onSelectWord,
     this.onClearSelection,
+    this.onDeletedSelectedWord,
     this.onChangeCenterWordId,
     this.onChangeCenterWord,
   }) : centerWordId = _resolveCenterWordId(
@@ -1311,6 +1317,11 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                 icon: const Icon(Icons.add_link),
                 onPressed: _showAddRelationFlow,
               ),
+              IconButton(
+                tooltip: '선택 단어 삭제',
+                icon: const Icon(Icons.delete_outline),
+                onPressed: _confirmDeleteSelectedWord,
+              ),
 
               IconButton(
                 tooltip: '단어 추가',
@@ -1799,7 +1810,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     _notifySelectedWord(_centerWordCompatibilityFallback());
   }
 
-  void _handleConnectedWordTap(Word word) {
+  Future<void> _handleConnectedWordTap(Word word) async {
     _temporarilySuppressBackgroundTapClear();
     final isSameTap = _selectedWordId == word.id;
 
@@ -1821,10 +1832,21 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       return;
     }
 
-    Navigator.push(
+    final graphResult = await Navigator.push<WordDetailRouteResult>(
       context,
       MaterialPageRoute(builder: (_) => WordGraphScreen(centerWordId: word.id)),
     );
+    if (!mounted) return;
+
+    if (graphResult is WordDetailDeletedResult) {
+      final deletedWordId = graphResult.wordId.trim();
+      if (_selectedWordId == deletedWordId) {
+        setState(() => _selectedWordId = null);
+        widget.onClearSelection?.call();
+      }
+      WordGraphDataCache.clear();
+      await _loadConnectedWords();
+    }
   }
 
   void _handlePlaceholderMoreNodeTap(GraphNode node) {
@@ -4684,6 +4706,88 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     if (nextScale != _currentScale) {
       setState(() => _currentScale = nextScale);
     }
+  }
+
+  /// [선택 단어 삭제] 전체 흐름
+  /// 1) 선택 단어 확인
+  /// 2) 연결 관계 수 확인
+  /// 3) 삭제 확인
+  /// 4) 단어 삭제 후 graph/selection/result 정리
+  Future<void> _confirmDeleteSelectedWord() async {
+    final selectedWordId = (_selectedWordId ?? '').trim();
+    if (selectedWordId.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('삭제할 단어를 그래프에서 먼저 선택하세요.')));
+      return;
+    }
+
+    final wasCenterWord = selectedWordId == _centerWordId;
+    final relationCount = await _repository.countRelationsForWord(
+      selectedWordId,
+    );
+
+    if (!mounted) return;
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('단어 삭제'),
+          content: Text(
+            relationCount > 0
+                ? '이 단어를 삭제하면 연결된 관계 $relationCount개도 함께 삭제됩니다.\n정말 삭제할까요?'
+                : '이 단어를 정말 삭제할까요?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('취소'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('삭제'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed != true) return;
+
+    try {
+      await _wordWriteService.execute(
+        DeleteWordCommand(wordId: selectedWordId),
+      );
+      WordGraphDataCache.clear();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('삭제 실패: $e')));
+      return;
+    }
+
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('단어가 삭제되었습니다.')));
+
+    final onDeletedSelectedWord = widget.onDeletedSelectedWord;
+    if (onDeletedSelectedWord != null) {
+      await onDeletedSelectedWord(selectedWordId, wasCenterWord: wasCenterWord);
+      return;
+    }
+
+    if (wasCenterWord) {
+      Navigator.pop(context, WordDetailDeletedResult(wordId: selectedWordId));
+      return;
+    }
+
+    setState(() => _selectedWordId = null);
+    widget.onClearSelection?.call();
+    await _loadConnectedWords();
   }
 
   /// [단어 추가] 전체 흐름

@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2026-06-17 Phase 21-D selected-word node delete action 추가
+
+- `WordGraphScreen`의 기존 graph action surface에 selected-word 기준 단어 삭제 action을 추가했다.
+- selected word가 없으면 안내만 표시하고 relation count 조회나 delete write path를 시작하지 않는다.
+- 삭제 확인은 `countRelationsForWord`, `DeleteWordCommand`, `WordGraphDataCache.clear()` 기존 경로를 재사용한다.
+- peripheral 삭제 후 graph/selection/detail을 정리하고, center 삭제 후 standalone graph route와 embedded Explorer가 삭제된 center graph를 남기지 않도록 result/fallback 처리를 연결했다.
+- 기존 `WordDetailScreen._confirmDelete()`와 `WordInfoPanel` delete wiring은 transitional compatibility로 유지했다.
+- relation edit/delete, DB schema, repository write API, domain command, dependency는 변경하지 않았다.
+
 ## 2026-06-17 Phase 21-B relation create selected-word 기준 전환
 
 - `WordGraphScreen`의 관계 추가 기준을 center word에서 selected word로 전환했다.

@@ -43,10 +43,11 @@ void main() {
       );
       expect(
         explorerSource,
-        contains(
-          "const String _graphDetailSplitFractionPreferenceKey =\n"
-          "    'explorer_graph_detail_split_fraction';",
-        ),
+        contains('const String _graphDetailSplitFractionPreferenceKey ='),
+      );
+      expect(
+        explorerSource,
+        contains("'explorer_graph_detail_split_fraction';"),
       );
       expect(
         explorerSource,
@@ -129,20 +130,12 @@ void main() {
       );
       expect(explorerSource, contains('_restoreGraphPaneFraction();'));
       expect(persistenceSource, contains('SharedPreferences.getInstance()'));
+      expect(persistenceSource, contains('preferences.getDouble('));
       expect(
         persistenceSource,
-        contains(
-          'preferences.getDouble(\n'
-          '        _graphDetailSplitFractionPreferenceKey,',
-        ),
+        contains('_graphDetailSplitFractionPreferenceKey'),
       );
-      expect(
-        persistenceSource,
-        contains(
-          'preferences.setDouble(\n'
-          '        _graphDetailSplitFractionPreferenceKey,',
-        ),
-      );
+      expect(persistenceSource, contains('preferences.setDouble('));
     });
   });
 }

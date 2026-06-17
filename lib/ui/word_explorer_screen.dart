@@ -338,6 +338,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
                   await _selectWord(selectedWordId);
                 },
                 onClearSelection: _clearSelectedWordPanel,
+                onDeletedSelectedWord: _handleGraphDeletedSelectedWord,
                 onChangeCenterWordId: (centerWordId) async {
                   await _selectWord(centerWordId, changeCenterWord: true);
                 },
@@ -902,6 +903,27 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
     ).showSnackBar(const SnackBar(content: Text('단어 정보를 찾을 수 없습니다.')));
   }
 
+  Future<void> _handleGraphDeletedSelectedWord(
+    String deletedWordId, {
+    required bool wasCenterWord,
+  }) async {
+    final selectedWordId = _selectedWordId;
+    if (selectedWordId == null) return;
+
+    final normalizedDeletedWordId = deletedWordId.trim();
+    final expectedDeletedWordId = selectedWordId.trim();
+    if (normalizedDeletedWordId != expectedDeletedWordId) {
+      await _refreshSelectedWord(
+        wordId: selectedWordId,
+        syncCenterWord: wasCenterWord,
+        refreshGraphIfChanged: true,
+      );
+      return;
+    }
+
+    await _handleDeletedSelectedWord(wasCenterWord: wasCenterWord);
+  }
+
   Future<void> _handleDeletedSelectedWord({required bool wasCenterWord}) async {
     if (!wasCenterWord) {
       _clearSelectedWordPanel(refreshGraph: true);
@@ -926,8 +948,34 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
       }
     }
 
+    final fallbackCenterWordId = await _resolveFallbackCenterWordId(
+      excludedWordId: _centerWordId,
+    );
     if (!mounted) return;
+    if (fallbackCenterWordId != null) {
+      await _selectWord(fallbackCenterWordId, changeCenterWord: true);
+      return;
+    }
+
     _clearSelectedWordPanel(refreshGraph: true);
+  }
+
+  Future<String?> _resolveFallbackCenterWordId({
+    required String excludedWordId,
+  }) async {
+    final normalizedExcludedWordId = excludedWordId.trim();
+    final candidates = await _repository.getStrongWordsMap(limit: 12);
+
+    for (final candidate in candidates) {
+      final candidateWordId = candidate.wordId.trim();
+      if (candidateWordId.isEmpty ||
+          candidateWordId == normalizedExcludedWordId) {
+        continue;
+      }
+      return candidateWordId;
+    }
+
+    return null;
   }
 
   void _clearSelectedWordPanel({bool refreshGraph = false}) {

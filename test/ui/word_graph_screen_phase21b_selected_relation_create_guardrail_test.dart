@@ -160,7 +160,6 @@ void main() {
           graphSource,
           contains('await _repository.deleteRelation(info.relationId)'),
         );
-        expect(graphSource, isNot(contains('DeleteWordCommand(')));
       },
     );
   });

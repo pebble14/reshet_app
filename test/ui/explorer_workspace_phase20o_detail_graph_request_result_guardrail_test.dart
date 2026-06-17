@@ -108,7 +108,9 @@ void main() {
       final resultIndex = openGraphSource.indexOf(
         'WordDetailGraphRequestedResult(wordId: _wordId)',
       );
-      final standalonePushIndex = openGraphSource.indexOf('Navigator.push(');
+      final standalonePushIndex = openGraphSource.indexOf(
+        'Navigator.push<WordDetailRouteResult>(',
+      );
 
       expect(availabilityIndex, greaterThanOrEqualTo(0));
       expect(unavailableIndex, greaterThan(availabilityIndex));

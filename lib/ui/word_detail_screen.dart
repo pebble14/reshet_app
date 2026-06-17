@@ -120,12 +120,18 @@ class _WordDetailScreenState extends State<WordDetailScreen> {
       return;
     }
 
-    Navigator.push(
+    final graphResult = await Navigator.push<WordDetailRouteResult>(
       context,
       MaterialPageRoute(
         builder: (context) => WordGraphScreen(centerWordId: _wordId),
       ),
     );
+
+    if (!mounted) return;
+    if (graphResult is WordDetailDeletedResult &&
+        graphResult.wordId.trim() == _wordId) {
+      Navigator.pop(context, graphResult);
+    }
   }
 
   Future<void> _confirmDelete() async {
