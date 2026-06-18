@@ -512,7 +512,12 @@ class _WordEditScreenState extends State<WordEditScreen> {
       child: Scaffold(
         appBar: AppBar(title: const Text('단어 편집')),
         body: ListView(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.fromLTRB(
+            16,
+            16,
+            16,
+            16 + MediaQuery.viewPaddingOf(context).bottom,
+          ),
           children: [
             TextFormField(
               initialValue: idText,

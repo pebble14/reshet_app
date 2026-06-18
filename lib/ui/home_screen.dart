@@ -1498,7 +1498,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
 
                 if (!isLargeScreen) {
-                  return homePane;
+                  return SafeArea(
+                    top: false,
+                    left: false,
+                    right: false,
+                    child: homePane,
+                  );
                 }
 
                 return Row(

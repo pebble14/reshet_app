@@ -211,12 +211,17 @@ class _WordDetailScreenState extends State<WordDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(_buildTitle())),
-      body: WordInfoPanel(
-        displayItem: _displayItem,
-        onEdit: widget.showEditAction ? _openEdit : null,
-        onShowGraph: _openGraph,
-        onDelete: _confirmDelete,
-        isDeleting: _isDeleting,
+      body: SafeArea(
+        top: false,
+        left: false,
+        right: false,
+        child: WordInfoPanel(
+          displayItem: _displayItem,
+          onEdit: widget.showEditAction ? _openEdit : null,
+          onShowGraph: _openGraph,
+          onDelete: _confirmDelete,
+          isDeleting: _isDeleting,
+        ),
       ),
     );
   }
