@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2026-06-18 Phase 22-B Explorer full-detail 편집 action 경계 정리
+
+- Large-screen embedded Explorer detail pane의 direct `편집` action은 유지했다.
+- Embedded pane에서 연 full-detail `WordDetailScreen`은 중복되는 `편집` action만 숨기고, `그래프 보기`와 `삭제` action 및 result contract는 유지했다.
+- Home과 small-screen standalone detail route의 기본 edit 노출과 local edit 동작은 유지했다.
+- 기존 `WordDetailEditActionMode.returnToCaller`와 `WordDetailEditRequestedResult`는 제거하지 않았다.
+- DB schema, repository read/write path, dependency 변경은 없으며 large/small-screen 수동 UI 확인이 필요하다.
+
 ## 2026-06-18 Phase 21-H delete action boundary 정리
 
 - Phase 21-F에서 복사본 DB와 disposable root를 사용해 Windows large-screen과 Android small-screen selected-word delete actual confirm smoke를 완료했으며, 원본 DB는 변경하지 않았다.

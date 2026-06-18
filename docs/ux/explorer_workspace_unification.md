@@ -9429,3 +9429,11 @@ Phase 21-F에서는 원본 DB를 보호한 복사본 DB와 disposable root를 �
 이 검증으로 graph/node selected-word delete가 primary delete 경로로 성립했다. 다만 detail route delete는 지금 제거하지 않으며, `WordDetailScreen._confirmDelete()`와 `WordInfoPanel` delete wiring은 fallback/transitional compatibility로 유지한다. Android small-screen detail route의 직접 삭제 접근성을 보존해야 하고, full-detail route가 edit/graph/delete result contract를 가진 active route인 반면 large-screen embedded detail pane에는 이미 direct delete가 없어 graph action surface가 primary 경로이기 때문이다.
 
 Detail delete 제거 또는 축소는 Phase 21 이후 별도 UX 판단과 production phase에서만 검토한다. Relation edit/delete는 기존 graph relation detail dialog 경로를 유지한다. 이 경계는 Phase 21-F actual confirm smoke와 Phase 21-G read-only audit 결론을 반영하며, 미래 production 변경을 확정하지 않는다.
+
+### 17.147 Phase 22-B Explorer full-detail 편집 action 경계
+
+Large-screen embedded Explorer detail pane의 direct `편집` action은 유지한다. Embedded pane의 `상세 작업 화면 열기`로 진입한 full-detail `WordDetailScreen`에서는 중복되는 `편집` action만 숨기며, `그래프 보기`와 `삭제` action 및 각 result contract는 유지한다.
+
+Home과 small-screen에서 여는 standalone `WordDetailScreen`은 기본 edit 노출과 local edit route를 그대로 유지한다. 기존 `WordDetailEditActionMode.returnToCaller`와 `WordDetailEditRequestedResult` contract는 이번 단계에서 제거하지 않는다.
+
+이번 변경은 route/action 노출 경계에 한정하며 DB schema, repository read/write path, graph/delete 동작과 dependency에는 영향이 없다. Large-screen과 small-screen의 노출 차이는 클라이언트 수동 UI 테스트가 필요하다.

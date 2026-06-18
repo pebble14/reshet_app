@@ -857,6 +857,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
           initialDisplayItem: selectedDisplayItem,
           editActionMode: WordDetailEditActionMode.returnToCaller,
           graphActionMode: WordDetailGraphActionMode.returnToCaller,
+          showEditAction: false,
         ),
       ),
     );

@@ -22,6 +22,7 @@ class WordDetailScreen extends StatefulWidget {
   final WordDetailLikeDisplayItem initialDisplayItem;
   final WordDetailEditActionMode editActionMode;
   final WordDetailGraphActionMode graphActionMode;
+  final bool showEditAction;
 
   const WordDetailScreen({
     super.key,
@@ -29,6 +30,7 @@ class WordDetailScreen extends StatefulWidget {
     required this.initialDisplayItem,
     this.editActionMode = WordDetailEditActionMode.localRoute,
     this.graphActionMode = WordDetailGraphActionMode.standaloneRoute,
+    this.showEditAction = true,
   });
 
   @override
@@ -211,7 +213,7 @@ class _WordDetailScreenState extends State<WordDetailScreen> {
       appBar: AppBar(title: Text(_buildTitle())),
       body: WordInfoPanel(
         displayItem: _displayItem,
-        onEdit: _openEdit,
+        onEdit: widget.showEditAction ? _openEdit : null,
         onShowGraph: _openGraph,
         onDelete: _confirmDelete,
         isDeleting: _isDeleting,

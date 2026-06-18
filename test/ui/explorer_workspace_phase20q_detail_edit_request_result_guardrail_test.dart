@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('Phase 20-Q detail edit request result guardrail', () {
     late String routeResultSource;
+    late String detailSource;
     late String detailWidgetSource;
     late String openEditSource;
     late String openSelectedWordDetailSource;
@@ -18,9 +19,7 @@ void main() {
         'lib/ui/word_detail_route_result.dart',
       ).readAsStringSync();
 
-      final detailSource = File(
-        'lib/ui/word_detail_screen.dart',
-      ).readAsStringSync();
+      detailSource = File('lib/ui/word_detail_screen.dart').readAsStringSync();
       detailWidgetSource = _sourceBetween(
         detailSource,
         'class WordDetailScreen extends StatefulWidget {',
@@ -87,7 +86,9 @@ void main() {
         detailWidgetSource,
         contains('this.editActionMode = WordDetailEditActionMode.localRoute'),
       );
+      expect(detailWidgetSource, contains('this.showEditAction = true'));
       expect(homeDetailRouteSource, isNot(contains('editActionMode:')));
+      expect(homeDetailRouteSource, isNot(contains('showEditAction:')));
       expect(homeDetailRouteSource, contains('WordDetailScreen('));
     });
 
@@ -120,6 +121,11 @@ void main() {
       expect(
         openSelectedWordDetailSource,
         contains('graphActionMode: WordDetailGraphActionMode.returnToCaller'),
+      );
+      expect(openSelectedWordDetailSource, contains('showEditAction: false'));
+      expect(
+        detailSource,
+        contains('onEdit: widget.showEditAction ? _openEdit : null'),
       );
       expect(homeDetailRouteSource, isNot(contains('editActionMode:')));
     });
