@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-06-18 Phase 21-H delete action boundary 정리
+
+- Phase 21-F에서 복사본 DB와 disposable root를 사용해 Windows large-screen과 Android small-screen selected-word delete actual confirm smoke를 완료했으며, 원본 DB는 변경하지 않았다.
+- Phase 21-G read-only audit 결과 graph/node selected-word delete를 primary 경로로 확인하고, detail delete는 `WordDetailScreen._confirmDelete()`와 `WordInfoPanel` delete wiring의 fallback/transitional compatibility로 유지하기로 했다.
+- Phase 21-H는 위 결론을 기존 문서에 반영해 delete action ownership 경계를 정리한 docs-only 단계이며 source, DB, test는 변경하지 않았다.
+- Detail delete 제거·축소는 Phase 21 이후 별도 UX 판단과 production phase로 보류하고, relation edit/delete는 기존 graph relation detail dialog 경로를 유지한다.
+
 ## 2026-06-17 Phase 21-D selected-word node delete action 추가
 
 - `WordGraphScreen`의 기존 graph action surface에 selected-word 기준 단어 삭제 action을 추가했다.

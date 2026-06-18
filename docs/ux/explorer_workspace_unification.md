@@ -9421,3 +9421,11 @@ Phase 21-D는 `WordGraphScreen`의 기존 graph action surface에 selected-word 
 Peripheral selected word 삭제는 selection/detail을 clear하고 graph를 reload한다. Center selected word 삭제는 standalone graph route에서 `WordDetailDeletedResult`를 반환하고, embedded Explorer에서는 기존 `_handleDeletedSelectedWord(...)` 정책을 재사용하되 history fallback이 없으면 기존 strong list read API로 대체 center를 선택한다. `WordDetailScreen`에서 연 graph route가 현재 detail word를 삭제하면 detail route도 같은 deleted result로 닫는다.
 
 `WordDetailScreen._confirmDelete()`와 `WordInfoPanel` delete wiring은 transitional compatibility로 유지한다. Relation edit/delete action은 기존 graph relation detail dialog 경로를 유지하며, 이번 phase에서 ownership이나 동작을 재설계하지 않았다. DB/schema/repository/dependency 변경은 없다.
+
+### 17.146 Phase 21-H delete action boundary closure
+
+Phase 21-F에서는 원본 DB를 보호한 복사본 DB와 disposable root를 사용해 Windows large-screen과 Android small-screen의 selected-word delete actual confirm smoke를 완료했다. 원본 `reshet_work.db`와 `reshet_seed.db`는 변경되지 않았고 Git 추적 대상이 아니다. Destructive smoke는 앞으로도 원본 DB가 아닌 disposable root/DB에서만 수행한다.
+
+이 검증으로 graph/node selected-word delete가 primary delete 경로로 성립했다. 다만 detail route delete는 지금 제거하지 않으며, `WordDetailScreen._confirmDelete()`와 `WordInfoPanel` delete wiring은 fallback/transitional compatibility로 유지한다. Android small-screen detail route의 직접 삭제 접근성을 보존해야 하고, full-detail route가 edit/graph/delete result contract를 가진 active route인 반면 large-screen embedded detail pane에는 이미 direct delete가 없어 graph action surface가 primary 경로이기 때문이다.
+
+Detail delete 제거 또는 축소는 Phase 21 이후 별도 UX 판단과 production phase에서만 검토한다. Relation edit/delete는 기존 graph relation detail dialog 경로를 유지한다. 이 경계는 Phase 21-F actual confirm smoke와 Phase 21-G read-only audit 결론을 반영하며, 미래 production 변경을 확정하지 않는다.
