@@ -33,6 +33,7 @@ Layout cache identity에는 다음 항목만 포함한다.
 - 실제 viewport 크기는 scene 표시와 camera transform 계산에만 사용한다.
 - Fit은 graph content bounds를 실제 viewport에 맞추는 scale/translation을 계산한다.
 - Reset은 scale을 초기화하고 canonical layout의 중심을 실제 viewport 중심에 배치한다.
+- 선택 노드 포커스는 현재 scale을 유지하고 선택 node의 layout coordinate가 실제 viewport 중심에 오도록 translation만 조정한다.
 - Zoom과 pan은 layout result를 변경하지 않는다.
 - Viewport resize는 layout을 다시 정의하지 않고 기존 camera 중심을 새 viewport 중심에 맞춘다.
 

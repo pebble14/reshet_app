@@ -1319,6 +1319,13 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                 onPressed: () => _resetView(layout),
               ),
               IconButton(
+                tooltip: '선택 노드 중앙 맞춤',
+                icon: const Icon(Icons.center_focus_strong),
+                onPressed: _selectedNodeLayoutCenter(layout) == null
+                    ? null
+                    : () => _focusSelectedNode(layout),
+              ),
+              IconButton(
                 tooltip: '관계 추가',
                 icon: const Icon(Icons.add_link),
                 onPressed: _showAddRelationFlow,
@@ -2718,6 +2725,42 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     matrix.storage[13] = shift.dy;
     _transformController.value = matrix;
     setState(() => _currentScale = 1.0);
+  }
+
+  Offset? _selectedNodeLayoutCenter(_GraphLayoutData layout) {
+    final selectedWordId = (_selectedWordId ?? '').trim();
+    if (selectedWordId.isEmpty) {
+      return null;
+    }
+    if (selectedWordId == layout.centerNodeId) {
+      return layout.center;
+    }
+    return layout.nodeLayoutById[selectedWordId]?.center;
+  }
+
+  void _focusSelectedNode(_GraphLayoutData layout) {
+    final selectedNodeCenter = _selectedNodeLayoutCenter(layout);
+    if (selectedNodeCenter == null) {
+      return;
+    }
+
+    final matrix = Matrix4.copy(_transformController.value);
+    final viewportCenter = Offset(
+      layout.viewportSize.width / 2,
+      layout.viewportSize.height / 2,
+    );
+    final currentSelectedNodeCenter = MatrixUtils.transformPoint(
+      matrix,
+      selectedNodeCenter,
+    );
+    final shift = viewportCenter - currentSelectedNodeCenter;
+    if (shift.distanceSquared <= 0.0001) {
+      return;
+    }
+
+    matrix.storage[12] += shift.dx;
+    matrix.storage[13] += shift.dy;
+    _transformController.value = matrix;
   }
 
   _GraphLayoutData _computeGraphLayout(
