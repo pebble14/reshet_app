@@ -2253,6 +2253,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     final double labelFontSize = isDepthTwo ? 11.0 : 12.0;
     final double secondaryLabelFontSize = isDepthTwo ? 9.0 : 10.0;
     final double nodeSize = nodeLayout.nodeSize;
+    final safeSceneScale = _currentScale.isFinite && _currentScale > 0
+        ? _currentScale
+        : 1.0;
+    final selectedOuterRingWidth = _selectedNodeOuterRingWidth / safeSceneScale;
 
     return GestureDetector(
       onTap: () => _handleConnectedWordTap(word),
@@ -2281,7 +2285,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                         shape: BoxShape.circle,
                         border: Border.all(
                           color: selectedRingColor,
-                          width: _selectedNodeOuterRingWidth,
+                          width: selectedOuterRingWidth,
                         ),
                       ),
                     ),

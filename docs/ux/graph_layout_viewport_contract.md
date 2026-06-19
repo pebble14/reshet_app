@@ -37,6 +37,7 @@ Layout cache identity에는 다음 항목만 포함한다.
 - Zoom과 pan은 layout result를 변경하지 않는다.
 - Viewport resize는 layout을 다시 정의하지 않고 기존 camera 중심을 새 viewport 중심에 맞춘다.
 - Edge stroke와 dash/dot/arrowhead 같은 edge rendering metric은 screen-space 기준값을 유지하도록 rendering 단계에서 camera scale의 역수로 보정한다. 이 보정은 layout result, cache identity, graph data, camera transform을 변경하지 않는다.
+- Peripheral selected node outer ring 두께도 screen-space 기준값을 유지하도록 rendering 단계에서 camera scale의 역수로 보정한다.
 
 ## 5. 현재 구현 범위와 비범위
 
