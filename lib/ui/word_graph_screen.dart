@@ -18,6 +18,7 @@ import '../domain/graph/graph_view_data.dart';
 import '../domain/graph/graph_visible_node.dart';
 import '../domain/graph/graph_visible_word.dart';
 import '../domain/graph/graph_word_label_display_item.dart';
+import '../domain/graph/layout/graph_layout_options.dart';
 import '../domain/graph/layout/graph_layout_strategy_resolver.dart';
 import '../domain/relation/relation_formatter.dart';
 import '../domain/word/duplicate_candidate_display_item.dart';
@@ -252,7 +253,8 @@ class _GraphEdgeLayout {
 }
 
 class _GraphLayoutData {
-  final Size canvasSize;
+  final Size viewportSize;
+  final Size layoutSpaceSize;
   final String centerNodeId;
   final Offset center;
   final Rect centerBounds;
@@ -264,7 +266,8 @@ class _GraphLayoutData {
   final List<double> ringRadii;
 
   const _GraphLayoutData({
-    required this.canvasSize,
+    required this.viewportSize,
+    required this.layoutSpaceSize,
     required this.centerNodeId,
     required this.center,
     required this.centerBounds,
@@ -732,6 +735,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   final WordWriteService _wordWriteService = WordWriteService();
   final GraphBuilder _graphBuilder = const GraphBuilder();
   static const GraphLayoutMode _graphLayoutMode = GraphLayoutMode.forceDirected;
+  static const GraphLayoutOptions _graphLayoutOptions = GraphLayoutOptions();
   static const int _defaultGraphMaxNodes = 30;
 
   /// 그래프 줌/팬 상태를 관리하는 컨트롤러
@@ -783,6 +787,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   bool _suppressBackgroundTapClear = false;
   bool _isViewportInteracting = false;
   DateTime? _lastViewportInteractionAt;
+  Size? _appliedViewportSize;
+  Size? _pendingViewportSize;
+  Offset? _pendingLayoutCenter;
+  bool _isViewportCameraSyncScheduled = false;
 
   String? _nullIfBlank(String? value) {
     final trimmed = (value ?? '').trim();
@@ -1259,7 +1267,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final canvasSize = Size(constraints.maxWidth, constraints.maxHeight);
+        final viewportSize = Size(constraints.maxWidth, constraints.maxHeight);
         final viewData = _graphViewData;
         if (viewData == null) {
           return Scaffold(
@@ -1281,7 +1289,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         }
 
         final peripheralNodes = _peripheralNodesForViewData(viewData);
-        final layout = _computeGraphLayout(canvasSize, viewData);
+        final layout = _computeGraphLayout(viewportSize, viewData);
+        _scheduleViewportCameraSync(layout);
         _scheduleConditionalCenterFocus(layout);
         final selectedEdgeIds = _selectedEdgeIds(_selectedWordId);
         final selectedRelationEntries = _selectedNodeRelationEntries(
@@ -1307,10 +1316,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
               IconButton(
                 tooltip: '보기 초기화',
                 icon: const Icon(Icons.refresh),
-                onPressed: () {
-                  _transformController.value = Matrix4.identity();
-                  setState(() => _currentScale = 1.0);
-                },
+                onPressed: () => _resetView(layout),
               ),
               IconButton(
                 tooltip: '관계 추가',
@@ -1340,88 +1346,93 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                     _handlePointerScroll(event);
                   }
                 },
-                child: InteractiveViewer(
-                  transformationController: _transformController,
-                  minScale: 0.6,
-                  maxScale: 3.5,
-                  boundaryMargin: const EdgeInsets.all(2000),
-                  panEnabled: true,
-                  scaleEnabled: true,
-                  onInteractionStart: (_) {
-                    _isViewportInteracting = true;
-                    _markViewportInteraction();
-                  },
-                  onInteractionUpdate: (_) {
-                    final newScale = _transformController.value
-                        .getMaxScaleOnAxis();
-                    if (newScale != _currentScale) {
-                      setState(() => _currentScale = newScale);
-                    }
-                  },
-                  onInteractionEnd: (_) {
-                    _isViewportInteracting = false;
-                    _markViewportInteraction();
-                  },
-                  child: GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: _handleBackgroundTap,
-                    child: SizedBox(
-                      width: canvasSize.width,
-                      height: canvasSize.height,
-                      child: Stack(
-                        clipBehavior: Clip.none,
-                        children: [
-                          if (peripheralNodes.isNotEmpty)
-                            AnimatedSwitcher(
-                              duration: _visualStateAnimationDuration,
-                              switchInCurve: Curves.easeOutCubic,
-                              switchOutCurve: Curves.easeOutCubic,
-                              child: SizedBox(
-                                key: ValueKey<String>(
-                                  '${_selectedWordId ?? ''}:${viewData.nodes.length}:${viewData.edges.length}',
-                                ),
-                                width: canvasSize.width,
-                                height: canvasSize.height,
-                                child: CustomPaint(
-                                  size: canvasSize,
-                                  painter: _GraphLinePainter(
-                                    layout: layout,
-                                    selectedWordId: _selectedWordId,
-                                    selectedEdgeIds: selectedEdgeIds,
-                                    showLabels: false,
-                                    sceneScale: _currentScale,
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: _handleBackgroundTap,
+                  child: InteractiveViewer(
+                    transformationController: _transformController,
+                    constrained: false,
+                    minScale: 0.6,
+                    maxScale: 3.5,
+                    boundaryMargin: const EdgeInsets.all(2000),
+                    panEnabled: true,
+                    scaleEnabled: true,
+                    onInteractionStart: (_) {
+                      _isViewportInteracting = true;
+                      _markViewportInteraction();
+                    },
+                    onInteractionUpdate: (_) {
+                      final newScale = _transformController.value
+                          .getMaxScaleOnAxis();
+                      if (newScale != _currentScale) {
+                        setState(() => _currentScale = newScale);
+                      }
+                    },
+                    onInteractionEnd: (_) {
+                      _isViewportInteracting = false;
+                      _markViewportInteraction();
+                    },
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: _handleBackgroundTap,
+                      child: SizedBox(
+                        width: layout.layoutSpaceSize.width,
+                        height: layout.layoutSpaceSize.height,
+                        child: Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            if (peripheralNodes.isNotEmpty)
+                              AnimatedSwitcher(
+                                duration: _visualStateAnimationDuration,
+                                switchInCurve: Curves.easeOutCubic,
+                                switchOutCurve: Curves.easeOutCubic,
+                                child: SizedBox(
+                                  key: ValueKey<String>(
+                                    '${_selectedWordId ?? ''}:${viewData.nodes.length}:${viewData.edges.length}',
+                                  ),
+                                  width: layout.layoutSpaceSize.width,
+                                  height: layout.layoutSpaceSize.height,
+                                  child: CustomPaint(
+                                    size: layout.layoutSpaceSize,
+                                    painter: _GraphLinePainter(
+                                      layout: layout,
+                                      selectedWordId: _selectedWordId,
+                                      selectedEdgeIds: selectedEdgeIds,
+                                      showLabels: false,
+                                      sceneScale: _currentScale,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          Positioned(
-                            left: layout.centerBounds.left,
-                            top: layout.centerBounds.top,
-                            child: GestureDetector(
-                              onTap: _handleCenterNodeTap,
-                              child: _buildCenterNode(
-                                centerDisplayItem,
-                                visualState: centerVisualState,
+                            Positioned(
+                              left: layout.centerBounds.left,
+                              top: layout.centerBounds.top,
+                              child: GestureDetector(
+                                onTap: _handleCenterNodeTap,
+                                child: _buildCenterNode(
+                                  centerDisplayItem,
+                                  visualState: centerVisualState,
+                                ),
                               ),
                             ),
-                          ),
-                          ..._buildEdgeLabelWidgets(
-                            layout,
-                            selectedEdgeIds: selectedEdgeIds,
-                            selectedWordId: _selectedWordId,
-                          ),
-                          ..._buildWordNodes(
-                            layout,
-                            viewData,
-                            selectedWordId: _selectedWordId,
-                          ),
-                          if (peripheralNodes.isEmpty)
-                            _buildEmptyStateBanner(
-                              context,
-                              layout: layout,
-                              canvasSize: canvasSize,
+                            ..._buildEdgeLabelWidgets(
+                              layout,
+                              selectedEdgeIds: selectedEdgeIds,
+                              selectedWordId: _selectedWordId,
                             ),
-                        ],
+                            ..._buildWordNodes(
+                              layout,
+                              viewData,
+                              selectedWordId: _selectedWordId,
+                            ),
+                            if (peripheralNodes.isEmpty)
+                              _buildEmptyStateBanner(
+                                context,
+                                layout: layout,
+                                layoutSpaceSize: layout.layoutSpaceSize,
+                              ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -1596,7 +1607,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   Widget _buildEmptyStateBanner(
     BuildContext context, {
     required _GraphLayoutData layout,
-    required Size canvasSize,
+    required Size layoutSpaceSize,
   }) {
     const double verticalInset = 20.0;
     const double horizontalInset = 16.0;
@@ -1606,7 +1617,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     final availableTopSpace =
         layout.centerBounds.top - verticalInset - gapFromCenterNode;
     final availableBottomSpace =
-        canvasSize.height -
+        layoutSpaceSize.height -
         layout.centerBounds.bottom -
         verticalInset -
         gapFromCenterNode;
@@ -2627,8 +2638,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   void _applyConditionalCenterFocus(_GraphLayoutData layout) {
     final matrix = Matrix4.copy(_transformController.value);
     final viewportCenter = Offset(
-      layout.canvasSize.width / 2,
-      layout.canvasSize.height / 2,
+      layout.viewportSize.width / 2,
+      layout.viewportSize.height / 2,
     );
     final currentCenter = MatrixUtils.transformPoint(matrix, layout.center);
     final delta = viewportCenter - currentCenter;
@@ -2649,24 +2660,85 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     _transformController.value = next;
   }
 
+  void _scheduleViewportCameraSync(_GraphLayoutData layout) {
+    if (_appliedViewportSize == layout.viewportSize &&
+        _pendingViewportSize == null) {
+      return;
+    }
+
+    _pendingViewportSize = layout.viewportSize;
+    _pendingLayoutCenter = layout.center;
+    if (_isViewportCameraSyncScheduled) {
+      return;
+    }
+
+    _isViewportCameraSyncScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _isViewportCameraSyncScheduled = false;
+      if (!mounted) return;
+
+      final viewportSize = _pendingViewportSize;
+      final layoutCenter = _pendingLayoutCenter;
+      _pendingViewportSize = null;
+      _pendingLayoutCenter = null;
+      if (viewportSize == null || layoutCenter == null) {
+        return;
+      }
+
+      final previousViewportSize = _appliedViewportSize;
+      final matrix = Matrix4.copy(_transformController.value);
+      final currentAnchor = previousViewportSize == null
+          ? MatrixUtils.transformPoint(matrix, layoutCenter)
+          : Offset(
+              previousViewportSize.width / 2,
+              previousViewportSize.height / 2,
+            );
+      final nextViewportCenter = Offset(
+        viewportSize.width / 2,
+        viewportSize.height / 2,
+      );
+      final shift = nextViewportCenter - currentAnchor;
+      if (shift.distanceSquared > 0.0001) {
+        matrix.storage[12] += shift.dx;
+        matrix.storage[13] += shift.dy;
+        _transformController.value = matrix;
+      }
+      _appliedViewportSize = viewportSize;
+    });
+  }
+
+  void _resetView(_GraphLayoutData layout) {
+    final viewportCenter = Offset(
+      layout.viewportSize.width / 2,
+      layout.viewportSize.height / 2,
+    );
+    final shift = viewportCenter - layout.center;
+    final matrix = Matrix4.identity();
+    matrix.storage[12] = shift.dx;
+    matrix.storage[13] = shift.dy;
+    _transformController.value = matrix;
+    setState(() => _currentScale = 1.0);
+  }
+
   _GraphLayoutData _computeGraphLayout(
-    Size canvasSize,
+    Size viewportSize,
     GraphViewData viewData,
   ) {
     final layoutResult = GraphLayoutStrategyResolver.layout(
       layoutMode: _graphLayoutMode,
       viewData: viewData,
-      viewportSize: canvasSize,
+      options: _graphLayoutOptions,
       layoutSeed: _graphLayoutSeed(viewData),
       seedPositions: _seedNodePositions,
     );
+    final layoutSpaceSize = _graphLayoutOptions.layoutSpaceSize;
     final resolvedPositions = Map<String, Offset>.from(
       layoutResult.positionedNodes,
     );
     final peripheralNodes = _peripheralNodesForViewData(viewData);
     final center =
         resolvedPositions[viewData.centerNodeId] ??
-        Offset(canvasSize.width / 2, canvasSize.height / 2);
+        Offset(layoutSpaceSize.width / 2, layoutSpaceSize.height / 2);
     final centerBounds = Rect.fromCenter(
       center: center,
       width: _centerNodeSize,
@@ -2807,7 +2879,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     final fitPadding = _fitBoundsPadding + (ringRadii.length > 1 ? 12.0 : 0.0);
 
     return _GraphLayoutData(
-      canvasSize: canvasSize,
+      viewportSize: viewportSize,
+      layoutSpaceSize: layoutSpaceSize,
       centerNodeId: viewData.centerNodeId,
       center: center,
       centerBounds: centerBounds,
@@ -5238,8 +5311,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     // 여백(태그/선 고려)
 
     // 스케일 계산
-    final sx = layout.canvasSize.width / bboxW;
-    final sy = layout.canvasSize.height / bboxH;
+    final sx = layout.viewportSize.width / bboxW;
+    final sy = layout.viewportSize.height / bboxH;
     final scale = min(sx, sy).clamp(0.6, 3.5);
 
     // 바운딩 박스 중심
@@ -5247,7 +5320,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
     // bbox 중심이 화면 중앙에 오도록 변환 설정
     final m = Matrix4.identity()
-      ..translate(layout.canvasSize.width / 2, layout.canvasSize.height / 2)
+      ..translate(layout.viewportSize.width / 2, layout.viewportSize.height / 2)
       ..scale(scale)
       ..translate(-bboxCenter.dx, -bboxCenter.dy);
 

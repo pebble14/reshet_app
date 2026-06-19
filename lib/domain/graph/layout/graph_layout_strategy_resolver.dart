@@ -5,6 +5,7 @@ import '../graph_layout_result.dart';
 import '../graph_view_data.dart';
 import 'force_directed_layout_strategy.dart';
 import 'graph_layout_cache.dart';
+import 'graph_layout_options.dart';
 import 'graph_layout_strategy.dart';
 import 'radial_layout_strategy.dart';
 
@@ -29,21 +30,21 @@ class GraphLayoutStrategyResolver {
   static GraphLayoutResult layout({
     required GraphLayoutMode layoutMode,
     required GraphViewData viewData,
-    required Size viewportSize,
+    GraphLayoutOptions options = const GraphLayoutOptions(),
     int? layoutSeed,
     Map<String, Offset> seedPositions = const <String, Offset>{},
   }) {
     return GraphLayoutCache.getOrCompute(
       layoutMode: layoutMode,
       viewData: viewData,
-      viewportSize: viewportSize,
+      options: options,
       layoutSeed: layoutSeed,
       seedPositions: seedPositions,
       compute: () {
         final strategy = resolve(layoutMode);
         return strategy.layout(
           viewData,
-          viewportSize,
+          options: options,
           layoutSeed: layoutSeed,
           seedPositions: seedPositions,
         );
@@ -63,15 +64,15 @@ class _FallbackGraphLayoutStrategy implements GraphLayoutStrategy {
 
   @override
   GraphLayoutResult layout(
-    GraphViewData viewData,
-    Size viewportSize, {
+    GraphViewData viewData, {
+    GraphLayoutOptions options = const GraphLayoutOptions(),
     int? layoutSeed,
     Map<String, Offset> seedPositions = const <String, Offset>{},
   }) {
     try {
       final result = primary.layout(
         viewData,
-        viewportSize,
+        options: options,
         layoutSeed: layoutSeed,
         seedPositions: seedPositions,
       );
@@ -82,7 +83,7 @@ class _FallbackGraphLayoutStrategy implements GraphLayoutStrategy {
 
     return fallback.layout(
       viewData,
-      viewportSize,
+      options: options,
       layoutSeed: layoutSeed,
       seedPositions: seedPositions,
     );

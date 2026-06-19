@@ -219,6 +219,8 @@ Exact breakpoint, platform layout decision, Flutter implementation detail은 res
 
 Graph authority 문서는 graph semantics, relation traversal, direction interpretation, expansion policy, edge behavior, graph-specific rendering rule을 정의한다.
 
+Graph layout coordinate와 viewport/camera 책임 경계는 `graph_layout_viewport_contract.md`가 정의한다.
+
 이 문서는 workspace 안에서 graph의 UX 역할을 정의할 뿐, graph engine behavior를 정의하지 않는다.
 
 ### Responsive Policy 문서

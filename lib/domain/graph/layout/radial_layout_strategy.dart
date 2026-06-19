@@ -4,6 +4,7 @@ import 'dart:ui';
 import '../graph_layout_result.dart';
 import '../graph_node.dart';
 import '../graph_view_data.dart';
+import 'graph_layout_options.dart';
 import 'graph_layout_strategy.dart';
 
 class _MutableNodePlacement {
@@ -37,12 +38,12 @@ class _MutableNodePlacement {
 
 /// radial_layout_strategy.dart
 ///
-/// 중심 노드를 화면 중앙에 두고, 화면 크기와 노드 수에 따라
+/// 중심 노드를 layout space 중앙에 두고, layout space와 노드 수에 따라
 /// 방사형 배치를 안정적으로 계산하는 기본 레이아웃 전략이다.
 class RadialLayoutStrategy implements GraphLayoutStrategy {
   final double centerNodeDiameter;
   final double nodeDiameter;
-  final double viewportPadding;
+  final double layoutSpacePadding;
   final double preferredNodeGap;
   final double minimumNodeGap;
   final double preferredCenterGap;
@@ -56,7 +57,7 @@ class RadialLayoutStrategy implements GraphLayoutStrategy {
   const RadialLayoutStrategy({
     this.centerNodeDiameter = 180.0,
     this.nodeDiameter = 80.0,
-    this.viewportPadding = 28.0,
+    this.layoutSpacePadding = 28.0,
     this.preferredNodeGap = 28.0,
     this.minimumNodeGap = 12.0,
     this.preferredCenterGap = 18.0,
@@ -70,12 +71,16 @@ class RadialLayoutStrategy implements GraphLayoutStrategy {
 
   @override
   GraphLayoutResult layout(
-    GraphViewData viewData,
-    Size viewportSize, {
+    GraphViewData viewData, {
+    GraphLayoutOptions options = const GraphLayoutOptions(),
     int? layoutSeed,
     Map<String, Offset> seedPositions = const <String, Offset>{},
   }) {
-    final center = Offset(viewportSize.width / 2, viewportSize.height / 2);
+    final layoutSpaceSize = options.layoutSpaceSize;
+    final center = Offset(
+      layoutSpaceSize.width / 2,
+      layoutSpaceSize.height / 2,
+    );
     final positionedNodes = <String, Offset>{viewData.centerNodeId: center};
     final peripheralNodes =
         viewData.nodes
@@ -95,11 +100,11 @@ class RadialLayoutStrategy implements GraphLayoutStrategy {
     final centerHalf = centerNodeDiameter / 2;
     final availableRadiusX = max(
       0.0,
-      viewportSize.width / 2 - nodeHalf - viewportPadding,
+      layoutSpaceSize.width / 2 - nodeHalf - layoutSpacePadding,
     );
     final availableRadiusY = max(
       0.0,
-      viewportSize.height / 2 - nodeHalf - viewportPadding,
+      layoutSpaceSize.height / 2 - nodeHalf - layoutSpacePadding,
     );
     final maxRadius = max(0.0, min(availableRadiusX, availableRadiusY));
     final preferredMinimumRadius = centerHalf + nodeHalf + preferredCenterGap;

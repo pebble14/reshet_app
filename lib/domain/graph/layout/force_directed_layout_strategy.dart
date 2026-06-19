@@ -5,6 +5,7 @@ import '../graph_edge.dart';
 import '../graph_layout_result.dart';
 import '../graph_node.dart';
 import '../graph_view_data.dart';
+import 'graph_layout_options.dart';
 import 'graph_layout_strategy.dart';
 
 class _ForceNodePlacement {
@@ -28,7 +29,7 @@ class _ForceNodePlacement {
 class ForceDirectedLayoutStrategy implements GraphLayoutStrategy {
   final double centerNodeDiameter;
   final double nodeDiameter;
-  final double viewportPadding;
+  final double layoutSpacePadding;
   final double minimumNodeGap;
   final double minimumCenterGap;
   final double baseCenterDistance;
@@ -46,7 +47,7 @@ class ForceDirectedLayoutStrategy implements GraphLayoutStrategy {
   const ForceDirectedLayoutStrategy({
     this.centerNodeDiameter = 180.0,
     this.nodeDiameter = 80.0,
-    this.viewportPadding = 28.0,
+    this.layoutSpacePadding = 28.0,
     this.minimumNodeGap = 14.0,
     this.minimumCenterGap = 12.0,
     this.baseCenterDistance = 190.0,
@@ -64,12 +65,16 @@ class ForceDirectedLayoutStrategy implements GraphLayoutStrategy {
 
   @override
   GraphLayoutResult layout(
-    GraphViewData viewData,
-    Size viewportSize, {
+    GraphViewData viewData, {
+    GraphLayoutOptions options = const GraphLayoutOptions(),
     int? layoutSeed,
     Map<String, Offset> seedPositions = const <String, Offset>{},
   }) {
-    final center = Offset(viewportSize.width / 2, viewportSize.height / 2);
+    final layoutSpaceSize = options.layoutSpaceSize;
+    final center = Offset(
+      layoutSpaceSize.width / 2,
+      layoutSpaceSize.height / 2,
+    );
     final positionedNodes = <String, Offset>{viewData.centerNodeId: center};
     final peripheralNodes =
         viewData.nodes
@@ -89,13 +94,13 @@ class ForceDirectedLayoutStrategy implements GraphLayoutStrategy {
     final nodeHalf = nodeDiameter / 2;
     final centerHalf = centerNodeDiameter / 2;
     final minCenterDistance = centerHalf + nodeHalf + minimumCenterGap;
-    final maxViewportRadius = _maxViewportRadius(
-      viewportSize: viewportSize,
+    final maxLayoutSpaceRadius = _maxLayoutSpaceRadius(
+      layoutSpaceSize: layoutSpaceSize,
       nodeHalf: nodeHalf,
     );
     final baseMaxCenterDistance = max(
       minCenterDistance,
-      min(maximumCenterDistance, maxViewportRadius),
+      min(maximumCenterDistance, maxLayoutSpaceRadius),
     );
     final crowdingFactor = _crowdingFactor(peripheralNodeCount);
     final effectiveBaseCenterDistance =
@@ -111,7 +116,7 @@ class ForceDirectedLayoutStrategy implements GraphLayoutStrategy {
     final additionalRadius = crowdingFactor <= 0
         ? 0.0
         : min(
-            maxViewportRadius * crowdingFactor * 1.8,
+            maxLayoutSpaceRadius * crowdingFactor * 1.8,
             effectiveShellSpacing *
                 (2.0 + peripheralNodeCount / max(baseShellCapacity, 1)),
           );
@@ -129,7 +134,8 @@ class ForceDirectedLayoutStrategy implements GraphLayoutStrategy {
         spacingPerNode: nodeDiameter + minimumNodeGap,
       ),
     );
-    final effectiveViewportOverflow = maxViewportRadius * crowdingFactor * 1.8;
+    final effectiveLayoutSpaceOverflow =
+        maxLayoutSpaceRadius * crowdingFactor * 1.8;
     final effectiveIterationCount =
         iterationCount + (crowdingFactor * 120).round();
     final effectiveRepulsionStrength =
@@ -193,11 +199,11 @@ class ForceDirectedLayoutStrategy implements GraphLayoutStrategy {
             ),
             minCenterDistance: minCenterDistance,
             maxCenterDistance: maxCenterDistance,
-            viewportSize: viewportSize,
+            layoutSpaceSize: layoutSpaceSize,
             nodeHalf: nodeHalf,
             layoutSeed: layoutSeed,
             index: index,
-            viewportOverflow: effectiveViewportOverflow,
+            layoutSpaceOverflow: effectiveLayoutSpaceOverflow,
           ),
         ),
       );
@@ -256,11 +262,11 @@ class ForceDirectedLayoutStrategy implements GraphLayoutStrategy {
           candidate: placements[index].position + movement,
           minCenterDistance: minCenterDistance,
           maxCenterDistance: maxCenterDistance,
-          viewportSize: viewportSize,
+          layoutSpaceSize: layoutSpaceSize,
           nodeHalf: nodeHalf,
           layoutSeed: layoutSeed,
           index: placements[index].index,
-          viewportOverflow: effectiveViewportOverflow,
+          layoutSpaceOverflow: effectiveLayoutSpaceOverflow,
         );
       }
 
@@ -276,10 +282,10 @@ class ForceDirectedLayoutStrategy implements GraphLayoutStrategy {
       passCount: deOverlapPassCount,
       minCenterDistance: minCenterDistance,
       maxCenterDistance: maxCenterDistance,
-      viewportSize: viewportSize,
+      layoutSpaceSize: layoutSpaceSize,
       nodeHalf: nodeHalf,
       layoutSeed: layoutSeed,
-      viewportOverflow: effectiveViewportOverflow,
+      layoutSpaceOverflow: effectiveLayoutSpaceOverflow,
       stepLimit: max(4.0, effectiveMaxStepDistance * 0.82),
     );
 
@@ -448,21 +454,27 @@ class ForceDirectedLayoutStrategy implements GraphLayoutStrategy {
     required Offset candidate,
     required double minCenterDistance,
     required double maxCenterDistance,
-    required Size viewportSize,
+    required Size layoutSpaceSize,
     required double nodeHalf,
     required int? layoutSeed,
     required int index,
-    required double viewportOverflow,
+    required double layoutSpaceOverflow,
   }) {
-    final minX = nodeHalf + viewportPadding - viewportOverflow;
+    final minX = nodeHalf + layoutSpacePadding - layoutSpaceOverflow;
     final maxX = max(
       minX,
-      viewportSize.width - nodeHalf - viewportPadding + viewportOverflow,
+      layoutSpaceSize.width -
+          nodeHalf -
+          layoutSpacePadding +
+          layoutSpaceOverflow,
     );
-    final minY = nodeHalf + viewportPadding - viewportOverflow;
+    final minY = nodeHalf + layoutSpacePadding - layoutSpaceOverflow;
     final maxY = max(
       minY,
-      viewportSize.height - nodeHalf - viewportPadding + viewportOverflow,
+      layoutSpaceSize.height -
+          nodeHalf -
+          layoutSpacePadding +
+          layoutSpaceOverflow,
     );
     var stabilized = Offset(
       candidate.dx.clamp(minX, maxX).toDouble(),
@@ -607,12 +619,18 @@ class ForceDirectedLayoutStrategy implements GraphLayoutStrategy {
     return max(1, (2 * pi * radius / spacingPerNode).floor());
   }
 
-  double _maxViewportRadius({
-    required Size viewportSize,
+  double _maxLayoutSpaceRadius({
+    required Size layoutSpaceSize,
     required double nodeHalf,
   }) {
-    final maxX = max(0.0, viewportSize.width / 2 - nodeHalf - viewportPadding);
-    final maxY = max(0.0, viewportSize.height / 2 - nodeHalf - viewportPadding);
+    final maxX = max(
+      0.0,
+      layoutSpaceSize.width / 2 - nodeHalf - layoutSpacePadding,
+    );
+    final maxY = max(
+      0.0,
+      layoutSpaceSize.height / 2 - nodeHalf - layoutSpacePadding,
+    );
     return min(maxX, maxY);
   }
 
@@ -648,10 +666,10 @@ class ForceDirectedLayoutStrategy implements GraphLayoutStrategy {
     required int passCount,
     required double minCenterDistance,
     required double maxCenterDistance,
-    required Size viewportSize,
+    required Size layoutSpaceSize,
     required double nodeHalf,
     required int? layoutSeed,
-    required double viewportOverflow,
+    required double layoutSpaceOverflow,
     required double stepLimit,
   }) {
     if (placements.length < 2 || passCount <= 0) {
@@ -703,11 +721,11 @@ class ForceDirectedLayoutStrategy implements GraphLayoutStrategy {
               _clampOffset(deltas[index], stepLimit),
           minCenterDistance: minCenterDistance,
           maxCenterDistance: maxCenterDistance,
-          viewportSize: viewportSize,
+          layoutSpaceSize: layoutSpaceSize,
           nodeHalf: nodeHalf,
           layoutSeed: layoutSeed,
           index: placements[index].index,
-          viewportOverflow: viewportOverflow,
+          layoutSpaceOverflow: layoutSpaceOverflow,
         );
       }
     }

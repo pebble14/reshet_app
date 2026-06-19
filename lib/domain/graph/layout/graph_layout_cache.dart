@@ -4,19 +4,20 @@ import 'dart:ui';
 import '../graph_build_options.dart';
 import '../graph_layout_result.dart';
 import '../graph_view_data.dart';
+import 'graph_layout_options.dart';
 
 class _GraphLayoutCacheKey {
   final GraphLayoutMode layoutMode;
-  final double viewportWidth;
-  final double viewportHeight;
+  final double layoutSpaceWidth;
+  final double layoutSpaceHeight;
   final int? layoutSeed;
   final int viewDataSignature;
   final int seedPositionsSignature;
 
   const _GraphLayoutCacheKey({
     required this.layoutMode,
-    required this.viewportWidth,
-    required this.viewportHeight,
+    required this.layoutSpaceWidth,
+    required this.layoutSpaceHeight,
     required this.layoutSeed,
     required this.viewDataSignature,
     required this.seedPositionsSignature,
@@ -27,8 +28,8 @@ class _GraphLayoutCacheKey {
     if (identical(this, other)) return true;
     return other is _GraphLayoutCacheKey &&
         other.layoutMode == layoutMode &&
-        other.viewportWidth == viewportWidth &&
-        other.viewportHeight == viewportHeight &&
+        other.layoutSpaceWidth == layoutSpaceWidth &&
+        other.layoutSpaceHeight == layoutSpaceHeight &&
         other.layoutSeed == layoutSeed &&
         other.viewDataSignature == viewDataSignature &&
         other.seedPositionsSignature == seedPositionsSignature;
@@ -37,8 +38,8 @@ class _GraphLayoutCacheKey {
   @override
   int get hashCode => Object.hash(
     layoutMode,
-    viewportWidth,
-    viewportHeight,
+    layoutSpaceWidth,
+    layoutSpaceHeight,
     layoutSeed,
     viewDataSignature,
     seedPositionsSignature,
@@ -59,15 +60,15 @@ class GraphLayoutCache {
   static GraphLayoutResult getOrCompute({
     required GraphLayoutMode layoutMode,
     required GraphViewData viewData,
-    required Size viewportSize,
+    required GraphLayoutOptions options,
     required int? layoutSeed,
     required Map<String, Offset> seedPositions,
     required GraphLayoutResult Function() compute,
   }) {
     final cacheKey = _GraphLayoutCacheKey(
       layoutMode: layoutMode,
-      viewportWidth: viewportSize.width,
-      viewportHeight: viewportSize.height,
+      layoutSpaceWidth: options.layoutSpaceSize.width,
+      layoutSpaceHeight: options.layoutSpaceSize.height,
       layoutSeed: layoutSeed,
       viewDataSignature: _viewDataSignature(viewData),
       seedPositionsSignature: _seedPositionsSignature(viewData, seedPositions),
