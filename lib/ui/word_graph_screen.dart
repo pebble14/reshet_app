@@ -5731,6 +5731,9 @@ class _GraphLinePainter extends CustomPainter {
     if (layout.edgeLayouts.isEmpty) return;
 
     final hasFocusedEdge = selectedWordId != null;
+    final safeSceneScale = sceneScale.isFinite && sceneScale > 0
+        ? sceneScale
+        : 1.0;
     for (final edgeLayout in layout.edgeLayouts) {
       final bool isFocusedEdge = selectedEdgeIds.contains(edgeLayout.edgeId);
       final edgePriority = _edgeVisualPriorityFor(
@@ -5767,7 +5770,7 @@ class _GraphLinePainter extends CustomPainter {
 
       final paint = Paint()
         ..color = strokeColor
-        ..strokeWidth = strokeWidth
+        ..strokeWidth = strokeWidth / safeSceneScale
         ..strokeCap = StrokeCap.round
         ..style = PaintingStyle.stroke;
 
@@ -5777,6 +5780,7 @@ class _GraphLinePainter extends CustomPainter {
         edgeLayout.end,
         paint,
         edgeStyle,
+        safeSceneScale,
       );
       _drawDirectionIndicator(
         canvas,
@@ -5786,6 +5790,7 @@ class _GraphLinePainter extends CustomPainter {
         edgeLayout.targetId,
         paint,
         edgeLayout.directionSummary,
+        safeSceneScale,
       );
     }
   }
@@ -5796,6 +5801,7 @@ class _GraphLinePainter extends CustomPainter {
     Offset end,
     Paint paint,
     _GraphEdgeSemanticStyle edgeStyle,
+    double safeSceneScale,
   ) {
     switch (edgeStyle) {
       case _GraphEdgeSemanticStyle.solid:
@@ -5807,8 +5813,8 @@ class _GraphLinePainter extends CustomPainter {
           start,
           end,
           paint,
-          segmentLength: _dashedEdgeDashLength,
-          gapLength: _dashedEdgeGapLength,
+          segmentLength: _dashedEdgeDashLength / safeSceneScale,
+          gapLength: _dashedEdgeGapLength / safeSceneScale,
         );
         return;
       case _GraphEdgeSemanticStyle.dotted:
@@ -5817,8 +5823,8 @@ class _GraphLinePainter extends CustomPainter {
           start,
           end,
           paint,
-          segmentLength: _dottedEdgeDotLength,
-          gapLength: _dottedEdgeGapLength,
+          segmentLength: _dottedEdgeDotLength / safeSceneScale,
+          gapLength: _dottedEdgeGapLength / safeSceneScale,
         );
         return;
     }
@@ -5856,6 +5862,7 @@ class _GraphLinePainter extends CustomPainter {
     String targetId,
     Paint paint,
     _GraphEdgeDirectionSummary directionSummary,
+    double safeSceneScale,
   ) {
     final delta = end - start;
     final totalLength = delta.distance;
@@ -5869,12 +5876,12 @@ class _GraphLinePainter extends CustomPainter {
       case _GraphEdgeDirectionSummary.outgoing:
         final tip = end - direction * (_nodeHalfFor(targetId) + edgeInset);
         final tailReference = tip - direction * arrowLength;
-        _drawArrowHead(canvas, tip, tailReference, paint);
+        _drawArrowHead(canvas, tip, tailReference, paint, safeSceneScale);
         return;
       case _GraphEdgeDirectionSummary.incoming:
         final tip = start + direction * (_nodeHalfFor(sourceId) + edgeInset);
         final tailReference = tip + direction * arrowLength;
-        _drawArrowHead(canvas, tip, tailReference, paint);
+        _drawArrowHead(canvas, tip, tailReference, paint, safeSceneScale);
         return;
       case _GraphEdgeDirectionSummary.undirected:
       case _GraphEdgeDirectionSummary.unknown:
@@ -5896,6 +5903,7 @@ class _GraphLinePainter extends CustomPainter {
     Offset tip,
     Offset tailReference,
     Paint paint,
+    double safeSceneScale,
   ) {
     final vector = tip - tailReference;
     final length = vector.distance;
@@ -5903,7 +5911,7 @@ class _GraphLinePainter extends CustomPainter {
 
     final direction = Offset(vector.dx / length, vector.dy / length);
     final perpendicular = Offset(-direction.dy, direction.dx);
-    final wingLength = 8.0 + paint.strokeWidth;
+    final wingLength = 8.0 / safeSceneScale + paint.strokeWidth;
     final wingWidth = wingLength * 0.56;
     final base = tip - direction * wingLength;
     final wingA = base + perpendicular * wingWidth;
