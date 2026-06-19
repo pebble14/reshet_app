@@ -2054,6 +2054,12 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     final bool hasPeripheralSelection = _hasActivePeripheralSelection();
     final backgroundOpacity = _nodeOpacityForState(visualState, isCenter: true);
     final textOpacity = _nodeTextOpacityForState(visualState);
+    final safeSceneScale = _currentScale.isFinite && _currentScale > 0
+        ? _currentScale
+        : 1.0;
+    final centerNodeBorderWidth =
+        (isSelected ? _centerNodeBorderWidth : _centerNodeBorderWidth - 0.8) /
+        safeSceneScale;
     final centerAccentColor =
         _blendColor(
           languageTintColor,
@@ -2121,9 +2127,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                   color: Colors.black.withValues(
                     alpha: isSelected ? 0.66 : 0.48,
                   ),
-                  width: isSelected
-                      ? _centerNodeBorderWidth
-                      : _centerNodeBorderWidth - 0.8,
+                  width: centerNodeBorderWidth,
                 ),
                 boxShadow: boxShadows,
               ),
@@ -2256,6 +2260,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     final safeSceneScale = _currentScale.isFinite && _currentScale > 0
         ? _currentScale
         : 1.0;
+    final nodeBorderWidth = borderWidth / safeSceneScale;
     final selectedOuterRingWidth = _selectedNodeOuterRingWidth / safeSceneScale;
 
     return GestureDetector(
@@ -2334,7 +2339,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                   ),
                   border: Border.all(
                     color: effectiveAccentColor,
-                    width: borderWidth,
+                    width: nodeBorderWidth,
                   ),
                   boxShadow: boxShadows,
                 ),
