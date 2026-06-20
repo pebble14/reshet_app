@@ -37,9 +37,19 @@ Layout cache identity에는 다음 항목만 포함한다.
 - Zoom과 pan은 layout result를 변경하지 않는다.
 - Viewport resize는 layout을 다시 정의하지 않고 기존 camera 중심을 새 viewport 중심에 맞춘다.
 - Edge stroke와 dash/dot/arrowhead 같은 edge rendering metric은 screen-space 기준값을 유지하도록 rendering 단계에서 camera scale의 역수로 보정한다. 이 보정은 layout result, cache identity, graph data, camera transform을 변경하지 않는다.
-- Graph node border와 peripheral selected node outer ring 두께도 screen-space 기준값을 유지하도록 rendering 단계에서 camera scale의 역수로 보정한다.
+- Graph node border와 peripheral selected node outer ring 두께는 node의 실효 화면 scale을 기준으로 역보정해 screen-space 기준값을 유지한다.
 - Peripheral node의 기본 identity pair는 상단 Strong 번호와 하단 spelling이다. 실제 Strong 값은 transliteration 유무와 관계없이 표시하며, spelling/primary 값이 없으면 기존 word ID fallback을 유지한다.
-- Peripheral spelling/primary label font는 zoom에 따른 screen-space 가독성 변동을 완화하기 위해 camera scale 역보정값을 기본 font size의 85%~125% 범위로 제한한다. Strong identity line도 같은 목적의 역보정을 적용하되 두 줄 구성의 overflow를 제한하도록 기본 font size의 90%~115% 범위로 제한한다. 이 보정은 center label, language label 또는 transliteration LOD 정책으로 확장되지 않는다.
+- Peripheral spelling/primary label font는 zoom에 따른 screen-space 가독성 변동을 완화하기 위해 node의 실효 화면 scale 역보정값을 기본 font size의 85%~125% 범위로 제한한다. Strong identity line도 같은 목적의 역보정을 적용하되 두 줄 구성의 overflow를 제한하도록 기본 font size의 90%~115% 범위로 제한한다. 이 보정은 center label, language label 또는 transliteration LOD 정책으로 확장되지 않는다.
+
+### 4.1 Node 시각 확대 상한
+
+- Camera scale `S`와 node-local visual scale `V`의 책임을 분리한다. 안전한 camera scale은 0 이하 또는 비정상 값을 `1.0`으로 정규화한다.
+- Node-local visual scale은 `V = min(1.0, 1.6 / S)`, node의 실효 화면 scale은 `E = S × V`다.
+- Center와 peripheral node의 본체, label, border, ring, shadow 및 사각 hit area는 node 중심을 기준으로 `V`를 함께 적용한다. Center label에는 별도 역보정을 추가하지 않는다.
+- Node center의 layout coordinate, node center 간 거리, edge 길이와 scene의 pan/zoom 위치 관계는 raw camera scale `S`를 계속 따른다.
+- Peripheral Strong·spelling font, node border와 selected outer ring 두께의 기존 clamp·screen-space 보정은 raw `S`가 아니라 `E`를 기준으로 한다.
+- Edge stroke, dash/dot metric과 arrowhead 자체는 raw `S` 기준 보정을 유지한다. Arrow tip의 node 경계 참조에만 `base node half × V`를 사용하며 기존 scene-space `edgeInset`은 유지한다.
+- 이 상한은 zoom별 정보량을 바꾸는 full LOD가 아니다.
 
 ## 5. 현재 구현 범위와 비범위
 
@@ -111,4 +121,4 @@ PyVis-like interaction은 이 layout/viewport 경계 위에서 별도 단계로 
 
 ### 6.7 비범위
 
-이 계약은 full LOD, edge label·metric·border·ring, relation visual style mapping, DB schema·migration·repository·SQL, graph layout·physics·drag·pin, 새 graph dependency, 다크모드 변경을 포함하지 않는다.
+이 계약은 full LOD, edge label·metric, relation visual style mapping, DB schema·migration·repository·SQL, graph layout·physics·drag·pin, 새 graph dependency, 다크모드 변경을 포함하지 않는다.

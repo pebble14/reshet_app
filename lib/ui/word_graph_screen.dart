@@ -40,6 +40,7 @@ const double _centerNodeSize = 180.0;
 const double _centerNodeHalf = _centerNodeSize / 2;
 const double _connectedNodeSize = 80.0;
 const double _connectedNodeHalf = _connectedNodeSize / 2;
+const double _nodeVisualScaleCap = 1.6;
 const double _depthOneNodeSize = 84.0;
 const double _depthTwoNodeSize = 76.0;
 const double _placeholderAnchorGap = 16.0;
@@ -130,6 +131,25 @@ const double _selectedNodeRelationOverlayInset = 16.0;
 const double _selectedNodeRelationOverlayMinHeight = 40.0;
 const double _selectedNodePreviewMaxWidth = 320.0;
 const double _selectedNodePreviewLauncherGap = 12.0;
+
+double _safeCameraScale(double cameraScale) {
+  return cameraScale.isFinite && cameraScale > 0 ? cameraScale : 1.0;
+}
+
+double _nodeLocalVisualScale(double cameraScale) {
+  final safeCameraScale = _safeCameraScale(cameraScale);
+  return min(1.0, _nodeVisualScaleCap / safeCameraScale);
+}
+
+double _effectiveNodeScreenScale(double cameraScale) {
+  final safeCameraScale = _safeCameraScale(cameraScale);
+  return safeCameraScale * _nodeLocalVisualScale(safeCameraScale);
+}
+
+double _effectiveNodeHalf(double baseNodeHalf, double cameraScale) {
+  return baseNodeHalf * _nodeLocalVisualScale(cameraScale);
+}
+
 const double _dashedEdgeDashLength = 14.0;
 const double _dashedEdgeGapLength = 9.0;
 const double _dottedEdgeDotLength = 1.0;
@@ -1415,11 +1435,19 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                             Positioned(
                               left: layout.centerBounds.left,
                               top: layout.centerBounds.top,
-                              child: GestureDetector(
-                                onTap: _handleCenterNodeTap,
-                                child: _buildCenterNode(
-                                  centerDisplayItem,
-                                  visualState: centerVisualState,
+                              child: Transform.scale(
+                                key: const ValueKey<String>(
+                                  'graph-center-node-visual-scale',
+                                ),
+                                scale: _nodeLocalVisualScale(_currentScale),
+                                alignment: Alignment.center,
+                                transformHitTests: true,
+                                child: GestureDetector(
+                                  onTap: _handleCenterNodeTap,
+                                  child: _buildCenterNode(
+                                    centerDisplayItem,
+                                    visualState: centerVisualState,
+                                  ),
                                 ),
                               ),
                             ),
@@ -2211,12 +2239,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     final bool hasPeripheralSelection = _hasActivePeripheralSelection();
     final backgroundOpacity = _nodeOpacityForState(visualState, isCenter: true);
     final textOpacity = _nodeTextOpacityForState(visualState);
-    final safeSceneScale = _currentScale.isFinite && _currentScale > 0
-        ? _currentScale
-        : 1.0;
+    final effectiveScreenScale = _effectiveNodeScreenScale(_currentScale);
     final centerNodeBorderWidth =
         (isSelected ? _centerNodeBorderWidth : _centerNodeBorderWidth - 0.8) /
-        safeSceneScale;
+        effectiveScreenScale;
     final centerAccentColor =
         _blendColor(
           languageTintColor,
@@ -2414,20 +2440,17 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     final double labelFontSize = isDepthTwo ? 11.0 : 12.0;
     final double secondaryLabelFontSize = isDepthTwo ? 9.0 : 10.0;
     final double nodeSize = nodeLayout.nodeSize;
-    final safeSceneScale = _currentScale.isFinite && _currentScale > 0
-        ? _currentScale
-        : 1.0;
-    final boundedPrimaryLabelFontSize = (labelFontSize / safeSceneScale).clamp(
-      labelFontSize * 0.85,
-      labelFontSize * 1.25,
-    );
+    final effectiveScreenScale = _effectiveNodeScreenScale(_currentScale);
+    final boundedPrimaryLabelFontSize = (labelFontSize / effectiveScreenScale)
+        .clamp(labelFontSize * 0.85, labelFontSize * 1.25);
     final boundedStrongIdentityFontSize =
-        (secondaryLabelFontSize / safeSceneScale).clamp(
+        (secondaryLabelFontSize / effectiveScreenScale).clamp(
           secondaryLabelFontSize * 0.90,
           secondaryLabelFontSize * 1.15,
         );
-    final nodeBorderWidth = borderWidth / safeSceneScale;
-    final selectedOuterRingWidth = _selectedNodeOuterRingWidth / safeSceneScale;
+    final nodeBorderWidth = borderWidth / effectiveScreenScale;
+    final selectedOuterRingWidth =
+        _selectedNodeOuterRingWidth / effectiveScreenScale;
 
     return GestureDetector(
       onTap: () => _handleConnectedWordTap(word),
@@ -3478,7 +3501,13 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         Positioned(
           left: nodeLayout.nodeBounds.left,
           top: nodeLayout.nodeBounds.top,
-          child: child,
+          child: Transform.scale(
+            key: ValueKey<String>('graph-node-visual-scale:${graphNode.id}'),
+            scale: _nodeLocalVisualScale(_currentScale),
+            alignment: Alignment.center,
+            transformHitTests: true,
+            child: child,
+          ),
         ),
       );
     }
@@ -6067,10 +6096,12 @@ class _GraphLinePainter extends CustomPainter {
 
   double _nodeHalfFor(String nodeId) {
     if (nodeId == layout.centerNodeId) {
-      return _centerNodeHalf;
+      return _effectiveNodeHalf(_centerNodeHalf, sceneScale);
     }
 
-    return layout.nodeLayoutById[nodeId]?.nodeHalf ?? _connectedNodeHalf;
+    final baseNodeHalf =
+        layout.nodeLayoutById[nodeId]?.nodeHalf ?? _connectedNodeHalf;
+    return _effectiveNodeHalf(baseNodeHalf, sceneScale);
   }
 
   void _drawArrowHead(
