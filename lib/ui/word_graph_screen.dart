@@ -999,16 +999,6 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     return left.containsAll(right);
   }
 
-  String _secondaryLabelForPeripheralWord(
-    GraphWordLabelDisplayItem labelDisplay,
-  ) {
-    return labelDisplay.secondaryLabel(
-      showStrongNumber: _dbWideCollisionWordIdsForVisibleGraph.contains(
-        labelDisplay.wordId.trim(),
-      ),
-    );
-  }
-
   GraphWordLabelDisplayItem _labelDisplayForGraphNode(GraphNode graphNode) {
     final wordId = graphNode.wordId.trim();
     final labelDisplay = _graphWordLabelsById[wordId];
@@ -2182,8 +2172,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     required _GraphNodeLayout nodeLayout,
     required _GraphVisualState visualState,
   }) {
-    final label = labelDisplay.peripheralTitleLabel;
-    final secondaryLabel = _secondaryLabelForPeripheralWord(labelDisplay);
+    final spellingLabel = labelDisplay.peripheralTitleLabel;
+    final strongIdentityLabel = labelDisplay.displayStrongNumber.trim();
     final bool isDepthTwo = nodeLayout.depth >= 2;
     final bool isSelected = visualState == _GraphVisualState.selected;
     final bool isDimmed = visualState == _GraphVisualState.dimmed;
@@ -2264,6 +2254,11 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       labelFontSize * 0.85,
       labelFontSize * 1.25,
     );
+    final boundedStrongIdentityFontSize =
+        (secondaryLabelFontSize / safeSceneScale).clamp(
+          secondaryLabelFontSize * 0.90,
+          secondaryLabelFontSize * 1.15,
+        );
     final nodeBorderWidth = borderWidth / safeSceneScale;
     final selectedOuterRingWidth = _selectedNodeOuterRingWidth / safeSceneScale;
 
@@ -2358,8 +2353,21 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    if (strongIdentityLabel.isNotEmpty) ...[
+                      Text(
+                        strongIdentityLabel,
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: boundedStrongIdentityFontSize,
+                          fontWeight: secondaryLabelFontWeight,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                    ],
                     Text(
-                      label,
+                      spellingLabel,
                       textAlign: TextAlign.center,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -2368,19 +2376,6 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                         fontWeight: labelFontWeight,
                       ),
                     ),
-                    if (secondaryLabel.isNotEmpty) ...[
-                      const SizedBox(height: 2),
-                      Text(
-                        secondaryLabel,
-                        textAlign: TextAlign.center,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: secondaryLabelFontSize,
-                          fontWeight: secondaryLabelFontWeight,
-                        ),
-                      ),
-                    ],
                   ],
                 ),
               ),

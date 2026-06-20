@@ -38,7 +38,8 @@ Layout cache identity에는 다음 항목만 포함한다.
 - Viewport resize는 layout을 다시 정의하지 않고 기존 camera 중심을 새 viewport 중심에 맞춘다.
 - Edge stroke와 dash/dot/arrowhead 같은 edge rendering metric은 screen-space 기준값을 유지하도록 rendering 단계에서 camera scale의 역수로 보정한다. 이 보정은 layout result, cache identity, graph data, camera transform을 변경하지 않는다.
 - Graph node border와 peripheral selected node outer ring 두께도 screen-space 기준값을 유지하도록 rendering 단계에서 camera scale의 역수로 보정한다.
-- Peripheral spelling/primary label font는 zoom에 따른 screen-space 가독성 변동을 완화하기 위해 camera scale 역보정값을 기본 font size의 85%~125% 범위로 제한한다. 이 보정은 center label과 secondary label에는 적용하지 않는다.
+- Peripheral node의 기본 identity pair는 상단 Strong 번호와 하단 spelling이다. 실제 Strong 값은 transliteration 유무와 관계없이 표시하며, spelling/primary 값이 없으면 기존 word ID fallback을 유지한다.
+- Peripheral spelling/primary label font는 zoom에 따른 screen-space 가독성 변동을 완화하기 위해 camera scale 역보정값을 기본 font size의 85%~125% 범위로 제한한다. Strong identity line도 같은 목적의 역보정을 적용하되 두 줄 구성의 overflow를 제한하도록 기본 font size의 90%~115% 범위로 제한한다. 이 보정은 center label, language label 또는 transliteration LOD 정책으로 확장되지 않는다.
 
 ## 5. 현재 구현 범위와 비범위
 
