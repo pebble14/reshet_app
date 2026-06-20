@@ -2260,6 +2260,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     final safeSceneScale = _currentScale.isFinite && _currentScale > 0
         ? _currentScale
         : 1.0;
+    final boundedPrimaryLabelFontSize = (labelFontSize / safeSceneScale).clamp(
+      labelFontSize * 0.85,
+      labelFontSize * 1.25,
+    );
     final nodeBorderWidth = borderWidth / safeSceneScale;
     final selectedOuterRingWidth = _selectedNodeOuterRingWidth / safeSceneScale;
 
@@ -2360,7 +2364,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        fontSize: labelFontSize,
+                        fontSize: boundedPrimaryLabelFontSize,
                         fontWeight: labelFontWeight,
                       ),
                     ),
