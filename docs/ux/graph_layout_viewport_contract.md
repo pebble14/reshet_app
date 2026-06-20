@@ -61,7 +61,7 @@ PyVis-like interaction은 이 layout/viewport 경계 위에서 별도 단계로 
 ### 6.1 현재 구현 상태
 
 - Peripheral node는 Strong 값이 있으면 상단에 표시하고, 하단에는 spelling을 표시한다. spelling이 없으면 `wordId`를 사용한다.
-- Center node는 현재 language, Strong, spelling, transliteration, pronunciation, meaning을 실제 값이 있는 범위에서 조건부로 표시한다. 아래의 center compact 구조는 아직 구현되지 않았다.
+- Center node는 Strong 값이 있으면 상단에 표시하고, 하단에는 spelling을 표시한다. Strong 값이 없으면 해당 줄을 생략하고, spelling이 없으면 `wordId`를 사용한다.
 - 현재 선택 노드에 표시 가능한 관계가 하나 이상 있으면 graph 우하단에 compact한 “관계 보기” launcher가 표시된다. 관계가 1건이면 바로 해당 관계로 진입하고, 복수이면 popup menu에서 관계를 선택한다. 표시 가능한 관계가 없으면 launcher를 표시하지 않는다.
 - Mobile selected-node preview는 아직 구현되지 않았다. 아래 mobile 항목은 현재 구현 설명이 아니라 확정된 향후 UX 계약이다.
 
@@ -76,7 +76,7 @@ PyVis-like interaction은 이 layout/viewport 경계 위에서 별도 단계로 
 - Strong 번호와 spelling은 graph node의 core identity pair이며 기본 순서는 `Strong → spelling`이다.
 - 실제 Strong 값이 있으면 항상 표시한다. 값이 없으면 임의 값을 만들지 않고 Strong 줄을 생략한다.
 - spelling이 없으면 기존 `wordId` fallback을 유지한다.
-- Center와 peripheral은 동일한 정보량일 필요가 없다. 다만 center node도 장기적으로 Strong과 spelling 중심의 compact structure를 따른다.
+- Center와 peripheral은 동일한 정보량일 필요가 없다. 현재 center와 peripheral 모두 Strong과 spelling 중심의 compact structure를 따른다.
 - Center node의 중요성은 더 큰 크기, 중심 위치, 강조색, 선택·중심 affordance로 유지한다.
 - 기본 node label에는 language, transliteration, pronunciation, meaning을 넣지 않는다.
 - 향후 language를 실제 텍스트로 표시하는 정책이 생기면 label 최상단에 둔다.

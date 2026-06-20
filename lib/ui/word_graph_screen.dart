@@ -1953,12 +1953,11 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     GraphCenterWordDisplayItem displayItem, {
     required _GraphVisualState visualState,
   }) {
-    final language = displayItem.language.trim();
     final strongNumber = displayItem.displayStrongNumber.trim();
-    final spelling = displayItem.representativeSpelling.trim();
-    final pronunciation = displayItem.representativePronunciation.trim();
-    final transliteration = displayItem.representativeTransliteration.trim();
-    final meaning = displayItem.primaryMeaning.trim();
+    final representativeSpelling = displayItem.representativeSpelling.trim();
+    final spelling = representativeSpelling.isNotEmpty
+        ? representativeSpelling
+        : displayItem.wordId.trim();
     final languageTintColor = _colorForWordLanguageGroup(displayItem.wordId);
     final centerInnerColor = _surfaceTint(
       languageTintColor,
@@ -1981,10 +1980,6 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       children.add(child);
     }
 
-    if (language.isNotEmpty) {
-      addNodeText(Text(language, style: const TextStyle(fontSize: 12)), gap: 4);
-    }
-
     if (strongNumber.isNotEmpty) {
       addNodeText(
         Text(strongNumber, style: const TextStyle(fontSize: 12)),
@@ -2000,42 +1995,6 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-      );
-    }
-
-    if (transliteration.isNotEmpty) {
-      addNodeText(
-        Text(
-          transliteration,
-          textAlign: TextAlign.center,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: const TextStyle(fontSize: 11),
-        ),
-      );
-    }
-
-    if (pronunciation.isNotEmpty) {
-      addNodeText(
-        Text(
-          pronunciation,
-          textAlign: TextAlign.center,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: const TextStyle(fontSize: 12),
-        ),
-      );
-    }
-
-    if (meaning.isNotEmpty) {
-      addNodeText(
-        Text(
-          meaning,
-          textAlign: TextAlign.center,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-          style: const TextStyle(fontSize: 12),
         ),
       );
     }
