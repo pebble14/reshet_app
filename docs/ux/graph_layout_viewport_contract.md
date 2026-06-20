@@ -63,7 +63,7 @@ PyVis-like interaction은 이 layout/viewport 경계 위에서 별도 단계로 
 - Peripheral node는 Strong 값이 있으면 상단에 표시하고, 하단에는 spelling을 표시한다. spelling이 없으면 `wordId`를 사용한다.
 - Center node는 Strong 값이 있으면 상단에 표시하고, 하단에는 spelling을 표시한다. Strong 값이 없으면 해당 줄을 생략하고, spelling이 없으면 `wordId`를 사용한다.
 - 현재 선택 노드에 표시 가능한 관계가 하나 이상 있으면 graph 우하단에 compact한 “관계 보기” launcher가 표시된다. 관계가 1건이면 바로 해당 관계로 진입하고, 복수이면 popup menu에서 관계를 선택한다. 표시 가능한 관계가 없으면 launcher를 표시하지 않는다.
-- Mobile selected-node preview는 아직 구현되지 않았다. 아래 mobile 항목은 현재 구현 설명이 아니라 확정된 향후 UX 계약이다.
+- Mobile selected-node preview와 기존 full-detail route 연결은 구현되어 있다.
 
 ### 6.2 Graph와 detail의 역할 경계
 
@@ -89,12 +89,14 @@ PyVis-like interaction은 이 layout/viewport 경계 위에서 별도 단계로 
 
 ### 6.5 Mobile detail 접근 정책
 
-다음은 확정된 향후 구현 정책이며 현재 구현 완료 상태를 뜻하지 않는다.
+다음은 현재 구현된 mobile detail 접근 정책이다.
 
 - Mobile graph에서는 선택된 node가 있을 때만 compact selected-node preview surface를 표시한다.
 - 선택된 node가 없으면 preview를 표시하지 않는다. Center word가 존재한다는 이유만으로 자동 표시하지 않는다.
+- 전체 창 폭이 900px 미만일 때만 preview를 표시하며, 900px 이상 large-screen에서는 preview를 표시하지 않고 기존 detail panel 역할을 유지한다.
 - Center node도 사용자가 명시적으로 탭해 선택할 수 있으며, 선택되면 같은 preview 규칙을 적용한다.
 - Preview는 현재 mobile “관계 보기”와 같은 compact secondary surface 계열의 표현과 상호작용 리듬을 따른다. 같은 widget이나 구현을 재사용한다는 의미는 아니다.
+- Preview와 “관계 보기” launcher가 함께 표시되면 preview를 launcher 위에 배치해 tap 영역이 겹치지 않게 한다.
 - Preview에는 실제 값이 있는 범위에서 Strong, spelling, transliteration, meaning 1까지만 이 순서로 표시한다.
 - Transliteration 또는 meaning 1이 없으면 placeholder를 만들지 않고 해당 항목을 생략한다.
 - Node 탭은 선택, preview 탭은 해당 선택 node의 기존 full detail route 진입 역할을 맡는다.
@@ -102,11 +104,10 @@ PyVis-like interaction은 이 layout/viewport 경계 위에서 별도 단계로 
 
 ### 6.6 구현 분리 원칙
 
-- Center compact와 mobile selected-node preview/detail route는 설계상 연결되지만 별도의 small production slice로 구현한다.
-- Center compact는 graph label renderer 범위다.
-- Mobile preview/detail 접근은 mobile selection state, compact surface, 기존 detail route 연결 범위다.
-- 두 작업을 하나의 production branch에 묶지 않는다.
-- Mobile preview 구현 전에는 해당 route와 selection seam만 대상으로 별도 read-only audit을 수행한다.
+- Center compact와 mobile selected-node preview/detail route는 설계상 연결되지만 별도의 small production slice로 구현되었다.
+- Center compact는 graph label renderer 범위로 구현되었다.
+- Phase 24-K에서 mobile preview 구현 전 route와 selection seam의 read-only audit을 완료했다.
+- Mobile preview/detail 접근은 별도 구현으로 mobile selection state, compact surface, 기존 detail route 연결 범위에 한정했다.
 
 ### 6.7 비범위
 

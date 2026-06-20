@@ -22,9 +22,12 @@ import '../domain/graph/layout/graph_layout_options.dart';
 import '../domain/graph/layout/graph_layout_strategy_resolver.dart';
 import '../domain/relation/relation_formatter.dart';
 import '../domain/word/duplicate_candidate_display_item.dart';
+import '../domain/word/word_detail_like_display_item.dart';
 import '../domain/word/word_edit_save_result.dart';
 import '../domain/word/word_write_models.dart';
 import '../domain/word/word_write_service.dart';
+import 'responsive_layout.dart';
+import 'word_detail_screen.dart';
 import 'word_expression_set.dart';
 import 'word_detail_route_result.dart';
 import 'word_graph_cache.dart';
@@ -125,6 +128,8 @@ const double _centerChangeFocusShiftFactor = 0.38;
 const double _centerChangeFocusMaxShift = 112.0;
 const double _selectedNodeRelationOverlayInset = 16.0;
 const double _selectedNodeRelationOverlayMinHeight = 40.0;
+const double _selectedNodePreviewMaxWidth = 320.0;
+const double _selectedNodePreviewLauncherGap = 12.0;
 const double _dashedEdgeDashLength = 14.0;
 const double _dashedEdgeGapLength = 9.0;
 const double _dottedEdgeDotLength = 1.0;
@@ -776,6 +781,9 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   /// 사용자가 클릭(선택)한 주변 노드 id
   /// - 같은 노드를 다시 클릭하면 이동(push)하는 트리거로 사용
   String? _selectedWordId;
+  WordDetailLikeDisplayItem? _selectedWordPreviewItem;
+  String? _selectedWordPreviewItemWordId;
+  int _selectedWordPreviewRequestSerial = 0;
 
   /// 상대 단어 id 기준으로 관계(엣지) 메타를 보관한다.
   /// - 여러 관계가 있을 수 있으나, 현재는 “표시용 1개”만 선택(마지막으로 덮어씀)
@@ -840,6 +848,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         _centerWord = _centerSeedWordFrom(nextCenterSeedId);
         _centerWordDisplayItem = null;
         _selectedWordId = widget.selectedWordId;
+        _resetSelectedWordPreviewState();
         _isLoading = true;
         _errorMessage = null;
         _graphViewData = null;
@@ -860,6 +869,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                 graphViewData,
                 widget.selectedWordId,
               );
+        _syncSelectedWordPreviewForCurrentSelection();
       });
     }
   }
@@ -896,6 +906,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       ..clear()
       ..addAll(labelsById);
     _selectedWordId = _resolvedSelectedWordIdForViewData(viewData);
+    _syncSelectedWordPreviewForCurrentSelection();
 
     _edgeInfosByEdgeId.clear();
     _adjacentNodeIdsByNodeId.clear();
@@ -1435,7 +1446,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                   ),
                 ),
               ),
-              _buildSelectedNodeRelationOverlay(
+              _buildSelectedNodeBottomRightOverlayGroup(
                 context,
                 relationEntries: selectedRelationEntries,
               ),
@@ -1456,12 +1467,43 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     );
   }
 
-  Widget _buildSelectedNodeRelationOverlay(
+  Widget _buildSelectedNodeBottomRightOverlayGroup(
+    BuildContext context, {
+    required List<_SelectedNodeRelationEntry> relationEntries,
+  }) {
+    final preview = _buildSelectedWordPreview(context);
+    final relationLauncher = _buildSelectedNodeRelationLauncherOverlay(
+      context,
+      relationEntries: relationEntries,
+    );
+    if (preview == null && relationLauncher == null) {
+      return const SizedBox.shrink();
+    }
+
+    return SafeArea(
+      minimum: const EdgeInsets.all(_selectedNodeRelationOverlayInset),
+      child: Align(
+        alignment: Alignment.bottomRight,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            ?preview,
+            if (preview != null && relationLauncher != null)
+              const SizedBox(height: _selectedNodePreviewLauncherGap),
+            ?relationLauncher,
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget? _buildSelectedNodeRelationLauncherOverlay(
     BuildContext context, {
     required List<_SelectedNodeRelationEntry> relationEntries,
   }) {
     if (relationEntries.isEmpty) {
-      return const SizedBox.shrink();
+      return null;
     }
 
     final launcher = relationEntries.length == 1
@@ -1529,21 +1571,187 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         .map((entry) => entry.edgeId)
         .join(':');
 
-    return SafeArea(
-      minimum: const EdgeInsets.all(_selectedNodeRelationOverlayInset),
-      child: Align(
-        alignment: Alignment.bottomRight,
-        child: AnimatedSwitcher(
-          duration: _visualStateAnimationDuration,
-          switchInCurve: Curves.easeOutCubic,
-          switchOutCurve: Curves.easeOutCubic,
-          child: KeyedSubtree(
-            key: ValueKey<String>(edgeSignature),
-            child: launcher,
+    return KeyedSubtree(
+      key: const Key('selected-node-relation-launcher'),
+      child: AnimatedSwitcher(
+        duration: _visualStateAnimationDuration,
+        switchInCurve: Curves.easeOutCubic,
+        switchOutCurve: Curves.easeOutCubic,
+        child: KeyedSubtree(
+          key: ValueKey<String>(edgeSignature),
+          child: launcher,
+        ),
+      ),
+    );
+  }
+
+  Widget? _buildSelectedWordPreview(BuildContext context) {
+    if (isExplorerLargeScreenWidth(MediaQuery.sizeOf(context).width)) {
+      return null;
+    }
+
+    final selectedWordId = (_selectedWordId ?? '').trim();
+    final previewItem = _selectedWordPreviewItem;
+    if (selectedWordId.isEmpty ||
+        previewItem == null ||
+        _selectedWordPreviewItemWordId != selectedWordId) {
+      return null;
+    }
+
+    final strong = _nullIfBlank(previewItem.displayStrongNumber);
+    final spelling =
+        _nullIfBlank(previewItem.representativeSpelling) ?? selectedWordId;
+    final transliteration = _firstNonBlank(previewItem.transliterations);
+    final meaning = _firstNonBlank(previewItem.meanings);
+
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: _selectedNodePreviewMaxWidth),
+      child: Material(
+        key: const Key('mobile-selected-node-preview'),
+        color: Theme.of(context).colorScheme.surfaceContainerHigh,
+        elevation: 4,
+        shadowColor: Theme.of(context).shadowColor.withValues(alpha: 0.16),
+        borderRadius: BorderRadius.circular(16),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: () {
+            unawaited(_openSelectedWordPreviewDetail());
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (strong != null)
+                  Text(strong, style: Theme.of(context).textTheme.labelMedium),
+                Text(
+                  spelling,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                if (transliteration != null)
+                  Text(
+                    transliteration,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                if (meaning != null)
+                  Text(
+                    meaning,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+              ],
+            ),
           ),
         ),
       ),
     );
+  }
+
+  String? _firstNonBlank(Iterable<String> values) {
+    for (final value in values) {
+      final normalized = _nullIfBlank(value);
+      if (normalized != null) {
+        return normalized;
+      }
+    }
+    return null;
+  }
+
+  void _resetSelectedWordPreviewState() {
+    _selectedWordPreviewRequestSerial++;
+    _selectedWordPreviewItem = null;
+    _selectedWordPreviewItemWordId = null;
+  }
+
+  void _syncSelectedWordPreviewForCurrentSelection() {
+    _resetSelectedWordPreviewState();
+    final selectedWordId = (_selectedWordId ?? '').trim();
+    if (selectedWordId.isEmpty) {
+      return;
+    }
+
+    final requestSerial = _selectedWordPreviewRequestSerial;
+    unawaited(
+      _loadSelectedWordPreview(
+        selectedWordId: selectedWordId,
+        requestSerial: requestSerial,
+      ),
+    );
+  }
+
+  Future<void> _loadSelectedWordPreview({
+    required String selectedWordId,
+    required int requestSerial,
+  }) async {
+    WordDetailLikeDisplayItem? previewItem;
+    try {
+      previewItem = await _repository
+          .getWordDetailLikeDisplayItemByIdForDetailScreen(selectedWordId);
+    } catch (_) {
+      previewItem = null;
+    }
+
+    if (!mounted ||
+        requestSerial != _selectedWordPreviewRequestSerial ||
+        selectedWordId != (_selectedWordId ?? '').trim()) {
+      return;
+    }
+
+    setState(() {
+      _selectedWordPreviewItem = previewItem;
+      _selectedWordPreviewItemWordId = previewItem == null
+          ? null
+          : selectedWordId;
+    });
+  }
+
+  void _setSelectedWordId(String? wordId) {
+    final normalizedWordId = (wordId ?? '').trim();
+    setState(() {
+      _selectedWordId = normalizedWordId.isEmpty ? null : normalizedWordId;
+      _syncSelectedWordPreviewForCurrentSelection();
+    });
+  }
+
+  Future<void> _openSelectedWordPreviewDetail() async {
+    _temporarilySuppressBackgroundTapClear();
+    final selectedWordId = (_selectedWordId ?? '').trim();
+    final previewItem = _selectedWordPreviewItem;
+    if (selectedWordId.isEmpty ||
+        previewItem == null ||
+        _selectedWordPreviewItemWordId != selectedWordId) {
+      return;
+    }
+
+    final detailResult = await Navigator.push<WordDetailRouteResult>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => WordDetailScreen(
+          wordId: selectedWordId,
+          initialDisplayItem: previewItem,
+        ),
+      ),
+    );
+    if (!mounted) return;
+
+    if (detailResult is WordDetailDeletedResult) {
+      final deletedWordId = detailResult.wordId.trim();
+      if (deletedWordId == _centerWordId) {
+        Navigator.pop(context, detailResult);
+        return;
+      }
+      if ((_selectedWordId ?? '').trim() == deletedWordId) {
+        _setSelectedWordId(null);
+        widget.onClearSelection?.call();
+      }
+    }
+
+    WordGraphDataCache.clear();
+    await _loadConnectedWords();
   }
 
   Widget _buildSelectedNodeRelationLauncher(
@@ -1812,7 +2020,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   void _handleCenterNodeTap() {
     _temporarilySuppressBackgroundTapClear();
     if (_selectedWordId != _centerWordId) {
-      setState(() => _selectedWordId = _centerWordId);
+      _setSelectedWordId(_centerWordId);
     }
 
     _notifySelectedWord(_centerWordCompatibilityFallback());
@@ -1823,7 +2031,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     final isSameTap = _selectedWordId == word.id;
 
     if (!isSameTap) {
-      setState(() => _selectedWordId = word.id);
+      _setSelectedWordId(word.id);
       _notifySelectedWord(word);
       unawaited(_expandDepthTwoForSelection(word));
       return;
@@ -1849,7 +2057,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     if (graphResult is WordDetailDeletedResult) {
       final deletedWordId = graphResult.wordId.trim();
       if (_selectedWordId == deletedWordId) {
-        setState(() => _selectedWordId = null);
+        _setSelectedWordId(null);
         widget.onClearSelection?.call();
       }
       WordGraphDataCache.clear();
@@ -2549,7 +2757,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
   void _clearSelectedWord() {
     if (_selectedWordId == null) return;
-    setState(() => _selectedWordId = null);
+    _setSelectedWordId(null);
     widget.onClearSelection?.call();
   }
 
@@ -4868,7 +5076,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       return;
     }
 
-    setState(() => _selectedWordId = null);
+    _setSelectedWordId(null);
     widget.onClearSelection?.call();
     await _loadConnectedWords();
   }
@@ -5020,7 +5228,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       await _loadConnectedWords();
 
       if (!mounted) return;
-      setState(() => _selectedWordId = newId);
+      _setSelectedWordId(newId);
       _notifySelectedWord(Word(id: newId));
 
       ScaffoldMessenger.of(
@@ -5054,7 +5262,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     await _loadConnectedWords();
 
     if (!mounted) return;
-    setState(() => _selectedWordId = newId);
+    _setSelectedWordId(newId);
 
     ScaffoldMessenger.of(
       context,

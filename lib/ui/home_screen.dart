@@ -18,6 +18,7 @@ import '../database/database_service.dart';
 import 'word_detail_route_result.dart';
 import 'word_detail_screen.dart';
 import '../data/repositories/word_repository.dart';
+import 'responsive_layout.dart';
 import 'word_graph_cache.dart';
 import 'word_graph_screen.dart';
 import 'word_explorer_screen.dart';
@@ -65,7 +66,6 @@ class _HomeScreenState extends State<HomeScreen> {
   static const double _strongRailListItemExtent = 46.0;
   static const double _largeScreenStrongControlSurfaceWidth = 160.0;
   static const double _largeScreenStrongControlHorizontalPadding = 12.0;
-  static const double _largeScreenSplitBreakpoint = 900.0;
   static const String _largeScreenDefaultExplorerWordId = 'H0001_0000';
   static const Duration _strongJumpDebounceDuration = Duration(
     milliseconds: 300,
@@ -246,7 +246,7 @@ class _HomeScreenState extends State<HomeScreen> {
       return false;
     }
 
-    return _isLargeScreenWidth(mediaQuery.size.width);
+    return isExplorerLargeScreenWidth(mediaQuery.size.width);
   }
 
   bool _canRunAutoStrongRailJump(String input) {
@@ -924,7 +924,7 @@ class _HomeScreenState extends State<HomeScreen> {
           itemCount: items.length,
           itemBuilder: (context, index) {
             final item = items[index];
-            final showLargeScreenTargetFeedback = _isLargeScreenWidth(
+            final showLargeScreenTargetFeedback = isExplorerLargeScreenWidth(
               MediaQuery.of(context).size.width,
             );
             final isCurrentLargeScreenTarget =
@@ -958,7 +958,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               onTap: () async {
                 final width = MediaQuery.of(context).size.width;
-                if (_isLargeScreenWidth(width)) {
+                if (isExplorerLargeScreenWidth(width)) {
                   _showWordInLargeScreenExplorerPane(item.wordId);
                   return;
                 }
@@ -993,10 +993,6 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
-  }
-
-  bool _isLargeScreenWidth(double width) {
-    return width >= _largeScreenSplitBreakpoint;
   }
 
   void _showWordInLargeScreenExplorerPane(String wordId) {
@@ -1273,7 +1269,9 @@ class _HomeScreenState extends State<HomeScreen> {
           ? _buildDatabaseErrorView(_dbErrorMessage!)
           : LayoutBuilder(
               builder: (context, constraints) {
-                final isLargeScreen = _isLargeScreenWidth(constraints.maxWidth);
+                final isLargeScreen = isExplorerLargeScreenWidth(
+                  constraints.maxWidth,
+                );
                 final homeSearchControlArea = Padding(
                   padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
                   child: isLargeScreen
@@ -1449,7 +1447,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 final width = MediaQuery.of(context).size.width;
 
                                 // 넓은 화면(데스크탑/태블릿)에서는 스플릿뷰
-                                if (_isLargeScreenWidth(width)) {
+                                if (isExplorerLargeScreenWidth(width)) {
                                   _showWordInLargeScreenExplorerPane(wordId);
                                   return;
                                 }
