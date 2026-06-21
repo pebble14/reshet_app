@@ -2243,11 +2243,18 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     GraphCenterWordDisplayItem displayItem, {
     required _GraphVisualState visualState,
   }) {
+    final language = displayItem.language.trim();
     final strongNumber = displayItem.displayStrongNumber.trim();
+    final metadata = [
+      if (language.isNotEmpty) language,
+      if (strongNumber.isNotEmpty) strongNumber,
+    ].join(' · ');
     final representativeSpelling = displayItem.representativeSpelling.trim();
     final spelling = representativeSpelling.isNotEmpty
         ? representativeSpelling
         : displayItem.wordId.trim();
+    final transliteration = displayItem.representativeTransliteration.trim();
+    final meaning = displayItem.primaryMeaning.trim();
     final languageTintColor = _colorForWordLanguageGroup(displayItem.wordId);
     final centerInnerColor = _surfaceTint(
       languageTintColor,
@@ -2270,9 +2277,18 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       children.add(child);
     }
 
-    if (strongNumber.isNotEmpty) {
+    if (metadata.isNotEmpty) {
       addNodeText(
-        Text(strongNumber, style: const TextStyle(fontSize: 12)),
+        Text(
+          metadata,
+          key: ValueKey<String>(
+            'graph-center-node-line:${displayItem.wordId}:metadata',
+          ),
+          textAlign: TextAlign.center,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(fontSize: 11),
+        ),
         gap: 4,
       );
     }
@@ -2281,11 +2297,46 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       addNodeText(
         Text(
           spelling,
+          key: ValueKey<String>(
+            'graph-center-node-line:${displayItem.wordId}:spelling',
+          ),
           textAlign: TextAlign.center,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
+      );
+    }
+
+    if (transliteration.isNotEmpty) {
+      addNodeText(
+        Text(
+          transliteration,
+          key: ValueKey<String>(
+            'graph-center-node-line:${displayItem.wordId}:transliteration',
+          ),
+          textAlign: TextAlign.center,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(fontSize: 12),
+        ),
+        gap: 5,
+      );
+    }
+
+    if (meaning.isNotEmpty) {
+      addNodeText(
+        Text(
+          meaning,
+          key: ValueKey<String>(
+            'graph-center-node-line:${displayItem.wordId}:meaning',
+          ),
+          textAlign: TextAlign.center,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(fontSize: 11),
+        ),
+        gap: 4,
       );
     }
 
@@ -2339,6 +2390,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
           ];
 
     return SizedBox(
+      key: ValueKey<String>('graph-center-node:${displayItem.wordId}'),
       width: _centerNodeSize,
       height: _centerNodeSize,
       child: Stack(
@@ -2400,6 +2452,9 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
               curve: Curves.easeOutCubic,
               opacity: textOpacity,
               child: Column(
+                key: ValueKey<String>(
+                  'graph-center-node-semantic-anchor:${displayItem.wordId}',
+                ),
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: children,

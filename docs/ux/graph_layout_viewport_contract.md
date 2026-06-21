@@ -82,25 +82,29 @@ PyVis-like interaction은 이 layout/viewport 경계 위에서 별도 단계로 
 ### 6.1 현재 구현 상태
 
 - Peripheral node는 raw camera scale에 따라 3단계 label LOD를 적용한다. 각 단계의 line 순서와 전환 기준은 4.2절을 따른다.
-- Center node는 Strong 값이 있으면 상단에 표시하고, 하단에는 spelling을 표시한다. Strong 값이 없으면 해당 줄을 생략하고, spelling이 없으면 `wordId`를 사용한다.
+- Center node는 zoom과 무관한 고정 semantic anchor다. `language · Strong → spelling → representative transliteration → primary meaning` 순서로 표시하고, spelling이 없으면 `wordId`를 사용한다.
 - 현재 선택 노드에 표시 가능한 관계가 하나 이상 있으면 graph 우하단에 compact한 “관계 보기” launcher가 표시된다. 관계가 1건이면 바로 해당 관계로 진입하고, 복수이면 popup menu에서 관계를 선택한다. 표시 가능한 관계가 없으면 launcher를 표시하지 않는다.
 - Mobile selected-node preview와 기존 full-detail route 연결은 구현되어 있다.
 
 ### 6.2 Graph와 detail의 역할 경계
 
 - Graph는 단어 간 관계 탐색과 핵심 식별을 위한 surface다.
-- Detail surface는 의미, 발음, 음역, 추가 설명을 확인하는 surface다.
+- Detail surface는 발음, 추가 meaning, 설명을 확인하는 surface다.
 - Graph node와 detail surface가 같은 상세 정보를 모두 중복해 담을 필요는 없다.
 
 ### 6.3 기본 graph node 정보 계층
 
-- Strong 번호와 spelling은 graph node의 core identity pair다. Peripheral node의 표시 순서는 현재 LOD에 따라 달라지고 center node는 기존 compact structure를 유지한다.
+- Strong 번호와 spelling은 graph node의 core identity pair다. Peripheral node의 표시 순서는 현재 LOD에 따라 달라지고 center node는 고정 semantic-anchor 정보 계층을 유지한다.
 - 실제 Strong 값이 있으면 항상 표시한다. 값이 없으면 임의 값을 만들지 않고 Strong 줄을 생략한다.
 - spelling이 없으면 기존 `wordId` fallback을 유지한다.
-- Center와 peripheral은 동일한 정보량일 필요가 없다. Center는 Strong과 spelling 중심의 compact structure를 유지하고 peripheral만 3단계 LOD를 사용한다.
+- Center metadata는 trim된 language와 Strong을 가운데점으로 결합한다. 둘 중 하나만 있으면 해당 값만 표시하고, 둘 다 없으면 metadata 줄 전체를 생략한다.
+- Center는 metadata 다음에 spelling 또는 `wordId` fallback, representative transliteration, primary meaning을 순서대로 표시한다. 빈 transliteration과 meaning은 placeholder나 빈 간격 없이 해당 줄 전체를 생략한다.
+- Center의 모든 정보 줄은 중앙 정렬한 한 줄 ellipsis다. Pronunciation은 표시하지 않고 detail surface 책임으로 유지한다.
+- Center와 peripheral은 동일한 정보량일 필요가 없다. Center는 peripheral 3단계 LOD와 독립된 고정 정보량을 유지하며 zoom별 정보량 전환을 하지 않는다.
 - Center node의 중요성은 더 큰 크기, 중심 위치, 강조색, 선택·중심 affordance로 유지한다.
 - Peripheral LOD 2·3의 language는 실제 DB 표시값을 최상단에 두며, LOD 3은 representative transliteration과 primary meaning을 추가한다.
 - Center node와 mobile selected-node preview의 정보량은 peripheral LOD에 연동하지 않는다.
+- Center 전체의 visual cap `V` 적용, border의 실효 화면 scale `E` 기준 보정, center label 역보정 비적용 책임은 4.1절을 그대로 따른다.
 
 ### 6.4 Desktop detail 표현
 
@@ -124,8 +128,8 @@ PyVis-like interaction은 이 layout/viewport 경계 위에서 별도 단계로 
 
 ### 6.6 구현 분리 원칙
 
-- Center compact와 mobile selected-node preview/detail route는 설계상 연결되지만 별도의 small production slice로 구현되었다.
-- Center compact는 graph label renderer 범위로 구현되었다.
+- Center semantic anchor와 mobile selected-node preview/detail route는 설계상 연결되지만 별도의 small production slice로 구현되었다.
+- Center semantic anchor는 graph label renderer 범위로 구현되었다.
 - Phase 24-K에서 mobile preview 구현 전 route와 selection seam의 read-only audit을 완료했다.
 - Mobile preview/detail 접근은 별도 구현으로 mobile selection state, compact surface, 기존 detail route 연결 범위에 한정했다.
 
