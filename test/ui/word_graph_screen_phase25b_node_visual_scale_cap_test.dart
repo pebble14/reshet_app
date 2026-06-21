@@ -8,6 +8,7 @@ import 'package:reshet_app/ui/word_graph_cache.dart';
 import 'package:reshet_app/ui/word_graph_screen.dart';
 
 const _representativeWordId = 'H0001_0000';
+const _placeholderGraphCenterWordId = 'G5342_0000';
 const _centerVisualScaleKey = Key('graph-center-node-visual-scale');
 
 void main() {
@@ -45,19 +46,31 @@ void main() {
 
   group('Phase 25-B graph node visual scale cap', () {
     testWidgets(
-      'caps node visuals while center distance follows raw camera scale',
+      'keeps the center cap while actual peripheral nodes use the capacity curve',
       (tester) async {
         await _pumpGraph(tester);
 
         final centerFinder = find.byKey(_centerVisualScaleKey);
-        final peripheralFinder = _peripheralNodeTransforms().first;
+        final peripheralFinder = _actualPeripheralNodeTransforms().first;
 
-        await _setCameraScale(tester, 1.6);
+        await _setCameraScale(tester, 0.75);
+        expect(_localVisualScale(tester, centerFinder), closeTo(1.0, 0.0001));
+        expect(_localVisualScale(tester, peripheralFinder), lessThan(1.0));
+        expect(
+          0.75 * _localVisualScale(tester, peripheralFinder),
+          closeTo(peripheralNodeEffectiveScreenScaleForTesting(0.75), 0.0001),
+        );
+
+        await _setCameraScale(tester, 1.0);
         expect(_localVisualScale(tester, centerFinder), closeTo(1.0, 0.0001));
         expect(
           _localVisualScale(tester, peripheralFinder),
           closeTo(1.0, 0.0001),
         );
+
+        await _setCameraScale(tester, 1.6);
+        expect(_localVisualScale(tester, centerFinder), closeTo(1.0, 0.0001));
+        expect(_localVisualScale(tester, peripheralFinder), greaterThan(1.0));
         final distanceAtCap =
             (tester.getCenter(peripheralFinder) -
                     tester.getCenter(centerFinder))
@@ -70,9 +83,9 @@ void main() {
           peripheralFinder,
         );
         expect(centerLocalScale, closeTo(0.5, 0.0001));
-        expect(peripheralLocalScale, closeTo(0.5, 0.0001));
+        expect(peripheralLocalScale, closeTo(1.8 / 3.2, 0.0001));
         expect(3.2 * centerLocalScale, closeTo(1.6, 0.0001));
-        expect(3.2 * peripheralLocalScale, closeTo(1.6, 0.0001));
+        expect(3.2 * peripheralLocalScale, closeTo(1.8, 0.0001));
 
         final distanceAboveCap =
             (tester.getCenter(peripheralFinder) -
@@ -84,6 +97,72 @@ void main() {
       },
     );
 
+    test('uses the approved peripheral typography clamp ranges', () {
+      expect(
+        peripheralNodeSpellingFontSizeForTesting(
+          baseFontSize: 12,
+          cameraScale: 0.6,
+        ),
+        closeTo(12 * 1.35, 0.0001),
+      );
+      expect(
+        peripheralNodeSpellingFontSizeForTesting(
+          baseFontSize: 12,
+          cameraScale: 3.5,
+        ),
+        closeTo(12 * 0.75, 0.0001),
+      );
+      expect(
+        peripheralNodeSecondaryFontSizeForTesting(
+          baseFontSize: 10,
+          cameraScale: 0.6,
+        ),
+        closeTo(10 * 1.25, 0.0001),
+      );
+      expect(
+        peripheralNodeSecondaryFontSizeForTesting(
+          baseFontSize: 10,
+          cameraScale: 3.5,
+        ),
+        closeTo(10 * 0.80, 0.0001),
+      );
+    });
+
+    testWidgets('keeps placeholder nodes on the common visual cap', (
+      tester,
+    ) async {
+      await _pumpGraph(tester, centerWordId: _placeholderGraphCenterWordId);
+
+      final placeholderTransforms = _placeholderNodeTransforms();
+      expect(placeholderTransforms, findsWidgets);
+
+      await _setCameraScale(tester, 3.2);
+      expect(
+        _localVisualScale(tester, find.byKey(_centerVisualScaleKey)),
+        closeTo(0.5, 0.0001),
+      );
+      for (final element in placeholderTransforms.evaluate()) {
+        expect(
+          _localVisualScale(
+            tester,
+            find.byElementPredicate((candidate) => candidate == element),
+          ),
+          closeTo(0.5, 0.0001),
+        );
+      }
+      for (final element in _actualPeripheralNodeTransforms().evaluate()) {
+        expect(
+          _localVisualScale(
+            tester,
+            find.byElementPredicate((candidate) => candidate == element),
+          ),
+          closeTo(1.8 / 3.2, 0.0001),
+        );
+      }
+
+      await _disposeRuntimeApp(tester);
+    });
+
     testWidgets('high zoom hit area matches the capped visible node bounds', (
       tester,
     ) async {
@@ -93,11 +172,11 @@ void main() {
         onSelectWordId: (wordId) => selectedWordId = wordId,
       );
 
-      final peripheralFinder = _peripheralNodeTransforms().first;
+      final peripheralFinder = _actualPeripheralNodeTransforms().first;
       await _centerNodeInViewportAtScale(tester, peripheralFinder, 3.2);
       final nodeCenter = tester.getCenter(peripheralFinder);
       final baseNodeSize = tester.getSize(peripheralFinder).width;
-      final cappedVisibleHalf = baseNodeSize / 2 * 1.6;
+      final cappedVisibleHalf = baseNodeSize / 2 * 1.8;
 
       await tester.tapAt(nodeCenter);
       await tester.pump();
@@ -120,7 +199,17 @@ void main() {
 
       final expectedHalfReductions = <double>{
         tester.getSize(find.byKey(_centerVisualScaleKey)).width / 4,
-        for (final element in _peripheralNodeTransforms().evaluate())
+        for (final element in _actualPeripheralNodeTransforms().evaluate())
+          tester
+                  .getSize(
+                    find.byElementPredicate(
+                      (candidate) => candidate == element,
+                    ),
+                  )
+                  .width /
+              2 *
+              (1 - 1.8 / 3.2),
+        for (final element in _placeholderNodeTransforms().evaluate())
           tester
                   .getSize(
                     find.byElementPredicate(
@@ -149,7 +238,8 @@ void main() {
             (expectedShift) => (actualShift - expectedShift).abs() < 0.1,
           ),
           isTrue,
-          reason: 'S=3.2이면 V=0.5이므로 arrow tip 이동량은 base node half의 절반이어야 한다.',
+          reason:
+              'arrow tip은 center/placeholder의 common V와 실제 peripheral의 전용 V를 따라야 한다.',
         );
       }
 
@@ -167,19 +257,52 @@ Finder _peripheralNodeTransforms() {
   });
 }
 
+Finder _actualPeripheralNodeTransforms() {
+  return find.byWidgetPredicate((widget) {
+    if (!_isPeripheralNodeTransform(widget)) {
+      return false;
+    }
+    final childKey = (widget as Transform).child?.key;
+    return childKey is ValueKey<String> &&
+        childKey.value.startsWith('graph-peripheral-node:');
+  });
+}
+
+Finder _placeholderNodeTransforms() {
+  return find.byWidgetPredicate(
+    (widget) =>
+        _isPeripheralNodeTransform(widget) &&
+        !_isActualPeripheralNodeTransform(widget as Transform),
+  );
+}
+
+bool _isPeripheralNodeTransform(Widget widget) {
+  final key = widget.key;
+  return widget is Transform &&
+      key is ValueKey<String> &&
+      key.value.startsWith('graph-node-visual-scale:');
+}
+
+bool _isActualPeripheralNodeTransform(Transform transform) {
+  final childKey = transform.child?.key;
+  return childKey is ValueKey<String> &&
+      childKey.value.startsWith('graph-peripheral-node:');
+}
+
 double _localVisualScale(WidgetTester tester, Finder finder) {
   return tester.widget<Transform>(finder).transform.storage[0];
 }
 
 Future<void> _pumpGraph(
   WidgetTester tester, {
+  String centerWordId = _representativeWordId,
   ValueChanged<String>? onSelectWordId,
 }) async {
   _setSurfaceSize(tester, const Size(1200, 900));
   await tester.pumpWidget(
     MaterialApp(
       home: WordGraphScreen(
-        centerWordId: _representativeWordId,
+        centerWordId: centerWordId,
         onSelectWordId: onSelectWordId,
       ),
     ),

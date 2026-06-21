@@ -181,7 +181,7 @@ void main() {
       await _disposeRuntimeApp(tester);
     });
 
-    testWidgets('keeps the Phase 25-B visual cap corrections in LOD 3', (
+    testWidgets('keeps the actual peripheral capacity curve in LOD 3', (
       tester,
     ) async {
       await _pumpGraph(tester);
@@ -195,11 +195,14 @@ void main() {
       final borderWidthAtLod3 = _bodyBorderWidth(tester, _fullWordId);
       final ringWidthAtLod3 = _selectedRingWidth(tester, _fullWordId);
 
-      expect(localScaleAtLod3, closeTo(1.6 / 1.85, 0.0001));
+      expect(localScaleAtLod3, closeTo(1.8 / 1.85, 0.0001));
 
       await _setCameraScale(tester, 3.2);
       _expectLod(tester, _fullWordId, PeripheralNodeLodLevel.lod3);
-      expect(_localVisualScale(tester, _fullWordId), closeTo(0.5, 0.0001));
+      expect(
+        _localVisualScale(tester, _fullWordId),
+        closeTo(1.8 / 3.2, 0.0001),
+      );
       expect(
         _lineFontSize(tester, _fullWordId, 'spelling'),
         closeTo(fontSizeAtLod3, 0.0001),

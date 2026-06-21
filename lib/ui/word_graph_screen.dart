@@ -41,6 +41,8 @@ const double _centerNodeHalf = _centerNodeSize / 2;
 const double _connectedNodeSize = 80.0;
 const double _connectedNodeHalf = _connectedNodeSize / 2;
 const double _nodeVisualScaleCap = 1.6;
+const double _peripheralNodeScaleExponent = 1.15;
+const double _peripheralNodeEffectiveScaleCap = 1.80;
 const double _depthOneNodeSize = 84.0;
 const double _depthTwoNodeSize = 76.0;
 const double _placeholderAnchorGap = 16.0;
@@ -148,6 +150,53 @@ double _effectiveNodeScreenScale(double cameraScale) {
 
 double _effectiveNodeHalf(double baseNodeHalf, double cameraScale) {
   return baseNodeHalf * _nodeLocalVisualScale(cameraScale);
+}
+
+@visibleForTesting
+double peripheralNodeEffectiveScreenScaleForTesting(double cameraScale) {
+  final safeCameraScale = _safeCameraScale(cameraScale);
+  return min(
+    pow(safeCameraScale, _peripheralNodeScaleExponent).toDouble(),
+    _peripheralNodeEffectiveScaleCap,
+  );
+}
+
+double _peripheralNodeLocalVisualScale(double cameraScale) {
+  final safeCameraScale = _safeCameraScale(cameraScale);
+  return peripheralNodeEffectiveScreenScaleForTesting(safeCameraScale) /
+      safeCameraScale;
+}
+
+double _peripheralNodeEffectiveHalf(double baseNodeHalf, double cameraScale) {
+  return baseNodeHalf * _peripheralNodeLocalVisualScale(cameraScale);
+}
+
+@visibleForTesting
+double peripheralNodeSpellingFontSizeForTesting({
+  required double baseFontSize,
+  required double cameraScale,
+}) {
+  final effectiveScreenScale = peripheralNodeEffectiveScreenScaleForTesting(
+    cameraScale,
+  );
+  return (baseFontSize / effectiveScreenScale).clamp(
+    baseFontSize * 0.75,
+    baseFontSize * 1.35,
+  );
+}
+
+@visibleForTesting
+double peripheralNodeSecondaryFontSizeForTesting({
+  required double baseFontSize,
+  required double cameraScale,
+}) {
+  final effectiveScreenScale = peripheralNodeEffectiveScreenScaleForTesting(
+    cameraScale,
+  );
+  return (baseFontSize / effectiveScreenScale).clamp(
+    baseFontSize * 0.80,
+    baseFontSize * 1.25,
+  );
 }
 
 const double _dashedEdgeDashLength = 14.0;
@@ -1480,6 +1529,14 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                                       layout: layout,
                                       selectedWordId: _selectedWordId,
                                       selectedEdgeIds: selectedEdgeIds,
+                                      actualPeripheralWordNodeIds:
+                                          _peripheralNodesForViewData(viewData)
+                                              .where(
+                                                (node) =>
+                                                    !node.isPlaceholderMoreNode,
+                                              )
+                                              .map((node) => node.id)
+                                              .toSet(),
                                       showLabels: false,
                                       sceneScale: _currentScale,
                                     ),
@@ -2553,13 +2610,18 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     final double labelFontSize = isDepthTwo ? 11.0 : 12.0;
     final double secondaryLabelFontSize = isDepthTwo ? 9.0 : 10.0;
     final double nodeSize = nodeLayout.nodeSize;
-    final effectiveScreenScale = _effectiveNodeScreenScale(_currentScale);
-    final boundedPrimaryLabelFontSize = (labelFontSize / effectiveScreenScale)
-        .clamp(labelFontSize * 0.85, labelFontSize * 1.25);
+    final effectiveScreenScale = peripheralNodeEffectiveScreenScaleForTesting(
+      _currentScale,
+    );
+    final boundedPrimaryLabelFontSize =
+        peripheralNodeSpellingFontSizeForTesting(
+          baseFontSize: labelFontSize,
+          cameraScale: _currentScale,
+        );
     final boundedStrongIdentityFontSize =
-        (secondaryLabelFontSize / effectiveScreenScale).clamp(
-          secondaryLabelFontSize * 0.90,
-          secondaryLabelFontSize * 1.15,
+        peripheralNodeSecondaryFontSizeForTesting(
+          baseFontSize: secondaryLabelFontSize,
+          cameraScale: _currentScale,
         );
     final nodeBorderWidth = borderWidth / effectiveScreenScale;
     final selectedOuterRingWidth =
@@ -3599,6 +3661,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     for (final entry in [...regularNodes, ...placeholderNodes]) {
       final nodeLayout = entry.$1;
       final graphNode = entry.$2;
+      final isActualPeripheralWordNode = !graphNode.isPlaceholderMoreNode;
       final isCenterDepthOnePlaceholder = _isCenterDepthOnePlaceholderNode(
         graphNode,
       );
@@ -3647,7 +3710,9 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
           top: nodeLayout.nodeBounds.top,
           child: Transform.scale(
             key: ValueKey<String>('graph-node-visual-scale:${graphNode.id}'),
-            scale: _nodeLocalVisualScale(_currentScale),
+            scale: isActualPeripheralWordNode
+                ? _peripheralNodeLocalVisualScale(_currentScale)
+                : _nodeLocalVisualScale(_currentScale),
             alignment: Alignment.center,
             transformHitTests: true,
             child: child,
@@ -6061,6 +6126,7 @@ class _GraphLinePainter extends CustomPainter {
   final _GraphLayoutData layout;
   final String? selectedWordId;
   final Set<String> selectedEdgeIds;
+  final Set<String> actualPeripheralWordNodeIds;
   final bool showLabels;
   final double sceneScale;
 
@@ -6068,6 +6134,7 @@ class _GraphLinePainter extends CustomPainter {
     required this.layout,
     required this.selectedWordId,
     required this.selectedEdgeIds,
+    required this.actualPeripheralWordNodeIds,
     required this.showLabels,
     required this.sceneScale,
   });
@@ -6243,6 +6310,9 @@ class _GraphLinePainter extends CustomPainter {
 
     final baseNodeHalf =
         layout.nodeLayoutById[nodeId]?.nodeHalf ?? _connectedNodeHalf;
+    if (actualPeripheralWordNodeIds.contains(nodeId)) {
+      return _peripheralNodeEffectiveHalf(baseNodeHalf, sceneScale);
+    }
     return _effectiveNodeHalf(baseNodeHalf, sceneScale);
   }
 
@@ -6283,6 +6353,11 @@ class _GraphLinePainter extends CustomPainter {
         oldDelegate.selectedWordId != selectedWordId ||
         oldDelegate.selectedEdgeIds.length != selectedEdgeIds.length ||
         oldDelegate.selectedEdgeIds.difference(selectedEdgeIds).isNotEmpty ||
+        oldDelegate.actualPeripheralWordNodeIds.length !=
+            actualPeripheralWordNodeIds.length ||
+        oldDelegate.actualPeripheralWordNodeIds
+            .difference(actualPeripheralWordNodeIds)
+            .isNotEmpty ||
         oldDelegate.showLabels != showLabels ||
         oldDelegate.sceneScale != sceneScale;
   }
