@@ -3,12 +3,16 @@ class GraphWordLabelDisplayItem {
   final String representativeSpelling;
   final String representativeTransliteration;
   final String displayStrongNumber;
+  final String language;
+  final String primaryMeaning;
 
   const GraphWordLabelDisplayItem({
     required this.wordId,
     required this.representativeSpelling,
     required this.representativeTransliteration,
     required this.displayStrongNumber,
+    required this.language,
+    required this.primaryMeaning,
   });
 
   String get graphBuilderLabel {
@@ -60,7 +64,9 @@ class GraphWordLabelDisplayItem {
         other.wordId == wordId &&
         other.representativeSpelling == representativeSpelling &&
         other.representativeTransliteration == representativeTransliteration &&
-        other.displayStrongNumber == displayStrongNumber;
+        other.displayStrongNumber == displayStrongNumber &&
+        other.language == language &&
+        other.primaryMeaning == primaryMeaning;
   }
 
   @override
@@ -69,5 +75,7 @@ class GraphWordLabelDisplayItem {
     representativeSpelling,
     representativeTransliteration,
     displayStrongNumber,
+    language,
+    primaryMeaning,
   );
 }

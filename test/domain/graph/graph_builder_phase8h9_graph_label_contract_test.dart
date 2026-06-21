@@ -29,12 +29,16 @@ void main() {
             representativeSpelling: 'representative-center-title',
             representativeTransliteration: 'representative-center-translit',
             displayStrongNumber: '',
+            language: '',
+            primaryMeaning: '',
           ),
           GraphWordLabelDisplayItem(
             wordId: childWordId,
             representativeSpelling: 'representative-child-title',
             representativeTransliteration: 'representative-child-translit',
             displayStrongNumber: 'H42',
+            language: '',
+            primaryMeaning: '',
           ),
         ],
         baseRelationEdges: [
@@ -66,6 +70,8 @@ void main() {
           representativeSpelling: 'representative-child-title',
           representativeTransliteration: 'representative-child-translit',
           displayStrongNumber: 'H42',
+          language: '',
+          primaryMeaning: '',
         ),
       );
     });
@@ -91,12 +97,16 @@ void main() {
             representativeSpelling: 'representative-center-title',
             representativeTransliteration: '',
             displayStrongNumber: '',
+            language: '',
+            primaryMeaning: '',
           ),
           GraphWordLabelDisplayItem(
             wordId: childWordId,
             representativeSpelling: '',
             representativeTransliteration: '',
             displayStrongNumber: 'H88',
+            language: '',
+            primaryMeaning: '',
           ),
         ],
         baseRelationEdges: [
@@ -138,6 +148,8 @@ void main() {
               representativeSpelling: 'representative-center-title',
               representativeTransliteration: '',
               displayStrongNumber: '',
+              language: '',
+              primaryMeaning: '',
             ),
           ],
           baseRelationEdges: [
@@ -164,6 +176,8 @@ void main() {
             representativeSpelling: '',
             representativeTransliteration: 'fallback-translit',
             displayStrongNumber: 'H77',
+            language: '',
+            primaryMeaning: '',
           ),
         );
       },

@@ -158,6 +158,42 @@ const int _centerDepthOneSoftLimit = 12;
 
 enum _GraphVisualState { selected, connected, dimmed }
 
+enum PeripheralNodeLodLevel { lod1, lod2, lod3 }
+
+@visibleForTesting
+PeripheralNodeLodLevel resolvePeripheralNodeLodForTesting({
+  required double cameraScale,
+  PeripheralNodeLodLevel? currentLod,
+}) {
+  final scale = _safeCameraScale(cameraScale);
+  if (currentLod == null) {
+    if (scale < 1.15) return PeripheralNodeLodLevel.lod1;
+    if (scale < 1.80) return PeripheralNodeLodLevel.lod2;
+    return PeripheralNodeLodLevel.lod3;
+  }
+
+  return switch (currentLod) {
+    PeripheralNodeLodLevel.lod1 =>
+      scale >= 1.85
+          ? PeripheralNodeLodLevel.lod3
+          : scale >= 1.20
+          ? PeripheralNodeLodLevel.lod2
+          : PeripheralNodeLodLevel.lod1,
+    PeripheralNodeLodLevel.lod2 =>
+      scale >= 1.85
+          ? PeripheralNodeLodLevel.lod3
+          : scale < 1.10
+          ? PeripheralNodeLodLevel.lod1
+          : PeripheralNodeLodLevel.lod2,
+    PeripheralNodeLodLevel.lod3 =>
+      scale < 1.10
+          ? PeripheralNodeLodLevel.lod1
+          : scale < 1.75
+          ? PeripheralNodeLodLevel.lod2
+          : PeripheralNodeLodLevel.lod3,
+  };
+}
+
 enum _GraphEdgeSemanticStyle { solid, dashed, dotted }
 
 enum _GraphEdgeVisualPriority { selected, center, expansion }
@@ -769,6 +805,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
   /// 현재 줌 배율(태그 표시/숨김 등에 사용)
   double _currentScale = 1.0;
+  PeripheralNodeLodLevel _peripheralNodeLod =
+      resolvePeripheralNodeLodForTesting(cameraScale: 1.0);
 
   /// 이 배율보다 작아지면 엣지 태그를 숨긴다(가독성/겹침 감소)
   static const double _labelVisibleScaleThreshold = 1.15;
@@ -823,6 +861,22 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   String? _nullIfBlank(String? value) {
     final trimmed = (value ?? '').trim();
     return trimmed.isEmpty ? null : trimmed;
+  }
+
+  void _updateCurrentScale(double cameraScale) {
+    final safeScale = _safeCameraScale(cameraScale);
+    final nextLod = resolvePeripheralNodeLodForTesting(
+      cameraScale: safeScale,
+      currentLod: _peripheralNodeLod,
+    );
+    if (safeScale == _currentScale && nextLod == _peripheralNodeLod) {
+      return;
+    }
+
+    setState(() {
+      _currentScale = safeScale;
+      _peripheralNodeLod = nextLod;
+    });
   }
 
   /// Collapse the external graph seed to the only trusted bootstrap field.
@@ -1047,6 +1101,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       representativeTransliteration:
           visibleNode?.fallbackTransliteration.trim() ?? '',
       displayStrongNumber: visibleNode?.fallbackStrongNumber.trim() ?? '',
+      language: '',
+      primaryMeaning: '',
     );
   }
 
@@ -1392,9 +1448,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                     onInteractionUpdate: (_) {
                       final newScale = _transformController.value
                           .getMaxScaleOnAxis();
-                      if (newScale != _currentScale) {
-                        setState(() => _currentScale = newScale);
-                      }
+                      _updateCurrentScale(newScale);
                     },
                     onInteractionEnd: (_) {
                       _isViewportInteracting = false;
@@ -2367,6 +2421,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   }) {
     final spellingLabel = labelDisplay.peripheralTitleLabel;
     final strongIdentityLabel = labelDisplay.displayStrongNumber.trim();
+    final languageLabel = labelDisplay.language.trim();
+    final transliterationLabel = labelDisplay.representativeTransliteration
+        .trim();
+    final primaryMeaningLabel = labelDisplay.primaryMeaning.trim();
     final bool isDepthTwo = nodeLayout.depth >= 2;
     final bool isSelected = visualState == _GraphVisualState.selected;
     final bool isDimmed = visualState == _GraphVisualState.dimmed;
@@ -2451,8 +2509,56 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     final nodeBorderWidth = borderWidth / effectiveScreenScale;
     final selectedOuterRingWidth =
         _selectedNodeOuterRingWidth / effectiveScreenScale;
+    final primaryLabelStyle = TextStyle(
+      fontSize: boundedPrimaryLabelFontSize,
+      fontWeight: labelFontWeight,
+    );
+    final secondaryLabelStyle = TextStyle(
+      fontSize: boundedStrongIdentityFontSize,
+      fontWeight: secondaryLabelFontWeight,
+    );
+
+    Widget buildLabelLine(String role, String value, TextStyle style) {
+      return Text(
+        value,
+        key: ValueKey<String>(
+          'graph-peripheral-node-lod-line:${word.id}:$role',
+        ),
+        textAlign: TextAlign.center,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: style,
+      );
+    }
+
+    final labelLines = <Widget>[
+      if (_peripheralNodeLod == PeripheralNodeLodLevel.lod1) ...[
+        if (strongIdentityLabel.isNotEmpty)
+          buildLabelLine('strong', strongIdentityLabel, secondaryLabelStyle)
+        else if (spellingLabel.isNotEmpty)
+          buildLabelLine('spelling', spellingLabel, primaryLabelStyle),
+      ] else ...[
+        if (languageLabel.isNotEmpty)
+          buildLabelLine('language', languageLabel, secondaryLabelStyle),
+        if (strongIdentityLabel.isNotEmpty)
+          buildLabelLine('strong', strongIdentityLabel, secondaryLabelStyle),
+        if (spellingLabel.isNotEmpty)
+          buildLabelLine('spelling', spellingLabel, primaryLabelStyle),
+        if (_peripheralNodeLod == PeripheralNodeLodLevel.lod3) ...[
+          if (transliterationLabel.isNotEmpty)
+            buildLabelLine(
+              'transliteration',
+              transliterationLabel,
+              secondaryLabelStyle,
+            ),
+          if (primaryMeaningLabel.isNotEmpty)
+            buildLabelLine('meaning', primaryMeaningLabel, secondaryLabelStyle),
+        ],
+      ],
+    ];
 
     return GestureDetector(
+      key: ValueKey<String>('graph-peripheral-node:${word.id}'),
       onTap: () => _handleConnectedWordTap(word),
       child: SizedBox(
         width: nodeSize,
@@ -2471,6 +2577,9 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                     curve: Curves.easeOutCubic,
                     opacity: backgroundOpacity,
                     child: AnimatedContainer(
+                      key: ValueKey<String>(
+                        'graph-peripheral-node-selected-ring:${word.id}',
+                      ),
                       duration: _visualStateAnimationDuration,
                       curve: Curves.easeOutCubic,
                       width: nodeSize + _selectedNodeOuterRingInset * 2,
@@ -2516,6 +2625,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
               curve: Curves.easeOutCubic,
               opacity: backgroundOpacity,
               child: AnimatedContainer(
+                key: ValueKey<String>('graph-peripheral-node-body:${word.id}'),
                 duration: _visualStateAnimationDuration,
                 curve: Curves.easeOutCubic,
                 width: nodeSize,
@@ -2541,32 +2651,11 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                 curve: Curves.easeOutCubic,
                 opacity: textOpacity,
                 child: Column(
+                  key: ValueKey<String>(
+                    'graph-peripheral-node-lod:${word.id}:${_peripheralNodeLod.name}',
+                  ),
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    if (strongIdentityLabel.isNotEmpty) ...[
-                      Text(
-                        strongIdentityLabel,
-                        textAlign: TextAlign.center,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: boundedStrongIdentityFontSize,
-                          fontWeight: secondaryLabelFontWeight,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                    ],
-                    Text(
-                      spellingLabel,
-                      textAlign: TextAlign.center,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: boundedPrimaryLabelFontSize,
-                        fontWeight: labelFontWeight,
-                      ),
-                    ),
-                  ],
+                  children: labelLines,
                 ),
               ),
             ),
@@ -2922,7 +3011,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     matrix.storage[12] = shift.dx;
     matrix.storage[13] = shift.dy;
     _transformController.value = matrix;
-    setState(() => _currentScale = 1.0);
+    _updateCurrentScale(1.0);
   }
 
   Offset? _selectedNodeLayoutCenter(_GraphLayoutData layout) {
@@ -5023,9 +5112,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     _transformController.value = next;
 
     // 줌 값 갱신(태그 표시/숨김을 위해)
-    if (nextScale != _currentScale) {
-      setState(() => _currentScale = nextScale);
-    }
+    _updateCurrentScale(nextScale);
   }
 
   /// [선택 단어 삭제] 전체 흐름
@@ -5572,7 +5659,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       ..translate(-bboxCenter.dx, -bboxCenter.dy);
 
     _transformController.value = m;
-    setState(() => _currentScale = scale);
+    _updateCurrentScale(scale);
   }
 
   /// [관계 추가] 전체 흐름

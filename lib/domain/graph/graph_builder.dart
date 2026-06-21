@@ -1164,6 +1164,8 @@ class GraphBuilder {
       representativeSpelling: (word.spelling1 ?? '').trim(),
       representativeTransliteration: (word.transliteration1 ?? '').trim(),
       displayStrongNumber: (word.strongNumber ?? '').trim(),
+      language: '',
+      primaryMeaning: '',
     );
   }
 
@@ -1179,6 +1181,8 @@ class GraphBuilder {
       representativeSpelling: word.fallbackSpelling.trim(),
       representativeTransliteration: word.fallbackTransliteration.trim(),
       displayStrongNumber: word.fallbackStrongNumber.trim(),
+      language: '',
+      primaryMeaning: '',
     );
   }
 

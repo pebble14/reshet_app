@@ -1592,6 +1592,8 @@ class WordRepository {
       displayStrongNumber: _normalizeStrongValue(
         (row['display_strong_number'] ?? '').toString(),
       ),
+      language: (row['language'] ?? '').toString().trim(),
+      primaryMeaning: (row['primary_meaning'] ?? '').toString().trim(),
     );
   }
 
@@ -2052,7 +2054,9 @@ class WordRepository {
           AS representative_spelling,
         representative_query_projection.representative_transliteration
           AS representative_transliteration,
-        TRIM(COALESCE(wt.스트롱넘버, '')) AS display_strong_number
+        TRIM(COALESCE(wt.스트롱넘버, '')) AS display_strong_number,
+        TRIM(COALESCE(wt.언어, '')) AS language,
+        TRIM(COALESCE(wt.의미1, '')) AS primary_meaning
       FROM WORD_TABLE wt
       INNER JOIN representative_query_projection
         ON representative_query_projection.word_id = wt.id

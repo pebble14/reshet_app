@@ -38,8 +38,8 @@ Layout cache identity에는 다음 항목만 포함한다.
 - Viewport resize는 layout을 다시 정의하지 않고 기존 camera 중심을 새 viewport 중심에 맞춘다.
 - Edge stroke와 dash/dot/arrowhead 같은 edge rendering metric은 screen-space 기준값을 유지하도록 rendering 단계에서 camera scale의 역수로 보정한다. 이 보정은 layout result, cache identity, graph data, camera transform을 변경하지 않는다.
 - Graph node border와 peripheral selected node outer ring 두께는 node의 실효 화면 scale을 기준으로 역보정해 screen-space 기준값을 유지한다.
-- Peripheral node의 기본 identity pair는 상단 Strong 번호와 하단 spelling이다. 실제 Strong 값은 transliteration 유무와 관계없이 표시하며, spelling/primary 값이 없으면 기존 word ID fallback을 유지한다.
-- Peripheral spelling/primary label font는 zoom에 따른 screen-space 가독성 변동을 완화하기 위해 node의 실효 화면 scale 역보정값을 기본 font size의 85%~125% 범위로 제한한다. Strong identity line도 같은 목적의 역보정을 적용하되 두 줄 구성의 overflow를 제한하도록 기본 font size의 90%~115% 범위로 제한한다. 이 보정은 center label, language label 또는 transliteration LOD 정책으로 확장되지 않는다.
+- Peripheral node label은 raw camera scale 기반 LOD로 정보량을 바꾸며, node 시각 확대 상한과 독립된 책임을 가진다.
+- Peripheral spelling label font는 zoom에 따른 screen-space 가독성 변동을 완화하기 위해 node의 실효 화면 scale 역보정값을 기본 font size의 85%~125% 범위로 제한한다. Strong·language·transliteration·primary meaning line은 기본 font size의 90%~115% 범위로 제한한다.
 
 ### 4.1 Node 시각 확대 상한
 
@@ -49,7 +49,18 @@ Layout cache identity에는 다음 항목만 포함한다.
 - Node center의 layout coordinate, node center 간 거리, edge 길이와 scene의 pan/zoom 위치 관계는 raw camera scale `S`를 계속 따른다.
 - Peripheral Strong·spelling font, node border와 selected outer ring 두께의 기존 clamp·screen-space 보정은 raw `S`가 아니라 `E`를 기준으로 한다.
 - Edge stroke, dash/dot metric과 arrowhead 자체는 raw `S` 기준 보정을 유지한다. Arrow tip의 node 경계 참조에만 `base node half × V`를 사용하며 기존 scene-space `edgeInset`은 유지한다.
-- 이 상한은 zoom별 정보량을 바꾸는 full LOD가 아니다.
+- 시각 확대 상한은 node 크기와 screen-space metric을 제한하고, peripheral LOD는 label 정보량을 결정한다. 두 정책은 각각 실효 화면 scale `E`와 raw camera scale `S`를 사용하며 서로 대체하지 않는다.
+
+### 4.2 Peripheral node label LOD
+
+- LOD 1은 Strong 1줄을 표시하고, Strong이 없을 때만 representative spelling 1줄을 표시한다.
+- LOD 2는 `language → Strong → representative spelling` 순서로 표시한다. Strong이 없으면 `language → spelling` 순서다.
+- LOD 3은 `language → Strong → representative spelling → representative transliteration → primary meaning` 순서로 표시한다.
+- 초기 진입은 `S < 1.15`에서 LOD 1, `1.15 <= S < 1.80`에서 LOD 2, `S >= 1.80`에서 LOD 3을 선택한다.
+- 전환 hysteresis는 LOD 1→2에서 `S >= 1.20`, LOD 2→1에서 `S < 1.10`, LOD 2→3에서 `S >= 1.85`, LOD 3→2에서 `S < 1.75`를 적용한다. 한 번의 큰 scale 변화는 중간 상태를 event별로 지연하지 않고 최종 적합 LOD로 직접 전환한다.
+- Language는 `GraphNode.languageCode`가 아니라 graph label batch query가 제공하는 실제 `WORD_TABLE.언어` 표시값이다.
+- 빈 값은 placeholder나 빈 줄 없이 생략한다. Representative spelling이 비어 있으면 기존 `wordId` fallback을 사용한다.
+- 모든 label line은 한 줄 ellipsis를 적용하며 LOD 전환 전용 animation은 도입하지 않는다.
 
 ## 5. 현재 구현 범위와 비범위
 
@@ -70,7 +81,7 @@ PyVis-like interaction은 이 layout/viewport 경계 위에서 별도 단계로 
 
 ### 6.1 현재 구현 상태
 
-- Peripheral node는 Strong 값이 있으면 상단에 표시하고, 하단에는 spelling을 표시한다. spelling이 없으면 `wordId`를 사용한다.
+- Peripheral node는 raw camera scale에 따라 3단계 label LOD를 적용한다. 각 단계의 line 순서와 전환 기준은 4.2절을 따른다.
 - Center node는 Strong 값이 있으면 상단에 표시하고, 하단에는 spelling을 표시한다. Strong 값이 없으면 해당 줄을 생략하고, spelling이 없으면 `wordId`를 사용한다.
 - 현재 선택 노드에 표시 가능한 관계가 하나 이상 있으면 graph 우하단에 compact한 “관계 보기” launcher가 표시된다. 관계가 1건이면 바로 해당 관계로 진입하고, 복수이면 popup menu에서 관계를 선택한다. 표시 가능한 관계가 없으면 launcher를 표시하지 않는다.
 - Mobile selected-node preview와 기존 full-detail route 연결은 구현되어 있다.
@@ -83,14 +94,13 @@ PyVis-like interaction은 이 layout/viewport 경계 위에서 별도 단계로 
 
 ### 6.3 기본 graph node 정보 계층
 
-- Strong 번호와 spelling은 graph node의 core identity pair이며 기본 순서는 `Strong → spelling`이다.
+- Strong 번호와 spelling은 graph node의 core identity pair다. Peripheral node의 표시 순서는 현재 LOD에 따라 달라지고 center node는 기존 compact structure를 유지한다.
 - 실제 Strong 값이 있으면 항상 표시한다. 값이 없으면 임의 값을 만들지 않고 Strong 줄을 생략한다.
 - spelling이 없으면 기존 `wordId` fallback을 유지한다.
-- Center와 peripheral은 동일한 정보량일 필요가 없다. 현재 center와 peripheral 모두 Strong과 spelling 중심의 compact structure를 따른다.
+- Center와 peripheral은 동일한 정보량일 필요가 없다. Center는 Strong과 spelling 중심의 compact structure를 유지하고 peripheral만 3단계 LOD를 사용한다.
 - Center node의 중요성은 더 큰 크기, 중심 위치, 강조색, 선택·중심 affordance로 유지한다.
-- 기본 node label에는 language, transliteration, pronunciation, meaning을 넣지 않는다.
-- 향후 language를 실제 텍스트로 표시하는 정책이 생기면 label 최상단에 둔다.
-- 현재는 language label, transliteration LOD, zoom별 정보량 전환을 도입하지 않는다.
+- Peripheral LOD 2·3의 language는 실제 DB 표시값을 최상단에 두며, LOD 3은 representative transliteration과 primary meaning을 추가한다.
+- Center node와 mobile selected-node preview의 정보량은 peripheral LOD에 연동하지 않는다.
 
 ### 6.4 Desktop detail 표현
 
@@ -121,4 +131,4 @@ PyVis-like interaction은 이 layout/viewport 경계 위에서 별도 단계로 
 
 ### 6.7 비범위
 
-이 계약은 full LOD, edge label·metric, relation visual style mapping, DB schema·migration·repository·SQL, graph layout·physics·drag·pin, 새 graph dependency, 다크모드 변경을 포함하지 않는다.
+이 계약은 center node 또는 mobile selected-node preview의 LOD, edge label·metric, relation visual style mapping, DB schema·migration, graph layout·physics·drag·pin, 새 graph dependency, 다크모드 변경을 포함하지 않는다.

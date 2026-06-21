@@ -59,6 +59,8 @@ void main() {
         await _insertWord(
           db,
           id: centerWordId,
+          language: ' center language ',
+          primaryMeaning: ' center meaning ',
           legacySpelling: 'legacy-center',
           legacyTransliteration: 'legacy-center-translit',
           expressionRows: const [
@@ -73,12 +75,20 @@ void main() {
         await _insertWord(
           db,
           id: childWordId,
+          language: ' actual display language ',
+          primaryMeaning: ' primary child meaning ',
           strongNumber: 'h00042',
           legacySpelling: 'legacy-child-title',
           legacyTransliteration: 'legacy-child-translit',
           expressionRows: const [
             {
               'seq': 1,
+              'is_representative': 0,
+              'spelling': 'first-normalized-but-not-representative',
+              'transliteration': 'first-normalized-translit',
+            },
+            {
+              'seq': 2,
               'is_representative': 1,
               'spelling': 'representative-child-title',
               'transliteration': 'representative-child-translit',
@@ -109,6 +119,8 @@ void main() {
           'representative-child-translit',
         );
         expect(childLabel.displayStrongNumber, 'H42');
+        expect(childLabel.language, 'actual display language');
+        expect(childLabel.primaryMeaning, 'primary child meaning');
         expect(childLabel.graphBuilderLabel, 'representative-child-title');
         expect(childLabel.peripheralTitleLabel, 'representative-child-title');
         expect(childLabel.relationDisplayName, 'representative-child-title');
@@ -125,6 +137,8 @@ void main() {
           (label) => label.wordId == centerWordId,
         );
         expect(centerLabel.representativeSpelling, 'representative-center');
+        expect(centerLabel.language, 'center language');
+        expect(centerLabel.primaryMeaning, 'center meaning');
       },
     );
 
@@ -153,6 +167,8 @@ void main() {
         await _insertWord(
           db,
           id: childWordId,
+          language: '   ',
+          primaryMeaning: '   ',
           legacySpelling: 'legacy-fallback-child',
           legacyTransliteration: 'legacy-fallback-translit',
           expressionRows: const [
@@ -184,8 +200,94 @@ void main() {
           childLabel.representativeTransliteration,
           'first-normalized-translit',
         );
+        expect(childLabel.language, '');
+        expect(childLabel.primaryMeaning, '');
       },
     );
+
+    test(
+      'keeps legacy expression fallback when normalized rows are absent',
+      () async {
+        final repository = WordRepository();
+        final db = await DatabaseService.openDatabaseFile();
+        const centerWordId = 'T9000_H9_GRAPH_LEGACY_CENTER';
+        const childWordId = 'T9000_H9_GRAPH_LEGACY_CHILD';
+
+        await _insertWord(
+          db,
+          id: centerWordId,
+          legacySpelling: 'legacy-center',
+          legacyTransliteration: 'legacy-center-translit',
+          expressionRows: const [],
+        );
+        await _insertWord(
+          db,
+          id: childWordId,
+          language: ' legacy language ',
+          primaryMeaning: ' legacy meaning ',
+          legacySpelling: 'legacy-child',
+          legacyTransliteration: 'legacy-child-translit',
+          expressionRows: const [],
+        );
+        await _insertRelation(db, wordId1: centerWordId, wordId2: childWordId);
+
+        final graphData = await repository.getVisibleGraphDataForGraph(
+          centerWordId,
+        );
+        final childLabel = graphData.wordLabels.singleWhere(
+          (label) => label.wordId == childWordId,
+        );
+
+        expect(childLabel.representativeSpelling, 'legacy-child');
+        expect(
+          childLabel.representativeTransliteration,
+          'legacy-child-translit',
+        );
+        expect(childLabel.language, 'legacy language');
+        expect(childLabel.primaryMeaning, 'legacy meaning');
+      },
+    );
+
+    test('includes language and primary meaning in equality and hashCode', () {
+      const base = GraphWordLabelDisplayItem(
+        wordId: 'word',
+        representativeSpelling: 'spelling',
+        representativeTransliteration: 'transliteration',
+        displayStrongNumber: 'H1',
+        language: 'language',
+        primaryMeaning: 'meaning',
+      );
+      const same = GraphWordLabelDisplayItem(
+        wordId: 'word',
+        representativeSpelling: 'spelling',
+        representativeTransliteration: 'transliteration',
+        displayStrongNumber: 'H1',
+        language: 'language',
+        primaryMeaning: 'meaning',
+      );
+      const differentLanguage = GraphWordLabelDisplayItem(
+        wordId: 'word',
+        representativeSpelling: 'spelling',
+        representativeTransliteration: 'transliteration',
+        displayStrongNumber: 'H1',
+        language: 'other language',
+        primaryMeaning: 'meaning',
+      );
+      const differentMeaning = GraphWordLabelDisplayItem(
+        wordId: 'word',
+        representativeSpelling: 'spelling',
+        representativeTransliteration: 'transliteration',
+        displayStrongNumber: 'H1',
+        language: 'language',
+        primaryMeaning: 'other meaning',
+      );
+
+      expect(base, same);
+      expect(base.hashCode, same.hashCode);
+      expect(base, isNot(differentLanguage));
+      expect(base, isNot(differentMeaning));
+      expect({base, differentLanguage, differentMeaning}, hasLength(3));
+    });
   });
 }
 
@@ -217,6 +319,8 @@ Future<Directory> _createIsolatedWorkspace(
 Future<void> _insertWord(
   dynamic db, {
   required String id,
+  String language = 'test',
+  String? primaryMeaning,
   String? strongNumber,
   required String legacySpelling,
   required String legacyTransliteration,
@@ -224,10 +328,11 @@ Future<void> _insertWord(
 }) async {
   await db.insert('WORD_TABLE', {
     'id': id,
-    '\uC5B8\uC5B4': 'test',
+    '\uC5B8\uC5B4': language,
     '\uC2A4\uD2B8\uB871\uB118\uBC84': strongNumber,
     '\uD45C\uAE301': legacySpelling,
     '\uC74C\uC5ED1': legacyTransliteration,
+    '\uC758\uBBF81': primaryMeaning,
   });
 
   for (final row in expressionRows) {
