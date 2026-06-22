@@ -120,6 +120,21 @@ Search는 다음으로의 이동을 시작할 수 있다.
 
 이 문서는 ranking, scoring, fuzzy matching, result grouping, debounce behavior, result rendering algorithm을 정의하지 않는다.
 
+### Mobile Focused Search Navigation 계약
+
+Mobile Graph 또는 Detail에서 연 focused search는 검색 결과 target을 직접 push하지 않는다. Search route는 `wordId`와 destination(`detail` 또는 `graph`) 의미를 가진 typed selection만 origin route에 반환하고 즉시 stack에서 제거된다.
+
+Navigation 순서는 다음과 같다.
+
+1. origin Graph 또는 Detail이 focused search를 child route로 push한다.
+2. Search route는 결과 선택 시 typed selection을 반환하며 pop한다.
+3. origin route가 selection을 해석해 기존 Detail 또는 Graph target route를 child로 push한다.
+4. target에서 back 하면 Search 목록이 아니라 origin Graph 또는 Detail로 복귀한다.
+
+일반 읽기·탐색 흐름에서 이 구조는 origin Graph의 camera, zoom/LOD, selection, relation·expansion state와 origin Detail의 route·scroll 위치를 보존해야 한다. Search 진입·dismiss·selection은 origin의 graph reload, center 교체, selection clear를 일으키지 않는다.
+
+target에서 삭제 같은 write가 발생한 경우는 별도 데이터 정합성 경계다. 기존 target route가 mutation result를 반환하고 origin이 처리하는 계약은 재사용할 수 있지만, 독립적인 cross-route mutation protocol이나 graph reload 정책은 이 navigation 계약으로 새로 정의하지 않는다.
+
 ## 8. Focus와 Context Continuity
 
 Navigation은 focus, selected object, 더 넓은 semantic context 사이의 관계를 보존해야 한다.

@@ -22,6 +22,7 @@ import 'responsive_layout.dart';
 import 'word_graph_cache.dart';
 import 'word_graph_screen.dart';
 import 'word_explorer_screen.dart';
+import 'word_search_query.dart';
 
 /*
   HomeScreen 클래스
@@ -92,22 +93,10 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<List<HomeSearchResultDisplayItem>> _createSearchWordsFuture() async {
-    final keyword = _searchController.text.trim();
-    if (keyword.isEmpty) {
-      return const [];
-    }
-
-    if (_isStrongJumpInput(keyword)) {
-      final exactMatches = await _repository.searchStrongExactMap(
-        keyword,
-        limit: 200,
-      );
-      if (exactMatches.isNotEmpty) {
-        return exactMatches;
-      }
-    }
-
-    return _repository.searchWordsMap(keyword, limit: 200);
+    return runWordSearchQuery(
+      repository: _repository,
+      query: _searchController.text,
+    );
   }
 
   String _formatDisplayStrong(String strong) {
@@ -429,11 +418,7 @@ class _HomeScreenState extends State<HomeScreen> {
   HomeWordDisplaySummary _buildSearchResultSummary(
     HomeSearchResultDisplayItem item,
   ) {
-    return HomeWordDisplaySummary(
-      representativeSpelling: item.representativeSpelling ?? '',
-      representativeTransliteration: item.representativeTransliteration ?? '',
-      representativePronunciation: item.representativePronunciation ?? '',
-    );
+    return buildWordSearchResultSummary(item);
   }
 
   void _setVisibleWordListFuture() {

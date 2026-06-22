@@ -27,14 +27,32 @@ import '../domain/word/word_edit_save_result.dart';
 import '../domain/word/word_write_models.dart';
 import '../domain/word/word_write_service.dart';
 import 'responsive_layout.dart';
+import 'mobile_word_search_screen.dart';
 import 'word_detail_screen.dart';
 import 'word_expression_set.dart';
 import 'word_detail_route_result.dart';
 import 'word_graph_cache.dart';
 import 'word_edit_screen.dart';
+import 'word_search_query.dart';
 
 typedef WordGraphSelectedWordDeletedCallback =
     Future<void> Function(String wordId, {required bool wasCenterWord});
+
+class _GraphAppBarCommand {
+  final String label;
+  final IconData icon;
+  final VoidCallback? onPressed;
+
+  const _GraphAppBarCommand({
+    required this.label,
+    required this.icon,
+    required this.onPressed,
+  });
+
+  Widget buildIconButton() {
+    return IconButton(tooltip: label, icon: Icon(icon), onPressed: onPressed);
+  }
+}
 
 const double _centerNodeSize = 180.0;
 const double _centerNodeHalf = _centerNodeSize / 2;
@@ -1433,38 +1451,37 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         return Scaffold(
           appBar: _buildAppBar(
             title: const Text('단어 그래프'),
-            actions: [
-              IconButton(
-                tooltip: '전체보기',
-                icon: const Icon(Icons.fit_screen),
+            commands: [
+              _GraphAppBarCommand(
+                label: '전체보기',
+                icon: Icons.fit_screen,
                 onPressed: () => _fitToView(layout),
               ),
-              IconButton(
-                tooltip: '보기 초기화',
-                icon: const Icon(Icons.refresh),
+              _GraphAppBarCommand(
+                label: '보기 초기화',
+                icon: Icons.refresh,
                 onPressed: () => _resetView(layout),
               ),
-              IconButton(
-                tooltip: '선택 노드 중앙 맞춤',
-                icon: const Icon(Icons.center_focus_strong),
+              _GraphAppBarCommand(
+                label: '선택 노드 중앙 맞춤',
+                icon: Icons.center_focus_strong,
                 onPressed: _selectedNodeLayoutCenter(layout) == null
                     ? null
                     : () => _focusSelectedNode(layout),
               ),
-              IconButton(
-                tooltip: '관계 추가',
-                icon: const Icon(Icons.add_link),
+              _GraphAppBarCommand(
+                label: '관계 추가',
+                icon: Icons.add_link,
                 onPressed: _showAddRelationFlow,
               ),
-              IconButton(
-                tooltip: '선택 단어 삭제',
-                icon: const Icon(Icons.delete_outline),
+              _GraphAppBarCommand(
+                label: '선택 단어 삭제',
+                icon: Icons.delete_outline,
                 onPressed: _confirmDeleteSelectedWord,
               ),
-
-              IconButton(
-                tooltip: '단어 추가',
-                icon: const Icon(Icons.note_add),
+              _GraphAppBarCommand(
+                label: '단어 추가',
+                icon: Icons.note_add,
                 onPressed: _showCreateWordFlow,
               ),
             ],
@@ -1597,13 +1614,136 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   }
 
   /// 중앙(선택) 단어 노드
-  PreferredSizeWidget _buildAppBar({Widget? title, List<Widget>? actions}) {
-    final mergedActions = <Widget>[...widget.appBarActionPrefix, ...?actions];
+  PreferredSizeWidget _buildAppBar({
+    Widget? title,
+    List<_GraphAppBarCommand>? commands,
+  }) {
+    final graphCommands = commands ?? const <_GraphAppBarCommand>[];
+    final isMobile = !isExplorerLargeScreenWidth(
+      MediaQuery.sizeOf(context).width,
+    );
+    final mergedActions = isMobile
+        ? <Widget>[
+            ...widget.appBarActionPrefix,
+            IconButton(
+              key: const Key('mobile-global-search-action'),
+              tooltip: '검색',
+              icon: const Icon(Icons.search),
+              onPressed: _openMobileSearch,
+            ),
+            if (graphCommands.isNotEmpty)
+              PopupMenuButton<int>(
+                key: const Key('mobile-graph-command-overflow'),
+                onSelected: (index) => graphCommands[index].onPressed?.call(),
+                itemBuilder: (context) =>
+                    List.generate(graphCommands.length, (index) {
+                      final command = graphCommands[index];
+                      return PopupMenuItem<int>(
+                        value: index,
+                        enabled: command.onPressed != null,
+                        child: Row(
+                          children: [
+                            Icon(command.icon),
+                            const SizedBox(width: 12),
+                            Text(command.label),
+                          ],
+                        ),
+                      );
+                    }),
+              ),
+          ]
+        : <Widget>[
+            ...widget.appBarActionPrefix,
+            ...graphCommands.map((command) => command.buildIconButton()),
+          ];
 
     return AppBar(
       title: title ?? const Text('단어 그래프'),
       actions: mergedActions.isEmpty ? null : mergedActions,
     );
+  }
+
+  Future<void> _openMobileSearch() async {
+    final selection = await Navigator.push<WordSearchSelection>(
+      context,
+      MaterialPageRoute(builder: (_) => const MobileWordSearchScreen()),
+    );
+    if (!mounted || selection == null) {
+      return;
+    }
+
+    switch (selection.destination) {
+      case WordSearchDestination.detail:
+        await _openMobileSearchDetail(selection.wordId);
+      case WordSearchDestination.graph:
+        await _openMobileSearchGraph(selection.wordId);
+    }
+  }
+
+  Future<void> _openMobileSearchDetail(String wordId) async {
+    final detailWord = await _repository
+        .getWordDetailLikeDisplayItemByIdForDetailScreen(wordId);
+    if (!mounted) return;
+    if (detailWord == null) {
+      _showMobileSearchNavigationUnavailableSnackBar();
+      return;
+    }
+
+    final result = await Navigator.push<WordDetailRouteResult>(
+      context,
+      MaterialPageRoute(
+        builder: (_) =>
+            WordDetailScreen(wordId: wordId, initialDisplayItem: detailWord),
+      ),
+    );
+    if (!mounted) return;
+    await _handleMobileSearchTargetResult(result);
+  }
+
+  Future<void> _openMobileSearchGraph(String wordId) async {
+    final centerWordExists = await _repository.wordExistsForGraphNavigation(
+      wordId,
+    );
+    if (!mounted) return;
+    if (!centerWordExists) {
+      _showMobileSearchNavigationUnavailableSnackBar();
+      return;
+    }
+
+    final result = await Navigator.push<WordDetailRouteResult>(
+      context,
+      MaterialPageRoute(builder: (_) => WordGraphScreen(centerWordId: wordId)),
+    );
+    if (!mounted) return;
+    await _handleMobileSearchTargetResult(result);
+  }
+
+  Future<void> _handleMobileSearchTargetResult(
+    WordDetailRouteResult? result,
+  ) async {
+    if (result is! WordDetailDeletedResult) {
+      return;
+    }
+
+    final deletedWordId = result.wordId.trim();
+    if (deletedWordId == _centerWordId) {
+      Navigator.pop(context, result);
+      return;
+    }
+
+    if ((_selectedWordId ?? '').trim() == deletedWordId) {
+      _setSelectedWordId(null);
+      widget.onClearSelection?.call();
+    }
+
+    WordGraphDataCache.clear();
+    await _loadConnectedWords();
+  }
+
+  void _showMobileSearchNavigationUnavailableSnackBar() {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('단어 정보를 찾을 수 없습니다.')));
   }
 
   Widget _buildSelectedNodeBottomRightOverlayGroup(

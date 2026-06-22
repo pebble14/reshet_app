@@ -7,11 +7,14 @@ import '../domain/word/word_detail_like_display_item.dart';
 import '../domain/word/word_edit_save_result.dart';
 import '../domain/word/word_write_models.dart';
 import '../domain/word/word_write_service.dart';
+import 'mobile_word_search_screen.dart';
+import 'responsive_layout.dart';
 import 'word_detail_route_result.dart';
 import 'word_edit_screen.dart';
 import 'word_graph_cache.dart';
 import 'word_graph_screen.dart';
 import 'word_info_panel.dart';
+import 'word_search_query.dart';
 
 enum WordDetailEditActionMode { localRoute, returnToCaller }
 
@@ -136,6 +139,67 @@ class _WordDetailScreenState extends State<WordDetailScreen> {
     }
   }
 
+  Future<void> _openMobileSearch() async {
+    final selection = await Navigator.push<WordSearchSelection>(
+      context,
+      MaterialPageRoute(builder: (_) => const MobileWordSearchScreen()),
+    );
+    if (!mounted || selection == null) {
+      return;
+    }
+
+    switch (selection.destination) {
+      case WordSearchDestination.detail:
+        await _openMobileSearchDetail(selection.wordId);
+      case WordSearchDestination.graph:
+        await _openMobileSearchGraph(selection.wordId);
+    }
+  }
+
+  Future<void> _openMobileSearchDetail(String wordId) async {
+    final detailWord = await _repository
+        .getWordDetailLikeDisplayItemByIdForDetailScreen(wordId);
+    if (!mounted) return;
+    if (detailWord == null) {
+      _showWordNavigationUnavailableSnackBar();
+      return;
+    }
+
+    final result = await Navigator.push<WordDetailRouteResult>(
+      context,
+      MaterialPageRoute(
+        builder: (_) =>
+            WordDetailScreen(wordId: wordId, initialDisplayItem: detailWord),
+      ),
+    );
+    if (!mounted) return;
+    _handleMobileSearchTargetResult(result);
+  }
+
+  Future<void> _openMobileSearchGraph(String wordId) async {
+    final centerWordExists = await _repository.wordExistsForGraphNavigation(
+      wordId,
+    );
+    if (!mounted) return;
+    if (!centerWordExists) {
+      _showWordNavigationUnavailableSnackBar();
+      return;
+    }
+
+    final result = await Navigator.push<WordDetailRouteResult>(
+      context,
+      MaterialPageRoute(builder: (_) => WordGraphScreen(centerWordId: wordId)),
+    );
+    if (!mounted) return;
+    _handleMobileSearchTargetResult(result);
+  }
+
+  void _handleMobileSearchTargetResult(WordDetailRouteResult? result) {
+    if (result is WordDetailDeletedResult && result.wordId.trim() == _wordId) {
+      Navigator.pop(context, result);
+    }
+  }
+
   Future<void> _confirmDelete() async {
     if (_wordId.isEmpty) return;
 
@@ -209,8 +273,24 @@ class _WordDetailScreenState extends State<WordDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = !isExplorerLargeScreenWidth(
+      MediaQuery.sizeOf(context).width,
+    );
+
     return Scaffold(
-      appBar: AppBar(title: Text(_buildTitle())),
+      appBar: AppBar(
+        title: Text(_buildTitle()),
+        actions: isMobile
+            ? [
+                IconButton(
+                  key: const Key('mobile-global-search-action'),
+                  tooltip: '검색',
+                  icon: const Icon(Icons.search),
+                  onPressed: _openMobileSearch,
+                ),
+              ]
+            : null,
+      ),
       body: SafeArea(
         top: false,
         left: false,

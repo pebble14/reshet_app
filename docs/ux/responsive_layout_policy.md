@@ -203,6 +203,16 @@ Tablet에서는 Search가 workspace surface를 과도하게 차지하지 않으�
 
 Mobile에서는 Search가 flow 안에서 사라지는 보조 기능이 되어서는 안 된다. Search는 graph, detail, exploration 어느 surface에서도 semantic context로 진입할 수 있는 접근 경로로 유지되어야 한다.
 
+### Mobile Global Search 접근 계약
+
+현재 production의 mobile global search 접근 경계는 전체 `MediaQuery` 폭 `< 900`이다. Graph pane의 로컬 폭이 아니라 전체 form factor 폭으로 판단한다.
+
+- Mobile Graph와 Mobile Detail은 AppBar에서 focused full-screen search route에 직접 진입할 수 있어야 한다.
+- Mobile Graph에서는 search action을 직접 노출하고 기존 Graph command는 순서와 활성 조건을 유지한 하나의 overflow menu로 제공한다.
+- Home의 기존 inline search와 결과 surface는 유지한다.
+- `>= 900`에서는 기존 Desktop top search, floating transient result panel, Explorer pane, Graph AppBar action 구성을 유지하며 mobile search action을 노출하지 않는다.
+- Mobile focused search의 query와 결과 의미는 Home search와 동일한 계약을 사용하며, form factor 차이가 ranking, filtering, mapping을 분기시키지 않는다.
+
 ## 12. Navigation Continuity와 Responsive Layout
 
 Navigation continuity의 의미는 `navigation_policy.md`가 정의한다. 이 문서는 그 continuity가 form factor별 layout 변화 속에서 끊기지 않도록 하는 layout-level 원칙만 정의한다.
@@ -237,7 +247,7 @@ Responsive layout은 한 화면에 많은 것을 보여주는 것보다 semantic
 
 다음 규칙은 이 policy의 boundary를 정의한다.
 
-1. Responsive layout policy는 breakpoint specification이 아니다.
+1. Responsive layout policy는 일반 breakpoint specification이 아니다. 다만 active production 접근 계약에 명시된 경계는 해당 surface에 적용한다.
 2. Responsive layout policy는 Flutter widget tree specification이 아니다.
 3. Responsive layout policy는 rendering optimization guide가 아니다.
 4. Responsive layout policy는 animation 또는 gesture timing specification이 아니다.
@@ -284,7 +294,7 @@ Migration and historical 문서는 transition context와 implementation history�
 
 이 문서는 다음을 정의하지 않는다.
 
-- exact breakpoint value
+- active production 접근 계약 밖의 일반 breakpoint value
 - device width table
 - Flutter widget tree
 - controller hierarchy
