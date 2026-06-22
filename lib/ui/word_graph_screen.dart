@@ -818,6 +818,7 @@ class WordGraphScreen extends StatefulWidget {
   /// 부모가 중심 단어를 바꾸도록 알린다.
   final ValueChanged<String>? onChangeCenterWordId;
   final ValueChanged<Word>? onChangeCenterWord;
+  final WordMutationImpactCollector? mutationImpactCollector;
 
   WordGraphScreen({
     super.key,
@@ -831,6 +832,7 @@ class WordGraphScreen extends StatefulWidget {
     this.onDeletedSelectedWord,
     this.onChangeCenterWordId,
     this.onChangeCenterWord,
+    this.mutationImpactCollector,
   }) : centerWordId = _resolveCenterWordId(
          centerWordId: centerWordId,
          centerWord: centerWord,
@@ -1391,6 +1393,113 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     }
   }
 
+  Future<void> _refreshConnectedWordsPreservingState() async {
+    final requestedCenterWordId = _centerWordId;
+    final cameraTransform = Matrix4.copy(_transformController.value);
+    final cameraScale = _currentScale;
+    final selectedWordId = _selectedWordId;
+    final expandedSourceIds = Set<String>.from(_expandedDepthOneWordIds);
+    final fullyRevealedSourceIds = Set<String>.from(
+      _fullyRevealedExpansionSourceIds,
+    );
+    final wasCenterDepthOneFullyRevealed = _isCenterDepthOneFullyRevealed;
+    final seedNodePositions = Map<String, Offset>.from(_seedNodePositions);
+
+    try {
+      final resolvedCenterPayload = await _loadResolvedCenterPayload(
+        requestedCenterWordId,
+      );
+      final visibleGraphData = await _repository.getVisibleGraphDataForGraph(
+        requestedCenterWordId,
+      );
+      final baseGraphData = (
+        connectedWords: List<GraphVisibleWord>.unmodifiable(
+          visibleGraphData.connectedWords,
+        ),
+        wordLabels: List<GraphWordLabelDisplayItem>.unmodifiable(
+          visibleGraphData.wordLabels,
+        ),
+        relationEdges: List<WordRelationEdgeInfo>.unmodifiable(
+          visibleGraphData.relationEdges,
+        ),
+      );
+      WordGraphDataCache.putBaseGraph(
+        centerWordId: requestedCenterWordId,
+        connectedWords: baseGraphData.connectedWords,
+        wordLabels: baseGraphData.wordLabels,
+        relationEdges: baseGraphData.relationEdges,
+      );
+
+      final currentDepthOneWordIds = baseGraphData.connectedWords
+          .map((word) => word.wordId.trim())
+          .where((wordId) => wordId.isNotEmpty)
+          .toSet();
+      final refreshedExpansionData = <String, WordGraphExpansionCacheData>{};
+      for (final sourceWordId in expandedSourceIds.intersection(
+        currentDepthOneWordIds,
+      )) {
+        final expansionGraphData = await _repository
+            .getVisibleGraphDataForGraph(sourceWordId);
+        final expansionData = (
+          connectedWords: List<GraphVisibleWord>.unmodifiable(
+            expansionGraphData.connectedWords,
+          ),
+          wordLabels: List<GraphWordLabelDisplayItem>.unmodifiable(
+            expansionGraphData.wordLabels,
+          ),
+          relationEdges: List<WordRelationEdgeInfo>.unmodifiable(
+            expansionGraphData.relationEdges,
+          ),
+        );
+        refreshedExpansionData[sourceWordId] = expansionData;
+        WordGraphDataCache.putExpansion(
+          centerWordId: requestedCenterWordId,
+          sourceWordId: sourceWordId,
+          connectedWords: expansionData.connectedWords,
+          wordLabels: expansionData.wordLabels,
+          relationEdges: expansionData.relationEdges,
+        );
+      }
+
+      if (!mounted || _centerWordId != requestedCenterWordId) {
+        return;
+      }
+
+      setState(() {
+        _centerWord = resolvedCenterPayload.word;
+        _centerWordDisplayItem = resolvedCenterPayload.displayItem;
+        _baseGraphData = baseGraphData;
+        _selectedWordId = selectedWordId;
+        _expansionDataBySourceId
+          ..clear()
+          ..addAll(refreshedExpansionData);
+        _expandedDepthOneWordIds
+          ..clear()
+          ..addAll(refreshedExpansionData.keys);
+        _expansionRequestsInFlight.clear();
+        _fullyRevealedExpansionSourceIds
+          ..clear()
+          ..addAll(
+            fullyRevealedSourceIds.intersection(
+              refreshedExpansionData.keys.toSet(),
+            ),
+          );
+        _isCenterDepthOneFullyRevealed = wasCenterDepthOneFullyRevealed;
+        _seedNodePositions
+          ..clear()
+          ..addAll(seedNodePositions);
+        _currentScale = cameraScale;
+        _rebuildGraphData();
+      });
+      _transformController.value = cameraTransform;
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('그래프 갱신 실패: $e')));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // 로딩
@@ -1689,15 +1798,27 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       return;
     }
 
+    final collector =
+        widget.mutationImpactCollector ?? WordMutationImpactCollector();
+    final checkpoint = collector.checkpoint;
     final result = await Navigator.push<WordDetailRouteResult>(
       context,
       MaterialPageRoute(
-        builder: (_) =>
-            WordDetailScreen(wordId: wordId, initialDisplayItem: detailWord),
+        builder: (_) => WordDetailScreen(
+          wordId: wordId,
+          initialDisplayItem: detailWord,
+          mutationImpactCollector: collector,
+        ),
       ),
     );
     if (!mounted) return;
-    await _handleMobileSearchTargetResult(result);
+    await _handleMobileSearchTargetImpact(
+      mutationImpactSince(
+        collector: collector,
+        checkpoint: checkpoint,
+        routeResult: result,
+      ),
+    );
   }
 
   Future<void> _openMobileSearchGraph(String wordId) async {
@@ -1710,34 +1831,61 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       return;
     }
 
+    final collector =
+        widget.mutationImpactCollector ?? WordMutationImpactCollector();
+    final checkpoint = collector.checkpoint;
     final result = await Navigator.push<WordDetailRouteResult>(
       context,
-      MaterialPageRoute(builder: (_) => WordGraphScreen(centerWordId: wordId)),
+      MaterialPageRoute(
+        builder: (_) => WordGraphScreen(
+          centerWordId: wordId,
+          mutationImpactCollector: collector,
+        ),
+      ),
     );
     if (!mounted) return;
-    await _handleMobileSearchTargetResult(result);
+    await _handleMobileSearchTargetImpact(
+      mutationImpactSince(
+        collector: collector,
+        checkpoint: checkpoint,
+        routeResult: result,
+      ),
+    );
   }
 
-  Future<void> _handleMobileSearchTargetResult(
-    WordDetailRouteResult? result,
+  Future<void> _handleMobileSearchTargetImpact(
+    WordMutationImpact impact,
   ) async {
-    if (result is! WordDetailDeletedResult) {
+    if (impact.isEmpty) {
       return;
     }
 
-    final deletedWordId = result.wordId.trim();
-    if (deletedWordId == _centerWordId) {
-      Navigator.pop(context, result);
+    final activeWordIds = _graphViewData?.nodes.map((node) => node.id).toSet();
+    if (activeWordIds == null) {
+      return;
+    }
+    final decision = resolveGraphMutationOriginDecision(
+      impact: impact,
+      centerWordId: _centerWordId,
+      selectedWordId: _selectedWordId,
+      activeWordIds: activeWordIds,
+    );
+    if (decision.shouldClose) {
+      Navigator.pop(context, WordDetailDeletedResult(wordId: _centerWordId));
       return;
     }
 
-    if ((_selectedWordId ?? '').trim() == deletedWordId) {
+    if (decision.shouldClearSelection) {
       _setSelectedWordId(null);
       widget.onClearSelection?.call();
     }
 
+    if (!decision.shouldRefresh) {
+      return;
+    }
+
     WordGraphDataCache.clear();
-    await _loadConnectedWords();
+    await _refreshConnectedWordsPreservingState();
   }
 
   void _showMobileSearchNavigationUnavailableSnackBar() {
@@ -2006,16 +2154,30 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       return;
     }
 
+    final collector = widget.mutationImpactCollector;
+    final checkpoint = collector?.checkpoint;
     final detailResult = await Navigator.push<WordDetailRouteResult>(
       context,
       MaterialPageRoute(
         builder: (_) => WordDetailScreen(
           wordId: selectedWordId,
           initialDisplayItem: previewItem,
+          mutationImpactCollector: widget.mutationImpactCollector,
         ),
       ),
     );
     if (!mounted) return;
+
+    if (collector != null && checkpoint != null) {
+      await _handleMobileSearchTargetImpact(
+        mutationImpactSince(
+          collector: collector,
+          checkpoint: checkpoint,
+          routeResult: detailResult,
+        ),
+      );
+      return;
+    }
 
     if (detailResult is WordDetailDeletedResult) {
       final deletedWordId = detailResult.wordId.trim();
@@ -2327,11 +2489,29 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       return;
     }
 
+    final collector = widget.mutationImpactCollector;
+    final checkpoint = collector?.checkpoint;
     final graphResult = await Navigator.push<WordDetailRouteResult>(
       context,
-      MaterialPageRoute(builder: (_) => WordGraphScreen(centerWordId: word.id)),
+      MaterialPageRoute(
+        builder: (_) => WordGraphScreen(
+          centerWordId: word.id,
+          mutationImpactCollector: widget.mutationImpactCollector,
+        ),
+      ),
     );
     if (!mounted) return;
+
+    if (collector != null && checkpoint != null) {
+      await _handleMobileSearchTargetImpact(
+        mutationImpactSince(
+          collector: collector,
+          checkpoint: checkpoint,
+          routeResult: graphResult,
+        ),
+      );
+      return;
+    }
 
     if (graphResult is WordDetailDeletedResult) {
       final deletedWordId = graphResult.wordId.trim();
@@ -4916,6 +5096,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
               note: noteController.text.trim(),
               source: sourceController.text.trim(),
             );
+            widget.mutationImpactCollector?.recordGraphAffectedWords([
+              info.wordId1,
+              info.wordId2,
+            ]);
 
             // 그래프 갱신(색/라벨/팝업 내용 반영)
             WordGraphDataCache.invalidateMany([
@@ -4944,6 +5128,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
           try {
             await _repository.deleteRelation(info.relationId);
+            widget.mutationImpactCollector?.recordGraphAffectedWords([
+              info.wordId1,
+              info.wordId2,
+            ]);
 
             // 그래프 갱신(엣지/라벨/색 반영)
             WordGraphDataCache.invalidateMany([
@@ -5390,6 +5578,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     }
 
     final wasCenterWord = selectedWordId == _centerWordId;
+    final graphAffectedWordIds = <String>{
+      selectedWordId,
+      ...?_adjacentNodeIdsByNodeId[selectedWordId],
+    };
     final relationCount = await _repository.countRelationsForWord(
       selectedWordId,
     );
@@ -5427,6 +5619,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         DeleteWordCommand(wordId: selectedWordId),
       );
       WordGraphDataCache.clear();
+      widget.mutationImpactCollector?.recordDeletedWord(
+        selectedWordId,
+        graphAffectedWordIds: graphAffectedWordIds,
+      );
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(
@@ -5583,6 +5779,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
               note: relationPayload.note,
               source: relationPayload.source,
             );
+            widget.mutationImpactCollector?.recordGraphAffectedWords([
+              relationSourceWordId,
+              createdWordPayload.wordId,
+            ]);
             didCreateRelation = true;
           } else {
             if (!mounted) return;
@@ -5628,7 +5828,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (_) => WordGraphScreen(centerWordId: payload.wordId),
+          builder: (_) => WordGraphScreen(
+            centerWordId: payload.wordId,
+            mutationImpactCollector: widget.mutationImpactCollector,
+          ),
         ),
       );
       return;
@@ -5999,6 +6202,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       note: payload.note,
       source: payload.source,
     );
+    widget.mutationImpactCollector?.recordGraphAffectedWords([
+      relationSourceWordId,
+      other.wordId,
+    ]);
 
     // 5) 갱신
     WordGraphDataCache.invalidateMany([

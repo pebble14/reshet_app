@@ -133,7 +133,11 @@ Navigation 순서는 다음과 같다.
 
 일반 읽기·탐색 흐름에서 이 구조는 origin Graph의 camera, zoom/LOD, selection, relation·expansion state와 origin Detail의 route·scroll 위치를 보존해야 한다. Search 진입·dismiss·selection은 origin의 graph reload, center 교체, selection clear를 일으키지 않는다.
 
-target에서 삭제 같은 write가 발생한 경우는 별도 데이터 정합성 경계다. 기존 target route가 mutation result를 반환하고 origin이 처리하는 계약은 재사용할 수 있지만, 독립적인 cross-route mutation protocol이나 graph reload 정책은 이 navigation 계약으로 새로 정의하지 않는다.
+Mobile Search target과 그 child route에서 성공한 write는 해당 탐색 체인에 한정된 typed mutation impact로 누적해 origin에 반영할 수 있다. mutation이 없는 일반 탐색과 back은 origin reload를 일으키지 않는다.
+
+origin은 현재 Detail의 단어 또는 Graph의 active node·edge 범위와 mutation 영향 범위가 겹칠 때만 최소 반영한다. Graph 반영은 최신 데이터 정합성과 기존 camera, zoom/LOD, 유효한 selection, relation·expansion/reveal 상태, seed node position 보존을 함께 만족해야 한다. 삭제되어 더 이상 유효하지 않은 route나 selection은 보존 대상이 아니다.
+
+이 계약은 Mobile Search 탐색 체인의 route-local 전달 경계이며, 독립적인 global cross-route mutation protocol을 새로 정의하지 않는다.
 
 ## 8. Focus와 Context Continuity
 

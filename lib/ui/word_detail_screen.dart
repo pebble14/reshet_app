@@ -26,6 +26,7 @@ class WordDetailScreen extends StatefulWidget {
   final WordDetailEditActionMode editActionMode;
   final WordDetailGraphActionMode graphActionMode;
   final bool showEditAction;
+  final WordMutationImpactCollector? mutationImpactCollector;
 
   const WordDetailScreen({
     super.key,
@@ -34,6 +35,7 @@ class WordDetailScreen extends StatefulWidget {
     this.editActionMode = WordDetailEditActionMode.localRoute,
     this.graphActionMode = WordDetailGraphActionMode.standaloneRoute,
     this.showEditAction = true,
+    this.mutationImpactCollector,
   });
 
   @override
@@ -102,7 +104,8 @@ class _WordDetailScreenState extends State<WordDetailScreen> {
     );
 
     if (result != null) {
-      unawaited(_refreshDetailScreenDisplayItem());
+      widget.mutationImpactCollector?.recordChangedWord(result.wordId);
+      await _refreshDetailScreenDisplayItem();
       if (!mounted) return;
       ScaffoldMessenger.of(
         context,
@@ -125,14 +128,29 @@ class _WordDetailScreenState extends State<WordDetailScreen> {
       return;
     }
 
+    final collector = widget.mutationImpactCollector;
+    final checkpoint = collector?.checkpoint;
     final graphResult = await Navigator.push<WordDetailRouteResult>(
       context,
       MaterialPageRoute(
-        builder: (context) => WordGraphScreen(centerWordId: _wordId),
+        builder: (context) => WordGraphScreen(
+          centerWordId: _wordId,
+          mutationImpactCollector: widget.mutationImpactCollector,
+        ),
       ),
     );
 
     if (!mounted) return;
+    if (collector != null && checkpoint != null) {
+      await _handleMobileSearchTargetResult(
+        mutationImpactSince(
+          collector: collector,
+          checkpoint: checkpoint,
+          routeResult: graphResult,
+        ),
+      );
+      return;
+    }
     if (graphResult is WordDetailDeletedResult &&
         graphResult.wordId.trim() == _wordId) {
       Navigator.pop(context, graphResult);
@@ -165,15 +183,27 @@ class _WordDetailScreenState extends State<WordDetailScreen> {
       return;
     }
 
+    final collector =
+        widget.mutationImpactCollector ?? WordMutationImpactCollector();
+    final checkpoint = collector.checkpoint;
     final result = await Navigator.push<WordDetailRouteResult>(
       context,
       MaterialPageRoute(
-        builder: (_) =>
-            WordDetailScreen(wordId: wordId, initialDisplayItem: detailWord),
+        builder: (_) => WordDetailScreen(
+          wordId: wordId,
+          initialDisplayItem: detailWord,
+          mutationImpactCollector: collector,
+        ),
       ),
     );
     if (!mounted) return;
-    _handleMobileSearchTargetResult(result);
+    await _handleMobileSearchTargetResult(
+      mutationImpactSince(
+        collector: collector,
+        checkpoint: checkpoint,
+        routeResult: result,
+      ),
+    );
   }
 
   Future<void> _openMobileSearchGraph(String wordId) async {
@@ -186,17 +216,41 @@ class _WordDetailScreenState extends State<WordDetailScreen> {
       return;
     }
 
+    final collector =
+        widget.mutationImpactCollector ?? WordMutationImpactCollector();
+    final checkpoint = collector.checkpoint;
     final result = await Navigator.push<WordDetailRouteResult>(
       context,
-      MaterialPageRoute(builder: (_) => WordGraphScreen(centerWordId: wordId)),
+      MaterialPageRoute(
+        builder: (_) => WordGraphScreen(
+          centerWordId: wordId,
+          mutationImpactCollector: collector,
+        ),
+      ),
     );
     if (!mounted) return;
-    _handleMobileSearchTargetResult(result);
+    await _handleMobileSearchTargetResult(
+      mutationImpactSince(
+        collector: collector,
+        checkpoint: checkpoint,
+        routeResult: result,
+      ),
+    );
   }
 
-  void _handleMobileSearchTargetResult(WordDetailRouteResult? result) {
-    if (result is WordDetailDeletedResult && result.wordId.trim() == _wordId) {
-      Navigator.pop(context, result);
+  Future<void> _handleMobileSearchTargetResult(
+    WordMutationImpact impact,
+  ) async {
+    switch (resolveDetailMutationOriginAction(
+      impact: impact,
+      originWordId: _wordId,
+    )) {
+      case DetailMutationOriginAction.none:
+        return;
+      case DetailMutationOriginAction.refresh:
+        await _refreshDetailScreenDisplayItem();
+      case DetailMutationOriginAction.close:
+        Navigator.pop(context, WordDetailDeletedResult(wordId: _wordId));
     }
   }
 
@@ -238,6 +292,7 @@ class _WordDetailScreenState extends State<WordDetailScreen> {
     try {
       await _wordWriteService.execute(DeleteWordCommand(wordId: _wordId));
       WordGraphDataCache.clear();
+      widget.mutationImpactCollector?.recordDeletedWord(_wordId);
 
       if (!mounted) return;
 
