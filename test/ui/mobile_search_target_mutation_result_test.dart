@@ -8,6 +8,7 @@ import 'package:reshet_app/domain/word/word_detail_like_display_item.dart';
 import 'package:reshet_app/ui/mobile_word_search_screen.dart';
 import 'package:reshet_app/ui/word_detail_route_result.dart';
 import 'package:reshet_app/ui/word_detail_screen.dart';
+import 'package:reshet_app/ui/word_edit_screen.dart';
 import 'package:reshet_app/ui/word_graph_cache.dart';
 import 'package:reshet_app/ui/word_graph_screen.dart';
 
@@ -16,6 +17,7 @@ const _mobileSearchActionKey = Key('mobile-global-search-action');
 const _mobileSearchFieldKey = Key('mobile-global-search-field');
 const _mobileSearchSubmitKey = Key('mobile-global-search-submit');
 const _mobileSearchResultListKey = Key('mobile-global-search-result-list');
+const _mobileGraphOverflowKey = Key('mobile-graph-command-overflow');
 const _selectedPreviewKey = Key('mobile-selected-node-preview');
 
 void main() {
@@ -152,6 +154,105 @@ void main() {
   });
 
   group('Mobile Search target mutation origin 반영', () {
+    testWidgets('Graph target local retarget이 route result owner를 보존한다', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(800, 900));
+      final collector = WordMutationImpactCollector();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WordGraphScreen(
+            centerWordId: _representativeWordId,
+            mutationImpactCollector: collector,
+          ),
+        ),
+      );
+      await _waitForGraphBootstrap(tester);
+
+      final originElement = tester.element(find.byType(WordGraphScreen));
+      await _openSearchAndSubmit(tester, 'H2');
+      await tester.tap(find.byTooltip('그래프').first);
+      await _pumpUntil(
+        tester,
+        () =>
+            find.byType(WordGraphScreen).evaluate().length == 1 &&
+            find
+                    .byType(WordGraphScreen, skipOffstage: false)
+                    .evaluate()
+                    .length ==
+                2 &&
+            find.byType(MobileWordSearchScreen).evaluate().isEmpty,
+        reason: 'origin 위에 target Graph가 열려야 한다.',
+      );
+      await _waitForGraphBootstrap(tester);
+
+      final targetElement = tester.element(find.byType(WordGraphScreen));
+      final createdWordId = await _createUnrelatedWordFromActiveGraph(
+        tester,
+        spelling: 'Phase29 local retarget',
+      );
+
+      expect(tester.element(find.byType(WordGraphScreen)), same(targetElement));
+      expect(
+        find.byType(WordGraphScreen, skipOffstage: false).evaluate().length,
+        2,
+      );
+      expect(
+        find.byKey(ValueKey<String>('graph-center-node:$createdWordId')),
+        findsOneWidget,
+      );
+
+      collector.recordGraphAffectedWords([_representativeWordId]);
+      await tester.binding.handlePopRoute();
+      await tester.pump();
+      await _pumpUntil(
+        tester,
+        () =>
+            find.byType(WordGraphScreen).evaluate().length == 1 &&
+            find
+                    .byType(WordGraphScreen, skipOffstage: false)
+                    .evaluate()
+                    .length ==
+                1,
+        reason: '한 번의 back으로 target route가 종료되고 origin Graph로 복귀해야 한다.',
+      );
+      await _pumpForAsyncWork(tester);
+
+      expect(tester.element(find.byType(WordGraphScreen)), same(originElement));
+      await _disposeRuntimeApp(tester);
+    });
+
+    testWidgets('collector 없는 standalone Graph는 pushReplacement를 유지한다', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(800, 900));
+      await tester.pumpWidget(
+        MaterialApp(home: WordGraphScreen(centerWordId: _representativeWordId)),
+      );
+      await _waitForGraphBootstrap(tester);
+
+      final initialElement = tester.element(find.byType(WordGraphScreen));
+      final createdWordId = await _createUnrelatedWordFromActiveGraph(
+        tester,
+        spelling: 'Phase29 standalone replacement',
+      );
+
+      expect(
+        tester.element(find.byType(WordGraphScreen)),
+        isNot(same(initialElement)),
+      );
+      expect(
+        find.byType(WordGraphScreen, skipOffstage: false).evaluate().length,
+        1,
+      );
+      expect(
+        find.byKey(ValueKey<String>('graph-center-node:$createdWordId')),
+        findsOneWidget,
+      );
+
+      await _disposeRuntimeApp(tester);
+    });
+
     testWidgets('Graph origin refresh가 camera, selection, 확장 node 위치를 보존한다', (
       tester,
     ) async {
@@ -326,6 +427,60 @@ Finder _peripheralNodeFinder() {
     return key is ValueKey<String> &&
         key.value.startsWith('graph-peripheral-node:');
   });
+}
+
+Finder _centerNodeFinder() {
+  return find.byWidgetPredicate((widget) {
+    final key = widget.key;
+    return key is ValueKey<String> &&
+        key.value.startsWith('graph-center-node:');
+  });
+}
+
+Future<String> _createUnrelatedWordFromActiveGraph(
+  WidgetTester tester, {
+  required String spelling,
+}) async {
+  await tester.tap(find.byKey(_mobileGraphOverflowKey));
+  await tester.pumpAndSettle();
+  await tester.tap(find.text('단어 추가'));
+  await tester.pumpAndSettle();
+
+  expect(find.text('신규 단어 생성'), findsOneWidget);
+  await tester.enterText(find.widgetWithText(TextField, '표기'), spelling);
+  await tester.tap(find.widgetWithText(ElevatedButton, '저장'));
+  await _pumpUntil(
+    tester,
+    () => find.byType(WordEditScreen).evaluate().length == 1,
+    reason: '생성된 단어의 편집 화면이 열려야 한다.',
+  );
+
+  final editSaveButton = find.descendant(
+    of: find.byType(WordEditScreen),
+    matching: find.widgetWithText(ElevatedButton, '저장'),
+  );
+  await tester.scrollUntilVisible(
+    editSaveButton,
+    300,
+    scrollable: find
+        .descendant(
+          of: find.byType(WordEditScreen),
+          matching: find.byType(Scrollable),
+        )
+        .first,
+  );
+  await tester.tap(editSaveButton);
+  await _pumpUntil(
+    tester,
+    () =>
+        find.byType(WordEditScreen).evaluate().isEmpty &&
+        _centerNodeFinder().evaluate().length == 1 &&
+        find.byType(CircularProgressIndicator).evaluate().isEmpty,
+    reason: '새 단어를 center로 하는 Graph 전환이 완료되어야 한다.',
+  );
+
+  final centerKey = tester.widget(_centerNodeFinder()).key! as ValueKey<String>;
+  return centerKey.value.substring('graph-center-node:'.length);
 }
 
 Future<void> _openSearchAndSubmit(WidgetTester tester, String query) async {

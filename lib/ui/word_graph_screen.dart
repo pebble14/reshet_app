@@ -984,22 +984,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     final didCenterWordChange = nextCenterSeedId != oldCenterSeedId;
 
     if (didCenterWordChange) {
-      WordGraphDataCache.clearExpansionsForCenter(oldCenterSeedId);
-      _resetExpansionState(clearSeedPositions: true);
-      setState(() {
-        _centerWordId = nextCenterSeedId;
-        _centerWord = _centerSeedWordFrom(nextCenterSeedId);
-        _centerWordDisplayItem = null;
-        _selectedWordId = widget.selectedWordId;
-        _resetSelectedWordPreviewState();
-        _isLoading = true;
-        _errorMessage = null;
-        _graphViewData = null;
-        _baseGraphData = null;
-        _pendingCenterFocusAfterCenterChange = true;
-        _pendingCenterFocusWordId = nextCenterSeedId;
-      });
-      _loadConnectedWords();
+      _retargetCenterLocally(
+        nextCenterSeedId,
+        selectedWordId: widget.selectedWordId,
+      );
       return;
     }
 
@@ -1015,6 +1003,29 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         _syncSelectedWordPreviewForCurrentSelection();
       });
     }
+  }
+
+  void _retargetCenterLocally(
+    String centerWordId, {
+    required String? selectedWordId,
+  }) {
+    final nextCenterWordId = _centerSeedIdOf(centerWordId);
+    WordGraphDataCache.clearExpansionsForCenter(_centerWordId);
+    _resetExpansionState(clearSeedPositions: true);
+    setState(() {
+      _centerWordId = nextCenterWordId;
+      _centerWord = _centerSeedWordFrom(nextCenterWordId);
+      _centerWordDisplayItem = null;
+      _selectedWordId = selectedWordId;
+      _resetSelectedWordPreviewState();
+      _isLoading = true;
+      _errorMessage = null;
+      _graphViewData = null;
+      _baseGraphData = null;
+      _pendingCenterFocusAfterCenterChange = true;
+      _pendingCenterFocusWordId = nextCenterWordId;
+    });
+    _loadConnectedWords();
   }
 
   @override
@@ -5823,6 +5834,11 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       if (widget.onChangeCenterWordId != null ||
           widget.onChangeCenterWord != null) {
         _dispatchCenterChange(createdWord);
+        return;
+      }
+
+      if (widget.mutationImpactCollector != null) {
+        _retargetCenterLocally(payload.wordId, selectedWordId: null);
         return;
       }
 
