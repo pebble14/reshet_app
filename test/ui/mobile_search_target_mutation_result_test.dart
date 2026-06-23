@@ -187,10 +187,26 @@ void main() {
       await _waitForGraphBootstrap(tester);
 
       final targetElement = tester.element(find.byType(WordGraphScreen));
+      await _zoomAndPanActiveGraphAwayFromCenter(tester);
+      final transformController = tester
+          .widget<InteractiveViewer>(find.byType(InteractiveViewer))
+          .transformationController!;
+      final scaleBeforeRetarget = transformController.value.getMaxScaleOnAxis();
+      expect(scaleBeforeRetarget, greaterThan(1.0));
+      expect(
+        _widgetRect(
+          tester,
+          find.byType(InteractiveViewer),
+        ).contains(_widgetRect(tester, _centerNodeFinder()).center),
+        isFalse,
+        reason: 'retarget 전 target Graph center가 viewport 밖에 있어야 한다.',
+      );
+
       final createdWordId = await _createUnrelatedWordFromActiveGraph(
         tester,
         spelling: 'Phase29 local retarget',
       );
+      await tester.pump();
 
       expect(tester.element(find.byType(WordGraphScreen)), same(targetElement));
       expect(
@@ -200,6 +216,24 @@ void main() {
       expect(
         find.byKey(ValueKey<String>('graph-center-node:$createdWordId')),
         findsOneWidget,
+      );
+      expect(
+        tester
+            .widget<InteractiveViewer>(find.byType(InteractiveViewer))
+            .transformationController!
+            .value
+            .getMaxScaleOnAxis(),
+        closeTo(scaleBeforeRetarget, 0.0001),
+      );
+      expect(
+        _widgetRect(tester, find.byType(InteractiveViewer)).contains(
+          _widgetRect(
+            tester,
+            find.byKey(ValueKey<String>('graph-center-node:$createdWordId')),
+          ).center,
+        ),
+        isTrue,
+        reason: 'local retarget 후 새 center node가 Graph viewport 안에 보여야 한다.',
       );
 
       collector.recordGraphAffectedWords([_representativeWordId]);
@@ -435,6 +469,60 @@ Finder _centerNodeFinder() {
     return key is ValueKey<String> &&
         key.value.startsWith('graph-center-node:');
   });
+}
+
+Future<void> _zoomAndPanActiveGraphAwayFromCenter(WidgetTester tester) async {
+  await _pinchZoomActiveGraph(tester);
+  await _panActiveGraphUntilCenterLeavesViewport(tester);
+}
+
+Future<void> _pinchZoomActiveGraph(WidgetTester tester) async {
+  final viewport = _widgetRect(tester, find.byType(InteractiveViewer));
+  final center = viewport.center;
+  final first = await tester.createGesture(pointer: 1);
+  final second = await tester.createGesture(pointer: 2);
+
+  await first.down(center - const Offset(24, 0));
+  await second.down(center + const Offset(24, 0));
+  await tester.pump();
+  await first.moveTo(center - const Offset(96, 0));
+  await second.moveTo(center + const Offset(96, 0));
+  await tester.pump();
+  await first.up();
+  await second.up();
+  await tester.pump();
+}
+
+Future<void> _panActiveGraphUntilCenterLeavesViewport(
+  WidgetTester tester,
+) async {
+  final graphFinder = find.byType(InteractiveViewer);
+  for (var attempt = 0; attempt < 4; attempt++) {
+    await tester.drag(graphFinder, const Offset(620, 520));
+    await tester.pump();
+    if (!_widgetRect(
+      tester,
+      graphFinder,
+    ).contains(_widgetRect(tester, _centerNodeFinder()).center)) {
+      return;
+    }
+  }
+
+  expect(
+    _widgetRect(
+      tester,
+      graphFinder,
+    ).contains(_widgetRect(tester, _centerNodeFinder()).center),
+    isFalse,
+    reason: 'retarget 전 target Graph center가 viewport 밖으로 이동해야 한다.',
+  );
+}
+
+Rect _widgetRect(WidgetTester tester, Finder finder) {
+  return Rect.fromPoints(
+    tester.getTopLeft(finder),
+    tester.getBottomRight(finder),
+  );
 }
 
 Future<String> _createUnrelatedWordFromActiveGraph(

@@ -919,6 +919,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   bool _pendingCenterFocusAfterCenterChange = false;
   bool _didSchedulePendingCenterFocus = false;
   String? _pendingCenterFocusWordId;
+  String? _pendingLocalRetargetCenterFocusWordId;
+  bool _didSchedulePendingLocalRetargetCenterFocus = false;
   bool _suppressBackgroundTapClear = false;
   bool _isViewportInteracting = false;
   DateTime? _lastViewportInteractionAt;
@@ -1008,6 +1010,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   void _retargetCenterLocally(
     String centerWordId, {
     required String? selectedWordId,
+    bool ensureCenterVisibleAfterRetarget = false,
   }) {
     final nextCenterWordId = _centerSeedIdOf(centerWordId);
     WordGraphDataCache.clearExpansionsForCenter(_centerWordId);
@@ -1024,6 +1027,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       _baseGraphData = null;
       _pendingCenterFocusAfterCenterChange = true;
       _pendingCenterFocusWordId = nextCenterWordId;
+      _pendingLocalRetargetCenterFocusWordId = ensureCenterVisibleAfterRetarget
+          ? nextCenterWordId
+          : null;
+      _didSchedulePendingLocalRetargetCenterFocus = false;
     });
     _loadConnectedWords();
   }
@@ -1400,6 +1407,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         _centerWordDisplayItem = null;
         _pendingCenterFocusAfterCenterChange = false;
         _pendingCenterFocusWordId = null;
+        _pendingLocalRetargetCenterFocusWordId = null;
+        _didSchedulePendingLocalRetargetCenterFocus = false;
       });
     }
   }
@@ -1556,6 +1565,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         final layout = _computeGraphLayout(viewportSize, viewData);
         _scheduleViewportCameraSync(layout);
         _scheduleConditionalCenterFocus(layout);
+        _scheduleLocalRetargetCenterFocus(layout);
         final selectedEdgeIds = _selectedEdgeIds(_selectedWordId);
         final selectedRelationEntries = _selectedNodeRelationEntries(
           layout,
@@ -3402,6 +3412,33 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     _transformController.value = next;
   }
 
+  void _scheduleLocalRetargetCenterFocus(_GraphLayoutData layout) {
+    final pendingCenterWordId = _pendingLocalRetargetCenterFocusWordId;
+    if (pendingCenterWordId == null ||
+        pendingCenterWordId != _centerWordId ||
+        pendingCenterWordId != layout.centerNodeId ||
+        _didSchedulePendingLocalRetargetCenterFocus) {
+      return;
+    }
+
+    _didSchedulePendingLocalRetargetCenterFocus = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _didSchedulePendingLocalRetargetCenterFocus = false;
+      if (!mounted) return;
+      if (_pendingLocalRetargetCenterFocusWordId != pendingCenterWordId ||
+          _centerWordId != pendingCenterWordId ||
+          layout.centerNodeId != pendingCenterWordId) {
+        return;
+      }
+
+      _translateLayoutPointToViewportCenter(
+        layoutPoint: layout.center,
+        viewportSize: layout.viewportSize,
+      );
+      _pendingLocalRetargetCenterFocusWordId = null;
+    });
+  }
+
   void _scheduleViewportCameraSync(_GraphLayoutData layout) {
     if (_appliedViewportSize == layout.viewportSize &&
         _pendingViewportSize == null) {
@@ -3479,16 +3516,23 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       return;
     }
 
+    _translateLayoutPointToViewportCenter(
+      layoutPoint: selectedNodeCenter,
+      viewportSize: layout.viewportSize,
+    );
+  }
+
+  void _translateLayoutPointToViewportCenter({
+    required Offset layoutPoint,
+    required Size viewportSize,
+  }) {
     final matrix = Matrix4.copy(_transformController.value);
     final viewportCenter = Offset(
-      layout.viewportSize.width / 2,
-      layout.viewportSize.height / 2,
+      viewportSize.width / 2,
+      viewportSize.height / 2,
     );
-    final currentSelectedNodeCenter = MatrixUtils.transformPoint(
-      matrix,
-      selectedNodeCenter,
-    );
-    final shift = viewportCenter - currentSelectedNodeCenter;
+    final currentPoint = MatrixUtils.transformPoint(matrix, layoutPoint);
+    final shift = viewportCenter - currentPoint;
     if (shift.distanceSquared <= 0.0001) {
       return;
     }
@@ -5838,7 +5882,11 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       }
 
       if (widget.mutationImpactCollector != null) {
-        _retargetCenterLocally(payload.wordId, selectedWordId: null);
+        _retargetCenterLocally(
+          payload.wordId,
+          selectedWordId: null,
+          ensureCenterVisibleAfterRetarget: true,
+        );
         return;
       }
 
