@@ -49,6 +49,17 @@
 - 현재 앱의 일부 read 경로는 아직 legacy expression slot에 의존한다.
 - expression write 경로에서는 `WORD_TABLE` expression slot을 canonical authority가 아니라 compatibility projection으로 갱신한다.
 
+#### 5.1.1 meaning slot / word_meaning_set migration boundary
+
+- 현재 meaning의 canonical write authority는 `WORD_TABLE.의미1~7`이다. `word_meaning_set`은 아직 구현 전 후보이며, 이번 경계는 향후 migration/write 전환 판단 기준이다.
+- 향후 initial backfill에서는 raw 값이 존재하는 `의미N`을 문자열 수정 없이 `word_meaning_set.seq=N`으로 보존한다. `ROW_NUMBER()` 재번호 부여, hole 재압축, 순서 변경, trim, 중복 제거, 문자열 수정, 의미 병합/분할, 중요도 재판단은 하지 않는다. 예를 들어 `G2367_0000`의 `의미1`과 `의미7`은 `seq=1`, `seq=7`로 보존하며 `seq=2`로 당기지 않는다.
+- expression set의 `seq`는 표기/음역/발음 묶음의 안정적 대응 순서이고 대표성은 `is_representative`로 판단한다. meaning set의 `seq`는 기존 `의미1~7`의 우선순위와 표시 순서를 보존하므로 expression migration의 compact/reindex 전략을 재사용하지 않는다.
+- 첫 production slice는 `word_meaning_set` schema/runtime ensure, legacy `의미1~7` to `seq=N` backfill, normalized-first create/update, 같은 transaction의 legacy projection 갱신, migration/dual-write parity 검증으로 제한한다. detail/home search/graph read 전환, legacy read 기본값 제거, legacy column 삭제, meaning data repair, 검색 ranking 재설계는 제외한다.
+- 첫 slice에서 legacy projection을 유지하는 이유는 detail/search/graph가 현재 legacy `의미1~7` projection을 읽고 있어 read path 전환 없이 독립 구현할 수 있기 때문이다.
+- 초기 migration은 기존 DB raw slot을 보존한다. 현재 UI edit/write는 의미 입력을 list로 다루며 trim/빈 값 제거 후 저장할 수 있으므로, 사용자가 edit 후 저장하면 기존 hole이 compact될 수 있다. slot-aware 편집 UX나 hole 보존 편집 의미론은 첫 production slice의 목표가 아니며 별도 UX/쓰기 정책 phase에서 다룬다.
+- Phase 31-B 시점 실제 DB에는 공백 전용 meaning이 0건이었지만, 향후 발견되는 공백 전용 raw value를 initial migration에서 임의 trim/삭제하지 않는다. 일반 UI write는 기존 입력 의미론에 따라 trim/빈 값 제거를 유지할 수 있다. schema 후보의 trim 기반 CHECK(`TRIM(meaning) <> ''`)는 raw 보존 원칙과 충돌할 수 있으므로 첫 후보에서는 피하고, 최소 제약은 `TEXT NOT NULL`과 필요 시 `meaning <> ''` 수준으로 검토한다.
+- 현재 history/undo는 legacy `WORD_TABLE.의미1~7` snapshot 기반이다. normalized write 전환 후 undo/restore도 같은 transaction에서 normalized rows와 legacy projection을 동기화해야 하며, normalized-only history format 전환은 첫 production slice의 필수 목표가 아니다.
+
 ### 5.2 word_expression_set
 
 - `word_expression_set`는 expression을 정규화된 row 구조로 저장하는 테이블이다.
