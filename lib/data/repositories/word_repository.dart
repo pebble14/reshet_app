@@ -214,8 +214,6 @@ class WordRepository {
   });
   static const String _historyNormalizedExpressionRowsKey =
       '_normalized_expression_rows';
-  static const String _historyNormalizedMeaningRowsKey =
-      '_normalized_meaning_rows';
   static const List<String> _wordExpressionSetSnapshotColumns = [
     'word_id',
     'seq',
@@ -223,11 +221,6 @@ class WordRepository {
     'spelling',
     'transliteration',
     'pronunciation',
-  ];
-  static const List<String> _wordMeaningSetSnapshotColumns = [
-    'word_id',
-    'seq',
-    'meaning',
   ];
   static final RegExp _hebrewMarkPattern = RegExp(r'[\u0591-\u05C7]');
   static final RegExp _hebrewScriptPattern = RegExp(r'[\u0590-\u05FF]');
@@ -344,15 +337,12 @@ class WordRepository {
   Map<String, dynamic> _buildWordHistorySnapshot({
     required Map<String, dynamic> compatibilityWordSnapshot,
     required List<Map<String, dynamic>> normalizedExpressionRows,
-    required List<Map<String, dynamic>> normalizedMeaningRows,
   }) {
     final snapshot = _sanitizeWordHistorySnapshot(
       Map<String, dynamic>.from(compatibilityWordSnapshot),
     );
     snapshot[_historyNormalizedExpressionRowsKey] =
         _cloneWordExpressionRowsForHistory(normalizedExpressionRows);
-    snapshot[_historyNormalizedMeaningRowsKey] =
-        _cloneWordMeaningRowsForHistory(normalizedMeaningRows);
     return snapshot;
   }
 
@@ -371,19 +361,6 @@ class WordRepository {
       rows.map(
         (row) => {
           for (final column in _wordExpressionSetSnapshotColumns)
-            column: row[column],
-        },
-      ),
-    );
-  }
-
-  List<Map<String, dynamic>> _cloneWordMeaningRowsForHistory(
-    Iterable<Map<String, dynamic>> rows,
-  ) {
-    return List<Map<String, dynamic>>.unmodifiable(
-      rows.map(
-        (row) => {
-          for (final column in _wordMeaningSetSnapshotColumns)
             column: row[column],
         },
       ),
@@ -413,29 +390,6 @@ class WordRepository {
     );
   }
 
-  List<Map<String, Object?>>? _readNormalizedMeaningRowsFromHistorySnapshot(
-    Map<String, dynamic> historySnapshot,
-  ) {
-    if (!historySnapshot.containsKey(_historyNormalizedMeaningRowsKey)) {
-      return null;
-    }
-
-    final rawRows = historySnapshot[_historyNormalizedMeaningRowsKey];
-    if (rawRows is! List) {
-      return const <Map<String, Object?>>[];
-    }
-
-    return List<Map<String, Object?>>.unmodifiable(
-      rawRows.whereType<Map>().map((rawRow) {
-        final row = Map<String, dynamic>.from(rawRow);
-        return {
-          for (final column in _wordMeaningSetSnapshotColumns)
-            column: row[column],
-        };
-      }),
-    );
-  }
-
   Future<List<Map<String, dynamic>>> _loadWordExpressionSetRowsForHistory(
     DatabaseExecutor txn,
     String wordId,
@@ -449,23 +403,6 @@ class WordRepository {
     );
 
     return _cloneWordExpressionRowsForHistory(
-      rows.map((row) => Map<String, dynamic>.from(row)),
-    );
-  }
-
-  Future<List<Map<String, dynamic>>> _loadWordMeaningSetRowsForHistory(
-    DatabaseExecutor txn,
-    String wordId,
-  ) async {
-    final rows = await txn.query(
-      'word_meaning_set',
-      columns: _wordMeaningSetSnapshotColumns,
-      where: 'word_id = ?',
-      whereArgs: [wordId],
-      orderBy: 'seq ASC, id ASC',
-    );
-
-    return _cloneWordMeaningRowsForHistory(
       rows.map((row) => Map<String, dynamic>.from(row)),
     );
   }
@@ -543,14 +480,6 @@ class WordRepository {
         'meaning': normalizedMeanings[index],
       },
       growable: false,
-    );
-  }
-
-  List<Map<String, dynamic>> _buildNormalizedMeaningHistoryRows(
-    Iterable<Map<String, Object?>> rows,
-  ) {
-    return _cloneWordMeaningRowsForHistory(
-      rows.map((row) => Map<String, dynamic>.from(row)),
     );
   }
 
@@ -3778,9 +3707,6 @@ class WordRepository {
       id,
       normalizedMeanings,
     );
-    final normalizedMeaningRowsForHistory = _buildNormalizedMeaningHistoryRows(
-      normalizedMeaningRows,
-    );
 
     await db.transaction((txn) async {
       await _replaceWordExpressionSetRows(txn, id, normalizedExpressionRows);
@@ -3807,7 +3733,6 @@ class WordRepository {
       final historyAfter = _buildWordHistorySnapshot(
         compatibilityWordSnapshot: row,
         normalizedExpressionRows: normalizedExpressionRowsForHistory,
-        normalizedMeaningRows: normalizedMeaningRowsForHistory,
       );
 
       await txn.insert('WORD_TABLE', row);
@@ -3859,10 +3784,6 @@ class WordRepository {
       }
       final normalizedRows = after[_historyNormalizedExpressionRowsKey];
       if (normalizedRows != null && normalizedRows is! List) {
-        return false;
-      }
-      final normalizedMeaningRows = after[_historyNormalizedMeaningRowsKey];
-      if (normalizedMeaningRows != null && normalizedMeaningRows is! List) {
         return false;
       }
       return true;
@@ -4011,12 +3932,9 @@ class WordRepository {
       );
       final normalizedExpressionRowsBefore =
           await _loadWordExpressionSetRowsForHistory(txn, wordId);
-      final normalizedMeaningRowsBefore =
-          await _loadWordMeaningSetRowsForHistory(txn, wordId);
       final wordBeforeHistory = _buildWordHistorySnapshot(
         compatibilityWordSnapshot: wordBefore,
         normalizedExpressionRows: normalizedExpressionRowsBefore,
-        normalizedMeaningRows: normalizedMeaningRowsBefore,
       );
 
       final relationRows = await txn.query(
@@ -4082,9 +4000,6 @@ class WordRepository {
       id,
       normalizedMeanings,
     );
-    final normalizedMeaningRowsForHistory = _buildNormalizedMeaningHistoryRows(
-      normalizedMeaningRows,
-    );
 
     await db.transaction((txn) async {
       final beforeRaw = await _getWordRowById(txn, id);
@@ -4094,13 +4009,10 @@ class WordRepository {
 
       final beforeNormalizedExpressionRows =
           await _loadWordExpressionSetRowsForHistory(txn, id);
-      final beforeNormalizedMeaningRows =
-          await _loadWordMeaningSetRowsForHistory(txn, id);
       final beforeWordSnapshot = _sanitizeWordHistorySnapshot(beforeRaw);
       final before = _buildWordHistorySnapshot(
         compatibilityWordSnapshot: beforeWordSnapshot,
         normalizedExpressionRows: beforeNormalizedExpressionRows,
-        normalizedMeaningRows: beforeNormalizedMeaningRows,
       );
       final after = Map<String, dynamic>.from(beforeWordSnapshot);
 
@@ -4146,7 +4058,6 @@ class WordRepository {
       final afterHistory = _buildWordHistorySnapshot(
         compatibilityWordSnapshot: after,
         normalizedExpressionRows: normalizedExpressionRowsForHistory,
-        normalizedMeaningRows: normalizedMeaningRowsForHistory,
       );
 
       await _insertHistory(
@@ -4288,28 +4199,6 @@ class WordRepository {
   ) async {
     final compatibilityWordSnapshot =
         _extractCompatibilityWordSnapshotFromHistory(historySnapshot);
-    final wordId = (compatibilityWordSnapshot['id'] ?? '').toString().trim();
-    if (wordId.isEmpty) {
-      throw Exception('word_meaning_set 복원 실패: word id가 비어 있습니다.');
-    }
-
-    final normalizedRows = _readNormalizedMeaningRowsFromHistorySnapshot(
-      historySnapshot,
-    );
-    if (normalizedRows != null) {
-      final restoredRows = List<Map<String, Object?>>.unmodifiable(
-        normalizedRows.map(
-          (row) => {
-            'word_id': wordId,
-            'seq': row['seq'],
-            'meaning': row['meaning'],
-          },
-        ),
-      );
-      await _replaceWordMeaningSetRows(txn, wordId, restoredRows);
-      return;
-    }
-
     await _syncWordMeaningSetFromLegacySnapshot(txn, compatibilityWordSnapshot);
   }
 

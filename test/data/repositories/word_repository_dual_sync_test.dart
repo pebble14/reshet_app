@@ -121,9 +121,7 @@ void main() {
         jsonColumn: 'after_json',
       );
       expect(_readHistoryNormalizedRows(createHistoryAfter), hasLength(2));
-      expect(_readHistoryNormalizedMeaningRows(createHistoryAfter), [
-        {'word_id': wordId, 'seq': 1, 'meaning': '첫째 의미'},
-      ]);
+      _expectNoHistoryNormalizedMeaningRows(createHistoryAfter);
     });
 
     test(
@@ -210,9 +208,8 @@ void main() {
         );
         expect(_readHistoryNormalizedRows(updateHistoryBefore), hasLength(3));
         expect(_readHistoryNormalizedRows(updateHistoryAfter), hasLength(2));
-        expect(_readHistoryNormalizedMeaningRows(updateHistoryAfter), [
-          {'word_id': wordId, 'seq': 1, 'meaning': '대표 변경 후'},
-        ]);
+        _expectNoHistoryNormalizedMeaningRows(updateHistoryBefore);
+        _expectNoHistoryNormalizedMeaningRows(updateHistoryAfter);
       },
     );
 
@@ -264,6 +261,13 @@ void main() {
         expect(remainingRows, isEmpty);
         expect(remainingMeaningRows, isEmpty);
 
+        final deleteHistoryBefore = await _loadLatestWordHistorySnapshot(
+          wordId: wordId,
+          actionType: 'delete',
+          jsonColumn: 'before_json',
+        );
+        _expectNoHistoryNormalizedMeaningRows(deleteHistoryBefore);
+
         final undone = await repository.undoLastChange();
         expect(undone.didUndo, isTrue);
         expect(undone.primaryWordId, wordId);
@@ -295,6 +299,7 @@ void main() {
               isRepresentative: true,
             ),
           ],
+          meanings: const ['생성 취소 의미'],
         ),
       );
 
@@ -309,9 +314,15 @@ void main() {
         where: 'word_id = ?',
         whereArgs: [wordId],
       );
+      final meaningRows = await db.query(
+        'word_meaning_set',
+        where: 'word_id = ?',
+        whereArgs: [wordId],
+      );
 
       expect(word, isNull);
       expect(rows, isEmpty);
+      expect(meaningRows, isEmpty);
     });
 
     test('undoLastChange restores normalized rows for recent update', () async {
@@ -456,7 +467,7 @@ void main() {
     );
 
     test(
-      'undoLastChange falls back to legacy snapshot when normalized history is absent',
+      'undoLastChange uses legacy meaning slots despite forged normalized metadata',
       () async {
         final repository = WordRepository();
         const wordId = 'T9000_1007';
@@ -507,11 +518,15 @@ void main() {
           'before_json',
         );
         beforeSnapshot.remove(_historyNormalizedExpressionRowsKey);
-        beforeSnapshot.remove(_historyNormalizedMeaningRowsKey);
+        beforeSnapshot[_historyNormalizedMeaningRowsKey] = [
+          {'word_id': wordId, 'seq': 2, 'meaning': '위조 normalized 의미'},
+          {'word_id': wordId, 'seq': 3, 'meaning': '위조 normalized 셋째 의미'},
+        ];
         beforeSnapshot['표기1'] = 'legacy-only-restore';
         beforeSnapshot['음역1'] = '레거시 음역';
         beforeSnapshot['발음1'] = 'legacy-pron';
         beforeSnapshot['의미1'] = '레거시 의미';
+        beforeSnapshot['의미2'] = null;
         beforeSnapshot['의미7'] = '레거시 일곱째 의미';
         await _writeHistorySnapshot(historyId, 'before_json', beforeSnapshot);
 
@@ -530,6 +545,135 @@ void main() {
           (wordId: wordId, seq: 1, meaning: '레거시 의미'),
           (wordId: wordId, seq: 7, meaning: '레거시 일곱째 의미'),
         ]);
+      },
+    );
+
+    test(
+      'updateWord rollback restores legacy and normalized meanings on projection failure',
+      () async {
+        final repository = WordRepository();
+        const wordId = 'T9000_1008';
+        const updatedMeaning1 = 'rollback 새 의미 1';
+        const updatedMeaning2 = 'rollback 새 의미 2';
+        const updatedMeaning3 = 'rollback 새 의미 3';
+        const triggerName = 'phase31e_meaning_projection_failure';
+        const legacyProjectionFailureSentinel =
+            'phase31e legacy projection failure sentinel';
+        const normalizedFirstViolationSentinel =
+            'phase31e normalized-first violation sentinel';
+
+        await repository.createWord(
+          id: wordId,
+          payload: _payload(
+            expressionSets: const [
+              CanonicalExpressionWriteSet(
+                spelling: 'theta',
+                transliteration: '세타',
+                pronunciation: null,
+                seq: 1,
+                isRepresentative: true,
+              ),
+            ],
+            meanings: const ['rollback 이전 의미 1', 'rollback 이전 의미 2'],
+          ),
+        );
+
+        final db = await DatabaseService.openDatabaseFile();
+        final beforeMeaningSlots = _readMeaningSlots(
+          await _loadWordTableRow(wordId),
+        );
+        final beforeMeaningRows = await _loadActualMeaningRows(wordId);
+
+        await db.execute('''
+CREATE TEMP TRIGGER "$triggerName"
+BEFORE UPDATE OF "의미1", "의미2", "의미3", "의미4", "의미5", "의미6", "의미7"
+ON "WORD_TABLE"
+WHEN OLD."id" = '$wordId' AND NEW."의미1" = '$updatedMeaning1'
+BEGIN
+  SELECT CASE
+    WHEN (
+      SELECT COUNT(*)
+      FROM "word_meaning_set"
+      WHERE "word_id" = OLD."id"
+    ) != 3
+    THEN RAISE(ABORT, '$normalizedFirstViolationSentinel')
+  END;
+  SELECT CASE
+    WHEN NOT EXISTS (
+      SELECT 1
+      FROM "word_meaning_set"
+      WHERE "word_id" = OLD."id"
+        AND "seq" = 1
+        AND "meaning" = '$updatedMeaning1'
+    )
+    THEN RAISE(ABORT, '$normalizedFirstViolationSentinel')
+  END;
+  SELECT CASE
+    WHEN NOT EXISTS (
+      SELECT 1
+      FROM "word_meaning_set"
+      WHERE "word_id" = OLD."id"
+        AND "seq" = 2
+        AND "meaning" = '$updatedMeaning2'
+    )
+    THEN RAISE(ABORT, '$normalizedFirstViolationSentinel')
+  END;
+  SELECT CASE
+    WHEN NOT EXISTS (
+      SELECT 1
+      FROM "word_meaning_set"
+      WHERE "word_id" = OLD."id"
+        AND "seq" = 3
+        AND "meaning" = '$updatedMeaning3'
+    )
+    THEN RAISE(ABORT, '$normalizedFirstViolationSentinel')
+  END;
+  SELECT RAISE(ABORT, '$legacyProjectionFailureSentinel');
+END
+''');
+
+        Object? updateError;
+        try {
+          await repository.updateWord(
+            id: wordId,
+            payload: _payload(
+              expressionSets: const [
+                CanonicalExpressionWriteSet(
+                  spelling: 'theta-updated',
+                  transliteration: '세타 수정',
+                  pronunciation: null,
+                  seq: 1,
+                  isRepresentative: true,
+                ),
+              ],
+              meanings: const [
+                updatedMeaning1,
+                updatedMeaning2,
+                updatedMeaning3,
+              ],
+            ),
+          );
+        } catch (error) {
+          updateError = error;
+        } finally {
+          await db.execute('DROP TRIGGER IF EXISTS "$triggerName"');
+        }
+
+        expect(updateError, isNotNull);
+        expect(
+          updateError.toString(),
+          contains(legacyProjectionFailureSentinel),
+        );
+        expect(
+          updateError.toString(),
+          isNot(contains(normalizedFirstViolationSentinel)),
+        );
+
+        expect(
+          _readMeaningSlots(await _loadWordTableRow(wordId)),
+          beforeMeaningSlots,
+        );
+        expect(await _loadActualMeaningRows(wordId), beforeMeaningRows);
       },
     );
   });
@@ -790,18 +934,12 @@ List<Map<String, dynamic>> _readHistoryNormalizedRows(
       .toList(growable: false);
 }
 
-List<Map<String, dynamic>> _readHistoryNormalizedMeaningRows(
-  Map<String, dynamic> snapshot,
-) {
-  final rawRows = snapshot[_historyNormalizedMeaningRowsKey];
-  if (rawRows is! List) {
-    return const [];
-  }
-
-  return rawRows
-      .whereType<Map>()
-      .map((row) => Map<String, dynamic>.from(row))
-      .toList(growable: false);
+void _expectNoHistoryNormalizedMeaningRows(Map<String, dynamic> snapshot) {
+  expect(
+    snapshot.containsKey(_historyNormalizedMeaningRowsKey),
+    isFalse,
+    reason: 'word history snapshot은 _normalized_meaning_rows를 새로 기록하지 않아야 합니다.',
+  );
 }
 
 Future<Map<String, dynamic>> _loadWordTableRow(String wordId) async {
@@ -815,6 +953,12 @@ Future<Map<String, dynamic>> _loadWordTableRow(String wordId) async {
 
   expect(rows, isNotEmpty, reason: 'WORD_TABLE row가 필요합니다.');
   return Map<String, dynamic>.from(rows.first);
+}
+
+Map<String, Object?> _readMeaningSlots(Map<String, dynamic> wordRow) {
+  return {
+    for (var index = 1; index <= 7; index++) '의미$index': wordRow['의미$index'],
+  };
 }
 
 int _readInt(Object? value) {
