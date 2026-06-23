@@ -184,6 +184,29 @@ void main() {
     expect(row['expected_minus_actual_count'], 0);
     expect(row['actual_minus_expected_count'], 0);
   });
+
+  test('backfills word_meaning_set preserving raw slot seq', () async {
+    final db = await DatabaseService.openDatabaseFile();
+
+    final rows = await db.query(
+      'word_meaning_set',
+      columns: const ['word_id', 'seq', 'meaning'],
+      orderBy: 'word_id ASC, seq ASC',
+    );
+
+    expect(rows, [
+      {'word_id': 'W1', 'seq': 1, 'meaning': ' first '},
+      {'word_id': 'W1', 'seq': 7, 'meaning': ' seventh '},
+      {'word_id': 'W2', 'seq': 3, 'meaning': '  '},
+    ]);
+
+    await DatabaseService.closeDatabase();
+    final reopenedDb = await DatabaseService.openDatabaseFile();
+    final reopenedCounts = await reopenedDb.rawQuery(
+      'SELECT COUNT(*) AS row_count FROM word_meaning_set',
+    );
+    expect(reopenedCounts.single['row_count'], 3);
+  });
 }
 
 Future<Directory> _createIsolatedWorkspace(String repoRootPath) async {
@@ -230,7 +253,14 @@ Future<void> _createSyntheticSeedDb(String path) async {
         [발음3] TEXT,
         [발음4] TEXT,
         [발음5] TEXT,
-        [발음6] TEXT
+        [발음6] TEXT,
+        [의미1] TEXT,
+        [의미2] TEXT,
+        [의미3] TEXT,
+        [의미4] TEXT,
+        [의미5] TEXT,
+        [의미6] TEXT,
+        [의미7] TEXT
       )
     ''');
 
@@ -280,12 +310,16 @@ Future<void> _createSyntheticSeedDb(String path) async {
       '표기2': 'beta',
       '음역1': ' a ',
       '발음1': ' ah ',
+      '의미1': ' first ',
+      '의미7': ' seventh ',
     });
     await db.insert('WORD_TABLE', {
       'id': 'W2',
       '표기1': 'gamma',
       '음역1': 'g',
       '발음1': 'ga',
+      '의미1': '',
+      '의미3': '  ',
     });
 
     await db.insert('word_expression_set', {

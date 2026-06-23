@@ -172,6 +172,49 @@ H0001_0000
 
 ---
 
+# word_meaning_set
+
+의미 slot 정규화 테이블.
+
+현재 상태:
+
+- `DatabaseService.openDatabaseFile()`과 `resetToSeed()`가 `word_meaning_set` 테이블과 인덱스를 보장한다.
+- 테이블이 비어 있을 때만 legacy `WORD_TABLE.의미1~7`에서 one-time backfill한다.
+- backfill은 raw 의미 문자열을 수정하지 않고 기존 slot 번호를 `seq`로 보존한다.
+- 현재 detail/search/graph read path는 계속 legacy `WORD_TABLE.의미1~7` projection을 읽는다.
+- 현재 앱 meaning write path는 `word_meaning_set`를 우선 갱신하고 `WORD_TABLE.의미1~7` projection을 같은 transaction에서 함께 유지한다.
+- `word_meaning_set.id`는 surrogate key이다.
+- 의미 비교와 정합성 검증은 `(word_id, seq)`를 natural identity로 본다.
+
+## 실제 컬럼 구조
+
+| 컬럼 | 타입 | PK | NOT NULL | 기본값 | 설명 |
+| --- | --- | --- | --- | --- | --- |
+| `id` | `INTEGER` | Y | N | - | surrogate key |
+| `word_id` | `TEXT` | N | Y | - | `WORD_TABLE.id` 참조 |
+| `seq` | `INTEGER` | N | Y | - | legacy `의미N` slot 번호 |
+| `meaning` | `TEXT` | N | Y | - | 의미 raw 문자열 |
+
+제약:
+
+- `FOREIGN KEY(word_id) REFERENCES WORD_TABLE(id) ON DELETE CASCADE`
+- `CHECK(seq >= 1 AND seq <= 7)`
+- `CHECK(meaning <> '')`
+
+인덱스:
+
+- `ux_word_meaning_set_word_seq`
+  - `UNIQUE(word_id, seq)`
+
+정합성 원칙:
+
+- initial backfill은 `ROW_NUMBER()` 재번호 부여, hole 재압축, 순서 변경, trim, 중복 제거, 문자열 수정을 하지 않는다.
+- `NULL`과 빈 문자열은 normalized row로 저장하지 않는다.
+- 공백 전용 문자열은 trim 기준으로 제거하지 않는다.
+- semantic compare에서는 `id`를 제외하고 `word_id, seq, meaning` 집합만 비교한다.
+
+---
+
 # WORD_RELATION
 
 단어 간 관계 테이블.

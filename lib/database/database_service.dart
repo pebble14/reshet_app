@@ -375,6 +375,7 @@ class DatabaseService {
     await _ensureHistoryTable(_database!);
     await _ensureRelationLookupMetadata(_database!);
     await _ensureWordExpressionSetSchema(_database!);
+    await _ensureWordMeaningSetSchema(_database!);
 
     return _database!;
   }
@@ -460,6 +461,7 @@ class DatabaseService {
     await _ensureHistoryTable(_database!);
     await _ensureRelationLookupMetadata(_database!);
     await _ensureWordExpressionSetSchema(_database!);
+    await _ensureWordMeaningSetSchema(_database!);
   }
 
   /// WORD_RELATION v2 컬럼 보장
@@ -729,6 +731,67 @@ class DatabaseService {
         '[DB] word_expression_set baseline 보강: '
         '${backfilledRows.first['row_count']}건',
       );
+    });
+  }
+
+  /// legacy seed/work DB에서도 meaning slot의 normalized write target을
+  /// 사용할 수 있게 보장한다.
+  static Future<void> _ensureWordMeaningSetSchema(Database db) async {
+    await db.transaction((txn) async {
+      await txn.execute('''
+        CREATE TABLE IF NOT EXISTS word_meaning_set (
+          id INTEGER PRIMARY KEY,
+          word_id TEXT NOT NULL,
+          seq INTEGER NOT NULL,
+          meaning TEXT NOT NULL,
+          FOREIGN KEY (word_id) REFERENCES WORD_TABLE(id) ON DELETE CASCADE,
+          CHECK (seq >= 1 AND seq <= 7),
+          CHECK (meaning <> '')
+        )
+      ''');
+
+      await txn.execute('''
+        CREATE UNIQUE INDEX IF NOT EXISTS ux_word_meaning_set_word_seq
+        ON word_meaning_set(word_id, seq)
+      ''');
+
+      final existingRows = await txn.rawQuery(
+        'SELECT COUNT(*) AS row_count FROM word_meaning_set',
+      );
+      final existingRowCount = existingRows.first['row_count'] as int;
+      if (existingRowCount > 0) {
+        return;
+      }
+
+      await txn.execute('''
+        WITH legacy_slots AS (
+          SELECT id AS word_id, 1 AS seq, [의미1] AS meaning
+          FROM WORD_TABLE
+          UNION ALL
+          SELECT id, 2, [의미2]
+          FROM WORD_TABLE
+          UNION ALL
+          SELECT id, 3, [의미3]
+          FROM WORD_TABLE
+          UNION ALL
+          SELECT id, 4, [의미4]
+          FROM WORD_TABLE
+          UNION ALL
+          SELECT id, 5, [의미5]
+          FROM WORD_TABLE
+          UNION ALL
+          SELECT id, 6, [의미6]
+          FROM WORD_TABLE
+          UNION ALL
+          SELECT id, 7, [의미7]
+          FROM WORD_TABLE
+        )
+        INSERT INTO word_meaning_set (word_id, seq, meaning)
+        SELECT word_id, seq, meaning
+        FROM legacy_slots
+        WHERE meaning IS NOT NULL
+          AND meaning <> ''
+      ''');
     });
   }
 
