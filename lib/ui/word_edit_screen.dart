@@ -140,15 +140,10 @@ class _WordEditScreenState extends State<WordEditScreen> {
     return _meaningControllers
         .map((controller) => controller.text.trim())
         .where((value) => value.isNotEmpty)
-        .take(7)
         .toList(growable: false);
   }
 
   void _addMeaningField() {
-    if (_meaningControllers.length >= 7) {
-      return;
-    }
-
     setState(() {
       _meaningControllers.add(TextEditingController());
     });
@@ -240,7 +235,7 @@ class _WordEditScreenState extends State<WordEditScreen> {
 
   Widget _buildMeaningSection(BuildContext context) {
     final theme = Theme.of(context);
-    final canAddMeaning = !_isSaving && _meaningControllers.length < 7;
+    final canAddMeaning = !_isSaving;
 
     return Container(
       padding: const EdgeInsets.all(12),
@@ -258,7 +253,7 @@ class _WordEditScreenState extends State<WordEditScreen> {
             ),
           ),
           const SizedBox(height: 4),
-          Text('최대 7개까지 저장됩니다.', style: theme.textTheme.bodySmall),
+          Text('입력한 순서대로 저장됩니다.', style: theme.textTheme.bodySmall),
           const SizedBox(height: 12),
           if (_meaningControllers.isEmpty)
             Padding(

@@ -48,21 +48,23 @@
 - 동시에 expression slot(`표기1~6`, `음역1~6`, `발음1~6`)과 relation slot(`관련1~7`)도 함께 보유하고 있다.
 - 현재 앱의 일부 read 경로는 아직 legacy expression slot에 의존한다.
 - expression write 경로에서는 `WORD_TABLE` expression slot을 canonical authority가 아니라 compatibility projection으로 갱신한다.
-- meaning slot(`의미1~7`)은 현재 meaning read 및 history restore authority로 남아 있다.
+- meaning slot(`의미1~7`)은 현재 canonical authority가 아니라 compatibility projection이다.
 
 #### 5.1.1 meaning slot / word_meaning_set migration boundary
 
-- 현재 meaning read 및 history restore authority는 legacy `WORD_TABLE.의미1~7`이다.
-- `word_meaning_set`은 정상 runtime에서 `DatabaseService.openDatabaseFile()`의 DB open 직후 ensure/backfill되는 병행 저장/동기화 구조다.
+- 현재 normal runtime의 meaning read 및 history authority는 `word_meaning_set`이다.
+- `word_meaning_set`은 정상 runtime에서 `DatabaseService.openDatabaseFile()`의 DB open 직후 ensure/backfill되며, canonical meaning row 저장소로 사용한다.
 - 따라서 source DB 파일에 `word_meaning_set` table이 없는 상태 자체는 migration 누락으로 단정하지 않는다.
 - ensure/backfill에서는 raw 값이 존재하는 `의미N`을 문자열 수정 없이 `word_meaning_set.seq=N`으로 보존한다. `ROW_NUMBER()` 재번호 부여, hole 재압축, 순서 변경, trim, 중복 제거, 문자열 수정, 의미 병합/분할, 중요도 재판단은 하지 않는다. 예를 들어 `G2367_0000`의 `의미1`과 `의미7`은 `seq=1`, `seq=7`로 보존하며 `seq=2`로 당기지 않는다.
 - expression set의 `seq`는 표기/음역/발음 묶음의 안정적 대응 순서이고 대표성은 `is_representative`로 판단한다. meaning set의 `seq`는 기존 `의미1~7`의 우선순위와 표시 순서를 보존하므로 expression migration의 compact/reindex 전략을 재사용하지 않는다.
-- 현재 `word_meaning_set`은 final canonical read/history authority가 아니라 병행 저장/동기화 target이다. final canonical read/history authority로의 승격은 후속 phase다.
-- 현재 전환 경계는 runtime ensure/backfill, legacy `의미1~7` to `seq=N` 보존, normalized row와 legacy projection의 동기화 검증으로 제한한다. detail/home search/graph read 전환, legacy read 기본값 제거, legacy column 삭제, meaning data repair, 검색 ranking 재설계는 제외한다.
-- legacy projection을 유지하는 이유는 detail/search/graph와 history restore가 현재 legacy `의미1~7` projection을 읽고 있어 read/history path 전환 없이 독립 구현할 수 있기 때문이다.
+- `word_meaning_set.seq`는 `seq >= 1`을 유지하며 `seq <= 7` 상한을 두지 않는다. `seq>7` canonical meaning은 허용되며 legacy slot에 맞추기 위해 절단하지 않는다.
+- legacy `의미1~7`은 compatibility projection으로 유지한다. canonical row의 `seq=1~7`만 `의미1~7`에 대응하며 `seq>7`은 legacy column에 기록하지 않는다.
+- detail, edit 재진입, home search, graph primary label, graph relation-add search, 새 history/undo는 `word_meaning_set`을 meaning authority로 사용한다.
+- legacy-only 구형 history snapshot처럼 normalized meaning payload가 없는 경우에는 `의미1~7` fallback을 유지한다.
+- legacy column 삭제, projection 중단, `의미8` 등 legacy slot 확장, 전체 검색 ranking 재설계는 이번 전환 범위 밖이며 별도 phase에서 판단한다.
 - 초기 migration은 기존 DB raw slot을 보존한다. 현재 UI edit/write는 의미 입력을 list로 다루며 trim/빈 값 제거 후 저장할 수 있으므로, 사용자가 edit 후 저장하면 기존 hole이 compact될 수 있다. slot-aware 편집 UX나 hole 보존 편집 의미론은 현재 전환 경계의 목표가 아니며 별도 UX/쓰기 정책 phase에서 다룬다.
 - Phase 31-B 시점 실제 DB에는 공백 전용 meaning이 0건이었지만, 향후 발견되는 공백 전용 raw value를 initial migration에서 임의 trim/삭제하지 않는다. 일반 UI write는 기존 입력 의미론에 따라 trim/빈 값 제거를 유지할 수 있다. schema 제약 검토에서는 trim 기반 CHECK(`TRIM(meaning) <> ''`)가 raw 보존 원칙과 충돌할 수 있으므로 피하고, 최소 제약은 `TEXT NOT NULL`과 필요 시 `meaning <> ''` 수준으로 검토한다.
-- 현재 history/undo는 legacy `WORD_TABLE.의미1~7` snapshot 기반이다. undo/restore가 normalized rows와 legacy projection을 함께 동기화하더라도, normalized-only history format 전환은 별도 phase다.
+- 새 history snapshot은 canonical normalized meaning rows를 포함한다. 구형 legacy-only snapshot fallback은 호환 목적으로만 유지한다.
 
 ### 5.2 word_expression_set
 
@@ -107,8 +109,8 @@
 - 의미는 서로 독립된 목록이므로 `word_meaning_set`의 개별 행으로 다룬다.
 - 관련은 단어와 단어 사이의 관계이므로 `WORD_RELATION`이 최종 authority다.
 - legacy 번호 slot은 장기 canonical authority가 아니라 전환 기간의 compatibility projection이다.
-- 이 원칙은 legacy column 즉시 삭제, read path 변경, history authority 변경을 뜻하지 않는다.
-- legacy column 제거 또는 projection 중단은 상세, 편집, 검색, graph, history, undo, data migration이 모두 해당 normalized authority로 안전하게 전환된 뒤 별도 production phase에서 결정한다.
+- 이 원칙은 legacy column 즉시 삭제나 projection 중단을 뜻하지 않는다.
+- legacy column 제거 또는 projection 중단은 호환 필요성과 data migration 상태를 확인한 뒤 별도 production phase에서 결정한다.
 - 새 기능은 legacy 번호 slot의 개수를 늘려 문제를 해결하지 않는다.
 
 ## 7. canonical / non-canonical 분류
@@ -156,10 +158,10 @@
 
 ### 8.4 meaning slot
 
-- `의미1~7`은 현재 meaning read 및 history restore authority다.
-- 장기적으로는 `word_meaning_set`이 meaning canonical authority가 되어야 한다.
-- 현재 `word_meaning_set`은 병행 저장/동기화 구조이며, normalized-only read/history authority 완료 상태로 선언하지 않는다.
-- meaning slot 제거 또는 projection 중단은 read, history restore, undo, data migration 전환이 완료된 뒤 별도 production phase에서 검토한다.
+- `word_meaning_set`은 normal runtime의 meaning read 및 history authority다.
+- `의미1~7`은 compatibility projection이며 canonical authority가 아니다.
+- `seq>7` canonical meaning은 `word_meaning_set`에 저장·조회되며 legacy slot에 맞추어 잘리지 않는다.
+- meaning slot 제거 또는 projection 중단은 이번 범위 밖이며 별도 production phase에서 검토한다.
 
 ## 9. word_expression_set 정책
 
@@ -242,7 +244,7 @@
 
 - `WORD_TABLE` 역할 확정
 - expression authority transition
-- meaning read/history authority transition
+- meaning legacy projection 축소 또는 제거 정책 확정
 - relation lookup/data/contract 정합화
 - legacy slot 축소 또는 제거 정책 확정
 

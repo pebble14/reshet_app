@@ -391,6 +391,44 @@ void main() {
         }
       },
     );
+
+    testWidgets('allows adding an 8th meaning field', (tester) async {
+      await tester.binding.setSurfaceSize(const Size(800, 2200));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
+      final seed = WordEditSeed(
+        wordId: 'T9000_EDIT_MEANING8_WIDGET',
+        language: '영어',
+        strongNumber: '',
+        note: '',
+        meanings: List<String>.generate(
+          7,
+          (index) => 'meaning ${index + 1}',
+          growable: false,
+        ),
+        expressionReadResult: const CanonicalExpressionReadResult(
+          sets: [
+            ExpressionSet(
+              spelling: 'meaning-eight-widget-title',
+              transliteration: null,
+              pronunciation: null,
+              seq: 1,
+              isRepresentative: true,
+            ),
+          ],
+        ),
+        hiddenSlotIssues: const [],
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(home: WordEditScreen.fromSeed(seed: seed)),
+      );
+      await tester.ensureVisible(find.text('+ 의미 추가'));
+      await tester.tap(find.text('+ 의미 추가'));
+      await tester.pump();
+
+      expect(_textFieldByLabel(tester, '의미 8').controller?.text, '');
+    });
   });
 }
 

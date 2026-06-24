@@ -117,6 +117,48 @@ void main() {
         expect(results.single.displayStrongNumber, strongNumber);
       },
     );
+
+    test(
+      'finds relation add candidates by the 8th canonical meaning',
+      () async {
+        final repository = WordRepository();
+        final db = await DatabaseService.openDatabaseFile();
+        const wordId = 'T9000_H4_GRAPH_SEARCH_MEANING8';
+        const keyword = 'phase32-graph-canonical-meaning-08';
+
+        await _insertWord(
+          db,
+          id: wordId,
+          legacySpelling: 'phase32 graph search title',
+          expressionRows: const [
+            {
+              'seq': 1,
+              'is_representative': 1,
+              'spelling': 'representative-graph-meaning8-title',
+            },
+          ],
+        );
+        for (var index = 1; index <= 8; index++) {
+          await db.insert('word_meaning_set', {
+            'word_id': wordId,
+            'seq': index,
+            'meaning': index == 8 ? keyword : 'phase32 graph meaning $index',
+          });
+        }
+
+        final results = await repository.searchWords(keyword, limit: 20);
+        final targetResults = results
+            .where((result) => result.wordId == wordId)
+            .toList(growable: false);
+
+        expect(targetResults, hasLength(1));
+        expect(
+          targetResults.single.representativeSpelling,
+          'representative-graph-meaning8-title',
+        );
+        expect(targetResults.single.primaryMeaning, 'phase32 graph meaning 1');
+      },
+    );
   });
 }
 
@@ -163,5 +205,12 @@ Future<void> _insertWord(
 
   for (final row in expressionRows) {
     await db.insert('word_expression_set', {'word_id': id, ...row});
+  }
+  if (meaning1 != null) {
+    await db.insert('word_meaning_set', {
+      'word_id': id,
+      'seq': 1,
+      'meaning': meaning1,
+    });
   }
 }

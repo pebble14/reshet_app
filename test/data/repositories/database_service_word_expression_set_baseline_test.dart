@@ -207,6 +207,52 @@ void main() {
     );
     expect(reopenedCounts.single['row_count'], 3);
   });
+
+  test(
+    'rebuilds legacy word_meaning_set seq upper-bound schema preserving rows',
+    () async {
+      await DatabaseService.closeDatabase();
+      await _installLegacyWordMeaningSetWithSeqLimit(isolatedRoot!.path);
+
+      final db = await DatabaseService.openDatabaseFile();
+      final schemaRows = await db.rawQuery('''
+        SELECT sql
+        FROM sqlite_master
+        WHERE type = 'table'
+          AND name = 'word_meaning_set'
+      ''');
+      expect(schemaRows, hasLength(1));
+      expect(
+        (schemaRows.single['sql'] ?? '').toString(),
+        isNot(contains('seq <= 7')),
+      );
+
+      final preservedRows = await db.query(
+        'word_meaning_set',
+        columns: const ['word_id', 'seq', 'meaning'],
+        orderBy: 'word_id ASC, seq ASC',
+      );
+      expect(preservedRows, [
+        {'word_id': 'W1', 'seq': 1, 'meaning': 'legacy first'},
+        {'word_id': 'W1', 'seq': 7, 'meaning': 'legacy seventh'},
+      ]);
+
+      await db.insert('word_meaning_set', {
+        'word_id': 'W1',
+        'seq': 8,
+        'meaning': 'legacy eighth now allowed',
+      });
+      final seq8Rows = await db.query(
+        'word_meaning_set',
+        columns: const ['word_id', 'seq', 'meaning'],
+        where: 'word_id = ? AND seq = ?',
+        whereArgs: ['W1', 8],
+      );
+      expect(seq8Rows, [
+        {'word_id': 'W1', 'seq': 8, 'meaning': 'legacy eighth now allowed'},
+      ]);
+    },
+  );
 }
 
 Future<Directory> _createIsolatedWorkspace(String repoRootPath) async {
@@ -350,6 +396,41 @@ Future<void> _stripWordExpressionSetFromSeedCopy(
   final db = await databaseFactory.openDatabase(seedCopyPath);
   try {
     await db.execute('DROP TABLE IF EXISTS word_expression_set');
+  } finally {
+    await db.close();
+  }
+}
+
+Future<void> _installLegacyWordMeaningSetWithSeqLimit(
+  String isolatedRootPath,
+) async {
+  final seedCopyPath = p.join(isolatedRootPath, 'data', 'reshet_seed.db');
+  final db = await databaseFactory.openDatabase(seedCopyPath);
+  try {
+    await db.execute('''
+      CREATE TABLE word_meaning_set (
+        id INTEGER PRIMARY KEY,
+        word_id TEXT NOT NULL,
+        seq INTEGER NOT NULL,
+        meaning TEXT NOT NULL,
+        CHECK (seq >= 1 AND seq <= 7),
+        CHECK (meaning <> '')
+      )
+    ''');
+    await db.execute('''
+      CREATE UNIQUE INDEX ux_word_meaning_set_word_seq
+      ON word_meaning_set(word_id, seq)
+    ''');
+    await db.insert('word_meaning_set', {
+      'word_id': 'W1',
+      'seq': 1,
+      'meaning': 'legacy first',
+    });
+    await db.insert('word_meaning_set', {
+      'word_id': 'W1',
+      'seq': 7,
+      'meaning': 'legacy seventh',
+    });
   } finally {
     await db.close();
   }

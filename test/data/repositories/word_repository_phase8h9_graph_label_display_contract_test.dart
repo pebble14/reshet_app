@@ -338,6 +338,13 @@ Future<void> _insertWord(
   for (final row in expressionRows) {
     await db.insert('word_expression_set', {'word_id': id, ...row});
   }
+  if (primaryMeaning != null) {
+    await db.insert('word_meaning_set', {
+      'word_id': id,
+      'seq': 1,
+      'meaning': primaryMeaning,
+    });
+  }
 }
 
 Future<void> _insertRelation(

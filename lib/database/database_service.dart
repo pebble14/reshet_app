@@ -745,10 +745,12 @@ class DatabaseService {
           seq INTEGER NOT NULL,
           meaning TEXT NOT NULL,
           FOREIGN KEY (word_id) REFERENCES WORD_TABLE(id) ON DELETE CASCADE,
-          CHECK (seq >= 1 AND seq <= 7),
+          CHECK (seq >= 1),
           CHECK (meaning <> '')
         )
       ''');
+
+      await _rebuildWordMeaningSetIfSeqUpperBoundExists(txn);
 
       await txn.execute('''
         CREATE UNIQUE INDEX IF NOT EXISTS ux_word_meaning_set_word_seq
@@ -793,6 +795,55 @@ class DatabaseService {
           AND meaning <> ''
       ''');
     });
+  }
+
+  static Future<void> _rebuildWordMeaningSetIfSeqUpperBoundExists(
+    DatabaseExecutor txn,
+  ) async {
+    final schemaRows = await txn.rawQuery('''
+      SELECT sql
+      FROM sqlite_master
+      WHERE type = 'table'
+        AND name = 'word_meaning_set'
+      LIMIT 1
+    ''');
+    if (schemaRows.isEmpty) {
+      return;
+    }
+
+    final tableSql = (schemaRows.single['sql'] ?? '').toString();
+    final normalizedSql = tableSql.replaceAll(RegExp(r'\s+'), ' ');
+    final hasSeqUpperBound =
+        normalizedSql.contains('seq <= 7') ||
+        normalizedSql.contains('seq<=7') ||
+        normalizedSql.contains('seq >= 1 AND seq <= 7') ||
+        normalizedSql.contains('seq>=1 AND seq<=7');
+    if (!hasSeqUpperBound) {
+      return;
+    }
+
+    const backupTableName = 'word_meaning_set__phase32b_seq_limit_backup';
+    await txn.execute(
+      'ALTER TABLE word_meaning_set RENAME TO $backupTableName',
+    );
+    await txn.execute('''
+      CREATE TABLE word_meaning_set (
+        id INTEGER PRIMARY KEY,
+        word_id TEXT NOT NULL,
+        seq INTEGER NOT NULL,
+        meaning TEXT NOT NULL,
+        FOREIGN KEY (word_id) REFERENCES WORD_TABLE(id) ON DELETE CASCADE,
+        CHECK (seq >= 1),
+        CHECK (meaning <> '')
+      )
+    ''');
+    await txn.execute('''
+      INSERT INTO word_meaning_set (id, word_id, seq, meaning)
+      SELECT id, word_id, seq, meaning
+      FROM $backupTableName
+      ORDER BY word_id ASC, seq ASC, id ASC
+    ''');
+    await txn.execute('DROP TABLE $backupTableName');
   }
 
   /// relation lookup 메타데이터 보정

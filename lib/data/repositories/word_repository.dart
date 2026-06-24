@@ -184,7 +184,6 @@ class WordRepository {
     '스트롱넘버',
     ..._homeSearchSpellingColumns,
     ..._homeSearchTransliterationColumns,
-    ..._homeSearchMeaningColumns,
   ]);
   static final List<String> _wordPronunciationColumns = List.unmodifiable(
     List.generate(6, (index) => '발음${index + 1}'),
@@ -214,6 +213,10 @@ class WordRepository {
   });
   static const String _historyNormalizedExpressionRowsKey =
       '_normalized_expression_rows';
+  static const String _historyNormalizedMeaningRowsKey =
+      '_normalized_meaning_rows';
+  static const String _materializedCanonicalMeaningValuesKey =
+      '_canonical_meaning_values';
   static const List<String> _wordExpressionSetSnapshotColumns = [
     'word_id',
     'seq',
@@ -221,6 +224,11 @@ class WordRepository {
     'spelling',
     'transliteration',
     'pronunciation',
+  ];
+  static const List<String> _wordMeaningSetSnapshotColumns = [
+    'word_id',
+    'seq',
+    'meaning',
   ];
   static final RegExp _hebrewMarkPattern = RegExp(r'[\u0591-\u05C7]');
   static final RegExp _hebrewScriptPattern = RegExp(r'[\u0590-\u05FF]');
@@ -337,12 +345,15 @@ class WordRepository {
   Map<String, dynamic> _buildWordHistorySnapshot({
     required Map<String, dynamic> compatibilityWordSnapshot,
     required List<Map<String, dynamic>> normalizedExpressionRows,
+    required List<Map<String, dynamic>> normalizedMeaningRows,
   }) {
     final snapshot = _sanitizeWordHistorySnapshot(
       Map<String, dynamic>.from(compatibilityWordSnapshot),
     );
     snapshot[_historyNormalizedExpressionRowsKey] =
         _cloneWordExpressionRowsForHistory(normalizedExpressionRows);
+    snapshot[_historyNormalizedMeaningRowsKey] =
+        _cloneWordMeaningRowsForHistory(normalizedMeaningRows);
     return snapshot;
   }
 
@@ -361,6 +372,19 @@ class WordRepository {
       rows.map(
         (row) => {
           for (final column in _wordExpressionSetSnapshotColumns)
+            column: row[column],
+        },
+      ),
+    );
+  }
+
+  List<Map<String, dynamic>> _cloneWordMeaningRowsForHistory(
+    Iterable<Map<String, dynamic>> rows,
+  ) {
+    return List<Map<String, dynamic>>.unmodifiable(
+      rows.map(
+        (row) => {
+          for (final column in _wordMeaningSetSnapshotColumns)
             column: row[column],
         },
       ),
@@ -390,6 +414,29 @@ class WordRepository {
     );
   }
 
+  List<Map<String, Object?>>? _readNormalizedMeaningRowsFromHistorySnapshot(
+    Map<String, dynamic> historySnapshot,
+  ) {
+    if (!historySnapshot.containsKey(_historyNormalizedMeaningRowsKey)) {
+      return null;
+    }
+
+    final rawRows = historySnapshot[_historyNormalizedMeaningRowsKey];
+    if (rawRows is! List) {
+      return const <Map<String, Object?>>[];
+    }
+
+    return List<Map<String, Object?>>.unmodifiable(
+      rawRows.whereType<Map>().map((rawRow) {
+        final row = Map<String, dynamic>.from(rawRow);
+        return {
+          for (final column in _wordMeaningSetSnapshotColumns)
+            column: row[column],
+        };
+      }),
+    );
+  }
+
   Future<List<Map<String, dynamic>>> _loadWordExpressionSetRowsForHistory(
     DatabaseExecutor txn,
     String wordId,
@@ -403,6 +450,23 @@ class WordRepository {
     );
 
     return _cloneWordExpressionRowsForHistory(
+      rows.map((row) => Map<String, dynamic>.from(row)),
+    );
+  }
+
+  Future<List<Map<String, dynamic>>> _loadWordMeaningSetRowsForHistory(
+    DatabaseExecutor txn,
+    String wordId,
+  ) async {
+    final rows = await txn.query(
+      'word_meaning_set',
+      columns: _wordMeaningSetSnapshotColumns,
+      where: 'word_id = ?',
+      whereArgs: [wordId],
+      orderBy: 'seq ASC, id ASC',
+    );
+
+    return _cloneWordMeaningRowsForHistory(
       rows.map((row) => Map<String, dynamic>.from(row)),
     );
   }
@@ -462,7 +526,6 @@ class WordRepository {
 
   List<String> _normalizeMeaningValuesForWrite(Iterable<String> meanings) {
     return meanings
-        .take(7)
         .map((value) => value.trim())
         .where((value) => value.isNotEmpty)
         .toList(growable: false);
@@ -860,43 +923,133 @@ class WordRepository {
     return materializedRow;
   }
 
-  String _readTrimmedWordValue(Map<String, dynamic> wordRow, String key) {
-    return (wordRow[key] ?? '').toString().trim();
-  }
+  Future<Map<String, List<Map<String, dynamic>>>>
+  _loadNormalizedMeaningRowsByWordIds(
+    DatabaseExecutor db,
+    Iterable<String> wordIds,
+  ) async {
+    final orderedWordIds = <String>[];
+    final seenWordIds = <String>{};
 
-  String _readFirstNonEmptyWordValue(
-    Map<String, dynamic> wordRow,
-    List<String> keys,
-  ) {
-    for (final key in keys) {
-      final value = _readTrimmedWordValue(wordRow, key);
-      if (value.isNotEmpty) {
-        return value;
-      }
-    }
-
-    return '';
-  }
-
-  List<String> _collectWordSeries(
-    Map<String, dynamic> wordRow,
-    String prefix,
-    int count,
-  ) {
-    final values = <String>[];
-    for (var index = 1; index <= count; index++) {
-      final value = _readTrimmedWordValue(wordRow, '$prefix$index');
-      if (value.isEmpty || values.contains(value)) {
+    for (final wordId in wordIds) {
+      final normalizedWordId = wordId.trim();
+      if (normalizedWordId.isEmpty || !seenWordIds.add(normalizedWordId)) {
         continue;
       }
-      values.add(value);
+      orderedWordIds.add(normalizedWordId);
     }
-    return List<String>.unmodifiable(values);
+
+    if (orderedWordIds.isEmpty) {
+      return const {};
+    }
+
+    final placeholders = List.filled(orderedWordIds.length, '?').join(', ');
+    final rows = await db.rawQuery('''
+      SELECT id, word_id, seq, meaning
+      FROM word_meaning_set
+      WHERE word_id IN ($placeholders)
+      ORDER BY word_id ASC, seq ASC, id ASC
+      ''', orderedWordIds);
+
+    final rowsByWordId = <String, List<Map<String, dynamic>>>{};
+    for (final rawRow in rows) {
+      final row = Map<String, dynamic>.from(rawRow);
+      final wordId = (row['word_id'] ?? '').toString().trim();
+      if (wordId.isEmpty) {
+        continue;
+      }
+      rowsByWordId.putIfAbsent(wordId, () => <Map<String, dynamic>>[]).add(row);
+    }
+
+    return rowsByWordId;
   }
 
-  List<String> _collectWordEditSeedMeanings(Map<String, dynamic> wordRow) {
-    final values = <String>[];
+  List<String> _meaningValuesFromNormalizedRows(
+    Iterable<Map<String, dynamic>> rows,
+  ) {
+    return List<String>.unmodifiable(
+      rows
+          .map((row) => (row['meaning'] ?? '').toString().trim())
+          .where((meaning) => meaning.isNotEmpty),
+    );
+  }
 
+  Map<String, dynamic> _materializeCanonicalMeaningsForDisplay(
+    Map<String, dynamic> wordRow,
+    List<String> meanings,
+  ) {
+    final materializedRow = Map<String, dynamic>.from(wordRow);
+    materializedRow[_materializedCanonicalMeaningValuesKey] =
+        List<String>.unmodifiable(meanings);
+
+    final projectionCount = meanings.length > 7 ? meanings.length : 7;
+    for (var index = 1; index <= projectionCount; index++) {
+      materializedRow['의미$index'] = index <= meanings.length
+          ? meanings[index - 1]
+          : null;
+    }
+
+    return materializedRow;
+  }
+
+  Future<List<Map<String, dynamic>>>
+  _materializeCanonicalMeaningsForNormalRuntime(
+    DatabaseExecutor db,
+    Iterable<Map<String, dynamic>> rows,
+  ) async {
+    final rowList = rows
+        .map((row) => Map<String, dynamic>.from(row))
+        .toList(growable: false);
+    if (rowList.isEmpty) {
+      return const [];
+    }
+
+    late final Map<String, List<Map<String, dynamic>>> rowsByWordId;
+    try {
+      rowsByWordId = await _loadNormalizedMeaningRowsByWordIds(
+        db,
+        rowList.map((row) => (row['id'] ?? row['word_id'] ?? '').toString()),
+      );
+    } on DatabaseException catch (error) {
+      final message = error.toString();
+      if (message.contains('no such table') &&
+          message.contains('word_meaning_set')) {
+        return List<Map<String, dynamic>>.unmodifiable(rowList);
+      }
+      rethrow;
+    }
+
+    return List<Map<String, dynamic>>.unmodifiable(
+      rowList.map((row) {
+        final wordId = (row['id'] ?? row['word_id'] ?? '').toString().trim();
+        final meanings = _meaningValuesFromNormalizedRows(
+          rowsByWordId[wordId] ?? const <Map<String, dynamic>>[],
+        );
+        return _materializeCanonicalMeaningsForDisplay(row, meanings);
+      }),
+    );
+  }
+
+  List<String> _readMeaningValuesFromWordRow(Map<String, dynamic> wordRow) {
+    if (wordRow.containsKey(_materializedCanonicalMeaningValuesKey)) {
+      final rawValues = wordRow[_materializedCanonicalMeaningValuesKey];
+      if (rawValues is List) {
+        return List<String>.unmodifiable(
+          rawValues
+              .map((value) => value.toString().trim())
+              .where((value) => value.isNotEmpty),
+        );
+      }
+      return const [];
+    }
+
+    return _collectLegacyMeaningSlotsForFallback(wordRow);
+  }
+
+  List<String> _collectLegacyMeaningSlotsForFallback(
+    Map<String, dynamic> wordRow,
+  ) {
+    final values = <String>[];
     for (var index = 1; index <= 7; index++) {
       final value = (wordRow['의미$index'] ?? '').toString().trim();
       if (value.isEmpty) {
@@ -904,8 +1057,36 @@ class WordRepository {
       }
       values.add(value);
     }
-
     return List<String>.unmodifiable(values);
+  }
+
+  List<HomeSearchRankingValue> _readHomeSearchMeaningRankingValues(
+    Map<String, dynamic> row,
+  ) {
+    final meanings = _readMeaningValuesFromWordRow(row);
+    return List<HomeSearchRankingValue>.unmodifiable(
+      List.generate(
+        meanings.length,
+        (index) => HomeSearchRankingValue(
+          value: meanings[index],
+          fieldIndex: index + 1,
+        ),
+        growable: false,
+      ),
+    );
+  }
+
+  String _readPrimaryMeaningFromWordRow(Map<String, dynamic> wordRow) {
+    final meanings = _readMeaningValuesFromWordRow(wordRow);
+    return meanings.isEmpty ? '' : meanings.first;
+  }
+
+  String _readTrimmedWordValue(Map<String, dynamic> wordRow, String key) {
+    return (wordRow[key] ?? '').toString().trim();
+  }
+
+  List<String> _collectWordEditSeedMeanings(Map<String, dynamic> wordRow) {
+    return _readMeaningValuesFromWordRow(wordRow);
   }
 
   WordEditSeed buildWordEditSeedFromWordRow(Map<String, dynamic> wordRow) {
@@ -969,7 +1150,7 @@ class WordRepository {
       pronunciations: _collectUniqueNonEmptyWordValues(
         readResult.sets.map((set) => set.pronunciation),
       ),
-      meanings: _collectWordSeries(wordRow, '의미', 7),
+      meanings: _readMeaningValuesFromWordRow(wordRow),
       language: _readTrimmedWordValue(wordRow, '언어'),
       strongNumber: _readTrimmedWordValue(wordRow, '스트롱넘버'),
       note: _readTrimmedWordValue(wordRow, '비고'),
@@ -1119,7 +1300,7 @@ class WordRepository {
           .trim(),
       representativePronunciation: (representativeSet?.pronunciation ?? '')
           .trim(),
-      subtitleMeaning: _readFirstNonEmptyWordValue(wordRow, ['의미1', '의미']),
+      subtitleMeaning: _readPrimaryMeaningFromWordRow(wordRow),
     );
   }
 
@@ -1484,7 +1665,10 @@ class WordRepository {
     }
 
     _recordWordExpressionReadSnapshots(resolvedSnapshots);
-    return List<Map<String, dynamic>>.unmodifiable(resolvedRows);
+    return await _materializeCanonicalMeaningsForNormalRuntime(
+      db,
+      resolvedRows,
+    );
   }
 
   String? _nullIfEmptyDisplayValue(String value) {
@@ -1761,7 +1945,11 @@ class WordRepository {
     ], context: context);
     final snapshot = snapshots[normalizedId];
     if (snapshot == null) {
-      return legacyWordRow;
+      final materializedRows =
+          await _materializeCanonicalMeaningsForNormalRuntime(db, [
+            legacyWordRow,
+          ]);
+      return materializedRows.single;
     }
 
     final resolvedResult = _resolveWordRowForDetailLikeDisplay(
@@ -1769,7 +1957,11 @@ class WordRepository {
       snapshot: snapshot,
     );
     _recordWordExpressionReadSnapshots([resolvedResult.snapshot]);
-    return resolvedResult.wordRow;
+    final materializedRows =
+        await _materializeCanonicalMeaningsForNormalRuntime(db, [
+          resolvedResult.wordRow,
+        ]);
+    return materializedRows.single;
   }
 
   Future<WordDetailLikeDisplayItem?>
@@ -1902,7 +2094,7 @@ class WordRepository {
           AS representative_transliteration,
         graph_center_display_projection.representative_pronunciation
           AS representative_pronunciation,
-        TRIM(COALESCE(wt.\u{C758}\u{BBF8}1, '')) AS primary_meaning
+        ${_canonicalPrimaryMeaningSql()} AS primary_meaning
       FROM WORD_TABLE wt
       INNER JOIN graph_center_display_projection
         ON graph_center_display_projection.word_id = wt.id
@@ -2079,7 +2271,7 @@ class WordRepository {
           AS representative_transliteration,
         TRIM(COALESCE(wt.스트롱넘버, '')) AS display_strong_number,
         TRIM(COALESCE(wt.언어, '')) AS language,
-        TRIM(COALESCE(wt.의미1, '')) AS primary_meaning
+        ${_canonicalPrimaryMeaningSql()} AS primary_meaning
       FROM WORD_TABLE wt
       INNER JOIN representative_query_projection
         ON representative_query_projection.word_id = wt.id
@@ -2568,10 +2760,7 @@ class WordRepository {
         row,
         _homeSearchTransliterationColumns,
       ),
-      indexedMeanings: _readHomeSearchRankingValues(
-        row,
-        _homeSearchMeaningColumns,
-      ),
+      indexedMeanings: _readHomeSearchMeaningRankingValues(row),
     );
   }
 
@@ -2768,6 +2957,35 @@ class WordRepository {
     );
   }
 
+  Future<List<Map<String, dynamic>>> _queryHomeSearchMeaningCandidates(
+    Database db,
+    Set<String> sqlTerms,
+  ) async {
+    if (sqlTerms.isEmpty) {
+      return const [];
+    }
+
+    final whereParts = <String>[];
+    final whereArgs = <Object?>[];
+    for (final term in sqlTerms) {
+      whereParts.add('LOWER(COALESCE(wms.meaning, \'\')) LIKE ?');
+      whereArgs.add('%$term%');
+    }
+
+    final rows = await db.rawQuery('''
+      SELECT DISTINCT wt.*
+      FROM WORD_TABLE wt
+      INNER JOIN word_meaning_set wms
+        ON wms.word_id = wt.id
+      WHERE ${whereParts.join(' OR ')}
+      ORDER BY wt.id
+    ''', whereArgs);
+
+    return rows
+        .map((row) => Map<String, dynamic>.from(row))
+        .toList(growable: false);
+  }
+
   Future<List<Map<String, dynamic>>> _queryHomeSearchLanguageCandidates(
     Database db,
     String keyword,
@@ -2823,6 +3041,7 @@ class WordRepository {
     }
 
     addRows(await _queryHomeSearchLikeCandidates(db, sqlTerms));
+    addRows(await _queryHomeSearchMeaningCandidates(db, sqlTerms));
     addRows(await _queryHomeSearchLanguageCandidates(db, keyword));
 
     if (candidatesById.isEmpty &&
@@ -2830,7 +3049,10 @@ class WordRepository {
       addRows(await db.query('WORD_TABLE', orderBy: 'id'));
     }
 
-    return candidatesById.values.toList();
+    return await _materializeCanonicalMeaningsForNormalRuntime(
+      db,
+      candidatesById.values,
+    );
   }
 
   _HomeStrongExactCandidate _buildHomeStrongExactCandidate(
@@ -2931,7 +3153,7 @@ class WordRepository {
 
   /// 키워드로 단어 검색 (홈 검색용)
   /// - DB에서 1차 후보를 수집한 뒤 Dart에서 정규화 비교/정렬한다.
-  /// - 표기1~6, 음역1~6, 의미1~7, 스트롱넘버를 대상으로 한다.
+  /// - 표기1~6, 음역1~6, canonical meaning rows, 스트롱넘버를 대상으로 한다.
   /// - 결과는 exact/prefix/partial 우선순위를 적용한 뒤 limit를 건다.
   Future<List<HomeSearchResultDisplayItem>> searchWordsMap(
     String keyword, {
@@ -3204,7 +3426,7 @@ class WordRepository {
   }
 
   /// 키워드로 단어 검색 (그래프에서 "관계 추가" 대상 단어 선택용)
-  /// - 표기1, 의미1, 스트롱넘버 부분일치 검색
+  /// - 표기1, canonical meaning rows, 스트롱넘버 부분일치 검색
   /// - 검색 semantics는 유지하고 graph relation add dialog용 최소 contract만 반환한다.
   Future<List<GraphRelationAddSearchResultItem>> searchWords(
     String keyword, {
@@ -3223,12 +3445,19 @@ class WordRepository {
       SELECT
         wt.id AS id,
         representative_query_projection.representative_spelling AS representative_spelling,
-        TRIM(COALESCE(wt.의미1, '')) AS primary_meaning,
+        ${_canonicalPrimaryMeaningSql()} AS primary_meaning,
         TRIM(COALESCE(wt.스트롱넘버, '')) AS display_strong_number
       FROM WORD_TABLE wt
       INNER JOIN representative_query_projection
         ON representative_query_projection.word_id = wt.id
-      WHERE wt.표기1 LIKE ? OR wt.의미1 LIKE ? OR wt.스트롱넘버 LIKE ?
+      WHERE wt.표기1 LIKE ?
+         OR EXISTS (
+              SELECT 1
+              FROM word_meaning_set wms_search
+              WHERE wms_search.word_id = wt.id
+                AND wms_search.meaning LIKE ?
+            )
+         OR wt.스트롱넘버 LIKE ?
       LIMIT ?
       ''',
       [like, like, like, limit],
@@ -3430,6 +3659,18 @@ class WordRepository {
     return withoutHebrewMarks.replaceAll(RegExp(r'\s+'), ' ');
   }
 
+  String _canonicalPrimaryMeaningSql({String wordTableAlias = 'wt'}) {
+    return '''
+      TRIM(COALESCE((
+        SELECT wms.meaning
+        FROM word_meaning_set wms
+        WHERE wms.word_id = $wordTableAlias.id
+        ORDER BY wms.seq ASC, wms.id ASC
+        LIMIT 1
+      ), ''))
+    ''';
+  }
+
   String _representativeQueryProjectionCte({
     String cteName = 'representative_query_projection',
   }) {
@@ -3568,7 +3809,7 @@ class WordRepository {
           AS strong_number,
         representative_query_projection.representative_spelling
           AS representative_spelling,
-        TRIM(COALESCE(wt.\u{C758}\u{BBF8}1, '')) AS primary_meaning
+        ${_canonicalPrimaryMeaningSql()} AS primary_meaning
       FROM WORD_TABLE wt
       INNER JOIN representative_query_projection
         ON representative_query_projection.word_id = wt.id
@@ -3613,7 +3854,7 @@ class WordRepository {
           TRIM(COALESCE(wt.스트롱넘버, '')) AS strong_number,
           representative_query_projection.representative_spelling
             AS representative_spelling,
-          TRIM(COALESCE(wt.의미1, '')) AS primary_meaning
+          ${_canonicalPrimaryMeaningSql()} AS primary_meaning
         FROM WORD_TABLE wt
         INNER JOIN representative_query_projection
           ON representative_query_projection.word_id = wt.id
@@ -3654,7 +3895,7 @@ class WordRepository {
         TRIM(COALESCE(wt.스트롱넘버, '')) AS strong_number,
         representative_query_projection.representative_spelling
           AS representative_spelling,
-        TRIM(COALESCE(wt.의미1, '')) AS primary_meaning
+        ${_canonicalPrimaryMeaningSql()} AS primary_meaning
       FROM WORD_TABLE wt
       INNER JOIN representative_query_projection
         ON representative_query_projection.word_id = wt.id
@@ -3733,6 +3974,9 @@ class WordRepository {
       final historyAfter = _buildWordHistorySnapshot(
         compatibilityWordSnapshot: row,
         normalizedExpressionRows: normalizedExpressionRowsForHistory,
+        normalizedMeaningRows: _cloneWordMeaningRowsForHistory(
+          normalizedMeaningRows.map((row) => Map<String, dynamic>.from(row)),
+        ),
       );
 
       await txn.insert('WORD_TABLE', row);
@@ -3784,6 +4028,10 @@ class WordRepository {
       }
       final normalizedRows = after[_historyNormalizedExpressionRowsKey];
       if (normalizedRows != null && normalizedRows is! List) {
+        return false;
+      }
+      final normalizedMeaningRows = after[_historyNormalizedMeaningRowsKey];
+      if (normalizedMeaningRows != null && normalizedMeaningRows is! List) {
         return false;
       }
       return true;
@@ -3932,9 +4180,12 @@ class WordRepository {
       );
       final normalizedExpressionRowsBefore =
           await _loadWordExpressionSetRowsForHistory(txn, wordId);
+      final normalizedMeaningRowsBefore =
+          await _loadWordMeaningSetRowsForHistory(txn, wordId);
       final wordBeforeHistory = _buildWordHistorySnapshot(
         compatibilityWordSnapshot: wordBefore,
         normalizedExpressionRows: normalizedExpressionRowsBefore,
+        normalizedMeaningRows: normalizedMeaningRowsBefore,
       );
 
       final relationRows = await txn.query(
@@ -4009,10 +4260,13 @@ class WordRepository {
 
       final beforeNormalizedExpressionRows =
           await _loadWordExpressionSetRowsForHistory(txn, id);
+      final beforeNormalizedMeaningRows =
+          await _loadWordMeaningSetRowsForHistory(txn, id);
       final beforeWordSnapshot = _sanitizeWordHistorySnapshot(beforeRaw);
       final before = _buildWordHistorySnapshot(
         compatibilityWordSnapshot: beforeWordSnapshot,
         normalizedExpressionRows: beforeNormalizedExpressionRows,
+        normalizedMeaningRows: beforeNormalizedMeaningRows,
       );
       final after = Map<String, dynamic>.from(beforeWordSnapshot);
 
@@ -4058,6 +4312,9 @@ class WordRepository {
       final afterHistory = _buildWordHistorySnapshot(
         compatibilityWordSnapshot: after,
         normalizedExpressionRows: normalizedExpressionRowsForHistory,
+        normalizedMeaningRows: _cloneWordMeaningRowsForHistory(
+          normalizedMeaningRows.map((row) => Map<String, dynamic>.from(row)),
+        ),
       );
 
       await _insertHistory(
@@ -4199,6 +4456,28 @@ class WordRepository {
   ) async {
     final compatibilityWordSnapshot =
         _extractCompatibilityWordSnapshotFromHistory(historySnapshot);
+    final wordId = (compatibilityWordSnapshot['id'] ?? '').toString().trim();
+    if (wordId.isEmpty) {
+      throw Exception('word_meaning_set 복원 실패: word id가 비어 있습니다.');
+    }
+
+    final normalizedRows = _readNormalizedMeaningRowsFromHistorySnapshot(
+      historySnapshot,
+    );
+    if (normalizedRows != null) {
+      final restoredRows = List<Map<String, Object?>>.unmodifiable(
+        normalizedRows.map(
+          (row) => {
+            'word_id': wordId,
+            'seq': row['seq'],
+            'meaning': row['meaning'],
+          },
+        ),
+      );
+      await _replaceWordMeaningSetRows(txn, wordId, restoredRows);
+      return;
+    }
+
     await _syncWordMeaningSetFromLegacySnapshot(txn, compatibilityWordSnapshot);
   }
 

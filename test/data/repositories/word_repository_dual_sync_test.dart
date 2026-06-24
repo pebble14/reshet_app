@@ -121,8 +121,81 @@ void main() {
         jsonColumn: 'after_json',
       );
       expect(_readHistoryNormalizedRows(createHistoryAfter), hasLength(2));
-      _expectNoHistoryNormalizedMeaningRows(createHistoryAfter);
+      expect(_readHistoryNormalizedMeaningRows(createHistoryAfter), [
+        {'word_id': wordId, 'seq': 1, 'meaning': '첫째 의미'},
+      ]);
     });
+
+    test(
+      'createWord preserves 8+ canonical meanings and projects only first seven legacy slots',
+      () async {
+        final repository = WordRepository();
+        const wordId = 'T9000_1010';
+        final meanings = List<String>.generate(
+          8,
+          (index) => 'canonical meaning ${index + 1}',
+          growable: false,
+        );
+
+        await repository.createWord(
+          id: wordId,
+          payload: _payload(
+            expressionSets: const [
+              CanonicalExpressionWriteSet(
+                spelling: 'meaning-eight-title',
+                transliteration: null,
+                pronunciation: null,
+                seq: 1,
+                isRepresentative: true,
+              ),
+            ],
+            meanings: meanings,
+          ),
+        );
+
+        expect(await _loadActualMeaningRows(wordId), [
+          for (var index = 1; index <= 8; index++)
+            (wordId: wordId, seq: index, meaning: 'canonical meaning $index'),
+        ]);
+
+        final wordRow = await _loadWordTableRow(wordId);
+        expect(_readMeaningSlots(wordRow), {
+          for (var index = 1; index <= 7; index++)
+            '의미$index': 'canonical meaning $index',
+        });
+        expect(wordRow.containsKey('의미8'), isFalse);
+
+        final detail = await repository
+            .getWordDetailLikeDisplayItemByIdForDetailScreen(wordId);
+        expect(detail, isNotNull);
+        expect(detail!.meanings, meanings);
+
+        final editSeed = await repository.getWordEditSeedForDetailEdit(wordId);
+        expect(editSeed, isNotNull);
+        expect(editSeed!.meanings, meanings);
+
+        final createHistoryAfter = await _loadLatestWordHistorySnapshot(
+          wordId: wordId,
+          actionType: 'create',
+          jsonColumn: 'after_json',
+        );
+        expect(_readHistoryNormalizedMeaningRows(createHistoryAfter), [
+          for (var index = 1; index <= 8; index++)
+            {
+              'word_id': wordId,
+              'seq': index,
+              'meaning': 'canonical meaning $index',
+            },
+        ]);
+
+        await DatabaseService.closeDatabase();
+        await DatabaseService.openDatabaseFile();
+        expect(await _loadActualMeaningRows(wordId), [
+          for (var index = 1; index <= 8; index++)
+            (wordId: wordId, seq: index, meaning: 'canonical meaning $index'),
+        ]);
+      },
+    );
 
     test(
       'updateWord full-replaces normalized rows after representative change',
@@ -208,8 +281,10 @@ void main() {
         );
         expect(_readHistoryNormalizedRows(updateHistoryBefore), hasLength(3));
         expect(_readHistoryNormalizedRows(updateHistoryAfter), hasLength(2));
-        _expectNoHistoryNormalizedMeaningRows(updateHistoryBefore);
-        _expectNoHistoryNormalizedMeaningRows(updateHistoryAfter);
+        expect(_readHistoryNormalizedMeaningRows(updateHistoryBefore), isEmpty);
+        expect(_readHistoryNormalizedMeaningRows(updateHistoryAfter), [
+          {'word_id': wordId, 'seq': 1, 'meaning': '대표 변경 후'},
+        ]);
       },
     );
 
@@ -266,7 +341,10 @@ void main() {
           actionType: 'delete',
           jsonColumn: 'before_json',
         );
-        _expectNoHistoryNormalizedMeaningRows(deleteHistoryBefore);
+        expect(_readHistoryNormalizedMeaningRows(deleteHistoryBefore), [
+          {'word_id': wordId, 'seq': 1, 'meaning': '삭제 전 의미'},
+          {'word_id': wordId, 'seq': 2, 'meaning': '두 번째 의미'},
+        ]);
 
         final undone = await repository.undoLastChange();
         expect(undone.didUndo, isTrue);
@@ -385,6 +463,74 @@ void main() {
     });
 
     test(
+      'undoLastChange restores 8+ canonical meanings for recent update',
+      () async {
+        final repository = WordRepository();
+        const wordId = 'T9000_1011';
+        final originalMeanings = List<String>.generate(
+          8,
+          (index) => 'undo original meaning ${index + 1}',
+          growable: false,
+        );
+        final updatedMeanings = List<String>.generate(
+          9,
+          (index) => 'undo updated meaning ${index + 1}',
+          growable: false,
+        );
+
+        await repository.createWord(
+          id: wordId,
+          payload: _payload(
+            expressionSets: const [
+              CanonicalExpressionWriteSet(
+                spelling: 'undo-meaning-title',
+                transliteration: null,
+                pronunciation: null,
+                seq: 1,
+                isRepresentative: true,
+              ),
+            ],
+            meanings: originalMeanings,
+          ),
+        );
+
+        await repository.updateWord(
+          id: wordId,
+          payload: _payload(
+            expressionSets: const [
+              CanonicalExpressionWriteSet(
+                spelling: 'undo-meaning-title-updated',
+                transliteration: null,
+                pronunciation: null,
+                seq: 1,
+                isRepresentative: true,
+              ),
+            ],
+            meanings: updatedMeanings,
+          ),
+        );
+
+        final undone = await repository.undoLastChange();
+        expect(undone.didUndo, isTrue);
+        expect(undone.primaryWordId, wordId);
+
+        expect(await _loadActualMeaningRows(wordId), [
+          for (var index = 1; index <= 8; index++)
+            (
+              wordId: wordId,
+              seq: index,
+              meaning: 'undo original meaning $index',
+            ),
+        ]);
+
+        final detail = await repository
+            .getWordDetailLikeDisplayItemByIdForDetailScreen(wordId);
+        expect(detail, isNotNull);
+        expect(detail!.meanings, originalMeanings);
+      },
+    );
+
+    test(
       'undoLastChange prefers normalized snapshot for new history rows',
       () async {
         final repository = WordRepository();
@@ -409,6 +555,16 @@ void main() {
                 isRepresentative: false,
               ),
             ],
+            meanings: const [
+              'zeta 의미 1',
+              'zeta 의미 2',
+              'zeta 의미 3',
+              'zeta 의미 4',
+              'zeta 의미 5',
+              'zeta 의미 6',
+              'zeta 의미 7',
+              'zeta 의미 8',
+            ],
           ),
         );
 
@@ -424,6 +580,7 @@ void main() {
                 isRepresentative: true,
               ),
             ],
+            meanings: const ['updated-zeta 의미'],
           ),
         );
 
@@ -436,6 +593,13 @@ void main() {
           'before_json',
         );
         beforeSnapshot['표기1'] = 'tampered-legacy';
+        beforeSnapshot['의미1'] = 'tampered legacy meaning';
+        beforeSnapshot['의미2'] = null;
+        beforeSnapshot['의미3'] = null;
+        beforeSnapshot['의미4'] = null;
+        beforeSnapshot['의미5'] = null;
+        beforeSnapshot['의미6'] = null;
+        beforeSnapshot['의미7'] = null;
         await _writeHistorySnapshot(historyId, 'before_json', beforeSnapshot);
 
         final undone = await repository.undoLastChange();
@@ -445,6 +609,7 @@ void main() {
         final restoredWordRow = await _loadWordTableRow(wordId);
         final restoredNormalizedRows = await _loadActualSemanticRows(wordId);
         expect(restoredWordRow['표기1'], 'tampered-legacy');
+        expect(restoredWordRow['의미1'], 'tampered legacy meaning');
         expect(restoredNormalizedRows, [
           (
             wordId: wordId,
@@ -463,11 +628,15 @@ void main() {
             pronunciation: null,
           ),
         ]);
+        expect(await _loadActualMeaningRows(wordId), [
+          for (var index = 1; index <= 8; index++)
+            (wordId: wordId, seq: index, meaning: 'zeta 의미 $index'),
+        ]);
       },
     );
 
     test(
-      'undoLastChange uses legacy meaning slots despite forged normalized metadata',
+      'undoLastChange falls back to legacy meaning slots for legacy-only snapshot',
       () async {
         final repository = WordRepository();
         const wordId = 'T9000_1007';
@@ -518,10 +687,7 @@ void main() {
           'before_json',
         );
         beforeSnapshot.remove(_historyNormalizedExpressionRowsKey);
-        beforeSnapshot[_historyNormalizedMeaningRowsKey] = [
-          {'word_id': wordId, 'seq': 2, 'meaning': '위조 normalized 의미'},
-          {'word_id': wordId, 'seq': 3, 'meaning': '위조 normalized 셋째 의미'},
-        ];
+        beforeSnapshot.remove(_historyNormalizedMeaningRowsKey);
         beforeSnapshot['표기1'] = 'legacy-only-restore';
         beforeSnapshot['음역1'] = '레거시 음역';
         beforeSnapshot['발음1'] = 'legacy-pron';
@@ -934,12 +1100,18 @@ List<Map<String, dynamic>> _readHistoryNormalizedRows(
       .toList(growable: false);
 }
 
-void _expectNoHistoryNormalizedMeaningRows(Map<String, dynamic> snapshot) {
-  expect(
-    snapshot.containsKey(_historyNormalizedMeaningRowsKey),
-    isFalse,
-    reason: 'word history snapshot은 _normalized_meaning_rows를 새로 기록하지 않아야 합니다.',
-  );
+List<Map<String, dynamic>> _readHistoryNormalizedMeaningRows(
+  Map<String, dynamic> snapshot,
+) {
+  final rawRows = snapshot[_historyNormalizedMeaningRowsKey];
+  if (rawRows is! List) {
+    return const [];
+  }
+
+  return rawRows
+      .whereType<Map>()
+      .map((row) => Map<String, dynamic>.from(row))
+      .toList(growable: false);
 }
 
 Future<Map<String, dynamic>> _loadWordTableRow(String wordId) async {

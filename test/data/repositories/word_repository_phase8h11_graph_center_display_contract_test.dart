@@ -62,7 +62,8 @@ void main() {
           legacySpelling: 'legacy-center-spelling',
           legacyTransliteration: 'legacy-center-translit',
           legacyPronunciation: 'legacy-center-pron',
-          meaning1: ' primary center meaning ',
+          meaning1: ' stale legacy center meaning ',
+          canonicalMeaning1: ' canonical center meaning ',
           expressionRows: const [
             {
               'seq': 1,
@@ -87,7 +88,7 @@ void main() {
           'representative-center-translit',
         );
         expect(item.representativePronunciation, 'representative-center-pron');
-        expect(item.primaryMeaning, 'primary center meaning');
+        expect(item.primaryMeaning, 'canonical center meaning');
       },
     );
 
@@ -170,6 +171,7 @@ Future<void> _insertWord(
   required String legacyTransliteration,
   required String legacyPronunciation,
   required String meaning1,
+  String? canonicalMeaning1,
   required List<Map<String, Object?>> expressionRows,
 }) async {
   await db.insert('WORD_TABLE', {
@@ -185,4 +187,9 @@ Future<void> _insertWord(
   for (final row in expressionRows) {
     await db.insert('word_expression_set', {'word_id': id, ...row});
   }
+  await db.insert('word_meaning_set', {
+    'word_id': id,
+    'seq': 1,
+    'meaning': canonicalMeaning1 ?? meaning1,
+  });
 }

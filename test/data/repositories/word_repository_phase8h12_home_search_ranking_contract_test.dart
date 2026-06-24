@@ -193,6 +193,42 @@ void main() {
         );
       },
     );
+
+    test('finds a word once by its 8th canonical meaning', () async {
+      final repository = WordRepository();
+      final db = await DatabaseService.openDatabaseFile();
+      const wordId = 'T9000_H12_MEANING8_ONCE';
+      const keyword = 'phase32-home-canonical-meaning-08';
+
+      await _insertWord(
+        db,
+        id: wordId,
+        spelling1: 'phase32 home meaning title',
+        meaning1: 'phase32 home meaning 1',
+        expressionRows: const [
+          {
+            'seq': 1,
+            'is_representative': 1,
+            'spelling': 'phase32 home meaning title',
+          },
+        ],
+      );
+      for (var index = 2; index <= 8; index++) {
+        await db.insert('word_meaning_set', {
+          'word_id': wordId,
+          'seq': index,
+          'meaning': index == 8 ? keyword : 'phase32 home meaning $index',
+        });
+      }
+
+      final items = await repository.searchWordsMap(keyword, limit: 20);
+      final targetItems = items
+          .where((item) => item.wordId == wordId)
+          .toList(growable: false);
+
+      expect(targetItems, hasLength(1));
+      expect(targetItems.single.subtitleMeaning, 'phase32 home meaning 1');
+    });
   });
 }
 
@@ -242,4 +278,9 @@ Future<void> _insertWord(
   for (final row in expressionRows) {
     await db.insert('word_expression_set', {'word_id': id, ...row});
   }
+  await db.insert('word_meaning_set', {
+    'word_id': id,
+    'seq': 1,
+    'meaning': meaning1,
+  });
 }
