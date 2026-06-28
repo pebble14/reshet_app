@@ -41,6 +41,7 @@ class WordRelationEdgeInfo {
   final String? categoryLabel;
   final String? relationType;
   final String? relationTypeLabel;
+  final String? statusCode;
   final String? description;
   final String? note;
   final String? source;
@@ -57,6 +58,7 @@ class WordRelationEdgeInfo {
     this.categoryLabel,
     this.relationType,
     this.relationTypeLabel,
+    this.statusCode,
     this.description,
     this.note,
     this.source,
@@ -81,6 +83,7 @@ class WordRelationEdgeInfo {
       categoryLabel: map['category_label'] as String?,
       relationType: map['relation_type'] as String?,
       relationTypeLabel: map['relation_type_label'] as String?,
+      statusCode: map['status_code'] as String?,
       description: map['description'] as String?,
       note: map['note'] as String?,
       source: map['source'] as String?,
@@ -2518,6 +2521,7 @@ class WordRepository {
         rc.label AS category_label,
         wr.relation_type AS relation_type,
         rt.label AS relation_type_label,
+        wr.status_code AS status_code,
         wr.note AS note,
         wr.source AS source
       FROM WORD_RELATION wr

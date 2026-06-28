@@ -598,6 +598,54 @@ void main() {
         expect(snapshot.fallbackObservation, isNull);
       },
     );
+
+    test(
+      'relation edge read preserves raw status_code past seven edges',
+      () async {
+        final repository = WordRepository();
+        final db = await DatabaseService.openDatabaseFile();
+        const centerWordId = 'T9000_RS_STATUS_CENTER';
+        final childWordIds = List<String>.generate(
+          8,
+          (index) => 'T9000_RS_STATUS_CHILD_${index + 1}',
+        );
+
+        await db.insert('WORD_TABLE', {
+          'id': centerWordId,
+          '\uC5B8\uC5B4': '\uD14C\uC2A4\uD2B8',
+          '\uD45C\uAE301': 'status-center',
+          '\uC74C\uC5ED1': 'status-center',
+          '\uBC1C\uC74C1': 'status-center',
+          '\uC758\uBBF81': 'status center',
+        });
+        for (final childWordId in childWordIds) {
+          await db.insert('WORD_TABLE', {
+            'id': childWordId,
+            '\uC5B8\uC5B4': '\uD14C\uC2A4\uD2B8',
+            '\uD45C\uAE301': childWordId.toLowerCase(),
+            '\uC74C\uC5ED1': childWordId.toLowerCase(),
+            '\uBC1C\uC74C1': childWordId.toLowerCase(),
+            '\uC758\uBBF81': 'status child',
+          });
+        }
+
+        for (var index = 0; index < childWordIds.length; index++) {
+          await db.insert('WORD_RELATION', {
+            'word_id_1': centerWordId,
+            'word_id_2': childWordIds[index],
+            'direction_code': 'unknown',
+            'status_code': index == 7 ? 'hypothesized' : 'asserted',
+            'updated_at': DateTime.now().toIso8601String(),
+          });
+        }
+
+        final edges = await repository.getRelationEdges(centerWordId);
+
+        expect(edges, hasLength(8));
+        expect(edges.last.otherWordId, childWordIds.last);
+        expect(edges.last.statusCode, 'hypothesized');
+      },
+    );
   });
 
   group('WordRepository graph single-word path', () {

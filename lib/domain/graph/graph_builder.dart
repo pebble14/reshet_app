@@ -1081,7 +1081,7 @@ class GraphBuilder {
       relationId: info.relationId,
       relationType: info.relationType,
       categoryCode: info.categoryCode,
-      statusCode: null,
+      statusCode: info.statusCode,
       directionCode: info.directionCode,
       description: info.description,
       weight: 1.0,

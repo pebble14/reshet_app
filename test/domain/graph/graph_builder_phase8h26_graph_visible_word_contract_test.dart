@@ -93,5 +93,42 @@ void main() {
         isNot(contains(depthTwoWords.last.wordId)),
       );
     });
+
+    test('preserves relation status metadata on the graph edge carrier', () {
+      const centerWordId = 'T9000_H26_STATUS_CENTER';
+      const childWordId = 'T9000_H26_STATUS_CHILD';
+      final builder = GraphBuilder();
+
+      final result = builder.buildMergedVisibleGraphData(
+        options: GraphBuildOptions(centerWordId: centerWordId),
+        centerWord: Word(id: centerWordId, spelling1: 'center'),
+        baseWords: const [
+          GraphVisibleWord(
+            wordId: childWordId,
+            fallbackSpelling: 'child',
+            fallbackStrongNumber: '',
+            fallbackTransliteration: '',
+          ),
+        ],
+        baseRelationEdges: [
+          WordRelationEdgeInfo(
+            relationId: 34,
+            wordId1: centerWordId,
+            wordId2: childWordId,
+            otherWordId: childWordId,
+            directionCode: 'unknown',
+            centerRelativeDirection: 'unknown',
+            relationType: 'translation',
+            statusCode: 'hypothesized',
+          ),
+        ],
+      );
+
+      final edge = result.viewData.edges.singleWhere(
+        (edge) => edge.relationId == 34,
+      );
+
+      expect(edge.statusCode, 'hypothesized');
+    });
   });
 }
