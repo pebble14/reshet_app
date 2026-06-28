@@ -41,7 +41,31 @@ void main() {
       final counts = await db.rawQuery(
         'SELECT COUNT(*) AS row_count FROM word_expression_set',
       );
-      expect(counts.single['row_count'], 2);
+      expect(counts.single['row_count'], 3);
+
+      final seq7Rows = await db.query(
+        'word_expression_set',
+        columns: const [
+          'word_id',
+          'seq',
+          'is_representative',
+          'spelling',
+          'transliteration',
+          'pronunciation',
+        ],
+        where: 'word_id = ? AND seq = ?',
+        whereArgs: ['W1', 7],
+      );
+      expect(seq7Rows, [
+        {
+          'word_id': 'W1',
+          'seq': 7,
+          'is_representative': 0,
+          'spelling': 'eta',
+          'transliteration': 'e',
+          'pronunciation': 'eh',
+        },
+      ]);
     },
   );
 
@@ -383,6 +407,14 @@ Future<void> _createSyntheticSeedDb(String path) async {
       'spelling': 'gamma',
       'transliteration': 'g',
       'pronunciation': 'ga',
+    });
+    await db.insert('word_expression_set', {
+      'word_id': 'W1',
+      'seq': 7,
+      'is_representative': 0,
+      'spelling': 'eta',
+      'transliteration': 'e',
+      'pronunciation': 'eh',
     });
   } finally {
     await db.close();

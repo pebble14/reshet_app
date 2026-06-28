@@ -171,6 +171,24 @@ class WordRepository {
     _getWordMapByIdContext,
     _readForExplorerSingleWordContext,
   };
+  static const Set<String> _canonicalExpressionAuthorityContexts = {
+    _detailScreenDisplayItemReadContext,
+    _readAfterSaveSingleWordContext,
+    _readAfterUndoSingleWordContext,
+    _readForDetailEditSeedContext,
+    _readForExplorerEditSeedContext,
+    _readForGraphCreateEditSeedContext,
+    _readForGraphSingleWordContext,
+    _readForGraphCenterSingleWordContext,
+    _readForGraphBatchContext,
+    _readForGraphCreatePostSavePayloadContext,
+    _readForSplitViewSingleWordContext,
+    _readForExplorerSingleWordContext,
+    _getWordMapByIdContext,
+    'getStrongWordsMap',
+    'searchStrongExactMap',
+    'searchWordsMap',
+  };
   static ReadSourcePolicy? _debugReadSourcePolicyOverride;
   static final List<String> _homeSearchSpellingColumns = List.unmodifiable(
     List.generate(6, (index) => '표기${index + 1}'),
@@ -182,8 +200,6 @@ class WordRepository {
   );
   static final List<String> _homeSearchLikeColumns = List.unmodifiable([
     '스트롱넘버',
-    ..._homeSearchSpellingColumns,
-    ..._homeSearchTransliterationColumns,
   ]);
   static final List<String> _wordPronunciationColumns = List.unmodifiable(
     List.generate(6, (index) => '발음${index + 1}'),
@@ -217,6 +233,8 @@ class WordRepository {
       '_normalized_meaning_rows';
   static const String _materializedCanonicalMeaningValuesKey =
       '_canonical_meaning_values';
+  static const String _materializedCanonicalExpressionSetsKey =
+      '_canonical_expression_sets';
   static const List<String> _wordExpressionSetSnapshotColumns = [
     'word_id',
     'seq',
@@ -266,6 +284,10 @@ class WordRepository {
 
   void debugClearWordExpressionReadObservations() {
     debugReadSourceCollector.debugReset();
+  }
+
+  bool _usesCanonicalExpressionAuthority(String context) {
+    return _canonicalExpressionAuthorityContexts.contains(context);
   }
 
   WordExpressionReadSnapshot? debugLastWordExpressionReadSnapshotFor(
@@ -476,7 +498,7 @@ class WordRepository {
   ) {
     final normalizedSets = <CanonicalExpressionWriteSet>[];
 
-    for (final set in expressionSets.take(6)) {
+    for (final set in expressionSets) {
       final spelling = set.spelling.trim();
       if (spelling.isEmpty) {
         continue;
@@ -722,6 +744,43 @@ class WordRepository {
     return rowsByWordId;
   }
 
+  Future<List<Map<String, dynamic>>>
+  _materializeCanonicalExpressionsForNormalRuntime(
+    Database db,
+    Iterable<Map<String, dynamic>> rows, {
+    required String context,
+  }) async {
+    final rowList = rows
+        .map((row) => Map<String, dynamic>.from(row))
+        .toList(growable: false);
+    if (rowList.isEmpty) {
+      return const [];
+    }
+
+    final snapshots = await _resolveWordExpressionReadSnapshots(
+      db,
+      rowList,
+      context: context,
+    );
+
+    return List<Map<String, dynamic>>.unmodifiable(
+      rowList.map((row) {
+        final wordId = (row['id'] ?? '').toString().trim();
+        final snapshot = snapshots[wordId];
+        if (snapshot == null ||
+            snapshot.finalResultSource != FinalReadResultSource.normalized ||
+            snapshot.normalizedReadResult == null) {
+          return row;
+        }
+
+        return _materializeWordRowForDisplay(
+          row,
+          snapshot.normalizedReadResult!,
+        );
+      }),
+    );
+  }
+
   WordExpressionReadSnapshot _snapshotForNormalizedQueryFailure({
     required String wordId,
     required String context,
@@ -780,6 +839,21 @@ class WordRepository {
         readResult: normalizedOutcome.readResult!,
         legacyReadResult: legacyResult,
         normalizedReadResult: normalizedOutcome.readResult!,
+      );
+    }
+
+    if (_usesCanonicalExpressionAuthority(context) &&
+        normalizedOutcome.failureReason == ReadFallbackReason.emptyResult) {
+      const emptyReadResult = CanonicalExpressionReadResult();
+      return WordExpressionReadSnapshot(
+        wordId: wordId,
+        context: context,
+        requestedPolicy: policy,
+        resolvedSource: ResolvedReadSource.normalized,
+        finalResultSource: FinalReadResultSource.normalized,
+        readResult: emptyReadResult,
+        legacyReadResult: legacyResult,
+        normalizedReadResult: emptyReadResult,
       );
     }
 
@@ -860,50 +934,83 @@ class WordRepository {
     }
   }
 
-  /// id로 단어 1건 조회
-  List<ExpressionSet> _orderExpressionSetsForDisplayMaterialization(
-    List<ExpressionSet> sets,
+  List<ExpressionSet> _cloneExpressionSetsForMaterialization(
+    Iterable<ExpressionSet> sets,
   ) {
-    if (sets.isEmpty) {
-      return const [];
-    }
-
-    ExpressionSet? representativeSet;
-    for (final set in sets) {
-      if (set.isRepresentative) {
-        representativeSet = set;
-        break;
-      }
-    }
-
-    if (representativeSet == null) {
-      return List<ExpressionSet>.unmodifiable(sets);
-    }
-
-    final resolvedRepresentativeSet = representativeSet;
-    final orderedSets = <ExpressionSet>[resolvedRepresentativeSet];
-    orderedSets.addAll(
-      sets.where(
-        (set) =>
-            !identical(set, resolvedRepresentativeSet) &&
-            (set.seq != resolvedRepresentativeSet.seq ||
-                set.spelling != resolvedRepresentativeSet.spelling ||
-                set.transliteration !=
-                    resolvedRepresentativeSet.transliteration ||
-                set.pronunciation != resolvedRepresentativeSet.pronunciation),
+    return List<ExpressionSet>.unmodifiable(
+      sets.map(
+        (set) => ExpressionSet(
+          spelling: set.spelling,
+          transliteration: set.transliteration,
+          pronunciation: set.pronunciation,
+          seq: set.seq,
+          isRepresentative: set.isRepresentative,
+        ),
       ),
     );
+  }
 
-    return List<ExpressionSet>.unmodifiable(orderedSets);
+  List<ExpressionSet>? _readMaterializedCanonicalExpressionSets(
+    Map<String, dynamic> wordRow,
+  ) {
+    if (!wordRow.containsKey(_materializedCanonicalExpressionSetsKey)) {
+      return null;
+    }
+
+    final rawSets = wordRow[_materializedCanonicalExpressionSetsKey];
+    if (rawSets is List<ExpressionSet>) {
+      return List<ExpressionSet>.unmodifiable(rawSets);
+    }
+
+    if (rawSets is List) {
+      return List<ExpressionSet>.unmodifiable(
+        rawSets.whereType<Map>().map((rawSet) {
+          final set = Map<String, dynamic>.from(rawSet);
+          return ExpressionSet(
+            spelling: (set['spelling'] ?? '').toString(),
+            transliteration: set['transliteration'] as String?,
+            pronunciation: set['pronunciation'] as String?,
+            seq: set['seq'] is int
+                ? set['seq'] as int
+                : int.tryParse((set['seq'] ?? '').toString()) ?? 0,
+            isRepresentative:
+                set['is_representative'] == true ||
+                set['is_representative'] == 1,
+          );
+        }),
+      );
+    }
+
+    return const [];
+  }
+
+  CanonicalExpressionReadResult _readExpressionReadResultFromWordRow(
+    Map<String, dynamic> wordRow,
+  ) {
+    final materializedSets = _readMaterializedCanonicalExpressionSets(wordRow);
+    if (materializedSets != null) {
+      return CanonicalExpressionReadResult(sets: materializedSets);
+    }
+
+    return readLegacyWordExpressionRow(wordRow);
+  }
+
+  ExpressionSet? _primaryExpressionSetForDisplay(List<ExpressionSet> sets) {
+    if (sets.isEmpty) {
+      return null;
+    }
+
+    return sets.firstWhere(
+      (set) => set.isRepresentative,
+      orElse: () => sets.first,
+    );
   }
 
   Map<String, dynamic> _materializeWordRowForDisplay(
     Map<String, dynamic> legacyWordRow,
     CanonicalExpressionReadResult readResult,
   ) {
-    final orderedSets = _orderExpressionSetsForDisplayMaterialization(
-      readResult.sets,
-    );
+    final orderedSets = _cloneExpressionSetsForMaterialization(readResult.sets);
     final materializedRow = Map<String, dynamic>.from(legacyWordRow);
     final legacyExpressionColumns = toLegacyWordExpressionColumns(
       orderedSets
@@ -919,6 +1026,7 @@ class WordRepository {
           .toList(growable: false),
     );
 
+    materializedRow[_materializedCanonicalExpressionSetsKey] = orderedSets;
     materializedRow.addAll(legacyExpressionColumns);
     return materializedRow;
   }
@@ -1090,7 +1198,7 @@ class WordRepository {
   }
 
   WordEditSeed buildWordEditSeedFromWordRow(Map<String, dynamic> wordRow) {
-    final expressionReadResult = readLegacyWordExpressionRow(wordRow);
+    final expressionReadResult = _readExpressionReadResultFromWordRow(wordRow);
 
     return WordEditSeed(
       wordId: (wordRow['id'] ?? '').toString(),
@@ -1128,16 +1236,10 @@ class WordRepository {
     String note,
   })
   _buildWordDetailDisplaySignature(Map<String, dynamic> wordRow) {
-    final readResult = readLegacyWordExpressionRow(wordRow);
-    final representativeSpelling = readResult.sets.isEmpty
-        ? ''
-        : readResult.sets
-              .firstWhere(
-                (set) => set.isRepresentative,
-                orElse: () => readResult.sets.first,
-              )
-              .spelling
-              .trim();
+    final readResult = _readExpressionReadResultFromWordRow(wordRow);
+    final representativeSpelling =
+        (_primaryExpressionSetForDisplay(readResult.sets)?.spelling ?? '')
+            .trim();
 
     return (
       representativeSpelling: representativeSpelling,
@@ -1173,16 +1275,10 @@ class WordRepository {
 
   ({String strongNumber, String representativeSpelling})
   _buildStrongListDisplaySignature(Map<String, dynamic> wordRow) {
-    final readResult = readLegacyWordExpressionRow(wordRow);
-    final representativeSpelling = readResult.sets.isEmpty
-        ? ''
-        : readResult.sets
-              .firstWhere(
-                (set) => set.isRepresentative,
-                orElse: () => readResult.sets.first,
-              )
-              .spelling
-              .trim();
+    final readResult = _readExpressionReadResultFromWordRow(wordRow);
+    final representativeSpelling =
+        (_primaryExpressionSetForDisplay(readResult.sets)?.spelling ?? '')
+            .trim();
 
     return (
       strongNumber: _readTrimmedWordValue(wordRow, '스트롱넘버'),
@@ -1285,13 +1381,8 @@ class WordRepository {
     String subtitleMeaning,
   })
   _buildSearchResultDisplaySignature(Map<String, dynamic> wordRow) {
-    final readResult = readLegacyWordExpressionRow(wordRow);
-    final representativeSet = readResult.sets.isEmpty
-        ? null
-        : readResult.sets.firstWhere(
-            (set) => set.isRepresentative,
-            orElse: () => readResult.sets.first,
-          );
+    final readResult = _readExpressionReadResultFromWordRow(wordRow);
+    final representativeSet = _primaryExpressionSetForDisplay(readResult.sets);
 
     return (
       strongNumber: _readTrimmedWordValue(wordRow, '스트롱넘버'),
@@ -1502,7 +1593,8 @@ class WordRepository {
       snapshot.normalizedReadResult!,
     );
 
-    if (snapshot.requestedPolicy != ReadSourcePolicy.normalizedWithFallback) {
+    if (snapshot.requestedPolicy != ReadSourcePolicy.normalizedWithFallback ||
+        _usesCanonicalExpressionAuthority(snapshot.context)) {
       return (wordRow: normalizedWordRow, snapshot: snapshot);
     }
 
@@ -1556,7 +1648,8 @@ class WordRepository {
       snapshot.normalizedReadResult!,
     );
 
-    if (snapshot.requestedPolicy != ReadSourcePolicy.normalizedWithFallback) {
+    if (snapshot.requestedPolicy != ReadSourcePolicy.normalizedWithFallback ||
+        _usesCanonicalExpressionAuthority(snapshot.context)) {
       return (wordRow: normalizedWordRow, snapshot: snapshot);
     }
 
@@ -2053,21 +2146,21 @@ class WordRepository {
               THEN TRIM(COALESCE(representative_row.spelling, ''))
             WHEN fallback_row.word_id IS NOT NULL
               THEN TRIM(COALESCE(fallback_row.spelling, ''))
-            ELSE TRIM(COALESCE(wt.\u{D45C}\u{AE30}1, ''))
+            ELSE ''
           END AS representative_spelling,
           CASE
             WHEN representative_row.word_id IS NOT NULL
               THEN TRIM(COALESCE(representative_row.transliteration, ''))
             WHEN fallback_row.word_id IS NOT NULL
               THEN TRIM(COALESCE(fallback_row.transliteration, ''))
-            ELSE TRIM(COALESCE(wt.\u{C74C}\u{C5ED}1, ''))
+            ELSE ''
           END AS representative_transliteration,
           CASE
             WHEN representative_row.word_id IS NOT NULL
               THEN TRIM(COALESCE(representative_row.pronunciation, ''))
             WHEN fallback_row.word_id IS NOT NULL
               THEN TRIM(COALESCE(fallback_row.pronunciation, ''))
-            ELSE TRIM(COALESCE(wt.\u{BC1C}\u{C74C}1, ''))
+            ELSE ''
           END AS representative_pronunciation
         FROM WORD_TABLE wt
         LEFT JOIN word_expression_set representative_row
@@ -2746,20 +2839,47 @@ class WordRepository {
     return List<HomeSearchRankingValue>.unmodifiable(values);
   }
 
+  List<HomeSearchRankingValue> _readHomeSearchExpressionRankingValues(
+    Map<String, dynamic> row,
+    String? Function(ExpressionSet set) readValue,
+  ) {
+    final materializedSets = _readMaterializedCanonicalExpressionSets(row);
+    if (materializedSets == null) {
+      return const [];
+    }
+
+    final values = <HomeSearchRankingValue>[];
+    for (final set in materializedSets) {
+      final value = (readValue(set) ?? '').trim();
+      if (value.isEmpty) {
+        continue;
+      }
+
+      values.add(HomeSearchRankingValue(value: value, fieldIndex: set.seq));
+    }
+
+    return List<HomeSearchRankingValue>.unmodifiable(values);
+  }
+
   HomeSearchRankingCandidate _buildHomeSearchRankingCandidate(
     Map<String, dynamic> row,
   ) {
+    final materializedExpressionSets = _readMaterializedCanonicalExpressionSets(
+      row,
+    );
+
     return HomeSearchRankingCandidate(
       wordId: (row['id'] ?? '').toString(),
       strongNumber: (row['스트롱넘버'] ?? '').toString().trim(),
-      indexedSpellings: _readHomeSearchRankingValues(
-        row,
-        _homeSearchSpellingColumns,
-      ),
-      indexedTransliterations: _readHomeSearchRankingValues(
-        row,
-        _homeSearchTransliterationColumns,
-      ),
+      indexedSpellings: materializedExpressionSets == null
+          ? _readHomeSearchRankingValues(row, _homeSearchSpellingColumns)
+          : _readHomeSearchExpressionRankingValues(row, (set) => set.spelling),
+      indexedTransliterations: materializedExpressionSets == null
+          ? _readHomeSearchRankingValues(row, _homeSearchTransliterationColumns)
+          : _readHomeSearchExpressionRankingValues(
+              row,
+              (set) => set.transliteration,
+            ),
       indexedMeanings: _readHomeSearchMeaningRankingValues(row),
     );
   }
@@ -2986,6 +3106,38 @@ class WordRepository {
         .toList(growable: false);
   }
 
+  Future<List<Map<String, dynamic>>> _queryHomeSearchExpressionCandidates(
+    Database db,
+    Set<String> sqlTerms,
+  ) async {
+    if (sqlTerms.isEmpty) {
+      return const [];
+    }
+
+    final whereParts = <String>[];
+    final whereArgs = <Object?>[];
+    for (final term in sqlTerms) {
+      final like = '%$term%';
+      whereParts.add('LOWER(COALESCE(wes.spelling, \'\')) LIKE ?');
+      whereArgs.add(like);
+      whereParts.add('LOWER(COALESCE(wes.transliteration, \'\')) LIKE ?');
+      whereArgs.add(like);
+    }
+
+    final rows = await db.rawQuery('''
+      SELECT DISTINCT wt.*
+      FROM WORD_TABLE wt
+      INNER JOIN word_expression_set wes
+        ON wes.word_id = wt.id
+      WHERE ${whereParts.join(' OR ')}
+      ORDER BY wt.id
+    ''', whereArgs);
+
+    return rows
+        .map((row) => Map<String, dynamic>.from(row))
+        .toList(growable: false);
+  }
+
   Future<List<Map<String, dynamic>>> _queryHomeSearchLanguageCandidates(
     Database db,
     String keyword,
@@ -3041,6 +3193,7 @@ class WordRepository {
     }
 
     addRows(await _queryHomeSearchLikeCandidates(db, sqlTerms));
+    addRows(await _queryHomeSearchExpressionCandidates(db, sqlTerms));
     addRows(await _queryHomeSearchMeaningCandidates(db, sqlTerms));
     addRows(await _queryHomeSearchLanguageCandidates(db, keyword));
 
@@ -3049,9 +3202,16 @@ class WordRepository {
       addRows(await db.query('WORD_TABLE', orderBy: 'id'));
     }
 
+    final expressionMaterializedRows =
+        await _materializeCanonicalExpressionsForNormalRuntime(
+          db,
+          candidatesById.values,
+          context: 'searchWordsMap',
+        );
+
     return await _materializeCanonicalMeaningsForNormalRuntime(
       db,
-      candidatesById.values,
+      expressionMaterializedRows,
     );
   }
 
@@ -3153,7 +3313,7 @@ class WordRepository {
 
   /// 키워드로 단어 검색 (홈 검색용)
   /// - DB에서 1차 후보를 수집한 뒤 Dart에서 정규화 비교/정렬한다.
-  /// - 표기1~6, 음역1~6, canonical meaning rows, 스트롱넘버를 대상으로 한다.
+  /// - canonical expression rows, canonical meaning rows, 스트롱넘버를 대상으로 한다.
   /// - 결과는 exact/prefix/partial 우선순위를 적용한 뒤 limit를 건다.
   Future<List<HomeSearchResultDisplayItem>> searchWordsMap(
     String keyword, {
@@ -3426,7 +3586,7 @@ class WordRepository {
   }
 
   /// 키워드로 단어 검색 (그래프에서 "관계 추가" 대상 단어 선택용)
-  /// - 표기1, canonical meaning rows, 스트롱넘버 부분일치 검색
+  /// - canonical expression spelling, canonical meaning rows, 스트롱넘버 부분일치 검색
   /// - 검색 semantics는 유지하고 graph relation add dialog용 최소 contract만 반환한다.
   Future<List<GraphRelationAddSearchResultItem>> searchWords(
     String keyword, {
@@ -3450,10 +3610,15 @@ class WordRepository {
       FROM WORD_TABLE wt
       INNER JOIN representative_query_projection
         ON representative_query_projection.word_id = wt.id
-      WHERE wt.표기1 LIKE ?
-         OR EXISTS (
-              SELECT 1
-              FROM word_meaning_set wms_search
+      WHERE EXISTS (
+               SELECT 1
+               FROM word_expression_set wes_search
+               WHERE wes_search.word_id = wt.id
+                 AND wes_search.spelling LIKE ?
+            )
+          OR EXISTS (
+               SELECT 1
+               FROM word_meaning_set wms_search
               WHERE wms_search.word_id = wt.id
                 AND wms_search.meaning LIKE ?
             )
@@ -3685,14 +3850,14 @@ class WordRepository {
               THEN TRIM(COALESCE(representative_row.spelling, ''))
             WHEN fallback_row.word_id IS NOT NULL
               THEN TRIM(COALESCE(fallback_row.spelling, ''))
-            ELSE TRIM(COALESCE(wt.표기1, ''))
+            ELSE ''
           END AS representative_spelling,
           CASE
             WHEN representative_row.word_id IS NOT NULL
               THEN TRIM(COALESCE(representative_row.transliteration, ''))
             WHEN fallback_row.word_id IS NOT NULL
               THEN TRIM(COALESCE(fallback_row.transliteration, ''))
-            ELSE TRIM(COALESCE(wt.음역1, ''))
+            ELSE ''
           END AS representative_transliteration
         FROM WORD_TABLE wt
         LEFT JOIN word_expression_set representative_row

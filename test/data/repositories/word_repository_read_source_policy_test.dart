@@ -111,41 +111,38 @@ void main() {
       },
     );
 
-    test('records empty-result fallback observation in model form', () async {
-      WordRepository.debugSetReadSourcePolicyOverride(
-        ReadSourcePolicy.normalizedWithFallback,
-      );
-      final repository = WordRepository();
-      final db = await DatabaseService.openDatabaseFile();
+    test(
+      'treats empty normalized rows as canonical empty expression result',
+      () async {
+        WordRepository.debugSetReadSourcePolicyOverride(
+          ReadSourcePolicy.normalizedWithFallback,
+        );
+        final repository = WordRepository();
+        final db = await DatabaseService.openDatabaseFile();
 
-      await db.insert('WORD_TABLE', {
-        'id': 'T9000_RS_EMPTY',
-        '언어': '테스트',
-        '표기1': 'fallback-empty',
-        '음역1': '폴백',
-        '발음1': 'fallback',
-      });
+        await db.insert('WORD_TABLE', {
+          'id': 'T9000_RS_EMPTY',
+          '언어': '테스트',
+          '표기1': 'fallback-empty',
+          '음역1': '폴백',
+          '발음1': 'fallback',
+        });
 
-      final row = await repository.getWordMapById('T9000_RS_EMPTY');
-      final snapshot = WordRepository.debugReadSourceCollector
-          .debugLastSnapshotForWord('T9000_RS_EMPTY');
+        final row = await repository.getWordMapById('T9000_RS_EMPTY');
+        final snapshot = WordRepository.debugReadSourceCollector
+            .debugLastSnapshotForWord('T9000_RS_EMPTY');
 
-      expect(row, isNotNull);
-      expect(snapshot, isNotNull);
-      expect(snapshot!.resolvedSource, ResolvedReadSource.legacy);
-      expect(snapshot.finalResultSource, FinalReadResultSource.legacyFallback);
-      expect(snapshot.didFallback, isTrue);
-      expect(
-        snapshot.fallbackObservation!.reason,
-        ReadFallbackReason.emptyResult,
-      );
-      expect(snapshot.fallbackObservation!.wordId, 'T9000_RS_EMPTY');
-      expect(
-        snapshot.fallbackObservation!.policy,
-        ReadSourcePolicy.normalizedWithFallback,
-      );
-      expect(snapshot.fallbackObservation!.context, 'getWordMapById');
-    });
+        expect(row, isNotNull);
+        expect(snapshot, isNotNull);
+        expect(snapshot!.resolvedSource, ResolvedReadSource.normalized);
+        expect(snapshot.finalResultSource, FinalReadResultSource.normalized);
+        expect(snapshot.didFallback, isFalse);
+        expect(snapshot.fallbackObservation, isNull);
+        expect(snapshot.readResult.sets, isEmpty);
+        expect(snapshot.legacyResultAvailable, isTrue);
+        expect(snapshot.normalizedResultAvailable, isTrue);
+      },
+    );
 
     test(
       'records query-failed fallback observation when normalized table is unavailable',
@@ -291,7 +288,7 @@ void main() {
     );
 
     test(
-      'keeps normalized-only failures visible without falling back to legacy',
+      'keeps normalized-only empty rows visible without falling back to legacy',
       () async {
         WordRepository.debugSetReadSourcePolicyOverride(
           ReadSourcePolicy.normalizedOnly,
@@ -312,15 +309,9 @@ void main() {
         expect(row, isNotNull);
         expect(snapshot, isNotNull);
         expect(snapshot!.resolvedSource, ResolvedReadSource.normalized);
-        expect(
-          snapshot.finalResultSource,
-          FinalReadResultSource.normalizedFailure,
-        );
-        expect(snapshot.didFallback, isTrue);
-        expect(
-          snapshot.fallbackObservation!.reason,
-          ReadFallbackReason.emptyResult,
-        );
+        expect(snapshot.finalResultSource, FinalReadResultSource.normalized);
+        expect(snapshot.didFallback, isFalse);
+        expect(snapshot.fallbackObservation, isNull);
         expect(snapshot.readResult.sets, isEmpty);
       },
     );
@@ -381,7 +372,7 @@ void main() {
     );
 
     test(
-      'split view falls back to legacy when normalized success would change the visible detail display',
+      'split view uses canonical rows when normalized success changes the visible detail display',
       () async {
         final repository = WordRepository();
         final db = await DatabaseService.openDatabaseFile();
@@ -432,23 +423,13 @@ void main() {
           snapshot.requestedPolicy,
           ReadSourcePolicy.normalizedWithFallback,
         );
-        expect(
-          snapshot.finalResultSource,
-          FinalReadResultSource.legacyFallback,
-        );
-        expect(snapshot.didFallback, isTrue);
+        expect(snapshot.finalResultSource, FinalReadResultSource.normalized);
+        expect(snapshot.didFallback, isFalse);
         expect(snapshot.legacyResultAvailable, isTrue);
         expect(snapshot.normalizedResultAvailable, isTrue);
-        expect(snapshot.fallbackObservation, isNotNull);
-        expect(
-          snapshot.fallbackObservation!.reason,
-          ReadFallbackReason.userVisibleDisplayMismatch,
-        );
-        expect(
-          snapshot.fallbackObservation!.detail,
-          contains('representative_spelling'),
-        );
-        _expectSameDetailDisplay(legacyWordRow, splitViewRow!);
+        expect(snapshot.fallbackObservation, isNull);
+        expect(splitViewRow!.representativeSpelling, 'aleph');
+        expect(splitViewRow.spellings, ['alpha', 'aleph']);
       },
     );
   });
@@ -542,7 +523,7 @@ void main() {
     );
 
     test(
-      'graph batch falls back to legacy when normalized success would change the visible graph row display',
+      'graph batch uses canonical rows when normalized success changes the visible graph row display',
       () async {
         final repository = WordRepository();
         final db = await DatabaseService.openDatabaseFile();
@@ -610,21 +591,11 @@ void main() {
           snapshot.requestedPolicy,
           ReadSourcePolicy.normalizedWithFallback,
         );
-        expect(
-          snapshot.finalResultSource,
-          FinalReadResultSource.legacyFallback,
-        );
-        expect(snapshot.didFallback, isTrue);
+        expect(snapshot.finalResultSource, FinalReadResultSource.normalized);
+        expect(snapshot.didFallback, isFalse);
         expect(snapshot.legacyResultAvailable, isTrue);
         expect(snapshot.normalizedResultAvailable, isTrue);
-        expect(
-          snapshot.fallbackObservation?.reason,
-          ReadFallbackReason.userVisibleDisplayMismatch,
-        );
-        expect(
-          snapshot.fallbackObservation?.detail,
-          contains('representative_spelling'),
-        );
+        expect(snapshot.fallbackObservation, isNull);
       },
     );
   });
@@ -680,12 +651,12 @@ void main() {
         expect(snapshot.normalizedResultAvailable, isTrue);
         expect(summary, isNotNull);
         expect(summary!.contexts, ['readForGraphSingleWord']);
-        _expectSameDetailDisplay(legacyWordRow, graphSingleRow!);
+        expect(graphSingleRow!['표기1'], 'graph-single-stable');
       },
     );
 
     test(
-      'graph single falls back to legacy when normalized success would change the visible detail display',
+      'graph single uses canonical rows when normalized success changes the visible detail display',
       () async {
         final repository = WordRepository();
         final db = await DatabaseService.openDatabaseFile();
@@ -739,25 +710,15 @@ void main() {
           snapshot.requestedPolicy,
           ReadSourcePolicy.normalizedWithFallback,
         );
-        expect(
-          snapshot.finalResultSource,
-          FinalReadResultSource.legacyFallback,
-        );
-        expect(snapshot.didFallback, isTrue);
+        expect(snapshot.finalResultSource, FinalReadResultSource.normalized);
+        expect(snapshot.didFallback, isFalse);
         expect(snapshot.legacyResultAvailable, isTrue);
         expect(snapshot.normalizedResultAvailable, isTrue);
-        expect(snapshot.fallbackObservation, isNotNull);
-        expect(
-          snapshot.fallbackObservation!.reason,
-          ReadFallbackReason.userVisibleDisplayMismatch,
-        );
-        expect(
-          snapshot.fallbackObservation!.detail,
-          contains('representative_spelling'),
-        );
+        expect(snapshot.fallbackObservation, isNull);
         expect(summary, isNotNull);
         expect(summary!.contexts, ['readForGraphSingleWord']);
-        _expectSameDetailDisplay(legacyWordRow, graphSingleRow!);
+        expect(graphSingleRow!['표기1'], 'alpha');
+        expect(graphSingleRow['표기2'], 'aleph');
       },
     );
   });
@@ -805,7 +766,7 @@ void main() {
     );
 
     test(
-      'falls back to legacy when detail-only API sees empty normalized rows',
+      'uses an empty canonical expression list when detail-only API sees empty normalized rows',
       () async {
         final repository = WordRepository();
         final db = await DatabaseService.openDatabaseFile();
@@ -838,24 +799,18 @@ void main() {
           snapshot.requestedPolicy,
           ReadSourcePolicy.normalizedWithFallback,
         );
-        expect(
-          snapshot.finalResultSource,
-          FinalReadResultSource.legacyFallback,
-        );
-        expect(snapshot.didFallback, isTrue);
+        expect(snapshot.finalResultSource, FinalReadResultSource.normalized);
+        expect(snapshot.didFallback, isFalse);
         expect(snapshot.legacyResultAvailable, isTrue);
-        expect(snapshot.normalizedResultAvailable, isFalse);
-        expect(snapshot.fallbackObservation, isNotNull);
-        expect(
-          snapshot.fallbackObservation!.reason,
-          ReadFallbackReason.emptyResult,
-        );
-        _expectSameDetailDisplay(legacyWordRow, detailRow!);
+        expect(snapshot.normalizedResultAvailable, isTrue);
+        expect(snapshot.fallbackObservation, isNull);
+        expect(detailRow!.representativeSpelling, isNull);
+        expect(detailRow.spellings, isEmpty);
       },
     );
 
     test(
-      'falls back to legacy when normalized success would change the user-visible detail display',
+      'uses canonical rows when normalized success changes the user-visible detail display',
       () async {
         final repository = WordRepository();
         final db = await DatabaseService.openDatabaseFile();
@@ -907,22 +862,13 @@ void main() {
           snapshot.requestedPolicy,
           ReadSourcePolicy.normalizedWithFallback,
         );
-        expect(
-          snapshot.finalResultSource,
-          FinalReadResultSource.legacyFallback,
-        );
-        expect(snapshot.didFallback, isTrue);
+        expect(snapshot.finalResultSource, FinalReadResultSource.normalized);
+        expect(snapshot.didFallback, isFalse);
         expect(snapshot.legacyResultAvailable, isTrue);
         expect(snapshot.normalizedResultAvailable, isTrue);
-        expect(
-          snapshot.fallbackObservation!.reason,
-          ReadFallbackReason.userVisibleDisplayMismatch,
-        );
-        expect(
-          snapshot.fallbackObservation!.detail,
-          contains('representative_spelling'),
-        );
-        _expectSameDetailDisplay(legacyWordRow, detailRow!);
+        expect(snapshot.fallbackObservation, isNull);
+        expect(detailRow!.representativeSpelling, 'aleph');
+        expect(detailRow.spellings, ['alpha', 'aleph']);
       },
     );
   });
@@ -962,22 +908,16 @@ void main() {
             .formatRecentEventLines(limit: 5);
 
         expect(wordSummary, isNotNull);
-        expect(wordSummary!.fallbackEvents, 1);
-        expect(wordSummary.reasonCounts[ReadFallbackReason.emptyResult], 1);
-        expect(reasonSummaries, isNotEmpty);
-        expect(
-          reasonSummaries.any(
-            (summary) => summary.reason == ReadFallbackReason.emptyResult,
-          ),
-          isTrue,
-        );
+        expect(wordSummary!.fallbackEvents, 0);
+        expect(wordSummary.reasonCounts, isEmpty);
+        expect(reasonSummaries, isEmpty);
         expect(recentEvents, isNotEmpty);
         expect(recentEvents.first.wordId, 'T9000_RS_SUMMARY');
         expect(wordSummaryLines.single, contains('[read-summary:word]'));
         expect(wordSummaryLines.single, contains('wordId=T9000_RS_SUMMARY'));
-        expect(reasonSummaryLines.join('\n'), contains('reason=empty_result'));
+        expect(reasonSummaryLines, isEmpty);
         expect(recentEventLines.first, contains('[read-event]'));
-        expect(recentEventLines.first, contains('reason=empty_result'));
+        expect(recentEventLines.first, contains('reason=-'));
       },
     );
   });

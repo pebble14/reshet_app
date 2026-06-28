@@ -169,6 +169,7 @@ void main() {
               'is_representative': 1,
               'spelling': 'field two visible title',
             },
+            {'seq': 2, 'is_representative': 0, 'spelling': keyword},
           ],
         );
         await _insertWord(
@@ -229,6 +230,64 @@ void main() {
       expect(targetItems, hasLength(1));
       expect(targetItems.single.subtitleMeaning, 'phase32 home meaning 1');
     });
+
+    test(
+      'finds a word once by its 7th canonical spelling and transliteration',
+      () async {
+        final repository = WordRepository();
+        final db = await DatabaseService.openDatabaseFile();
+        const wordId = 'T9000_H12_EXPR7_ONCE';
+        const spellingKeyword = 'phase33-home-spelling-07';
+        const transliterationKeyword = 'phase33-home-trans-07';
+
+        await _insertWord(
+          db,
+          id: wordId,
+          spelling1: 'phase33 home representative',
+          meaning1: 'phase33 home expression seven',
+          expressionRows: [
+            for (var index = 1; index <= 7; index++)
+              {
+                'seq': index,
+                'is_representative': index == 1 ? 1 : 0,
+                'spelling': index == 7
+                    ? spellingKeyword
+                    : 'phase33-home-spelling-0$index',
+                'transliteration': index == 7
+                    ? transliterationKeyword
+                    : 'phase33-home-trans-0$index',
+              },
+          ],
+        );
+
+        final spellingItems = await repository.searchWordsMap(
+          spellingKeyword,
+          limit: 20,
+        );
+        final transliterationItems = await repository.searchWordsMap(
+          transliterationKeyword,
+          limit: 20,
+        );
+
+        final spellingMatches = spellingItems
+            .where((item) => item.wordId == wordId)
+            .toList(growable: false);
+        final transliterationMatches = transliterationItems
+            .where((item) => item.wordId == wordId)
+            .toList(growable: false);
+
+        expect(spellingMatches, hasLength(1));
+        expect(transliterationMatches, hasLength(1));
+        expect(
+          spellingMatches.single.representativeSpelling,
+          'phase33-home-spelling-01',
+        );
+        expect(
+          transliterationMatches.single.representativeSpelling,
+          'phase33-home-spelling-01',
+        );
+      },
+    );
   });
 }
 

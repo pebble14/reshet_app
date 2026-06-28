@@ -6,8 +6,6 @@ import 'package:reshet_app/data/repositories/word_repository.dart';
 import 'package:reshet_app/database/database_service.dart';
 import 'package:reshet_app/domain/expression/read_source_policy.dart';
 import 'package:reshet_app/domain/word/word_edit_seed.dart';
-import 'package:reshet_app/domain/word/word_write_models.dart';
-import 'package:sqflite_common/sqlite_api.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -159,7 +157,7 @@ void main() {
     );
 
     test(
-      'records fallback context and preserves legacy hidden slot issues',
+      'uses canonical expression rows and ignores stale legacy hidden slot issues',
       () async {
         final repository = WordRepository();
         final db = await DatabaseService.openDatabaseFile();
@@ -202,53 +200,26 @@ void main() {
         expect(graphCreateSeed, isA<WordEditSeed>());
         expect(
           explorerSnapshot.finalResultSource,
-          FinalReadResultSource.legacyFallback,
+          FinalReadResultSource.normalized,
         );
-        expect(explorerSnapshot.didFallback, isTrue);
-        expect(
-          explorerSnapshot.fallbackObservation?.reason,
-          ReadFallbackReason.userVisibleDisplayMismatch,
-        );
-        expect(
-          explorerSnapshot.fallbackObservation?.context,
-          'readForExplorerEditSeed',
-        );
+        expect(explorerSnapshot.didFallback, isFalse);
+        expect(explorerSnapshot.fallbackObservation, isNull);
         expect(
           graphCreateSnapshot.finalResultSource,
-          FinalReadResultSource.legacyFallback,
+          FinalReadResultSource.normalized,
         );
-        expect(graphCreateSnapshot.didFallback, isTrue);
-        expect(
-          graphCreateSnapshot.fallbackObservation?.reason,
-          ReadFallbackReason.userVisibleDisplayMismatch,
-        );
-        expect(
-          graphCreateSnapshot.fallbackObservation?.context,
-          'readForGraphCreateEditSeed',
-        );
+        expect(graphCreateSnapshot.didFallback, isFalse);
+        expect(graphCreateSnapshot.fallbackObservation, isNull);
         expect(
           explorerSeed!.expressionReadResult.sets.single.spelling,
-          'legacy-visible-title',
+          'normalized-visible-title',
         );
         expect(
           graphCreateSeed!.expressionReadResult.sets.single.spelling,
-          'legacy-visible-title',
+          'normalized-visible-title',
         );
-        expect(explorerSeed.hiddenSlotIssues, hasLength(1));
-        expect(graphCreateSeed.hiddenSlotIssues, hasLength(1));
-        expect(
-          graphCreateSeed.hiddenSlotIssues.single.sourceKind,
-          WordWriteExclusionSourceKind.legacyHiddenSlot,
-        );
-        expect(graphCreateSeed.hiddenSlotIssues.single.sourceIndex, 2);
-        expect(
-          graphCreateSeed.hiddenSlotIssues.single.rawTransliteration,
-          'legacy-hidden-translit',
-        );
-        expect(
-          graphCreateSeed.hiddenSlotIssues.single.resolution,
-          excludedFromWriteResolution,
-        );
+        expect(explorerSeed.hiddenSlotIssues, isEmpty);
+        expect(graphCreateSeed.hiddenSlotIssues, isEmpty);
       },
     );
 
@@ -311,7 +282,7 @@ WordExpressionReadSnapshot _lastSnapshotFor(String wordId, String context) {
 }
 
 Future<Map<String, dynamic>> _insertWord(
-  Database db, {
+  dynamic db, {
   required String id,
   String language = '\uD14C\uC2A4\uD2B8',
   String? strongNumber,
@@ -339,6 +310,11 @@ Future<Map<String, dynamic>> _insertWord(
   for (final expressionRow in expressionRows) {
     await db.insert('word_expression_set', {'word_id': id, ...expressionRow});
   }
+  await db.insert('word_meaning_set', {
+    'word_id': id,
+    'seq': 1,
+    'meaning': meaning1,
+  });
 
   return wordRow;
 }

@@ -70,10 +70,13 @@
 
 - `word_expression_set`는 expression을 정규화된 row 구조로 저장하는 테이블이다.
 - 현재 상태에서 `word_expression_set`는 이미 존재하는 persisted normalized table이다.
-- 현재 expression write authority는 repository 내부 canonical expression set과 `word_expression_set` write path를 우선한다.
+- 현재 normal runtime의 expression read/history authority는 `word_expression_set`이다.
 - 현재 write는 canonical expression set을 normalized row로 저장한 뒤 `WORD_TABLE` expression slot을 compatibility projection으로 갱신하는 dual-write 구조다.
-- 현재 read source는 전역 단일 전환 상태가 아니라 `LEGACY` 기본 위에 일부 context만 `NORMALIZED_WITH_FALLBACK`으로 승격된 hybrid 상태다.
-- 따라서 현재 `word_expression_set`는 expression write 기준 canonical target이지만, expression read authority 완료 상태 또는 normalized-only 완료 상태로 선언하지 않는다.
+- legacy `표기1~6`·`음역1~6`·`발음1~6`은 compatibility projection이며 canonical authority가 아니다.
+- `seq>6` canonical expression set은 `word_expression_set`에 저장·조회되며 legacy slot에 맞추어 잘리지 않는다.
+- primary expression은 `is_representative=1` row를 우선하고, representative row가 없으면 가장 낮은 `seq` row를 fallback으로 사용한다.
+- normalized expression payload가 없는 구형 legacy-only history snapshot fallback은 호환 목적으로 유지한다.
+- legacy expression column 삭제, projection 중단, `표기7` 등 legacy slot 확장은 이번 범위 밖이며 별도 phase에서 판단한다.
 
 ### 5.3 WORD_RELATION / lookup
 
@@ -168,16 +171,16 @@
 ### 9.1 현재 상태
 
 - 현재 `word_expression_set`는 persisted normalized expression table이다.
-- 현재 expression write authority는 repository 내부 canonical expression set / `word_expression_set` write path를 우선한다.
+- 현재 normal runtime의 expression read/history authority는 `word_expression_set`이다.
 - 현재 `WORD_TABLE` expression slot은 legacy compatibility projection으로 유지된다.
-- 현재 read는 legacy 기본 + controlled normalized fallback 구조다.
+- legacy-only 구형 history snapshot처럼 normalized expression payload가 없는 경우에는 `표기1~6`·`음역1~6`·`발음1~6` fallback을 유지한다.
 
 ### 9.2 목표 상태
 
-- write 기준에서 `word_expression_set`는 현재 expression canonical write target이다.
-- read 기준에서는 아직 context별 hybrid 상태이며, normalized-only 완료 상태가 아니다.
-- 목표 상태에서 expression read authority도 `word_expression_set` 기준으로 확정된다.
-- legacy slot은 authority에서 내려온 compatibility projection이며, 이후 제거 후보가 된다.
+- `word_expression_set`는 normal runtime의 expression canonical write/read/history target이다.
+- expression set의 순서는 `seq ASC`이며, 표기·음역·발음은 동일 `seq`의 대응 묶음으로 보존한다.
+- `seq>6` canonical row는 보존하며 legacy slot projection을 위해 절단하지 않는다.
+- legacy slot은 authority에서 내려온 compatibility projection이며, 삭제 또는 projection 중단은 별도 phase에서 판단한다.
 
 ## 10. relation 정합성 정책
 

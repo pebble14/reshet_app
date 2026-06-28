@@ -161,7 +161,7 @@ CanonicalizedExpressionSetWriteResult canonicalizeExpressionSetDrafts(
   final expressionSets = <CanonicalExpressionWriteSet>[];
   final exclusionIssues = <WordWriteExclusionIssue>[...legacyHiddenSlotIssues];
 
-  for (var index = 0; index < drafts.length && index < 6; index++) {
+  for (var index = 0; index < drafts.length; index++) {
     final draft = drafts[index].normalized();
     final hasSupplementalValue =
         draft.transliteration.isNotEmpty || draft.pronunciation.isNotEmpty;
@@ -294,10 +294,7 @@ WordExpressionSetValidationResult validateExpressionSetDrafts(
 ) {
   final errors = <WordExpressionSetValidationIssue>[];
   final warnings = <WordExpressionSetValidationIssue>[];
-  final limitedDrafts = drafts
-      .take(6)
-      .map((draft) => draft.normalized())
-      .toList();
+  final limitedDrafts = drafts.map((draft) => draft.normalized()).toList();
 
   if (limitedDrafts.isEmpty || limitedDrafts.first.spelling.isEmpty) {
     errors.add(
@@ -437,7 +434,7 @@ class WordExpressionSetSection extends StatelessWidget {
   final ValueChanged<int>? onSetFocusLost;
   final WordExpressionSetValidationResult validationResult;
   final Set<int> visibleIssueSetIndexes;
-  final int maxSets;
+  final int? maxSets;
 
   const WordExpressionSetSection({
     super.key,
@@ -450,13 +447,17 @@ class WordExpressionSetSection extends StatelessWidget {
     required this.onSetFocusLost,
     this.validationResult = const WordExpressionSetValidationResult(),
     this.visibleIssueSetIndexes = const <int>{},
-    this.maxSets = 6,
+    this.maxSets,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final canAdd = enabled && controllerGroups.length < maxSets;
+    final canAdd =
+        enabled && (maxSets == null || controllerGroups.length < maxSets!);
+    final emptySetPolicyText = maxSets == null
+        ? '아무 값도 없는 세트는 저장되지 않습니다.'
+        : '아무 값도 없는 세트는 저장되지 않습니다. 최대 $maxSets개까지 저장됩니다.';
 
     return Container(
       padding: const EdgeInsets.all(12),
@@ -481,10 +482,7 @@ class WordExpressionSetSection extends StatelessWidget {
             style: theme.textTheme.bodySmall,
           ),
           const SizedBox(height: 2),
-          Text(
-            '아무 값도 없는 세트는 저장되지 않습니다. 최대 $maxSets개까지 저장됩니다.',
-            style: theme.textTheme.bodySmall,
-          ),
+          Text(emptySetPolicyText, style: theme.textTheme.bodySmall),
           const SizedBox(height: 12),
           for (var index = 0; index < controllerGroups.length; index++) ...[
             KeyedSubtree(

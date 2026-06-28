@@ -75,6 +75,93 @@ void main() {
       expect(result.exclusionIssues.single.sourceIndex, 4);
       expect(result.exclusionIssues.single.rawTransliteration, 'legacy-only');
     });
+
+    test('preserves seven or more expression sets during canonicalization', () {
+      final result = canonicalizeExpressionSetDrafts(
+        List<WordExpressionSetDraft>.generate(
+          7,
+          (index) => WordExpressionSetDraft(
+            spelling: 'phase33_spelling_${index + 1}',
+            transliteration: 'phase33_trans_${index + 1}',
+            pronunciation: 'phase33_pron_${index + 1}',
+          ),
+          growable: false,
+        ),
+      );
+
+      expect(result.expressionSets, hasLength(7));
+      for (var index = 0; index < result.expressionSets.length; index++) {
+        final set = result.expressionSets[index];
+        expect(set.seq, index + 1);
+        expect(set.spelling, 'phase33_spelling_${index + 1}');
+        expect(set.transliteration, 'phase33_trans_${index + 1}');
+        expect(set.pronunciation, 'phase33_pron_${index + 1}');
+        expect(set.isRepresentative, index == 0);
+      }
+    });
+  });
+
+  test('validateExpressionSetDrafts checks drafts after the sixth set', () {
+    final drafts = List<WordExpressionSetDraft>.generate(
+      7,
+      (index) => WordExpressionSetDraft(
+        spelling: index == 6 ? '' : 'phase33_spelling_${index + 1}',
+        transliteration: index == 6 ? 'phase33_trans_7' : '',
+        pronunciation: '',
+      ),
+      growable: false,
+    );
+
+    final result = validateExpressionSetDrafts(drafts);
+
+    expect(result.hasErrors, isFalse);
+    expect(result.warnings, hasLength(1));
+    expect(result.warnings.single.setIndex, 7);
+  });
+
+  testWidgets('WordExpressionSetSection does not disable add after six sets', (
+    tester,
+  ) async {
+    var addCount = 0;
+    final groups = List<WordExpressionSetControllerGroup>.generate(
+      6,
+      (index) => WordExpressionSetControllerGroup(
+        spelling: 'phase33_spelling_${index + 1}',
+      ),
+      growable: false,
+    );
+
+    try {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SingleChildScrollView(
+              child: WordExpressionSetSection(
+                controllerGroups: groups,
+                enabled: true,
+                onAddSet: () => addCount += 1,
+                onMakeRepresentative: (_) {},
+                onRemoveSet: (_) {},
+                onChanged: () {},
+                onSetFocusLost: (_) {},
+              ),
+            ),
+          ),
+        ),
+      );
+
+      final addButton = tester.widget<TextButton>(
+        find.widgetWithText(TextButton, '+ 세트 추가'),
+      );
+      expect(addButton.onPressed, isNotNull);
+      addButton.onPressed!();
+
+      expect(addCount, 1);
+    } finally {
+      for (final group in groups) {
+        group.dispose();
+      }
+    }
   });
 
   testWidgets(

@@ -48,7 +48,7 @@ void main() {
 
   group('Phase 8-H-4 graph relation add search contract first slice', () {
     test(
-      'keeps legacy search semantics while projecting representative spelling into the typed result',
+      'uses canonical expression spelling while projecting representative spelling into the typed result',
       () async {
         final repository = WordRepository();
         final db = await DatabaseService.openDatabaseFile();
@@ -65,11 +65,16 @@ void main() {
               'is_representative': 1,
               'spelling': 'representative-title',
             },
+            {
+              'seq': 2,
+              'is_representative': 0,
+              'spelling': 'canonical-spelling-match',
+            },
           ],
         );
 
         final results = await repository.searchWords(
-          'legacy-spelling-match',
+          'canonical-spelling-match',
           limit: 20,
         );
 
@@ -157,6 +162,44 @@ void main() {
           'representative-graph-meaning8-title',
         );
         expect(targetResults.single.primaryMeaning, 'phase32 graph meaning 1');
+      },
+    );
+
+    test(
+      'finds relation add candidates by the 7th canonical spelling while keeping representative label',
+      () async {
+        final repository = WordRepository();
+        final db = await DatabaseService.openDatabaseFile();
+        const wordId = 'T9000_H4_GRAPH_SEARCH_EXPR7';
+        const keyword = 'phase33-graph-spelling-07';
+
+        await _insertWord(
+          db,
+          id: wordId,
+          legacySpelling: 'stale-legacy-spelling',
+          meaning1: 'phase33 graph expression seven',
+          expressionRows: [
+            for (var index = 1; index <= 7; index++)
+              {
+                'seq': index,
+                'is_representative': index == 1 ? 1 : 0,
+                'spelling': index == 7
+                    ? keyword
+                    : 'phase33-graph-spelling-0$index',
+              },
+          ],
+        );
+
+        final results = await repository.searchWords(keyword, limit: 20);
+        final targetResults = results
+            .where((result) => result.wordId == wordId)
+            .toList(growable: false);
+
+        expect(targetResults, hasLength(1));
+        expect(
+          targetResults.single.representativeSpelling,
+          'phase33-graph-spelling-01',
+        );
       },
     );
   });

@@ -6,7 +6,6 @@ import 'package:reshet_app/data/repositories/word_repository.dart';
 import 'package:reshet_app/database/database_service.dart';
 import 'package:reshet_app/domain/expression/read_source_policy.dart';
 import 'package:reshet_app/domain/graph/graph_create_post_save_payload.dart';
-import 'package:sqflite_common/sqlite_api.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -99,7 +98,7 @@ void main() {
     );
 
     test(
-      'records fallback reason and keeps hidden slot data out of the payload',
+      'uses canonical expression rows and keeps hidden slot data out of the payload',
       () async {
         final repository = WordRepository();
         final db = await DatabaseService.openDatabaseFile();
@@ -134,25 +133,15 @@ void main() {
 
         expect(payload, isA<GraphCreatePostSavePayload>());
         expect(payload!.wordId, wordId);
-        expect(payload.representativeSpelling, 'legacy-post-save-title');
+        expect(payload.representativeSpelling, 'normalized-post-save-title');
         expect(payload.representativeSpelling, isNot('legacy-hidden-translit'));
         expect(
           snapshot.requestedPolicy,
           ReadSourcePolicy.normalizedWithFallback,
         );
-        expect(
-          snapshot.finalResultSource,
-          FinalReadResultSource.legacyFallback,
-        );
-        expect(snapshot.didFallback, isTrue);
-        expect(
-          snapshot.fallbackObservation?.reason,
-          ReadFallbackReason.userVisibleDisplayMismatch,
-        );
-        expect(
-          snapshot.fallbackObservation?.context,
-          'readForGraphCreatePostSavePayload',
-        );
+        expect(snapshot.finalResultSource, FinalReadResultSource.normalized);
+        expect(snapshot.didFallback, isFalse);
+        expect(snapshot.fallbackObservation, isNull);
       },
     );
   });
@@ -167,7 +156,7 @@ WordExpressionReadSnapshot _lastSnapshotFor(String wordId, String context) {
 }
 
 Future<void> _insertWord(
-  Database db, {
+  dynamic db, {
   required String id,
   String language = '\uD14C\uC2A4\uD2B8',
   String? strongNumber,

@@ -106,7 +106,7 @@ void main() {
         expect(graphData.connectedWords.single.wordId, childWordId);
         expect(
           graphData.connectedWords.single.fallbackSpelling,
-          'legacy-child-title',
+          'first-normalized-but-not-representative',
         );
         expect(graphData.wordLabels, isA<List<GraphWordLabelDisplayItem>>());
 
@@ -206,7 +206,7 @@ void main() {
     );
 
     test(
-      'keeps legacy expression fallback when normalized rows are absent',
+      'keeps expression labels empty when normalized rows are absent',
       () async {
         final repository = WordRepository();
         final db = await DatabaseService.openDatabaseFile();
@@ -238,11 +238,8 @@ void main() {
           (label) => label.wordId == childWordId,
         );
 
-        expect(childLabel.representativeSpelling, 'legacy-child');
-        expect(
-          childLabel.representativeTransliteration,
-          'legacy-child-translit',
-        );
+        expect(childLabel.representativeSpelling, '');
+        expect(childLabel.representativeTransliteration, '');
         expect(childLabel.language, 'legacy language');
         expect(childLabel.primaryMeaning, 'legacy meaning');
       },

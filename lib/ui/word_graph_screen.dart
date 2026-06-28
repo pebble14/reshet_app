@@ -508,10 +508,6 @@ class _CreateWordDialogState extends State<_CreateWordDialog> {
   }
 
   void _addExpressionSet() {
-    if (_expressionSetControllerGroups.length >= 6) {
-      return;
-    }
-
     final controllerGroup = WordExpressionSetControllerGroup();
 
     setState(() {

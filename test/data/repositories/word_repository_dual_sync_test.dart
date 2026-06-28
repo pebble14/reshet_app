@@ -198,6 +198,127 @@ void main() {
     );
 
     test(
+      'create update and undo preserve 7+ canonical expression sets while legacy projection stays six slots',
+      () async {
+        final repository = WordRepository();
+        const wordId = 'T9000_1012';
+        final originalExpressions = _expressionSets(
+          7,
+          prefix: 'phase33_original',
+        );
+        final updatedExpressions = _expressionSets(
+          7,
+          prefix: 'phase33_updated',
+        );
+
+        await repository.createWord(
+          id: wordId,
+          payload: _payload(expressionSets: originalExpressions),
+        );
+
+        expect(await _loadActualSemanticRows(wordId), [
+          for (var index = 1; index <= 7; index++)
+            (
+              wordId: wordId,
+              seq: index,
+              isRepresentative: index == 1 ? 1 : 0,
+              spelling: 'phase33_original_spelling_$index',
+              transliteration: 'phase33_original_trans_$index',
+              pronunciation: 'phase33_original_pron_$index',
+            ),
+        ]);
+
+        final createdWordRow = await _loadWordTableRow(wordId);
+        for (var index = 1; index <= 6; index++) {
+          expect(
+            createdWordRow['표기$index'],
+            'phase33_original_spelling_$index',
+          );
+          expect(createdWordRow['음역$index'], 'phase33_original_trans_$index');
+          expect(createdWordRow['발음$index'], 'phase33_original_pron_$index');
+        }
+        expect(createdWordRow.containsKey('표기7'), isFalse);
+        expect(createdWordRow.containsKey('음역7'), isFalse);
+        expect(createdWordRow.containsKey('발음7'), isFalse);
+
+        final detail = await repository
+            .getWordDetailLikeDisplayItemByIdForDetailScreen(wordId);
+        expect(detail, isNotNull);
+        expect(detail!.spellings, [
+          for (var index = 1; index <= 7; index++)
+            'phase33_original_spelling_$index',
+        ]);
+        expect(detail.transliterations, [
+          for (var index = 1; index <= 7; index++)
+            'phase33_original_trans_$index',
+        ]);
+        expect(detail.pronunciations, [
+          for (var index = 1; index <= 7; index++)
+            'phase33_original_pron_$index',
+        ]);
+
+        final editSeed = await repository.getWordEditSeedForDetailEdit(wordId);
+        expect(editSeed, isNotNull);
+        expect(editSeed!.expressionReadResult.sets, hasLength(7));
+        expect(
+          editSeed.expressionReadResult.sets[6].spelling,
+          ['phase33_original_spelling_7'].single,
+        );
+
+        final createHistoryAfter = await _loadLatestWordHistorySnapshot(
+          wordId: wordId,
+          actionType: 'create',
+          jsonColumn: 'after_json',
+        );
+        expect(_readHistoryNormalizedRows(createHistoryAfter), hasLength(7));
+
+        await repository.updateWord(
+          id: wordId,
+          payload: _payload(expressionSets: updatedExpressions),
+        );
+        expect(await _loadActualSemanticRows(wordId), [
+          for (var index = 1; index <= 7; index++)
+            (
+              wordId: wordId,
+              seq: index,
+              isRepresentative: index == 1 ? 1 : 0,
+              spelling: 'phase33_updated_spelling_$index',
+              transliteration: 'phase33_updated_trans_$index',
+              pronunciation: 'phase33_updated_pron_$index',
+            ),
+        ]);
+
+        final updateHistoryBefore = await _loadLatestWordHistorySnapshot(
+          wordId: wordId,
+          actionType: 'update',
+          jsonColumn: 'before_json',
+        );
+        final updateHistoryAfter = await _loadLatestWordHistorySnapshot(
+          wordId: wordId,
+          actionType: 'update',
+          jsonColumn: 'after_json',
+        );
+        expect(_readHistoryNormalizedRows(updateHistoryBefore), hasLength(7));
+        expect(_readHistoryNormalizedRows(updateHistoryAfter), hasLength(7));
+
+        final undone = await repository.undoLastChange();
+        expect(undone.didUndo, isTrue);
+        expect(undone.primaryWordId, wordId);
+        expect(await _loadActualSemanticRows(wordId), [
+          for (var index = 1; index <= 7; index++)
+            (
+              wordId: wordId,
+              seq: index,
+              isRepresentative: index == 1 ? 1 : 0,
+              spelling: 'phase33_original_spelling_$index',
+              transliteration: 'phase33_original_trans_$index',
+              pronunciation: 'phase33_original_pron_$index',
+            ),
+        ]);
+      },
+    );
+
+    test(
       'updateWord full-replaces normalized rows after representative change',
       () async {
         final repository = WordRepository();
@@ -880,6 +1001,22 @@ CanonicalWordWritePayload _payload({
     meanings: meanings,
     note: note,
   );
+}
+
+List<CanonicalExpressionWriteSet> _expressionSets(
+  int count, {
+  required String prefix,
+}) {
+  return List<CanonicalExpressionWriteSet>.generate(count, (index) {
+    final seq = index + 1;
+    return CanonicalExpressionWriteSet(
+      spelling: '${prefix}_spelling_$seq',
+      transliteration: '${prefix}_trans_$seq',
+      pronunciation: '${prefix}_pron_$seq',
+      seq: seq,
+      isRepresentative: seq == 1,
+    );
+  }, growable: false);
 }
 
 Future<void> _expectSemanticSync(String wordId) async {
