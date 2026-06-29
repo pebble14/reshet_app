@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../domain/word/word_detail_like_display_item.dart';
+import 'word_detail_clipboard_payload.dart';
 
 String formatWordDisplayStrong(String strong) {
   final trimmed = strong.trim();
@@ -62,12 +64,6 @@ class WordInfoPanel extends StatelessWidget {
       if (_hasText(displayItem.note))
         _WordInfoSection(label: '비고', values: [displayItem.note!.trim()]),
     ];
-    final hasActions =
-        onEdit != null ||
-        onDelete != null ||
-        onOpenDetail != null ||
-        onShowGraph != null;
-
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
@@ -79,58 +75,76 @@ class WordInfoPanel extends StatelessWidget {
           ),
           if (index < sections.length - 1) const Divider(height: 24),
         ],
-        if (hasActions) ...[
-          if (sections.isNotEmpty) const SizedBox(height: 20),
-          Wrap(
-            spacing: 12,
-            runSpacing: 12,
-            children: [
-              if (onEdit != null)
-                ElevatedButton.icon(
-                  onPressed: onEdit,
-                  icon: const Icon(Icons.edit),
-                  label: const Text('편집'),
+        if (sections.isNotEmpty) const SizedBox(height: 20),
+        Wrap(
+          spacing: 12,
+          runSpacing: 12,
+          children: [
+            Tooltip(
+              message: '상세 정보 복사',
+              child: OutlinedButton.icon(
+                onPressed: () => _copyDetailToClipboard(context),
+                icon: const Icon(Icons.copy),
+                label: const Text('복사'),
+              ),
+            ),
+            if (onEdit != null)
+              ElevatedButton.icon(
+                onPressed: onEdit,
+                icon: const Icon(Icons.edit),
+                label: const Text('편집'),
+              ),
+            if (onOpenDetail != null)
+              Tooltip(
+                message: '삭제·그래프 보기 등 전체 작업용 상세 화면을 엽니다.',
+                child: OutlinedButton.icon(
+                  onPressed: onOpenDetail,
+                  icon: const Icon(Icons.open_in_new),
+                  label: const Text('상세 작업 화면 열기'),
                 ),
-              if (onOpenDetail != null)
-                Tooltip(
-                  message: '삭제·그래프 보기 등 전체 작업용 상세 화면을 엽니다.',
-                  child: OutlinedButton.icon(
-                    onPressed: onOpenDetail,
-                    icon: const Icon(Icons.open_in_new),
-                    label: const Text('상세 작업 화면 열기'),
-                  ),
+              ),
+            if (onShowGraph != null)
+              ElevatedButton.icon(
+                onPressed: onShowGraph,
+                icon: const Icon(Icons.account_tree_outlined),
+                label: const Text('그래프 보기'),
+              ),
+            if (onDelete != null)
+              FilledButton.icon(
+                onPressed: isDeleting ? null : onDelete,
+                icon: isDeleting
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.delete),
+                label: Text(isDeleting ? '삭제 중...' : '삭제'),
+                style: FilledButton.styleFrom(
+                  backgroundColor: Theme.of(context).colorScheme.error,
+                  foregroundColor: Theme.of(context).colorScheme.onError,
                 ),
-              if (onShowGraph != null)
-                ElevatedButton.icon(
-                  onPressed: onShowGraph,
-                  icon: const Icon(Icons.account_tree_outlined),
-                  label: const Text('그래프 보기'),
-                ),
-              if (onDelete != null)
-                FilledButton.icon(
-                  onPressed: isDeleting ? null : onDelete,
-                  icon: isDeleting
-                      ? const SizedBox(
-                          width: 18,
-                          height: 18,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Icon(Icons.delete),
-                  label: Text(isDeleting ? '삭제 중...' : '삭제'),
-                  style: FilledButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.error,
-                    foregroundColor: Theme.of(context).colorScheme.onError,
-                  ),
-                ),
-            ],
-          ),
-        ],
+              ),
+          ],
+        ),
       ],
     );
   }
 
   bool _hasText(String? value) {
     return value != null && value.trim().isNotEmpty;
+  }
+
+  Future<void> _copyDetailToClipboard(BuildContext context) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final payload = buildWordDetailClipboardText(displayItem);
+
+    try {
+      await Clipboard.setData(ClipboardData(text: payload));
+      messenger.showSnackBar(const SnackBar(content: Text('상세 정보를 복사했습니다.')));
+    } catch (_) {
+      messenger.showSnackBar(const SnackBar(content: Text('복사에 실패했습니다.')));
+    }
   }
 }
 

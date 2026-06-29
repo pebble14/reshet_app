@@ -9437,3 +9437,11 @@ Large-screen embedded Explorer detail pane의 direct `편집` action은 유지�
 Home과 small-screen에서 여는 standalone `WordDetailScreen`은 기본 edit 노출과 local edit route를 그대로 유지한다. 기존 `WordDetailEditActionMode.returnToCaller`와 `WordDetailEditRequestedResult` contract는 이번 단계에서 제거하지 않는다.
 
 이번 변경은 route/action 노출 경계에 한정하며 DB schema, repository read/write path, graph/delete 동작과 dependency에는 영향이 없다. Large-screen과 small-screen의 노출 차이는 클라이언트 수동 UI 테스트가 필요하다.
+
+### 17.148 Phase 35-B canonical detail 복사 action 경계
+
+Phase 35-B는 `WordInfoPanel` 공통 detail boundary에 canonical detail 복사 action을 추가하는 작은 production UX 변경 단계다. Embedded Explorer detail pane과 `WordDetailScreen` route는 같은 `WordInfoPanel(displayItem: ...)` 경계를 통해 `복사` action을 제공한다.
+
+복사 payload는 이미 materialize된 `WordDetailLikeDisplayItem`만 입력으로 사용한다. 대표 표기, 스트롱 번호, 언어, 표기, 음역, 발음, 의미, 비고의 현재 표시값만 일반 텍스트로 직렬화하며 relation 목록, relation status, graph 정보, search state, raw row, `seq`는 포함하지 않는다.
+
+`복사`는 transient clipboard write action이며 edit/delete/graph action ownership, route/result contract, repository read/write path, DB schema, migration, dependency를 변경하지 않는다. Clipboard write 성공 또는 실패 feedback은 기존 snackbar 패턴을 따른다.
