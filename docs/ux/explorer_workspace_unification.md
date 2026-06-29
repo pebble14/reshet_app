@@ -9445,3 +9445,11 @@ Phase 35-B는 `WordInfoPanel` 공통 detail boundary에 canonical detail 복사 
 복사 payload는 이미 materialize된 `WordDetailLikeDisplayItem`만 입력으로 사용한다. 대표 표기, 스트롱 번호, 언어, 표기, 음역, 발음, 의미, 비고의 현재 표시값만 일반 텍스트로 직렬화하며 relation 목록, relation status, graph 정보, search state, raw row, `seq`는 포함하지 않는다.
 
 `복사`는 transient clipboard write action이며 edit/delete/graph action ownership, route/result contract, repository read/write path, DB schema, migration, dependency를 변경하지 않는다. Clipboard write 성공 또는 실패 feedback은 기존 snackbar 패턴을 따른다.
+
+### 17.149 Phase 35-D canonical detail 선택 및 항목별 복사 경계
+
+Phase 35-D는 Phase 35-B의 전체 `복사` action을 유지하면서 `WordInfoPanel`의 detail rows 영역을 선택 가능한 텍스트 영역으로 확장하는 작은 production UX 변경 단계다. Selection boundary는 대표 표기, 스트롱 번호, 언어, 표기, 음역, 발음, 의미, 비고 rows에만 적용하며 하단 전체 복사, 편집, 상세 작업 화면 열기, 그래프 보기, 삭제 action 영역은 포함하지 않는다.
+
+Small layout에서는 현재 표시되는 display value 단위로 항목별 복사 action을 제공한다. 대표 표기, 스트롱 번호, 언어, 표기, 음역, 발음, 의미, 비고의 각 표시값 하나가 복사 단위이며 라벨, 인접 값, section heading, 줄바꿈으로 결합된 목록 payload는 포함하지 않는다. 전체 `복사` v1 payload 형식과 성공·실패 feedback 경로는 계속 유지한다.
+
+이번 경계도 `WordDetailLikeDisplayItem`을 소비하는 UI rendering 및 clipboard action에 한정한다. relation 목록, relation status, graph 정보, search state, raw DB export, repository read/write path, DB schema, migration, dependency는 계속 범위 밖이다.

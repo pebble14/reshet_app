@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:reshet_app/domain/word/word_detail_like_display_item.dart';
 import 'package:reshet_app/ui/word_detail_clipboard_payload.dart';
+import 'package:reshet_app/ui/word_detail_screen.dart';
 import 'package:reshet_app/ui/word_info_panel.dart';
 
 void main() {
@@ -143,9 +144,9 @@ void main() {
         expect(find.text('표기'), findsOneWidget);
         expect(find.text('발음'), findsOneWidget);
         expect(find.text('음역'), findsNothing);
-        expect(find.text('hippopotamus'), findsOneWidget);
-        expect(find.text('hippopotamus\nhippo'), findsOneWidget);
-        expect(find.text('hippo'), findsOneWidget);
+        expect(find.text('hippopotamus'), findsNWidgets(2));
+        expect(find.text('hippopotamus\nhippo'), findsNothing);
+        expect(find.text('hippo'), findsNWidgets(2));
       },
     );
 
@@ -210,10 +211,71 @@ void main() {
         await tester.pump();
 
         expect(find.byType(WordInfoPanel), findsOneWidget);
-        expect(find.text(displayItem.representativeSpelling!), findsOneWidget);
+        expect(find.text(displayItem.representativeSpelling!), findsWidgets);
         expect(tester.takeException(), isNull);
       }
     });
+
+    testWidgets(
+      'wraps detail rows but not action controls in a selection area',
+      (tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: WordInfoPanel(
+                displayItem: const WordDetailLikeDisplayItem(
+                  representativeSpelling: 'selection anchor',
+                  meanings: ['selectable meaning'],
+                ),
+                onEdit: () {},
+                onOpenDetail: () {},
+              ),
+            ),
+          ),
+        );
+
+        final selectionArea = find.byType(SelectionArea);
+
+        expect(selectionArea, findsOneWidget);
+        expect(
+          find.descendant(of: selectionArea, matching: find.text('대표 표기')),
+          findsOneWidget,
+        );
+        expect(
+          find.descendant(
+            of: selectionArea,
+            matching: find.text('selectable meaning'),
+          ),
+          findsOneWidget,
+        );
+        expect(
+          find.descendant(
+            of: selectionArea,
+            matching: find.byWidgetPredicate(
+              (widget) =>
+                  widget is SelectableText &&
+                  widget.data == 'selectable meaning',
+            ),
+          ),
+          findsOneWidget,
+        );
+        expect(
+          find.descendant(of: selectionArea, matching: find.text('복사')),
+          findsNothing,
+        );
+        expect(
+          find.descendant(of: selectionArea, matching: find.text('편집')),
+          findsNothing,
+        );
+        expect(
+          find.descendant(
+            of: selectionArea,
+            matching: find.text('상세 작업 화면 열기'),
+          ),
+          findsNothing,
+        );
+      },
+    );
 
     testWidgets(
       'clarifies the full-detail action without exposing delete or graph actions',
@@ -242,6 +304,102 @@ void main() {
         );
         expect(find.text('삭제'), findsNothing);
         expect(find.text('그래프 보기'), findsNothing);
+      },
+    );
+
+    testWidgets(
+      'shows item copy actions only when the small-layout flag is enabled',
+      (tester) async {
+        const displayItem = WordDetailLikeDisplayItem(
+          representativeSpelling: 'copy anchor',
+          displayStrongNumber: 'G1',
+          spellings: ['copy spelling'],
+        );
+
+        await tester.pumpWidget(
+          const MaterialApp(
+            home: Scaffold(body: WordInfoPanel(displayItem: displayItem)),
+          ),
+        );
+
+        expect(
+          find.byKey(const ValueKey('word-info-copy-대표 표기-0')),
+          findsNothing,
+        );
+        expect(find.byKey(const ValueKey('word-info-copy-표기-0')), findsNothing);
+        expect(find.text('복사'), findsOneWidget);
+
+        await tester.pumpWidget(
+          const MaterialApp(
+            home: Scaffold(
+              body: WordInfoPanel(
+                displayItem: displayItem,
+                showItemCopyActions: true,
+              ),
+            ),
+          ),
+        );
+
+        expect(
+          find.byKey(const ValueKey('word-info-copy-대표 표기-0')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const ValueKey('word-info-copy-스트롱 번호-0')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const ValueKey('word-info-copy-표기-0')),
+          findsOneWidget,
+        );
+        expect(find.text('복사'), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'derives item copy exposure from the existing detail responsive decision',
+      (tester) async {
+        const displayItem = WordDetailLikeDisplayItem(
+          representativeSpelling: 'responsive anchor',
+          spellings: ['responsive spelling'],
+        );
+
+        await tester.pumpWidget(
+          const MaterialApp(
+            home: MediaQuery(
+              data: MediaQueryData(size: Size(500, 800)),
+              child: WordDetailScreen(
+                wordId: 'responsive-word',
+                initialDisplayItem: displayItem,
+              ),
+            ),
+          ),
+        );
+
+        expect(
+          find.byKey(const ValueKey('word-info-copy-대표 표기-0')),
+          findsOneWidget,
+        );
+        expect(find.text('복사'), findsOneWidget);
+
+        await tester.pumpWidget(
+          const MaterialApp(
+            home: MediaQuery(
+              data: MediaQueryData(size: Size(1000, 800)),
+              child: WordDetailScreen(
+                wordId: 'responsive-word',
+                initialDisplayItem: displayItem,
+              ),
+            ),
+          ),
+        );
+        await tester.pump();
+
+        expect(
+          find.byKey(const ValueKey('word-info-copy-대표 표기-0')),
+          findsNothing,
+        );
+        expect(find.text('복사'), findsOneWidget);
       },
     );
 
@@ -305,6 +463,119 @@ void main() {
       },
     );
 
+    testWidgets(
+      'copies exactly one scalar or list display value per item action',
+      (tester) async {
+        final clipboardCalls = <MethodCall>[];
+        final messenger =
+            TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+        addTearDown(
+          () =>
+              messenger.setMockMethodCallHandler(SystemChannels.platform, null),
+        );
+        messenger.setMockMethodCallHandler(SystemChannels.platform, (
+          call,
+        ) async {
+          if (call.method == 'Clipboard.setData') {
+            clipboardCalls.add(call);
+          }
+          return null;
+        });
+
+        await tester.pumpWidget(
+          const MaterialApp(
+            home: Scaffold(
+              body: WordInfoPanel(
+                displayItem: WordDetailLikeDisplayItem(
+                  representativeSpelling: 'single scalar',
+                  spellings: ['first spelling', 'second spelling'],
+                  meanings: ['first meaning'],
+                ),
+                showItemCopyActions: true,
+              ),
+            ),
+          ),
+        );
+
+        await tester.tap(find.byKey(const ValueKey('word-info-copy-대표 표기-0')));
+        await tester.pump();
+        await tester.tap(find.byKey(const ValueKey('word-info-copy-표기-1')));
+        await tester.pump();
+
+        expect(clipboardCalls, hasLength(2));
+        expect(
+          (clipboardCalls[0].arguments as Map<Object?, Object?>)['text'],
+          'single scalar',
+        );
+        expect(
+          (clipboardCalls[1].arguments as Map<Object?, Object?>)['text'],
+          'second spelling',
+        );
+        expect(
+          (clipboardCalls[1].arguments as Map<Object?, Object?>)['text'],
+          isNot(contains('표기')),
+        );
+        expect(
+          (clipboardCalls[1].arguments as Map<Object?, Object?>)['text'],
+          isNot(contains('\n')),
+        );
+        expect(
+          (clipboardCalls[1].arguments as Map<Object?, Object?>)['text'],
+          isNot(contains('first spelling')),
+        );
+        expect(find.text('상세 정보를 복사했습니다.'), findsWidgets);
+      },
+    );
+
+    testWidgets(
+      'keeps repeated meanings and many spellings as separate copyable rows',
+      (tester) async {
+        await tester.pumpWidget(
+          const MaterialApp(
+            home: Scaffold(
+              body: WordInfoPanel(
+                displayItem: WordDetailLikeDisplayItem(
+                  representativeSpelling: 'many values',
+                  spellings: [
+                    'spelling 1',
+                    'spelling 2',
+                    'spelling 3',
+                    'spelling 4',
+                    'spelling 5',
+                    'spelling 6',
+                    'spelling 7',
+                    'spelling 8',
+                  ],
+                  meanings: ['same meaning', 'same meaning', 'later meaning'],
+                ),
+                showItemCopyActions: true,
+              ),
+            ),
+          ),
+        );
+
+        for (var index = 0; index < 8; index++) {
+          expect(
+            find.byKey(ValueKey('word-info-copy-표기-$index')),
+            findsOneWidget,
+          );
+        }
+        expect(find.text('same meaning'), findsNWidgets(2));
+        expect(
+          find.byKey(const ValueKey('word-info-copy-의미-0')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const ValueKey('word-info-copy-의미-1')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const ValueKey('word-info-copy-의미-2')),
+          findsOneWidget,
+        );
+      },
+    );
+
     testWidgets('shows failure feedback when clipboard write fails', (
       tester,
     ) async {
@@ -333,6 +604,40 @@ void main() {
       );
 
       await tester.tap(find.text('복사'));
+      await tester.pump();
+
+      expect(find.text('복사에 실패했습니다.'), findsOneWidget);
+    });
+
+    testWidgets('shows the common failure feedback when item copy fails', (
+      tester,
+    ) async {
+      final messenger =
+          TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+      addTearDown(
+        () => messenger.setMockMethodCallHandler(SystemChannels.platform, null),
+      );
+      messenger.setMockMethodCallHandler(SystemChannels.platform, (call) async {
+        if (call.method == 'Clipboard.setData') {
+          throw PlatformException(code: 'clipboard-failed');
+        }
+        return null;
+      });
+
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: WordInfoPanel(
+              displayItem: WordDetailLikeDisplayItem(
+                representativeSpelling: 'item failure',
+              ),
+              showItemCopyActions: true,
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byKey(const ValueKey('word-info-copy-대표 표기-0')));
       await tester.pump();
 
       expect(find.text('복사에 실패했습니다.'), findsOneWidget);

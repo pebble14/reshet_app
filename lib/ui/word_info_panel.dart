@@ -27,6 +27,7 @@ class WordInfoPanel extends StatelessWidget {
   final VoidCallback? onOpenDetail;
   final VoidCallback? onShowGraph;
   final bool isDeleting;
+  final bool showItemCopyActions;
 
   const WordInfoPanel({
     super.key,
@@ -36,10 +37,16 @@ class WordInfoPanel extends StatelessWidget {
     this.onOpenDetail,
     this.onShowGraph,
     this.isDeleting = false,
+    this.showItemCopyActions = false,
   });
 
   @override
   Widget build(BuildContext context) {
+    final spellings = _displayListValues(displayItem.spellings);
+    final transliterations = _displayListValues(displayItem.transliterations);
+    final pronunciations = _displayListValues(displayItem.pronunciations);
+    final meanings = _displayListValues(displayItem.meanings);
+
     final sections = <_WordInfoSection>[
       if (_hasText(displayItem.representativeSpelling))
         _WordInfoSection(
@@ -53,28 +60,38 @@ class WordInfoPanel extends StatelessWidget {
         ),
       if (_hasText(displayItem.language))
         _WordInfoSection(label: '언어', values: [displayItem.language!.trim()]),
-      if (displayItem.spellings.isNotEmpty)
-        _WordInfoSection(label: '표기', values: displayItem.spellings),
-      if (displayItem.transliterations.isNotEmpty)
-        _WordInfoSection(label: '음역', values: displayItem.transliterations),
-      if (displayItem.pronunciations.isNotEmpty)
-        _WordInfoSection(label: '발음', values: displayItem.pronunciations),
-      if (displayItem.meanings.isNotEmpty)
-        _WordInfoSection(label: '의미', values: displayItem.meanings),
+      if (spellings.isNotEmpty)
+        _WordInfoSection(label: '표기', values: spellings),
+      if (transliterations.isNotEmpty)
+        _WordInfoSection(label: '음역', values: transliterations),
+      if (pronunciations.isNotEmpty)
+        _WordInfoSection(label: '발음', values: pronunciations),
+      if (meanings.isNotEmpty) _WordInfoSection(label: '의미', values: meanings),
       if (_hasText(displayItem.note))
         _WordInfoSection(label: '비고', values: [displayItem.note!.trim()]),
     ];
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        for (var index = 0; index < sections.length; index++) ...[
-          _WordInfoRow(
-            label: sections[index].label,
-            values: sections[index].values,
-            emphasizeValue: sections[index].label == '대표 표기',
+        if (sections.isNotEmpty)
+          SelectionArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                for (var index = 0; index < sections.length; index++) ...[
+                  _WordInfoRow(
+                    label: sections[index].label,
+                    values: sections[index].values,
+                    emphasizeValue: sections[index].label == '대표 표기',
+                    showItemCopyActions: showItemCopyActions,
+                    onCopyValue: (value) =>
+                        _copyTextToClipboard(context, value),
+                  ),
+                  if (index < sections.length - 1) const Divider(height: 24),
+                ],
+              ],
+            ),
           ),
-          if (index < sections.length - 1) const Divider(height: 24),
-        ],
         if (sections.isNotEmpty) const SizedBox(height: 20),
         Wrap(
           spacing: 12,
@@ -135,12 +152,23 @@ class WordInfoPanel extends StatelessWidget {
     return value != null && value.trim().isNotEmpty;
   }
 
+  List<String> _displayListValues(List<String> values) {
+    return [
+      for (final value in values)
+        if (_hasText(value)) value,
+    ];
+  }
+
   Future<void> _copyDetailToClipboard(BuildContext context) async {
-    final messenger = ScaffoldMessenger.of(context);
     final payload = buildWordDetailClipboardText(displayItem);
+    await _copyTextToClipboard(context, payload);
+  }
+
+  Future<void> _copyTextToClipboard(BuildContext context, String text) async {
+    final messenger = ScaffoldMessenger.of(context);
 
     try {
-      await Clipboard.setData(ClipboardData(text: payload));
+      await Clipboard.setData(ClipboardData(text: text));
       messenger.showSnackBar(const SnackBar(content: Text('상세 정보를 복사했습니다.')));
     } catch (_) {
       messenger.showSnackBar(const SnackBar(content: Text('복사에 실패했습니다.')));
@@ -159,11 +187,15 @@ class _WordInfoRow extends StatelessWidget {
   final String label;
   final List<String> values;
   final bool emphasizeValue;
+  final bool showItemCopyActions;
+  final ValueChanged<String> onCopyValue;
 
   const _WordInfoRow({
     required this.label,
     required this.values,
+    required this.onCopyValue,
     this.emphasizeValue = false,
+    this.showItemCopyActions = false,
   });
 
   @override
@@ -186,9 +218,69 @@ class _WordInfoRow extends StatelessWidget {
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
-          Expanded(child: Text(values.join('\n'), style: valueStyle)),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                for (var index = 0; index < values.length; index++)
+                  _WordInfoValueLine(
+                    label: label,
+                    value: values[index],
+                    index: index,
+                    style: valueStyle,
+                    showCopyAction: showItemCopyActions,
+                    onCopyValue: onCopyValue,
+                  ),
+              ],
+            ),
+          ),
         ],
       ),
+    );
+  }
+}
+
+class _WordInfoValueLine extends StatelessWidget {
+  final String label;
+  final String value;
+  final int index;
+  final TextStyle? style;
+  final bool showCopyAction;
+  final ValueChanged<String> onCopyValue;
+
+  const _WordInfoValueLine({
+    required this.label,
+    required this.value,
+    required this.index,
+    required this.onCopyValue,
+    this.style,
+    this.showCopyAction = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final valueText = SelectableText(value, style: style);
+
+    if (!showCopyAction) {
+      return valueText;
+    }
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(child: valueText),
+        SelectionContainer.disabled(
+          child: IconButton(
+            key: ValueKey('word-info-copy-$label-$index'),
+            tooltip: '$label 값 복사',
+            visualDensity: VisualDensity.compact,
+            constraints: const BoxConstraints.tightFor(width: 40, height: 40),
+            iconSize: 18,
+            onPressed: () => onCopyValue(value),
+            icon: const Icon(Icons.copy),
+          ),
+        ),
+      ],
     );
   }
 }

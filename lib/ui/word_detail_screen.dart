@@ -356,6 +356,7 @@ class _WordDetailScreenState extends State<WordDetailScreen> {
           onShowGraph: _openGraph,
           onDelete: _confirmDelete,
           isDeleting: _isDeleting,
+          showItemCopyActions: isMobile,
         ),
       ),
     );
