@@ -85,6 +85,9 @@ PyVis-like interaction은 이 layout/viewport 경계 위에서 별도 단계로 
 
 - Peripheral node는 raw camera scale에 따라 3단계 label LOD를 적용한다. 각 단계의 line 순서와 전환 기준은 4.2절을 따른다.
 - Center node는 zoom과 무관한 고정 semantic anchor다. `language · Strong → spelling → representative transliteration → primary meaning` 순서로 표시하고, spelling이 없으면 `wordId`를 사용한다.
+- 관계 chip은 `S >= 1.15`의 visible zoom 구간에서 parallel offset이 적용된 실제 visible edge segment 위에 배치한다.
+- 관계 chip은 relation detail popup을 여는 clickable control이며, 기존 popup 진입 경로를 유지한다.
+- `S < 1.15`에서 관계 chip을 숨기는 zoom-out visibility 정책은 유지한다.
 - 현재 선택 노드에 표시 가능한 관계가 하나 이상 있으면 graph 우하단에 compact한 “관계 보기” launcher가 표시된다. 관계가 1건이면 바로 해당 관계로 진입하고, 복수이면 popup menu에서 관계를 선택한다. 표시 가능한 관계가 없으면 launcher를 표시하지 않는다.
 - Mobile selected-node preview와 기존 full-detail route 연결은 구현되어 있다.
 

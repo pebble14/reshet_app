@@ -70,14 +70,13 @@ const double _placeholderCollisionPadding = 10.0;
 const double _labelAnchorFactor = 0.68;
 const double _fitBoundsPadding = 72.0;
 const double _baseLabelOffset = 12.0;
-const int _labelPlacementMaxAttempts = 7;
 const double _labelPlacementStep = 8.0;
-const double _labelPlacementRadialStep = 6.0;
 const double _labelMaxShiftDistance = 28.0;
 const double _labelCollisionPadding = 4.0;
 const double _edgeLabelFontSize = 11.0;
 const double _edgeLabelHorizontalPadding = 8.0;
 const double _edgeLabelVerticalPadding = 4.0;
+const double _labelVisibleScaleThreshold = 1.15;
 const double _centerNodeBorderWidth = 4.6;
 const double _centerNodeHaloBlur = 16.0;
 const double _centerNodeHaloSpread = 1.8;
@@ -140,6 +139,10 @@ const double _selectedEdgeLabelTintAlpha = 0.18;
 const double _connectedEdgeLabelTintAlpha = 0.06;
 const double _dimmedEdgeLabelTintAlpha = 0.03;
 const int _edgeLabelVisibleCountThreshold = 6;
+const double _edgeParallelOffsetStep = 14.0;
+const double _edgeDirectionIndicatorInset = 8.0;
+const double _edgeDirectionIndicatorReferenceLength = 14.0;
+const double _edgeArrowHeadBaseLength = 8.0;
 const double _centerNodeAccentRingInset = 12.0;
 const double _centerNodeSelectedAccentRingInset = 8.0;
 const double _centerNodeAccentRingWidth = 1.8;
@@ -273,6 +276,121 @@ enum _GraphEdgeDirectionSummary {
   mixed,
 }
 
+enum _EdgeChipPlacementCandidateKind {
+  visibleSegmentCenter,
+  tangentForward,
+  tangentBackward,
+  normalPositive,
+  normalNegative,
+}
+
+class _VisibleEdgeSegment {
+  final Offset start;
+  final Offset end;
+  final Offset direction;
+  final Offset normal;
+  final double length;
+
+  const _VisibleEdgeSegment({
+    required this.start,
+    required this.end,
+    required this.direction,
+    required this.normal,
+    required this.length,
+  });
+
+  Offset pointAt(double distance) {
+    if (length <= 0.001) return start;
+    final clamped = distance.clamp(0.0, length).toDouble();
+    return start + direction * clamped;
+  }
+}
+
+class _EdgeChipPlacementCandidate {
+  final _EdgeChipPlacementCandidateKind kind;
+  final Offset center;
+  final Rect bounds;
+
+  const _EdgeChipPlacementCandidate({
+    required this.kind,
+    required this.center,
+    required this.bounds,
+  });
+}
+
+class _EdgeChipPlacementResult {
+  final _VisibleEdgeSegment visibleSegment;
+  final _EdgeChipPlacementCandidate selectedCandidate;
+  final List<_EdgeChipPlacementCandidate> candidates;
+
+  const _EdgeChipPlacementResult({
+    required this.visibleSegment,
+    required this.selectedCandidate,
+    required this.candidates,
+  });
+}
+
+@visibleForTesting
+bool isEdgeChipVisibleForTesting(double cameraScale) {
+  return _safeCameraScale(cameraScale) >= _labelVisibleScaleThreshold;
+}
+
+@visibleForTesting
+({
+  Offset visibleStart,
+  Offset visibleEnd,
+  Offset selectedCenter,
+  Rect selectedBounds,
+  String selectedCandidateKind,
+  List<({String kind, Offset center, Rect bounds})> candidates,
+})
+resolveEdgeChipPlacementForTesting({
+  required Offset edgeStart,
+  required Offset edgeEnd,
+  required String label,
+  required double sceneScale,
+  required double sourceNodeHalf,
+  required double targetNodeHalf,
+  bool hasOutgoingArrow = false,
+  bool hasIncomingArrow = false,
+  List<Rect> nodeObstacles = const <Rect>[],
+  List<Rect> placedLabelBounds = const <Rect>[],
+}) {
+  final directionSummary = hasOutgoingArrow
+      ? _GraphEdgeDirectionSummary.outgoing
+      : hasIncomingArrow
+      ? _GraphEdgeDirectionSummary.incoming
+      : _GraphEdgeDirectionSummary.unknown;
+  final result = _resolveEdgeChipPlacement(
+    edgeStart: edgeStart,
+    edgeEnd: edgeEnd,
+    label: label,
+    sceneScale: sceneScale,
+    sourceNodeHalf: sourceNodeHalf,
+    targetNodeHalf: targetNodeHalf,
+    directionSummary: directionSummary,
+    nodeObstacles: nodeObstacles,
+    placedLabelBounds: placedLabelBounds,
+  );
+
+  return (
+    visibleStart: result.visibleSegment.start,
+    visibleEnd: result.visibleSegment.end,
+    selectedCenter: result.selectedCandidate.center,
+    selectedBounds: result.selectedCandidate.bounds,
+    selectedCandidateKind: result.selectedCandidate.kind.name,
+    candidates: result.candidates
+        .map(
+          (candidate) => (
+            kind: candidate.kind.name,
+            center: candidate.center,
+            bounds: candidate.bounds,
+          ),
+        )
+        .toList(growable: false),
+  );
+}
+
 _GraphEdgeSemanticStyle _edgeSemanticStyleForRelationType(
   String? relationType,
 ) {
@@ -300,6 +418,246 @@ _GraphEdgeVisualPriority _edgeVisualPriorityFor({
   return touchesCenter
       ? _GraphEdgeVisualPriority.center
       : _GraphEdgeVisualPriority.expansion;
+}
+
+double _edgeNodeHalfForGeometry({
+  required String nodeId,
+  required String centerNodeId,
+  required double sceneScale,
+  required double baseNodeHalf,
+  required bool isActualPeripheralWordNode,
+}) {
+  if (nodeId == centerNodeId) {
+    return _effectiveNodeHalf(_centerNodeHalf, sceneScale);
+  }
+  if (isActualPeripheralWordNode) {
+    return _peripheralNodeEffectiveHalf(baseNodeHalf, sceneScale);
+  }
+  return _effectiveNodeHalf(baseNodeHalf, sceneScale);
+}
+
+_EdgeChipPlacementResult _resolveEdgeChipPlacement({
+  required Offset edgeStart,
+  required Offset edgeEnd,
+  required String label,
+  required double sceneScale,
+  required double sourceNodeHalf,
+  required double targetNodeHalf,
+  required _GraphEdgeDirectionSummary directionSummary,
+  required List<Rect> nodeObstacles,
+  required List<Rect> placedLabelBounds,
+}) {
+  final visibleSegment = _visibleEdgeSegmentForChip(
+    edgeStart: edgeStart,
+    edgeEnd: edgeEnd,
+    sourceNodeHalf: sourceNodeHalf,
+    targetNodeHalf: targetNodeHalf,
+    directionSummary: directionSummary,
+  );
+  final labelSize = _measureEdgeChipBounds(
+    label: label,
+    center: visibleSegment.start,
+  ).size;
+  final candidates = _edgeChipPlacementCandidates(
+    visibleSegment: visibleSegment,
+    label: label,
+    labelSize: labelSize,
+  ).toList(growable: false);
+
+  var bestCandidate = candidates.first;
+  var bestScore = double.infinity;
+  for (final candidate in candidates) {
+    final collisionScore = _edgeChipCollisionScore(
+      bounds: candidate.bounds,
+      nodeObstacles: nodeObstacles,
+      placedLabelBounds: placedLabelBounds,
+    );
+    if (collisionScore < bestScore) {
+      bestScore = collisionScore;
+      bestCandidate = candidate;
+    }
+    if (collisionScore == 0.0) {
+      break;
+    }
+  }
+
+  return _EdgeChipPlacementResult(
+    visibleSegment: visibleSegment,
+    selectedCandidate: bestCandidate,
+    candidates: candidates,
+  );
+}
+
+_VisibleEdgeSegment _visibleEdgeSegmentForChip({
+  required Offset edgeStart,
+  required Offset edgeEnd,
+  required double sourceNodeHalf,
+  required double targetNodeHalf,
+  required _GraphEdgeDirectionSummary directionSummary,
+}) {
+  final delta = edgeEnd - edgeStart;
+  final edgeLength = delta.distance;
+  if (edgeLength <= 0.001) {
+    return _VisibleEdgeSegment(
+      start: edgeStart,
+      end: edgeStart,
+      direction: const Offset(1, 0),
+      normal: const Offset(0, 1),
+      length: 0.0,
+    );
+  }
+
+  final direction = Offset(delta.dx / edgeLength, delta.dy / edgeLength);
+  final normal = Offset(-direction.dy, direction.dx);
+  var sourceTrim = sourceNodeHalf + _edgeDirectionIndicatorInset;
+  var targetTrim = targetNodeHalf + _edgeDirectionIndicatorInset;
+  switch (directionSummary) {
+    case _GraphEdgeDirectionSummary.outgoing:
+      targetTrim += _edgeDirectionIndicatorReferenceLength;
+      break;
+    case _GraphEdgeDirectionSummary.incoming:
+      sourceTrim += _edgeDirectionIndicatorReferenceLength;
+      break;
+    case _GraphEdgeDirectionSummary.undirected:
+    case _GraphEdgeDirectionSummary.unknown:
+    case _GraphEdgeDirectionSummary.mixed:
+      break;
+  }
+
+  if (edgeLength <= sourceTrim + targetTrim) {
+    final midpoint = edgeStart + direction * (edgeLength / 2);
+    return _VisibleEdgeSegment(
+      start: midpoint,
+      end: midpoint,
+      direction: direction,
+      normal: normal,
+      length: 0.0,
+    );
+  }
+
+  final visibleStart = edgeStart + direction * sourceTrim;
+  final visibleEnd = edgeEnd - direction * targetTrim;
+  return _VisibleEdgeSegment(
+    start: visibleStart,
+    end: visibleEnd,
+    direction: direction,
+    normal: normal,
+    length: (visibleEnd - visibleStart).distance,
+  );
+}
+
+Iterable<_EdgeChipPlacementCandidate> _edgeChipPlacementCandidates({
+  required _VisibleEdgeSegment visibleSegment,
+  required String label,
+  required Size labelSize,
+}) sync* {
+  final anchorDistance = visibleSegment.length / 2;
+  final projectedHalfExtent = _projectedHalfExtent(
+    size: labelSize,
+    axis: visibleSegment.direction,
+  );
+  final minCenterDistance = visibleSegment.length <= projectedHalfExtent * 2
+      ? anchorDistance
+      : projectedHalfExtent;
+  final maxCenterDistance = visibleSegment.length <= projectedHalfExtent * 2
+      ? anchorDistance
+      : visibleSegment.length - projectedHalfExtent;
+
+  double clampCenterDistance(double distance) {
+    return distance.clamp(minCenterDistance, maxCenterDistance).toDouble();
+  }
+
+  _EdgeChipPlacementCandidate candidate(
+    _EdgeChipPlacementCandidateKind kind,
+    Offset center,
+  ) {
+    return _EdgeChipPlacementCandidate(
+      kind: kind,
+      center: center,
+      bounds: _measureEdgeChipBounds(label: label, center: center),
+    );
+  }
+
+  final anchorCenter = visibleSegment.pointAt(anchorDistance);
+  yield candidate(
+    _EdgeChipPlacementCandidateKind.visibleSegmentCenter,
+    anchorCenter,
+  );
+
+  final tangentTierCount = max(
+    1,
+    (_labelMaxShiftDistance / _labelPlacementStep).floor(),
+  );
+  for (var tier = 1; tier <= tangentTierCount; tier++) {
+    final shift = min(_labelPlacementStep * tier, _labelMaxShiftDistance);
+    yield candidate(
+      _EdgeChipPlacementCandidateKind.tangentForward,
+      visibleSegment.pointAt(clampCenterDistance(anchorDistance + shift)),
+    );
+    yield candidate(
+      _EdgeChipPlacementCandidateKind.tangentBackward,
+      visibleSegment.pointAt(clampCenterDistance(anchorDistance - shift)),
+    );
+  }
+
+  final normalShift = min(_labelPlacementStep, _labelMaxShiftDistance);
+  yield candidate(
+    _EdgeChipPlacementCandidateKind.normalPositive,
+    anchorCenter + visibleSegment.normal * normalShift,
+  );
+  yield candidate(
+    _EdgeChipPlacementCandidateKind.normalNegative,
+    anchorCenter - visibleSegment.normal * normalShift,
+  );
+}
+
+double _projectedHalfExtent({required Size size, required Offset axis}) {
+  return (axis.dx.abs() * size.width + axis.dy.abs() * size.height) / 2;
+}
+
+Rect _measureEdgeChipBounds({required String label, required Offset center}) {
+  final textPainter = TextPainter(
+    text: TextSpan(
+      text: label,
+      style: const TextStyle(
+        fontSize: _edgeLabelFontSize,
+        fontWeight: FontWeight.w600,
+        color: Colors.black87,
+      ),
+    ),
+    textDirection: TextDirection.ltr,
+  )..layout();
+
+  return Rect.fromCenter(
+    center: center,
+    width: textPainter.width + _edgeLabelHorizontalPadding * 2,
+    height: textPainter.height + _edgeLabelVerticalPadding * 2,
+  );
+}
+
+double _edgeChipCollisionScore({
+  required Rect bounds,
+  required List<Rect> nodeObstacles,
+  required List<Rect> placedLabelBounds,
+}) {
+  final paddedBounds = bounds.inflate(_labelCollisionPadding);
+  var score = 0.0;
+
+  for (final obstacle in nodeObstacles) {
+    score += _intersectionAreaForRects(paddedBounds, obstacle);
+  }
+
+  for (final placedBounds in placedLabelBounds) {
+    score += _intersectionAreaForRects(paddedBounds, placedBounds);
+  }
+
+  return score;
+}
+
+double _intersectionAreaForRects(Rect a, Rect b) {
+  final overlap = a.intersect(b);
+  if (overlap.isEmpty) return 0.0;
+  return overlap.width * overlap.height;
 }
 
 class _GraphNodeLayout {
@@ -349,8 +707,6 @@ class _GraphEdgeLayout {
   final String targetId;
   final Offset start;
   final Offset end;
-  final Offset midpoint;
-  final Offset labelNormal;
   final Color color;
   final String? relationType;
   final _GraphEdgeDirectionSummary directionSummary;
@@ -362,22 +718,11 @@ class _GraphEdgeLayout {
     required this.targetId,
     required this.start,
     required this.end,
-    required this.midpoint,
-    required this.labelNormal,
     required this.color,
     required this.relationType,
     required this.directionSummary,
     required this.touchesCenter,
   });
-
-  Offset labelCenter(double sceneScale) {
-    final scale = sceneScale <= 0 ? 1.0 : sceneScale;
-    final offset = (_baseLabelOffset / scale).clamp(6.0, 14.0);
-    return Offset(
-      midpoint.dx + labelNormal.dx * offset,
-      midpoint.dy + labelNormal.dy * offset,
-    );
-  }
 }
 
 class _GraphLayoutData {
@@ -872,9 +1217,6 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   double _currentScale = 1.0;
   PeripheralNodeLodLevel _peripheralNodeLod =
       resolvePeripheralNodeLodForTesting(cameraScale: 1.0);
-
-  /// 이 배율보다 작아지면 엣지 태그를 숨긴다(가독성/겹침 감소)
-  static const double _labelVisibleScaleThreshold = 1.15;
 
   /// The graph center authority is the normalized id only.
   late String _centerWordId;
@@ -1558,6 +1900,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         }
 
         final peripheralNodes = _peripheralNodesForViewData(viewData);
+        final actualPeripheralWordNodeIds = peripheralNodes
+            .where((node) => !node.isPlaceholderMoreNode)
+            .map((node) => node.id)
+            .toSet();
         final layout = _computeGraphLayout(viewportSize, viewData);
         _scheduleViewportCameraSync(layout);
         _scheduleConditionalCenterFocus(layout);
@@ -1673,13 +2019,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                                       selectedWordId: _selectedWordId,
                                       selectedEdgeIds: selectedEdgeIds,
                                       actualPeripheralWordNodeIds:
-                                          _peripheralNodesForViewData(viewData)
-                                              .where(
-                                                (node) =>
-                                                    !node.isPlaceholderMoreNode,
-                                              )
-                                              .map((node) => node.id)
-                                              .toSet(),
+                                          actualPeripheralWordNodeIds,
                                       showLabels: false,
                                       sceneScale: _currentScale,
                                     ),
@@ -1709,6 +2049,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                               layout,
                               selectedEdgeIds: selectedEdgeIds,
                               selectedWordId: _selectedWordId,
+                              actualPeripheralWordNodeIds:
+                                  actualPeripheralWordNodeIds,
                             ),
                             ..._buildWordNodes(
                               layout,
@@ -3975,14 +4317,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         final distance = max(delta.distance, 0.001);
         final direction = Offset(delta.dx / distance, delta.dy / distance);
         final normal = Offset(-direction.dy, direction.dx);
-        final parallelOffset = (index - centerOffset) * 14.0;
+        final parallelOffset = (index - centerOffset) * _edgeParallelOffsetStep;
         final shift = normal * parallelOffset;
         final shiftedStart = start + shift;
         final shiftedEnd = end + shift;
-        final midpoint = Offset(
-          (shiftedStart.dx + shiftedEnd.dx) / 2,
-          (shiftedStart.dy + shiftedEnd.dy) / 2,
-        );
 
         edgeLayouts.add(
           _GraphEdgeLayout(
@@ -3991,8 +4329,6 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
             targetId: edge.targetId,
             start: shiftedStart,
             end: shiftedEnd,
-            midpoint: midpoint,
-            labelNormal: normal,
             color: _colorForCategory(primaryEdgeInfo?.categoryCode),
             relationType: primaryEdgeInfo?.relationType ?? edge.relationType,
             directionSummary: directionSummary,
@@ -4101,9 +4437,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     _GraphLayoutData layout, {
     required Set<String> selectedEdgeIds,
     required String? selectedWordId,
+    required Set<String> actualPeripheralWordNodeIds,
   }) {
     // 줌이 작으면 태그 숨김(기존 정책 유지)
-    if (_currentScale < _labelVisibleScaleThreshold) return [];
+    if (!isEdgeChipVisibleForTesting(_currentScale)) return [];
     if (layout.edgeLayouts.isEmpty) return [];
     final visibleEdgeLabelIds = _visibleEdgeLabelIds(
       layout,
@@ -4142,6 +4479,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         label: label,
         nodeObstacles: nodeObstacles,
         placedLabelBounds: placedLabelBounds,
+        actualPeripheralWordNodeIds: actualPeripheralWordNodeIds,
       );
       final pos = placement.center;
       placedLabelBounds.add(placement.bounds);
@@ -4219,6 +4557,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
           child: FractionalTranslation(
             translation: const Offset(-0.5, -0.5),
             child: GestureDetector(
+              key: ValueKey<String>('graph-edge-chip:${edgeLayout.edgeId}'),
               onTap: () {
                 _temporarilySuppressBackgroundTapClear();
                 if (edgeInfos.isEmpty) return;
@@ -4270,122 +4609,46 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     required String label,
     required List<Rect> nodeObstacles,
     required List<Rect> placedLabelBounds,
+    required Set<String> actualPeripheralWordNodeIds,
   }) {
-    final baseCenter = edgeLayout.labelCenter(_currentScale);
-    final radial = _unitVector(
-      Offset(
-        edgeLayout.midpoint.dx - layout.center.dx,
-        edgeLayout.midpoint.dy - layout.center.dy,
-      ),
+    final sourceNodeHalf = _nodeHalfForEdgeChip(
+      layout: layout,
+      nodeId: edgeLayout.sourceId,
+      actualPeripheralWordNodeIds: actualPeripheralWordNodeIds,
     );
-
-    Offset bestCenter = baseCenter;
-    Rect bestBounds = _measureEdgeLabelBounds(label: label, center: baseCenter);
-    double bestScore = double.infinity;
-
-    for (int attempt = 0; attempt < _labelPlacementMaxAttempts; attempt++) {
-      final candidateCenter = _candidateEdgeLabelCenter(
-        baseCenter: baseCenter,
-        normal: edgeLayout.labelNormal,
-        radial: radial,
-        attempt: attempt,
-      );
-      final shiftDistance = (candidateCenter - baseCenter).distance;
-      if (shiftDistance > _labelMaxShiftDistance) continue;
-
-      final candidateBounds = _measureEdgeLabelBounds(
-        label: label,
-        center: candidateCenter,
-      );
-      final collisionScore = _edgeLabelCollisionScore(
-        bounds: candidateBounds,
-        nodeObstacles: nodeObstacles,
-        placedLabelBounds: placedLabelBounds,
-      );
-
-      if (collisionScore < bestScore) {
-        bestScore = collisionScore;
-        bestCenter = candidateCenter;
-        bestBounds = candidateBounds;
-      }
-
-      if (collisionScore == 0.0) {
-        break;
-      }
-    }
-
-    return (center: bestCenter, bounds: bestBounds);
+    final targetNodeHalf = _nodeHalfForEdgeChip(
+      layout: layout,
+      nodeId: edgeLayout.targetId,
+      actualPeripheralWordNodeIds: actualPeripheralWordNodeIds,
+    );
+    final placement = _resolveEdgeChipPlacement(
+      edgeStart: edgeLayout.start,
+      edgeEnd: edgeLayout.end,
+      label: label,
+      sceneScale: _currentScale,
+      sourceNodeHalf: sourceNodeHalf,
+      targetNodeHalf: targetNodeHalf,
+      directionSummary: edgeLayout.directionSummary,
+      nodeObstacles: nodeObstacles,
+      placedLabelBounds: placedLabelBounds,
+    );
+    final selectedCandidate = placement.selectedCandidate;
+    return (center: selectedCandidate.center, bounds: selectedCandidate.bounds);
   }
 
-  Offset _candidateEdgeLabelCenter({
-    required Offset baseCenter,
-    required Offset normal,
-    required Offset radial,
-    required int attempt,
+  double _nodeHalfForEdgeChip({
+    required _GraphLayoutData layout,
+    required String nodeId,
+    required Set<String> actualPeripheralWordNodeIds,
   }) {
-    if (attempt == 0) return baseCenter;
-
-    final tier = ((attempt + 1) / 2).ceil();
-    final normalSign = attempt.isOdd ? 1.0 : -1.0;
-    final lateralShift = min(
-      _labelPlacementStep * tier,
-      _labelMaxShiftDistance,
+    return _edgeNodeHalfForGeometry(
+      nodeId: nodeId,
+      centerNodeId: layout.centerNodeId,
+      sceneScale: _currentScale,
+      baseNodeHalf:
+          layout.nodeLayoutById[nodeId]?.nodeHalf ?? _connectedNodeHalf,
+      isActualPeripheralWordNode: actualPeripheralWordNodeIds.contains(nodeId),
     );
-    final radialShift = min(
-      _labelPlacementRadialStep * max(0, tier - 1),
-      _labelMaxShiftDistance,
-    );
-
-    return Offset(
-      baseCenter.dx +
-          normal.dx * lateralShift * normalSign +
-          radial.dx * radialShift,
-      baseCenter.dy +
-          normal.dy * lateralShift * normalSign +
-          radial.dy * radialShift,
-    );
-  }
-
-  Rect _measureEdgeLabelBounds({
-    required String label,
-    required Offset center,
-  }) {
-    final textPainter = TextPainter(
-      text: TextSpan(
-        text: label,
-        style: const TextStyle(
-          fontSize: _edgeLabelFontSize,
-          fontWeight: FontWeight.w600,
-          color: Colors.black87,
-        ),
-      ),
-      textDirection: TextDirection.ltr,
-    )..layout();
-
-    return Rect.fromCenter(
-      center: center,
-      width: textPainter.width + _edgeLabelHorizontalPadding * 2,
-      height: textPainter.height + _edgeLabelVerticalPadding * 2,
-    );
-  }
-
-  double _edgeLabelCollisionScore({
-    required Rect bounds,
-    required List<Rect> nodeObstacles,
-    required List<Rect> placedLabelBounds,
-  }) {
-    final paddedBounds = bounds.inflate(_labelCollisionPadding);
-    double score = 0.0;
-
-    for (final obstacle in nodeObstacles) {
-      score += _intersectionArea(paddedBounds, obstacle);
-    }
-
-    for (final placedBounds in placedLabelBounds) {
-      score += _intersectionArea(paddedBounds, placedBounds);
-    }
-
-    return score;
   }
 
   double _intersectionArea(Rect a, Rect b) {
@@ -6689,18 +6952,21 @@ class _GraphLinePainter extends CustomPainter {
     if (totalLength <= 0.001) return;
 
     final direction = Offset(delta.dx / totalLength, delta.dy / totalLength);
-    const edgeInset = 8.0;
-    const arrowLength = 14.0;
-
     switch (directionSummary) {
       case _GraphEdgeDirectionSummary.outgoing:
-        final tip = end - direction * (_nodeHalfFor(targetId) + edgeInset);
-        final tailReference = tip - direction * arrowLength;
+        final tip =
+            end -
+            direction * (_nodeHalfFor(targetId) + _edgeDirectionIndicatorInset);
+        final tailReference =
+            tip - direction * _edgeDirectionIndicatorReferenceLength;
         _drawArrowHead(canvas, tip, tailReference, paint, safeSceneScale);
         return;
       case _GraphEdgeDirectionSummary.incoming:
-        final tip = start + direction * (_nodeHalfFor(sourceId) + edgeInset);
-        final tailReference = tip + direction * arrowLength;
+        final tip =
+            start +
+            direction * (_nodeHalfFor(sourceId) + _edgeDirectionIndicatorInset);
+        final tailReference =
+            tip + direction * _edgeDirectionIndicatorReferenceLength;
         _drawArrowHead(canvas, tip, tailReference, paint, safeSceneScale);
         return;
       case _GraphEdgeDirectionSummary.undirected:
@@ -6711,16 +6977,14 @@ class _GraphLinePainter extends CustomPainter {
   }
 
   double _nodeHalfFor(String nodeId) {
-    if (nodeId == layout.centerNodeId) {
-      return _effectiveNodeHalf(_centerNodeHalf, sceneScale);
-    }
-
-    final baseNodeHalf =
-        layout.nodeLayoutById[nodeId]?.nodeHalf ?? _connectedNodeHalf;
-    if (actualPeripheralWordNodeIds.contains(nodeId)) {
-      return _peripheralNodeEffectiveHalf(baseNodeHalf, sceneScale);
-    }
-    return _effectiveNodeHalf(baseNodeHalf, sceneScale);
+    return _edgeNodeHalfForGeometry(
+      nodeId: nodeId,
+      centerNodeId: layout.centerNodeId,
+      sceneScale: sceneScale,
+      baseNodeHalf:
+          layout.nodeLayoutById[nodeId]?.nodeHalf ?? _connectedNodeHalf,
+      isActualPeripheralWordNode: actualPeripheralWordNodeIds.contains(nodeId),
+    );
   }
 
   void _drawArrowHead(
@@ -6736,7 +7000,8 @@ class _GraphLinePainter extends CustomPainter {
 
     final direction = Offset(vector.dx / length, vector.dy / length);
     final perpendicular = Offset(-direction.dy, direction.dx);
-    final wingLength = 8.0 / safeSceneScale + paint.strokeWidth;
+    final wingLength =
+        _edgeArrowHeadBaseLength / safeSceneScale + paint.strokeWidth;
     final wingWidth = wingLength * 0.56;
     final base = tip - direction * wingLength;
     final wingA = base + perpendicular * wingWidth;
