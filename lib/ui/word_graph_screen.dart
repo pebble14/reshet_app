@@ -5259,7 +5259,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   Future<void> _showSingleEdgeDetailDialog(WordRelationEdgeInfo info) async {
     await showDialog(
       context: context,
-      builder: (context) {
+      builder: (dialogContext) {
         bool isEditing = false;
         bool isSaving = false;
 
@@ -5373,6 +5373,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
           try {
             final c = await _repository.getRelationCategories();
             final t = await _repository.getRelationTypes();
+            if (!dialogContext.mounted) return;
             setState(() {
               categories = _sanitizeLookupItemsByCode(
                 c,
@@ -5388,7 +5389,9 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
               restoreEditorDropdownStateFromOriginal();
             });
           } catch (e) {
+            if (!dialogContext.mounted) return;
             setState(() => isOptionsLoading = false);
+            if (!mounted) return;
             ScaffoldMessenger.of(
               context,
             ).showSnackBar(SnackBar(content: Text('코드표 로딩 실패: $e')));
@@ -5423,14 +5426,16 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
             ]);
             await _loadConnectedWords();
 
-            if (!mounted) return;
-            Navigator.pop(context);
+            if (!mounted || !dialogContext.mounted) return;
+            Navigator.of(dialogContext).pop();
 
             ScaffoldMessenger.of(
-              this.context,
+              context,
             ).showSnackBar(const SnackBar(content: Text('관계가 저장되었습니다.')));
           } catch (e) {
+            if (!dialogContext.mounted) return;
             setState(() => isSaving = false);
+            if (!mounted) return;
             ScaffoldMessenger.of(
               context,
             ).showSnackBar(SnackBar(content: Text('저장 실패: $e')));
@@ -5455,14 +5460,16 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
             ]);
             await _loadConnectedWords();
 
-            if (!mounted) return;
-            Navigator.pop(context);
+            if (!mounted || !dialogContext.mounted) return;
+            Navigator.of(dialogContext).pop();
 
             ScaffoldMessenger.of(
-              this.context,
+              context,
             ).showSnackBar(const SnackBar(content: Text('관계가 삭제되었습니다.')));
           } catch (e) {
+            if (!dialogContext.mounted) return;
             setState(() => isSaving = false);
+            if (!mounted) return;
             ScaffoldMessenger.of(
               context,
             ).showSnackBar(SnackBar(content: Text('삭제 실패: $e')));
@@ -5555,7 +5562,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                         )
                       else
                         DropdownButtonFormField<String>(
-                          value: selectedCategoryCode,
+                          key: ValueKey<String>(
+                            'relation-edit-category:${selectedCategoryCode ?? ''}',
+                          ),
+                          initialValue: selectedCategoryCode,
                           isExpanded: true,
                           decoration: const InputDecoration(
                             border: OutlineInputBorder(),
@@ -5599,7 +5609,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                         )
                       else
                         DropdownButtonFormField<String>(
-                          value: selectedRelationType,
+                          key: ValueKey<String>(
+                            'relation-edit-type:${selectedCategoryCode ?? ''}:${selectedRelationType ?? ''}',
+                          ),
+                          initialValue: selectedRelationType,
                           isExpanded: true,
                           decoration: const InputDecoration(
                             border: OutlineInputBorder(),
@@ -5635,7 +5648,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                         Text(directionText)
                       else
                         DropdownButtonFormField<String>(
-                          value: selectedDirectionCode,
+                          key: ValueKey<String>(
+                            'relation-edit-direction:$selectedDirectionCode',
+                          ),
+                          initialValue: selectedDirectionCode,
                           isExpanded: true,
                           decoration: const InputDecoration(
                             border: OutlineInputBorder(),
@@ -5733,11 +5749,14 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
               ),
               actions: [
                 TextButton(
-                  onPressed: isSaving ? null : () => Navigator.pop(context),
+                  onPressed: isSaving
+                      ? null
+                      : () => Navigator.of(dialogContext).pop(),
                   child: const Text('닫기'),
                 ),
                 if (!isEditing)
                   TextButton(
+                    key: const Key('relation-edit-mode-button'),
                     onPressed: () async {
                       setState(() => isEditing = true);
                       await loadOptionsIfNeeded(setState);
@@ -5770,8 +5789,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                         ? null
                         : () async {
                             final confirmed = await showDialog<bool>(
-                              context: context,
-                              builder: (context) => AlertDialog(
+                              context: dialogContext,
+                              builder: (confirmContext) => AlertDialog(
                                 title: const Text('관계 삭제'),
                                 content: const Text(
                                   '이 관계를 삭제할까요?\n이 작업은 되돌리기 어렵습니다.',
@@ -5779,12 +5798,12 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                                 actions: [
                                   TextButton(
                                     onPressed: () =>
-                                        Navigator.pop(context, false),
+                                        Navigator.pop(confirmContext, false),
                                     child: const Text('취소'),
                                   ),
                                   TextButton(
                                     onPressed: () =>
-                                        Navigator.pop(context, true),
+                                        Navigator.pop(confirmContext, true),
                                     child: const Text('삭제'),
                                   ),
                                 ],
@@ -5792,6 +5811,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                             );
 
                             if (confirmed == true) {
+                              if (!dialogContext.mounted) return;
                               await deleteEdge(setState);
                             }
                           },
@@ -5799,6 +5819,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                   ),
 
                   ElevatedButton(
+                    key: const Key('relation-edit-save-button'),
                     onPressed: canSave ? () => save(setState) : null,
                     child: isSaving
                         ? const SizedBox(
@@ -6289,7 +6310,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       DropdownButtonFormField<String>(
-                        value: selectedCategoryCode,
+                        key: ValueKey<String>(
+                          'relation-add-category:${selectedCategoryCode ?? ''}',
+                        ),
+                        initialValue: selectedCategoryCode,
                         isExpanded: true,
                         decoration: const InputDecoration(labelText: '카테고리'),
                         items: [
@@ -6318,7 +6342,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                       ),
                       const SizedBox(height: 12),
                       DropdownButtonFormField<String>(
-                        value: selectedRelationType,
+                        key: ValueKey<String>(
+                          'relation-add-type:${selectedCategoryCode ?? ''}:${selectedRelationType ?? ''}',
+                        ),
+                        initialValue: selectedRelationType,
                         isExpanded: true,
                         decoration: const InputDecoration(labelText: '타입'),
                         items: [
@@ -6343,7 +6370,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                       ),
                       const SizedBox(height: 12),
                       DropdownButtonFormField<String>(
-                        value: selectedDirectionCode,
+                        key: ValueKey<String>(
+                          'relation-add-direction:$selectedDirectionCode',
+                        ),
+                        initialValue: selectedDirectionCode,
                         isExpanded: true,
                         decoration: const InputDecoration(labelText: '방향'),
                         items: directionItems,
@@ -6393,6 +6423,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                   child: const Text('취소'),
                 ),
                 ElevatedButton(
+                  key: const Key('relation-add-save-button'),
                   onPressed: () {
                     Navigator.pop(
                       context,
