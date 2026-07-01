@@ -9453,3 +9453,9 @@ Phase 35-D는 Phase 35-B의 전체 `복사` action을 유지하면서 `WordInfoP
 Small layout에서는 현재 표시되는 display value 단위로 항목별 복사 action을 제공한다. 대표 표기, 스트롱 번호, 언어, 표기, 음역, 발음, 의미, 비고의 각 표시값 하나가 복사 단위이며 라벨, 인접 값, section heading, 줄바꿈으로 결합된 목록 payload는 포함하지 않는다. 전체 `복사` v1 payload 형식과 성공·실패 feedback 경로는 계속 유지한다.
 
 이번 경계도 `WordDetailLikeDisplayItem`을 소비하는 UI rendering 및 clipboard action에 한정한다. relation 목록, relation status, graph 정보, search state, raw DB export, repository read/write path, DB schema, migration, dependency는 계속 범위 밖이다.
+
+### 17.150 Phase 37-A Windows 데스크톱 시작 최대화 경계
+
+Phase 37-A는 Windows desktop runner의 시작 표시 상태만 조정하는 작은 production 변경 단계다. Windows에서 Reshet을 새 프로세스로 실행하면 앱 창은 최대화 상태로 시작한다. 이는 매 실행 시 적용되는 시작 표시 상태이며, 마지막 창 크기·위치·최대화 상태를 저장하거나 다음 실행에 복원하는 기능은 아직 제공하지 않는다.
+
+`windows/runner/main.cpp`의 1280x720 초기 size는 사용자가 복원 버튼으로 일반 창 상태로 전환했을 때의 기본 일반 창 크기 기준으로 유지한다. Dart UI, Explorer/graph layout, 검색·관계 기능, DB/repository/schema/migration, dependency는 변경 범위 밖이다.
