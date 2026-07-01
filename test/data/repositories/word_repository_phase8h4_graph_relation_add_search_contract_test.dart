@@ -88,6 +88,46 @@ void main() {
     );
 
     test(
+      'finds relation add candidates by canonical transliteration',
+      () async {
+        final repository = WordRepository();
+
+        final logosResults = await repository.searchWords('로고스', limit: 200);
+        expect(
+          logosResults,
+          contains(
+            isA<GraphRelationAddSearchResultItem>()
+                .having((item) => item.wordId, 'wordId', 'G3056_0000')
+                .having(
+                  (item) => item.representativeSpelling,
+                  'representativeSpelling',
+                  'λόγος',
+                )
+                .having(
+                  (item) => item.displayStrongNumber,
+                  'displayStrongNumber',
+                  'G3056',
+                ),
+          ),
+        );
+
+        final agapeResults = await repository.searchWords('아가페', limit: 200);
+        expect(
+          agapeResults,
+          contains(
+            isA<GraphRelationAddSearchResultItem>()
+                .having((item) => item.wordId, 'wordId', 'G0026_0000')
+                .having(
+                  (item) => item.displayStrongNumber,
+                  'displayStrongNumber',
+                  'G0026',
+                ),
+          ),
+        );
+      },
+    );
+
+    test(
       'keeps meaning and strong number display fields in the minimal typed contract',
       () async {
         final repository = WordRepository();

@@ -8744,7 +8744,7 @@ Phase 18-L은 `Search / Strong Jump role separation audit`를 수행한 read-onl
 #### 확인한 현재 결합 상태
 
 - 현재 일반 검색과 Strong jump는 같은 `_searchController`, 같은 `TextField`, 같은 입력 surface를 공유한다.
-- 같은 입력 surface는 large-screen 상단 control surface의 `TextField`이며, `labelText`는 현재 `검색 (표기/의미/스트롱 번호)`다.
+- 같은 입력 surface는 large-screen 상단 control surface의 `TextField`이며, Phase 36-F 기준 활성 `labelText`는 현재 `검색 (표기·음역·의미·스트롱)`다. 이 안내는 일반 검색과 관계 추가 대상 검색이 표기, 음역, 의미, Strong 번호를 검색 대상으로 포함한다는 활성 계약과 일치해야 한다.
 - Strong 번호 형식 입력의 `onChanged` 경로는 `_handleSearchChanged(...)`에서 시작해 `_isStrongJumpInput(...)`, debounce, `_normalizeStrongInput(...)`, `_canRunAutoStrongRailJump(...)`, `_jumpToStrongInRail(...)`로 이어진다.
 - 일반 검색 실행 경로는 `_runSearch(...)`, `_setVisibleWordListFuture(...)`, `_createSearchWordsFuture(...)`를 통해 기존 `_repository.searchStrongExactMap(...)` 또는 `_repository.searchWordsMap(...)`를 사용한다.
 - 일반 검색 후보 item tap은 large-screen에서 `_showWordInLargeScreenExplorerPane(wordId)`를 호출해 `_largeScreenExplorerWordId`를 갱신하고, `WordExplorerScreen(key: ValueKey(_largeScreenExplorerWordId), initialWordId: _largeScreenExplorerWordId)` remount로 우측 Explorer retarget을 수행한다.

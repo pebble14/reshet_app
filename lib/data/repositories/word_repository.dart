@@ -3622,6 +3622,12 @@ class WordRepository {
             )
           OR EXISTS (
                SELECT 1
+               FROM word_expression_set wes_search
+               WHERE wes_search.word_id = wt.id
+                 AND wes_search.transliteration LIKE ?
+            )
+          OR EXISTS (
+               SELECT 1
                FROM word_meaning_set wms_search
               WHERE wms_search.word_id = wt.id
                 AND wms_search.meaning LIKE ?
@@ -3629,7 +3635,7 @@ class WordRepository {
          OR wt.스트롱넘버 LIKE ?
       LIMIT ?
       ''',
-      [like, like, like, limit],
+      [like, like, like, like, limit],
     );
 
     return List<GraphRelationAddSearchResultItem>.unmodifiable(

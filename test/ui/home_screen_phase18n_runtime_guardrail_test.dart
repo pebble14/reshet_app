@@ -78,7 +78,7 @@ void main() {
           _strongRailListFinder(),
         );
 
-        final searchField = find.widgetWithText(TextField, '검색 (표기/의미/스트롱 번호)');
+        final searchField = find.widgetWithText(TextField, '검색 (표기·음역·의미·스트롱)');
         await tester.enterText(searchField, 'H1');
         await tester.testTextInput.receiveAction(TextInputAction.done);
         await _pumpUntil(
@@ -206,7 +206,7 @@ void main() {
         tester,
         () =>
             find
-                .widgetWithText(TextField, '검색 (표기/의미/스트롱 번호)')
+                .widgetWithText(TextField, '검색 (표기·음역·의미·스트롱)')
                 .evaluate()
                 .length ==
             1,
@@ -216,7 +216,7 @@ void main() {
       expect(find.byType(WordExplorerScreen), findsNothing);
       expect(find.widgetWithText(TextField, 'Strong/스트롱'), findsNothing);
 
-      final searchField = find.widgetWithText(TextField, '검색 (표기/의미/스트롱 번호)');
+      final searchField = find.widgetWithText(TextField, '검색 (표기·음역·의미·스트롱)');
       await tester.enterText(searchField, 'H1');
       await tester.testTextInput.receiveAction(TextInputAction.done);
       await _pumpUntil(

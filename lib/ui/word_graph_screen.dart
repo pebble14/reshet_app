@@ -6606,7 +6606,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                     TextField(
                       controller: controller,
                       decoration: const InputDecoration(
-                        labelText: '검색 (표기/의미/스트롱 번호)',
+                        labelText: '검색 (표기·음역·의미·스트롱)',
                         prefixIcon: Icon(Icons.search),
                       ),
                       onChanged: (v) {

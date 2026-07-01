@@ -94,7 +94,7 @@ class _MobileWordSearchScreenState extends State<MobileWordSearchScreen> {
                       focusNode: _searchFocusNode,
                       autofocus: true,
                       decoration: const InputDecoration(
-                        labelText: '검색 (표기/의미/스트롱 번호)',
+                        labelText: '검색 (표기·음역·의미·스트롱)',
                         border: OutlineInputBorder(),
                       ),
                       textInputAction: TextInputAction.search,

@@ -1267,7 +1267,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 controller: _searchController,
                                 focusNode: _largeScreenSearchFocusNode,
                                 decoration: const InputDecoration(
-                                  labelText: '검색 (표기/의미/스트롱 번호)',
+                                  labelText: '검색 (표기·음역·의미·스트롱)',
                                   border: OutlineInputBorder(),
                                   isDense: true,
                                 ),
@@ -1294,7 +1294,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               child: TextField(
                                 controller: _searchController,
                                 decoration: const InputDecoration(
-                                  labelText: '검색 (표기/의미/스트롱 번호)',
+                                  labelText: '검색 (표기·음역·의미·스트롱)',
                                   border: OutlineInputBorder(),
                                   isDense: true,
                                 ),

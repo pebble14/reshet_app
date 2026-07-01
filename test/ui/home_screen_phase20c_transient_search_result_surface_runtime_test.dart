@@ -68,7 +68,7 @@ void main() {
         final initialExplorer = tester.widget<WordExplorerScreen>(
           explorerFinder,
         );
-        final searchField = find.widgetWithText(TextField, '검색 (표기/의미/스트롱 번호)');
+        final searchField = find.widgetWithText(TextField, '검색 (표기·음역·의미·스트롱)');
         final strongField = find.widgetWithText(TextField, 'Strong/스트롱');
 
         expect(_strongRailListFinder(), findsOneWidget);
@@ -227,7 +227,7 @@ void main() {
 
       final explorerFinder = find.byType(WordExplorerScreen);
       final initialExplorer = tester.widget<WordExplorerScreen>(explorerFinder);
-      final searchField = find.widgetWithText(TextField, '검색 (표기/의미/스트롱 번호)');
+      final searchField = find.widgetWithText(TextField, '검색 (표기·음역·의미·스트롱)');
 
       await tester.enterText(searchField, 'PHASE20C_RESULT_NOT_FOUND_20260606');
       await tester.testTextInput.receiveAction(TextInputAction.done);
@@ -476,7 +476,7 @@ void main() {
       expect(_defaultStrongListFinder(), findsOneWidget);
       expect(_strongRailListFinder(), findsNothing);
 
-      final searchField = find.widgetWithText(TextField, '검색 (표기/의미/스트롱 번호)');
+      final searchField = find.widgetWithText(TextField, '검색 (표기·음역·의미·스트롱)');
       await tester.enterText(searchField, 'H2');
       await tester.testTextInput.receiveAction(TextInputAction.done);
       await _pumpUntil(
