@@ -9459,3 +9459,9 @@ Small layout에서는 현재 표시되는 display value 단위로 항목별 복�
 Phase 37-A는 Windows desktop runner의 시작 표시 상태만 조정하는 작은 production 변경 단계다. Windows에서 Reshet을 새 프로세스로 실행하면 앱 창은 최대화 상태로 시작한다. 이는 매 실행 시 적용되는 시작 표시 상태이며, 마지막 창 크기·위치·최대화 상태를 저장하거나 다음 실행에 복원하는 기능은 아직 제공하지 않는다.
 
 `windows/runner/main.cpp`의 1280x720 초기 size는 사용자가 복원 버튼으로 일반 창 상태로 전환했을 때의 기본 일반 창 크기 기준으로 유지한다. Dart UI, Explorer/graph layout, 검색·관계 기능, DB/repository/schema/migration, dependency는 변경 범위 밖이다.
+
+### 17.151 Phase 38-C 선택 노드 확장 접기 경계
+
+Phase 38-C는 `WordGraphScreen`에서 선택된 depth 1 노드가 이미 depth 2 확장을 실행한 경우에만 `확장 접기` control을 제공하는 작은 production 변경 단계다. 접기는 선택 source가 추가한 depth 2 expansion state와 해당 source의 `+N more` 공개 상태를 제거한 뒤 기존 graph rebuild 경로로 화면을 다시 구성한다.
+
+이 접기는 전체 graph 초기화나 재귀 접기가 아니다. 중심 노드와 최초 depth 1 노드는 유지되며, 다른 depth 1 source에서 펼친 가지와 공유 노드·엣지는 남아 있는 source별 expansion data를 기준으로 다시 계산된다. Route, DB/repository/schema/migration, dependency, node cap 정책, layout 정책은 변경하지 않는다.

@@ -154,6 +154,9 @@ const double _selectedNodeRelationOverlayInset = 16.0;
 const double _selectedNodeRelationOverlayMinHeight = 40.0;
 const double _selectedNodePreviewMaxWidth = 320.0;
 const double _selectedNodePreviewLauncherGap = 12.0;
+const Key _selectedNodeCollapseExpansionKey = Key(
+  'selected-node-collapse-expansion',
+);
 
 double _safeCameraScale(double cameraScale) {
   return cameraScale.isFinite && cameraScale > 0 ? cameraScale : 1.0;
@@ -2258,11 +2261,19 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     required List<_SelectedNodeRelationEntry> relationEntries,
   }) {
     final preview = _buildSelectedWordPreview(context);
+    final collapseExpansionAction = _buildSelectedNodeCollapseExpansionAction(
+      context,
+    );
     final relationLauncher = _buildSelectedNodeRelationLauncherOverlay(
       context,
       relationEntries: relationEntries,
     );
-    if (preview == null && relationLauncher == null) {
+    final actionWidgets = <Widget>[
+      ?preview,
+      ?collapseExpansionAction,
+      ?relationLauncher,
+    ];
+    if (actionWidgets.isEmpty) {
       return const SizedBox.shrink();
     }
 
@@ -2274,12 +2285,35 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            ?preview,
-            if (preview != null && relationLauncher != null)
-              const SizedBox(height: _selectedNodePreviewLauncherGap),
-            ?relationLauncher,
+            for (var index = 0; index < actionWidgets.length; index++) ...[
+              if (index > 0)
+                const SizedBox(height: _selectedNodePreviewLauncherGap),
+              actionWidgets[index],
+            ],
           ],
         ),
+      ),
+    );
+  }
+
+  Widget? _buildSelectedNodeCollapseExpansionAction(BuildContext context) {
+    if (!_canCollapseSelectedDepthOneExpansion()) {
+      return null;
+    }
+
+    final colorScheme = Theme.of(context).colorScheme;
+    return OutlinedButton.icon(
+      key: _selectedNodeCollapseExpansionKey,
+      onPressed: _collapseSelectedDepthOneExpansion,
+      icon: const Icon(Icons.unfold_less, size: 18),
+      label: const Text('확장 접기'),
+      style: OutlinedButton.styleFrom(
+        backgroundColor: colorScheme.surfaceContainerHigh,
+        foregroundColor: colorScheme.onSurface,
+        side: BorderSide(color: colorScheme.outlineVariant),
+        shape: const StadiumBorder(),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        minimumSize: const Size(0, _selectedNodeRelationOverlayMinHeight),
       ),
     );
   }
@@ -2905,6 +2939,36 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
     setState(() {
       _fullyRevealedExpansionSourceIds.add(sourceWordId);
+      _rebuildGraphData();
+    });
+  }
+
+  bool _canCollapseSelectedDepthOneExpansion() {
+    final selectedWordId = (_selectedWordId ?? '').trim();
+    if (selectedWordId.isEmpty ||
+        !_expansionDataBySourceId.containsKey(selectedWordId)) {
+      return false;
+    }
+
+    final selectedNode = _graphViewData?.nodeById(selectedWordId);
+    return selectedNode != null &&
+        !selectedNode.isCenter &&
+        !selectedNode.isPlaceholderMoreNode &&
+        selectedNode.depth == 1;
+  }
+
+  void _collapseSelectedDepthOneExpansion() {
+    _temporarilySuppressBackgroundTapClear();
+    final selectedWordId = (_selectedWordId ?? '').trim();
+    if (!_canCollapseSelectedDepthOneExpansion()) {
+      return;
+    }
+
+    setState(() {
+      _expansionDataBySourceId.remove(selectedWordId);
+      _expandedDepthOneWordIds.remove(selectedWordId);
+      _fullyRevealedExpansionSourceIds.remove(selectedWordId);
+      _expansionRequestsInFlight.remove(selectedWordId);
       _rebuildGraphData();
     });
   }
