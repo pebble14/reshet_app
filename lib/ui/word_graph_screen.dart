@@ -1163,6 +1163,8 @@ class WordGraphScreen extends StatefulWidget {
   final ValueChanged<String>? onChangeCenterWordId;
   final ValueChanged<Word>? onChangeCenterWord;
   final WordMutationImpactCollector? mutationImpactCollector;
+  @visibleForTesting
+  final WordRepository? repositoryForTesting;
 
   WordGraphScreen({
     super.key,
@@ -1177,6 +1179,7 @@ class WordGraphScreen extends StatefulWidget {
     this.onChangeCenterWordId,
     this.onChangeCenterWord,
     this.mutationImpactCollector,
+    this.repositoryForTesting,
   }) : centerWordId = _resolveCenterWordId(
          centerWordId: centerWordId,
          centerWord: centerWord,
@@ -1205,7 +1208,7 @@ class WordGraphScreen extends StatefulWidget {
 }
 
 class _WordGraphScreenState extends State<WordGraphScreen> {
-  final WordRepository _repository = WordRepository();
+  late final WordRepository _repository;
   final WordWriteService _wordWriteService = WordWriteService();
   final GraphBuilder _graphBuilder = const GraphBuilder();
   static const GraphLayoutMode _graphLayoutMode = GraphLayoutMode.forceDirected;
@@ -1245,6 +1248,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   final Map<String, Offset> _seedNodePositions = <String, Offset>{};
   bool _isCenterDepthOneFullyRevealed = false;
   int _collisionWordIdsRefreshSerial = 0;
+  int _graphRevision = 0;
+  List<WordRelationEdgeInfo> _supplementalRelationEdges =
+      const <WordRelationEdgeInfo>[];
+  String? _supplementalRelationNodeSignature;
 
   /// 사용자가 클릭(선택)한 주변 노드 id
   /// - 같은 노드를 다시 클릭하면 이동(push)하는 트리거로 사용
@@ -1312,6 +1319,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   @override
   void initState() {
     super.initState();
+    _repository = widget.repositoryForTesting ?? WordRepository();
     _centerWordId = _centerSeedIdOf(widget.centerWordId);
     _centerWord = _centerSeedWordFrom(_centerWordId);
     _selectedWordId = widget.selectedWordId;
@@ -1632,7 +1640,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     );
   }
 
-  GraphVisibleDataBuildResult _buildGraphData() {
+  GraphVisibleDataBuildResult _buildGraphData({
+    Iterable<WordRelationEdgeInfo> supplementalRelationEdges =
+        const <WordRelationEdgeInfo>[],
+  }) {
     final baseGraphData = _baseGraphData;
     if (baseGraphData == null) {
       throw StateError('Base graph data is not loaded for $_centerWordId.');
@@ -1644,6 +1655,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       baseWords: baseGraphData.connectedWords,
       wordLabels: baseGraphData.wordLabels,
       baseRelationEdges: baseGraphData.relationEdges,
+      supplementalRelationEdges: supplementalRelationEdges,
       expansionDataBySourceId: _expansionDataBySourceId,
       fullyRevealedExpansionSourceIds: _fullyRevealedExpansionSourceIds,
       centerDepthOneSoftLimit: _centerDepthOneSoftLimit,
@@ -1651,7 +1663,49 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     );
   }
 
+  List<String> _visibleRegularWordIdsForSupplementalRelations(
+    GraphViewData viewData,
+  ) {
+    final visibleWordIds =
+        viewData.nodes
+            .where((node) => !node.isPlaceholderMoreNode)
+            .map((node) => node.wordId.trim())
+            .where((wordId) => wordId.isNotEmpty)
+            .toSet()
+            .toList(growable: false)
+          ..sort();
+    return List<String>.unmodifiable(visibleWordIds);
+  }
+
+  String _visibleWordIdSignature(List<String> wordIds) {
+    return wordIds.map((wordId) => '${wordId.length}:$wordId').join('|');
+  }
+
+  bool _sameSupplementalRelationState({
+    required String nodeSignature,
+    required List<WordRelationEdgeInfo> relationEdges,
+  }) {
+    if (_supplementalRelationNodeSignature != nodeSignature) {
+      return false;
+    }
+    if (_supplementalRelationEdges.length != relationEdges.length) {
+      return false;
+    }
+
+    for (var index = 0; index < relationEdges.length; index++) {
+      if (_supplementalRelationEdges[index].relationId !=
+          relationEdges[index].relationId) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   void _rebuildGraphData() {
+    _graphRevision++;
+    _supplementalRelationEdges = const <WordRelationEdgeInfo>[];
+    _supplementalRelationNodeSignature = null;
     final buildResult = _buildGraphData();
     _applyGraphData(
       viewData: buildResult.viewData,
@@ -1659,6 +1713,76 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       wordLabels: buildResult.wordLabels,
       edges: buildResult.relationEdges,
     );
+    _scheduleSupplementalRelationRefresh(buildResult.viewData);
+  }
+
+  void _scheduleSupplementalRelationRefresh(GraphViewData viewData) {
+    final visibleWordIds = _visibleRegularWordIdsForSupplementalRelations(
+      viewData,
+    );
+    if (visibleWordIds.length < 2) {
+      return;
+    }
+
+    final requestRevision = _graphRevision;
+    final requestSignature = _visibleWordIdSignature(visibleWordIds);
+    final requestCenterWordId = _centerWordId;
+    unawaited(
+      _refreshSupplementalRelationEdges(
+        expectedCenterWordId: requestCenterWordId,
+        expectedGraphRevision: requestRevision,
+        expectedNodeSignature: requestSignature,
+        visibleWordIds: visibleWordIds,
+      ),
+    );
+  }
+
+  Future<void> _refreshSupplementalRelationEdges({
+    required String expectedCenterWordId,
+    required int expectedGraphRevision,
+    required String expectedNodeSignature,
+    required List<String> visibleWordIds,
+  }) async {
+    try {
+      final relationEdges = await _repository
+          .getRelationEdgesWithinWordIdsForGraph(visibleWordIds);
+
+      if (!mounted) return;
+      if (_centerWordId != expectedCenterWordId) return;
+      if (_graphRevision != expectedGraphRevision) return;
+
+      final viewData = _graphViewData;
+      if (viewData == null) return;
+      final currentSignature = _visibleWordIdSignature(
+        _visibleRegularWordIdsForSupplementalRelations(viewData),
+      );
+      if (currentSignature != expectedNodeSignature) return;
+
+      if (_sameSupplementalRelationState(
+        nodeSignature: expectedNodeSignature,
+        relationEdges: relationEdges,
+      )) {
+        return;
+      }
+
+      setState(() {
+        _supplementalRelationEdges = List<WordRelationEdgeInfo>.unmodifiable(
+          relationEdges,
+        );
+        _supplementalRelationNodeSignature = expectedNodeSignature;
+        final buildResult = _buildGraphData(
+          supplementalRelationEdges: _supplementalRelationEdges,
+        );
+        _applyGraphData(
+          viewData: buildResult.viewData,
+          words: buildResult.connectedWords,
+          wordLabels: buildResult.wordLabels,
+          edges: buildResult.relationEdges,
+        );
+      });
+    } catch (_) {
+      // 보완 relation 조회 실패는 기존 source 기반 graph를 유지한다.
+    }
   }
 
   void _resetExpansionState({bool clearSeedPositions = false}) {
@@ -1668,6 +1792,9 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     _fullyRevealedExpansionSourceIds.clear();
     _collisionWordIdsRefreshSerial++;
     _dbWideCollisionWordIdsForVisibleGraph.clear();
+    _graphRevision++;
+    _supplementalRelationEdges = const <WordRelationEdgeInfo>[];
+    _supplementalRelationNodeSignature = null;
     _isCenterDepthOneFullyRevealed = false;
     if (clearSeedPositions) {
       _seedNodePositions.clear();

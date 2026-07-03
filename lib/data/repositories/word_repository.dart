@@ -2554,6 +2554,76 @@ class WordRepository {
         .toList(growable: false);
   }
 
+  /// 그래프의 최종 가시 단어 집합 내부에 존재하는 관계(엣지) 메타 정보 조회
+  /// - 호출자는 synthetic placeholder를 제외한 실제 단어 id만 전달한다.
+  /// - WORD_RELATION + RELATION_TYPE + RELATION_CATEGORY 조인 계약은
+  ///   [getRelationEdges]와 동일하게 유지한다.
+  Future<List<WordRelationEdgeInfo>> getRelationEdgesWithinWordIdsForGraph(
+    Iterable<String> wordIds,
+  ) async {
+    final orderedWordIds =
+        wordIds
+            .map((wordId) => wordId.trim())
+            .where((wordId) => wordId.isNotEmpty)
+            .toSet()
+            .toList(growable: false)
+          ..sort();
+    if (orderedWordIds.length < 2) {
+      return const <WordRelationEdgeInfo>[];
+    }
+
+    final db = await DatabaseService.openDatabaseFile();
+    final placeholders = List<String>.filled(
+      orderedWordIds.length,
+      '?',
+    ).join(', ');
+
+    final rows = await db.rawQuery(
+      '''
+      SELECT
+        wr.id AS relation_id,
+        wr.word_id_1 AS word_id_1,
+        wr.word_id_2 AS word_id_2,
+        wr.direction_code AS direction_code,
+        wr.description AS description,
+        wr.relation_group_id AS relation_group_id,
+        COALESCE(rt.category_code, wr.category_code) AS category_code,
+        rc.label AS category_label,
+        wr.relation_type AS relation_type,
+        rt.label AS relation_type_label,
+        wr.status_code AS status_code,
+        wr.note AS note,
+        wr.source AS source
+      FROM WORD_RELATION wr
+      LEFT JOIN RELATION_TYPE rt
+        ON rt.code = wr.relation_type
+      LEFT JOIN RELATION_CATEGORY rc
+        ON rc.code = COALESCE(rt.category_code, wr.category_code)
+      WHERE wr.word_id_1 IN ($placeholders)
+        AND wr.word_id_2 IN ($placeholders)
+      ORDER BY wr.id ASC
+      ''',
+      [...orderedWordIds, ...orderedWordIds],
+    );
+
+    return rows
+        .map((row) {
+          final wordId1 = row['word_id_1'] as String;
+          final wordId2 = row['word_id_2'] as String;
+          return WordRelationEdgeInfo.fromMap(
+            row,
+            centerWordId: wordId1,
+            centerRelativeDirection: _resolveCenterRelativeDirection(
+              centerWordId: wordId1,
+              wordId1: wordId1,
+              wordId2: wordId2,
+              directionCode: row['direction_code'] as String?,
+            ),
+          );
+        })
+        .toList(growable: false);
+  }
+
   /// 그래프 표시용 엣지 조회
   Future<List<WordRelationEdgeInfo>> getVisibleRelationEdgesForGraph(
     String centerWordId,

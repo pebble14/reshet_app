@@ -75,6 +75,8 @@ class GraphBuilder {
     Iterable<GraphWordLabelDisplayItem> wordLabels =
         const <GraphWordLabelDisplayItem>[],
     required Iterable<WordRelationEdgeInfo> relationEdges,
+    Iterable<WordRelationEdgeInfo> supplementalRelationEdges =
+        const <WordRelationEdgeInfo>[],
     int? centerDepthOneSoftLimit,
     bool fullyRevealCenterDepthOne = false,
   }) {
@@ -84,6 +86,7 @@ class GraphBuilder {
       baseWords: connectedWords,
       wordLabels: wordLabels,
       baseRelationEdges: relationEdges,
+      supplementalRelationEdges: supplementalRelationEdges,
       centerDepthOneSoftLimit: centerDepthOneSoftLimit,
       fullyRevealCenterDepthOne: fullyRevealCenterDepthOne,
     ).viewData;
@@ -96,6 +99,8 @@ class GraphBuilder {
     Iterable<GraphWordLabelDisplayItem> wordLabels =
         const <GraphWordLabelDisplayItem>[],
     required Iterable<WordRelationEdgeInfo> baseRelationEdges,
+    Iterable<WordRelationEdgeInfo> supplementalRelationEdges =
+        const <WordRelationEdgeInfo>[],
     Map<String, VisibleWordGraphData> expansionDataBySourceId =
         const <String, VisibleWordGraphData>{},
     Set<String> fullyRevealedExpansionSourceIds = const <String>{},
@@ -337,12 +342,35 @@ class GraphBuilder {
         )
         .followedBy(placeholderNodes)
         .toList(growable: false);
-    final edges = mergedRelationEdges
+    final initialEdges = mergedRelationEdges
         .map(_buildGraphEdgeFromEdgeInfo)
         .followedBy(syntheticEdges)
         .toList(growable: false);
 
-    final viewData = build(
+    var viewData = build(
+      options: options,
+      centerNode: centerNode,
+      nodes: nodes,
+      edges: initialEdges,
+    );
+    final visibleRegularNodeIds = viewData.nodes
+        .where((node) => !node.isPlaceholderMoreNode)
+        .map((node) => node.wordId)
+        .toSet();
+
+    for (final edgeInfo in supplementalRelationEdges) {
+      if (!visibleRegularNodeIds.contains(edgeInfo.wordId1) ||
+          !visibleRegularNodeIds.contains(edgeInfo.wordId2)) {
+        continue;
+      }
+      registerEdgeInfo(edgeInfo);
+    }
+
+    final edges = mergedRelationEdges
+        .map(_buildGraphEdgeFromEdgeInfo)
+        .followedBy(syntheticEdges)
+        .toList(growable: false);
+    viewData = build(
       options: options,
       centerNode: centerNode,
       nodes: nodes,

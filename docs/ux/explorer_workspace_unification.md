@@ -9465,3 +9465,11 @@ Phase 37-A는 Windows desktop runner의 시작 표시 상태만 조정하는 작
 Phase 38-C는 `WordGraphScreen`에서 선택된 depth 1 노드가 이미 depth 2 확장을 실행한 경우에만 `확장 접기` control을 제공하는 작은 production 변경 단계다. 접기는 선택 source가 추가한 depth 2 expansion state와 해당 source의 `+N more` 공개 상태를 제거한 뒤 기존 graph rebuild 경로로 화면을 다시 구성한다.
 
 이 접기는 전체 graph 초기화나 재귀 접기가 아니다. 중심 노드와 최초 depth 1 노드는 유지되며, 다른 depth 1 source에서 펼친 가지와 공유 노드·엣지는 남아 있는 source별 expansion data를 기준으로 다시 계산된다. Route, DB/repository/schema/migration, dependency, node cap 정책, layout 정책은 변경하지 않는다.
+
+### 17.152 Phase 38-E 가시 노드 내부 관계 엣지 보완 경계
+
+Phase 38-E는 최종 `GraphViewData`에 포함된 일반 단어 노드 사이의 실제 `WORD_RELATION` 관계를 보완 엣지로 병합하는 작은 production 변경 단계다. 가시 노드는 최종 graph model에 남은 일반 단어 노드이며, `isPlaceholderMoreNode == true`인 `+N more` placeholder는 관계 조회와 병합 대상에서 제외한다.
+
+내부 관계는 최종 가시 node set 기준으로 보완 병합한다. 중심 변경, depth 2 확장, `+N more` reveal, 선택 source의 `확장 접기` 뒤에는 같은 기준으로 다시 계산한다. 이전 graph 상태에서 시작한 비동기 보완 조회 결과는 graph revision과 가시 node signature가 현재 상태와 모두 일치할 때만 적용한다.
+
+이번 단계는 source 기반 기존 엣지를 유지하고 `relationId` 기준으로 중복을 제거한다. Relation direction, relation type/category, edge chip, relation detail, 선택·인접 highlight 경로는 기존 관계 엣지 계약을 따른다. Route, DB schema, migration, seed 데이터, dependency, node cap, depth 확장 정책, `+N more` 노출 정책, layout 알고리즘은 변경하지 않는다.

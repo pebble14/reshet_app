@@ -47,6 +47,20 @@ class RelationFormatter {
       return _selfReferenceText;
     }
 
+    return _formatRelationText(
+      relationType: relationType,
+      direction: direction,
+      centerWord: centerWord,
+      targetWord: targetWord,
+    );
+  }
+
+  static RelationText _formatRelationText({
+    required String? relationType,
+    required RelationDirection direction,
+    required String centerWord,
+    required String targetWord,
+  }) {
     final pattern = _patternFor(relationType);
     final template = pattern.resolve(direction);
 
@@ -83,7 +97,7 @@ class RelationFormatter {
       return _selfReferenceText;
     }
 
-    return format(
+    return _formatRelationText(
       relationType: relationType,
       direction: resolveDirectionForPair(
         directionCode: directionCode,
@@ -188,9 +202,9 @@ class RelationFormatter {
     final normalizedWordId1 = (wordId1 ?? '').trim();
     final normalizedWordId2 = (wordId2 ?? '').trim();
 
-    if (normalizedWordId1.isNotEmpty &&
-        normalizedWordId1 == normalizedWordId2) {
-      return true;
+    if (normalizedWordId1.isNotEmpty || normalizedWordId2.isNotEmpty) {
+      return normalizedWordId1.isNotEmpty &&
+          normalizedWordId1 == normalizedWordId2;
     }
 
     return normalizedCenterWord.isNotEmpty &&
