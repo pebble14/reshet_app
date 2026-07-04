@@ -79,6 +79,7 @@ const double _edgeLabelVerticalPadding = 4.0;
 const double _edgeLabelVisualFontSize = 10.0;
 const double _edgeLabelVisualHorizontalPadding = 6.0;
 const double _edgeLabelVisualVerticalPadding = 3.0;
+const double _edgeChipVisualScreenScaleCap = 1.5;
 const double _labelVisibleScaleThreshold = 1.15;
 const double _centerNodeBorderWidth = 4.6;
 const double _centerNodeHaloBlur = 16.0;
@@ -177,6 +178,17 @@ double _effectiveNodeScreenScale(double cameraScale) {
 
 double _effectiveNodeHalf(double baseNodeHalf, double cameraScale) {
   return baseNodeHalf * _nodeLocalVisualScale(cameraScale);
+}
+
+@visibleForTesting
+double edgeChipEffectiveScreenScaleForTesting(double cameraScale) {
+  return min(_safeCameraScale(cameraScale), _edgeChipVisualScreenScaleCap);
+}
+
+double _edgeChipLocalVisualScale(double cameraScale) {
+  final safeCameraScale = _safeCameraScale(cameraScale);
+  return edgeChipEffectiveScreenScaleForTesting(safeCameraScale) /
+      safeCameraScale;
 }
 
 @visibleForTesting
@@ -4762,33 +4774,40 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                 width: placement.bounds.width,
                 height: placement.bounds.height,
                 child: Center(
-                  child: AnimatedOpacity(
-                    duration: _visualStateAnimationDuration,
-                    curve: Curves.easeOutCubic,
-                    opacity: labelOpacity,
-                    child: AnimatedContainer(
-                      key: ValueKey<String>(
-                        'graph-edge-chip-visual:${edgeLayout.edgeId}',
-                      ),
+                  child: Transform.scale(
+                    key: ValueKey<String>(
+                      'graph-edge-chip-visual-scale:${edgeLayout.edgeId}',
+                    ),
+                    scale: _edgeChipLocalVisualScale(_currentScale),
+                    alignment: Alignment.center,
+                    child: AnimatedOpacity(
                       duration: _visualStateAnimationDuration,
                       curve: Curves.easeOutCubic,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: _edgeLabelVisualHorizontalPadding,
-                        vertical: _edgeLabelVisualVerticalPadding,
-                      ),
-                      decoration: BoxDecoration(
-                        color: labelBackgroundColor,
-                        border: Border.all(
-                          color: labelBorderColor,
-                          width: labelBorderWidth,
+                      opacity: labelOpacity,
+                      child: AnimatedContainer(
+                        key: ValueKey<String>(
+                          'graph-edge-chip-visual:${edgeLayout.edgeId}',
                         ),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Text(
-                        label,
-                        style: TextStyle(
-                          fontSize: _edgeLabelVisualFontSize,
-                          fontWeight: labelFontWeight,
+                        duration: _visualStateAnimationDuration,
+                        curve: Curves.easeOutCubic,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: _edgeLabelVisualHorizontalPadding,
+                          vertical: _edgeLabelVisualVerticalPadding,
+                        ),
+                        decoration: BoxDecoration(
+                          color: labelBackgroundColor,
+                          border: Border.all(
+                            color: labelBorderColor,
+                            width: labelBorderWidth,
+                          ),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          label,
+                          style: TextStyle(
+                            fontSize: _edgeLabelVisualFontSize,
+                            fontWeight: labelFontWeight,
+                          ),
                         ),
                       ),
                     ),
