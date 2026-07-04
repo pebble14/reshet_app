@@ -76,6 +76,9 @@ const double _labelCollisionPadding = 4.0;
 const double _edgeLabelFontSize = 11.0;
 const double _edgeLabelHorizontalPadding = 8.0;
 const double _edgeLabelVerticalPadding = 4.0;
+const double _edgeLabelVisualFontSize = 10.0;
+const double _edgeLabelVisualHorizontalPadding = 6.0;
+const double _edgeLabelVisualVerticalPadding = 3.0;
 const double _labelVisibleScaleThreshold = 1.15;
 const double _centerNodeBorderWidth = 4.6;
 const double _centerNodeHaloBlur = 16.0;
@@ -4749,35 +4752,45 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
             translation: const Offset(-0.5, -0.5),
             child: GestureDetector(
               key: ValueKey<String>('graph-edge-chip:${edgeLayout.edgeId}'),
+              behavior: HitTestBehavior.opaque,
               onTap: () {
                 _temporarilySuppressBackgroundTapClear();
                 if (edgeInfos.isEmpty) return;
                 _showEdgeDetailDialog(edgeInfos);
               },
-              child: AnimatedOpacity(
-                duration: _visualStateAnimationDuration,
-                curve: Curves.easeOutCubic,
-                opacity: labelOpacity,
-                child: AnimatedContainer(
-                  duration: _visualStateAnimationDuration,
-                  curve: Curves.easeOutCubic,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: _edgeLabelHorizontalPadding,
-                    vertical: _edgeLabelVerticalPadding,
-                  ),
-                  decoration: BoxDecoration(
-                    color: labelBackgroundColor,
-                    border: Border.all(
-                      color: labelBorderColor,
-                      width: labelBorderWidth,
-                    ),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Text(
-                    label,
-                    style: TextStyle(
-                      fontSize: _edgeLabelFontSize,
-                      fontWeight: labelFontWeight,
+              child: SizedBox(
+                width: placement.bounds.width,
+                height: placement.bounds.height,
+                child: Center(
+                  child: AnimatedOpacity(
+                    duration: _visualStateAnimationDuration,
+                    curve: Curves.easeOutCubic,
+                    opacity: labelOpacity,
+                    child: AnimatedContainer(
+                      key: ValueKey<String>(
+                        'graph-edge-chip-visual:${edgeLayout.edgeId}',
+                      ),
+                      duration: _visualStateAnimationDuration,
+                      curve: Curves.easeOutCubic,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: _edgeLabelVisualHorizontalPadding,
+                        vertical: _edgeLabelVisualVerticalPadding,
+                      ),
+                      decoration: BoxDecoration(
+                        color: labelBackgroundColor,
+                        border: Border.all(
+                          color: labelBorderColor,
+                          width: labelBorderWidth,
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text(
+                        label,
+                        style: TextStyle(
+                          fontSize: _edgeLabelVisualFontSize,
+                          fontWeight: labelFontWeight,
+                        ),
+                      ),
                     ),
                   ),
                 ),
