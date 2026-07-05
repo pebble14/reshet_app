@@ -14,12 +14,14 @@
 
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:flutter/foundation.dart' show kDebugMode, visibleForTesting;
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:path/path.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class DatabaseService {
   static Database? _database;
+  static String? _dataRootOverrideForTest;
 
   /// 초기 상태(골든) DB 파일명
   static const String _seedDbFileName = 'reshet_seed.db';
@@ -274,21 +276,122 @@ class DatabaseService {
     ),
   ];
 
-  /// data 폴더 경로.
-  /// Windows/테스트는 기존 프로젝트 루트 data 폴더를 유지하고,
-  /// Android는 앱 전용 내부 저장소를 사용한다.
-  static Future<String> _dataDirPath() async {
-    if (Platform.isAndroid) {
-      final appRoot = Directory.systemTemp.parent;
-      return join(appRoot.path, 'files', 'data');
-    }
-
-    return _desktopDataDirPath();
+  @visibleForTesting
+  static void setDataRootOverrideForTest(String? dataRootPath) {
+    _dataRootOverrideForTest = dataRootPath;
   }
 
-  static String _desktopDataDirPath() {
-    final currentPath = Directory.current.path;
-    return join(currentPath, 'data');
+  @visibleForTesting
+  static String resolveDataDirPathForTest({
+    required bool isAndroid,
+    required bool isWindows,
+    required bool isDebug,
+    required String currentDirectoryPath,
+    required String resolvedExecutablePath,
+    required String systemTempParentPath,
+    String? dataRootOverrideForTest,
+  }) {
+    return _resolveDataDirPath(
+      isAndroid: isAndroid,
+      isWindows: isWindows,
+      isDebug: isDebug,
+      currentDirectoryPath: currentDirectoryPath,
+      resolvedExecutablePath: resolvedExecutablePath,
+      systemTempParentPath: systemTempParentPath,
+      dataRootOverrideForTest: dataRootOverrideForTest,
+    );
+  }
+
+  /// data 폴더 경로.
+  /// Windows Debug는 실행 위치와 무관하게 프로젝트 루트 data 폴더를 사용하고,
+  /// Android는 앱 전용 내부 저장소를 사용한다.
+  static Future<String> _dataDirPath() async {
+    return _resolveDataDirPath(
+      isAndroid: Platform.isAndroid,
+      isWindows: Platform.isWindows,
+      isDebug: kDebugMode,
+      currentDirectoryPath: Directory.current.path,
+      resolvedExecutablePath: Platform.resolvedExecutable,
+      systemTempParentPath: Directory.systemTemp.parent.path,
+      dataRootOverrideForTest: _dataRootOverrideForTest,
+    );
+  }
+
+  static String _resolveDataDirPath({
+    required bool isAndroid,
+    required bool isWindows,
+    required bool isDebug,
+    required String currentDirectoryPath,
+    required String resolvedExecutablePath,
+    required String systemTempParentPath,
+    required String? dataRootOverrideForTest,
+  }) {
+    if (dataRootOverrideForTest != null) {
+      return dataRootOverrideForTest;
+    }
+
+    if (isAndroid) {
+      return join(systemTempParentPath, 'files', 'data');
+    }
+
+    if (isWindows && isDebug) {
+      return _windowsDebugProjectDataDirPath(
+        currentDirectoryPath: currentDirectoryPath,
+        resolvedExecutablePath: resolvedExecutablePath,
+      );
+    }
+
+    return join(currentDirectoryPath, 'data');
+  }
+
+  static String _windowsDebugProjectDataDirPath({
+    required String currentDirectoryPath,
+    required String resolvedExecutablePath,
+  }) {
+    final currentRoot = _findProjectRootAtOrAbove(currentDirectoryPath);
+    if (currentRoot != null) {
+      return join(currentRoot.path, 'data');
+    }
+
+    if (resolvedExecutablePath.trim().isNotEmpty) {
+      final executableRoot = _findProjectRootAtOrAbove(
+        File(resolvedExecutablePath).parent.path,
+      );
+      if (executableRoot != null) {
+        return join(executableRoot.path, 'data');
+      }
+    }
+
+    throw StateError(
+      'Windows Debug project root data directory를 찾을 수 없습니다. '
+      'currentDirectory=$currentDirectoryPath, '
+      'resolvedExecutable=$resolvedExecutablePath',
+    );
+  }
+
+  static Directory? _findProjectRootAtOrAbove(String startPath) {
+    var currentPath = normalize(absolute(startPath));
+
+    while (true) {
+      final current = Directory(currentPath);
+      if (_isProjectRoot(current)) {
+        return current;
+      }
+
+      final parentPath = dirname(currentPath);
+      if (parentPath == currentPath) {
+        return null;
+      }
+      currentPath = parentPath;
+    }
+  }
+
+  static bool _isProjectRoot(Directory directory) {
+    final dataDir = Directory(join(directory.path, 'data'));
+    return File(join(directory.path, 'pubspec.yaml')).existsSync() &&
+        dataDir.existsSync() &&
+        (File(join(dataDir.path, _seedDbFileName)).existsSync() ||
+            File(join(dataDir.path, _workDbFileName)).existsSync());
   }
 
   static Future<String> _seedDbPath() async {
