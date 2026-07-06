@@ -17,7 +17,7 @@ Reshet 프로젝트는 SQLite 데이터베이스를 사용한다.
 
 Windows 개발/테스트 경로는 repository root의 `data/` 디렉터리를 기준으로 유지한다.
 Android 앱은 `pubspec.yaml`에 선언된 `data/reshet_seed.db` asset을 앱 내부 `files/data/` 디렉터리로 복사하고, 같은 디렉터리의 `reshet_work.db`를 작업 DB로 사용한다.
-`data/reshet_seed.db`는 현재 개발 기준에서 `data/reshet_work.db`를 복사해 만든 snapshot이지만, 앱 공개 전까지 Git 미추적 로컬 private build asset으로 유지한다. 단, 완성 배포 DB를 뜻하지 않고 Hebrew Strong coverage 같은 콘텐츠 완성도는 별도 DB 완성도 phase에서 다룬다.
+`data/reshet_seed.db`는 앱 설치/reset baseline 역할의 snapshot이지만, Phase 41-A 확인 기준에서 `word_meaning_set`은 `data/reshet_work.db`에 존재하고 seed DB에는 없다. 앱 공개 전까지 seed DB는 Git 미추적 로컬 private build asset으로 유지한다. 단, 완성 배포 DB를 뜻하지 않고 Hebrew Strong coverage 같은 콘텐츠 완성도는 별도 DB 완성도 phase에서 다룬다.
 `data/reshet_work.db`는 mutable local work DB이므로 Git 미추적 상태로 유지한다.
 clean clone에는 DB 파일이 포함되지 않으므로, Android full build와 fresh install smoke는 별도 private DB 준비 후 수행한다.
 
@@ -178,11 +178,16 @@ H0001_0000
 
 현재 상태:
 
-- `DatabaseService.openDatabaseFile()`과 `resetToSeed()`가 `word_meaning_set` 테이블과 인덱스를 보장한다.
+- Phase 41-A 확인 기준에서 `data/reshet_work.db`에는 `word_meaning_set`이 존재하고, seed DB에는 존재하지 않는다.
+- 앱은 work DB가 있으면 work DB를 열고, 없을 때만 seed를 복사한다.
+- `DatabaseService.openDatabaseFile()`과 `resetToSeed()`의 runtime ensure 경로가 `word_meaning_set` 테이블과 인덱스를 보장한다.
 - 테이블이 비어 있을 때만 legacy `WORD_TABLE.의미1~7`에서 one-time backfill한다.
 - backfill은 raw 의미 문자열을 수정하지 않고 기존 slot 번호를 `seq`로 보존한다.
-- 현재 detail/search/graph read path는 계속 legacy `WORD_TABLE.의미1~7` projection을 읽는다.
+- 현재 meaning read/write authority는 `word_meaning_set`이다.
 - 현재 앱 meaning write path는 `word_meaning_set`를 우선 갱신하고 `WORD_TABLE.의미1~7` projection을 같은 transaction에서 함께 유지한다.
+- legacy `WORD_TABLE.의미1~7`은 compatibility projection과 제한적 fallback 역할을 유지한다.
+- meaning 표시 목록은 `seq ASC, id ASC` 순서로 materialize하며, trim 후 빈 값은 제외한다.
+- 대표 meaning은 materialized 표시 목록의 첫 번째 값이다.
 - `word_meaning_set.id`는 surrogate key이다.
 - 의미 비교와 정합성 검증은 `(word_id, seq)`를 natural identity로 본다.
 

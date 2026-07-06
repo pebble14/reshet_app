@@ -8,7 +8,7 @@
 
 ## 2. 문서 범위
 
-- word core / expression / relation 저장 구조
+- word core / expression / meaning / relation 저장 구조
 - repository read boundary
 - UI contract boundary
 - import/export 책임 경계
@@ -85,6 +85,45 @@
 - `RELATION_STATUS` lookup table도 존재한다.
 - 그러나 현재 실제 데이터의 `WORD_RELATION.status_code` 값과 `RELATION_STATUS` lookup membership가 일치하지 않는다.
 - 이 불일치가 남아 있는 동안 `RELATION_STATUS`는 canonical lookup 완료 상태로 선언할 수 없다.
+
+### 5.4 Phase 41-B canonical boundary 기록
+
+이 section은 Phase 41-A 감사에서 이미 확인된 현재 경계만 기록한다. 새 설계, migration 계획, legacy 제거 일정, relation status 해결안은 포함하지 않는다.
+
+#### 5.4.1 현재 canonical read/write authority
+
+| 영역 | 현재 canonical read/write authority | compatibility projection 및 fallback 경계 |
+| --- | --- | --- |
+| expression | `word_expression_set` 중심의 normalized-with-fallback 경계 | `WORD_TABLE` expression slot은 compatibility projection이며, legacy fallback 축소는 이번 범위 밖이다. |
+| meaning | `word_meaning_set` | `WORD_TABLE.의미1~7`은 compatibility projection과 제한적 fallback 역할을 유지한다. |
+| relation | `WORD_RELATION` | `RELATION_STATUS` lookup 정합성 문제는 relation status 별도 fix 후보다. |
+
+#### 5.4.2 meaning materialization 경계
+
+- meaning 표시 목록은 `word_meaning_set` row를 `seq ASC, id ASC` 순서로 materialize한다.
+- 표시 materialization에서는 trim 후 빈 값이 되는 meaning을 제외한다.
+- 대표 meaning은 materialized 표시 목록의 첫 번째 값이다.
+- legacy `WORD_TABLE.의미1~7`은 canonical authority가 아니며, compatibility projection과 제한적 fallback 경계로만 유지한다.
+- work DB의 `word_meaning_set` 18,149건은 legacy meaning의 non-empty 값과 missing/extra 0으로 일치한다.
+
+#### 5.4.3 seed/work DB와 runtime ensure 경계
+
+- Phase 41-A 확인 기준에서 seed DB에는 `word_meaning_set`이 없고, work DB에는 존재한다.
+- 앱은 work DB가 있으면 work DB를 열고, 없을 때만 seed를 복사한다.
+- 이후 runtime ensure 경로가 meaning table을 생성하거나 보강할 수 있다.
+- 이 기록은 seed/work parity 정책 확정이나 startup/restore contract 정리를 의미하지 않는다.
+
+#### 5.4.4 history와 relation status 경계
+
+- `CHANGE_HISTORY`는 현재 데이터 조회 authority가 아니라 undo/restore용 snapshot 저장소다.
+- `RELATION_STATUS` lookup에 없는 `status_code='inferred'` 데이터 7,413건은 meaning canonical boundary와 분리된 별도 fix 후보다.
+- 현재 relation의 canonical authority가 `WORD_RELATION`이라는 경계는 유지하지만, relation status lookup 정합성 수정은 이번 범위에 포함하지 않는다.
+
+#### 5.4.5 이번 기록이 확정하지 않는 사항
+
+- 현재 상태는 normalized-only 완료나 legacy column 물리적 제거 가능 확정을 의미하지 않는다.
+- legacy meaning column 삭제, projection 중단, fallback 제거는 이번 범위 밖이다.
+- expression fallback 축소, relation status lookup 정합성 수정, graph dynamics, node level, dark mode는 이번 범위에 포함하지 않는다.
 
 ## 6. 목표 상태
 
