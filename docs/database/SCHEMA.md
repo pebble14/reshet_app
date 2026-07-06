@@ -181,6 +181,7 @@ H0001_0000
 - Phase 41-A 확인 기준에서 `data/reshet_work.db`에는 `word_meaning_set`이 존재하고, seed DB에는 존재하지 않는다.
 - 앱은 work DB가 있으면 work DB를 열고, 없을 때만 seed를 복사한다.
 - `DatabaseService.openDatabaseFile()`과 `resetToSeed()`의 runtime ensure 경로가 `word_meaning_set` 테이블과 인덱스를 보장한다.
+- Phase 41-C 확인 기준에서 seed-only 최초 시작, 기존 work DB 시작, `resetToSeed()` 이후 재오픈은 모두 같은 runtime ensure/backfill 계약으로 `word_meaning_set` canonical 상태를 준비한다.
 - 테이블이 비어 있을 때만 legacy `WORD_TABLE.의미1~7`에서 one-time backfill한다.
 - backfill은 raw 의미 문자열을 수정하지 않고 기존 slot 번호를 `seq`로 보존한다.
 - 현재 meaning read/write authority는 `word_meaning_set`이다.
@@ -203,7 +204,7 @@ H0001_0000
 제약:
 
 - `FOREIGN KEY(word_id) REFERENCES WORD_TABLE(id) ON DELETE CASCADE`
-- `CHECK(seq >= 1 AND seq <= 7)`
+- `CHECK(seq >= 1)`
 - `CHECK(meaning <> '')`
 
 인덱스:
