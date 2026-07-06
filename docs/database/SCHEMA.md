@@ -17,7 +17,7 @@ Reshet 프로젝트는 SQLite 데이터베이스를 사용한다.
 
 Windows 개발/테스트 경로는 repository root의 `data/` 디렉터리를 기준으로 유지한다.
 Android 앱은 `pubspec.yaml`에 선언된 `data/reshet_seed.db` asset을 앱 내부 `files/data/` 디렉터리로 복사하고, 같은 디렉터리의 `reshet_work.db`를 작업 DB로 사용한다.
-`data/reshet_seed.db`는 앱 설치/reset baseline 역할의 snapshot이지만, Phase 41-A 확인 기준에서 `word_meaning_set`은 `data/reshet_work.db`에 존재하고 seed DB에는 없다. 앱 공개 전까지 seed DB는 Git 미추적 로컬 private build asset으로 유지한다. 단, 완성 배포 DB를 뜻하지 않고 Hebrew Strong coverage 같은 콘텐츠 완성도는 별도 DB 완성도 phase에서 다룬다.
+`data/reshet_seed.db`는 앱 설치/reset baseline 역할의 snapshot이며, Phase 43-A 기준으로 `word_meaning_set` canonical baseline과 `RELATION_STATUS.inferred` lookup을 물리적으로 포함한다. 앱 공개 전까지 seed DB는 Git 미추적 로컬 private build asset으로 유지한다. 단, 완성 배포 DB를 뜻하지 않고 Hebrew Strong coverage 같은 콘텐츠 완성도는 별도 DB 완성도 phase에서 다룬다.
 `data/reshet_work.db`는 mutable local work DB이므로 Git 미추적 상태로 유지한다.
 clean clone에는 DB 파일이 포함되지 않으므로, Android full build와 fresh install smoke는 별도 private DB 준비 후 수행한다.
 
@@ -178,10 +178,10 @@ H0001_0000
 
 현재 상태:
 
-- Phase 41-A 확인 기준에서 `data/reshet_work.db`에는 `word_meaning_set`이 존재하고, seed DB에는 존재하지 않는다.
+- Phase 43-A 기준에서 `data/reshet_seed.db`와 `data/reshet_work.db`는 모두 `word_meaning_set` 테이블과 `ux_word_meaning_set_word_seq` 인덱스를 포함한다.
 - 앱은 work DB가 있으면 work DB를 열고, 없을 때만 seed를 복사한다.
-- `DatabaseService.openDatabaseFile()`과 `resetToSeed()`의 runtime ensure 경로가 `word_meaning_set` 테이블과 인덱스를 보장한다.
-- Phase 41-C 확인 기준에서 seed-only 최초 시작, 기존 work DB 시작, `resetToSeed()` 이후 재오픈은 모두 같은 runtime ensure/backfill 계약으로 `word_meaning_set` canonical 상태를 준비한다.
+- `DatabaseService.openDatabaseFile()`과 `resetToSeed()`의 runtime ensure 경로는 기존 work DB, 과거 seed-only 최초 시작, reset 후 재오픈처럼 baseline이 오래된 경우를 위한 안전망으로 유지한다.
+- seed-only 최초 시작, 기존 work DB 시작, `resetToSeed()` 이후 재오픈은 모두 같은 runtime ensure/backfill 계약으로 `word_meaning_set` canonical 상태를 준비한다.
 - 테이블이 비어 있을 때만 legacy `WORD_TABLE.의미1~7`에서 one-time backfill한다.
 - backfill은 raw 의미 문자열을 수정하지 않고 기존 slot 번호를 `seq`로 보존한다.
 - 현재 meaning read/write authority는 `word_meaning_set`이다.
@@ -360,7 +360,7 @@ H0001_0000
 메모:
 
 - `WORD_RELATION.status_code`의 스키마 기본값은 `asserted`다.
-- `inferred`는 runtime lookup 보정 경로에서 공식 lookup 값으로 보장된다.
+- `inferred`는 seed baseline에 물리적으로 포함되며, runtime lookup 보정 경로도 기존/과거 DB 안전망으로 유지된다.
 - `inferred`는 기존 데이터와 기존 처리 경로에서 보존된 관계 상태를 뜻하며, 관계 유형·방향·근거가 현재 기준에서 독립적으로 확정·검증되었음을 뜻하지 않는다.
 - 이 보정은 relation 데이터 재작성이나 `WORD_RELATION.status_code` FK 추가를 포함하지 않는다.
 

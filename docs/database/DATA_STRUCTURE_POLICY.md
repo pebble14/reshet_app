@@ -53,8 +53,9 @@
 #### 5.1.1 meaning slot / word_meaning_set migration boundary
 
 - 현재 normal runtime의 meaning read 및 history authority는 `word_meaning_set`이다.
+- Phase 43-A 기준 private seed baseline은 `word_meaning_set` table과 `ux_word_meaning_set_word_seq` index를 물리적으로 포함한다.
 - `word_meaning_set`은 정상 runtime에서 `DatabaseService.openDatabaseFile()`의 DB open 직후 ensure/backfill되며, canonical meaning row 저장소로 사용한다.
-- 따라서 source DB 파일에 `word_meaning_set` table이 없는 상태 자체는 migration 누락으로 단정하지 않는다.
+- 따라서 과거 work DB나 legacy source DB 파일에 `word_meaning_set` table이 없는 상태 자체는 migration 누락으로 단정하지 않고 runtime 안전망으로 보강한다.
 - ensure/backfill에서는 raw 값이 존재하는 `의미N`을 문자열 수정 없이 `word_meaning_set.seq=N`으로 보존한다. `ROW_NUMBER()` 재번호 부여, hole 재압축, 순서 변경, trim, 중복 제거, 문자열 수정, 의미 병합/분할, 중요도 재판단은 하지 않는다. 예를 들어 `G2367_0000`의 `의미1`과 `의미7`은 `seq=1`, `seq=7`로 보존하며 `seq=2`로 당기지 않는다.
 - expression set의 `seq`는 표기/음역/발음 묶음의 안정적 대응 순서이고 대표성은 `is_representative`로 판단한다. meaning set의 `seq`는 기존 `의미1~7`의 우선순위와 표시 순서를 보존하므로 expression migration의 compact/reindex 전략을 재사용하지 않는다.
 - `word_meaning_set.seq`는 `seq >= 1`을 유지하며 `seq <= 7` 상한을 두지 않는다. `seq>7` canonical meaning은 허용되며 legacy slot에 맞추기 위해 절단하지 않는다.
@@ -83,7 +84,7 @@
 - `WORD_RELATION`은 현재 relation edge의 runtime storage다.
 - `RELATION_CATEGORY`, `RELATION_TYPE`는 runtime lookup으로 사용된다.
 - `RELATION_STATUS` lookup table도 존재한다.
-- `RELATION_STATUS.inferred`는 runtime lookup 보정 경로에서 공식 lookup 값으로 보장된다.
+- `RELATION_STATUS.inferred`는 seed baseline에 포함되며, runtime lookup 보정 경로에서도 기존/과거 DB 안전망으로 보장된다.
 - `inferred`의 사용자 표시 label은 `기존 데이터 기반`이다.
 - `inferred`는 기존 데이터와 기존 처리 경로에서 보존된 관계 상태이며, 관계 유형·방향·근거가 현재 기준에서 독립적으로 확정·검증되었음을 뜻하지 않는다.
 - 이 보정은 relation 데이터 재작성이나 `WORD_RELATION.status_code` FK 추가를 포함하지 않는다.
@@ -98,7 +99,7 @@
 | --- | --- | --- |
 | expression | `word_expression_set` 중심의 normalized-with-fallback 경계 | `WORD_TABLE` expression slot은 compatibility projection이며, legacy fallback 축소는 이번 범위 밖이다. |
 | meaning | `word_meaning_set` | `WORD_TABLE.의미1~7`은 compatibility projection과 제한적 fallback 역할을 유지한다. |
-| relation | `WORD_RELATION` | `RELATION_STATUS.inferred` lookup은 runtime 보정 대상이며, relation 데이터 재작성과 FK 추가는 별도 판단 대상이다. |
+| relation | `WORD_RELATION` | `RELATION_STATUS.inferred` lookup은 seed baseline과 runtime 보정 안전망에 포함되며, relation 데이터 재작성과 FK 추가는 별도 판단 대상이다. |
 
 #### 5.4.2 meaning materialization 경계
 
@@ -110,10 +111,10 @@
 
 #### 5.4.3 seed/work DB와 runtime ensure 경계
 
-- Phase 41-A 확인 기준에서 seed DB에는 `word_meaning_set`이 없고, work DB에는 존재한다.
+- Phase 43-A 기준에서 seed DB와 work DB 모두 `word_meaning_set` canonical baseline을 포함한다.
 - 앱은 work DB가 있으면 work DB를 열고, 없을 때만 seed를 복사한다.
-- 이후 runtime ensure 경로가 meaning table을 생성하거나 보강할 수 있다.
-- 이 기록은 seed/work parity 정책 확정이나 startup/restore contract 정리를 의미하지 않는다.
+- 이후 runtime ensure 경로는 기존 work DB나 과거 seed 상태를 열 때 meaning table을 생성하거나 보강하는 안전망으로 유지한다.
+- 이 기록은 legacy projection/fallback 제거, normalized-only 완료 선언, seed Git 추적 전환을 의미하지 않는다.
 
 #### 5.4.4 history와 relation status 경계
 
@@ -228,7 +229,7 @@
 
 ### 10.1 현재 상태
 
-- `RELATION_STATUS.inferred`는 runtime lookup 보정 경로에서 공식 lookup 값으로 보장된다.
+- `RELATION_STATUS.inferred`는 seed baseline에 포함되며, runtime lookup 보정 경로에서도 기존/과거 DB 안전망으로 보장된다.
 - 실제 relation data의 `status_code` 값은 보존되며, 이 문서는 relation data 재작성 완료나 FK 추가 완료를 선언하지 않는다.
 
 ### 10.2 구조적 의미
