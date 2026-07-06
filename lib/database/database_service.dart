@@ -276,6 +276,19 @@ class DatabaseService {
     ),
   ];
 
+  static const List<
+    ({String code, String label, String description, int sortOrder})
+  >
+  _relationStatusDefinitions = [
+    (
+      code: 'inferred',
+      label: '기존 데이터 기반',
+      description:
+          '기존 데이터와 기존 처리 경로에서 보존된 관계 상태다. 이 값은 관계 유형·방향·근거가 현재 기준에서 독립적으로 확정·검증되었음을 뜻하지 않는다.',
+      sortOrder: 7,
+    ),
+  ];
+
   @visibleForTesting
   static void setDataRootOverrideForTest(String? dataRootPath) {
     _dataRootOverrideForTest = dataRootPath;
@@ -974,6 +987,16 @@ class DatabaseService {
           sortOrder: relationType.sortOrder,
         );
       }
+
+      for (final status in _relationStatusDefinitions) {
+        await _upsertRelationStatus(
+          txn,
+          code: status.code,
+          label: status.label,
+          description: status.description,
+          sortOrder: status.sortOrder,
+        );
+      }
     });
   }
 
@@ -1029,5 +1052,31 @@ class DatabaseService {
     }
 
     await db.insert('RELATION_TYPE', {'code': code, ...row});
+  }
+
+  static Future<void> _upsertRelationStatus(
+    DatabaseExecutor db, {
+    required String code,
+    required String label,
+    required String description,
+    required int sortOrder,
+  }) async {
+    final row = {
+      'label': label,
+      'description': description,
+      'sort_order': sortOrder,
+    };
+
+    final updated = await db.update(
+      'RELATION_STATUS',
+      row,
+      where: 'code = ?',
+      whereArgs: [code],
+    );
+    if (updated > 0) {
+      return;
+    }
+
+    await db.insert('RELATION_STATUS', {'code': code, ...row});
   }
 }

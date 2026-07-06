@@ -83,8 +83,10 @@
 - `WORD_RELATION`은 현재 relation edge의 runtime storage다.
 - `RELATION_CATEGORY`, `RELATION_TYPE`는 runtime lookup으로 사용된다.
 - `RELATION_STATUS` lookup table도 존재한다.
-- 그러나 현재 실제 데이터의 `WORD_RELATION.status_code` 값과 `RELATION_STATUS` lookup membership가 일치하지 않는다.
-- 이 불일치가 남아 있는 동안 `RELATION_STATUS`는 canonical lookup 완료 상태로 선언할 수 없다.
+- `RELATION_STATUS.inferred`는 runtime lookup 보정 경로에서 공식 lookup 값으로 보장된다.
+- `inferred`의 사용자 표시 label은 `기존 데이터 기반`이다.
+- `inferred`는 기존 데이터와 기존 처리 경로에서 보존된 관계 상태이며, 관계 유형·방향·근거가 현재 기준에서 독립적으로 확정·검증되었음을 뜻하지 않는다.
+- 이 보정은 relation 데이터 재작성이나 `WORD_RELATION.status_code` FK 추가를 포함하지 않는다.
 
 ### 5.4 Phase 41-B canonical boundary 기록
 
@@ -96,7 +98,7 @@
 | --- | --- | --- |
 | expression | `word_expression_set` 중심의 normalized-with-fallback 경계 | `WORD_TABLE` expression slot은 compatibility projection이며, legacy fallback 축소는 이번 범위 밖이다. |
 | meaning | `word_meaning_set` | `WORD_TABLE.의미1~7`은 compatibility projection과 제한적 fallback 역할을 유지한다. |
-| relation | `WORD_RELATION` | `RELATION_STATUS` lookup 정합성 문제는 relation status 별도 fix 후보다. |
+| relation | `WORD_RELATION` | `RELATION_STATUS.inferred` lookup은 runtime 보정 대상이며, relation 데이터 재작성과 FK 추가는 별도 판단 대상이다. |
 
 #### 5.4.2 meaning materialization 경계
 
@@ -116,14 +118,15 @@
 #### 5.4.4 history와 relation status 경계
 
 - `CHANGE_HISTORY`는 현재 데이터 조회 authority가 아니라 undo/restore용 snapshot 저장소다.
-- `RELATION_STATUS` lookup에 없는 `status_code='inferred'` 데이터 7,413건은 meaning canonical boundary와 분리된 별도 fix 후보다.
-- 현재 relation의 canonical authority가 `WORD_RELATION`이라는 경계는 유지하지만, relation status lookup 정합성 수정은 이번 범위에 포함하지 않는다.
+- `status_code='inferred'` relation 데이터는 `RELATION_STATUS.inferred` lookup 보정과 함께 해석할 수 있다.
+- 이 보정은 relation 데이터 snapshot 재작성, history restore 정책 변경, relation provenance 모델 도입을 뜻하지 않는다.
+- 현재 relation의 canonical authority가 `WORD_RELATION`이라는 경계는 유지한다.
 
 #### 5.4.5 이번 기록이 확정하지 않는 사항
 
 - 현재 상태는 normalized-only 완료나 legacy column 물리적 제거 가능 확정을 의미하지 않는다.
 - legacy meaning column 삭제, projection 중단, fallback 제거는 이번 범위 밖이다.
-- expression fallback 축소, relation status lookup 정합성 수정, graph dynamics, node level, dark mode는 이번 범위에 포함하지 않는다.
+- expression fallback 축소, relation 데이터 재작성, graph dynamics, node level, dark mode는 이번 범위에 포함하지 않는다.
 
 ## 6. 목표 상태
 
@@ -225,14 +228,14 @@
 
 ### 10.1 현재 상태
 
-- 실제 relation data의 `status_code`와 `RELATION_STATUS` lookup membership가 일치하지 않는다.
-- 이는 relation lookup 정합성이 아직 완료되지 않았음을 의미한다.
+- `RELATION_STATUS.inferred`는 runtime lookup 보정 경로에서 공식 lookup 값으로 보장된다.
+- 실제 relation data의 `status_code` 값은 보존되며, 이 문서는 relation data 재작성 완료나 FK 추가 완료를 선언하지 않는다.
 
 ### 10.2 구조적 의미
 
-- relation 구조는 아직 canonical lookup 완료 상태가 아니다.
+- relation 구조는 아직 전체 canonical 전환 완료 상태가 아니다.
 - relation 구조 정합화 phase가 별도로 필요하다.
-- 완료 선언 전에는 lookup code set, 실제 data code set, repository/runtime 해석이 서로 일치해야 한다.
+- 완료 선언 전에는 lookup code set, 실제 data code set, repository/runtime 해석, history/restore 정책이 서로 일치해야 한다.
 
 ### 10.3 현재 작업 경계
 
@@ -287,7 +290,7 @@
 - `WORD_TABLE` 역할 확정
 - expression authority transition
 - meaning legacy projection 축소 또는 제거 정책 확정
-- relation lookup/data/contract 정합화
+- relation data/contract 정합화
 - legacy slot 축소 또는 제거 정책 확정
 
 ### 13.3 병렬 가능성

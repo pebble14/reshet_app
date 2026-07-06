@@ -12,6 +12,8 @@ void main() {
   late File sourceSeedFile;
   Directory? tempRoot;
 
+  const assertedRelationStatusCode = 'asserted';
+
   setUpAll(() async {
     repoRootPath = Directory.current.path;
     sourceSeedFile = File(p.join(repoRootPath, 'data', 'reshet_seed.db'));
@@ -130,7 +132,14 @@ void main() {
     'existing work DB opens without seed and has canonical meanings',
     () async {
       final dataDir = await _createDataRoot(tempRoot!);
-      await sourceSeedFile.copy(p.join(dataDir.path, 'reshet_work.db'));
+      final workPath = p.join(dataDir.path, 'reshet_work.db');
+      await sourceSeedFile.copy(workPath);
+      final expectedDistribution =
+          await _readRelationStatusDistributionFromPath(workPath);
+      final expectedAsserted = await _readRelationStatusRowFromPath(
+        workPath,
+        assertedRelationStatusCode,
+      );
       DatabaseService.setDataRootOverrideForTest(dataDir.path);
 
       final db = await DatabaseService.openDatabaseFile();
@@ -140,7 +149,14 @@ void main() {
 
       expect(tableRows, isNotEmpty);
       await _expectMeaningCanonicalState(db);
-      expect(File(p.join(dataDir.path, 'reshet_work.db')).existsSync(), isTrue);
+      await _expectInferredRelationStatus(db);
+      await _expectRelationStatusRow(
+        db,
+        assertedRelationStatusCode,
+        expectedAsserted,
+      );
+      await _expectRelationStatusDistribution(db, expectedDistribution);
+      expect(File(workPath).existsSync(), isTrue);
       expect(
         File(p.join(dataDir.path, 'reshet_seed.db')).existsSync(),
         isFalse,
@@ -153,7 +169,14 @@ void main() {
     'seed DB creates canonical work DB in the project data root only',
     () async {
       final dataDir = await _createDataRoot(tempRoot!);
-      await sourceSeedFile.copy(p.join(dataDir.path, 'reshet_seed.db'));
+      final seedPath = p.join(dataDir.path, 'reshet_seed.db');
+      await sourceSeedFile.copy(seedPath);
+      final expectedDistribution =
+          await _readRelationStatusDistributionFromPath(seedPath);
+      final expectedAsserted = await _readRelationStatusRowFromPath(
+        seedPath,
+        assertedRelationStatusCode,
+      );
       DatabaseService.setDataRootOverrideForTest(dataDir.path);
 
       final workPath = p.join(dataDir.path, 'reshet_work.db');
@@ -166,6 +189,13 @@ void main() {
 
       expect(tableRows, isNotEmpty);
       await _expectMeaningCanonicalState(db);
+      await _expectInferredRelationStatus(db);
+      await _expectRelationStatusRow(
+        db,
+        assertedRelationStatusCode,
+        expectedAsserted,
+      );
+      await _expectRelationStatusDistribution(db, expectedDistribution);
       expect(File(workPath).existsSync(), isTrue);
       expect(_isInside(tempRoot!.path, workPath), isTrue);
     },
@@ -177,6 +207,13 @@ void main() {
     final workPath = p.join(dataDir.path, 'reshet_work.db');
     await sourceSeedFile.copy(seedPath);
     await sourceSeedFile.copy(workPath);
+    final expectedDistribution = await _readRelationStatusDistributionFromPath(
+      seedPath,
+    );
+    final expectedAsserted = await _readRelationStatusRowFromPath(
+      seedPath,
+      assertedRelationStatusCode,
+    );
 
     DatabaseService.setDataRootOverrideForTest(dataDir.path);
     final beforeResetDb = await DatabaseService.openDatabaseFile();
@@ -194,24 +231,37 @@ void main() {
       ''');
     expect(markerRows, isEmpty);
     await _expectMeaningCanonicalState(afterResetDb);
+    await _expectInferredRelationStatus(afterResetDb);
+    await _expectRelationStatusRow(
+      afterResetDb,
+      assertedRelationStatusCode,
+      expectedAsserted,
+    );
+    await _expectRelationStatusDistribution(afterResetDb, expectedDistribution);
     expect(File(p.join(dataDir.path, 'backups')).existsSync(), isFalse);
     expect(_isInside(tempRoot!.path, workPath), isTrue);
   });
 
-  test('Android data path remains app-private and ignores Windows Debug resolver', () {
-    final systemTempParentPath = p.join(tempRoot!.path, 'android_parent');
+  test(
+    'Android data path remains app-private and ignores Windows Debug resolver',
+    () {
+      final systemTempParentPath = p.join(tempRoot!.path, 'android_parent');
 
-    final resolvedPath = DatabaseService.resolveDataDirPathForTest(
-      isAndroid: true,
-      isWindows: true,
-      isDebug: true,
-      currentDirectoryPath: p.join(tempRoot!.path, 'debug'),
-      resolvedExecutablePath: p.join(tempRoot!.path, 'debug', 'study.exe'),
-      systemTempParentPath: systemTempParentPath,
-    );
+      final resolvedPath = DatabaseService.resolveDataDirPathForTest(
+        isAndroid: true,
+        isWindows: true,
+        isDebug: true,
+        currentDirectoryPath: p.join(tempRoot!.path, 'debug'),
+        resolvedExecutablePath: p.join(tempRoot!.path, 'debug', 'study.exe'),
+        systemTempParentPath: systemTempParentPath,
+      );
 
-    _expectSamePath(resolvedPath, p.join(systemTempParentPath, 'files', 'data'));
-  });
+      _expectSamePath(
+        resolvedPath,
+        p.join(systemTempParentPath, 'files', 'data'),
+      );
+    },
+  );
 }
 
 Future<Directory> _createProjectRoot(
@@ -222,9 +272,9 @@ Future<Directory> _createProjectRoot(
   final dataDir = Directory(p.join(projectRoot.path, 'data'));
 
   await dataDir.create(recursive: true);
-  await File(p.join(projectRoot.path, 'pubspec.yaml')).writeAsString(
-    'name: reshet_project_test\n',
-  );
+  await File(
+    p.join(projectRoot.path, 'pubspec.yaml'),
+  ).writeAsString('name: reshet_project_test\n');
   if (withWork) {
     await File(p.join(dataDir.path, 'reshet_work.db')).writeAsString('fixture');
   }
@@ -244,6 +294,98 @@ void _expectSamePath(String actual, String expected) {
 
 bool _isInside(String parent, String child) {
   return p.equals(parent, child) || p.isWithin(parent, child);
+}
+
+Future<Map<String, Object?>> _readRelationStatusRowFromPath(
+  String dbPath,
+  String code,
+) async {
+  return _withReadOnlyDb(dbPath, (db) => _readRelationStatusRow(db, code));
+}
+
+Future<Map<String, int>> _readRelationStatusDistributionFromPath(
+  String dbPath,
+) async {
+  return _withReadOnlyDb(dbPath, _readRelationStatusDistribution);
+}
+
+Future<T> _withReadOnlyDb<T>(
+  String dbPath,
+  Future<T> Function(Database db) read,
+) async {
+  final db = await databaseFactoryFfi.openDatabase(
+    dbPath,
+    options: OpenDatabaseOptions(readOnly: true),
+  );
+  try {
+    return await read(db);
+  } finally {
+    await db.close();
+  }
+}
+
+Future<Map<String, Object?>> _readRelationStatusRow(
+  Database db,
+  String code,
+) async {
+  final rows = await db.rawQuery(
+    '''
+    SELECT code, label, description, sort_order
+    FROM RELATION_STATUS
+    WHERE code = ?
+    ''',
+    [code],
+  );
+  expect(rows, hasLength(1));
+  return rows.single;
+}
+
+Future<Map<String, int>> _readRelationStatusDistribution(Database db) async {
+  final rows = await db.rawQuery('''
+    SELECT status_code, COUNT(*) AS status_count
+    FROM WORD_RELATION
+    GROUP BY status_code
+    ORDER BY status_code
+    ''');
+
+  return {
+    for (final row in rows)
+      (row['status_code'] ?? '').toString(): row['status_count'] as int,
+  };
+}
+
+Future<void> _expectInferredRelationStatus(Database db) async {
+  final row = await _readRelationStatusRow(db, 'inferred');
+
+  expect(row['code'], 'inferred');
+  expect(row['label'], '기존 데이터 기반');
+  expect(
+    row['description'],
+    '기존 데이터와 기존 처리 경로에서 보존된 관계 상태다. 이 값은 관계 유형·방향·근거가 현재 기준에서 독립적으로 확정·검증되었음을 뜻하지 않는다.',
+  );
+  expect(row['sort_order'], 7);
+}
+
+Future<void> _expectRelationStatusRow(
+  Database db,
+  String code,
+  Map<String, Object?> expected,
+) async {
+  final row = await _readRelationStatusRow(db, code);
+
+  expect(row['code'], expected['code']);
+  expect(row['label'], expected['label']);
+  expect(row['description'], expected['description']);
+  expect(row['sort_order'], expected['sort_order']);
+}
+
+Future<void> _expectRelationStatusDistribution(
+  Database db,
+  Map<String, int> expected,
+) async {
+  final actual = await _readRelationStatusDistribution(db);
+
+  expect(actual, expected);
 }
 
 Future<void> _expectMeaningCanonicalState(Database db) async {

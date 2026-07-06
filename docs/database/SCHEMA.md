@@ -355,11 +355,14 @@ H0001_0000
 | `uncertain` | 불확실 | `4` |
 | `rejected` | 부정됨 | `5` |
 | `unknown` | 미정 | `6` |
+| `inferred` | 기존 데이터 기반 | `7` |
 
 메모:
 
 - `WORD_RELATION.status_code`의 스키마 기본값은 `asserted`다.
-- 현재 `reshet_work.db`의 `WORD_RELATION` 데이터에는 `inferred` 값도 존재하므로, lookup 행과 실제 데이터 값의 정합성은 별도 검토 대상이다.
+- `inferred`는 runtime lookup 보정 경로에서 공식 lookup 값으로 보장된다.
+- `inferred`는 기존 데이터와 기존 처리 경로에서 보존된 관계 상태를 뜻하며, 관계 유형·방향·근거가 현재 기준에서 독립적으로 확정·검증되었음을 뜻하지 않는다.
+- 이 보정은 relation 데이터 재작성이나 `WORD_RELATION.status_code` FK 추가를 포함하지 않는다.
 
 ---
 
@@ -415,7 +418,7 @@ H0001_0000
 앱은 DB를 열 때 다음 흐름으로 relation metadata를 맞춘다.
 
 1. seed DB를 work DB로 복사한다.
-2. `database_service.dart`가 `RELATION_CATEGORY.code`, `RELATION_TYPE.code` 기준으로 upsert를 수행한다.
+2. `database_service.dart`가 `RELATION_CATEGORY.code`, `RELATION_TYPE.code`, `RELATION_STATUS.code` 기준으로 upsert를 수행한다.
 3. 기존 work DB와 reset 후 work DB 모두 같은 label, description, sort_order를 갖게 된다.
 
 이 방식은 DB 파일을 직접 수정하지 않고도 lookup 정합화를 유지하기 위한 것이다.
