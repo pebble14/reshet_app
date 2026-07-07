@@ -41,6 +41,7 @@ void main() {
     );
 
     await DatabaseService.closeDatabase();
+    DatabaseService.setDataRootOverrideForTest(null);
     await DatabaseService.initialize();
   });
 
@@ -50,11 +51,15 @@ void main() {
       repoRootPath,
       sourceWorkDbPath,
     );
+    DatabaseService.setDataRootOverrideForTest(
+      p.join(isolatedRoot!.path, 'data'),
+    );
     Directory.current = isolatedRoot!.path;
   });
 
   tearDown(() async {
     await DatabaseService.closeDatabase();
+    DatabaseService.setDataRootOverrideForTest(null);
     Directory.current = repoRootPath;
 
     if (isolatedRoot != null && isolatedRoot!.existsSync()) {

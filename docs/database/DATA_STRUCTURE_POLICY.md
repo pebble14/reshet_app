@@ -129,6 +129,15 @@
 - legacy meaning column 삭제, projection 중단, fallback 제거는 이번 범위 밖이다.
 - expression fallback 축소, relation 데이터 재작성, graph dynamics, node level, dark mode는 이번 범위에 포함하지 않는다.
 
+#### 5.4.6 canonical read/write closure guard 경계
+
+- 사용자 기능용 detail, home/search, graph single/center/batch, explorer/split view, edit seed, save 후 재조회, undo 후 재조회는 expression `word_expression_set`, meaning `word_meaning_set` 기준의 canonical read contract를 사용한다.
+- generic/raw helper의 legacy 기본 정책은 raw compatibility 경계로 유지할 수 있다. 이 경계는 사용자 기능용 canonical display/read의 근거가 아니다.
+- 신규 expression/meaning write는 normalized table을 먼저 갱신하고, `WORD_TABLE` expression/meaning slot은 compatibility projection으로 동기화한다.
+- 새 `CHANGE_HISTORY` word snapshot은 normalized expression/meaning row를 포함하며, restore는 해당 normalized payload를 우선한다.
+- normalized payload가 없는 과거 history snapshot은 legacy slot fallback을 compatibility 목적으로만 사용한다.
+- 이 closure guard의 완료 기준은 legacy slot 물리 삭제, projection 중단, 과거 history 재작성, fallback 전면 제거가 아니다. 해당 작업은 별도 production/data phase에서 판단한다.
+
 ## 6. 목표 상태
 
 ### 6.1 canonical normalized target

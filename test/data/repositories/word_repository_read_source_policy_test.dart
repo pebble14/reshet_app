@@ -27,6 +27,7 @@ void main() {
     );
 
     await DatabaseService.closeDatabase();
+    DatabaseService.setDataRootOverrideForTest(null);
     await DatabaseService.initialize();
   });
 
@@ -38,11 +39,15 @@ void main() {
       repoRootPath,
       sourceWorkDbPath,
     );
+    DatabaseService.setDataRootOverrideForTest(
+      p.join(isolatedRoot!.path, 'data'),
+    );
     Directory.current = isolatedRoot!.path;
   });
 
   tearDown(() async {
     await DatabaseService.closeDatabase();
+    DatabaseService.setDataRootOverrideForTest(null);
     WordRepository.debugSetReadSourcePolicyOverride(null);
     WordRepository.debugReadSourceCollector.debugReset();
     Directory.current = repoRootPath;
@@ -317,6 +322,178 @@ void main() {
     );
   });
 
+  group('Canonical read/write closure guard', () {
+    test(
+      'user-facing feature contexts use canonical read policy and normalized rows',
+      () async {
+        final repository = WordRepository();
+        final db = await DatabaseService.openDatabaseFile();
+        const centerWordId = 'T9000_RS_CLOSURE_CENTER';
+        const targetWordId = 'T9000_RS_CLOSURE_TARGET';
+        const strongNumber = 'G999999';
+        const canonicalTitle = 'canonical-closure-title';
+        const canonicalMeaning = 'canonical closure meaning';
+
+        await _insertCanonicalClosureWord(
+          db,
+          id: centerWordId,
+          strongNumber: 'G999998',
+          legacySpelling: 'legacy-closure-center',
+          canonicalSpelling: 'canonical-closure-center',
+          canonicalMeaning: 'canonical closure center meaning',
+        );
+        await _insertCanonicalClosureWord(
+          db,
+          id: targetWordId,
+          strongNumber: strongNumber,
+          legacySpelling: 'legacy-closure-title',
+          canonicalSpelling: canonicalTitle,
+          canonicalMeaning: canonicalMeaning,
+        );
+        await db.insert('WORD_RELATION', {
+          'word_id_1': centerWordId,
+          'word_id_2': targetWordId,
+          'direction_code': 'unknown',
+          'updated_at': DateTime.now().toIso8601String(),
+        });
+
+        final detailDisplay = await repository
+            .getWordDetailLikeDisplayItemByIdForDetailScreen(targetWordId);
+        _expectNormalizedSnapshot(
+          targetWordId,
+          'getWordDetailLikeDisplayItemByIdForDetailScreen',
+        );
+        final splitViewDisplay = await repository
+            .getWordDetailLikeDisplayItemByIdForSplitView(targetWordId);
+        _expectNormalizedSnapshot(targetWordId, 'readForSplitViewSingleWord');
+        final explorerRow = await repository
+            .getWordMapByIdForExplorerSingleWord(targetWordId);
+        _expectNormalizedSnapshot(targetWordId, 'readForExplorerSingleWord');
+        final graphSingleRow = await repository
+            .getWordMapByIdForGraphSingleWord(targetWordId);
+        _expectNormalizedSnapshot(targetWordId, 'readForGraphSingleWord');
+        final graphCenterRow = await repository
+            .getWordMapByIdForGraphCenterSingleWord(targetWordId);
+        _expectNormalizedSnapshot(targetWordId, 'readForGraphCenterSingleWord');
+        final graphCenterDisplay = await repository
+            .getGraphCenterWordDisplayItemByIdForGraphCenterSingleWord(
+              targetWordId,
+            );
+        final graphData = await repository.getVisibleGraphDataForGraph(
+          centerWordId,
+        );
+        _expectNormalizedSnapshot(targetWordId, 'readForGraphBatch');
+        final strongItems = await repository.getStrongWordsMap();
+        _expectNormalizedSnapshot(targetWordId, 'getStrongWordsMap');
+        final searchItems = await repository.searchWordsMap(
+          canonicalTitle,
+          limit: 20,
+        );
+        _expectNormalizedSnapshot(targetWordId, 'searchWordsMap');
+        final strongExactItems = await repository.searchStrongExactMap(
+          strongNumber,
+          limit: 20,
+        );
+        _expectNormalizedSnapshot(targetWordId, 'searchStrongExactMap');
+        final detailSeed = await repository.getWordEditSeedForDetailEdit(
+          targetWordId,
+        );
+        _expectNormalizedSnapshot(targetWordId, 'readForDetailEditSeed');
+        final explorerSeed = await repository.getWordEditSeedForExplorerEdit(
+          targetWordId,
+        );
+        _expectNormalizedSnapshot(targetWordId, 'readForExplorerEditSeed');
+        final graphEditSeed = await repository
+            .getWordEditSeedForGraphCreateEdit(targetWordId);
+        _expectNormalizedSnapshot(targetWordId, 'readForGraphCreateEditSeed');
+        final graphPostSavePayload = await repository
+            .getGraphCreatePostSavePayloadAfterEdit(targetWordId);
+        _expectNormalizedSnapshot(
+          targetWordId,
+          'readForGraphCreatePostSavePayload',
+        );
+        final afterSaveRow = await repository
+            .getWordMapByIdForReadAfterSaveSingleWord(targetWordId);
+        _expectNormalizedSnapshot(targetWordId, 'readAfterSaveSingleWord');
+        final afterUndoRow = await repository
+            .getWordMapByIdForReadAfterUndoSingleWord(targetWordId);
+        _expectNormalizedSnapshot(targetWordId, 'readAfterUndoSingleWord');
+
+        final graphChild = graphData.connectedWords.singleWhere(
+          (word) => word.wordId == targetWordId,
+        );
+        final strongItem = strongItems.singleWhere(
+          (item) => item.wordId == targetWordId,
+        );
+        final searchItem = searchItems.singleWhere(
+          (item) => item.wordId == targetWordId,
+        );
+        final strongExactItem = strongExactItems.singleWhere(
+          (item) => item.wordId == targetWordId,
+        );
+
+        expect(detailDisplay, isNotNull);
+        expect(detailDisplay!.representativeSpelling, canonicalTitle);
+        expect(detailDisplay.meanings, [canonicalMeaning]);
+        expect(splitViewDisplay, isNotNull);
+        expect(splitViewDisplay!.representativeSpelling, canonicalTitle);
+        expect(explorerRow!['표기1'], canonicalTitle);
+        expect(explorerRow['의미1'], canonicalMeaning);
+        expect(graphSingleRow!['표기1'], canonicalTitle);
+        expect(graphCenterRow!['표기1'], canonicalTitle);
+        expect(graphCenterDisplay, isNotNull);
+        expect(graphCenterDisplay!.representativeSpelling, canonicalTitle);
+        expect(graphCenterDisplay.primaryMeaning, canonicalMeaning);
+        expect(graphChild.fallbackSpelling, canonicalTitle);
+        expect(strongItem.representativeSpelling, canonicalTitle);
+        expect(searchItem.representativeSpelling, canonicalTitle);
+        expect(strongExactItem.representativeSpelling, canonicalTitle);
+        expect(
+          detailSeed!.expressionReadResult.sets.single.spelling,
+          canonicalTitle,
+        );
+        expect(detailSeed.meanings, [canonicalMeaning]);
+        expect(
+          explorerSeed!.expressionReadResult.sets.single.spelling,
+          canonicalTitle,
+        );
+        expect(
+          graphEditSeed!.expressionReadResult.sets.single.spelling,
+          canonicalTitle,
+        );
+        expect(graphPostSavePayload!.representativeSpelling, canonicalTitle);
+        expect(afterSaveRow!['표기1'], canonicalTitle);
+        expect(afterSaveRow['의미1'], canonicalMeaning);
+        expect(afterUndoRow!['표기1'], canonicalTitle);
+        expect(afterUndoRow['의미1'], canonicalMeaning);
+      },
+    );
+
+    test('generic raw batch remains a LEGACY compatibility boundary', () async {
+      final repository = WordRepository();
+      final db = await DatabaseService.openDatabaseFile();
+      const wordId = 'T9000_RS_GENERIC_RAW_COMPAT';
+
+      await _insertCanonicalClosureWord(
+        db,
+        id: wordId,
+        strongNumber: 'H943002',
+        legacySpelling: 'legacy-generic-title',
+        canonicalSpelling: 'normalized-generic-title',
+        canonicalMeaning: 'normalized generic meaning',
+      );
+
+      final rows = await repository.getWordsByIds([wordId]);
+      final snapshot = _lastSnapshotFor(wordId, 'getWordsByIds');
+
+      expect(rows, hasLength(1));
+      expect(rows.single['표기1'], 'legacy-generic-title');
+      expect(snapshot.requestedPolicy, ReadSourcePolicy.legacy);
+      expect(snapshot.finalResultSource, FinalReadResultSource.legacy);
+      expect(snapshot.didFallback, isFalse);
+    });
+  });
+
   group('WordRepository split view single-word path', () {
     test(
       'split view and explorer single-word reads use NORMALIZED_WITH_FALLBACK while contexts stay separated',
@@ -436,7 +613,7 @@ void main() {
 
   group('WordRepository graph batch path', () {
     test(
-      'graph batch uses NORMALIZED_WITH_FALLBACK while generic batch keeps LEGACY and collector contexts stay separated',
+      'graph batch uses canonical policy while generic raw batch remains LEGACY compatibility boundary',
       () async {
         final repository = WordRepository();
         final db = await DatabaseService.openDatabaseFile();
@@ -994,6 +1171,57 @@ Future<Directory> _createIsolatedWorkspace(
   await File(sourceWorkDbPath).copy(p.join(dataDir.path, 'reshet_work.db'));
 
   return isolatedRoot;
+}
+
+WordExpressionReadSnapshot _lastSnapshotFor(String wordId, String context) {
+  return WordRepository.debugReadSourceCollector
+      .debugRecentSnapshots()
+      .lastWhere(
+        (snapshot) => snapshot.wordId == wordId && snapshot.context == context,
+      );
+}
+
+void _expectNormalizedSnapshot(String wordId, String context) {
+  final snapshot = _lastSnapshotFor(wordId, context);
+
+  expect(snapshot.requestedPolicy, ReadSourcePolicy.normalizedWithFallback);
+  expect(snapshot.finalResultSource, FinalReadResultSource.normalized);
+  expect(snapshot.didFallback, isFalse);
+  expect(snapshot.legacyResultAvailable, isTrue);
+  expect(snapshot.normalizedResultAvailable, isTrue);
+  expect(snapshot.fallbackObservation, isNull);
+}
+
+Future<void> _insertCanonicalClosureWord(
+  dynamic db, {
+  required String id,
+  required String strongNumber,
+  required String legacySpelling,
+  required String canonicalSpelling,
+  required String canonicalMeaning,
+}) async {
+  await db.insert('WORD_TABLE', {
+    'id': id,
+    '\uC5B8\uC5B4': '\uD14C\uC2A4\uD2B8',
+    '\uC2A4\uD2B8\uB871\uB118\uBC84': strongNumber,
+    '\uD45C\uAE301': legacySpelling,
+    '\uC74C\uC5ED1': 'legacy-translit-$id',
+    '\uBC1C\uC74C1': 'legacy-pron-$id',
+    '\uC758\uBBF81': 'legacy meaning $id',
+  });
+  await db.insert('word_expression_set', {
+    'word_id': id,
+    'seq': 1,
+    'is_representative': 1,
+    'spelling': canonicalSpelling,
+    'transliteration': 'canonical-translit-$id',
+    'pronunciation': 'canonical-pron-$id',
+  });
+  await db.insert('word_meaning_set', {
+    'word_id': id,
+    'seq': 1,
+    'meaning': canonicalMeaning,
+  });
 }
 
 void _expectSameDetailDisplay(Object expectedDetail, Object actualDetail) {
