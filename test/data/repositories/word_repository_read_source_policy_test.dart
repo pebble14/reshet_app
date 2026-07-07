@@ -13,17 +13,17 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   late String repoRootPath;
-  late String sourceWorkDbPath;
+  late String sourceSeedDbPath;
   Directory? isolatedRoot;
 
   setUpAll(() async {
     repoRootPath = Directory.current.path;
-    sourceWorkDbPath = p.join(repoRootPath, 'data', 'reshet_work.db');
+    sourceSeedDbPath = p.join(repoRootPath, 'data', 'reshet_seed.db');
 
     expect(
-      File(sourceWorkDbPath).existsSync(),
+      File(sourceSeedDbPath).existsSync(),
       isTrue,
-      reason: 'read source policy 테스트용 기준 DB가 필요합니다.',
+      reason: 'read source policy 테스트용 기준 seed DB가 필요합니다.',
     );
 
     await DatabaseService.closeDatabase();
@@ -35,14 +35,10 @@ void main() {
     await DatabaseService.closeDatabase();
     WordRepository.debugSetReadSourcePolicyOverride(null);
     WordRepository.debugReadSourceCollector.debugReset();
-    isolatedRoot = await _createIsolatedWorkspace(
-      repoRootPath,
-      sourceWorkDbPath,
-    );
+    isolatedRoot = await _createIsolatedWorkspace(sourceSeedDbPath);
     DatabaseService.setDataRootOverrideForTest(
       p.join(isolatedRoot!.path, 'data'),
     );
-    Directory.current = isolatedRoot!.path;
   });
 
   tearDown(() async {
@@ -50,7 +46,6 @@ void main() {
     DatabaseService.setDataRootOverrideForTest(null);
     WordRepository.debugSetReadSourcePolicyOverride(null);
     WordRepository.debugReadSourceCollector.debugReset();
-    Directory.current = repoRootPath;
 
     if (isolatedRoot != null && isolatedRoot!.existsSync()) {
       await isolatedRoot!.delete(recursive: true);
@@ -1148,27 +1143,14 @@ void main() {
   });
 }
 
-Future<Directory> _createIsolatedWorkspace(
-  String repoRootPath,
-  String sourceWorkDbPath,
-) async {
-  final tmpRoot = Directory(
-    p.join(repoRootPath, '.tmp_read_source_policy_tests'),
+Future<Directory> _createIsolatedWorkspace(String sourceSeedDbPath) async {
+  final isolatedRoot = await Directory.systemTemp.createTemp(
+    'reshet_read_source_policy_tests_',
   );
-  if (!tmpRoot.existsSync()) {
-    await tmpRoot.create(recursive: true);
-  }
-
-  final isolatedRoot = Directory(
-    p.join(tmpRoot.path, 'case_${DateTime.now().microsecondsSinceEpoch}'),
-  );
-  await isolatedRoot.create(recursive: true);
-
   final dataDir = Directory(p.join(isolatedRoot.path, 'data'));
   await dataDir.create(recursive: true);
 
-  await File(sourceWorkDbPath).copy(p.join(dataDir.path, 'reshet_seed.db'));
-  await File(sourceWorkDbPath).copy(p.join(dataDir.path, 'reshet_work.db'));
+  await File(sourceSeedDbPath).copy(p.join(dataDir.path, 'reshet_seed.db'));
 
   return isolatedRoot;
 }
