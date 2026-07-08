@@ -79,6 +79,10 @@ const double _edgeLabelVerticalPadding = 4.0;
 const double _edgeLabelVisualFontSize = 10.0;
 const double _edgeLabelVisualHorizontalPadding = 6.0;
 const double _edgeLabelVisualVerticalPadding = 3.0;
+const double _edgeStateBadgeGap = 5.0;
+const double _edgeStateBadgeFontSize = 8.5;
+const double _edgeStateBadgeHorizontalPadding = 4.0;
+const double _edgeStateBadgeVerticalPadding = 1.0;
 const double _edgeChipVisualScreenScaleCap = 1.5;
 const double _labelVisibleScaleThreshold = 1.15;
 const double _centerNodeBorderWidth = 4.6;
@@ -189,6 +193,23 @@ double _edgeChipLocalVisualScale(double cameraScale) {
   final safeCameraScale = _safeCameraScale(cameraScale);
   return edgeChipEffectiveScreenScaleForTesting(safeCameraScale) /
       safeCameraScale;
+}
+
+@visibleForTesting
+String? edgeStateBadgeLabelForTesting(String directionSummaryName) {
+  switch (directionSummaryName) {
+    case 'undirected':
+      return '무향';
+    case 'unknown':
+      return '미정';
+    case 'mixed':
+      return '혼합';
+    case 'outgoing':
+    case 'incoming':
+      return null;
+    default:
+      return null;
+  }
 }
 
 @visibleForTesting
@@ -4672,6 +4693,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       final edgeInfos = _edgeInfosForEdge(edgeLayout.edgeId);
       final label = _labelForEdgeGroup(edgeInfos).trim();
       if (label.isEmpty) continue;
+      final stateBadge = _edgeStateBadgeForSummary(edgeLayout.directionSummary);
+      final placementLabel = stateBadge == null ? label : '$label $stateBadge';
 
       // 중심 -> 주변 방향 벡터
 
@@ -4682,7 +4705,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       final placement = _resolveEdgeLabelPlacement(
         layout: layout,
         edgeLayout: edgeLayout,
-        label: label,
+        label: placementLabel,
         nodeObstacles: nodeObstacles,
         placedLabelBounds: placedLabelBounds,
         actualPeripheralWordNodeIds: actualPeripheralWordNodeIds,
@@ -4802,12 +4825,46 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                           ),
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: Text(
-                          label,
-                          style: TextStyle(
-                            fontSize: _edgeLabelVisualFontSize,
-                            fontWeight: labelFontWeight,
-                          ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              label,
+                              style: TextStyle(
+                                fontSize: _edgeLabelVisualFontSize,
+                                fontWeight: labelFontWeight,
+                              ),
+                            ),
+                            if (stateBadge != null) ...[
+                              const SizedBox(width: _edgeStateBadgeGap),
+                              Container(
+                                key: ValueKey<String>(
+                                  'graph-edge-chip-state-badge:${edgeLayout.edgeId}',
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: _edgeStateBadgeHorizontalPadding,
+                                  vertical: _edgeStateBadgeVerticalPadding,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withValues(alpha: 0.72),
+                                  border: Border.all(
+                                    color: labelBorderColor.withValues(
+                                      alpha: 0.78,
+                                    ),
+                                  ),
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: Text(
+                                  stateBadge,
+                                  style: const TextStyle(
+                                    fontSize: _edgeStateBadgeFontSize,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ],
                         ),
                       ),
                     ),
@@ -5168,6 +5225,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       case _GraphEdgeDirectionSummary.unknown:
         return 'UNK';
     }
+  }
+
+  String? _edgeStateBadgeForSummary(_GraphEdgeDirectionSummary summary) {
+    return edgeStateBadgeLabelForTesting(summary.name);
   }
 
   String _relationPhraseForDetails(WordRelationEdgeInfo info) {
