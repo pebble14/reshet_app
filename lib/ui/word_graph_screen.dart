@@ -479,6 +479,7 @@ _EdgeChipPlacementResult _resolveEdgeChipPlacement({
   required Offset edgeStart,
   required Offset edgeEnd,
   required String label,
+  String? stateBadge,
   required double sceneScale,
   required double sourceNodeHalf,
   required double targetNodeHalf,
@@ -495,11 +496,13 @@ _EdgeChipPlacementResult _resolveEdgeChipPlacement({
   );
   final labelSize = _measureEdgeChipBounds(
     label: label,
+    stateBadge: stateBadge,
     center: visibleSegment.start,
   ).size;
   final candidates = _edgeChipPlacementCandidates(
     visibleSegment: visibleSegment,
     label: label,
+    stateBadge: stateBadge,
     labelSize: labelSize,
   ).toList(growable: false);
 
@@ -588,6 +591,7 @@ _VisibleEdgeSegment _visibleEdgeSegmentForChip({
 Iterable<_EdgeChipPlacementCandidate> _edgeChipPlacementCandidates({
   required _VisibleEdgeSegment visibleSegment,
   required String label,
+  String? stateBadge,
   required Size labelSize,
 }) sync* {
   final anchorDistance = visibleSegment.length / 2;
@@ -613,7 +617,11 @@ Iterable<_EdgeChipPlacementCandidate> _edgeChipPlacementCandidates({
     return _EdgeChipPlacementCandidate(
       kind: kind,
       center: center,
-      bounds: _measureEdgeChipBounds(label: label, center: center),
+      bounds: _measureEdgeChipBounds(
+        label: label,
+        stateBadge: stateBadge,
+        center: center,
+      ),
     );
   }
 
@@ -654,8 +662,32 @@ double _projectedHalfExtent({required Size size, required Offset axis}) {
   return (axis.dx.abs() * size.width + axis.dy.abs() * size.height) / 2;
 }
 
-Rect _measureEdgeChipBounds({required String label, required Offset center}) {
+double _measureTextWidth({
+  required String text,
+  required double fontSize,
+  required FontWeight fontWeight,
+}) {
   final textPainter = TextPainter(
+    text: TextSpan(
+      text: text,
+      style: TextStyle(
+        fontSize: fontSize,
+        fontWeight: fontWeight,
+        color: Colors.black87,
+      ),
+    ),
+    textDirection: TextDirection.ltr,
+  )..layout();
+
+  return textPainter.width;
+}
+
+Rect _measureEdgeChipBounds({
+  required String label,
+  String? stateBadge,
+  required Offset center,
+}) {
+  final labelPainter = TextPainter(
     text: TextSpan(
       text: label,
       style: const TextStyle(
@@ -666,11 +698,28 @@ Rect _measureEdgeChipBounds({required String label, required Offset center}) {
     ),
     textDirection: TextDirection.ltr,
   )..layout();
+  final normalizedStateBadge = (stateBadge ?? '').trim();
+  final badgeWidth = normalizedStateBadge.isEmpty
+      ? 0.0
+      : _measureTextWidth(
+              text: normalizedStateBadge,
+              fontSize: _edgeStateBadgeFontSize,
+              fontWeight: FontWeight.w700,
+            ) +
+            _edgeStateBadgeHorizontalPadding * 2 +
+            2;
+  final badgeHeight = normalizedStateBadge.isEmpty
+      ? 0.0
+      : _edgeStateBadgeFontSize + _edgeStateBadgeVerticalPadding * 2 + 2;
+  final contentWidth =
+      labelPainter.width +
+      (normalizedStateBadge.isEmpty ? 0.0 : _edgeStateBadgeGap + badgeWidth);
+  final contentHeight = max(labelPainter.height, badgeHeight);
 
   return Rect.fromCenter(
     center: center,
-    width: textPainter.width + _edgeLabelHorizontalPadding * 2,
-    height: textPainter.height + _edgeLabelVerticalPadding * 2,
+    width: contentWidth + _edgeLabelHorizontalPadding * 2,
+    height: contentHeight + _edgeLabelVerticalPadding * 2,
   );
 }
 
@@ -4694,7 +4743,6 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       final label = _labelForEdgeGroup(edgeInfos).trim();
       if (label.isEmpty) continue;
       final stateBadge = _edgeStateBadgeForSummary(edgeLayout.directionSummary);
-      final placementLabel = stateBadge == null ? label : '$label $stateBadge';
 
       // 중심 -> 주변 방향 벡터
 
@@ -4705,7 +4753,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       final placement = _resolveEdgeLabelPlacement(
         layout: layout,
         edgeLayout: edgeLayout,
-        label: placementLabel,
+        label: label,
+        stateBadge: stateBadge,
         nodeObstacles: nodeObstacles,
         placedLabelBounds: placedLabelBounds,
         actualPeripheralWordNodeIds: actualPeripheralWordNodeIds,
@@ -4887,6 +4936,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     required _GraphLayoutData layout,
     required _GraphEdgeLayout edgeLayout,
     required String label,
+    String? stateBadge,
     required List<Rect> nodeObstacles,
     required List<Rect> placedLabelBounds,
     required Set<String> actualPeripheralWordNodeIds,
@@ -4905,6 +4955,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       edgeStart: edgeLayout.start,
       edgeEnd: edgeLayout.end,
       label: label,
+      stateBadge: stateBadge,
       sceneScale: _currentScale,
       sourceNodeHalf: sourceNodeHalf,
       targetNodeHalf: targetNodeHalf,

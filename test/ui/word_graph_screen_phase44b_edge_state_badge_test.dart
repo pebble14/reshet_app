@@ -71,6 +71,11 @@ void main() {
         _edgeChipTextFinder(_unknownRelationId.toString(), '미정'),
         findsOneWidget,
       );
+      expect(
+        tester.takeException(),
+        isNull,
+        reason: '긴 relation label과 상태 배지가 함께 렌더링되어도 layout overflow가 없어야 한다.',
+      );
 
       await tester.tap(_edgeChipFinder(_unknownRelationId.toString()));
       await _pumpUntil(
@@ -192,6 +197,7 @@ VisibleWordGraphData _graphData() {
         wordId2: _outgoingWordId,
         directionCode: 'w1_to_w2',
         centerRelativeDirection: 'outgoing',
+        relationType: 'compound',
         description: 'Phase44B outgoing detail',
       ),
       _edgeInfo(
@@ -199,6 +205,7 @@ VisibleWordGraphData _graphData() {
         wordId2: _incomingWordId,
         directionCode: 'w2_to_w1',
         centerRelativeDirection: 'incoming',
+        relationType: 'compound',
         description: 'Phase44B incoming detail',
       ),
       _edgeInfo(
@@ -206,6 +213,7 @@ VisibleWordGraphData _graphData() {
         wordId2: _undirectedWordId,
         directionCode: 'undirected',
         centerRelativeDirection: 'undirected',
+        relationType: 'approx_transliteration',
         description: 'Phase44B undirected detail',
       ),
       _edgeInfo(
@@ -213,6 +221,7 @@ VisibleWordGraphData _graphData() {
         wordId2: _unknownWordId,
         directionCode: 'unknown',
         centerRelativeDirection: 'unknown',
+        relationType: 'conventional_transliteration',
         description: 'Phase44B unknown detail',
       ),
     ],
@@ -268,6 +277,7 @@ WordRelationEdgeInfo _edgeInfo({
   required String wordId2,
   required String directionCode,
   required String centerRelativeDirection,
+  required String relationType,
   required String description,
 }) {
   return WordRelationEdgeInfo(
@@ -279,7 +289,7 @@ WordRelationEdgeInfo _edgeInfo({
     centerRelativeDirection: centerRelativeDirection,
     categoryCode: 'translation',
     categoryLabel: '번역',
-    relationType: 'translation',
+    relationType: relationType,
     relationTypeLabel: '번역',
     statusCode: 'asserted',
     description: description,
