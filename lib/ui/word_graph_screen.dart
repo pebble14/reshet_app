@@ -162,6 +162,7 @@ const double _selectedNodeRelationOverlayInset = 16.0;
 const double _selectedNodeRelationOverlayMinHeight = 40.0;
 const double _selectedNodePreviewMaxWidth = 320.0;
 const double _selectedNodePreviewLauncherGap = 12.0;
+const Key _selectedNodeCenterActionKey = Key('selected-node-center-action');
 const Key _selectedNodeCollapseExpansionKey = Key(
   'selected-node-collapse-expansion',
 );
@@ -2473,6 +2474,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     required List<_SelectedNodeRelationEntry> relationEntries,
   }) {
     final preview = _buildSelectedWordPreview(context);
+    final centerAction = _buildSelectedNodeCenterAction(context);
     final collapseExpansionAction = _buildSelectedNodeCollapseExpansionAction(
       context,
     );
@@ -2482,6 +2484,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     );
     final actionWidgets = <Widget>[
       ?preview,
+      ?centerAction,
       ?collapseExpansionAction,
       ?relationLauncher,
     ];
@@ -2504,6 +2507,27 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
             ],
           ],
         ),
+      ),
+    );
+  }
+
+  Widget? _buildSelectedNodeCenterAction(BuildContext context) {
+    if (_selectedPeripheralWord() == null) {
+      return null;
+    }
+
+    final colorScheme = Theme.of(context).colorScheme;
+    return FilledButton.tonalIcon(
+      key: _selectedNodeCenterActionKey,
+      onPressed: _showSelectedNodeAsCenter,
+      icon: const Icon(Icons.hub_outlined, size: 18),
+      label: const Text('이 단어를 중심으로 보기'),
+      style: FilledButton.styleFrom(
+        backgroundColor: colorScheme.secondaryContainer,
+        foregroundColor: colorScheme.onSecondaryContainer,
+        shape: const StadiumBorder(),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        minimumSize: const Size(0, _selectedNodeRelationOverlayMinHeight),
       ),
     );
   }
@@ -3063,6 +3087,32 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     widget.onChangeCenterWord?.call(word);
   }
 
+  Word? _selectedPeripheralWord() {
+    final selectedWordId = (_selectedWordId ?? '').trim();
+    if (selectedWordId.isEmpty || selectedWordId == _centerWordId) {
+      return null;
+    }
+
+    final selectedNode = _graphViewData?.nodeById(selectedWordId);
+    if (selectedNode == null ||
+        selectedNode.isCenter ||
+        selectedNode.isPlaceholderMoreNode) {
+      return null;
+    }
+
+    return _wordForNodeId(selectedWordId);
+  }
+
+  Future<void> _showSelectedNodeAsCenter() async {
+    _temporarilySuppressBackgroundTapClear();
+    final selectedWord = _selectedPeripheralWord();
+    if (selectedWord == null) {
+      return;
+    }
+
+    await _openWordAsGraphCenter(selectedWord);
+  }
+
   void _handleCenterNodeTap() {
     _temporarilySuppressBackgroundTapClear();
     if (_selectedWordId != _centerWordId) {
@@ -3083,6 +3133,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       return;
     }
 
+    await _openWordAsGraphCenter(word);
+  }
+
+  Future<void> _openWordAsGraphCenter(Word word) async {
     if (widget.onChangeCenterWordId != null ||
         widget.onChangeCenterWord != null) {
       _dispatchCenterChange(word);

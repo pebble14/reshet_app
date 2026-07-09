@@ -90,6 +90,7 @@ PyVis-like interaction은 이 layout/viewport 경계 위에서 별도 단계로 
 - `S < 1.15`에서 관계 chip을 숨기는 zoom-out visibility 정책은 유지한다.
 - 방향 edge는 기존 arrowhead로 표현하며, 관계 chip에 별도 방향 배지를 추가하지 않는다.
 - 관계 chip의 상태 배지는 화살표가 없는 edge 상태를 구분하기 위한 보조 표시다. `미정`은 direction이 확인되지 않았거나 unknown인 관계, `무향`은 방향 없는 관계, `혼합`은 여러 relation direction이 하나의 visual edge에 섞인 상태를 뜻한다. 이 표시는 relation 데이터 재해석이나 status/provenance 변경이 아니다.
+- 현재 선택 대상이 중심이 아닌 일반 단어 노드이면 선택 context action surface에 “이 단어를 중심으로 보기” action을 제공한다. 이 action은 기존 center 변경 경로를 명시적으로 노출하며, camera translation만 변경하는 “선택 노드 중앙 맞춤”과 달리 graph semantic center를 선택 단어로 전환한다.
 - 현재 선택 노드에 표시 가능한 관계가 하나 이상 있으면 graph 우하단에 compact한 “관계 보기” launcher가 표시된다. 관계가 1건이면 바로 해당 관계로 진입하고, 복수이면 popup menu에서 관계를 선택한다. 표시 가능한 관계가 없으면 launcher를 표시하지 않는다.
 - Mobile selected-node preview와 기존 full-detail route 연결은 구현되어 있다.
 

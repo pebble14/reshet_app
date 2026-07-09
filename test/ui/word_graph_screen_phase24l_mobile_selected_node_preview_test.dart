@@ -11,6 +11,7 @@ import 'package:reshet_app/ui/word_graph_screen.dart';
 
 const _representativeWordId = 'H0001_0000';
 const _previewKey = Key('mobile-selected-node-preview');
+const _centerActionKey = Key('selected-node-center-action');
 const _relationLauncherKey = Key('selected-node-relation-launcher');
 
 void main() {
@@ -34,10 +35,14 @@ void main() {
     WordGraphDataCache.clear();
     isolatedRoot = await _createIsolatedWorkspace(sourceWorkDbPath);
     Directory.current = isolatedRoot!.path;
+    DatabaseService.setDataRootOverrideForTest(
+      p.join(isolatedRoot!.path, 'data'),
+    );
   });
 
   tearDown(() async {
     await DatabaseService.closeDatabase();
+    DatabaseService.setDataRootOverrideForTest(null);
     WordGraphDataCache.clear();
     Directory.current = repoRootPath;
 
@@ -155,6 +160,68 @@ void main() {
     });
 
     testWidgets(
+      'portrait peripheral selection stacks preview, center action, and relation launcher without overlap',
+      (tester) async {
+        _setSurfaceSize(tester, const Size(360, 640));
+        await tester.pumpWidget(
+          MaterialApp(
+            home: WordGraphScreen(centerWordId: _representativeWordId),
+          ),
+        );
+
+        await _pumpUntil(
+          tester,
+          () => _peripheralNodeFinder().evaluate().isNotEmpty,
+          reason: 'portrait graph must render at least one peripheral node.',
+        );
+        final peripheralNode = tester.widget<GestureDetector>(
+          _peripheralNodeFinder().first,
+        );
+        final peripheralNodeKey = peripheralNode.key! as ValueKey<String>;
+        final selectedWordId = peripheralNodeKey.value.substring(
+          'graph-peripheral-node:'.length,
+        );
+        peripheralNode.onTap!.call();
+        await tester.pump();
+
+        await _pumpUntil(
+          tester,
+          () =>
+              find.byKey(_previewKey).evaluate().length == 1 &&
+              find.byKey(_centerActionKey).evaluate().length == 1 &&
+              find.byKey(_relationLauncherKey).evaluate().length == 1,
+          reason:
+              'portrait peripheral selection must show all selected-node surfaces.',
+        );
+
+        final previewRect = tester.getRect(find.byKey(_previewKey));
+        final centerActionRect = tester.getRect(find.byKey(_centerActionKey));
+        final relationLauncherRect = tester.getRect(
+          find.byKey(_relationLauncherKey),
+        );
+        expect(find.text('이 단어를 중심으로 보기'), findsOneWidget);
+        expect(previewRect.overlaps(centerActionRect), isFalse);
+        expect(centerActionRect.overlaps(relationLauncherRect), isFalse);
+        expect(previewRect.bottom, lessThan(centerActionRect.top));
+        expect(centerActionRect.bottom, lessThan(relationLauncherRect.top));
+        expect(tester.takeException(), isNull);
+
+        await tester.tap(find.byKey(_centerActionKey));
+        await _pumpUntil(
+          tester,
+          () => find.byType(WordGraphScreen).evaluate().length == 2,
+          reason: 'center action must open the existing standalone graph path.',
+        );
+        final graphScreens = tester
+            .widgetList<WordGraphScreen>(find.byType(WordGraphScreen))
+            .toList(growable: false);
+        expect(graphScreens.last.centerWordId, selectedWordId);
+
+        await _disposeRuntimeApp(tester);
+      },
+    );
+
+    testWidgets(
       'portrait preview and relation launcher do not overlap and launcher opens action',
       (tester) async {
         _setSurfaceSize(tester, const Size(360, 640));
@@ -206,6 +273,15 @@ void main() {
         await _disposeRuntimeApp(tester);
       },
     );
+  });
+}
+
+Finder _peripheralNodeFinder() {
+  return find.byWidgetPredicate((widget) {
+    final key = widget.key;
+    return widget is GestureDetector &&
+        key is ValueKey<String> &&
+        key.value.startsWith('graph-peripheral-node:');
   });
 }
 

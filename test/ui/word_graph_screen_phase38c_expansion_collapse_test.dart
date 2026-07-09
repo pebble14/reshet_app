@@ -21,6 +21,7 @@ const _aExtraWordIds = [
   'T938C_A_EXTRA_5',
 ];
 const _collapseLabel = '확장 접기';
+const _centerActionLabel = '이 단어를 중심으로 보기';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -46,6 +47,9 @@ void main() {
     WordGraphDataCache.clear();
     isolatedRoot = await _createIsolatedWorkspace(sourceWorkDbPath);
     Directory.current = isolatedRoot!.path;
+    DatabaseService.setDataRootOverrideForTest(
+      p.join(isolatedRoot!.path, 'data'),
+    );
 
     final db = await DatabaseService.openDatabaseFile();
     await _insertWord(db, id: _centerWordId, spelling: 'Phase38C Center');
@@ -87,6 +91,7 @@ void main() {
 
   tearDown(() async {
     await DatabaseService.closeDatabase();
+    DatabaseService.setDataRootOverrideForTest(null);
     WordGraphDataCache.clear();
     Directory.current = repoRootPath;
 
@@ -96,6 +101,42 @@ void main() {
   });
 
   group('Phase 38-C depth 1 expansion collapse', () {
+    testWidgets(
+      'selected depth 1 node exposes center action through the existing callback path',
+      (tester) async {
+        String? changedCenterWordId;
+        await _pumpGraph(
+          tester,
+          onChangeCenterWordId: (wordId) {
+            changedCenterWordId = wordId;
+          },
+        );
+
+        expect(_centerActionFinder(), findsNothing);
+
+        await _tapNode(tester, _sourceAWordId);
+        await _pumpUntil(
+          tester,
+          () =>
+              _centerActionFinder().evaluate().length == 1 &&
+              _collapseActionFinder().evaluate().length == 1 &&
+              _relationLauncherFinder().evaluate().length == 1,
+          reason:
+              'selected source must expose center, collapse, and relation actions.',
+        );
+
+        expect(find.text(_centerActionLabel), findsOneWidget);
+        await tester.tap(_centerActionFinder());
+        await tester.pump();
+
+        expect(changedCenterWordId, _sourceAWordId);
+        expect(_collapseActionFinder(), findsOneWidget);
+        expect(_relationLauncherFinder(), findsOneWidget);
+
+        await _disposeRuntimeApp(tester);
+      },
+    );
+
     testWidgets(
       'collapses only the selected source branch and preserves another expanded source',
       (tester) async {
@@ -170,7 +211,7 @@ void main() {
         );
         await _setCameraScale(tester, 1.2);
         expect(_edgeChipFinder(relationAOnlyId), findsNothing);
-        expect(_edgeChipFinder(relationASharedId), findsNothing);
+        expect(_edgeChipFinder(relationASharedId), findsOneWidget);
         expect(_edgeChipFinder(relationBSharedId), findsOneWidget);
 
         await _disposeRuntimeApp(tester);
@@ -248,6 +289,14 @@ Finder _collapseActionFinder() {
   return find.byKey(const Key('selected-node-collapse-expansion'));
 }
 
+Finder _centerActionFinder() {
+  return find.byKey(const Key('selected-node-center-action'));
+}
+
+Finder _relationLauncherFinder() {
+  return find.byKey(const Key('selected-node-relation-launcher'));
+}
+
 Finder _nodeFinder(String wordId) {
   return find.byKey(ValueKey<String>('graph-peripheral-node:$wordId'));
 }
@@ -268,13 +317,18 @@ Finder _edgeChipFinder(int relationId) {
   return find.byKey(ValueKey<String>('graph-edge-chip:$relationId'));
 }
 
-Future<void> _pumpGraph(WidgetTester tester, {String? selectedWordId}) async {
+Future<void> _pumpGraph(
+  WidgetTester tester, {
+  String? selectedWordId,
+  ValueChanged<String>? onChangeCenterWordId,
+}) async {
   _setSurfaceSize(tester, const Size(1200, 900));
   await tester.pumpWidget(
     MaterialApp(
       home: WordGraphScreen(
         centerWordId: _centerWordId,
         selectedWordId: selectedWordId,
+        onChangeCenterWordId: onChangeCenterWordId,
       ),
     ),
   );
