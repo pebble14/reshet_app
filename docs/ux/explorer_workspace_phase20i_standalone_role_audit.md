@@ -56,10 +56,10 @@ production 시작점은 `MaterialApp(home: const HomeScreen())`이며, large-scr
 | `HomeScreen` default Strong 목록 graph 아이콘 | `_openDefaultStrongWordGraph(...)` → `WordGraphScreen` | active인 shared 목록 action | 현재 목록이 mount되는 small-screen |
 | `HomeScreen` 검색 결과 목록 graph 아이콘 | `_openWordGraph(...)` → `_openDefaultStrongWordGraph(...)` → `WordGraphScreen` | active인 shared 목록 action | 현재 목록이 mount되는 small-screen |
 | `WordDetailScreen` graph 보기 | `_openGraph()` → `WordGraphScreen` | active | detail route가 열린 모든 form factor |
-| standalone `WordGraphScreen` 연결 node 재탭 | callback이 없을 때 `Navigator.push` → 새 `WordGraphScreen` | active standalone graph 내부 탐색 | standalone graph route 내부 |
+| standalone `WordGraphScreen` 연결 node 재탭 | Phase 20-I 당시에는 callback이 없을 때 `Navigator.push` → 새 `WordGraphScreen`; Phase 44-G 이후에는 재탭 route push 없음 | historical standalone graph 내부 탐색 기록 | standalone graph route 내부 |
 | standalone `WordGraphScreen` 단어 생성 후 relation 미생성 | callback이 없을 때 `pushReplacement` → 새 `WordGraphScreen` | active standalone graph create 후속 흐름 | standalone graph route 내부 |
 
-`WordExplorerScreen`이 child로 mount하는 `WordGraphScreen`에는 selection과 center change callback이 항상 전달된다. 따라서 해당 embedded graph에서 node 재탭은 새 graph route를 열지 않고 Explorer owner의 center/selection 흐름으로 전달된다.
+`WordExplorerScreen`이 child로 mount하는 `WordGraphScreen`에는 selection과 center change callback이 항상 전달된다. Phase 20-I 당시 embedded graph의 node 재탭은 새 graph route를 열지 않고 Explorer owner의 center/selection 흐름으로 전달되는 경로였으나, Phase 44-G 이후 같은 노드 재탭은 center 변경을 dispatch하지 않는다.
 
 ## 2. 현재 embedded workspace pane 경로 목록
 
@@ -152,7 +152,7 @@ Phase 20-J의 최소 구현 후보를 검토할 때 다음 경로는 우선 보�
 
 ### 7.3 standalone graph 내부 route 탐색
 
-callback 없는 `WordGraphScreen`은 node 재탭 시 새 graph route를 push하고 create 후 relation을 만들지 않으면 graph route를 replace한다. embedded graph callback 흐름과 의미가 다르므로 별도 감사와 설계 없이 비활성화하지 않는다.
+callback 없는 `WordGraphScreen`은 Phase 20-I 당시 node 재탭 시 새 graph route를 push하고 create 후 relation을 만들지 않으면 graph route를 replace했다. Phase 44-G 이후 node 재탭 route push는 비활성화되었고, create 후 relation 미생성 시 graph route replace 흐름은 별도 경계로 남는다.
 
 ### 7.4 history, selection, center navigation, owner state 영향
 
@@ -275,7 +275,7 @@ Phase 20-J 승인 전 확인 조건은 다음과 같다.
 - embedded Explorer full-detail route 제거 또는 대체
 - `WordDetailScreen` delete/graph/read 역할 이동
 - detail → graph의 large-screen workspace-aware redirect
-- standalone graph 내부 node 재탭 push 또는 create 후 pushReplacement 변경
+- standalone graph 내부 node 재탭 push는 Phase 44-G에서 비활성화됨; create 후 pushReplacement 변경은 별도 후보
 - small-screen route 흐름 변경
 - embedded Explorer retarget 시 owner/history continuity 변경
 - `ExplorerWorkspace` production mount 또는 source-of-truth 승격

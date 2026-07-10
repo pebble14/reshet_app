@@ -126,6 +126,18 @@ void main() {
         );
 
         expect(find.text(_centerActionLabel), findsOneWidget);
+        await _tapNode(tester, _sourceAWordId);
+        await tester.pump();
+
+        expect(
+          changedCenterWordId,
+          isNull,
+          reason:
+              'same-node retap must not dispatch an implicit center change.',
+        );
+        expect(_collapseActionFinder(), findsOneWidget);
+        expect(_relationLauncherFinder(), findsOneWidget);
+
         await tester.tap(_centerActionFinder());
         await tester.pump();
 

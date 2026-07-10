@@ -77,7 +77,7 @@ Delete 실행과 delete 이후 workspace 복구는 같은 owner가 아니다. `W
 - 기본 `standaloneRoute` mode에서는 `WordGraphScreen(centerWordId: _wordId)` route를 push한다.
 - embedded Explorer full-detail caller가 지정한 `returnToCaller` mode에서는 `WordDetailGraphRequestedResult(wordId: _wordId)`를 반환한다.
 
-기본 standalone graph route는 callback 없는 `WordGraphScreen`이다. 이 graph는 같은 연결 노드 재탭 시 새 graph route를 push하고, create 이후 조건에 따라 `pushReplacement`를 수행하는 독립 navigation 책임을 유지한다.
+기본 standalone graph route는 callback 없는 `WordGraphScreen`이다. Phase 20-P 당시 이 graph는 같은 연결 노드 재탭 시 새 graph route를 push하고, create 이후 조건에 따라 `pushReplacement`를 수행하는 독립 navigation 책임을 유지했다. Phase 44-G 이후 같은 노드 재탭 route push는 비활성화되었고, create 이후 `pushReplacement`는 별도 흐름으로 유지된다.
 
 ### 3.5 Route result
 

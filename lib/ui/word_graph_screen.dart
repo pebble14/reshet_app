@@ -1340,7 +1340,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   String? _supplementalRelationNodeSignature;
 
   /// 사용자가 클릭(선택)한 주변 노드 id
-  /// - 같은 노드를 다시 클릭하면 이동(push)하는 트리거로 사용
+  /// - 같은 노드를 다시 클릭해도 center 변경이나 route push를 수행하지 않음
   String? _selectedWordId;
   WordDetailLikeDisplayItem? _selectedWordPreviewItem;
   String? _selectedWordPreviewItemWordId;
@@ -3126,14 +3126,13 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     _temporarilySuppressBackgroundTapClear();
     final isSameTap = _selectedWordId == word.id;
 
-    if (!isSameTap) {
-      _setSelectedWordId(word.id);
-      _notifySelectedWord(word);
-      unawaited(_expandDepthTwoForSelection(word));
+    if (isSameTap) {
       return;
     }
 
-    await _openWordAsGraphCenter(word);
+    _setSelectedWordId(word.id);
+    _notifySelectedWord(word);
+    unawaited(_expandDepthTwoForSelection(word));
   }
 
   Future<void> _openWordAsGraphCenter(Word word) async {

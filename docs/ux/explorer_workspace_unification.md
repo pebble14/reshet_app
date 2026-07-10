@@ -64,7 +64,8 @@ Phase 2-A에서는 구현하지 않는다.
 | Home 기본 strong list / 검색 결과 | Graph | `Navigator.push(... WordGraphScreen(centerWordId: ...))` |
 | Detail | Graph | `Navigator.push(... WordGraphScreen(centerWordId: _wordId))` |
 | Explorer detail panel | Detail | `Navigator.push(... WordDetailScreen(...))` |
-| Graph standalone node 재탭 | Graph recenter | `Navigator.push(... WordGraphScreen(centerWordId: word.id))` |
+| Graph standalone 명시적 중심 보기 action | Graph recenter | `Navigator.push(... WordGraphScreen(centerWordId: word.id))` |
+| Graph standalone node 재탭 | 선택 유지 | route push 없음 |
 | Graph create 후 relation 미생성 | Graph recenter | callback이 없으면 `pushReplacement(... WordGraphScreen(centerWordId: ...))` |
 
 ### 3.4 navigation payload 구조
@@ -108,7 +109,7 @@ Phase 2-A에서는 구현하지 않는다.
 
 - standalone 모드와 embedded 모드 모두 `_selectedWordId`를 내부에 보유한다.
 - embedded 모드에서는 parent callback이 있으면 selection을 parent에 전달한다.
-- standalone 모드에서는 같은 노드를 다시 누를 때 그래프 route recenter가 발생할 수 있다.
+- 같은 노드를 다시 눌러도 standalone route push 또는 embedded center callback dispatch를 수행하지 않는다.
 
 ### 4.3 graph center ownership
 
@@ -249,12 +250,10 @@ large-screen embedded Explorer가 연 full-detail route:
 
 #### 같은 노드 재클릭
 
-- parent center callback이 있으면:
-  - `onChangeCenterWordId`로 Explorer center 갱신
-- selection callback만 있으면:
-  - selection만 다시 통지
-- callback이 없으면:
-  - standalone graph가 새 `WordGraphScreen(centerWordId: word.id)` route를 push
+- 선택 상태를 유지한다.
+- parent center callback이 있어도 `onChangeCenterWordId`를 호출하지 않는다.
+- callback이 없는 standalone graph에서도 새 `WordGraphScreen(centerWordId: word.id)` route를 push하지 않는다.
+- graph center 변경은 선택 context action surface의 “이 단어를 중심으로 보기”를 통해 수행한다.
 
 ## 6. 현재 graph production path 유지 여부
 
@@ -325,7 +324,7 @@ Phase 2-A의 문서 초안은 이 production path를 변경하지 않는다.
   - 독립 route screen
   - Explorer panel
   두 역할을 모두 수행한다.
-- node 재클릭 의미도 caller callback 유무에 따라 달라진다.
+- node 재클릭은 caller callback 유무와 무관하게 center 변경 trigger가 아니다.
 - 통합 workspace에서는 이 동작을 panel state transition으로 재정의할 필요가 있다.
 
 ### 7.6 raw carrier 또는 raw map 재도입 위험

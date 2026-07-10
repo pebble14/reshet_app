@@ -206,6 +206,18 @@ void main() {
         expect(centerActionRect.bottom, lessThan(relationLauncherRect.top));
         expect(tester.takeException(), isNull);
 
+        tester
+            .widget<GestureDetector>(find.byKey(peripheralNodeKey))
+            .onTap!
+            .call();
+        await tester.pump();
+
+        expect(
+          find.byType(WordGraphScreen),
+          findsOneWidget,
+          reason: 'same-node retap must keep standalone graph route depth.',
+        );
+
         await tester.tap(find.byKey(_centerActionKey));
         await _pumpUntil(
           tester,
