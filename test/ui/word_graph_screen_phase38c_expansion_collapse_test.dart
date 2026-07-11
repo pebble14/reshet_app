@@ -260,6 +260,13 @@ void main() {
         reason: 'source A expansion must start with a +N more placeholder.',
       );
 
+      expect(find.byIcon(Icons.add_rounded), findsWidgets);
+      expect(
+        find.bySemanticsLabel('숨겨진 항목 1개 더 보기'),
+        findsOneWidget,
+        reason: '+N more placeholder must expose a concise button label.',
+      );
+
       await tester.tap(
         _sourcePlaceholderFinder(_sourceAWordId),
         warnIfMissed: false,

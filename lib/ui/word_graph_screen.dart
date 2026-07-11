@@ -3836,6 +3836,32 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     return label.isEmpty ? '+more' : label;
   }
 
+  String _placeholderActionSemanticLabel(GraphNode node) {
+    final hiddenCount = node.hiddenCount;
+    return hiddenCount > 0 ? '숨겨진 항목 $hiddenCount개 더 보기' : '숨겨진 항목 더 보기';
+  }
+
+  Widget _buildPlaceholderActionLabel(
+    GraphNode node, {
+    required double fontSize,
+    required FontWeight fontWeight,
+  }) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          _placeholderLabelForNode(node),
+          textAlign: TextAlign.center,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(fontSize: fontSize, fontWeight: fontWeight),
+        ),
+        const SizedBox(height: 1),
+        const Icon(Icons.add_rounded, size: 13),
+      ],
+    );
+  }
+
   Widget _buildCenterDepthOneMoreNode(
     GraphNode node,
     Color accentColor, {
@@ -3859,56 +3885,57 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         ? _blendColor(accentColor, Colors.grey.shade500, 0.36)
         : _blendColor(accentColor, Colors.black, 0.14);
 
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: () => _handlePlaceholderMoreNodeTap(node),
-      child: SizedBox(
-        width: nodeSize,
-        height: nodeSize,
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            AnimatedOpacity(
-              duration: _visualStateAnimationDuration,
-              curve: Curves.easeOutCubic,
-              opacity: backgroundOpacity,
-              child: AnimatedContainer(
+    return Semantics(
+      key: ValueKey<String>('graph-more-action:${node.id}'),
+      button: true,
+      label: _placeholderActionSemanticLabel(node),
+      excludeSemantics: true,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => _handlePlaceholderMoreNodeTap(node),
+        child: SizedBox(
+          width: nodeSize,
+          height: nodeSize,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              AnimatedOpacity(
                 duration: _visualStateAnimationDuration,
                 curve: Curves.easeOutCubic,
-                width: nodeSize,
-                height: nodeSize,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: RadialGradient(
-                    colors: [innerFillColor, fillColor],
-                    stops: const [0.0, 1.0],
-                  ),
-                  border: Border.all(
-                    color: borderColor,
-                    width: _depthOneNodeBorderWidth,
+                opacity: backgroundOpacity,
+                child: AnimatedContainer(
+                  duration: _visualStateAnimationDuration,
+                  curve: Curves.easeOutCubic,
+                  width: nodeSize,
+                  height: nodeSize,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [innerFillColor, fillColor],
+                      stops: const [0.0, 1.0],
+                    ),
+                    border: Border.all(
+                      color: borderColor,
+                      width: _depthOneNodeBorderWidth,
+                    ),
                   ),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: AnimatedOpacity(
-                duration: _visualStateAnimationDuration,
-                curve: Curves.easeOutCubic,
-                opacity: textOpacity,
-                child: Text(
-                  _placeholderLabelForNode(node),
-                  textAlign: TextAlign.center,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: AnimatedOpacity(
+                  duration: _visualStateAnimationDuration,
+                  curve: Curves.easeOutCubic,
+                  opacity: textOpacity,
+                  child: _buildPlaceholderActionLabel(
+                    node,
                     fontSize: 10.8,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -3937,56 +3964,57 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         ? _blendColor(accentColor, Colors.grey.shade500, 0.42)
         : _blendColor(accentColor, Colors.black, 0.10);
 
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: () => _handlePlaceholderMoreNodeTap(node),
-      child: SizedBox(
-        width: nodeSize,
-        height: nodeSize,
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            AnimatedOpacity(
-              duration: _visualStateAnimationDuration,
-              curve: Curves.easeOutCubic,
-              opacity: backgroundOpacity,
-              child: AnimatedContainer(
+    return Semantics(
+      key: ValueKey<String>('graph-more-action:${node.id}'),
+      button: true,
+      label: _placeholderActionSemanticLabel(node),
+      excludeSemantics: true,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => _handlePlaceholderMoreNodeTap(node),
+        child: SizedBox(
+          width: nodeSize,
+          height: nodeSize,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              AnimatedOpacity(
                 duration: _visualStateAnimationDuration,
                 curve: Curves.easeOutCubic,
-                width: nodeSize,
-                height: nodeSize,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: RadialGradient(
-                    colors: [innerFillColor, fillColor],
-                    stops: const [0.0, 1.0],
-                  ),
-                  border: Border.all(
-                    color: borderColor,
-                    width: _depthTwoNodeBorderWidth,
+                opacity: backgroundOpacity,
+                child: AnimatedContainer(
+                  duration: _visualStateAnimationDuration,
+                  curve: Curves.easeOutCubic,
+                  width: nodeSize,
+                  height: nodeSize,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [innerFillColor, fillColor],
+                      stops: const [0.0, 1.0],
+                    ),
+                    border: Border.all(
+                      color: borderColor,
+                      width: _depthTwoNodeBorderWidth,
+                    ),
                   ),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: AnimatedOpacity(
-                duration: _visualStateAnimationDuration,
-                curve: Curves.easeOutCubic,
-                opacity: textOpacity,
-                child: Text(
-                  _placeholderLabelForNode(node),
-                  textAlign: TextAlign.center,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: AnimatedOpacity(
+                  duration: _visualStateAnimationDuration,
+                  curve: Curves.easeOutCubic,
+                  opacity: textOpacity,
+                  child: _buildPlaceholderActionLabel(
+                    node,
                     fontSize: 10.5,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
