@@ -31,6 +31,9 @@ void main() {
     await DatabaseService.closeDatabase();
     WordGraphDataCache.clear();
     isolatedRoot = await _createIsolatedWorkspace(sourceWorkDbPath);
+    DatabaseService.setDataRootOverrideForTest(
+      p.join(isolatedRoot!.path, 'data'),
+    );
     Directory.current = isolatedRoot!.path;
 
     final db = await DatabaseService.openDatabaseFile();
@@ -60,6 +63,7 @@ void main() {
 
   tearDown(() async {
     await DatabaseService.closeDatabase();
+    DatabaseService.setDataRootOverrideForTest(null);
     WordGraphDataCache.clear();
     Directory.current = repoRootPath;
 

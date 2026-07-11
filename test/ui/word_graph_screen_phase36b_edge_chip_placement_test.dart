@@ -30,6 +30,9 @@ void main() {
     await DatabaseService.closeDatabase();
     WordGraphDataCache.clear();
     isolatedRoot = await _createIsolatedWorkspace(sourceWorkDbPath);
+    DatabaseService.setDataRootOverrideForTest(
+      p.join(isolatedRoot!.path, 'data'),
+    );
     Directory.current = isolatedRoot!.path;
 
     final db = await DatabaseService.openDatabaseFile();
@@ -54,6 +57,7 @@ void main() {
 
   tearDown(() async {
     await DatabaseService.closeDatabase();
+    DatabaseService.setDataRootOverrideForTest(null);
     WordGraphDataCache.clear();
     Directory.current = repoRootPath;
 
@@ -154,6 +158,58 @@ void main() {
     test('zoom visibility threshold는 기존 1.15 기준을 유지한다', () {
       expect(isEdgeChipVisibleForTesting(1.149), isFalse);
       expect(isEdgeChipVisibleForTesting(1.15), isTrue);
+    });
+
+    test('충돌이 없으면 기존 visible segment 중심 후보를 유지한다', () {
+      final placement = resolveEdgeChipPlacementForTesting(
+        edgeStart: Offset.zero,
+        edgeEnd: const Offset(260, 0),
+        label: '관계',
+        sceneScale: 1.2,
+        sourceNodeHalf: 20,
+        targetNodeHalf: 20,
+      );
+
+      expect(placement.selectedCandidateKind, 'visibleSegmentCenter');
+      expect(placement.selectedCenter, const Offset(130, 0));
+    });
+
+    test('기존 후보가 node obstacle과 충돌하면 제한된 추가 normal 후보를 선택한다', () {
+      final placement = resolveEdgeChipPlacementForTesting(
+        edgeStart: Offset.zero,
+        edgeEnd: const Offset(260, 0),
+        label: '관계',
+        sceneScale: 1.2,
+        sourceNodeHalf: 20,
+        targetNodeHalf: 20,
+        nodeObstacles: [
+          Rect.fromCenter(center: const Offset(130, 0), width: 260, height: 10),
+        ],
+      );
+
+      expect(placement.selectedCandidateKind, 'normalPositive');
+      expect(placement.selectedCenter.dx, closeTo(130, 0.001));
+      expect(placement.selectedCenter.dy, greaterThan(8));
+      expect(placement.selectedCenter.dy, lessThanOrEqualTo(24));
+    });
+
+    test('기존 후보가 placed chip과 충돌하면 추가 normal 후보에서도 이를 회피한다', () {
+      final placement = resolveEdgeChipPlacementForTesting(
+        edgeStart: Offset.zero,
+        edgeEnd: const Offset(260, 0),
+        label: '관계',
+        sceneScale: 1.2,
+        sourceNodeHalf: 20,
+        targetNodeHalf: 20,
+        placedLabelBounds: [
+          Rect.fromCenter(center: const Offset(130, 0), width: 260, height: 10),
+        ],
+      );
+
+      expect(placement.selectedCandidateKind, 'normalPositive');
+      expect(placement.selectedCenter.dx, closeTo(130, 0.001));
+      expect(placement.selectedCenter.dy, greaterThan(8));
+      expect(placement.selectedCenter.dy, lessThanOrEqualTo(24));
     });
 
     testWidgets('visible zoom chip tap은 기존 관계 상세 popup을 연다', (tester) async {
