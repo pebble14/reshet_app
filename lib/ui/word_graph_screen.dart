@@ -648,21 +648,15 @@ Iterable<_EdgeChipPlacementCandidate> _edgeChipPlacementCandidates({
     );
   }
 
-  final normalTierCount = max(
-    1,
-    (_labelMaxShiftDistance / _labelPlacementStep).floor(),
+  final normalShift = min(_labelPlacementStep, _labelMaxShiftDistance);
+  yield candidate(
+    _EdgeChipPlacementCandidateKind.normalPositive,
+    anchorCenter + visibleSegment.normal * normalShift,
   );
-  for (var tier = 1; tier <= normalTierCount; tier++) {
-    final shift = min(_labelPlacementStep * tier, _labelMaxShiftDistance);
-    yield candidate(
-      _EdgeChipPlacementCandidateKind.normalPositive,
-      anchorCenter + visibleSegment.normal * shift,
-    );
-    yield candidate(
-      _EdgeChipPlacementCandidateKind.normalNegative,
-      anchorCenter - visibleSegment.normal * shift,
-    );
-  }
+  yield candidate(
+    _EdgeChipPlacementCandidateKind.normalNegative,
+    anchorCenter - visibleSegment.normal * normalShift,
+  );
 }
 
 double _projectedHalfExtent({required Size size, required Offset axis}) {

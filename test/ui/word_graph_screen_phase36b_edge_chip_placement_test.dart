@@ -174,7 +174,7 @@ void main() {
       expect(placement.selectedCenter, const Offset(130, 0));
     });
 
-    test('기존 후보가 node obstacle과 충돌하면 제한된 추가 normal 후보를 선택한다', () {
+    test('node obstacle 회피에서도 normal 후보는 edge 인접 8px 범위를 유지한다', () {
       final placement = resolveEdgeChipPlacementForTesting(
         edgeStart: Offset.zero,
         edgeEnd: const Offset(260, 0),
@@ -183,17 +183,22 @@ void main() {
         sourceNodeHalf: 20,
         targetNodeHalf: 20,
         nodeObstacles: [
-          Rect.fromCenter(center: const Offset(130, 0), width: 260, height: 10),
+          Rect.fromCenter(center: const Offset(130, 0), width: 260, height: 40),
         ],
       );
 
       expect(placement.selectedCandidateKind, 'normalPositive');
       expect(placement.selectedCenter.dx, closeTo(130, 0.001));
-      expect(placement.selectedCenter.dy, greaterThan(8));
-      expect(placement.selectedCenter.dy, lessThanOrEqualTo(24));
+      expect(placement.selectedCenter.dy, closeTo(8, 0.001));
+      expect(
+        placement.candidates
+            .where((candidate) => candidate.kind.startsWith('normal'))
+            .every((candidate) => candidate.center.dy.abs() <= 8.001),
+        isTrue,
+      );
     });
 
-    test('기존 후보가 placed chip과 충돌하면 추가 normal 후보에서도 이를 회피한다', () {
+    test('placed chip 회피에서도 normal 후보는 edge 인접 8px 범위를 유지한다', () {
       final placement = resolveEdgeChipPlacementForTesting(
         edgeStart: Offset.zero,
         edgeEnd: const Offset(260, 0),
@@ -202,14 +207,19 @@ void main() {
         sourceNodeHalf: 20,
         targetNodeHalf: 20,
         placedLabelBounds: [
-          Rect.fromCenter(center: const Offset(130, 0), width: 260, height: 10),
+          Rect.fromCenter(center: const Offset(130, 0), width: 260, height: 40),
         ],
       );
 
       expect(placement.selectedCandidateKind, 'normalPositive');
       expect(placement.selectedCenter.dx, closeTo(130, 0.001));
-      expect(placement.selectedCenter.dy, greaterThan(8));
-      expect(placement.selectedCenter.dy, lessThanOrEqualTo(24));
+      expect(placement.selectedCenter.dy, closeTo(8, 0.001));
+      expect(
+        placement.candidates
+            .where((candidate) => candidate.kind.startsWith('normal'))
+            .every((candidate) => candidate.center.dy.abs() <= 8.001),
+        isTrue,
+      );
     });
 
     testWidgets('visible zoom chip tap은 기존 관계 상세 popup을 연다', (tester) async {
