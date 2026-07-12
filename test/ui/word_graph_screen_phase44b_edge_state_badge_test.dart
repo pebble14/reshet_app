@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:reshet_app/data/repositories/word_repository.dart';
 import 'package:reshet_app/domain/graph/graph_center_word_display_item.dart';
 import 'package:reshet_app/domain/graph/graph_visible_word.dart';
 import 'package:reshet_app/domain/graph/graph_word_label_display_item.dart';
+import 'package:reshet_app/domain/word/word_detail_like_display_item.dart';
 import 'package:reshet_app/ui/word_graph_cache.dart';
 import 'package:reshet_app/ui/word_graph_screen.dart';
 
@@ -126,7 +129,181 @@ void main() {
 
       await _disposeRuntimeApp(tester);
     });
+    testWidgets('같은 topology에서는 선택 변경과 해제 후에도 노드 위치를 유지한다', (tester) async {
+      final repository = _FakeWordRepository(_graphData());
+      await _pumpGraph(tester, repository);
+      await tester.pump();
+      await tester.pump();
+      final initialPositions = _nodeCenters(tester);
+
+      await tester.tap(_nodeFinder(_outgoingWordId), warnIfMissed: false);
+      await tester.pump();
+      expect(_selectedRingFinder(_outgoingWordId), findsOneWidget);
+      expect(_nodeCenters(tester), initialPositions);
+
+      await tester.tap(_nodeFinder(_incomingWordId), warnIfMissed: false);
+      await tester.pump();
+      expect(_selectedRingFinder(_incomingWordId), findsOneWidget);
+      expect(_nodeCenters(tester), initialPositions);
+
+      _backgroundTap(tester);
+      await tester.pump();
+      expect(_selectedRingFinder(_outgoingWordId), findsNothing);
+      expect(_selectedRingFinder(_incomingWordId), findsNothing);
+      expect(_nodeCenters(tester), initialPositions);
+
+      await tester.pump();
+      await tester.pump();
+      expect(_nodeCenters(tester), initialPositions);
+
+      await _disposeRuntimeApp(tester);
+    });
+
+    testWidgets('small-screen preview 완료와 선택 흐름에서도 layout과 camera를 유지한다', (
+      tester,
+    ) async {
+      final previewCompleter = Completer<WordDetailLikeDisplayItem?>();
+      final repository = _FakeWordRepository(
+        _graphData(),
+        previewFuture: previewCompleter.future,
+      );
+      await _pumpGraph(tester, repository, surfaceSize: const Size(412, 915));
+      await tester.pump();
+      await tester.pump();
+
+      final initialState = tester.state(find.byType(WordGraphScreen));
+      final initialLocalCenters = _nodeLayoutLocalCenters(tester);
+      final initialGlobalCenters = _nodeCenters(tester);
+      final initialCamera = _cameraMatrix(tester);
+
+      await tester.tap(_nodeFinder(_outgoingWordId), warnIfMissed: false);
+      await tester.pump();
+      _expectStableGraphMeasurements(
+        tester,
+        state: initialState,
+        localCenters: initialLocalCenters,
+        globalCenters: initialGlobalCenters,
+        camera: initialCamera,
+      );
+
+      previewCompleter.complete(
+        const WordDetailLikeDisplayItem(
+          representativeSpelling: 'Phase44B Preview',
+          meanings: ['Phase44B preview meaning'],
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+      expect(
+        find.byKey(const Key('mobile-selected-node-preview')),
+        findsOneWidget,
+      );
+      _expectStableGraphMeasurements(
+        tester,
+        state: initialState,
+        localCenters: initialLocalCenters,
+        globalCenters: initialGlobalCenters,
+        camera: initialCamera,
+      );
+
+      await tester.tap(_nodeFinder(_incomingWordId), warnIfMissed: false);
+      await tester.pump();
+      _expectStableGraphMeasurements(
+        tester,
+        state: initialState,
+        localCenters: initialLocalCenters,
+        globalCenters: initialGlobalCenters,
+        camera: initialCamera,
+      );
+
+      _backgroundTap(tester);
+      await tester.pump();
+      expect(_selectedRingFinder(_incomingWordId), findsNothing);
+      _expectStableGraphMeasurements(
+        tester,
+        state: initialState,
+        localCenters: initialLocalCenters,
+        globalCenters: initialGlobalCenters,
+        camera: initialCamera,
+      );
+
+      await _disposeRuntimeApp(tester);
+    });
   });
+}
+
+Finder _nodeFinder(String wordId) {
+  return find.byKey(ValueKey<String>('graph-peripheral-node:$wordId'));
+}
+
+Finder _selectedRingFinder(String wordId) {
+  return find.byKey(
+    ValueKey<String>('graph-peripheral-node-selected-ring:$wordId'),
+  );
+}
+
+Map<String, Offset> _nodeCenters(WidgetTester tester) {
+  return {
+    for (final wordId in [
+      _outgoingWordId,
+      _incomingWordId,
+      _undirectedWordId,
+      _unknownWordId,
+    ])
+      wordId: tester.getCenter(_nodeFinder(wordId)),
+  };
+}
+
+Map<String, Offset> _nodeLayoutLocalCenters(WidgetTester tester) {
+  return {
+    for (final wordId in [
+      _outgoingWordId,
+      _incomingWordId,
+      _undirectedWordId,
+      _unknownWordId,
+    ])
+      wordId: _nodeLayoutLocalCenter(tester, wordId),
+  };
+}
+
+Offset _nodeLayoutLocalCenter(WidgetTester tester, String wordId) {
+  final nodeFinder = _nodeFinder(wordId);
+  final positioned = tester.widget<Positioned>(
+    find.ancestor(of: nodeFinder, matching: find.byType(Positioned)).first,
+  );
+  final nodeSize = tester.getSize(nodeFinder);
+  return Offset(
+    positioned.left! + nodeSize.width / 2,
+    positioned.top! + nodeSize.height / 2,
+  );
+}
+
+List<double> _cameraMatrix(WidgetTester tester) {
+  final viewer = tester.widget<InteractiveViewer>(
+    find.byType(InteractiveViewer),
+  );
+  return List<double>.from(viewer.transformationController!.value.storage);
+}
+
+void _expectStableGraphMeasurements(
+  WidgetTester tester, {
+  required State<StatefulWidget> state,
+  required Map<String, Offset> localCenters,
+  required Map<String, Offset> globalCenters,
+  required List<double> camera,
+}) {
+  expect(tester.state(find.byType(WordGraphScreen)), same(state));
+  expect(_nodeLayoutLocalCenters(tester), localCenters);
+  expect(_nodeCenters(tester), globalCenters);
+  expect(_cameraMatrix(tester), camera);
+}
+
+void _backgroundTap(WidgetTester tester) {
+  final canvas = find.byKey(const ValueKey<String>('graph-canvas-surface'));
+  final detector = find
+      .descendant(of: canvas, matching: find.byType(GestureDetector))
+      .first;
+  tester.widget<GestureDetector>(detector).onTap!.call();
 }
 
 Finder _edgeChipFinder(String edgeId) {
@@ -144,8 +321,12 @@ Finder _edgeChipTextFinder(String edgeId, String text) {
   );
 }
 
-Future<void> _pumpGraph(WidgetTester tester, WordRepository repository) async {
-  _setSurfaceSize(tester, const Size(1200, 900));
+Future<void> _pumpGraph(
+  WidgetTester tester,
+  WordRepository repository, {
+  Size surfaceSize = const Size(1200, 900),
+}) async {
+  _setSurfaceSize(tester, surfaceSize);
   await tester.pumpWidget(
     MaterialApp(
       theme: ThemeData(
@@ -342,8 +523,9 @@ WordRelationEdgeInfo _edgeInfo({
 
 class _FakeWordRepository extends WordRepository {
   final VisibleWordGraphData graphData;
+  final Future<WordDetailLikeDisplayItem?>? previewFuture;
 
-  _FakeWordRepository(this.graphData);
+  _FakeWordRepository(this.graphData, {this.previewFuture});
 
   @override
   Future<Map<String, dynamic>?> getWordMapByIdForGraphCenterSingleWord(
@@ -366,6 +548,12 @@ class _FakeWordRepository extends WordRepository {
       throw StateError('Unexpected graph center: $centerWordId');
     }
     return graphData;
+  }
+
+  @override
+  Future<WordDetailLikeDisplayItem?>
+  getWordDetailLikeDisplayItemByIdForDetailScreen(String id) async {
+    return previewFuture ?? const WordDetailLikeDisplayItem();
   }
 
   @override

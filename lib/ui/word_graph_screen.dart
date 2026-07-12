@@ -1363,6 +1363,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   final Set<String> _fullyRevealedExpansionSourceIds = <String>{};
   final Set<String> _dbWideCollisionWordIdsForVisibleGraph = <String>{};
   final Map<String, Offset> _seedNodePositions = <String, Offset>{};
+  int? _positionedNodesTopologySignature;
   bool _isCenterDepthOneFullyRevealed = false;
   int _collisionWordIdsRefreshSerial = 0;
   int _graphRevision = 0;
@@ -1915,6 +1916,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     _isCenterDepthOneFullyRevealed = false;
     if (clearSeedPositions) {
       _seedNodePositions.clear();
+      _positionedNodesTopologySignature = null;
     }
   }
 
@@ -4299,17 +4301,22 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     Size viewportSize,
     GraphViewData viewData,
   ) {
-    final layoutResult = GraphLayoutStrategyResolver.layout(
-      layoutMode: _graphLayoutMode,
-      viewData: viewData,
-      options: _graphLayoutOptions,
-      layoutSeed: _graphLayoutSeed(viewData),
-      seedPositions: _seedNodePositions,
-    );
+    final topologySignature = _graphTopologySignature(viewData);
+    final canReusePositionedNodes =
+        _positionedNodesTopologySignature == topologySignature &&
+        viewData.nodes.every((node) => _seedNodePositions.containsKey(node.id));
     final layoutSpaceSize = _graphLayoutOptions.layoutSpaceSize;
-    final resolvedPositions = Map<String, Offset>.from(
-      layoutResult.positionedNodes,
-    );
+    final resolvedPositions = canReusePositionedNodes
+        ? Map<String, Offset>.from(_seedNodePositions)
+        : Map<String, Offset>.from(
+            GraphLayoutStrategyResolver.layout(
+              layoutMode: _graphLayoutMode,
+              viewData: viewData,
+              options: _graphLayoutOptions,
+              layoutSeed: _graphLayoutSeed(viewData),
+              seedPositions: _seedNodePositions,
+            ).positionedNodes,
+          );
     final peripheralNodes = _peripheralNodesForViewData(viewData);
     final center =
         resolvedPositions[viewData.centerNodeId] ??
@@ -4387,9 +4394,12 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         .where((node) => node.depth >= 2 && node.expansionSourceId != null)
         .map((node) => node.expansionSourceId!)
         .toSet();
-    _seedNodePositions
-      ..clear()
-      ..addAll(resolvedPositions);
+    if (!canReusePositionedNodes) {
+      _seedNodePositions
+        ..clear()
+        ..addAll(resolvedPositions);
+      _positionedNodesTopologySignature = topologySignature;
+    }
     final ringRadii = <double>[];
     final nodeLayouts = <_GraphNodeLayout>[];
 
@@ -4498,6 +4508,36 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     seed = 0x1fffffff & (seed + ((0x00003fff & seed) << 15));
 
     return seed & 0x7fffffff;
+  }
+
+  int _graphTopologySignature(GraphViewData viewData) {
+    final nodeSignatures =
+        viewData.nodes
+            .map(
+              (node) => Object.hash(
+                node.id,
+                node.depth,
+                node.isCenter,
+                node.isPlaceholderMoreNode,
+                node.placeholderSourceWordId,
+                node.expansionSourceId,
+                node.hiddenCount,
+              ),
+            )
+            .toList(growable: false)
+          ..sort();
+    final edgeSignatures =
+        viewData.edges
+            .map((edge) => Object.hash(edge.id, edge.sourceId, edge.targetId))
+            .toList(growable: false)
+          ..sort();
+    return Object.hash(
+      viewData.centerNodeId,
+      _graphLayoutMode,
+      _graphLayoutOptions.layoutSpaceSize,
+      Object.hashAll(nodeSignatures),
+      Object.hashAll(edgeSignatures),
+    );
   }
 
   _GraphNodeLayout _buildNodeLayout({
