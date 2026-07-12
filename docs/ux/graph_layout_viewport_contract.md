@@ -30,6 +30,8 @@ Layout cache identity에는 다음 항목만 포함한다.
 
 하나의 graph topology revision에서 force-directed layout은 한 번 계산한 위치를 확정값으로 사용한다. 중심 노드, 노드·엣지 구성, depth, placeholder source, layout mode 또는 layout option이 바뀔 때만 새 layout 계산을 허용한다. 노드 선택·선택 해제, preview 로딩, hover·focus, theme 또는 단순 widget rebuild는 확정된 노드 위치를 변경하지 않는다. topology가 바뀌면 직전 확정 위치를 새 계산의 seed로 사용할 수 있으며, 새 계산이 끝난 뒤에는 그 결과를 다시 고정한다.
 
+실제 depth 1·2 주변 단어 노드는 현재 graph 화면 session에서 drag할 수 있다. 중심 노드와 `+N more` placeholder는 drag할 수 없다. Drag 중에는 camera scale과 translation을 유지하면서 해당 노드 좌표와 연결 edge·chip geometry만 현재 좌표로 다시 계산한다. Release 위치는 force relaxation 1회의 임시 고정 anchor이며, 계산 결과는 같은 topology의 새 확정 좌표로 고정한다. 이 임시 위치와 pin은 DB에 저장하지 않으며, 선택 상태 변화는 relaxation을 요청하지 않는다.
+
 ## 4. Camera / viewport 계약
 
 - 실제 viewport 크기는 scene 표시와 camera transform 계산에만 사용한다.
@@ -72,7 +74,7 @@ Layout cache identity에는 다음 항목만 포함한다.
 
 다음 항목은 아직 이 계약의 구현 범위가 아니다.
 
-- node drag와 pin/fixed position
+- 영구 pin/fixed position과 session 밖 node 위치 저장
 - 지속 physics simulation
 - physics option UI
 - PyVis, vis.js, WebView 또는 새 dependency 도입

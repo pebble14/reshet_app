@@ -99,4 +99,23 @@ void main() {
     expect(identical(cached, first), isTrue);
     expect(identical(differentCanonicalSpace, first), isFalse);
   });
+
+  test('force layout은 transient pinned node의 seed 위치를 유지한다', () {
+    const releasePosition = Offset(1000, 700);
+    final pinnedViewData = GraphViewData(
+      centerNodeId: viewData.centerNodeId,
+      nodes: viewData.nodes.map(
+        (node) => node.id == 'alpha' ? node.copyWith(isPinned: true) : node,
+      ),
+      edges: viewData.edges,
+    );
+    final result = GraphLayoutStrategyResolver.layout(
+      layoutMode: GraphLayoutMode.forceDirected,
+      viewData: pinnedViewData,
+      options: layoutOptions,
+      layoutSeed: 2303,
+      seedPositions: {...seedPositions, 'alpha': releasePosition},
+    );
+    expect(result.positionFor('alpha'), releasePosition);
+  });
 }

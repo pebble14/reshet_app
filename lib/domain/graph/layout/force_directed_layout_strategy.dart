@@ -14,6 +14,7 @@ class _ForceNodePlacement {
   final double targetRadius;
   final Offset? seedPosition;
   final double seedAnchorStrength;
+  final bool isPinned;
   Offset position;
 
   _ForceNodePlacement({
@@ -22,6 +23,7 @@ class _ForceNodePlacement {
     required this.targetRadius,
     required this.seedPosition,
     required this.seedAnchorStrength,
+    required this.isPinned,
     required this.position,
   });
 }
@@ -182,29 +184,37 @@ class ForceDirectedLayoutStrategy implements GraphLayoutStrategy {
               : (node.depth <= 1
                     ? seedAnchorStrength
                     : seedAnchorStrength * 0.72),
-          position: _stabilizePosition(
-            center: center,
-            candidate: _initialPositionForNode(
-              center: center,
-              targetRadius: targetRadius,
-              node: node,
-              index: index,
-              depthOrderIndex: depthOrderIndex,
-              totalNodeCount: peripheralNodes.length,
-              shellCapacity: shellCapacity,
-              layoutSeed: layoutSeed,
-              seedPositions: seedPositions,
-              shellSpacing: effectiveShellSpacing,
-              crowdingFactor: crowdingFactor,
-            ),
-            minCenterDistance: minCenterDistance,
-            maxCenterDistance: maxCenterDistance,
-            layoutSpaceSize: layoutSpaceSize,
-            nodeHalf: nodeHalf,
-            layoutSeed: layoutSeed,
-            index: index,
-            layoutSpaceOverflow: effectiveLayoutSpaceOverflow,
-          ),
+          isPinned: node.isPinned && seedPosition != null,
+          position: node.isPinned && seedPosition != null
+              ? _clampToLayoutBoundary(
+                  candidate: seedPosition,
+                  layoutSpaceSize: layoutSpaceSize,
+                  nodeHalf: nodeHalf,
+                  layoutSpaceOverflow: effectiveLayoutSpaceOverflow,
+                )
+              : _stabilizePosition(
+                  center: center,
+                  candidate: _initialPositionForNode(
+                    center: center,
+                    targetRadius: targetRadius,
+                    node: node,
+                    index: index,
+                    depthOrderIndex: depthOrderIndex,
+                    totalNodeCount: peripheralNodes.length,
+                    shellCapacity: shellCapacity,
+                    layoutSeed: layoutSeed,
+                    seedPositions: seedPositions,
+                    shellSpacing: effectiveShellSpacing,
+                    crowdingFactor: crowdingFactor,
+                  ),
+                  minCenterDistance: minCenterDistance,
+                  maxCenterDistance: maxCenterDistance,
+                  layoutSpaceSize: layoutSpaceSize,
+                  nodeHalf: nodeHalf,
+                  layoutSeed: layoutSeed,
+                  index: index,
+                  layoutSpaceOverflow: effectiveLayoutSpaceOverflow,
+                ),
         ),
       );
     }
@@ -252,6 +262,9 @@ class ForceDirectedLayoutStrategy implements GraphLayoutStrategy {
 
       var moved = false;
       for (var index = 0; index < placements.length; index++) {
+        if (placements[index].isPinned) {
+          continue;
+        }
         final movement = _clampOffset(deltas[index], stepLimit);
         if (movement.distanceSquared > 0.0001) {
           moved = true;
@@ -460,6 +473,12 @@ class ForceDirectedLayoutStrategy implements GraphLayoutStrategy {
     required int index,
     required double layoutSpaceOverflow,
   }) {
+    var stabilized = _clampToLayoutBoundary(
+      candidate: candidate,
+      layoutSpaceSize: layoutSpaceSize,
+      nodeHalf: nodeHalf,
+      layoutSpaceOverflow: layoutSpaceOverflow,
+    );
     final minX = nodeHalf + layoutSpacePadding - layoutSpaceOverflow;
     final maxX = max(
       minX,
@@ -475,10 +494,6 @@ class ForceDirectedLayoutStrategy implements GraphLayoutStrategy {
           nodeHalf -
           layoutSpacePadding +
           layoutSpaceOverflow,
-    );
-    var stabilized = Offset(
-      candidate.dx.clamp(minX, maxX).toDouble(),
-      candidate.dy.clamp(minY, maxY).toDouble(),
     );
     final vector = stabilized - center;
     var distance = vector.distance;
@@ -503,6 +518,34 @@ class ForceDirectedLayoutStrategy implements GraphLayoutStrategy {
     }
 
     return stabilized;
+  }
+
+  Offset _clampToLayoutBoundary({
+    required Offset candidate,
+    required Size layoutSpaceSize,
+    required double nodeHalf,
+    required double layoutSpaceOverflow,
+  }) {
+    final minX = nodeHalf + layoutSpacePadding - layoutSpaceOverflow;
+    final maxX = max(
+      minX,
+      layoutSpaceSize.width -
+          nodeHalf -
+          layoutSpacePadding +
+          layoutSpaceOverflow,
+    );
+    final minY = nodeHalf + layoutSpacePadding - layoutSpaceOverflow;
+    final maxY = max(
+      minY,
+      layoutSpaceSize.height -
+          nodeHalf -
+          layoutSpacePadding +
+          layoutSpaceOverflow,
+    );
+    return Offset(
+      candidate.dx.clamp(minX, maxX).toDouble(),
+      candidate.dy.clamp(minY, maxY).toDouble(),
+    );
   }
 
   Offset _initialPositionForNode({
@@ -714,6 +757,9 @@ class ForceDirectedLayoutStrategy implements GraphLayoutStrategy {
       }
 
       for (var index = 0; index < placements.length; index++) {
+        if (placements[index].isPinned) {
+          continue;
+        }
         placements[index].position = _stabilizePosition(
           center: center,
           candidate:

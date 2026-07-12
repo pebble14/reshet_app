@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:reshet_app/data/repositories/word_repository.dart';
 import 'package:reshet_app/domain/graph/graph_center_word_display_item.dart';
@@ -43,6 +44,14 @@ void main() {
 
       await _pumpGraph(tester, repository);
       await _setCameraScale(tester, 1.2);
+      final viewerRect = tester.getRect(find.byType(InteractiveViewer));
+      final canvasGesture = await tester.startGesture(
+        viewerRect.topLeft + const Offset(24, 24),
+        kind: PointerDeviceKind.mouse,
+      );
+      await canvasGesture.moveBy(const Offset(36, 28));
+      await canvasGesture.up();
+      await tester.pump();
       await _pumpUntil(
         tester,
         () =>
@@ -155,6 +164,113 @@ void main() {
       await tester.pump();
       await tester.pump();
       expect(_nodeCenters(tester), initialPositions);
+
+      await _disposeRuntimeApp(tester);
+    });
+
+    testWidgets('주변 노드 drag는 camera를 유지하고 release 결과를 안정 좌표로 고정한다', (
+      tester,
+    ) async {
+      final repository = _FakeWordRepository(_graphData());
+      await _pumpGraph(tester, repository);
+      await _setCameraScale(tester, 1.2);
+      expect(
+        tester
+            .widget<InteractiveViewer>(find.byType(InteractiveViewer))
+            .panEnabled,
+        isTrue,
+      );
+      await _pumpUntil(
+        tester,
+        () => _edgeChipFinder(
+          _outgoingRelationId.toString(),
+        ).evaluate().isNotEmpty,
+        reason: 'drag 전 대표 edge chip이 렌더링되어야 한다.',
+      );
+
+      final initialNodeCenter = tester.getCenter(_nodeFinder(_outgoingWordId));
+      final initialLayoutCenter = _nodeLayoutLocalCenter(
+        tester,
+        _outgoingWordId,
+      );
+      final initialChipCenter = tester.getCenter(
+        _edgeChipFinder(_outgoingRelationId.toString()),
+      );
+      final initialCamera = _cameraMatrix(tester);
+      final gesture = await tester.startGesture(
+        initialNodeCenter,
+        kind: PointerDeviceKind.mouse,
+      );
+      await gesture.moveBy(const Offset(18, 10));
+      await tester.pump();
+      await gesture.moveBy(const Offset(72, 44));
+      await tester.pump();
+
+      final draggingNodeCenter = tester.getCenter(_nodeFinder(_outgoingWordId));
+      final draggingChipCenter = tester.getCenter(
+        _edgeChipFinder(_outgoingRelationId.toString()),
+      );
+      final draggingLayoutCenter = _nodeLayoutLocalCenter(
+        tester,
+        _outgoingWordId,
+      );
+      expect(draggingNodeCenter, isNot(initialNodeCenter));
+      expect(draggingLayoutCenter, isNot(initialLayoutCenter));
+      expect(draggingChipCenter, isNot(initialChipCenter));
+      expect(_cameraMatrix(tester), initialCamera);
+      expect(
+        tester
+            .widget<InteractiveViewer>(find.byType(InteractiveViewer))
+            .panEnabled,
+        isFalse,
+      );
+
+      await gesture.up();
+      await tester.pump();
+      final releasedCenters = _nodeLayoutLocalCenters(tester);
+      expect(releasedCenters[_outgoingWordId], draggingLayoutCenter);
+      expect(_cameraMatrix(tester), initialCamera);
+      expect(
+        tester
+            .widget<InteractiveViewer>(find.byType(InteractiveViewer))
+            .panEnabled,
+        isTrue,
+      );
+
+      await tester.tap(_nodeFinder(_incomingWordId), warnIfMissed: false);
+      await tester.pump();
+      expect(_nodeLayoutLocalCenters(tester), releasedCenters);
+      expect(_cameraMatrix(tester), initialCamera);
+
+      _backgroundTap(tester);
+      await tester.pump();
+      expect(_nodeLayoutLocalCenters(tester), releasedCenters);
+      expect(_cameraMatrix(tester), initialCamera);
+
+      await _disposeRuntimeApp(tester);
+    });
+
+    testWidgets('small-screen에서도 주변 노드 touch drag와 camera 고정 계약을 유지한다', (
+      tester,
+    ) async {
+      final repository = _FakeWordRepository(_graphData());
+      await _pumpGraph(tester, repository, surfaceSize: const Size(412, 915));
+      final initialCenter = tester.getCenter(_nodeFinder(_outgoingWordId));
+      final initialCamera = _cameraMatrix(tester);
+      final gesture = await tester.startGesture(initialCenter);
+      await gesture.moveBy(const Offset(16, 8));
+      await tester.pump();
+      await gesture.moveBy(const Offset(48, 32));
+      await tester.pump();
+
+      expect(
+        tester.getCenter(_nodeFinder(_outgoingWordId)),
+        isNot(initialCenter),
+      );
+      expect(_cameraMatrix(tester), initialCamera);
+      await gesture.up();
+      await tester.pump();
+      expect(_cameraMatrix(tester), initialCamera);
 
       await _disposeRuntimeApp(tester);
     });

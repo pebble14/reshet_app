@@ -1335,6 +1335,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   /// 그래프 줌/팬 상태를 관리하는 컨트롤러
   final TransformationController _transformController =
       TransformationController();
+  final GlobalKey _graphViewportKey = GlobalKey();
 
   /// 현재 줌 배율(태그 표시/숨김 등에 사용)
   double _currentScale = 1.0;
@@ -1364,6 +1365,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   final Set<String> _dbWideCollisionWordIdsForVisibleGraph = <String>{};
   final Map<String, Offset> _seedNodePositions = <String, Offset>{};
   int? _positionedNodesTopologySignature;
+  String? _draggingNodeId;
+  Offset? _dragGrabOffset;
   bool _isCenterDepthOneFullyRevealed = false;
   int _collisionWordIdsRefreshSerial = 0;
   int _graphRevision = 0;
@@ -2225,12 +2228,13 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                     behavior: HitTestBehavior.opaque,
                     onTap: _handleBackgroundTap,
                     child: InteractiveViewer(
+                      key: _graphViewportKey,
                       transformationController: _transformController,
                       constrained: false,
                       minScale: 0.6,
                       maxScale: 3.5,
                       boundaryMargin: const EdgeInsets.all(2000),
-                      panEnabled: true,
+                      panEnabled: _draggingNodeId == null,
                       scaleEnabled: true,
                       onInteractionStart: (_) {
                         _isViewportInteracting = true;
@@ -3588,6 +3592,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     required GraphWordLabelDisplayItem labelDisplay,
     required _GraphNodeLayout nodeLayout,
     required _GraphVisualState visualState,
+    required GestureDragStartCallback onPanStart,
+    required GestureDragUpdateCallback onPanUpdate,
+    required GestureDragEndCallback onPanEnd,
+    required GestureDragCancelCallback onPanCancel,
   }) {
     final spellingLabel = labelDisplay.peripheralTitleLabel;
     final strongIdentityLabel = labelDisplay.displayStrongNumber.trim();
@@ -3737,6 +3745,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     return GestureDetector(
       key: ValueKey<String>('graph-peripheral-node:${word.id}'),
       onTap: () => _handleConnectedWordTap(word),
+      onPanStart: onPanStart,
+      onPanUpdate: onPanUpdate,
+      onPanEnd: onPanEnd,
+      onPanCancel: onPanCancel,
       child: SizedBox(
         width: nodeSize,
         height: nodeSize,
@@ -4864,26 +4876,108 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                 labelDisplay: _labelDisplayForGraphNode(graphNode),
                 nodeLayout: nodeLayout,
                 visualState: visualState,
+                onPanStart: (details) =>
+                    _startNodeDrag(graphNode.id, details.globalPosition),
+                onPanUpdate: (details) =>
+                    _updateNodeDrag(details.globalPosition),
+                onPanEnd: (_) => _endNodeDrag(viewData),
+                onPanCancel: () => _endNodeDrag(viewData),
               );
             }();
       widgets.add(
         Positioned(
           left: nodeLayout.nodeBounds.left,
           top: nodeLayout.nodeBounds.top,
-          child: Transform.scale(
-            key: ValueKey<String>('graph-node-visual-scale:${graphNode.id}'),
-            scale: isActualPeripheralWordNode
-                ? _peripheralNodeLocalVisualScale(_currentScale)
-                : _nodeLocalVisualScale(_currentScale),
-            alignment: Alignment.center,
-            transformHitTests: true,
-            child: child,
+          child: MouseRegion(
+            cursor: isActualPeripheralWordNode
+                ? (_draggingNodeId == graphNode.id
+                      ? SystemMouseCursors.grabbing
+                      : SystemMouseCursors.grab)
+                : MouseCursor.defer,
+            child: Transform.scale(
+              key: ValueKey<String>('graph-node-visual-scale:${graphNode.id}'),
+              scale: isActualPeripheralWordNode
+                  ? _peripheralNodeLocalVisualScale(_currentScale)
+                  : _nodeLocalVisualScale(_currentScale),
+              alignment: Alignment.center,
+              transformHitTests: true,
+              child: child,
+            ),
           ),
         ),
       );
     }
 
     return widgets;
+  }
+
+  Offset? _globalToGraphLayout(Offset globalPosition) {
+    final viewportContext = _graphViewportKey.currentContext;
+    final renderObject = viewportContext?.findRenderObject();
+    if (renderObject is! RenderBox) {
+      return null;
+    }
+    final viewportLocal = renderObject.globalToLocal(globalPosition);
+    final inverse = Matrix4.inverted(_transformController.value);
+    return MatrixUtils.transformPoint(inverse, viewportLocal);
+  }
+
+  void _startNodeDrag(String nodeId, Offset globalPosition) {
+    final pointerLayoutPosition = _globalToGraphLayout(globalPosition);
+    final nodePosition = _seedNodePositions[nodeId];
+    if (pointerLayoutPosition == null || nodePosition == null) {
+      return;
+    }
+    _temporarilySuppressBackgroundTapClear();
+    _markViewportInteraction();
+    setState(() {
+      _draggingNodeId = nodeId;
+      _dragGrabOffset = pointerLayoutPosition - nodePosition;
+    });
+  }
+
+  void _updateNodeDrag(Offset globalPosition) {
+    final nodeId = _draggingNodeId;
+    final grabOffset = _dragGrabOffset;
+    final pointerLayoutPosition = _globalToGraphLayout(globalPosition);
+    if (nodeId == null || grabOffset == null || pointerLayoutPosition == null) {
+      return;
+    }
+    _markViewportInteraction();
+    setState(() {
+      _seedNodePositions[nodeId] = pointerLayoutPosition - grabOffset;
+    });
+  }
+
+  void _endNodeDrag(GraphViewData viewData) {
+    final nodeId = _draggingNodeId;
+    final releasePosition = nodeId == null ? null : _seedNodePositions[nodeId];
+    if (nodeId == null || releasePosition == null) {
+      return;
+    }
+    final pinnedViewData = GraphViewData(
+      centerNodeId: viewData.centerNodeId,
+      nodes: viewData.nodes.map(
+        (node) => node.id == nodeId ? node.copyWith(isPinned: true) : node,
+      ),
+      edges: viewData.edges,
+    );
+    final relaxedPositions = GraphLayoutStrategyResolver.layout(
+      layoutMode: _graphLayoutMode,
+      viewData: pinnedViewData,
+      options: _graphLayoutOptions,
+      layoutSeed: _graphLayoutSeed(viewData),
+      seedPositions: _seedNodePositions,
+    ).positionedNodes;
+    _temporarilySuppressBackgroundTapClear();
+    _markViewportInteraction();
+    setState(() {
+      _seedNodePositions
+        ..clear()
+        ..addAll(relaxedPositions);
+      _draggingNodeId = null;
+      _dragGrabOffset = null;
+    });
   }
 
   /// 엣지 태그(라벨)를 "클릭 가능한 위젯"으로 렌더링한다.
