@@ -214,7 +214,7 @@ void main() {
     });
 
     test('production app home and owner remain unchanged', () {
-      expect(mainSource, contains('home: const HomeScreen()'));
+      expect(mainSource, matches(RegExp(r'home:\s*HomeScreen\s*\(')));
       expect(mainSource, isNot(contains('ExplorerWorkspacePreviewScreen')));
       expect(mainSource, isNot(contains('explorer_workspace_preview_screen')));
 

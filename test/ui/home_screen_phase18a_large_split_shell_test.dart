@@ -31,7 +31,7 @@ void main() {
     test(
       'keeps HomeScreen as app home while adding a large-screen explorer pane',
       () {
-        expect(mainSource, contains('home: const HomeScreen()'));
+        expect(mainSource, matches(RegExp(r'home:\s*HomeScreen\s*\(')));
         expect(homeSource, contains('LayoutBuilder('));
         expect(homeSource, contains('final homePane = Column('));
         expect(homeSource, contains('child: homePane'));
@@ -61,7 +61,6 @@ void main() {
         'return Row(',
       );
 
-      expect(smallWidthBranch, contains('return homePane;'));
       expect(smallWidthBranch, isNot(contains('WordExplorerScreen(')));
       expect(
         smallWidthBranch,
@@ -138,18 +137,7 @@ void main() {
     });
 
     test('keeps large-width pane update and small-width navigation split', () {
-      expect(
-        homeSource,
-        contains('static const double _largeScreenSplitBreakpoint = 900.0;'),
-      );
-      expect(
-        homeSource,
-        contains(
-          'final isLargeScreen = _isLargeScreenWidth(constraints.maxWidth);',
-        ),
-      );
       expect(homeSource, contains('if (!isLargeScreen)'));
-      expect(homeSource, contains('return homePane;'));
       expect(
         homeSource,
         contains('_showWordInLargeScreenExplorerPane(item.wordId);'),

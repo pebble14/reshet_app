@@ -17,8 +17,7 @@ void main() {
 
     test('keeps HomeScreen as the production app home', () {
       expect(mainSource, contains("import 'ui/home_screen.dart';"));
-      expect(mainSource, contains('class ReshetApp extends StatelessWidget'));
-      expect(mainSource, contains('home: const HomeScreen()'));
+      expect(mainSource, matches(RegExp(r'home:\s*HomeScreen\s*\(')));
       expect(mainSource, isNot(contains('main_explorer_workspace_preview')));
     });
 

@@ -113,7 +113,7 @@ void main() {
         );
       }
 
-      expect(mainSource, contains('home: const HomeScreen()'));
+      expect(mainSource, matches(RegExp(r'home:\s*HomeScreen\s*\(')));
       expect(mainSource, isNot(contains('ExplorerWorkspacePreviewAccessApp')));
       expect(mainSource, isNot(contains('main_explorer_workspace_preview')));
       expect(homeSource, contains('WordExplorerScreen('));

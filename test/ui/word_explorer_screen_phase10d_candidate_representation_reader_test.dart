@@ -194,7 +194,7 @@ void main() {
         );
         expect(
           productionBoundarySources[mainSourcePath],
-          contains('home: const HomeScreen()'),
+          matches(RegExp(r'home:\s*HomeScreen\s*\(')),
         );
         expect(
           productionBoundarySources[mainSourcePath],

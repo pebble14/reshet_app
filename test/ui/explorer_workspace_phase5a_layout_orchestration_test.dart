@@ -248,9 +248,7 @@ void main() {
       expect(hostSource, contains('_PreviewPanelVisibilityState'));
       expect(
         hostSource,
-        contains(
-          '_PreviewPanelVisibilityState _panelVisibilityState =',
-        ),
+        contains('_PreviewPanelVisibilityState _panelVisibilityState ='),
       );
       expect(
         hostSource,
@@ -326,7 +324,7 @@ void main() {
     });
 
     test('production owner and route default remain unchanged', () {
-      expect(mainSource, contains('home: const HomeScreen()'));
+      expect(mainSource, matches(RegExp(r'home:\s*HomeScreen\s*\(')));
       expect(homeSource, contains('WordExplorerScreen('));
       expect(homeSource, contains('Navigator.push'));
       expect(

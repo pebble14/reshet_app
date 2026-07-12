@@ -266,7 +266,7 @@ Repository, read boundary, normalization, database 문서는 data authority와 i
 
 ## 14. 런타임 테마와 그래프 surface 계약
 
-애플리케이션의 일반 surface는 운영체제의 light/dark 테마를 따른다. 그래프 canvas도 현재 테마의 surface를 사용하되, node·edge chip·방향 상태 badge 같은 그래프 콘텐츠 객체는 어두운 canvas에서도 밝은 객체 성격과 의미 계층을 유지한다. 그래프 dialog는 그래프 객체가 아니라 일반 애플리케이션 UI로서 현재 테마를 따른다.
+애플리케이션의 기본 테마 모드는 시스템 설정 사용이며 운영체제의 light/dark 테마를 따른다. 사용자가 라이트 또는 다크를 선택하면 운영체제 설정보다 사용자 선택을 우선하며, 시스템 설정 사용을 다시 선택하면 운영체제 테마 추종으로 돌아간다. 이 선택은 앱을 재실행한 뒤에도 유지한다. 그래프 canvas도 현재 테마의 surface를 사용하되, node·edge chip·방향 상태 badge 같은 그래프 콘텐츠 객체는 어두운 canvas에서도 밝은 객체 성격과 의미 계층을 유지한다. 그래프 dialog는 그래프 객체가 아니라 일반 애플리케이션 UI로서 현재 테마를 따른다.
 
 ## 15. 요약
 

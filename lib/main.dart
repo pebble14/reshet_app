@@ -9,11 +9,16 @@
   2. 최상위 위젯(App)을 실행
 */
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'theme_mode_preference.dart';
 import 'ui/home_screen.dart'; // 우리가 만들 첫 화면
 
-void main() {
-  runApp(const ReshetApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final initialThemeMode = await ThemeModePreference.load();
+  runApp(ReshetApp(initialThemeMode: initialThemeMode));
 }
 
 /*
@@ -24,11 +29,33 @@ void main() {
   - 테마 설정
   - 첫 화면 지정
 
-  StatelessWidget을 사용하는 이유:
-  앱의 전체 설정은 실행 중에 변하지 않기 때문이다.
+  앱 전체 테마 선택을 실행 중에 즉시 반영하기 위해 상태를 소유한다.
 */
-class ReshetApp extends StatelessWidget {
-  const ReshetApp({super.key});
+class ReshetApp extends StatefulWidget {
+  const ReshetApp({super.key, this.initialThemeMode = ThemeMode.system});
+
+  final ThemeMode initialThemeMode;
+
+  @override
+  State<ReshetApp> createState() => _ReshetAppState();
+}
+
+class _ReshetAppState extends State<ReshetApp> {
+  late ThemeMode _themeMode;
+
+  @override
+  void initState() {
+    super.initState();
+    _themeMode = widget.initialThemeMode;
+  }
+
+  void _changeThemeMode(ThemeMode themeMode) {
+    if (themeMode == _themeMode) {
+      return;
+    }
+    setState(() => _themeMode = themeMode);
+    unawaited(ThemeModePreference.save(themeMode));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,8 +73,11 @@ class ReshetApp extends StatelessWidget {
       debugShowCheckedModeBanner: false, // 우측 상단 DEBUG 배너 제거
       theme: ThemeData(colorScheme: lightColorScheme, useMaterial3: true),
       darkTheme: ThemeData(colorScheme: darkColorScheme, useMaterial3: true),
-      themeMode: ThemeMode.system,
-      home: const HomeScreen(), // 첫 화면
+      themeMode: _themeMode,
+      home: HomeScreen(
+        themeMode: _themeMode,
+        onThemeModeChanged: _changeThemeMode,
+      ), // 첫 화면
     );
   }
 }

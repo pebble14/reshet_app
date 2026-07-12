@@ -188,7 +188,7 @@ void main() {
         );
       }
 
-      expect(mainSource, contains('home: const HomeScreen()'));
+      expect(mainSource, matches(RegExp(r'home:\s*HomeScreen\s*\(')));
     });
   });
 }

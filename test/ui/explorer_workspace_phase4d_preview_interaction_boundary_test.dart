@@ -206,7 +206,7 @@ void main() {
         previewSource,
         isNot(contains('ExplorerWorkspacePreviewInteractionHost')),
       );
-      expect(mainSource, contains('home: const HomeScreen()'));
+      expect(mainSource, matches(RegExp(r'home:\s*HomeScreen\s*\(')));
       expect(mainSource, isNot(contains('ExplorerWorkspacePreviewScreen')));
       expect(
         mainSource,

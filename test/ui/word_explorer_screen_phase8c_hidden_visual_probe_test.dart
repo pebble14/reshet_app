@@ -147,7 +147,7 @@ void main() {
       expect(wordExplorerSource, isNot(contains('ExplorerWorkspace(')));
       expect(mainSource, isNot(contains('_debugValidateHiddenVisualProbe')));
       expect(homeSource, isNot(contains('_debugValidateHiddenVisualProbe')));
-      expect(mainSource, contains('home: const HomeScreen()'));
+      expect(mainSource, matches(RegExp(r'home:\s*HomeScreen\s*\(')));
     });
   });
 }

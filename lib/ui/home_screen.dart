@@ -37,7 +37,14 @@ import 'word_search_query.dart';
   등을 대비하기 위함이다.
 */
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({
+    super.key,
+    this.themeMode = ThemeMode.system,
+    this.onThemeModeChanged,
+  });
+
+  final ThemeMode themeMode;
+  final ValueChanged<ThemeMode>? onThemeModeChanged;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -760,6 +767,47 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Future<void> _showThemeDialog() async {
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('테마'),
+          contentPadding: const EdgeInsets.fromLTRB(12, 8, 12, 16),
+          content: RadioGroup<ThemeMode>(
+            groupValue: widget.themeMode,
+            onChanged: (themeMode) {
+              if (themeMode == null) {
+                return;
+              }
+              Navigator.of(dialogContext).pop();
+              if (themeMode != widget.themeMode) {
+                widget.onThemeModeChanged?.call(themeMode);
+              }
+            },
+            child: const Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                RadioListTile<ThemeMode>(
+                  value: ThemeMode.system,
+                  title: Text('시스템 설정 사용'),
+                ),
+                RadioListTile<ThemeMode>(
+                  value: ThemeMode.light,
+                  title: Text('라이트'),
+                ),
+                RadioListTile<ThemeMode>(
+                  value: ThemeMode.dark,
+                  title: Text('다크'),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildStrongLevelOneRetargetRail() {
     final theme = Theme.of(context);
 
@@ -1222,6 +1270,11 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         actions: [
+          IconButton(
+            onPressed: _showThemeDialog,
+            icon: const Icon(Icons.settings_outlined),
+            tooltip: '설정',
+          ),
           IconButton(
             onPressed: _showAboutDialog,
             icon: const Icon(Icons.info_outline),
