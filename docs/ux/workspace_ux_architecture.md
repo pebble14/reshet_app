@@ -259,12 +259,16 @@ Repository, read boundary, normalization, database 문서는 data authority와 i
 - responsive breakpoint
 - visual design token
 - typography
-- color system
+- exact color system
 - performance optimization
 
 이 결정들은 별도 authority 문서 또는 implementation-level specification에서 다루어야 한다.
 
-## 14. 요약
+## 14. 런타임 테마와 그래프 surface 계약
+
+애플리케이션의 일반 surface는 운영체제의 light/dark 테마를 따른다. 그래프 canvas도 현재 테마의 surface를 사용하되, node·edge chip·방향 상태 badge 같은 그래프 콘텐츠 객체는 어두운 canvas에서도 밝은 객체 성격과 의미 계층을 유지한다. 그래프 dialog는 그래프 객체가 아니라 일반 애플리케이션 UI로서 현재 테마를 따른다.
+
+## 15. 요약
 
 Reshet의 UX 방향은 persistent semantic workspace이다.
 

@@ -77,6 +77,43 @@ void main() {
         reason: '긴 relation label과 상태 배지가 함께 렌더링되어도 layout overflow가 없어야 한다.',
       );
 
+      final canvas = tester.widget<ColoredBox>(
+        find.byKey(const ValueKey<String>('graph-canvas-surface')),
+      );
+      final theme = Theme.of(
+        tester.element(find.byType(WordGraphScreen)),
+      ).colorScheme;
+      final chip = tester.widget<AnimatedContainer>(
+        find.byKey(
+          const ValueKey<String>('graph-edge-chip-visual:$_unknownRelationId'),
+        ),
+      );
+      final badge = tester.widget<Container>(
+        _edgeStateBadgeFinder(_unknownRelationId.toString()),
+      );
+      final chipColor = (chip.decoration! as BoxDecoration).color!;
+      final badgeColor = (badge.decoration! as BoxDecoration).color!;
+      final bodyText = tester
+          .widgetList<Text>(
+            find.descendant(
+              of: _edgeChipFinder(_unknownRelationId.toString()),
+              matching: find.byType(Text),
+            ),
+          )
+          .singleWhere((text) => text.data != '미정');
+      final badgeText = tester.widget<Text>(
+        _edgeChipTextFinder(_unknownRelationId.toString(), '미정'),
+      );
+
+      expect(canvas.color, theme.surface);
+      expect(
+        chipColor.computeLuminance(),
+        greaterThan(canvas.color.computeLuminance()),
+      );
+      expect(badgeColor, isNot(chipColor));
+      expect(bodyText.style?.color?.computeLuminance(), lessThan(0.5));
+      expect(badgeText.style?.color?.computeLuminance(), lessThan(0.5));
+
       await tester.tap(_edgeChipFinder(_unknownRelationId.toString()));
       await _pumpUntil(
         tester,
@@ -111,6 +148,13 @@ Future<void> _pumpGraph(WidgetTester tester, WordRepository repository) async {
   _setSurfaceSize(tester, const Size(1200, 900));
   await tester.pumpWidget(
     MaterialApp(
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.blueGrey,
+          brightness: Brightness.dark,
+        ),
+        useMaterial3: true,
+      ),
       home: WordGraphScreen(
         centerWordId: _centerWordId,
         repositoryForTesting: repository,

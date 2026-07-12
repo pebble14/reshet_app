@@ -268,6 +268,37 @@ const int _centerDepthOneSoftLimit = 12;
 
 enum _GraphVisualState { selected, connected, dimmed }
 
+class _GraphVisualPalette {
+  final Color objectSurface;
+  final Color objectForeground;
+  final Color badgeSurface;
+  final Color badgeForeground;
+
+  const _GraphVisualPalette({
+    required this.objectSurface,
+    required this.objectForeground,
+    required this.badgeSurface,
+    required this.badgeForeground,
+  });
+
+  factory _GraphVisualPalette.forBrightness(Brightness brightness) {
+    if (brightness == Brightness.dark) {
+      return const _GraphVisualPalette(
+        objectSurface: Color(0xFFF4F1EA),
+        objectForeground: Color(0xDD000000),
+        badgeSurface: Color(0xFFE4E0D8),
+        badgeForeground: Color(0xDD000000),
+      );
+    }
+    return const _GraphVisualPalette(
+      objectSurface: Colors.white,
+      objectForeground: Colors.black87,
+      badgeSurface: Color(0xEBFFFFFF),
+      badgeForeground: Colors.black87,
+    );
+  }
+}
+
 enum PeripheralNodeLodLevel { lod1, lod2, lod3 }
 
 @visibleForTesting
@@ -2135,6 +2166,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
         // 선택된 노드가 연결 노드 목록에서 몇 번째인지(없으면 null)
         final centerVisualState = _centerVisualState();
+        final colorScheme = Theme.of(context).colorScheme;
 
         return Scaffold(
           appBar: _buildAppBar(
@@ -2174,123 +2206,128 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
               ),
             ],
           ),
-          body: Stack(
-            fit: StackFit.expand,
-            children: [
-              Listener(
-                onPointerSignal: (event) {
-                  if (event is PointerScrollEvent) {
-                    _markViewportInteraction();
-                    _handlePointerScroll(event);
-                  }
-                },
-                child: GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: _handleBackgroundTap,
-                  child: InteractiveViewer(
-                    transformationController: _transformController,
-                    constrained: false,
-                    minScale: 0.6,
-                    maxScale: 3.5,
-                    boundaryMargin: const EdgeInsets.all(2000),
-                    panEnabled: true,
-                    scaleEnabled: true,
-                    onInteractionStart: (_) {
-                      _isViewportInteracting = true;
+          body: ColoredBox(
+            key: const ValueKey<String>('graph-canvas-surface'),
+            color: colorScheme.surface,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                Listener(
+                  onPointerSignal: (event) {
+                    if (event is PointerScrollEvent) {
                       _markViewportInteraction();
-                    },
-                    onInteractionUpdate: (_) {
-                      final newScale = _transformController.value
-                          .getMaxScaleOnAxis();
-                      _updateCurrentScale(newScale);
-                    },
-                    onInteractionEnd: (_) {
-                      _isViewportInteracting = false;
-                      _markViewportInteraction();
-                    },
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: _handleBackgroundTap,
-                      child: SizedBox(
-                        width: layout.layoutSpaceSize.width,
-                        height: layout.layoutSpaceSize.height,
-                        child: Stack(
-                          clipBehavior: Clip.none,
-                          children: [
-                            if (peripheralNodes.isNotEmpty)
-                              AnimatedSwitcher(
-                                duration: _visualStateAnimationDuration,
-                                switchInCurve: Curves.easeOutCubic,
-                                switchOutCurve: Curves.easeOutCubic,
-                                child: SizedBox(
-                                  key: ValueKey<String>(
-                                    '${_selectedWordId ?? ''}:${viewData.nodes.length}:${viewData.edges.length}',
+                      _handlePointerScroll(event);
+                    }
+                  },
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: _handleBackgroundTap,
+                    child: InteractiveViewer(
+                      transformationController: _transformController,
+                      constrained: false,
+                      minScale: 0.6,
+                      maxScale: 3.5,
+                      boundaryMargin: const EdgeInsets.all(2000),
+                      panEnabled: true,
+                      scaleEnabled: true,
+                      onInteractionStart: (_) {
+                        _isViewportInteracting = true;
+                        _markViewportInteraction();
+                      },
+                      onInteractionUpdate: (_) {
+                        final newScale = _transformController.value
+                            .getMaxScaleOnAxis();
+                        _updateCurrentScale(newScale);
+                      },
+                      onInteractionEnd: (_) {
+                        _isViewportInteracting = false;
+                        _markViewportInteraction();
+                      },
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: _handleBackgroundTap,
+                        child: SizedBox(
+                          width: layout.layoutSpaceSize.width,
+                          height: layout.layoutSpaceSize.height,
+                          child: Stack(
+                            clipBehavior: Clip.none,
+                            children: [
+                              if (peripheralNodes.isNotEmpty)
+                                AnimatedSwitcher(
+                                  duration: _visualStateAnimationDuration,
+                                  switchInCurve: Curves.easeOutCubic,
+                                  switchOutCurve: Curves.easeOutCubic,
+                                  child: SizedBox(
+                                    key: ValueKey<String>(
+                                      '${_selectedWordId ?? ''}:${viewData.nodes.length}:${viewData.edges.length}',
+                                    ),
+                                    width: layout.layoutSpaceSize.width,
+                                    height: layout.layoutSpaceSize.height,
+                                    child: CustomPaint(
+                                      size: layout.layoutSpaceSize,
+                                      painter: _GraphLinePainter(
+                                        layout: layout,
+                                        selectedWordId: _selectedWordId,
+                                        selectedEdgeIds: selectedEdgeIds,
+                                        actualPeripheralWordNodeIds:
+                                            actualPeripheralWordNodeIds,
+                                        showLabels: false,
+                                        sceneScale: _currentScale,
+                                        brightness: colorScheme.brightness,
+                                      ),
+                                    ),
                                   ),
-                                  width: layout.layoutSpaceSize.width,
-                                  height: layout.layoutSpaceSize.height,
-                                  child: CustomPaint(
-                                    size: layout.layoutSpaceSize,
-                                    painter: _GraphLinePainter(
-                                      layout: layout,
-                                      selectedWordId: _selectedWordId,
-                                      selectedEdgeIds: selectedEdgeIds,
-                                      actualPeripheralWordNodeIds:
-                                          actualPeripheralWordNodeIds,
-                                      showLabels: false,
-                                      sceneScale: _currentScale,
+                                ),
+                              Positioned(
+                                left: layout.centerBounds.left,
+                                top: layout.centerBounds.top,
+                                child: Transform.scale(
+                                  key: const ValueKey<String>(
+                                    'graph-center-node-visual-scale',
+                                  ),
+                                  scale: _nodeLocalVisualScale(_currentScale),
+                                  alignment: Alignment.center,
+                                  transformHitTests: true,
+                                  child: GestureDetector(
+                                    onTap: _handleCenterNodeTap,
+                                    child: _buildCenterNode(
+                                      centerDisplayItem,
+                                      visualState: centerVisualState,
                                     ),
                                   ),
                                 ),
                               ),
-                            Positioned(
-                              left: layout.centerBounds.left,
-                              top: layout.centerBounds.top,
-                              child: Transform.scale(
-                                key: const ValueKey<String>(
-                                  'graph-center-node-visual-scale',
-                                ),
-                                scale: _nodeLocalVisualScale(_currentScale),
-                                alignment: Alignment.center,
-                                transformHitTests: true,
-                                child: GestureDetector(
-                                  onTap: _handleCenterNodeTap,
-                                  child: _buildCenterNode(
-                                    centerDisplayItem,
-                                    visualState: centerVisualState,
-                                  ),
-                                ),
+                              ..._buildEdgeLabelWidgets(
+                                layout,
+                                selectedEdgeIds: selectedEdgeIds,
+                                selectedWordId: _selectedWordId,
+                                actualPeripheralWordNodeIds:
+                                    actualPeripheralWordNodeIds,
                               ),
-                            ),
-                            ..._buildEdgeLabelWidgets(
-                              layout,
-                              selectedEdgeIds: selectedEdgeIds,
-                              selectedWordId: _selectedWordId,
-                              actualPeripheralWordNodeIds:
-                                  actualPeripheralWordNodeIds,
-                            ),
-                            ..._buildWordNodes(
-                              layout,
-                              viewData,
-                              selectedWordId: _selectedWordId,
-                            ),
-                            if (peripheralNodes.isEmpty)
-                              _buildEmptyStateBanner(
-                                context,
-                                layout: layout,
-                                layoutSpaceSize: layout.layoutSpaceSize,
+                              ..._buildWordNodes(
+                                layout,
+                                viewData,
+                                selectedWordId: _selectedWordId,
                               ),
-                          ],
+                              if (peripheralNodes.isEmpty)
+                                _buildEmptyStateBanner(
+                                  context,
+                                  layout: layout,
+                                  layoutSpaceSize: layout.layoutSpaceSize,
+                                ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              _buildSelectedNodeBottomRightOverlayGroup(
-                context,
-                relationEntries: selectedRelationEntries,
-              ),
-            ],
+                _buildSelectedNodeBottomRightOverlayGroup(
+                  context,
+                  relationEntries: selectedRelationEntries,
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -2950,8 +2987,14 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
   }
 
   Color _surfaceTint(Color baseColor, double alpha) {
-    return Color.alphaBlend(baseColor.withValues(alpha: alpha), Colors.white);
+    return Color.alphaBlend(
+      baseColor.withValues(alpha: alpha),
+      _graphVisualPalette.objectSurface,
+    );
   }
+
+  _GraphVisualPalette get _graphVisualPalette =>
+      _GraphVisualPalette.forBrightness(Theme.of(context).brightness);
 
   String _wordIdPrefix(String wordId) {
     final normalized = wordId.trim().toUpperCase();
@@ -3308,6 +3351,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     GraphCenterWordDisplayItem displayItem, {
     required _GraphVisualState visualState,
   }) {
+    final graphForeground = _graphVisualPalette.objectForeground;
     final language = displayItem.language.trim();
     final strongNumber = displayItem.displayStrongNumber.trim();
     final metadata = [
@@ -3352,7 +3396,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
           textAlign: TextAlign.center,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: const TextStyle(fontSize: 11),
+          style: TextStyle(fontSize: 11, color: graphForeground),
         ),
         gap: 4,
       );
@@ -3368,7 +3412,11 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
           textAlign: TextAlign.center,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: graphForeground,
+          ),
         ),
       );
     }
@@ -3383,7 +3431,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
           textAlign: TextAlign.center,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: const TextStyle(fontSize: 12),
+          style: TextStyle(fontSize: 12, color: graphForeground),
         ),
         gap: 5,
       );
@@ -3399,7 +3447,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
           textAlign: TextAlign.center,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: const TextStyle(fontSize: 11),
+          style: TextStyle(fontSize: 11, color: graphForeground),
         ),
         gap: 4,
       );
@@ -3637,10 +3685,12 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     final primaryLabelStyle = TextStyle(
       fontSize: boundedPrimaryLabelFontSize,
       fontWeight: labelFontWeight,
+      color: _graphVisualPalette.objectForeground,
     );
     final secondaryLabelStyle = TextStyle(
       fontSize: boundedStrongIdentityFontSize,
       fontWeight: secondaryLabelFontWeight,
+      color: _graphVisualPalette.objectForeground,
     );
 
     Widget buildLabelLine(String role, String value, TextStyle style) {
@@ -3854,10 +3904,18 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
           textAlign: TextAlign.center,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: TextStyle(fontSize: fontSize, fontWeight: fontWeight),
+          style: TextStyle(
+            fontSize: fontSize,
+            fontWeight: fontWeight,
+            color: _graphVisualPalette.objectForeground,
+          ),
         ),
         const SizedBox(height: 1),
-        const Icon(Icons.add_rounded, size: 13),
+        Icon(
+          Icons.add_rounded,
+          size: 13,
+          color: _graphVisualPalette.objectForeground,
+        ),
       ],
     );
   }
@@ -3875,11 +3933,11 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     final textOpacity = _nodeTextOpacityForState(visualState);
     final fillColor = Color.alphaBlend(
       accentColor.withValues(alpha: isDimmed ? 0.10 : 0.18),
-      Colors.white,
+      _graphVisualPalette.objectSurface,
     );
     final innerFillColor = Color.alphaBlend(
       accentColor.withValues(alpha: isDimmed ? 0.05 : 0.10),
-      Colors.white,
+      _graphVisualPalette.objectSurface,
     );
     final borderColor = isDimmed
         ? _blendColor(accentColor, Colors.grey.shade500, 0.36)
@@ -3954,11 +4012,11 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     final textOpacity = _nodeTextOpacityForState(visualState);
     final fillColor = Color.alphaBlend(
       accentColor.withValues(alpha: isDimmed ? 0.08 : 0.15),
-      Colors.white,
+      _graphVisualPalette.objectSurface,
     );
     final innerFillColor = Color.alphaBlend(
       accentColor.withValues(alpha: isDimmed ? 0.04 : 0.08),
-      Colors.white,
+      _graphVisualPalette.objectSurface,
     );
     final borderColor = isDimmed
         ? _blendColor(accentColor, Colors.grey.shade500, 0.42)
@@ -4808,6 +4866,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
     // 태그가 선 위에 겹치지 않도록 약간 수직 방향 오프셋(줌 역보정)
 
+    final palette = _graphVisualPalette;
     final List<Widget> widgets = [];
     final placedLabelBounds = <Rect>[];
     final nodeObstacles = <Rect>[
@@ -4861,7 +4920,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
           labelBorderColor = _blendColor(edgeColor, Colors.black, 0.08);
           labelBackgroundColor = Color.alphaBlend(
             edgeColor.withValues(alpha: _selectedEdgeLabelTintAlpha),
-            Colors.white,
+            palette.objectSurface,
           );
           labelBorderWidth = _selectedEdgeLabelBorderWidth;
           labelOpacity = 1.0;
@@ -4879,7 +4938,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                   ? _dimmedEdgeLabelTintAlpha + 0.01
                   : _connectedEdgeLabelTintAlpha + 0.01,
             ),
-            Colors.white,
+            palette.objectSurface,
           );
           labelBorderWidth = _defaultEdgeLabelBorderWidth;
           labelOpacity = hasFocusedEdge
@@ -4899,7 +4958,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                   ? _dimmedEdgeLabelTintAlpha
                   : _connectedEdgeLabelTintAlpha - 0.01,
             ),
-            Colors.white,
+            palette.objectSurface,
           );
           labelBorderWidth = _defaultEdgeLabelBorderWidth;
           labelOpacity = hasFocusedEdge
@@ -4963,6 +5022,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                               style: TextStyle(
                                 fontSize: _edgeLabelVisualFontSize,
                                 fontWeight: labelFontWeight,
+                                color: palette.objectForeground,
                               ),
                             ),
                             if (stateBadge != null) ...[
@@ -4976,7 +5036,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                                   vertical: _edgeStateBadgeVerticalPadding,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.72),
+                                  color: palette.badgeSurface,
                                   border: Border.all(
                                     color: labelBorderColor.withValues(
                                       alpha: 0.78,
@@ -4986,10 +5046,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                                 ),
                                 child: Text(
                                   stateBadge,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: _edgeStateBadgeFontSize,
                                     fontWeight: FontWeight.w700,
-                                    color: Colors.black87,
+                                    color: palette.badgeForeground,
                                   ),
                                 ),
                               ),
@@ -5595,6 +5655,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     final selectedInfo = await showDialog<WordRelationEdgeInfo>(
       context: context,
       builder: (context) {
+        final colorScheme = Theme.of(context).colorScheme;
         return AlertDialog(
           title: Text('관계 목록 ${_edgeDisplayTitle(infos.first)}'),
           content: SizedBox(
@@ -5628,7 +5689,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                             width: double.infinity,
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey.shade300),
+                              color: colorScheme.surfaceContainerLow,
+                              border: Border.all(
+                                color: colorScheme.outlineVariant,
+                              ),
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Column(
@@ -5645,7 +5709,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                                   metaParts.join(' | '),
                                   style: TextStyle(
                                     fontSize: 12,
-                                    color: Colors.grey.shade700,
+                                    color: colorScheme.onSurfaceVariant,
                                   ),
                                 ),
                               ],
@@ -5950,14 +6014,16 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                         width: double.infinity,
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Colors.grey.shade50,
-                          border: Border.all(color: Colors.grey.shade300),
+                          color: Theme.of(context).colorScheme.surfaceContainer,
+                          border: Border.all(
+                            color: Theme.of(context).colorScheme.outlineVariant,
+                          ),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(
                           relationText.sentence,
                           style: TextStyle(
-                            color: Colors.grey.shade900,
+                            color: Theme.of(context).colorScheme.onSurface,
                             height: 1.35,
                           ),
                         ),
@@ -7246,6 +7312,7 @@ class _GraphLinePainter extends CustomPainter {
   final Set<String> actualPeripheralWordNodeIds;
   final bool showLabels;
   final double sceneScale;
+  final Brightness brightness;
 
   _GraphLinePainter({
     required this.layout,
@@ -7254,6 +7321,7 @@ class _GraphLinePainter extends CustomPainter {
     required this.actualPeripheralWordNodeIds,
     required this.showLabels,
     required this.sceneScale,
+    required this.brightness,
   });
 
   @override
@@ -7296,7 +7364,13 @@ class _GraphLinePainter extends CustomPainter {
               : _expansionEdgeOpacity;
           break;
       }
-      final Color strokeColor = edgeLayout.color.withValues(alpha: alpha);
+      final visibleEdgeColor = brightness == Brightness.dark
+          ? Color.alphaBlend(
+              Colors.white.withValues(alpha: 0.12),
+              edgeLayout.color,
+            )
+          : edgeLayout.color;
+      final Color strokeColor = visibleEdgeColor.withValues(alpha: alpha);
 
       final paint = Paint()
         ..color = strokeColor
@@ -7478,6 +7552,7 @@ class _GraphLinePainter extends CustomPainter {
             .difference(actualPeripheralWordNodeIds)
             .isNotEmpty ||
         oldDelegate.showLabels != showLabels ||
+        oldDelegate.brightness != brightness ||
         oldDelegate.sceneScale != sceneScale;
   }
 }

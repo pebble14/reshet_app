@@ -32,13 +32,21 @@ class ReshetApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final lightColorScheme = ColorScheme.fromSeed(
+      seedColor: Colors.blueGrey,
+      brightness: Brightness.light,
+    );
+    final darkColorScheme = ColorScheme.fromSeed(
+      seedColor: Colors.blueGrey,
+      brightness: Brightness.dark,
+    );
+
     return MaterialApp(
       title: 'Reshet',
       debugShowCheckedModeBanner: false, // 우측 상단 DEBUG 배너 제거
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey),
-        useMaterial3: true,
-      ),
+      theme: ThemeData(colorScheme: lightColorScheme, useMaterial3: true),
+      darkTheme: ThemeData(colorScheme: darkColorScheme, useMaterial3: true),
+      themeMode: ThemeMode.system,
       home: const HomeScreen(), // 첫 화면
     );
   }
