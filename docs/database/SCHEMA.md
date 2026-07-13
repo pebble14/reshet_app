@@ -21,16 +21,22 @@ Android 앱은 `pubspec.yaml`에 선언된 `data/reshet_seed.db` asset을 앱 �
 `data/reshet_work.db`는 mutable local work DB이므로 Git 미추적 상태로 유지한다.
 clean clone에는 DB 파일이 포함되지 않으므로, Android full build와 fresh install smoke는 별도 private DB 준비 후 수행한다.
 
-## 데이터 백업 경계
+## 데이터 백업·복원 경계
 
 - 데이터 백업은 정상 runtime ensure가 완료된 현재 열린 `reshet_work.db` 전체를 `VACUUM INTO`로 생성한 단일 SQLite snapshot이다.
 - snapshot에는 table, index, view, trigger가 그대로 포함되며 `RMAC_TABLE`, `RMAC_TABLE_KR`도 제외하지 않는다.
 - SharedPreferences의 화면·session 상태는 SQLite snapshot에 포함되지 않는다.
 - 백업 파일은 암호화되지 않으므로 신뢰할 수 있는 위치에 보관해야 한다.
-- 현재 restore는 지원하지 않는다.
-- 현재 백업 저장 경계의 검증 플랫폼은 Windows와 Android다.
-- 저장 위치 선택은 교체 가능한 adapter 경계로 유지하며, Windows는 `file_selector`, Android는 `flutter_file_dialog`을 사용한다.
-- Linux 백업 지원은 이번 범위에 포함하지 않으며, 후속 Production phase에서 `file_selector` 경로와 Linux runtime을 별도로 검증한 뒤 완료를 판단한다.
+- 현재 Reshet 복원 호환성 계약을 충족하는 전체 SQLite DB를 `reshet_work.db` 교체 대상으로 지원한다. 실제 백업 메뉴에서 생성됐는지 여부는 별도 marker가 없어 판별하지 않는다.
+- 복원 원본은 read-only connection에서 integrity, 필수 table·column·PK·unique index, 대표 read를 검증하며 원본에는 runtime ensure나 migration을 실행하지 않는다.
+- 현재 전체 백업 보존 계약에는 `RMAC_TABLE`, `RMAC_TABLE_KR`이 포함되며 복원 후보에도 두 table의 존재를 요구한다.
+- 검증된 외부 원본은 work DB와 같은 filesystem의 앱 소유 staging 파일로 stream copy하고, runtime ensure는 staging copy에만 적용한다.
+- live DB 교체 전 현재 열린 work DB에서 `VACUUM INTO` rollback snapshot을 생성·검증한다. 교체 또는 새 DB 검증 실패 시 previous work를 우선 복구하고, 불가능하면 rollback snapshot을 사용한다.
+- 새 work DB open, runtime ensure, integrity/schema, 대표 read가 성공한 뒤 DB 복원 성공으로 확정한다. 이후 화면 상태 갱신이나 임시 파일 cleanup 실패는 검증된 DB를 rollback하는 조건이 아니다.
+- SharedPreferences, 검색·탐색 session, graph session은 복원하지 않으며 복원 후 관련 화면 상태와 cache를 다시 초기화한다.
+- 현재 백업·복원 입력/저장 경계의 검증 플랫폼은 Windows와 Android다.
+- adapter 경계는 Windows에서 `file_selector`, Android에서 `flutter_file_dialog`을 사용한다. Android 복원 입력은 SAF 원본을 앱 cache path로 복사한 뒤 사용하고 best-effort 정리한다.
+- Linux 백업·복원 지원은 이번 범위에 포함하지 않으며, 후속 Production phase에서 `file_selector` 경로와 Linux runtime을 별도로 검증한 뒤 완료를 판단한다.
 - 배포 대상 플랫폼에서는 MPL 등 소스 제공 의무가 발생할 수 있는 dependency를 사용하지 않는다.
 
 검증 기준:

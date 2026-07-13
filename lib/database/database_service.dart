@@ -423,6 +423,15 @@ class DatabaseService {
     return join(await _dataDirPath(), _workDbFileName);
   }
 
+  /// 복원 staging 파일을 현재 work DB와 같은 filesystem에 배치하기 위한 제한적 경계다.
+  static Future<String> dataDirectoryPath() => _dataDirPath();
+
+  /// 현재 application work DB의 실제 경로를 반환한다.
+  static Future<String> workDatabasePath() => _workDbPath();
+
+  @visibleForTesting
+  static bool get hasOpenDatabaseForTest => _database != null;
+
   static Future<File> _ensureSeedDbFile(String seedPath) async {
     final seedFile = File(seedPath);
     if (seedFile.existsSync()) {
@@ -484,16 +493,19 @@ class DatabaseService {
       await seedFile.copy(workPath);
     }
 
-    _database = await databaseFactory.openDatabase(workPath);
-
-    await _ensureWordRelationV2Columns(_database!);
-    await _ensureWordRelationIndexes(_database!);
-    await _ensureHistoryTable(_database!);
-    await _ensureRelationLookupMetadata(_database!);
-    await _ensureWordExpressionSetSchema(_database!);
-    await _ensureWordMeaningSetSchema(_database!);
-
-    return _database!;
+    Database? openedDatabase;
+    try {
+      openedDatabase = await databaseFactory.openDatabase(workPath);
+      await ensureRuntimeSchema(openedDatabase);
+      _database = openedDatabase;
+      return openedDatabase;
+    } catch (_) {
+      if (openedDatabase != null && openedDatabase.isOpen) {
+        await openedDatabase.close();
+      }
+      _database = null;
+      rethrow;
+    }
   }
 
   /// 테스트용 DB 연결 확인 메서드
@@ -570,14 +582,29 @@ class DatabaseService {
     await seedFile.copy(workPath);
 
     // 다시 열기(이후 쿼리 즉시 가능)
-    _database = await databaseFactory.openDatabase(workPath);
+    Database? openedDatabase;
+    try {
+      openedDatabase = await databaseFactory.openDatabase(workPath);
+      await ensureRuntimeSchema(openedDatabase);
+      _database = openedDatabase;
+    } catch (_) {
+      if (openedDatabase != null && openedDatabase.isOpen) {
+        await openedDatabase.close();
+      }
+      _database = null;
+      rethrow;
+    }
+  }
 
-    await _ensureWordRelationV2Columns(_database!);
-    await _ensureWordRelationIndexes(_database!);
-    await _ensureHistoryTable(_database!);
-    await _ensureRelationLookupMetadata(_database!);
-    await _ensureWordExpressionSetSchema(_database!);
-    await _ensureWordMeaningSetSchema(_database!);
+  /// 이미 열린 임의의 DB connection에 현재 runtime schema 보정을 적용한다.
+  /// 외부 복원 원본에는 사용하지 않고 앱 소유 staging/work DB에만 사용한다.
+  static Future<void> ensureRuntimeSchema(Database database) async {
+    await _ensureWordRelationV2Columns(database);
+    await _ensureWordRelationIndexes(database);
+    await _ensureHistoryTable(database);
+    await _ensureRelationLookupMetadata(database);
+    await _ensureWordExpressionSetSchema(database);
+    await _ensureWordMeaningSetSchema(database);
   }
 
   /// WORD_RELATION v2 컬럼 보장

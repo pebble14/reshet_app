@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../database/database_backup_service.dart';
+import '../database/database_restore_service.dart';
 import '../domain/expression/home_word_display_summary.dart';
 import '../domain/home/home_default_strong_list_item.dart';
 import '../domain/home/home_search_result_display_item.dart';
@@ -43,11 +44,13 @@ class HomeScreen extends StatefulWidget {
     this.themeMode = ThemeMode.system,
     this.onThemeModeChanged,
     this.backupService = const DatabaseBackupService(),
+    this.restoreService = const DatabaseRestoreService(),
   });
 
   final ThemeMode themeMode;
   final ValueChanged<ThemeMode>? onThemeModeChanged;
   final DatabaseBackupRunner backupService;
+  final DatabaseRestoreRunner restoreService;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -62,6 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
   /// false → 준비 완료
   bool _isLoading = true;
   bool _isBackingUp = false;
+  bool _isRestoring = false;
   String? _dbErrorMessage;
 
   /// 홈 화면에서 사용할 Repository
@@ -98,6 +102,9 @@ class _HomeScreenState extends State<HomeScreen> {
   String _largeScreenExplorerWordId = _largeScreenDefaultExplorerWordId;
   String? _passiveSelectedStrongWordId;
   String? _passiveSelectedDisplayStrongNumber;
+  int _restoreGeneration = 0;
+
+  bool get _isDatabaseMaintenanceInProgress => _isBackingUp || _isRestoring;
 
   Future<List<HomeDefaultStrongListItem>> _createDefaultStrongListFuture() {
     return _repository.getStrongWordsMap();
@@ -498,7 +505,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _confirmAndCreateBackup() async {
-    if (_isBackingUp) {
+    if (_isDatabaseMaintenanceInProgress) {
       return;
     }
 
@@ -556,8 +563,142 @@ class _HomeScreenState extends State<HomeScreen> {
       ..showSnackBar(SnackBar(content: Text(message)));
   }
 
+  Future<void> _confirmAndRestoreDatabase() async {
+    if (_isDatabaseMaintenanceInProgress || _isLoading) {
+      return;
+    }
+
+    var restoreStarted = false;
+    RestoreResult result;
+    try {
+      result = await widget.restoreService.restore(
+        confirmation: () async {
+          if (!mounted) return false;
+          final confirmed = await showDialog<bool>(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('데이터 복원'),
+              content: const Text(
+                '선택한 백업 데이터로 현재 데이터가 교체됩니다. 복원 전에 현재 데이터를 '
+                '별도 파일로 백업하는 것을 권장합니다.\n\n'
+                '내부 rollback snapshot은 실패 복구용 임시 파일이며 사용자 백업이 아닙니다. '
+                '백업 파일은 암호화되지 않았을 수 있고, 복원 후 검색·탐색·현재 작업 화면 '
+                '상태가 초기화될 수 있습니다.',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  child: const Text('취소'),
+                ),
+                FilledButton(
+                  onPressed: () => Navigator.pop(context, true),
+                  child: const Text('복원'),
+                ),
+              ],
+            ),
+          );
+          if (confirmed == true && mounted) {
+            restoreStarted = true;
+            setState(() => _isRestoring = true);
+            return true;
+          }
+          return false;
+        },
+      );
+    } catch (error, stackTrace) {
+      debugPrint('데이터 복원 실행 실패: $error');
+      debugPrintStack(stackTrace: stackTrace);
+      result = RestoreFailed(
+        stage: RestoreFailureStage.sourceSelection,
+        rollbackStatus: RestoreRollbackStatus.notRequired,
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
+
+    if (!mounted) return;
+
+    var stateRefreshSucceeded = true;
+    if (result is RestoreSucceeded) {
+      try {
+        await _refreshAfterRestore();
+      } catch (error, stackTrace) {
+        stateRefreshSucceeded = false;
+        debugPrint('복원 후 화면 상태 갱신 실패: $error');
+        debugPrintStack(stackTrace: stackTrace);
+        if (mounted) {
+          _refreshWords();
+        }
+      }
+    }
+
+    if (restoreStarted && mounted) {
+      setState(() => _isRestoring = false);
+    }
+    if (!mounted || result is RestoreCancelled) return;
+
+    final message = switch (result) {
+      RestoreSucceeded() when !stateRefreshSucceeded =>
+        '데이터 복원은 완료되었지만 화면 갱신에 실패했습니다. 앱을 다시 실행하세요.',
+      RestoreSucceeded() => '데이터 복원이 완료되었습니다.',
+      RestoreRejected() => _restoreRejectedMessage(result.reason),
+      RestoreFailed()
+          when result.rollbackStatus == RestoreRollbackStatus.failed =>
+        '데이터 복원과 원본 복구에 실패했습니다. 앱을 종료하고 지원을 요청하세요.',
+      RestoreFailed() => '데이터 복원에 실패해 기존 데이터를 유지했습니다.',
+      RestoreCancelled() => '',
+    };
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  String _restoreRejectedMessage(RestoreRejectionReason reason) {
+    return switch (reason) {
+      RestoreRejectionReason.notSqlite => 'SQLite 데이터베이스 파일이 아닙니다.',
+      RestoreRejectionReason.integrityInvalid => '손상된 데이터베이스 파일은 복원할 수 없습니다.',
+      RestoreRejectionReason.schemaIncompatible =>
+        '현재 Reshet 복원 schema와 호환되지 않는 파일입니다.',
+      RestoreRejectionReason.unsupportedBackup =>
+        'Reshet 전체 데이터 백업으로 확인할 수 없는 파일입니다.',
+    };
+  }
+
+  Future<void> _refreshAfterRestore() async {
+    WordGraphDataCache.clear();
+
+    var nextExplorerWordId = _largeScreenExplorerWordId;
+    final currentWordExists =
+        nextExplorerWordId.isNotEmpty &&
+        await _repository.wordExistsForGraphNavigation(nextExplorerWordId);
+    if (!currentWordExists) {
+      final firstItems = await _repository.getStrongWordsMap(limit: 1);
+      nextExplorerWordId = firstItems.isEmpty
+          ? _largeScreenDefaultExplorerWordId
+          : firstItems.first.wordId;
+    }
+    if (!mounted) return;
+
+    _cancelPendingStrongJump();
+    _searchController.clear();
+    _strongJumpController.clear();
+    setState(() {
+      _currentDefaultStrongItems = const [];
+      _currentStrongRailItems = const [];
+      _searchWordsFuture = null;
+      _isShowingDefaultStrongList = true;
+      _isLargeScreenTransientSearchResultVisible = false;
+      _passiveSelectedStrongWordId = null;
+      _passiveSelectedDisplayStrongNumber = null;
+      _largeScreenExplorerWordId = nextExplorerWordId;
+      _restoreGeneration++;
+      _defaultStrongListFuture = _createDefaultStrongListFuture();
+    });
+  }
+
   /// DB 초기화를 실행하기 전에 사용자에게 확인을 받는다.
   Future<void> _confirmAndResetDb() async {
+    if (_isDatabaseMaintenanceInProgress) return;
     bool backup = true;
 
     final confirmed = await showDialog<bool>(
@@ -631,6 +772,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _undoLastChange() async {
+    if (_isDatabaseMaintenanceInProgress) return;
     setState(() => _isLoading = true);
 
     try {
@@ -1312,15 +1454,22 @@ class _HomeScreenState extends State<HomeScreen> {
     return Stack(
       children: [
         Positioned.fill(
-          child: AbsorbPointer(absorbing: _isBackingUp, child: child),
+          child: AbsorbPointer(
+            absorbing: _isDatabaseMaintenanceInProgress,
+            child: child,
+          ),
         ),
-        if (_isBackingUp) ...[
+        if (_isDatabaseMaintenanceInProgress) ...[
           const Positioned.fill(
             child: ModalBarrier(dismissible: false, color: Color(0x33000000)),
           ),
-          const Center(
+          Center(
             child: CircularProgressIndicator(
-              key: Key('database-backup-progress-indicator'),
+              key: Key(
+                _isRestoring
+                    ? 'database-restore-progress-indicator'
+                    : 'database-backup-progress-indicator',
+              ),
             ),
           ),
         ],
@@ -1354,20 +1503,25 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         actions: [
           IconButton(
-            onPressed: _showThemeDialog,
+            onPressed: _isRestoring ? null : _showThemeDialog,
             icon: const Icon(Icons.settings_outlined),
             tooltip: '설정',
           ),
           IconButton(
-            onPressed: _showAboutDialog,
+            onPressed: _isRestoring ? null : _showAboutDialog,
             icon: const Icon(Icons.info_outline),
             tooltip: '프로그램 정보',
           ),
           PopupMenuButton<String>(
-            enabled: !_isBackingUp && !_isLoading && _dbErrorMessage == null,
+            enabled:
+                !_isDatabaseMaintenanceInProgress &&
+                !_isLoading &&
+                _dbErrorMessage == null,
             onSelected: (value) async {
               if (value == 'create_backup') {
                 await _confirmAndCreateBackup();
+              } else if (value == 'restore_backup') {
+                await _confirmAndRestoreDatabase();
               } else if (value == 'reset_db') {
                 await _confirmAndResetDb();
               } else if (value == 'undo_last_change') {
@@ -1378,6 +1532,10 @@ class _HomeScreenState extends State<HomeScreen> {
               const PopupMenuItem<String>(
                 value: 'create_backup',
                 child: Text('데이터 백업'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'restore_backup',
+                child: Text('데이터 복원'),
               ),
               const PopupMenuItem<String>(
                 value: 'reset_db',
@@ -1662,7 +1820,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                           flex: 6,
                                           child: WordExplorerScreen(
                                             key: ValueKey(
-                                              _largeScreenExplorerWordId,
+                                              '$_restoreGeneration:'
+                                              '$_largeScreenExplorerWordId',
                                             ),
                                             initialWordId:
                                                 _largeScreenExplorerWordId,

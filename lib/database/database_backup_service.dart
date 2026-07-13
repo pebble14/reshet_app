@@ -3,10 +3,10 @@ import 'dart:io';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_file_dialog/flutter_file_dialog.dart';
-import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import 'database_service.dart';
+import 'database_snapshot_service.dart';
 
 abstract interface class BackupDestinationWriter {
   Future<String?> save({
@@ -163,8 +163,8 @@ abstract interface class DatabaseBackupRunner {
 }
 
 typedef BackupSourceDatabaseOpener = Future<Database> Function();
-typedef BackupTempDirectoryCreator = Future<Directory> Function(String prefix);
-typedef BackupSnapshotDatabaseOpener = Future<Database> Function(String path);
+typedef BackupTempDirectoryCreator = SnapshotTempDirectoryCreator;
+typedef BackupSnapshotDatabaseOpener = SnapshotDatabaseOpener;
 typedef BackupClock = DateTime Function();
 
 class DatabaseBackupService implements DatabaseBackupRunner {
@@ -180,17 +180,10 @@ class DatabaseBackupService implements DatabaseBackupRunner {
        _clock = clock;
 
   static const String tempDirectoryPrefix = 'reshet_backup_snapshot_';
-  static const String snapshotFileName = 'snapshot.db';
-  static const Set<String> requiredRuntimeTables = {
-    'WORD_TABLE',
-    'WORD_RELATION',
-    'word_expression_set',
-    'word_meaning_set',
-    'CHANGE_HISTORY',
-    'RELATION_CATEGORY',
-    'RELATION_TYPE',
-    'RELATION_STATUS',
-  };
+  static const String snapshotFileName =
+      DatabaseSnapshotService.snapshotFileName;
+  static const Set<String> requiredRuntimeTables =
+      DatabaseRestoreSchemaValidator.requiredTables;
 
   final BackupDestinationWriter destinationWriter;
   final BackupSourceDatabaseOpener? _sourceDatabaseOpener;
@@ -200,9 +193,7 @@ class DatabaseBackupService implements DatabaseBackupRunner {
 
   @override
   Future<BackupResult> createBackup() async {
-    Directory? tempDirectory;
-    File? snapshotFile;
-    Database? validationDatabase;
+    DatabaseSnapshot? snapshot;
 
     try {
       final sourceDatabase = await _runStage(
@@ -210,57 +201,35 @@ class DatabaseBackupService implements DatabaseBackupRunner {
         () =>
             _sourceDatabaseOpener?.call() ?? DatabaseService.openDatabaseFile(),
       );
-      final createdTempDirectory = await _runStage(
-        BackupFailureStage.snapshotCreation,
-        () =>
-            _tempDirectoryCreator?.call(tempDirectoryPrefix) ??
-            Directory.systemTemp.createTemp(tempDirectoryPrefix),
-      );
-      tempDirectory = createdTempDirectory;
-      final createdSnapshotFile = File(
-        p.join(createdTempDirectory.path, snapshotFileName),
-      );
-      snapshotFile = createdSnapshotFile;
-
-      await _runStage(BackupFailureStage.snapshotCreation, () async {
-        if (await createdSnapshotFile.exists()) {
-          throw StateError('Snapshot output path already exists.');
-        }
-        await sourceDatabase.execute('VACUUM INTO ?', [
-          createdSnapshotFile.path,
-        ]);
-      });
-
-      await _runStage(BackupFailureStage.snapshotValidation, () async {
-        validationDatabase =
-            await (_snapshotDatabaseOpener?.call(createdSnapshotFile.path) ??
-                databaseFactory.openDatabase(
-                  createdSnapshotFile.path,
-                  options: OpenDatabaseOptions(
-                    readOnly: true,
-                    singleInstance: false,
-                  ),
-                ));
-        await _validateSnapshot(validationDatabase!);
-        await validationDatabase!.close();
-        validationDatabase = null;
-      });
-
-      await _runStage(
-        BackupFailureStage.sourceRead,
-        () => sourceDatabase.rawQuery('SELECT 1'),
-      );
+      try {
+        snapshot =
+            await DatabaseSnapshotService(
+              tempDirectoryCreator: _tempDirectoryCreator,
+              snapshotDatabaseOpener: _snapshotDatabaseOpener,
+            ).create(
+              sourceDatabase: sourceDatabase,
+              directoryPrefix: tempDirectoryPrefix,
+            );
+      } on SnapshotException catch (failure) {
+        final stage = switch (failure.stage) {
+          SnapshotFailureStage.creation => BackupFailureStage.snapshotCreation,
+          SnapshotFailureStage.validation =>
+            BackupFailureStage.snapshotValidation,
+          SnapshotFailureStage.sourceRead => BackupFailureStage.sourceRead,
+        };
+        throw _BackupStageException(stage, failure.error, failure.stackTrace);
+      }
 
       final snapshotBytes = await _runStage(
         BackupFailureStage.sourceRead,
-        createdSnapshotFile.readAsBytes,
+        snapshot.file.readAsBytes,
       );
       final selectedDestination = await _runStage(
         BackupFailureStage.destinationWrite,
         () => destinationWriter.save(
           fileName: buildDefaultFileName(_clock?.call() ?? DateTime.now()),
           bytes: snapshotBytes,
-          sourceFilePath: createdSnapshotFile.path,
+          sourceFilePath: snapshot!.file.path,
         ),
       );
 
@@ -274,15 +243,14 @@ class DatabaseBackupService implements DatabaseBackupRunner {
         stackTrace: failure.stackTrace,
       );
     } finally {
-      if (validationDatabase != null) {
+      if (snapshot != null) {
         try {
-          await validationDatabase!.close();
+          await snapshot.cleanup();
         } catch (error, stackTrace) {
-          debugPrint('백업 snapshot 검증 connection 정리 실패: $error');
+          debugPrint('백업 snapshot 임시 파일 정리 실패: $error');
           debugPrintStack(stackTrace: stackTrace);
         }
       }
-      await _cleanupTempSnapshot(tempDirectory, snapshotFile);
     }
   }
 
@@ -298,32 +266,6 @@ class DatabaseBackupService implements DatabaseBackupRunner {
         '${twoDigits(localTime.second)}.db';
   }
 
-  static Future<void> _validateSnapshot(Database snapshotDatabase) async {
-    final integrityRows = await snapshotDatabase.rawQuery(
-      'PRAGMA integrity_check',
-    );
-    final integrityValue = integrityRows.length == 1
-        ? integrityRows.single.values.single
-        : null;
-    if (integrityValue != 'ok') {
-      throw StateError('Snapshot integrity check failed.');
-    }
-
-    final schemaRows = await snapshotDatabase.rawQuery('''
-      SELECT name
-      FROM sqlite_master
-      WHERE type = 'table'
-      ''');
-    final tableNames = schemaRows
-        .map((row) => row['name'])
-        .whereType<String>()
-        .toSet();
-    final missingTables = requiredRuntimeTables.difference(tableNames);
-    if (missingTables.isNotEmpty) {
-      throw StateError('Snapshot runtime schema is incomplete.');
-    }
-  }
-
   static Future<T> _runStage<T>(
     BackupFailureStage stage,
     Future<T> Function() operation,
@@ -332,39 +274,6 @@ class DatabaseBackupService implements DatabaseBackupRunner {
       return await operation();
     } catch (error, stackTrace) {
       throw _BackupStageException(stage, error, stackTrace);
-    }
-  }
-
-  static Future<void> _cleanupTempSnapshot(
-    Directory? tempDirectory,
-    File? snapshotFile,
-  ) async {
-    if (tempDirectory == null || snapshotFile == null) {
-      return;
-    }
-
-    final normalizedDirectory = p.normalize(p.absolute(tempDirectory.path));
-    final normalizedSnapshot = p.normalize(p.absolute(snapshotFile.path));
-    final isExpectedDirectory = p
-        .basename(normalizedDirectory)
-        .startsWith(tempDirectoryPrefix);
-    final isSnapshotInsideDirectory =
-        p.dirname(normalizedSnapshot) == normalizedDirectory;
-    if (!isExpectedDirectory || !isSnapshotInsideDirectory) {
-      debugPrint('백업 임시 파일 경로 안전성 확인 실패로 cleanup을 건너뜁니다.');
-      return;
-    }
-
-    try {
-      if (await snapshotFile.exists()) {
-        await snapshotFile.delete();
-      }
-      if (await tempDirectory.exists()) {
-        await tempDirectory.delete();
-      }
-    } catch (error, stackTrace) {
-      debugPrint('백업 임시 파일 정리 실패: $error');
-      debugPrintStack(stackTrace: stackTrace);
     }
   }
 }

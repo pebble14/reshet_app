@@ -265,7 +265,14 @@
 - import/export는 canonical payload와 외부 교환 형식 사이를 변환하는 adapter 책임이다.
 - backup/restore는 현재 work DB 전체를 단일 SQLite snapshot으로 보존하거나 교체하는 별도 계약이다.
 - 두 기능은 데이터 단위, 검증 기준, 사용자 위험이 다르므로 같은 책임으로 합치지 않는다.
-- 현재 지원 범위는 backup이며 restore는 지원하지 않는다.
+- 현재 backup은 열린 work DB에서 `VACUUM INTO`로 생성한 전체 SQLite snapshot이며, restore는 현재 Reshet 복원 호환성 계약을 충족하는 전체 SQLite DB로 work DB를 교체한다.
+- 복원 원본은 read-only로만 검증한다. runtime ensure와 schema 보정은 앱 data directory에 stream copy한 staging 파일에만 적용하며 외부 원본을 수정하지 않는다.
+- 복원 호환성은 SQLite integrity와 현재 필수 table·column·PK·unique index 및 대표 read로 판단한다. 실제 백업 메뉴 생성 여부나 사용자의 수동 변경 여부를 증명하는 계약은 아니다.
+- `RMAC_TABLE`, `RMAC_TABLE_KR`은 runtime canonical authority는 아니지만 전체 백업 보존 대상이므로 복원 후보에 존재해야 하며 그대로 교체·보존한다.
+- live DB 교체 전 `VACUUM INTO` rollback snapshot을 만들고, 교체 후 검증 실패 시 previous work 또는 rollback snapshot으로 기존 DB를 복구한다.
+- 새 DB open·runtime ensure·integrity/schema·대표 read 이후 cleanup 또는 화면 갱신 실패는 DB 성공을 뒤집지 않는다.
+- Windows와 Android를 현재 지원하며 Linux runtime은 후속 Production phase에서 별도로 검증한다.
+- SharedPreferences와 검색·탐색·graph session state는 SQLite backup/restore 대상이 아니다.
 
 ### 11.2 DB 계층이 책임지지 않아야 하는 이유
 

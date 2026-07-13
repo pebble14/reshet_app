@@ -269,22 +269,30 @@ void main() {
 
 Future<void> _createRuntimeFixture(Database database) async {
   for (final statement in const [
-    'CREATE TABLE WORD_TABLE (id TEXT PRIMARY KEY, memo TEXT)',
-    'CREATE TABLE WORD_RELATION (id INTEGER PRIMARY KEY)',
-    'CREATE TABLE word_expression_set (word_id TEXT, seq INTEGER)',
-    'CREATE TABLE word_meaning_set (word_id TEXT, seq INTEGER)',
-    'CREATE TABLE CHANGE_HISTORY (id INTEGER PRIMARY KEY)',
-    'CREATE TABLE RELATION_CATEGORY (code TEXT PRIMARY KEY)',
-    'CREATE TABLE RELATION_TYPE (code TEXT PRIMARY KEY)',
-    'CREATE TABLE RELATION_STATUS (code TEXT PRIMARY KEY)',
-    'CREATE TABLE RMAC_TABLE (RMAC TEXT PRIMARY KEY)',
-    'CREATE TABLE RMAC_TABLE_KR (RMAC TEXT PRIMARY KEY)',
+    'CREATE TABLE WORD_TABLE (id TEXT PRIMARY KEY, 언어 TEXT, 스트롱넘버 TEXT, 표기1 TEXT, 의미1 TEXT, 비고 TEXT)',
+    'CREATE TABLE WORD_RELATION (id INTEGER PRIMARY KEY, word_id_1 TEXT, word_id_2 TEXT, category_code TEXT, relation_type TEXT, status_code TEXT, direction_code TEXT, description TEXT, relation_group_id TEXT)',
+    'CREATE TABLE word_expression_set (id INTEGER PRIMARY KEY, word_id TEXT, seq INTEGER, is_representative INTEGER, spelling TEXT, transliteration TEXT, pronunciation TEXT)',
+    'CREATE TABLE word_meaning_set (id INTEGER PRIMARY KEY, word_id TEXT, seq INTEGER, meaning TEXT)',
+    'CREATE TABLE CHANGE_HISTORY (id INTEGER PRIMARY KEY, group_id TEXT, action_type TEXT, entity_type TEXT, entity_id TEXT, before_json TEXT, after_json TEXT, created_at TEXT, undone_at TEXT)',
+    'CREATE TABLE RELATION_CATEGORY (code TEXT PRIMARY KEY, label TEXT, description TEXT, sort_order INTEGER)',
+    'CREATE TABLE RELATION_TYPE (code TEXT PRIMARY KEY, category_code TEXT, label TEXT, description TEXT, sort_order INTEGER)',
+    'CREATE TABLE RELATION_STATUS (code TEXT PRIMARY KEY, label TEXT, description TEXT, sort_order INTEGER)',
+    'CREATE TABLE RMAC_TABLE (RMAC TEXT PRIMARY KEY, Part_of_Speech TEXT, '
+        'Tense TEXT, Voice TEXT, Mood TEXT, Person TEXT, "Case" TEXT, '
+        'Number TEXT, Gender TEXT, Degree TEXT, Form TEXT)',
+    'CREATE TABLE RMAC_TABLE_KR (RMAC TEXT PRIMARY KEY, Part_of_Speech TEXT, '
+        'Tense TEXT, Voice TEXT, Mood TEXT, Person TEXT, "Case" TEXT, '
+        'Number TEXT, Gender TEXT, Degree TEXT, Form TEXT)',
+    'CREATE UNIQUE INDEX idx_word_relation_pair_type_direction_unique ON WORD_RELATION(word_id_1, word_id_2, relation_type, direction_code)',
+    'CREATE UNIQUE INDEX ux_word_expression_set_word_seq ON word_expression_set(word_id, seq)',
+    'CREATE UNIQUE INDEX ux_word_expression_set_one_representative ON word_expression_set(word_id) WHERE is_representative = 1',
+    'CREATE UNIQUE INDEX ux_word_meaning_set_word_seq ON word_meaning_set(word_id, seq)',
   ]) {
     await database.execute(statement);
   }
   await database.insert('WORD_TABLE', {
     'id': 'backup_fixture_word',
-    'memo': 'Phase 48-B1 대표 행',
+    '비고': 'Phase 48-B1 대표 행',
   });
 }
 
