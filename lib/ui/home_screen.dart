@@ -11,6 +11,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../database/database_backup_service.dart';
 import '../domain/expression/home_word_display_summary.dart';
 import '../domain/home/home_default_strong_list_item.dart';
 import '../domain/home/home_search_result_display_item.dart';
@@ -41,10 +42,12 @@ class HomeScreen extends StatefulWidget {
     super.key,
     this.themeMode = ThemeMode.system,
     this.onThemeModeChanged,
+    this.backupService = const DatabaseBackupService(),
   });
 
   final ThemeMode themeMode;
   final ValueChanged<ThemeMode>? onThemeModeChanged;
+  final DatabaseBackupRunner backupService;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -58,6 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
   /// true  → 로딩 중
   /// false → 준비 완료
   bool _isLoading = true;
+  bool _isBackingUp = false;
   String? _dbErrorMessage;
 
   /// 홈 화면에서 사용할 Repository
@@ -491,6 +495,65 @@ class _HomeScreenState extends State<HomeScreen> {
       _dbErrorMessage = null;
     });
     unawaited(_initializeDatabase());
+  }
+
+  Future<void> _confirmAndCreateBackup() async {
+    if (_isBackingUp) {
+      return;
+    }
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('데이터 백업'),
+        content: const Text(
+          '백업 파일에는 사용자가 입력한 단어, 관계, 메모와 변경 이력이 포함되며 '
+          '암호화되지 않습니다. 신뢰할 수 있는 위치에 보관하세요.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('취소'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('백업'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) {
+      return;
+    }
+
+    setState(() => _isBackingUp = true);
+    BackupResult result;
+    try {
+      result = await widget.backupService.createBackup();
+    } catch (error, stackTrace) {
+      debugPrint('데이터 백업 실행 실패: $error');
+      debugPrintStack(stackTrace: stackTrace);
+      result = BackupFailed(
+        stage: BackupFailureStage.destinationWrite,
+        error: error,
+        stackTrace: stackTrace,
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _isBackingUp = false);
+      }
+    }
+
+    if (!mounted || result is BackupCancelled) {
+      return;
+    }
+
+    final message = result is BackupSucceeded
+        ? '데이터 백업이 완료되었습니다.'
+        : '데이터 백업에 실패했습니다. 잠시 후 다시 시도하세요.';
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
   }
 
   /// DB 초기화를 실행하기 전에 사용자에게 확인을 받는다.
@@ -1245,6 +1308,26 @@ class _HomeScreenState extends State<HomeScreen> {
     return KeyEventResult.handled;
   }
 
+  Widget _buildBackupGuard(Widget child) {
+    return Stack(
+      children: [
+        Positioned.fill(
+          child: AbsorbPointer(absorbing: _isBackingUp, child: child),
+        ),
+        if (_isBackingUp) ...[
+          const Positioned.fill(
+            child: ModalBarrier(dismissible: false, color: Color(0x33000000)),
+          ),
+          const Center(
+            child: CircularProgressIndicator(
+              key: Key('database-backup-progress-indicator'),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
@@ -1281,14 +1364,21 @@ class _HomeScreenState extends State<HomeScreen> {
             tooltip: '프로그램 정보',
           ),
           PopupMenuButton<String>(
+            enabled: !_isBackingUp && !_isLoading && _dbErrorMessage == null,
             onSelected: (value) async {
-              if (value == 'reset_db') {
+              if (value == 'create_backup') {
+                await _confirmAndCreateBackup();
+              } else if (value == 'reset_db') {
                 await _confirmAndResetDb();
               } else if (value == 'undo_last_change') {
                 await _undoLastChange();
               }
             },
             itemBuilder: (context) => [
+              const PopupMenuItem<String>(
+                value: 'create_backup',
+                child: Text('데이터 백업'),
+              ),
               const PopupMenuItem<String>(
                 value: 'reset_db',
                 child: Text('데이터베이스 초기화(초기 상태로 되돌리기)'),
@@ -1534,15 +1624,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
 
                 if (!isLargeScreen) {
-                  return SafeArea(
+                  final content = SafeArea(
                     top: false,
                     left: false,
                     right: false,
                     child: homePane,
                   );
+                  return _buildBackupGuard(content);
                 }
 
-                return Row(
+                final content = Row(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Expanded(
@@ -1610,6 +1701,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ],
                 );
+                return _buildBackupGuard(content);
               },
             ),
     );

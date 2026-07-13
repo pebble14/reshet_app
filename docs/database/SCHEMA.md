@@ -21,6 +21,18 @@ Android 앱은 `pubspec.yaml`에 선언된 `data/reshet_seed.db` asset을 앱 �
 `data/reshet_work.db`는 mutable local work DB이므로 Git 미추적 상태로 유지한다.
 clean clone에는 DB 파일이 포함되지 않으므로, Android full build와 fresh install smoke는 별도 private DB 준비 후 수행한다.
 
+## 데이터 백업 경계
+
+- 데이터 백업은 정상 runtime ensure가 완료된 현재 열린 `reshet_work.db` 전체를 `VACUUM INTO`로 생성한 단일 SQLite snapshot이다.
+- snapshot에는 table, index, view, trigger가 그대로 포함되며 `RMAC_TABLE`, `RMAC_TABLE_KR`도 제외하지 않는다.
+- SharedPreferences의 화면·session 상태는 SQLite snapshot에 포함되지 않는다.
+- 백업 파일은 암호화되지 않으므로 신뢰할 수 있는 위치에 보관해야 한다.
+- 현재 restore는 지원하지 않는다.
+- 현재 백업 저장 경계의 검증 플랫폼은 Windows와 Android다.
+- 저장 위치 선택은 교체 가능한 adapter 경계로 유지하며, Windows는 `file_selector`, Android는 `flutter_file_dialog`을 사용한다.
+- Linux 백업 지원은 이번 범위에 포함하지 않으며, 후속 Production phase에서 `file_selector` 경로와 Linux runtime을 별도로 검증한 뒤 완료를 판단한다.
+- 배포 대상 플랫폼에서는 MPL 등 소스 제공 의무가 발생할 수 있는 dependency를 사용하지 않는다.
+
 검증 기준:
 
 - 주 기준 DB는 `data/reshet_work.db`

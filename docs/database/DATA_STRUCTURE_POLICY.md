@@ -260,7 +260,14 @@
 - export는 canonical stored entity를 외부 형식으로 투영하는 adapter/boundary 책임이다.
 - DB 내부에는 canonical normalized storage만 authority로 남아야 한다.
 
-### 11.1 DB 계층이 책임지지 않아야 하는 이유
+### 11.1 backup/restore 경계
+
+- import/export는 canonical payload와 외부 교환 형식 사이를 변환하는 adapter 책임이다.
+- backup/restore는 현재 work DB 전체를 단일 SQLite snapshot으로 보존하거나 교체하는 별도 계약이다.
+- 두 기능은 데이터 단위, 검증 기준, 사용자 위험이 다르므로 같은 책임으로 합치지 않는다.
+- 현재 지원 범위는 backup이며 restore는 지원하지 않는다.
+
+### 11.2 DB 계층이 책임지지 않아야 하는 이유
 
 - 외부 포맷 변화가 DB authority를 흔들면 안 된다.
 - 비정규화 포맷을 DB authority로 두면 source of truth가 둘 이상 생긴다.
