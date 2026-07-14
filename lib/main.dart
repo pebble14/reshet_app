@@ -1,19 +1,15 @@
 /*
   main.dart
 
-  이 파일은 Flutter 애플리케이션의 시작점이다.
-  프로그램이 실행되면 가장 먼저 main() 함수가 호출된다.
-
-  역할:
-  1. 앱 실행 시작
-  2. 최상위 위젯(App)을 실행
+  Flutter 바인딩과 저장된 테마 설정을 준비하고 ReshetApp을 실행하는
+  애플리케이션 시작점이다.
 */
 
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'theme_mode_preference.dart';
-import 'ui/home_screen.dart'; // 우리가 만들 첫 화면
+import 'ui/home_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,12 +20,7 @@ Future<void> main() async {
 /*
   ReshetApp 클래스
 
-  이 클래스는 앱 전체의 기본 설정을 담당한다.
-  - 앱 제목
-  - 테마 설정
-  - 첫 화면 지정
-
-  앱 전체 테마 선택을 실행 중에 즉시 반영하기 위해 상태를 소유한다.
+  앱 제목과 테마, HomeScreen 진입을 설정하고 실행 중 테마 상태를 소유한다.
 */
 class ReshetApp extends StatefulWidget {
   const ReshetApp({super.key, this.initialThemeMode = ThemeMode.system});
@@ -77,7 +68,7 @@ class _ReshetAppState extends State<ReshetApp> {
       home: HomeScreen(
         themeMode: _themeMode,
         onThemeModeChanged: _changeThemeMode,
-      ), // 첫 화면
+      ),
     );
   }
 }

@@ -1,15 +1,8 @@
 /*
   database_service.dart
 
-  이 파일은 SQLite 데이터베이스 연결을 담당한다.
-
-  역할:
-  1. Windows 환경에서 SQLite 초기화
-  2. 지정된 경로의 DB 파일 열기
-  3. 이후 CRUD 기능 확장 가능
-
-  현재 단계 목표:
-  - DB 연결 성공 여부 확인
+  SQLite work DB 경로와 FFI 초기화, open/ensure/close/reset lifecycle을
+  관리한다.
 */
 
 import 'dart:io';
@@ -475,8 +468,8 @@ class DatabaseService {
   /*
     openDatabaseFile()
 
-    프로젝트 루트의 data 폴더에 있는
-    reshet.db 파일을 연다.
+    작업용 reshet_work.db를 열고 runtime schema를 보장한다.
+    작업용 DB가 없으면 초기 seed DB를 복사해 생성한다.
   */
   static Future<Database> openDatabaseFile() async {
     if (_database != null) {
@@ -508,12 +501,6 @@ class DatabaseService {
     }
   }
 
-  /// 테스트용 DB 연결 확인 메서드
-  /// 실제 테이블 없이 간단한 문자열을 반환한다.
-  static Future<String> getTestData() async {
-    return "DB 연결 확인 완료";
-  }
-
   /// 현재 연결된 DB의 모든 테이블 목록을 조회한다.
   static Future<List<String>> getTableList() async {
     final db = _database;
@@ -527,17 +514,6 @@ class DatabaseService {
     );
 
     return result.map((row) => row['name'] as String).toList();
-  }
-
-  /// WORD_TABLE 데이터 일부 조회 (테스트용)
-  static Future<List<Map<String, dynamic>>> getWords() async {
-    final db = _database;
-
-    if (db == null) {
-      throw Exception("데이터베이스가 초기화되지 않았습니다.");
-    }
-
-    return await db.query('WORD_TABLE', limit: 50);
   }
 
   /// 현재 열려있는 DB를 닫는다.

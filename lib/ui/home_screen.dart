@@ -1,9 +1,8 @@
 /*
   home_screen.dart
 
-  이 파일은 Reshet 앱의 메인 화면을 정의한다.
-  현재는 기본 구조만 구성하고,
-  이후 데이터베이스 연결 및 기능을 점진적으로 추가할 예정이다.
+  검색과 Strong navigation, Explorer workspace를 연결하고 데이터베이스
+  maintenance action을 제공하는 최상위 UI coordinator다.
 */
 
 import 'dart:async';
@@ -26,18 +25,7 @@ import 'word_graph_screen.dart';
 import 'word_explorer_screen.dart';
 import 'word_search_query.dart';
 
-/*
-  HomeScreen 클래스
-
-  이 화면은 앱 실행 시 가장 먼저 보이는 메인 화면이다.
-  StatefulWidget으로 만든 이유:
-
-  - 나중에 데이터베이스 연결
-  - 화면 갱신
-  - 상태 변화 처리
-
-  등을 대비하기 위함이다.
-*/
+/// 검색·탐색 workspace와 데이터 maintenance 흐름의 최상위 화면이다.
 class HomeScreen extends StatefulWidget {
   const HomeScreen({
     super.key,

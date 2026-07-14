@@ -24,8 +24,7 @@ import '../../domain/word/word_detail_like_display_item.dart';
 import '../../domain/word/word_edit_seed.dart';
 import '../../domain/word/word_write_models.dart';
 
-/// 단어(WORD_TABLE) 및 관계(WORD_RELATION) 조회 전용 Repository
-/// 그래프 엣지(관계선) 표시를 위한 관계 메타 정보
+/// 그래프 엣지(관계선) 표시를 위한 관계 메타 정보다.
 /// - otherWordId: 중심 단어 기준으로 연결된 “상대 단어 id”
 /// - categoryCode/categoryLabel: RELATION_CATEGORY 기반(없으면 null)
 /// - relationType/relationTypeLabel: RELATION_TYPE 기반(없으면 null)
@@ -114,6 +113,8 @@ class _HomeStrongExactCandidate {
   });
 }
 
+/// 단어·표현·의미·관계의 조회·쓰기 경계를 제공한다.
+/// 화면별 typed contract를 구성하고 legacy map 경계의 호환을 유지한다.
 class WordRepository {
   static const ReadSourcePolicy _defaultReadSourcePolicy =
       ReadSourcePolicy.legacy;
@@ -2251,7 +2252,7 @@ class WordRepository {
 
     final db = await DatabaseService.openDatabaseFile();
     final placeholders = List.filled(orderedIds.length, '?').join(', ');
-    // TODO: probe context 전용 collector event 필요
+    // Probe 조회는 현재 collector에 기록하지 않는 의도된 관측 경계다.
     final rows = await db.rawQuery(
       'SELECT id FROM WORD_TABLE WHERE id IN ($placeholders)',
       orderedIds,
