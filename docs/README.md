@@ -20,6 +20,7 @@
 
 - [SCHEMA](database/SCHEMA.md) — 현재 `data/reshet_work.db` 전체 schema의 authority다.
 - [Data Structure Policy](database/DATA_STRUCTURE_POLICY.md) — canonical storage, compatibility projection, repository/UI 경계를 정의한다.
+- [Data Provenance](database/DATA_PROVENANCE.md) — 외부 사전·Strong 자료와 Reshet 작성 데이터의 출처, 재배포 경계 및 향후 입력 정책을 정의한다.
 
 ## UX와 navigation 계약
 

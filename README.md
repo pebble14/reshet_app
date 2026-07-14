@@ -57,6 +57,12 @@ Repository와 데이터 경계의 세부 계약은 [Repository Data Boundary Pol
 
 현재 DB 계약은 [SCHEMA](docs/database/SCHEMA.md)에서 확인한다.
 
+## 데이터와 라이선스
+
+코드와 데이터의 라이선스는 분리하여 결정할 수 있다. 현재 데이터 provenance 정리와 공개 Strong 원천을 통한 선택적 재검증이 진행 중이며, e-Sword 모듈 파일은 저장소와 배포물에 포함하지 않는다.
+
+확인된 출처, 재배포 경계와 향후 데이터 입력 기준은 [데이터 출처와 재배포 경계](docs/database/DATA_PROVENANCE.md)를 따른다.
+
 ## 개발 환경 준비
 
 1. Flutter stable과 대상 플랫폼 toolchain을 준비한다.

@@ -3,6 +3,8 @@
 > 문서 분류: 현행 data structure policy
 >
 > 이 문서는 canonical storage, compatibility projection, repository/UI contract의 현재 정책 경계를 정의한다. 전체 DB의 실제 schema authority는 [SCHEMA](SCHEMA.md)다.
+>
+> 외부 원천, 저작권·라이선스 경계와 provenance 정책은 [데이터 출처와 재배포 경계](DATA_PROVENANCE.md)를 따른다.
 
 ## 1. 문서 목적
 
