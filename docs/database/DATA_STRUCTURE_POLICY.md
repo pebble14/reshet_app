@@ -1,5 +1,9 @@
 # Data Structure Policy
 
+> 문서 분류: 현행 data structure policy
+>
+> 이 문서는 canonical storage, compatibility projection, repository/UI contract의 현재 정책 경계를 정의한다. 전체 DB의 실제 schema authority는 [SCHEMA](SCHEMA.md)다.
+
 ## 1. 문서 목적
 
 이 문서는 Reshet 프로젝트의 데이터 구조 개선 범위, 현재 상태, 목표 상태, 완료 조건을 정의한다.
@@ -238,20 +242,25 @@
 
 ### 10.1 현재 상태
 
+- relation runtime authority는 `WORD_RELATION`이다.
+- `RELATION_CATEGORY`, `RELATION_TYPE`, `RELATION_STATUS` lookup code set과 실제 relation data code set은 정합하다.
+- `WORD_RELATION.word_id_1`, `word_id_2`의 dangling endpoint는 0건이다.
+- repository의 relation read/write/delete/undo/restore 경계는 `WORD_RELATION`과 동일한 relation contract를 사용한다.
+- `WORD_TABLE.관련1~7`은 정상 runtime relation authority가 아니다.
 - `RELATION_STATUS.inferred`는 seed baseline에 포함되며, runtime lookup 보정 경로에서도 기존/과거 DB 안전망으로 보장된다.
 - 실제 relation data의 `status_code` 값은 보존되며, 이 문서는 relation data 재작성 완료나 FK 추가 완료를 선언하지 않는다.
 
 ### 10.2 구조적 의미
 
-- relation 구조는 아직 전체 canonical 전환 완료 상태가 아니다.
-- relation 구조 정합화 phase가 별도로 필요하다.
-- 완료 선언 전에는 lookup code set, 실제 data code set, repository/runtime 해석, history/restore 정책이 서로 일치해야 한다.
+- 현재 runtime relation authority와 lookup/data code, endpoint, repository/history 경계의 정합성은 확인됐다.
+- 이 확인은 legacy `관련1~7` column의 물리 삭제, relation provenance 재설계, FK 추가, `unknown` direction 데이터 전수 판정, 과거 history 재작성을 완료했다는 뜻이 아니다.
+- 위 장기 물리 정리 후보는 실제 호환 필요성과 데이터 보존 영향을 확인한 뒤 별도 production/data phase에서 판단한다.
 
 ### 10.3 현재 작업 경계
 
-- `WORD_RELATION`이 relation의 최종 authority라는 지향점은 유지한다.
-- 이 문서는 relation schema, metadata, `관련1~7` projection, read/write/history 전환을 감사하거나 구현하지 않는다.
-- 현재 relation의 세부 전환 상태는 기존에 검증된 사실만 유지하며 추측으로 보강하지 않는다.
+- `WORD_RELATION`은 현재 relation의 runtime authority다.
+- 이 문서는 relation schema 변경, relation data 재작성, `관련1~7` 물리 삭제, provenance/FK 정책 결정을 수행하지 않는다.
+- 현재 runtime 정합성과 장기적 물리 정리 가능성을 구분하며, 미검증 미래 선택을 완료 상태로 선언하지 않는다.
 
 ## 11. import/export 원칙
 
@@ -314,7 +323,7 @@
 - `WORD_TABLE` 역할 확정
 - expression authority transition
 - meaning legacy projection 축소 또는 제거 정책 확정
-- relation data/contract 정합화
+- relation legacy slot·provenance·FK 물리 정리 필요성 판단
 - legacy slot 축소 또는 제거 정책 확정
 
 ### 13.3 병렬 가능성

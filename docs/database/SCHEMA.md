@@ -1,7 +1,8 @@
 # SCHEMA
 
-이 문서는 `data/reshet_work.db`를 기준으로 현재 데이터베이스 스키마를 설명한다.  
-`SCHEMA_v2.md`는 차기 구조 설계 문서이며, 현행 스키마 기준 문서는 이 문서다.
+> 문서 분류: 현재 전체 DB schema authority
+>
+> 이 문서는 `data/reshet_work.db`를 기준으로 현재 데이터베이스 전체 스키마를 설명한다. relation v2 모델과 lookup metadata의 설계·참고 기준은 [SCHEMA_v2](SCHEMA_v2.md)에 있으며, 전체 DB의 현행 schema authority는 이 문서다.
 
 ## 데이터베이스 개요
 

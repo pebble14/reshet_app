@@ -1,5 +1,9 @@
 # FEATURE STATUS
 
+> 문서 분류: historical development status log
+>
+> 이 문서는 서로 다른 시점의 개발 단계와 당시 상태를 보존하며 최신 active authority가 아니다. 현재 구조와 기능은 [프로젝트 README](../../README.md)와 [문서 중앙 index](../README.md)에 연결된 active architecture/database/UX 문서를 따른다. 아래의 `현재 상태` 표현은 각 날짜·Phase 당시의 기록으로 읽는다.
+
 ## 현재 상태 (2026-05-16 Phase 4-D)
 
 - Phase 4-D는 **ExplorerWorkspace preview-local interaction boundary** 검증 단계다.

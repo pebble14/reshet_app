@@ -1,120 +1,94 @@
-# PROJECT_STRUCTURE.md
+# Project Structure
+
+> 문서 분류: 현재 코드 구조 reference
+>
+> 이 문서는 외부 개발자가 주요 디렉터리와 책임을 찾기 위한 안내다. 세부 repository/data authority는 [Repository Data Boundary Policy](repository_data_boundary_policy.md), UX authority는 [Workspace UX Architecture](../ux/workspace_ux_architecture.md), 현재 DB schema는 [SCHEMA](../database/SCHEMA.md)를 따른다.
 
 ## 프로젝트 개요
 
-Reshet은 Flutter 기반 단어 관계 탐색 도구이다.
+Reshet은 Flutter와 SQLite를 사용하는 단어 관계 탐색 도구다. 앱의 기본 데이터 흐름은 UI에서 domain/repository 경계를 거쳐 SQLite에 접근하며, UI가 SQL을 직접 실행하지 않는다.
 
-핵심 기능:
+## 저장소 최상위 구조
 
-- 단어 검색
-- 단어 상세 정보 확인
-- 단어 관계 그래프 탐색
+```text
+lib/       Flutter production code
+test/      UI, domain, repository, database test
+docs/      현행 계약, 설계 참고, migration, 과거 기록
+sql/       명시적으로 실행하는 migration·검증 SQL
+data/      로컬 private SQLite DB와 backup 위치
+windows/   Windows runner
+android/   Android runner
+```
 
+`data/`의 `*.db`, `*.sqlite`, `*.sqlite3` 파일은 `.gitignore`로 제외한다. clean clone에는 실행용 DB가 없으며, DB 경계는 [루트 README](../../README.md)와 [SCHEMA](../database/SCHEMA.md)를 함께 확인한다.
 
----
-
-# 디렉터리 구조
+## `lib/` 주요 책임
 
 ```text
 lib/
-main.dart
-
-database/
-database_service.dart
-
-data/
-models/
-word.dart
-word_relation.dart
-
-repositories/
-word_repository.dart
-
-ui/
-home_screen.dart
-word_detail_screen.dart
-word_graph_screen.dart
+├── main.dart
+├── database/
+├── data/
+│   ├── models/
+│   └── repositories/
+├── domain/
+│   ├── expression/
+│   ├── graph/
+│   ├── relation/
+│   └── word/
+└── ui/
+    └── explorer_workspace/
 ```
 
+### `lib/main.dart`
 
----
+Flutter 앱 시작점이다. 앱 초기화, 테마 설정, `HomeScreen` 진입을 연결한다.
 
-# 주요 파일 역할
+### `lib/database/`
 
-## main.dart
+SQLite 파일 lifecycle과 전체 DB 백업·복원을 담당한다.
 
-앱 시작점.
+- `database_service.dart` — seed/work DB 선택, open, runtime schema·lookup 보정 경계
+- `database_snapshot_service.dart` — 전체 SQLite snapshot 생성
+- `database_backup_service.dart` — 플랫폼별 백업 저장 흐름
+- `database_restore_service.dart` — 복원 후보 검증, staging, 교체와 rollback 흐름
 
-Flutter 애플리케이션을 초기화한다.
+### `lib/data/`
 
+- `models/` — word, relation, relation lookup의 data model
+- `repositories/word_repository.dart` — 단어·표현·의미·관계의 조회와 저장, history/undo를 제공하는 repository 경계
 
----
+단어·관계 데이터 read/write UI는 SQL을 직접 사용하지 않고 repository/domain 계약을 소비한다. DB 초기화·백업·복원 같은 SQLite lifecycle 작업은 별도 database service 경계를 통해 앱 UI에서 조율한다.
 
-## database/database_service.dart
+### `lib/domain/`
 
-SQLite 데이터베이스 연결 관리.
+저장 row와 화면 사이에서 사용하는 typed contract와 도메인 로직을 둔다.
 
-주요 역할:
+- `expression/` — expression read model과 read source 정책
+- `graph/` — graph node/edge/view contract와 layout 전략
+- `relation/` — relation 표시·해석 규칙
+- `word/` — word edit seed/result, write command와 write service
 
-- 데이터베이스 파일 열기
-- 테이블 목록 확인
-- 기본 DB 접근 제공
+### `lib/ui/`
 
+검색, 상세·편집, Explorer, graph 화면과 responsive presentation을 담당한다.
 
----
+- `home_screen.dart` — 검색과 large/small 화면 shell의 진입점
+- `word_detail_screen.dart` — 단어 상세 route
+- `word_edit_screen.dart` — 단어 편집 흐름
+- `word_explorer_screen.dart` — graph/detail 탐색의 production owner
+- `word_graph_screen.dart` — graph 표시와 단어·관계 action surface
+- `explorer_workspace/` — Explorer composition contract와 preview/reference 구성
 
-## data/models
+Explorer의 장기 UX 방향과 현재 owner 경계는 [문서 index](../README.md)의 UX·architecture authority를 따른다.
 
-데이터 모델 정의.
+## `test/`, `docs/`, `sql/`
 
-### word.dart
+- `test/ui/` — 화면 contract와 widget behavior 검증
+- `test/domain/` — graph, relation, expression, word domain 검증
+- `test/data/` — repository read/write 경계 검증
+- `test/database/` — backup/restore와 DB lifecycle 검증
+- `docs/` — 코드와 함께 유지하는 authority, reference/context, migration/history 기록
+- `sql/word_expression_set/` — expression normalization을 위한 단계별 SQL 자료
 
-WORD_TABLE 레코드를 표현하는 모델.
-
-주요 필드:
-
-- id
-- language
-- strongNumber
-- spelling1
-- pronunciation1
-- meaning1
-
-
-### word_relation.dart
-
-WORD_RELATION 레코드 모델.
-
-
----
-
-## data/repositories
-
-데이터 접근 계층.
-
-### word_repository.dart
-
-WORD_TABLE과 WORD_RELATION을 조회하는 로직.
-
-
----
-
-## ui
-
-Flutter 화면 UI.
-
-### home_screen.dart
-
-단어 목록 화면.
-
-
-### word_detail_screen.dart
-
-선택한 단어의 상세 정보 화면.
-
-
-### word_graph_screen.dart
-
-단어 관계 그래프 화면.
-
-중심 단어와 연결된 단어들을 원형으로 배치한다.
+이 문서는 모든 파일의 inventory가 아니다. 새 진입점을 찾을 때는 위 책임 경계에서 시작하고, 세부 정책은 [문서 중앙 index](../README.md)에서 현재 역할을 확인한다.

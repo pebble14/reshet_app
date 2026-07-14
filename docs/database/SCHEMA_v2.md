@@ -1,8 +1,12 @@
 # DATABASE_SCHEMA_v2
 
+> 문서 분류: relation v2 설계·모델 reference
+>
+> 이 문서는 현재 구현된 relation v2 contract와 lookup metadata를 이해하기 위한 해당 영역의 참고 기준이다. 전체 DB의 현행 schema authority는 [SCHEMA](SCHEMA.md)이며, 이 문서는 이를 대체하지 않는다. 문서 안의 설계 원칙과 현재 구현 설명은 각 section의 범위에 맞게 해석한다.
+
 ## 목적
 
-`WORD_RELATION` v2 구조와 관계 lookup 메타데이터의 현재 기준을 정리한다.
+`WORD_RELATION` v2 구조와 관계 lookup metadata의 모델·참고 기준을 정리한다.
 
 이번 기준의 핵심은 다음과 같다.
 
