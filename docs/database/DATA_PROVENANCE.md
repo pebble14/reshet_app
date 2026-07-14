@@ -138,7 +138,26 @@ Wikidata는 이번 감사에서 실제 원천으로 사용하지 않았으며 Re
 
 외부 원천을 실제로 채택할 때는 원천별 조건, attribution과 변경 이력을 먼저 검토하고 기록한다. 이 절차는 데이터 구조·값 변경 승인을 대체하지 않는다.
 
-## 11. 관련 문서와 외부 기준
+## 11. Strong 원천 dry-run diff 도구
+
+`tool/data_provenance/strong_source_diff.py`는 현행 `word_expression_set`의 원어 철자와 pronunciation을 사용자가 전달한 Open Scriptures Strong XML과 비교하는 재사용 가능한 검증 도구다. 이 도구는 Open Scriptures 자료를 Reshet의 최종 공식 재구축 원천으로 채택하지 않으며, 현재 정책상 비교용 보조 자료로만 사용한다.
+
+도구는 SQLite DB를 URI `mode=ro`와 `PRAGMA query_only = ON`으로 열고 `integrity_check`를 확인한다. DB 값을 수정하거나 schema·legacy projection을 변경하지 않는다. 입력 XML을 다운로드하지 않으며 외부 XML과 생성되는 CSV·JSON 결과는 저장소에 포함하지 않고 저장소 밖 임시 디렉터리에서 관리한다.
+
+실행 예시는 다음과 같다.
+
+```powershell
+python tool/data_provenance/strong_source_diff.py `
+  --db data/reshet_work.db `
+  --greek-xml "<TEMP_PATH>\strongsgreek.xml" `
+  --hebrew-xml "<TEMP_PATH>\HebrewStrong.xml" `
+  --output-dir "<TEMP_PATH>\reshet-strong-diff" `
+  --pretty
+```
+
+출력 디렉터리에는 입력 파일·실행 조건·무결성 정보를 기록한 `manifest.json`, 집계 결과인 `summary.json`, expression 단위 `expression_diff.csv`, 대표 expression 기준 `word_summary.csv`가 생성된다. 실제 집계는 입력 XML commit과 DB 버전에 따라 달라질 수 있으므로 이 문서에 고정하지 않는다.
+
+## 12. 관련 문서와 외부 기준
 
 내부 문서:
 
