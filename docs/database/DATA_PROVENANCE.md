@@ -34,16 +34,16 @@ Phase 50-A 기준 데이터 규모는 다음과 같다.
 | DB schema | Reshet 프로젝트 구조 | 코드·문서 정책과 함께 관리 | 현행 유지 |
 | Strong 번호 | 사실·식별자 | 공개 원천으로 재검증 가능 | provenance 확정 |
 | 원어 철자 | 외부 참고 후 입력 | 공개 Strong 원천과 대조 | 선택적 재검증 |
-| Strong식 발음 | 외부 참고 후 입력 | 공개 원천과 대조된 값만 공식 인정 | dry-run diff |
+| 발음(`pronunciation`) | Strong식 표기·IPA형·기타 형식이 혼재하고 항목별 출처 미기록 | legacy 값으로 보존하되 최종 active pronunciation으로 인정하지 않음 | profile·출처 확정 후 migration 분류 |
 | 한글 음역 | 항목별 출처 미기록 | 현행 유지, 독점 권리 단정 금지 | 별도 정책 |
 | 한국어 의미·설명 | 사용자 직접 작성 | Reshet 작성 데이터 | 라이선스 추후 확정 |
 | 단어 관계·메모 | 사용자 작성·편집 | Reshet 작성 데이터 | 현행 유지 |
 | e-Sword 모듈 | 제3자 전자 파생물 | 포함·재배포하지 않음 | 과거 참고로만 기록 |
 | Wiktionary 자료 | 과거 참고 가능성 | 항목별 직접 provenance 없음 | 향후 사용 시 별도 기록 |
 
-현재 유지 가능한 범위에는 단어 ID, 사용자가 직접 작성한 한국어 의미·설명, 사용자가 구성한 단어 관계·메모, Strong 번호, 공개 Strong 원천으로 재검증 가능한 대표 철자와 원판 또는 공개 원천에 일치하는 Strong식 발음이 포함된다.
+현재 유지 가능한 범위에는 단어 ID, 사용자가 직접 작성한 한국어 의미·설명, 사용자가 구성한 단어 관계·메모, Strong 번호와 공개 Strong 원천으로 재검증 가능한 대표 철자가 포함된다. 현행 `pronunciation` 값은 파괴적 변경을 피하기 위해 migration 전까지 보존하지만, 아래의 profile·출처 조건을 충족하기 전에는 최종 active pronunciation으로 인정하지 않는다.
 
-다음 항목은 선택적 재검증 대상이다.
+`pronunciation` 전체는 migration 분류 대상이지만 모든 행을 일괄 변환하지 않는다. 다음 형식과 항목은 분류 과정의 우선 확인 대상이다.
 
 - 히브리어 pronunciation 전반
 - 발음 대신 음역이 저장된 값과 혼합 발음값
@@ -75,6 +75,8 @@ CrossWire 공식 모듈 정보에서 다음 표시를 확인했다.
 Phase 50-A에서는 CrossWire 바이너리 값을 직접 export하지 못했다. 따라서 위 확인은 공식 모듈 정보와 config의 Public Domain 표시를 근거로 하며, 개별 현행 DB 값의 대조 완료를 의미하지 않는다.
 
 Open Scriptures 자료는 Strong 원전과 CrossWire 값을 비교하기 위한 보조 전자 자료다. 현재 공식 Reshet 재구축 원천으로 채택하지 않았다. `HebrewLexicon` 저장소의 파일은 CC BY 4.0 조건과 별도 attribution 판단이 필요하며, Greek XML의 교정 내용과 SBL식 음역은 Public Domain 원판과 구분한다.
+
+Strong 원판·모듈과 이를 이용한 문자열 대조는 Strong 데이터의 비교 근거일 뿐, 언어별 IPA profile이나 expression별 IPA provenance를 입증하지 않는다.
 
 ## 6. e-Sword 모듈 경계
 
@@ -140,7 +142,7 @@ Wikidata는 이번 감사에서 실제 원천으로 사용하지 않았으며 Re
 
 ## 11. Strong 원천 dry-run diff 도구
 
-`tool/data_provenance/strong_source_diff.py`는 현행 `word_expression_set`의 원어 철자와 pronunciation을 사용자가 전달한 Open Scriptures Strong XML과 비교하는 재사용 가능한 검증 도구다. 이 도구는 Open Scriptures 자료를 Reshet의 최종 공식 재구축 원천으로 채택하지 않으며, 현재 정책상 비교용 보조 자료로만 사용한다.
+`tool/data_provenance/strong_source_diff.py`는 현행 `word_expression_set`의 원어 철자와 pronunciation을 사용자가 전달한 Open Scriptures Strong XML과 비교하는 재사용 가능한 검증 도구다. 이 도구는 Open Scriptures 자료를 Reshet의 최종 공식 재구축 원천으로 채택하지 않으며, 현재 정책상 비교용 보조 자료로만 사용한다. 비교 일치만으로 현행 값의 최초 출처, 승인된 pronunciation profile과의 일치 또는 최종 IPA 원천 적합성이 입증되지는 않는다.
 
 도구는 SQLite DB를 URI `mode=ro`와 `PRAGMA query_only = ON`으로 열고 `integrity_check`를 확인한다. DB 값을 수정하거나 schema·legacy projection을 변경하지 않는다. 입력 XML을 다운로드하지 않으며 외부 XML과 생성되는 CSV·JSON 결과는 저장소에 포함하지 않고 저장소 밖 임시 디렉터리에서 관리한다.
 
@@ -157,7 +159,102 @@ python tool/data_provenance/strong_source_diff.py `
 
 출력 디렉터리에는 입력 파일·실행 조건·무결성 정보를 기록한 `manifest.json`, 집계 결과인 `summary.json`, expression 단위 `expression_diff.csv`, 대표 expression 기준 `word_summary.csv`가 생성된다. 실제 집계는 입력 XML commit과 DB 버전에 따라 달라질 수 있으므로 이 문서에 고정하지 않는다.
 
-## 12. 관련 문서와 외부 기준
+## 12. pronunciation profile·migration 현행 경계
+
+### 12.1 active pronunciation 계약
+
+Reshet의 active pronunciation은 언어별로 승인된 profile에 맞는 IPA만 사용한다. 기본 정밀도는 broad phonemic transcription이며, 다음 공통 원칙을 적용한다.
+
+- 하나의 active pronunciation에는 승인된 profile의 대표 IPA 하나만 저장한다. 대체 발음은 active 값에 함께 넣지 않는다.
+- 승인된 profile과 다른 시대·지역 체계를 fallback으로 사용하지 않는다.
+- 검증 가능한 profile 일치 자료가 없으면 추측하거나 음역을 IPA처럼 취급하지 않고 `NULL`을 유지한다.
+- DB에는 slash, 설명 또는 괄호를 붙이지 않은 순수 IPA만 저장한다.
+- UI는 값이 있을 때 `/IPA/` 형식으로 표시하고 시대·지역·체계 설명을 행마다 반복하지 않는다. 이 표시 정책은 승인됐지만 production UI에는 아직 구현되지 않았다.
+
+승인된 언어별 profile은 다음과 같다.
+
+| DB 언어 값 | 승인된 pronunciation profile |
+| --- | --- |
+| `히브리어` | 재구성 티베리아 성서 히브리어(Reconstructed Tiberian Biblical Hebrew) |
+| `헬라어` | 서기 1세기 코이네 그리스어 재구성(Reconstructed 1st-century CE Koine Greek) |
+| `라틴어` | 재구성 고전 라틴어(Reconstructed Classical Latin) |
+| `영어` | 일반 미국 영어(General American English) |
+
+DB의 `헬라어` label은 정책상 Greek에 해당한다. 위 네 profile은 pronunciation 목표를 승인한 것이며, 실제 원천·판본·라이선스·stable key를 승인한 것은 아니다.
+
+### 12.2 현행 구현과 데이터 신뢰 경계
+
+확인된 현행 구현에서 `pronunciation`은 schema·model·repository 전 구간에서 nullable이고, 빈 문자열 write는 `NULL`로 정규화된다. 상세 화면은 값이 없으면 pronunciation 영역을 숨긴다. pronunciation은 검색 대상, 정렬·filter 기준 또는 identity로 사용되지 않으며 graph에도 표시되지 않는다. 따라서 현재 누락값은 UI 흐름에서 안전하고, `NULL` 처리를 위한 schema나 production 변경은 필요하지 않다. 후속 production 변경 후보는 값이 있을 때의 `/IPA/` 표시 형식이다.
+
+현행 데이터의 확인된 규모와 신뢰 상태는 다음과 같다.
+
+| 항목 | 확인된 수 |
+| --- | ---: |
+| 전체 expression | 15,237 |
+| `pronunciation IS NULL` | 201 |
+| 형식상 IPA 후보 | 576 |
+| 승인 profile과 항목별 provenance가 함께 검증된 IPA | 0 |
+
+형식상 IPA 후보 576건을 모두 잘못된 값으로 단정하지 않는다. 다만 IPA처럼 보인다는 사실만으로는 승인 profile과 provenance가 확인되지 않으므로 cohort D로 분류한다. IPA가 아닌 현행 표기는 최종 active pronunciation이 아니다.
+
+### 12.3 언어 경계
+
+- `히브리어`, `헬라어`, `라틴어`, `영어`는 승인 profile이 있으므로 언어별 read-only 원천 조사 후보가 된다. 원천명, 판본, 라이선스와 stable key는 아직 승인되지 않았다.
+- `아람어`는 실제 데이터가 존재하지만 별도의 profile·원천 조사가 필요하다. 히브리어 profile을 자동 적용하지 않으며, profile 결정 뒤 별도 migration 대상으로 다룬다.
+- `히브리어/아람어`는 독립된 pronunciation 언어가 아니라 expression 언어가 아직 확정되지 않은 임시 label이다. 해당 21단어·22 expression은 전체 migration에서 제외하지 않고 `F-language`로 포함한다. 각 expression의 언어를 먼저 판정한 뒤 히브리어이면 승인된 히브리어 profile, 아람어이면 향후 승인될 아람어 profile을 적용한다. 판정 근거나 검증 가능한 원천이 부족하면 `NULL`로 둔다.
+- 고대 페르시아어, 독일어, 러시아어, 아카드어(현재 DB 언어 값: `아카디아어`), 우가릿어(현재 DB 언어 값: `우가리트어`), 이탈리아어에는 승인된 profile이 없다. profile을 임의로 만들거나 자동 IPA migration을 적용하지 않으며, 검증 가능한 자료가 없으면 `NULL`로 둔다. DB 집계·migration selector에서는 일반 명칭이 아니라 위 현재 DB 언어 값을 사용한다.
+
+### 12.4 migration DB와 backup 경계
+
+pronunciation migration의 active 대상은 `data/reshet_work.db`, `data/reshet_seed.db`와 legacy projection인 `WORD_TABLE.발음1`~`발음6`이다. 실제 migration에서는 work·seed·legacy projection parity를 함께 유지한다.
+
+`data/bbwdb_20260106.db`는 향후 사용하지 않기로 결정된 보존 원본이므로 pronunciation migration과 schema 변경 대상에서 제외한다. 이 파일을 수정·재생성·삭제하지 않는다. 현재 코드의 fallback 참조가 남아 있을 수 있다는 사실과 runtime 경로 제거는 별개다. 이 문서는 코드가 이미 해당 DB를 사용하지 않는다고 선언하지 않으며, 필요하면 후속 cleanup 또는 production 작업에서 다룬다.
+
+historical backup은 변형하지 않은 원본으로 보존한다. 전체 SQLite backup은 `pronunciation`을 별도로 정규화하거나 변환하지 않고 당시 DB 상태 그대로 포함한다.
+
+### 12.5 원천 수용 조건
+
+향후 IPA 원천은 다음 조건을 모두 검토한 뒤에만 채택한다.
+
+- 대상 언어와 승인 profile의 일치
+- 재현 가능한 판본·버전 식별자
+- expression 항목별 provenance
+- 라이선스와 attribution 조건
+- 재현 가능한 stable key
+- 명시적인 1:1 대응 또는 복수 후보 처리 규칙
+- broad phonemic IPA로 정규화 가능한 구조
+- import·diff·manifest 재현성과 원천 버전 비교 가능성
+
+Strong 번호만으로 모든 expression의 IPA를 자동 확정할 수 없다. variant·secondary expression과 같은 철자의 충돌은 stable key와 명시적 후보 규칙으로 처리해야 한다.
+
+### 12.6 migration cohort와 선행 예외
+
+| cohort | 분류 기준 | 처리 경계 |
+| --- | --- | --- |
+| A | 승인 profile과 항목별 provenance가 검증된 IPA | 검증 근거와 함께 유지 가능 |
+| B | non-IPA이며 승인 원천과 stable key로 1:1 대응 | dry-run 확인 뒤 자동 교체 후보 |
+| C | 복수 후보·variant·충돌로 대응이 모호함 | 자동 교체 금지, 개별 판정 |
+| D | 형식상 IPA이나 provenance 또는 profile이 불명확함 | 근거 확인 전 active IPA로 인정하지 않음 |
+| E | 검증 가능한 IPA 원천이 없음 | `NULL` 유지 |
+| F | 언어 또는 identity 등 데이터 자체의 선행 검토가 필요함 | 원천 매칭 전에 데이터 판정 |
+
+cohort F에는 `히브리어/아람어` 22 expression의 `F-language`와 tab 문자가 포함된 word ID `L0000_0003\t`의 `F-identity`가 포함된다. 재사용 가능한 다른 선행 예외는 pronunciation 첫 문자에 carriage return이 있는 `G2943_0000`, 철자 없이 legacy slot 2에 pronunciation `G2767`만 있는 `G0185_0000`이다. slash 포함 59건과 괄호 포함 26건은 순수 IPA 저장 규칙 대조를 위한 형식 신호이며, 그 자체만으로 잘못된 값이라고 확정하지 않는다.
+
+현재 확정할 수 있는 것은 위 분류 기준과 확인된 예외뿐이다. cohort A~F의 실제 배정은 원천 검증 결과에 따라 달라지며, 원천 채택 전에 B·C·E의 최종 건수를 선언하거나 모든 행을 강제로 변환하지 않는다. 결과는 확인 완료, 잠정 분류와 미해결 항목을 구분해 기록한다.
+
+### 12.7 후속 순서
+
+1. 이 문서에서 profile·출처·migration 경계를 유지한다.
+2. 우선 네 승인 profile 언어를 대상으로 언어별 read-only 원천 조사를 수행하고, 아람어는 별도로 조사한다.
+3. `히브리어/아람어` expression의 실제 언어를 판정한다.
+4. identity 예외와 stable key 대응 규칙을 확정한다.
+5. dry-run manifest, migration 전후 전체 SQLite backup과 diff를 준비하고 work·seed·legacy projection parity를 검증한다.
+6. 승인된 원천과 규칙에 한해 실제 DB migration을 수행한다.
+7. 별도 production slice에서 `/IPA/` UI 표시를 구현한다.
+
+`data/bbwdb_20260106.db`는 위 migration 순서에 포함하지 않는다.
+
+## 13. 관련 문서와 외부 기준
 
 내부 문서:
 
