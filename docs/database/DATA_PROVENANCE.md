@@ -60,23 +60,22 @@ Phase 50-A 기준 데이터 규모는 다음과 같다.
 
 ## 5. Strong 데이터의 공식 기준
 
-Reshet 공개 데이터의 Strong 관련 공식 provenance는 다음 기준으로 재정립한다.
+James Strong의 1890년 원판과 CrossWire SWORD Project의 Public Domain Strong 모듈은 Strong 데이터의 역사적·독립 대조 근거로 유지한다. Phase 50-Q부터 재현 가능한 전자 재구축 입력은 다음 두 원천의 고정 commit으로 한정한다.
 
-1. James Strong의 1890년 원판
-2. CrossWire SWORD Project의 Public Domain Strong 모듈
+| 언어 | 공식 전자 재구축 원천 | 고정 파일 | SHA-256 | 라이선스·표시 |
+| --- | --- | --- | --- | --- |
+| Greek | `morphgnt/strongs-dictionary-xml` commit `dd6758b82f46b620804a8ea677d715844679eea1`, version 1.9 | `strongsgreek.xml` | `91474213b208a4e487d35f85c10e5c90737acc69082dad15dec5431406003545` | CC0 1.0 |
+| Hebrew | `openscriptures/HebrewLexicon` commit `21c9add13bc727d3a951361778e97e3ff7afd1ce` | `HebrewStrong.xml` | `a628f4f89f8bdaf2483fd3faf1abc8653cc6717758dfc9f24beb7571d9bdd0c4` | CC BY 4.0, `Open Scriptures Hebrew Bible Project` attribution 필요 |
 
-CrossWire 공식 모듈 정보에서 다음 표시를 확인했다.
+Greek 원천은 `entry@strongs`, 머리부 `greek@unicode`, `greek@translit`과 해당 `greek` 뒤의 `pronunciation@strongs`만 사용한다. 설명 영역 이후 descendant `greek`·`pronunciation`, definition, derivation, KJV definition과 참조용 중첩 요소는 사용하지 않는다.
 
-| 모듈 | 공식 모듈 제목 | 표시된 배포 라이선스 |
-| --- | --- | --- |
-| `StrongsGreek` | Strong's Greek Bible Dictionary | Public Domain |
-| `StrongsHebrew` | Strong's Hebrew Bible Dictionary | Public Domain |
+Hebrew 원천은 `entry@id`와 `entry`의 직접 자식 `w` 본문, `w@xlit`, `w@pron`만 사용한다. `BrownDriverBriggs.xml`, `LexicalIndex.xml`, `StrongHebrewG.xml`, 중첩 참조 `w`, BDB·TWOT·definition·설명문과 Strong 외 lexical index 콘텐츠는 사용하지 않는다.
 
-Phase 50-A에서는 CrossWire 바이너리 값을 직접 export하지 못했다. 따라서 위 확인은 공식 모듈 정보와 config의 Public Domain 표시를 근거로 하며, 개별 현행 DB 값의 대조 완료를 의미하지 않는다.
+원천 XML 자체는 변형하지 않고 ignored local cache에 둔다. Reshet 도구가 수행하는 Strong ID 정규화, NFC 비교, headword 필드 추출과 dry-run plan 생성은 원천과 구분되는 가공이다. Hebrew 가공물에는 CC BY 4.0과 위 attribution을 유지하고 변경·정규화 사실을 표시한다.
 
-Open Scriptures 자료는 Strong 원전과 CrossWire 값을 비교하기 위한 보조 전자 자료다. 현재 공식 Reshet 재구축 원천으로 채택하지 않았다. `HebrewLexicon` 저장소의 파일은 CC BY 4.0 조건과 별도 attribution 판단이 필요하며, Greek XML의 교정 내용과 SBL식 음역은 Public Domain 원판과 구분한다.
+공식 전자 재구축 원천은 canonical source candidate의 근거다. DB의 `is_representative`는 기존 expression 내부 표시 정책이며 source candidate 선택 기준이 아니다. 원천 채택은 실제 DB migration 완료, 기존 모든 DB 값의 최초 provenance 입증, representative expression 변경 승인 또는 IPA profile 승인을 뜻하지 않는다.
 
-Strong 원판·모듈과 이를 이용한 문자열 대조는 Strong 데이터의 비교 근거일 뿐, 언어별 IPA profile이나 expression별 IPA provenance를 입증하지 않는다.
+Strong 원판·모듈과 고정 XML을 이용한 문자열 대조는 Strong식 철자·발음 표기의 재구축 근거일 뿐, 언어별 IPA profile이나 expression별 IPA provenance를 입증하지 않는다.
 
 ## 6. e-Sword 모듈 경계
 
@@ -140,24 +139,32 @@ Wikidata는 이번 감사에서 실제 원천으로 사용하지 않았으며 Re
 
 외부 원천을 실제로 채택할 때는 원천별 조건, attribution과 변경 이력을 먼저 검토하고 기록한다. 이 절차는 데이터 구조·값 변경 승인을 대체하지 않는다.
 
-## 11. Strong 원천 dry-run diff 도구
+## 11. Strong 원천 검증과 결정적 mapping 도구
 
-`tool/data_provenance/strong_source_diff.py`는 현행 `word_expression_set`의 원어 철자와 pronunciation을 사용자가 전달한 Open Scriptures Strong XML과 비교하는 재사용 가능한 검증 도구다. 이 도구는 Open Scriptures 자료를 Reshet의 최종 공식 재구축 원천으로 채택하지 않으며, 현재 정책상 비교용 보조 자료로만 사용한다. 비교 일치만으로 현행 값의 최초 출처, 승인된 pronunciation profile과의 일치 또는 최종 IPA 원천 적합성이 입증되지는 않는다.
+`tool/data_provenance/manifests/strong_sources.json`은 두 공식 원천의 repository·commit·file·SHA-256·라이선스·attribution·필드 경계를 고정한다. `tool/data_provenance/strong_source_mapping.py`의 `fetch`는 이 manifest에서 재구성되는 정확한 raw GitHub URL만 허용한다. 임의 URL, branch 최신 파일과 mirror fallback을 받지 않으며, SHA-256이 다르면 XML parsing 전에 실패한다. 공식 XML은 `.gitignore`의 `tool/data_provenance/.source_cache/`에 두고 저장소에는 commit하지 않는다.
 
-도구는 SQLite DB를 URI `mode=ro`와 `PRAGMA query_only = ON`으로 열고 `integrity_check`를 확인한다. DB 값을 수정하거나 schema·legacy projection을 변경하지 않는다. 입력 XML을 다운로드하지 않으며 외부 XML과 생성되는 CSV·JSON 결과는 저장소에 포함하지 않고 저장소 밖 임시 디렉터리에서 관리한다.
+source와 DB expression의 migration 준비 mapping은 Strong ID로 식별되는 word 전체를 단위로 한다. 아직 매핑되지 않은 candidate와 expression에 `raw spelling + exact pronunciation`, `NFC spelling + exact pronunciation`, `raw spelling`, `NFC spelling` 순서로만 적용하고, 각 단계에서 서로 degree 1인 pair만 확정한다. pronunciation trim·case 변환·유사도, pronunciation-only 일치, source ordinal, DB `seq`, `is_representative`와 임의 첫 결과는 선택 기준으로 사용하지 않는다. 모든 candidate와 expression이 완전한 일대일 대응을 이루고 expression 구조 변경이 필요 없을 때만 word를 `auto`로 분류한다.
+
+primary disposition은 `auto`, `exception`, `hold`로 상호 배타적으로 기록한다. cardinality 불일치, 모호한 bijection, 중복 source candidate, 잔여 candidate·expression, representative 무결성 이상과 expression 구조 변경 필요는 `exception`이다. 유효하지 않은 Strong ID, source 또는 DB target 부재, placeholder, 사용할 수 없는 headword와 지원하지 않는 source 구조는 `hold`다. source pronunciation이 없다는 사실만으로 word를 `hold`로 만들지 않으며, 이 경우 확정된 spelling 외 pronunciation·notation 변경 후보는 만들지 않는다.
+
+source pronunciation이 있고 word 전체 mapping이 확정된 expression만 예상 `pronunciation_notation = strong_dictionary`, `pronunciation_notation_name = NULL`을 생성한다. notation은 표기 형식 metadata이며 provenance나 라이선스 자체가 아니다. 이 phase의 plan은 DB write path와 연결하지 않는다.
 
 실행 예시는 다음과 같다.
 
 ```powershell
-python tool/data_provenance/strong_source_diff.py `
+python tool/data_provenance/strong_source_mapping.py fetch
+python tool/data_provenance/strong_source_mapping.py validate
+python tool/data_provenance/strong_source_mapping.py dry-run `
   --db data/reshet_work.db `
-  --greek-xml "<TEMP_PATH>\strongsgreek.xml" `
-  --hebrew-xml "<TEMP_PATH>\HebrewStrong.xml" `
-  --output-dir "<TEMP_PATH>\reshet-strong-diff" `
-  --pretty
+  --output-dir "<GENERATED_PATH>\work"
+python tool/data_provenance/strong_source_mapping.py parity `
+  --left-db data/reshet_work.db `
+  --right-db data/reshet_seed.db
 ```
 
-출력 디렉터리에는 입력 파일·실행 조건·무결성 정보를 기록한 `manifest.json`, 집계 결과인 `summary.json`, expression 단위 `expression_diff.csv`, 대표 expression 기준 `word_summary.csv`가 생성된다. 실제 집계는 입력 XML commit과 DB 버전에 따라 달라질 수 있으므로 이 문서에 고정하지 않는다.
+`dry-run`은 `manifest.json`, `summary.json`, `mapping_plan.jsonl`, `exception_manifest.json`을 생성한다. 대형 mapping plan과 exception manifest는 generated output로 관리하고 기본적으로 commit하지 않는다. 도구는 SQLite URI `mode=ro`, `PRAGMA query_only = ON`, `integrity_check`와 실행 전후 SHA-256 불변을 확인한다. `parity`는 surrogate row ID를 제외한 Strong word·expression 의미 projection을 비교한다.
+
+기존 `tool/data_provenance/strong_source_diff.py`는 사용자가 전달한 XML의 expression별 비교 결과를 확인하는 보조 도구로 유지한다. 해당 도구의 pronunciation-only·trimmed pronunciation을 포함한 독립 후보 선택은 migration 준비 mapping 계약으로 사용하지 않는다. 어느 도구의 일치 결과도 현행 값의 최초 출처, 승인된 IPA profile 또는 최종 IPA 원천 적합성을 입증하지 않는다.
 
 ## 12. pronunciation profile·migration 현행 경계
 
@@ -214,7 +221,9 @@ DB의 `헬라어` label은 정책상 Greek에 해당한다. 위 네 profile은 p
 
 pronunciation migration의 active 대상은 `data/reshet_work.db`, `data/reshet_seed.db`와 legacy projection인 `WORD_TABLE.발음1`~`발음6`이다. 실제 pronunciation 본문 migration에서는 work·seed·legacy projection parity를 함께 유지한다.
 
-Phase 50-O는 두 active DB의 normalized table에 notation 열을 추가하고 기존 non-NULL pronunciation 15,036건을 `unknown`으로 보강했다. pronunciation 본문과 legacy projection은 변경하지 않았고 legacy slot도 추가하지 않았다. 기존 값을 `strong_dictionary`로 자동 전환하지 않았으며, Open Scriptures 자료의 다운로드·반영·migration도 수행하지 않았다. Open Scriptures는 계속 비교용 보조 자료일 뿐 active canonical source가 아니다. notation은 형식 metadata이므로 원천을 뜻하는 source column도 추가하지 않았다.
+Phase 50-O는 두 active DB의 normalized table에 notation 열을 추가하고 기존 non-NULL pronunciation 15,036건을 `unknown`으로 보강했다. pronunciation 본문과 legacy projection은 변경하지 않았고 legacy slot도 추가하지 않았다. 기존 값을 `strong_dictionary`로 자동 전환하지 않았으며 notation은 형식 metadata이므로 원천을 뜻하는 source column도 추가하지 않았다.
+
+Phase 50-Q는 위 Greek·Hebrew 고정 XML을 공식 전자 재구축 원천으로 채택하고 source manifest, 결정적 mapping과 read-only dry-run 경계를 추가했다. 그러나 active work·seed DB의 spelling·pronunciation·notation, expression 구조, representative와 legacy projection에는 아직 반영하지 않았다. 실제 DB migration은 Greek와 Hebrew를 분리한 후속 production phase의 별도 승인·검증 대상이다.
 
 `data/bbwdb_20260106.db`는 향후 사용하지 않기로 결정된 보존 원본이므로 pronunciation migration과 schema 변경 대상에서 제외한다. 이 파일을 수정·재생성·삭제하지 않는다. 현재 코드의 fallback 참조가 남아 있을 수 있다는 사실과 runtime 경로 제거는 별개다. 이 문서는 코드가 이미 해당 DB를 사용하지 않는다고 선언하지 않으며, 필요하면 후속 cleanup 또는 production 작업에서 다룬다.
 
@@ -274,8 +283,8 @@ cohort F에는 `히브리어/아람어` 19 expression의 `F-language`와 tab 문
 - [CrossWire StrongsGreek module information](https://www.crosswire.org/sword/modules/ModInfo.jsp?modName=StrongsGreek) — `Strong's Greek Bible Dictionary`, `Distribution License: Public Domain`
 - [CrossWire StrongsHebrew module information](https://www.crosswire.org/sword/modules/ModInfo.jsp?modName=StrongsHebrew) — `Strong's Hebrew Bible Dictionary`, `Distribution License: Public Domain`
 - [James Strong, *The exhaustive concordance of the Bible* (1890) 서지](https://openlibrary.org/books/OL31772852M/The_exhaustive_concordance_of_the_Bible) 및 [Internet Archive 스캔](https://archive.org/details/bwb_T2-DOA-183)
-- [Open Scriptures HebrewLexicon](https://github.com/openscriptures/HebrewLexicon) — 저장소의 CC BY 4.0 및 attribution 안내
-- [Open Scriptures Strong's Greek XML](https://github.com/openscriptures/strongs/blob/master/greek/StrongsGreekDictionaryXML_1.4/strongsgreek.xml) — 비교용 보조 전자 자료 후보
+- [morphgnt Strong's Greek Dictionary XML 1.9 고정 commit](https://github.com/morphgnt/strongs-dictionary-xml/tree/dd6758b82f46b620804a8ea677d715844679eea1) — Greek 공식 전자 재구축 원천과 CC0 1.0 표시
+- [Open Scriptures HebrewLexicon 고정 commit](https://github.com/openscriptures/HebrewLexicon/tree/21c9add13bc727d3a951361778e97e3ff7afd1ce) — `HebrewStrong.xml`, CC BY 4.0과 attribution 안내
 - [Wiktionary: Copyrights](https://en.wiktionary.org/wiki/Wiktionary:Copyrights) 및 [Wikimedia Foundation Terms of Use](https://foundation.wikimedia.org/wiki/Policy:Terms_of_Use/en#7._Licensing_of_Content) — 전자는 오래된 비공식 안내라는 자체 경고가 있으므로 향후 재사용 판단 시 현행 이용 약관과 함께 확인
 - [Wikidata: Licensing](https://www.wikidata.org/wiki/Wikidata:Licensing) — Wikidata 라이선스 안내
 

@@ -48,3 +48,6 @@ app.*.map.json
 *.db
 *.sqlite
 *.sqlite3
+
+# Local pinned Strong source cache (verified through the tracked manifest)
+/tool/data_provenance/.source_cache/
