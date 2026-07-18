@@ -1,0 +1,170 @@
+{
+  "schema_version": 1,
+  "phase": "50-R",
+  "tool_version": "1.0.0",
+  "executed_at_utc": "2026-07-18T11:54:12.441664+00:00",
+  "source": {
+    "source_manifest_sha256": "5f8f1bb3086689d223345988c61d3d4c85a710e08490978bfb5bccbdf87ad2d2",
+    "greek_xml_sha256": "91474213b208a4e487d35f85c10e5c90737acc69082dad15dec5431406003545",
+    "repository": "https://github.com/morphgnt/strongs-dictionary-xml",
+    "commit": "dd6758b82f46b620804a8ea677d715844679eea1",
+    "license": "CC0 1.0",
+    "parser_contract": "greek_headword_v1"
+  },
+  "mapping_plan_sha256": "38136c17976ce5b0565bfcfef7b8d40e4b8b08d60a531fd6bed4c5aee4cdd0a5",
+  "mapping_summary_sha256": "d40584fc01abcd4d6fecd1d9491d8ee52ab948b1e5f047a10ccd32c8ced8b3b3",
+  "repair_report_sha256": "3eb7f5161b275768715f417a45fc64adc412181a1e3ba1b19b720637aa719129",
+  "preflight_repair": {
+    "strong_id": "G0153",
+    "word_id": "G0153_0000",
+    "seq": 1,
+    "field": "WORD_TABLE.발음1",
+    "reason": "normalized·legacy compatibility projection mismatch",
+    "before_length": 21,
+    "after_length": 20,
+    "normalized_changed": false,
+    "applied_to": [
+      "work",
+      "seed"
+    ]
+  },
+  "hash_boundaries": {
+    "phase_start": {
+      "work_sha256": "fc0b7839d307c5543cbec70e54df91d2767ae6bcc430aa03cfb00eb4ebe2707e",
+      "seed_sha256": "120d68883b32354cf1ab48f83b90453ee02b3601803a7c2e6de6e47df6c424f7"
+    },
+    "post_repair_pre_migration": {
+      "work_sha256": "3efb41d8fc94a3db68fc7025f0a2f36f41e009fc01e2fc1d3a35231a23b68d53",
+      "seed_sha256": "82f1daad9f7e714ed3872ed1ac1df96627c42a5bb151c23930d1576055c4d7b2"
+    },
+    "post_migration": {
+      "work_sha256": "63f5ab90df5c813449b91098847e159bcd5411fc9fcf0827fc790e5ef3a6f847",
+      "seed_sha256": "284d4ca1ff4eb55fbf23de1ea5da1eeee3451f6ceb6c66e274e5a60d679f5c33"
+    }
+  },
+  "scope": {
+    "greek_auto_word_count": 5326,
+    "greek_exception_word_count": 197,
+    "greek_source_only_hold_word_count": 101,
+    "source_pronunciation_missing_count": 0,
+    "greek_auto_expression_count": 5389,
+    "hebrew_expression_change_count": 0,
+    "greek_exception_expression_change_count": 0,
+    "greek_source_only_created_row_count": 0,
+    "change_history_used": false
+  },
+  "work": {
+    "input_sha256": "3efb41d8fc94a3db68fc7025f0a2f36f41e009fc01e2fc1d3a35231a23b68d53",
+    "output_sha256": "63f5ab90df5c813449b91098847e159bcd5411fc9fcf0827fc790e5ef3a6f847",
+    "change_counts": {
+      "auto_word_count": 5326,
+      "auto_expression_count": 5389,
+      "actual_changed_word_count": 5326,
+      "actual_changed_expression_count": 5389,
+      "spelling_change_count": 5238,
+      "pronunciation_change_count": 316,
+      "notation_change_count": 5389,
+      "notation_only_change_count": 136,
+      "nfc_equivalent_spelling_change_count": 5238,
+      "legacy_spelling_slot_change_count": 5238,
+      "legacy_pronunciation_slot_change_count": 316,
+      "already_expected_noop_count": 0
+    },
+    "protection": {
+      "word_count": 15009,
+      "expression_count": 15237,
+      "word_immutable_sha256": "b28d02086c933767fddf97641030c71e442695cfe24405696efe69731531388e",
+      "expression_immutable_sha256": "9ddfff5fd16f9622170d70bf63caf95a5479f1baa0dbb2f28b2ba97b5f4eb993",
+      "non_target_expression_sha256": "f76bba63292da88ad03823ac18fe413eae72a80295a7035d8a78d6fcf83f7d61",
+      "non_target_legacy_sha256": "1669d42e626f016f96ed9989d92b6205cfb6d3765b71b9a09deb5b718b161586",
+      "change_history_row_count": 1413,
+      "change_history_sha256": "1529b0d7311b96effbeba85224ddf3f63a455da4e4c4ca5ea17f8cf21db3d9b2",
+      "schema_sha256": "8d5836f71f26239e54abd180713e9649ab8f1105bd6f04b018e659981a71d580"
+    },
+    "health": {
+      "integrity_check": "ok",
+      "foreign_key_violation_count": 0,
+      "required_schema_present": true
+    }
+  },
+  "seed": {
+    "input_sha256": "82f1daad9f7e714ed3872ed1ac1df96627c42a5bb151c23930d1576055c4d7b2",
+    "output_sha256": "284d4ca1ff4eb55fbf23de1ea5da1eeee3451f6ceb6c66e274e5a60d679f5c33",
+    "change_counts": {
+      "auto_word_count": 5326,
+      "auto_expression_count": 5389,
+      "actual_changed_word_count": 5326,
+      "actual_changed_expression_count": 5389,
+      "spelling_change_count": 5238,
+      "pronunciation_change_count": 316,
+      "notation_change_count": 5389,
+      "notation_only_change_count": 136,
+      "nfc_equivalent_spelling_change_count": 5238,
+      "legacy_spelling_slot_change_count": 5238,
+      "legacy_pronunciation_slot_change_count": 316,
+      "already_expected_noop_count": 0
+    },
+    "protection": {
+      "word_count": 15009,
+      "expression_count": 15237,
+      "word_immutable_sha256": "45bd7d34cfdf6843232fe9442097cf2ec455fcba94bb9b7ccc8ade7731a27c86",
+      "expression_immutable_sha256": "ba384b5cee5b00bfe2f4adbd7c5ab7ddb34e1f991722ab9126391cd791c2b199",
+      "non_target_expression_sha256": "f76bba63292da88ad03823ac18fe413eae72a80295a7035d8a78d6fcf83f7d61",
+      "non_target_legacy_sha256": "1669d42e626f016f96ed9989d92b6205cfb6d3765b71b9a09deb5b718b161586",
+      "change_history_row_count": 1412,
+      "change_history_sha256": "653e4dcbde8b6fa7267ac0855c4c05eefb762942483d26f8b87d9f1fc4ea3cbd",
+      "schema_sha256": "8d5836f71f26239e54abd180713e9649ab8f1105bd6f04b018e659981a71d580"
+    },
+    "health": {
+      "integrity_check": "ok",
+      "foreign_key_violation_count": 0,
+      "required_schema_present": true
+    }
+  },
+  "backup": {
+    "pre_repair": {
+      "role": "G0153 repair 실패 복구용",
+      "work": {
+        "original_sha256": "fc0b7839d307c5543cbec70e54df91d2767ae6bcc430aa03cfb00eb4ebe2707e",
+        "backup_sha256": "fc0b7839d307c5543cbec70e54df91d2767ae6bcc430aa03cfb00eb4ebe2707e",
+        "byte_identical": true,
+        "integrity_check": "ok"
+      },
+      "seed": {
+        "original_sha256": "120d68883b32354cf1ab48f83b90453ee02b3601803a7c2e6de6e47df6c424f7",
+        "backup_sha256": "120d68883b32354cf1ab48f83b90453ee02b3601803a7c2e6de6e47df6c424f7",
+        "byte_identical": true,
+        "integrity_check": "ok"
+      }
+    },
+    "post_repair_pre_migration": {
+      "role": "Greek auto migration 실패 복구용",
+      "work": {
+        "original_sha256": "3efb41d8fc94a3db68fc7025f0a2f36f41e009fc01e2fc1d3a35231a23b68d53",
+        "backup_sha256": "3efb41d8fc94a3db68fc7025f0a2f36f41e009fc01e2fc1d3a35231a23b68d53",
+        "byte_identical": true,
+        "integrity_check": "ok"
+      },
+      "seed": {
+        "original_sha256": "82f1daad9f7e714ed3872ed1ac1df96627c42a5bb151c23930d1576055c4d7b2",
+        "backup_sha256": "82f1daad9f7e714ed3872ed1ac1df96627c42a5bb151c23930d1576055c4d7b2",
+        "byte_identical": true,
+        "integrity_check": "ok"
+      }
+    }
+  },
+  "parity_before": {
+    "semantic_projection_equal": true,
+    "left_projection_count": 14365,
+    "right_projection_count": 14365,
+    "left_projection_sha256": "2a102cfb5e35be157eeafb439e7b63b04cfaebc605237367cc26350a1369c79b",
+    "right_projection_sha256": "2a102cfb5e35be157eeafb439e7b63b04cfaebc605237367cc26350a1369c79b"
+  },
+  "parity_after": {
+    "semantic_projection_equal": true,
+    "left_projection_count": 14365,
+    "right_projection_count": 14365,
+    "left_projection_sha256": "89a0beeb2a100aa3a90e652b28d7fc3f3686088c8b0c489ace49f5bb6af5ed2d",
+    "right_projection_sha256": "89a0beeb2a100aa3a90e652b28d7fc3f3686088c8b0c489ace49f5bb6af5ed2d"
+  }
+}
