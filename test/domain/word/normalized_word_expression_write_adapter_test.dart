@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:reshet_app/data/adapters/normalized_word_expression_write_adapter.dart';
 import 'package:reshet_app/domain/expression/expression_read_models.dart';
+import 'package:reshet_app/domain/expression/pronunciation_notation.dart';
 
 void main() {
   group('toWordExpressionSetRows', () {
@@ -30,6 +31,8 @@ void main() {
           'spelling': 'beta',
           'transliteration': '베타',
           'pronunciation': null,
+          'pronunciation_notation': null,
+          'pronunciation_notation_name': null,
         },
         {
           'word_id': 'T9000_0001',
@@ -38,8 +41,27 @@ void main() {
           'spelling': 'gamma',
           'transliteration': null,
           'pronunciation': 'ga-ma',
+          'pronunciation_notation': 'unknown',
+          'pronunciation_notation_name': null,
         },
       ]);
+    });
+
+    test('normalizes typed IPA metadata into storage columns', () {
+      final rows = toWordExpressionSetRows('T9000_0002', const [
+        ExpressionSet(
+          spelling: 'ahava',
+          transliteration: null,
+          pronunciation: '/ʔa.haˈva/',
+          pronunciationNotation: PronunciationNotation.ipaPhonemic,
+          seq: 1,
+          isRepresentative: true,
+        ),
+      ]);
+
+      expect(rows.single['pronunciation'], 'ʔa.haˈva');
+      expect(rows.single['pronunciation_notation'], 'ipa_phonemic');
+      expect(rows.single['pronunciation_notation_name'], isNull);
     });
 
     test('rejects empty word ids', () {

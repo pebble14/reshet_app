@@ -725,6 +725,19 @@ class DatabaseService {
           spelling TEXT NOT NULL,
           transliteration TEXT,
           pronunciation TEXT,
+          pronunciation_notation TEXT CHECK (
+            pronunciation_notation IS NULL OR pronunciation_notation IN (
+              'strong_dictionary',
+              'ipa_phonemic',
+              'ipa_phonetic',
+              'other',
+              'unknown'
+            )
+          ),
+          pronunciation_notation_name TEXT CHECK (
+            pronunciation_notation_name IS NULL OR
+            LENGTH(TRIM(pronunciation_notation_name)) > 0
+          ),
           FOREIGN KEY (word_id) REFERENCES WORD_TABLE(id) ON DELETE CASCADE,
           CHECK (seq >= 1),
           CHECK (is_representative IN (0, 1)),
@@ -733,6 +746,37 @@ class DatabaseService {
           CHECK (pronunciation IS NULL OR LENGTH(TRIM(pronunciation)) > 0)
         )
       ''');
+
+      final columns = await txn.rawQuery(
+        "PRAGMA table_info('word_expression_set')",
+      );
+      final columnNames = columns
+          .map((row) => row['name'])
+          .whereType<String>()
+          .toSet();
+      if (!columnNames.contains('pronunciation_notation')) {
+        await txn.execute('''
+          ALTER TABLE word_expression_set
+          ADD COLUMN pronunciation_notation TEXT CHECK (
+            pronunciation_notation IS NULL OR pronunciation_notation IN (
+              'strong_dictionary',
+              'ipa_phonemic',
+              'ipa_phonetic',
+              'other',
+              'unknown'
+            )
+          )
+        ''');
+      }
+      if (!columnNames.contains('pronunciation_notation_name')) {
+        await txn.execute('''
+          ALTER TABLE word_expression_set
+          ADD COLUMN pronunciation_notation_name TEXT CHECK (
+            pronunciation_notation_name IS NULL OR
+            LENGTH(TRIM(pronunciation_notation_name)) > 0
+          )
+        ''');
+      }
 
       await txn.execute('''
         CREATE UNIQUE INDEX IF NOT EXISTS ux_word_expression_set_word_seq
@@ -749,106 +793,126 @@ class DatabaseService {
         'SELECT COUNT(*) AS row_count FROM word_expression_set',
       );
       final existingRowCount = existingRows.first['row_count'] as int;
-      if (existingRowCount > 0) {
-        return;
-      }
-
-      await txn.execute('''
-        WITH legacy_slots AS (
-          SELECT
-            id AS word_id,
-            1 AS source_slot,
-            TRIM(COALESCE([표기1], '')) AS spelling,
-            TRIM(COALESCE([음역1], '')) AS transliteration,
-            TRIM(COALESCE([발음1], '')) AS pronunciation
-          FROM WORD_TABLE
-          UNION ALL
-          SELECT
-            id,
-            2,
-            TRIM(COALESCE([표기2], '')),
-            TRIM(COALESCE([음역2], '')),
-            TRIM(COALESCE([발음2], ''))
-          FROM WORD_TABLE
-          UNION ALL
-          SELECT
-            id,
-            3,
-            TRIM(COALESCE([표기3], '')),
-            TRIM(COALESCE([음역3], '')),
-            TRIM(COALESCE([발음3], ''))
-          FROM WORD_TABLE
-          UNION ALL
-          SELECT
-            id,
-            4,
-            TRIM(COALESCE([표기4], '')),
-            TRIM(COALESCE([음역4], '')),
-            TRIM(COALESCE([발음4], ''))
-          FROM WORD_TABLE
-          UNION ALL
-          SELECT
-            id,
-            5,
-            TRIM(COALESCE([표기5], '')),
-            TRIM(COALESCE([음역5], '')),
-            TRIM(COALESCE([발음5], ''))
-          FROM WORD_TABLE
-          UNION ALL
-          SELECT
-            id,
-            6,
-            TRIM(COALESCE([표기6], '')),
-            TRIM(COALESCE([음역6], '')),
-            TRIM(COALESCE([발음6], ''))
-          FROM WORD_TABLE
-        ),
-        expected_expression_set AS (
-          SELECT
-            word_id,
-            ROW_NUMBER() OVER (PARTITION BY word_id ORDER BY source_slot)
-              AS seq,
-            spelling,
-            NULLIF(transliteration, '') AS transliteration,
-            NULLIF(pronunciation, '') AS pronunciation
-          FROM legacy_slots
-          WHERE spelling <> ''
-        ),
-        backfill_source AS (
-          SELECT
+      if (existingRowCount == 0) {
+        await txn.execute('''
+          WITH legacy_slots AS (
+            SELECT
+              id AS word_id,
+              1 AS source_slot,
+              TRIM(COALESCE([표기1], '')) AS spelling,
+              TRIM(COALESCE([음역1], '')) AS transliteration,
+              TRIM(COALESCE([발음1], '')) AS pronunciation
+            FROM WORD_TABLE
+            UNION ALL
+            SELECT
+              id,
+              2,
+              TRIM(COALESCE([표기2], '')),
+              TRIM(COALESCE([음역2], '')),
+              TRIM(COALESCE([발음2], ''))
+            FROM WORD_TABLE
+            UNION ALL
+            SELECT
+              id,
+              3,
+              TRIM(COALESCE([표기3], '')),
+              TRIM(COALESCE([음역3], '')),
+              TRIM(COALESCE([발음3], ''))
+            FROM WORD_TABLE
+            UNION ALL
+            SELECT
+              id,
+              4,
+              TRIM(COALESCE([표기4], '')),
+              TRIM(COALESCE([음역4], '')),
+              TRIM(COALESCE([발음4], ''))
+            FROM WORD_TABLE
+            UNION ALL
+            SELECT
+              id,
+              5,
+              TRIM(COALESCE([표기5], '')),
+              TRIM(COALESCE([음역5], '')),
+              TRIM(COALESCE([발음5], ''))
+            FROM WORD_TABLE
+            UNION ALL
+            SELECT
+              id,
+              6,
+              TRIM(COALESCE([표기6], '')),
+              TRIM(COALESCE([음역6], '')),
+              TRIM(COALESCE([발음6], ''))
+            FROM WORD_TABLE
+          ),
+          expected_expression_set AS (
+            SELECT
+              word_id,
+              ROW_NUMBER() OVER (PARTITION BY word_id ORDER BY source_slot)
+                AS seq,
+              spelling,
+              NULLIF(transliteration, '') AS transliteration,
+              NULLIF(pronunciation, '') AS pronunciation
+            FROM legacy_slots
+            WHERE spelling <> ''
+          ),
+          backfill_source AS (
+            SELECT
+              word_id,
+              seq,
+              CASE WHEN seq = 1 THEN 1 ELSE 0 END AS is_representative,
+              spelling,
+              transliteration,
+              pronunciation
+            FROM expected_expression_set
+          )
+          INSERT INTO word_expression_set (
             word_id,
             seq,
-            CASE WHEN seq = 1 THEN 1 ELSE 0 END AS is_representative,
+            is_representative,
             spelling,
             transliteration,
             pronunciation
-          FROM expected_expression_set
-        )
-        INSERT INTO word_expression_set (
-          word_id,
-          seq,
-          is_representative,
-          spelling,
-          transliteration,
-          pronunciation
-        )
-        SELECT
-          word_id,
-          seq,
-          is_representative,
-          spelling,
-          transliteration,
-          pronunciation
-        FROM backfill_source
-      ''');
+          )
+          SELECT
+            word_id,
+            seq,
+            is_representative,
+            spelling,
+            transliteration,
+            pronunciation
+          FROM backfill_source
+        ''');
 
-      final backfilledRows = await txn.rawQuery(
-        'SELECT COUNT(*) AS row_count FROM word_expression_set',
-      );
+        final backfilledRows = await txn.rawQuery(
+          'SELECT COUNT(*) AS row_count FROM word_expression_set',
+        );
+        // ignore: avoid_print
+        print(
+          '[DB] word_expression_set baseline 보강: '
+          '${backfilledRows.first['row_count']}건',
+        );
+      }
+
+      final unknownBackfillCount = await txn.rawUpdate('''
+        UPDATE word_expression_set
+        SET pronunciation_notation = 'unknown'
+        WHERE pronunciation IS NOT NULL
+          AND pronunciation_notation IS NULL
+      ''');
+      final clearedMetadataCount = await txn.rawUpdate('''
+        UPDATE word_expression_set
+        SET pronunciation_notation = NULL,
+            pronunciation_notation_name = NULL
+        WHERE pronunciation IS NULL
+          AND (
+            pronunciation_notation IS NOT NULL OR
+            pronunciation_notation_name IS NOT NULL
+          )
+      ''');
       // ignore: avoid_print
       print(
-        '[DB] word_expression_set baseline 보강: '
-        '${backfilledRows.first['row_count']}건',
+        '[DB] word_expression_set 발음 표기 방식 보강: '
+        'unknown=$unknownBackfillCount건, metadata 정리=$clearedMetadataCount건',
       );
     });
   }

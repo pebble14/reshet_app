@@ -6,6 +6,7 @@ import 'package:path/path.dart' as p;
 import 'package:reshet_app/data/adapters/legacy_word_expression_read_adapter.dart';
 import 'package:reshet_app/data/repositories/word_repository.dart';
 import 'package:reshet_app/database/database_service.dart';
+import 'package:reshet_app/domain/expression/pronunciation_notation.dart';
 import 'package:reshet_app/domain/word/word_write_models.dart';
 
 typedef SemanticExpressionRow = ({
@@ -535,14 +536,16 @@ void main() {
             CanonicalExpressionWriteSet(
               spelling: 'epsilon',
               transliteration: '엡실론',
-              pronunciation: null,
+              pronunciation: '/epsilon/',
+              pronunciationNotation: PronunciationNotation.ipaPhonemic,
               seq: 1,
               isRepresentative: true,
             ),
             CanonicalExpressionWriteSet(
               spelling: 'eps',
               transliteration: null,
-              pronunciation: 'eps',
+              pronunciation: '/eps/',
+              pronunciationNotation: PronunciationNotation.ipaPhonemic,
               seq: 2,
               isRepresentative: false,
             ),
@@ -581,6 +584,31 @@ void main() {
       expect(actualRows, hasLength(2));
       expect(actualRows.first.spelling, 'epsilon');
       expect(actualRows.first.isRepresentative, 1);
+
+      final db = await DatabaseService.openDatabaseFile();
+      final restoredPronunciationRows = await db.query(
+        'word_expression_set',
+        columns: const [
+          'pronunciation',
+          'pronunciation_notation',
+          'pronunciation_notation_name',
+        ],
+        where: 'word_id = ? AND seq = ?',
+        whereArgs: [wordId, 2],
+      );
+      expect(restoredPronunciationRows.single, {
+        'pronunciation': 'eps',
+        'pronunciation_notation': 'ipa_phonemic',
+        'pronunciation_notation_name': null,
+      });
+
+      final detail = await repository
+          .getWordDetailLikeDisplayItemByIdForDetailScreen(wordId);
+      final searchResult = (await repository.searchWordsMap(
+        'epsilon',
+      )).singleWhere((item) => item.wordId == wordId);
+      expect(detail!.pronunciations.first, '/epsilon/');
+      expect(searchResult.representativePronunciation, '/epsilon/');
     });
 
     test(

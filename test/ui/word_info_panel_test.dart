@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:reshet_app/domain/expression/pronunciation_notation.dart';
 import 'package:reshet_app/domain/word/word_detail_like_display_item.dart';
 import 'package:reshet_app/ui/word_detail_clipboard_payload.dart';
 import 'package:reshet_app/ui/word_detail_screen.dart';
@@ -90,7 +91,12 @@ void main() {
         language: 'Greek',
         spellings: ['alpha'],
         transliterations: ['alfa'],
-        pronunciations: ['al-fah'],
+        pronunciationItems: [
+          PronunciationValue(
+            text: 'al-fah',
+            notation: PronunciationNotation.ipaPhonemic,
+          ),
+        ],
         meanings: ['first'],
         note: 'visible note',
       );
@@ -108,8 +114,11 @@ void main() {
           '음역:',
           '- alfa',
           '',
-          '발음:',
-          '- al-fah',
+          '발음 표기:',
+          '- /al-fah/',
+          '',
+          '표기 방식:',
+          '- IPA — 음소 표기',
           '',
           '의미:',
           '- first',
@@ -142,7 +151,8 @@ void main() {
 
         expect(find.text('대표 표기'), findsOneWidget);
         expect(find.text('표기'), findsOneWidget);
-        expect(find.text('발음'), findsOneWidget);
+        expect(find.text('발음 표기'), findsOneWidget);
+        expect(find.text('표기 방식'), findsOneWidget);
         expect(find.text('음역'), findsNothing);
         expect(find.text('hippopotamus'), findsNWidgets(2));
         expect(find.text('hippopotamus\nhippo'), findsNothing);
@@ -171,7 +181,7 @@ void main() {
         expect(find.text('대표 표기'), findsOneWidget);
         expect(find.text('표기'), findsOneWidget);
         expect(find.text('음역'), findsOneWidget);
-        expect(find.text('발음'), findsNothing);
+        expect(find.text('발음 표기'), findsNothing);
         expect(find.text('크파르 나훌'), findsOneWidget);
         expect(find.text('가버나움'), findsOneWidget);
       },
@@ -526,6 +536,50 @@ void main() {
         expect(find.text('상세 정보를 복사했습니다.'), findsWidgets);
       },
     );
+
+    testWidgets('copies formatted pronunciation from the item action', (
+      tester,
+    ) async {
+      final clipboardCalls = <MethodCall>[];
+      final messenger =
+          TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+      addTearDown(
+        () => messenger.setMockMethodCallHandler(SystemChannels.platform, null),
+      );
+      messenger.setMockMethodCallHandler(SystemChannels.platform, (call) async {
+        if (call.method == 'Clipboard.setData') {
+          clipboardCalls.add(call);
+        }
+        return null;
+      });
+
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: WordInfoPanel(
+              displayItem: WordDetailLikeDisplayItem(
+                pronunciationItems: [
+                  PronunciationValue(
+                    text: 'ʔa.haˈva',
+                    notation: PronunciationNotation.ipaPhonemic,
+                  ),
+                ],
+              ),
+              showItemCopyActions: true,
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byKey(const ValueKey('word-info-copy-발음 표기-0')));
+      await tester.pump();
+
+      expect(clipboardCalls, hasLength(1));
+      expect(
+        (clipboardCalls.single.arguments as Map<Object?, Object?>)['text'],
+        '/ʔa.haˈva/',
+      );
+    });
 
     testWidgets(
       'keeps repeated meanings and many spellings as separate copyable rows',

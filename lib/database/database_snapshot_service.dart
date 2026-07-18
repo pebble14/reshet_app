@@ -108,6 +108,8 @@ class DatabaseRestoreSchemaValidator {
       'spelling',
       'transliteration',
       'pronunciation',
+      'pronunciation_notation',
+      'pronunciation_notation_name',
     },
     'word_meaning_set': {'id', 'word_id', 'seq', 'meaning'},
     'CHANGE_HISTORY': {
@@ -296,6 +298,43 @@ class DatabaseRestoreSchemaValidator {
           'Required unique indexes are missing from ${entry.key}.',
         );
       }
+    }
+
+    final invalidPronunciationRows = await database.rawQuery('''
+      SELECT COUNT(*) AS invalid_count
+      FROM word_expression_set
+      WHERE (
+          pronunciation IS NULL AND (
+            pronunciation_notation IS NOT NULL OR
+            pronunciation_notation_name IS NOT NULL
+          )
+        ) OR (
+          pronunciation IS NOT NULL AND (
+            pronunciation_notation IS NULL OR
+            pronunciation_notation NOT IN (
+              'strong_dictionary',
+              'ipa_phonemic',
+              'ipa_phonetic',
+              'other',
+              'unknown'
+            ) OR
+            (
+              pronunciation_notation <> 'other' AND
+              pronunciation_notation_name IS NOT NULL
+            ) OR
+            (
+              pronunciation_notation = 'other' AND
+              pronunciation_notation_name IS NOT NULL AND
+              LENGTH(TRIM(pronunciation_notation_name)) = 0
+            )
+          )
+        )
+    ''');
+    if (invalidPronunciationRows.single['invalid_count'] != 0) {
+      throw const DatabaseValidationException(
+        DatabaseValidationFailure.integrityInvalid,
+        'Invalid pronunciation notation metadata was found.',
+      );
     }
 
     await database.rawQuery('SELECT COUNT(*) AS row_count FROM WORD_TABLE');

@@ -168,8 +168,9 @@ Reshet의 active pronunciation은 언어별로 승인된 profile에 맞는 IPA�
 - 하나의 active pronunciation에는 승인된 profile의 대표 IPA 하나만 저장한다. 대체 발음은 active 값에 함께 넣지 않는다.
 - 승인된 profile과 다른 시대·지역 체계를 fallback으로 사용하지 않는다.
 - 검증 가능한 profile 일치 자료가 없으면 추측하거나 음역을 IPA처럼 취급하지 않고 `NULL`을 유지한다.
-- DB에는 slash, 설명 또는 괄호를 붙이지 않은 순수 IPA만 저장한다.
-- UI는 값이 있을 때 `/IPA/` 형식으로 표시하고 시대·지역·체계 설명을 행마다 반복하지 않는다. 이 표시 정책은 승인됐지만 production UI에는 아직 구현되지 않았다.
+- `ipa_phonemic`과 `ipa_phonetic` 값은 slash·bracket을 붙이지 않은 본문만 저장하고 notation metadata로 해석을 구분한다. Strong식 표기·기타 형식·미분류 legacy 값은 각각 `strong_dictionary`, `other`, `unknown`으로 구분할 수 있다.
+- UI·검색 결과·복사는 공통 formatter를 사용해 `ipa_phonemic`은 `/본문/`, `ipa_phonetic`은 `[본문]`, 나머지는 본문으로 표시한다.
+- notation metadata는 표기 형식을 나타낼 뿐 profile 승인, 원천 또는 라이선스를 입증하지 않는다. `unknown` backfill도 기존 값의 출처를 새로 확정하지 않는다.
 
 승인된 언어별 profile은 다음과 같다.
 
@@ -184,14 +185,17 @@ DB의 `헬라어` label은 정책상 Greek에 해당한다. 위 네 profile은 p
 
 ### 12.2 현행 구현과 데이터 신뢰 경계
 
-확인된 현행 구현에서 `pronunciation`은 schema·model·repository 전 구간에서 nullable이고, 빈 문자열 write는 `NULL`로 정규화된다. 상세 화면은 값이 없으면 pronunciation 영역을 숨긴다. pronunciation은 검색 대상, 정렬·filter 기준 또는 identity로 사용되지 않으며 graph에도 표시되지 않는다. 따라서 현재 누락값은 UI 흐름에서 안전하고, `NULL` 처리를 위한 schema나 production 변경은 필요하지 않다. 후속 production 변경 후보는 값이 있을 때의 `/IPA/` 표시 형식이다.
+확인된 현행 구현에서 `pronunciation`은 schema·model·repository 전 구간에서 nullable이고, `pronunciation_notation`, `pronunciation_notation_name`은 표기 방식 metadata로 함께 이동한다. 빈 pronunciation write는 세 필드를 모두 `NULL`로 정규화하며, 본문이 있는 기존·legacy 행은 notation을 `unknown`으로 해석한다. normalized write, history·undo와 backup·restore는 같은 typed validation을 사용하고, 상세 화면·검색 결과·개별 복사·전체 상세 복사는 같은 formatter를 사용한다. pronunciation은 검색 대상, 정렬·filter 기준 또는 identity로 사용되지 않으며 graph에도 표시하지 않는다. notation은 provenance가 아니므로 별도의 source column은 추가하지 않았다.
 
 현행 데이터의 확인된 규모와 신뢰 상태는 다음과 같다.
 
 | 항목 | 확인된 수 |
 | --- | ---: |
 | 전체 expression | 15,237 |
+| `pronunciation IS NOT NULL` | 15,036 |
 | `pronunciation IS NULL` | 201 |
+| `pronunciation_notation = unknown` | 15,036 |
+| pronunciation·notation 무효 조합 | 0 |
 | 형식상 IPA 후보 | 576 |
 | 승인 profile과 항목별 provenance가 함께 검증된 IPA | 0 |
 
@@ -208,7 +212,9 @@ DB의 `헬라어` label은 정책상 Greek에 해당한다. 위 네 profile은 p
 
 ### 12.4 migration DB와 backup 경계
 
-pronunciation migration의 active 대상은 `data/reshet_work.db`, `data/reshet_seed.db`와 legacy projection인 `WORD_TABLE.발음1`~`발음6`이다. 실제 migration에서는 work·seed·legacy projection parity를 함께 유지한다.
+pronunciation migration의 active 대상은 `data/reshet_work.db`, `data/reshet_seed.db`와 legacy projection인 `WORD_TABLE.발음1`~`발음6`이다. 실제 pronunciation 본문 migration에서는 work·seed·legacy projection parity를 함께 유지한다.
+
+Phase 50-O는 두 active DB의 normalized table에 notation 열을 추가하고 기존 non-NULL pronunciation 15,036건을 `unknown`으로 보강했다. pronunciation 본문과 legacy projection은 변경하지 않았고 legacy slot도 추가하지 않았다. 기존 값을 `strong_dictionary`로 자동 전환하지 않았으며, Open Scriptures 자료의 다운로드·반영·migration도 수행하지 않았다. Open Scriptures는 계속 비교용 보조 자료일 뿐 active canonical source가 아니다. notation은 형식 metadata이므로 원천을 뜻하는 source column도 추가하지 않았다.
 
 `data/bbwdb_20260106.db`는 향후 사용하지 않기로 결정된 보존 원본이므로 pronunciation migration과 schema 변경 대상에서 제외한다. 이 파일을 수정·재생성·삭제하지 않는다. 현재 코드의 fallback 참조가 남아 있을 수 있다는 사실과 runtime 경로 제거는 별개다. 이 문서는 코드가 이미 해당 DB를 사용하지 않는다고 선언하지 않으며, 필요하면 후속 cleanup 또는 production 작업에서 다룬다.
 
@@ -252,7 +258,7 @@ cohort F에는 `히브리어/아람어` 19 expression의 `F-language`와 tab 문
 4. identity 예외와 stable key 대응 규칙을 확정한다.
 5. dry-run manifest, migration 전후 전체 SQLite backup과 diff를 준비하고 work·seed·legacy projection parity를 검증한다.
 6. 승인된 원천과 규칙에 한해 실제 DB migration을 수행한다.
-7. 별도 production slice에서 `/IPA/` UI 표시를 구현한다.
+7. 실제 pronunciation 원천과 항목별 provenance가 승인된 뒤 별도 migration에서 본문과 notation을 함께 갱신한다. Phase 50-O의 typed formatter·입력·표시 지원은 이 원천 승인을 대신하지 않는다.
 
 `data/bbwdb_20260106.db`는 위 migration 순서에 포함하지 않는다.
 

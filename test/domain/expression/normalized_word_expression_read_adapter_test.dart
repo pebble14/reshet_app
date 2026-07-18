@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:reshet_app/data/adapters/normalized_word_expression_read_adapter.dart';
+import 'package:reshet_app/domain/expression/pronunciation_notation.dart';
 import 'package:reshet_app/domain/expression/read_source_policy.dart';
 
 void main() {
@@ -35,6 +36,10 @@ void main() {
         expect(outcome.readResult!.sets[0].isRepresentative, isFalse);
         expect(outcome.readResult!.sets[1].spelling, 'Eve');
         expect(outcome.readResult!.sets[1].isRepresentative, isTrue);
+        expect(
+          outcome.readResult!.sets[1].pronunciationNotation,
+          PronunciationNotation.unknown,
+        );
       },
     );
 
@@ -92,6 +97,43 @@ void main() {
         );
       },
     );
+
+    test('returns mappingInvalid for unsupported notation code', () {
+      final outcome = readNormalizedWordExpressionRows([
+        {
+          'id': 1,
+          'word_id': 'X0000_INVALID_NOTATION',
+          'seq': 1,
+          'is_representative': 1,
+          'spelling': 'alpha',
+          'pronunciation': 'a',
+          'pronunciation_notation': 'unsupported',
+          'pronunciation_notation_name': null,
+        },
+      ]);
+
+      expect(outcome.isSuccess, isFalse);
+      expect(outcome.failureReason, ReadFallbackReason.mappingInvalid);
+      expect(outcome.detail, contains('unsupported'));
+    });
+
+    test('returns mappingInvalid for an invalid cross-field combination', () {
+      final outcome = readNormalizedWordExpressionRows([
+        {
+          'id': 1,
+          'word_id': 'X0000_INVALID_CROSS_FIELD',
+          'seq': 1,
+          'is_representative': 1,
+          'spelling': 'alpha',
+          'pronunciation': null,
+          'pronunciation_notation': 'unknown',
+          'pronunciation_notation_name': null,
+        },
+      ]);
+
+      expect(outcome.isSuccess, isFalse);
+      expect(outcome.failureReason, ReadFallbackReason.mappingInvalid);
+    });
 
     test('returns mappingInvalid for duplicate seq rows', () {
       final outcome = readNormalizedWordExpressionRows([

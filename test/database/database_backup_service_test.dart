@@ -271,7 +271,7 @@ Future<void> _createRuntimeFixture(Database database) async {
   for (final statement in const [
     'CREATE TABLE WORD_TABLE (id TEXT PRIMARY KEY, 언어 TEXT, 스트롱넘버 TEXT, 표기1 TEXT, 의미1 TEXT, 비고 TEXT)',
     'CREATE TABLE WORD_RELATION (id INTEGER PRIMARY KEY, word_id_1 TEXT, word_id_2 TEXT, category_code TEXT, relation_type TEXT, status_code TEXT, direction_code TEXT, description TEXT, relation_group_id TEXT)',
-    'CREATE TABLE word_expression_set (id INTEGER PRIMARY KEY, word_id TEXT, seq INTEGER, is_representative INTEGER, spelling TEXT, transliteration TEXT, pronunciation TEXT)',
+    'CREATE TABLE word_expression_set (id INTEGER PRIMARY KEY, word_id TEXT, seq INTEGER, is_representative INTEGER, spelling TEXT, transliteration TEXT, pronunciation TEXT, pronunciation_notation TEXT, pronunciation_notation_name TEXT)',
     'CREATE TABLE word_meaning_set (id INTEGER PRIMARY KEY, word_id TEXT, seq INTEGER, meaning TEXT)',
     'CREATE TABLE CHANGE_HISTORY (id INTEGER PRIMARY KEY, group_id TEXT, action_type TEXT, entity_type TEXT, entity_id TEXT, before_json TEXT, after_json TEXT, created_at TEXT, undone_at TEXT)',
     'CREATE TABLE RELATION_CATEGORY (code TEXT PRIMARY KEY, label TEXT, description TEXT, sort_order INTEGER)',

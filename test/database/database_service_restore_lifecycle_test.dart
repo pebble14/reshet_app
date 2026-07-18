@@ -124,7 +124,9 @@ Future<void> _createEnsureCompatibleDatabase(String path) async {
       is_representative INTEGER NOT NULL,
       spelling TEXT NOT NULL,
       transliteration TEXT,
-      pronunciation TEXT
+      pronunciation TEXT,
+      pronunciation_notation TEXT,
+      pronunciation_notation_name TEXT
     )
   ''');
   await db.execute('''

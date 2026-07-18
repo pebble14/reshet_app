@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 
 import '../data/adapters/legacy_word_expression_read_adapter.dart';
 import '../domain/expression/expression_read_models.dart';
+import '../domain/expression/pronunciation_notation.dart';
 import '../domain/word/word_edit_seed.dart';
 import '../domain/word/word_write_models.dart';
 
@@ -27,23 +28,39 @@ class WordExpressionSetDraft {
   final String spelling;
   final String transliteration;
   final String pronunciation;
+  final PronunciationNotation? pronunciationNotation;
+  final String pronunciationNotationName;
 
   const WordExpressionSetDraft({
     required this.spelling,
     required this.transliteration,
     required this.pronunciation,
+    this.pronunciationNotation,
+    this.pronunciationNotationName = '',
   });
 
   const WordExpressionSetDraft.empty()
     : spelling = '',
       transliteration = '',
-      pronunciation = '';
+      pronunciation = '',
+      pronunciationNotation = null,
+      pronunciationNotationName = '';
 
   WordExpressionSetDraft normalized() {
+    final normalizedPronunciation = pronunciation.trim();
+    final normalizedNotation = normalizedPronunciation.isEmpty
+        ? null
+        : pronunciationNotation ?? PronunciationNotation.unknown;
+
     return WordExpressionSetDraft(
       spelling: spelling.trim(),
       transliteration: transliteration.trim(),
-      pronunciation: pronunciation.trim(),
+      pronunciation: normalizedPronunciation,
+      pronunciationNotation: normalizedNotation,
+      pronunciationNotationName:
+          normalizedNotation == PronunciationNotation.other
+          ? pronunciationNotationName.trim()
+          : '',
     );
   }
 
@@ -102,20 +119,30 @@ class WordExpressionSetControllerGroup {
   final TextEditingController spellingController;
   final TextEditingController transliterationController;
   final TextEditingController pronunciationController;
+  final TextEditingController pronunciationNotationNameController;
   final FocusNode spellingFocusNode;
   final FocusNode transliterationFocusNode;
   final FocusNode pronunciationFocusNode;
+  PronunciationNotation? pronunciationNotation;
 
   WordExpressionSetControllerGroup({
     String spelling = '',
     String transliteration = '',
     String pronunciation = '',
+    PronunciationNotation? pronunciationNotation,
+    String pronunciationNotationName = '',
   }) : spellingController = TextEditingController(text: spelling),
        transliterationController = TextEditingController(text: transliteration),
        pronunciationController = TextEditingController(text: pronunciation),
+       pronunciationNotationNameController = TextEditingController(
+         text: pronunciationNotationName,
+       ),
        spellingFocusNode = FocusNode(),
        transliterationFocusNode = FocusNode(),
-       pronunciationFocusNode = FocusNode();
+       pronunciationFocusNode = FocusNode(),
+       pronunciationNotation = pronunciation.trim().isEmpty
+           ? null
+           : pronunciationNotation ?? PronunciationNotation.unknown;
 
   factory WordExpressionSetControllerGroup.fromDraft(
     WordExpressionSetDraft draft,
@@ -124,6 +151,8 @@ class WordExpressionSetControllerGroup {
       spelling: draft.spelling,
       transliteration: draft.transliteration,
       pronunciation: draft.pronunciation,
+      pronunciationNotation: draft.pronunciationNotation,
+      pronunciationNotationName: draft.pronunciationNotationName,
     );
   }
 
@@ -132,13 +161,32 @@ class WordExpressionSetControllerGroup {
       spelling: spellingController.text,
       transliteration: transliterationController.text,
       pronunciation: pronunciationController.text,
+      pronunciationNotation: pronunciationNotation,
+      pronunciationNotationName: pronunciationNotationNameController.text,
     );
+  }
+
+  void handlePronunciationChanged(String value) {
+    if (value.trim().isEmpty) {
+      pronunciationNotation = null;
+      pronunciationNotationNameController.clear();
+      return;
+    }
+    pronunciationNotation ??= PronunciationNotation.unknown;
+  }
+
+  void updatePronunciationNotation(PronunciationNotation notation) {
+    pronunciationNotation = notation;
+    if (notation != PronunciationNotation.other) {
+      pronunciationNotationNameController.clear();
+    }
   }
 
   void dispose() {
     spellingController.dispose();
     transliterationController.dispose();
     pronunciationController.dispose();
+    pronunciationNotationNameController.dispose();
     spellingFocusNode.dispose();
     transliterationFocusNode.dispose();
     pronunciationFocusNode.dispose();
@@ -168,11 +216,18 @@ CanonicalizedExpressionSetWriteResult canonicalizeExpressionSetDrafts(
 
     if (draft.spelling.isNotEmpty) {
       final seq = expressionSets.length + 1;
+      final pronunciation = normalizePronunciationForWrite(
+        pronunciation: draft.pronunciation,
+        notation: draft.pronunciationNotation,
+        notationName: draft.pronunciationNotationName,
+      );
       expressionSets.add(
         CanonicalExpressionWriteSet(
           spelling: draft.spelling,
           transliteration: _nullIfEmpty(draft.transliteration),
-          pronunciation: _nullIfEmpty(draft.pronunciation),
+          pronunciation: pronunciation?.text,
+          pronunciationNotation: pronunciation?.notation,
+          pronunciationNotationName: pronunciation?.notationName,
           seq: seq,
           isRepresentative: seq == 1,
         ),
@@ -253,6 +308,8 @@ List<WordExpressionSetDraft> _expressionSetDraftsFromReadResult(
           spelling: set.spelling,
           transliteration: set.transliteration ?? '',
           pronunciation: set.pronunciation ?? '',
+          pronunciationNotation: set.pronunciationNotation,
+          pronunciationNotationName: set.pronunciationNotationName ?? '',
         ).normalized(),
       )
       .toList(growable: false);
@@ -304,6 +361,29 @@ WordExpressionSetValidationResult validateExpressionSetDrafts(
         setIndex: 1,
       ),
     );
+  }
+
+  for (var index = 0; index < limitedDrafts.length; index++) {
+    final draft = limitedDrafts[index];
+    if (draft.pronunciation.isEmpty) {
+      continue;
+    }
+
+    try {
+      normalizePronunciationForWrite(
+        pronunciation: draft.pronunciation,
+        notation: draft.pronunciationNotation,
+        notationName: draft.pronunciationNotationName,
+      );
+    } on FormatException catch (error) {
+      errors.add(
+        WordExpressionSetValidationIssue(
+          severity: WordExpressionSetIssueSeverity.error,
+          message: '발음 표기 입력을 확인하세요: ${error.message}',
+          setIndex: index + 1,
+        ),
+      );
+    }
   }
 
   for (var index = 1; index < limitedDrafts.length; index++) {
@@ -589,7 +669,10 @@ class WordExpressionSetSection extends StatelessWidget {
               textInputAction: index < controllerGroups.length - 1
                   ? TextInputAction.next
                   : TextInputAction.done,
-              onChanged: (_) => onChanged?.call(),
+              onChanged: (value) {
+                group.handlePronunciationChanged(value);
+                onChanged?.call();
+              },
               onSubmitted: (_) {
                 if (index < controllerGroups.length - 1) {
                   controllerGroups[index + 1].spellingFocusNode.requestFocus();
@@ -597,8 +680,45 @@ class WordExpressionSetSection extends StatelessWidget {
                 }
                 group.pronunciationFocusNode.unfocus();
               },
-              decoration: const InputDecoration(labelText: '발음'),
+              decoration: const InputDecoration(labelText: '발음 표기'),
             ),
+            const SizedBox(height: 12),
+            DropdownButtonFormField<PronunciationNotation>(
+              key: ValueKey(
+                'pronunciation-notation-$setIndex-'
+                '${group.pronunciationNotation?.code}',
+              ),
+              initialValue: group.pronunciationNotation,
+              decoration: const InputDecoration(labelText: '표기 방식'),
+              items: PronunciationNotation.values
+                  .map(
+                    (notation) => DropdownMenuItem(
+                      value: notation,
+                      child: Text(notation.label),
+                    ),
+                  )
+                  .toList(growable: false),
+              onChanged:
+                  enabled &&
+                      group.pronunciationController.text.trim().isNotEmpty
+                  ? (notation) {
+                      if (notation == null) {
+                        return;
+                      }
+                      group.updatePronunciationNotation(notation);
+                      onChanged?.call();
+                    }
+                  : null,
+            ),
+            if (group.pronunciationNotation == PronunciationNotation.other) ...[
+              const SizedBox(height: 12),
+              TextField(
+                controller: group.pronunciationNotationNameController,
+                enabled: enabled,
+                onChanged: (_) => onChanged?.call(),
+                decoration: const InputDecoration(labelText: '기타 표기 체계명 (선택)'),
+              ),
+            ],
             if (errors.isNotEmpty) ...[
               const SizedBox(height: 12),
               ...errors.map(

@@ -1,4 +1,5 @@
 import '../../domain/expression/expression_read_models.dart';
+import '../../domain/expression/pronunciation_notation.dart';
 
 List<Map<String, Object?>> toWordExpressionSetRows(
   String wordId,
@@ -16,6 +17,11 @@ List<Map<String, Object?>> toWordExpressionSetRows(
   return List.generate(normalizedSets.length, (index) {
     final set = normalizedSets[index];
     final seq = index + 1;
+    final pronunciation = normalizePronunciationForWrite(
+      pronunciation: set.pronunciation,
+      notation: set.pronunciationNotation,
+      notationName: set.pronunciationNotationName,
+    );
 
     return {
       'word_id': normalizedWordId,
@@ -23,7 +29,9 @@ List<Map<String, Object?>> toWordExpressionSetRows(
       'is_representative': seq == 1 ? 1 : 0,
       'spelling': set.spelling.trim(),
       'transliteration': _trimToNull(set.transliteration),
-      'pronunciation': _trimToNull(set.pronunciation),
+      'pronunciation': pronunciation?.text,
+      'pronunciation_notation': pronunciation?.notation.code,
+      'pronunciation_notation_name': pronunciation?.notationName,
     };
   }, growable: false);
 }

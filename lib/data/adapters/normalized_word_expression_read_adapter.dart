@@ -1,4 +1,5 @@
 import '../../domain/expression/expression_read_models.dart';
+import '../../domain/expression/pronunciation_notation.dart';
 import '../../domain/expression/read_source_policy.dart';
 
 class NormalizedWordExpressionReadOutcome {
@@ -54,6 +55,14 @@ NormalizedWordExpressionReadOutcome readNormalizedWordExpressionRows(
       continue;
     }
 
+    final pronunciation = _readPronunciation(row, index);
+    if (pronunciation.error != null) {
+      return NormalizedWordExpressionReadOutcome(
+        failureReason: ReadFallbackReason.mappingInvalid,
+        detail: pronunciation.error,
+      );
+    }
+
     parsedRows.add(
       _NormalizedExpressionRow(
         rowOrder: index,
@@ -62,7 +71,7 @@ NormalizedWordExpressionReadOutcome readNormalizedWordExpressionRows(
         isRepresentative: isRepresentativeFlag,
         spelling: spelling,
         transliteration: _readOptionalTrimmedString(row['transliteration']),
-        pronunciation: _readOptionalTrimmedString(row['pronunciation']),
+        pronunciation: pronunciation.value,
       ),
     );
   }
@@ -121,7 +130,9 @@ NormalizedWordExpressionReadOutcome readNormalizedWordExpressionRows(
         (row) => ExpressionSet(
           spelling: row.spelling,
           transliteration: row.transliteration,
-          pronunciation: row.pronunciation,
+          pronunciation: row.pronunciation?.text,
+          pronunciationNotation: row.pronunciation?.notation,
+          pronunciationNotationName: row.pronunciation?.notationName,
           seq: row.seq,
           isRepresentative: row.seq == representativeSeq,
         ),
@@ -138,7 +149,7 @@ NormalizedWordExpressionReadOutcome readNormalizedWordExpressionRows(
 
 int? _readPositiveInt(Object? value) {
   final parsed = _readStableInt(value);
-  if (parsed == null || parsed <= 0) {
+  if (parsed <= 0) {
     return null;
   }
   return parsed;
@@ -181,6 +192,29 @@ String? _readOptionalTrimmedString(Object? value) {
   return trimmed;
 }
 
+({PronunciationValue? value, String? error}) _readPronunciation(
+  Map<String, dynamic> row,
+  int rowIndex,
+) {
+  try {
+    return (
+      value: readStoredPronunciation(
+        pronunciation: row['pronunciation'],
+        notationCode: row['pronunciation_notation'],
+        notationName: row['pronunciation_notation_name'],
+      ),
+      error: null,
+    );
+  } on FormatException catch (error) {
+    return (
+      value: null,
+      error:
+          'invalid pronunciation metadata at row index=$rowIndex: '
+          '${error.message}',
+    );
+  }
+}
+
 class _NormalizedExpressionRow {
   final int rowOrder;
   final int stableId;
@@ -188,7 +222,7 @@ class _NormalizedExpressionRow {
   final bool isRepresentative;
   final String spelling;
   final String? transliteration;
-  final String? pronunciation;
+  final PronunciationValue? pronunciation;
 
   const _NormalizedExpressionRow({
     required this.rowOrder,

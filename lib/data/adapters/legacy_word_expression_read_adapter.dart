@@ -1,4 +1,5 @@
 import '../../domain/expression/expression_read_models.dart';
+import '../../domain/expression/pronunciation_notation.dart';
 
 const String supplementalWithoutSpellingIssueCode =
     'supplemental_without_spelling';
@@ -22,6 +23,9 @@ CanonicalExpressionReadResult readLegacyWordExpressionRow(
           spelling: spelling,
           transliteration: transliteration,
           pronunciation: pronunciation,
+          pronunciationNotation: pronunciation == null
+              ? null
+              : PronunciationNotation.unknown,
           seq: seq,
           isRepresentative: sets.isEmpty,
         ),

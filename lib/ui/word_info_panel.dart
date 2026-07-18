@@ -44,7 +44,13 @@ class WordInfoPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     final spellings = _displayListValues(displayItem.spellings);
     final transliterations = _displayListValues(displayItem.transliterations);
-    final pronunciations = _displayListValues(displayItem.pronunciations);
+    final pronunciationItems = displayItem.resolvedPronunciationItems;
+    final pronunciations = _displayListValues(
+      pronunciationItems.map((item) => item.formattedText).toList(),
+    );
+    final pronunciationNotations = _displayListValues(
+      pronunciationItems.map((item) => item.notationLabel).toList(),
+    );
     final meanings = _displayListValues(displayItem.meanings);
 
     final sections = <_WordInfoSection>[
@@ -65,7 +71,9 @@ class WordInfoPanel extends StatelessWidget {
       if (transliterations.isNotEmpty)
         _WordInfoSection(label: '음역', values: transliterations),
       if (pronunciations.isNotEmpty)
-        _WordInfoSection(label: '발음', values: pronunciations),
+        _WordInfoSection(label: '발음 표기', values: pronunciations),
+      if (pronunciationNotations.isNotEmpty)
+        _WordInfoSection(label: '표기 방식', values: pronunciationNotations),
       if (meanings.isNotEmpty) _WordInfoSection(label: '의미', values: meanings),
       if (_hasText(displayItem.note))
         _WordInfoSection(label: '비고', values: [displayItem.note!.trim()]),

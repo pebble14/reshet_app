@@ -8,7 +8,17 @@ String buildWordDetailClipboardText(WordDetailLikeDisplayItem displayItem) {
   _addScalarLine(lines, '언어', displayItem.language);
   _addListSection(lines, '표기', displayItem.spellings);
   _addListSection(lines, '음역', displayItem.transliterations);
-  _addListSection(lines, '발음', displayItem.pronunciations);
+  final pronunciationItems = displayItem.resolvedPronunciationItems;
+  _addListSection(
+    lines,
+    '발음 표기',
+    pronunciationItems.map((item) => item.formattedText).toList(),
+  );
+  _addListSection(
+    lines,
+    '표기 방식',
+    pronunciationItems.map((item) => item.notationLabel).toList(),
+  );
   _addListSection(lines, '의미', displayItem.meanings);
   _addNoteSection(lines, displayItem.note);
 

@@ -21,11 +21,15 @@ void main() {
   setUp(() async {
     await DatabaseService.closeDatabase();
     isolatedRoot = await _createIsolatedWorkspace(repoRootPath);
+    DatabaseService.setDataRootOverrideForTest(
+      p.join(isolatedRoot!.path, 'data'),
+    );
     Directory.current = isolatedRoot!.path;
   });
 
   tearDown(() async {
     await DatabaseService.closeDatabase();
+    DatabaseService.setDataRootOverrideForTest(null);
     Directory.current = repoRootPath;
 
     if (isolatedRoot != null && isolatedRoot!.existsSync()) {
@@ -66,6 +70,96 @@ void main() {
           'pronunciation': 'eh',
         },
       ]);
+    },
+  );
+
+  test(
+    'adds pronunciation notation columns and keeps backfill idempotent',
+    () async {
+      final db = await DatabaseService.openDatabaseFile();
+
+      final columns = await db.rawQuery(
+        "PRAGMA table_info('word_expression_set')",
+      );
+      final columnNames = columns.map((row) => row['name']).toSet();
+      expect(columnNames, contains('pronunciation_notation'));
+      expect(columnNames, contains('pronunciation_notation_name'));
+
+      final initialCounts = await db.rawQuery('''
+        SELECT
+          COUNT(*) AS total_count,
+          SUM(CASE WHEN pronunciation IS NOT NULL THEN 1 ELSE 0 END)
+            AS pronunciation_count,
+          SUM(
+            CASE
+              WHEN pronunciation IS NOT NULL
+               AND pronunciation_notation = 'unknown'
+              THEN 1
+              ELSE 0
+            END
+          ) AS unknown_count
+        FROM word_expression_set
+      ''');
+      expect(
+        initialCounts.single['unknown_count'],
+        initialCounts.single['pronunciation_count'],
+      );
+
+      await db.update(
+        'word_expression_set',
+        {
+          'pronunciation': 'a',
+          'pronunciation_notation': 'ipa_phonemic',
+          'pronunciation_notation_name': null,
+        },
+        where: 'word_id = ? AND seq = ?',
+        whereArgs: ['W1', 1],
+      );
+      await db.insert('word_expression_set', {
+        'word_id': 'W2',
+        'seq': 2,
+        'is_representative': 0,
+        'spelling': 'no-pronunciation',
+        'transliteration': null,
+        'pronunciation': null,
+        'pronunciation_notation': null,
+        'pronunciation_notation_name': null,
+      });
+
+      await DatabaseService.ensureRuntimeSchema(db);
+      await DatabaseService.ensureRuntimeSchema(db);
+
+      final preservedRows = await db.query(
+        'word_expression_set',
+        columns: const [
+          'pronunciation',
+          'pronunciation_notation',
+          'pronunciation_notation_name',
+        ],
+        where: 'word_id = ? AND seq = ?',
+        whereArgs: ['W1', 1],
+      );
+      expect(preservedRows.single, {
+        'pronunciation': 'a',
+        'pronunciation_notation': 'ipa_phonemic',
+        'pronunciation_notation_name': null,
+      });
+
+      final nullRows = await db.query(
+        'word_expression_set',
+        columns: const [
+          'pronunciation',
+          'pronunciation_notation',
+          'pronunciation_notation_name',
+        ],
+        where: 'word_id = ? AND seq = ?',
+        whereArgs: ['W2', 2],
+      );
+      expect(nullRows.single, {
+        'pronunciation': null,
+        'pronunciation_notation': null,
+        'pronunciation_notation_name': null,
+      });
     },
   );
 
@@ -356,6 +450,15 @@ Future<void> _createSyntheticSeedDb(String path) async {
       CREATE TABLE RELATION_TYPE (
         code TEXT PRIMARY KEY,
         category_code TEXT NOT NULL,
+        label TEXT NOT NULL,
+        description TEXT NOT NULL,
+        sort_order INTEGER NOT NULL
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE RELATION_STATUS (
+        code TEXT PRIMARY KEY,
         label TEXT NOT NULL,
         description TEXT NOT NULL,
         sort_order INTEGER NOT NULL

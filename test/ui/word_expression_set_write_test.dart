@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:reshet_app/domain/expression/expression_read_models.dart';
+import 'package:reshet_app/domain/expression/pronunciation_notation.dart';
 import 'package:reshet_app/domain/word/word_write_models.dart';
 import 'package:reshet_app/ui/word_expression_set.dart';
 
@@ -100,6 +101,105 @@ void main() {
       }
     });
   });
+
+  test('canonicalization normalizes IPA and keeps notation metadata', () {
+    final result = canonicalizeExpressionSetDrafts(const [
+      WordExpressionSetDraft(
+        spelling: 'ahava',
+        transliteration: '',
+        pronunciation: '/ʔa.haˈva/',
+        pronunciationNotation: PronunciationNotation.ipaPhonemic,
+      ),
+    ]);
+
+    expect(result.expressionSets.single.pronunciation, 'ʔa.haˈva');
+    expect(
+      result.expressionSets.single.pronunciationNotation,
+      PronunciationNotation.ipaPhonemic,
+    );
+    expect(result.expressionSets.single.pronunciationNotationName, isNull);
+  });
+
+  test('validation rejects opposite and incomplete IPA delimiters', () {
+    final result = validateExpressionSetDrafts(const [
+      WordExpressionSetDraft(
+        spelling: 'opposite',
+        transliteration: '',
+        pronunciation: '[a]',
+        pronunciationNotation: PronunciationNotation.ipaPhonemic,
+      ),
+      WordExpressionSetDraft(
+        spelling: 'incomplete',
+        transliteration: '',
+        pronunciation: '[b',
+        pronunciationNotation: PronunciationNotation.ipaPhonetic,
+      ),
+    ]);
+
+    expect(result.errors, hasLength(2));
+    expect(result.errors.map((issue) => issue.setIndex), [1, 2]);
+  });
+
+  test('controller defaults, clears, and seeds pronunciation metadata', () {
+    final group = WordExpressionSetControllerGroup(
+      spelling: 'seed',
+      pronunciation: 'seed-pronunciation',
+      pronunciationNotation: PronunciationNotation.other,
+      pronunciationNotationName: '학술 관례',
+    );
+    try {
+      expect(group.pronunciationNotation, PronunciationNotation.other);
+      expect(group.pronunciationNotationNameController.text, '학술 관례');
+
+      group.updatePronunciationNotation(PronunciationNotation.ipaPhonetic);
+      expect(group.pronunciationNotationNameController.text, isEmpty);
+
+      group.handlePronunciationChanged('');
+      expect(group.pronunciationNotation, isNull);
+      expect(group.pronunciationNotationNameController.text, isEmpty);
+
+      group.handlePronunciationChanged('new pronunciation');
+      expect(group.pronunciationNotation, PronunciationNotation.unknown);
+    } finally {
+      group.dispose();
+    }
+  });
+
+  testWidgets(
+    'common expression section exposes notation and optional other name',
+    (tester) async {
+      final group = WordExpressionSetControllerGroup(
+        spelling: 'other notation',
+        pronunciation: 'pronunciation',
+        pronunciationNotation: PronunciationNotation.other,
+      );
+      try {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: SingleChildScrollView(
+                child: WordExpressionSetSection(
+                  controllerGroups: [group],
+                  enabled: true,
+                  onAddSet: () {},
+                  onMakeRepresentative: (_) {},
+                  onRemoveSet: (_) {},
+                  onChanged: () {},
+                  onSetFocusLost: (_) {},
+                ),
+              ),
+            ),
+          ),
+        );
+
+        expect(find.text('발음 표기'), findsOneWidget);
+        expect(find.text('표기 방식'), findsOneWidget);
+        expect(find.text('기타 표기 체계명 (선택)'), findsOneWidget);
+      } finally {
+        group.dispose();
+      }
+    },
+  );
 
   test('validateExpressionSetDrafts checks drafts after the sixth set', () {
     final drafts = List<WordExpressionSetDraft>.generate(

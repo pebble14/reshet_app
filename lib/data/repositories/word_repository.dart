@@ -9,6 +9,7 @@ import '../models/relation_category_lookup.dart';
 import '../models/relation_type_lookup.dart';
 import '../models/word.dart';
 import '../../domain/expression/expression_read_models.dart';
+import '../../domain/expression/pronunciation_notation.dart';
 import '../../domain/graph/graph_center_word_display_item.dart';
 import '../../domain/graph/graph_create_post_save_payload.dart';
 import '../../domain/graph/graph_relation_add_search_result_item.dart';
@@ -246,6 +247,8 @@ class WordRepository {
     'spelling',
     'transliteration',
     'pronunciation',
+    'pronunciation_notation',
+    'pronunciation_notation_name',
   ];
   static const List<String> _wordMeaningSetSnapshotColumns = [
     'word_id',
@@ -509,11 +512,18 @@ class WordRepository {
       }
 
       final seq = normalizedSets.length + 1;
+      final pronunciation = normalizePronunciationForWrite(
+        pronunciation: set.pronunciation,
+        notation: set.pronunciationNotation,
+        notationName: set.pronunciationNotationName,
+      );
       normalizedSets.add(
         CanonicalExpressionWriteSet(
           spelling: spelling,
           transliteration: _trimWriteValueToNull(set.transliteration),
-          pronunciation: _trimWriteValueToNull(set.pronunciation),
+          pronunciation: pronunciation?.text,
+          pronunciationNotation: pronunciation?.notation,
+          pronunciationNotationName: pronunciation?.notationName,
           seq: seq,
           isRepresentative: seq == 1,
         ),
@@ -533,6 +543,8 @@ class WordRepository {
             spelling: set.spelling,
             transliteration: set.transliteration,
             pronunciation: set.pronunciation,
+            pronunciationNotation: set.pronunciationNotation,
+            pronunciationNotationName: set.pronunciationNotationName,
             seq: set.seq,
             isRepresentative: set.isRepresentative,
           ),
@@ -729,7 +741,16 @@ class WordRepository {
 
     final placeholders = List.filled(orderedWordIds.length, '?').join(', ');
     final rows = await db.rawQuery('''
-      SELECT id, word_id, seq, is_representative, spelling, transliteration, pronunciation
+      SELECT
+        id,
+        word_id,
+        seq,
+        is_representative,
+        spelling,
+        transliteration,
+        pronunciation,
+        pronunciation_notation,
+        pronunciation_notation_name
       FROM word_expression_set
       WHERE word_id IN ($placeholders)
       ORDER BY word_id ASC, seq ASC, id ASC
@@ -947,6 +968,8 @@ class WordRepository {
           spelling: set.spelling,
           transliteration: set.transliteration,
           pronunciation: set.pronunciation,
+          pronunciationNotation: set.pronunciationNotation,
+          pronunciationNotationName: set.pronunciationNotationName,
           seq: set.seq,
           isRepresentative: set.isRepresentative,
         ),
@@ -970,10 +993,17 @@ class WordRepository {
       return List<ExpressionSet>.unmodifiable(
         rawSets.whereType<Map>().map((rawSet) {
           final set = Map<String, dynamic>.from(rawSet);
+          final pronunciation = readStoredPronunciation(
+            pronunciation: set['pronunciation'],
+            notationCode: set['pronunciation_notation'],
+            notationName: set['pronunciation_notation_name'],
+          );
           return ExpressionSet(
             spelling: (set['spelling'] ?? '').toString(),
             transliteration: set['transliteration'] as String?,
-            pronunciation: set['pronunciation'] as String?,
+            pronunciation: pronunciation?.text,
+            pronunciationNotation: pronunciation?.notation,
+            pronunciationNotationName: pronunciation?.notationName,
             seq: set['seq'] is int
                 ? set['seq'] as int
                 : int.tryParse((set['seq'] ?? '').toString()) ?? 0,
@@ -1023,6 +1053,8 @@ class WordRepository {
               spelling: set.spelling,
               transliteration: set.transliteration,
               pronunciation: set.pronunciation,
+              pronunciationNotation: set.pronunciationNotation,
+              pronunciationNotationName: set.pronunciationNotationName,
               seq: set.seq,
               isRepresentative: set.isRepresentative,
             ),
@@ -1254,7 +1286,7 @@ class WordRepository {
         readResult.sets.map((set) => set.transliteration),
       ),
       pronunciations: _collectUniqueNonEmptyWordValues(
-        readResult.sets.map((set) => set.pronunciation),
+        readResult.sets.map((set) => set.pronunciationValue?.formattedText),
       ),
       meanings: _readMeaningValuesFromWordRow(wordRow),
       language: _readTrimmedWordValue(wordRow, '언어'),
@@ -1393,8 +1425,8 @@ class WordRepository {
       representativeSpelling: (representativeSet?.spelling ?? '').trim(),
       representativeTransliteration: (representativeSet?.transliteration ?? '')
           .trim(),
-      representativePronunciation: (representativeSet?.pronunciation ?? '')
-          .trim(),
+      representativePronunciation:
+          representativeSet?.pronunciationValue?.formattedText ?? '',
       subtitleMeaning: _readPrimaryMeaningFromWordRow(wordRow),
     );
   }
@@ -1781,6 +1813,11 @@ class WordRepository {
     Map<String, dynamic> wordRow,
   ) {
     final displaySignature = _buildWordDetailDisplaySignature(wordRow);
+    final pronunciationItems = _readExpressionReadResultFromWordRow(wordRow)
+        .sets
+        .map((set) => set.pronunciationValue)
+        .whereType<PronunciationValue>()
+        .toList(growable: false);
 
     return WordDetailLikeDisplayItem(
       representativeSpelling: _nullIfEmptyDisplayValue(
@@ -1796,6 +1833,9 @@ class WordRepository {
       ),
       pronunciations: List<String>.unmodifiable(
         displaySignature.pronunciations,
+      ),
+      pronunciationItems: List<PronunciationValue>.unmodifiable(
+        pronunciationItems,
       ),
       meanings: List<String>.unmodifiable(displaySignature.meanings),
       note: _nullIfEmptyDisplayValue(displaySignature.note),
@@ -4596,9 +4636,25 @@ class WordRepository {
     String wordId,
     List<Map<String, Object?>> rows,
   ) async {
+    final validatedRows = rows
+        .map((row) {
+          final pronunciation = readStoredPronunciation(
+            pronunciation: row['pronunciation'],
+            notationCode: row['pronunciation_notation'],
+            notationName: row['pronunciation_notation_name'],
+          );
+          return <String, Object?>{
+            ...row,
+            'pronunciation': pronunciation?.text,
+            'pronunciation_notation': pronunciation?.notation.code,
+            'pronunciation_notation_name': pronunciation?.notationName,
+          };
+        })
+        .toList(growable: false);
+
     await _deleteWordExpressionSetRows(txn, wordId);
 
-    for (final row in rows) {
+    for (final row in validatedRows) {
       await txn.insert('word_expression_set', row);
     }
   }
@@ -4629,6 +4685,8 @@ class WordRepository {
             'spelling': row['spelling'],
             'transliteration': row['transliteration'],
             'pronunciation': row['pronunciation'],
+            'pronunciation_notation': row['pronunciation_notation'],
+            'pronunciation_notation_name': row['pronunciation_notation_name'],
           },
         ),
       );

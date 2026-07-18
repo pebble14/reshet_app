@@ -1,3 +1,5 @@
+import '../expression/pronunciation_notation.dart';
+
 const String supplementalWithoutSpellingWriteIssueCode =
     'supplemental_without_spelling';
 const String excludedFromWriteResolution = 'excluded_from_write';
@@ -6,6 +8,8 @@ class CanonicalExpressionWriteSet {
   final String spelling;
   final String? transliteration;
   final String? pronunciation;
+  final PronunciationNotation? pronunciationNotation;
+  final String? pronunciationNotationName;
   final int seq;
   final bool isRepresentative;
 
@@ -13,6 +17,8 @@ class CanonicalExpressionWriteSet {
     required this.spelling,
     required this.transliteration,
     required this.pronunciation,
+    this.pronunciationNotation,
+    this.pronunciationNotationName,
     required this.seq,
     required this.isRepresentative,
   });
@@ -85,6 +91,18 @@ class CanonicalWordWritePayload {
       return null;
     }
     return expressionSets.first.pronunciation;
+  }
+
+  PronunciationValue? get representativePronunciationValue {
+    if (expressionSets.isEmpty) {
+      return null;
+    }
+    final set = expressionSets.first;
+    return normalizePronunciationForWrite(
+      pronunciation: set.pronunciation,
+      notation: set.pronunciationNotation,
+      notationName: set.pronunciationNotationName,
+    );
   }
 }
 

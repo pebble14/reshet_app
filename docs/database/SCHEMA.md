@@ -140,6 +140,7 @@ H0001_0000
 - 이전 Android 설치 DB나 legacy fallback처럼 이 테이블이 없거나 비어 있는 DB를 work DB로 열 때는
   `DatabaseService.openDatabaseFile()`이 `word_expression_set` 테이블과 인덱스를
   보장하고, 테이블이 비어 있을 때만 legacy expression slot에서 최소 backfill한다.
+- runtime ensure는 기존 테이블에 nullable `pronunciation_notation`, `pronunciation_notation_name` 열이 없으면 안전한 `ALTER TABLE ... ADD COLUMN`으로 추가한다. 기존 pronunciation 본문은 변경하지 않고, 본문이 있는 미분류 행만 `unknown`으로 멱등 보강한다.
 - 현재 앱 read source는 아직 전면 normalized-only가 아니며, legacy `WORD_TABLE` 표현 컬럼과 일부 `NORMALIZED_WITH_FALLBACK` context가 공존한다.
 - 현재 앱 expression write path는 `word_expression_set`를 우선 갱신하고 `WORD_TABLE` expression slot을 compatibility projection으로 함께 유지하는 dual-write 구조를 사용한다.
 - `word_expression_set.id`는 surrogate key이다.
@@ -163,6 +164,8 @@ H0001_0000
 | `spelling` | `TEXT` | N | Y | - | 표기 |
 | `transliteration` | `TEXT` | N | N | - | 음역 |
 | `pronunciation` | `TEXT` | N | N | - | 발음 |
+| `pronunciation_notation` | `TEXT` | N | N | - | 발음 표기 방식 코드 |
+| `pronunciation_notation_name` | `TEXT` | N | N | - | `other` 표기 체계명(선택) |
 
 제약:
 
@@ -172,6 +175,10 @@ H0001_0000
 - `CHECK(LENGTH(TRIM(spelling)) > 0)`
 - `CHECK(transliteration IS NULL OR LENGTH(TRIM(transliteration)) > 0)`
 - `CHECK(pronunciation IS NULL OR LENGTH(TRIM(pronunciation)) > 0)`
+- `CHECK(pronunciation_notation IS NULL OR pronunciation_notation IN ('strong_dictionary', 'ipa_phonemic', 'ipa_phonetic', 'other', 'unknown'))`
+- `CHECK(pronunciation_notation_name IS NULL OR LENGTH(TRIM(pronunciation_notation_name)) > 0)`
+
+기존 테이블 전체 재작성이나 trigger는 사용하지 않는다. pronunciation과 두 metadata 열의 교차 필드 규칙은 repository·normalized write·history restore 공통 write 경계에서 검증한다.
 
 인덱스:
 
@@ -183,10 +190,14 @@ H0001_0000
 정합성 원칙:
 
 - 대표 세트는 항상 `seq = 1`
+- `pronunciation`이 `NULL`이면 두 notation 열도 `NULL`이다. 본문이 있으면 `pronunciation_notation`은 허용 코드 중 하나이며, `other`가 아닐 때 체계명은 `NULL`이다.
+- `other`의 체계명은 선택 사항이지만 값이 있으면 trim 후 비어 있지 않아야 한다.
+- `ipa_phonemic`과 `ipa_phonetic`은 DB에 바깥 delimiter를 제외한 본문만 저장한다. 화면·검색 결과·복사는 공통 formatter가 각각 `/본문/`, `[본문]`으로 표시한다.
+- legacy `WORD_TABLE.발음1~6`에는 notation slot을 추가하지 않는다. legacy 본문을 읽을 때 값이 있으면 `unknown`, 없으면 notation도 `NULL`로 해석한다.
 - `spelling`이 있는 slot만 row로 승격한다.
 - `spelling` 없이 `transliteration` 또는 `pronunciation`만 있는 slot은 row로 저장하지 않고 migration exception으로 분리한다.
 - semantic compare에서는 `id`를 제외하고
-  `word_id, seq, is_representative, spelling, transliteration, pronunciation`
+  `word_id, seq, is_representative, spelling, transliteration, pronunciation, pronunciation_notation, pronunciation_notation_name`
   집합만 비교한다.
 
 ---
