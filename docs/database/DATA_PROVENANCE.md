@@ -256,6 +256,14 @@ Phase 50-V의 repository work·seed DB와 Android packaged seed에는 위 771건
 
 기존 Android work DB에는 사용자 편집 데이터가 존재하므로 앱 데이터 삭제나 DB 전체 교체를 해결책으로 사용하지 않는다. 기존 설치 DB용 조건부·idempotent data migration은 최종 데이터베이스 확정 후 배포 전 단계에서 구현·검증하며, Android release 검증 전까지 이 propagation 경계를 배포 blocker로 취급한다. **배포 전 필수 후속: Android 기존 설치 runtime DB migration 및 release 검증.** 이 시점에는 migration 세부 설계나 771 identity payload 형식을 확정하지 않는다.
 
+G0185 legacy pronunciation parity repair는 MorphGNT `strongs-dictionary-xml` 고정 commit `dd6758b82f46b620804a8ea677d715844679eea1`의 `strongsgreek.xml`, SHA-256 `91474213b208a4e487d35f85c10e5c90737acc69082dad15dec5431406003545`를 다시 확인했다. G0185의 source-owned 머리부는 `ἀκέραιος`와 pronunciation `ak-er'-ah-yos` 한 건이며, `G2767`은 `strongs_derivation` 내부 Strong 참조다. normalized expression은 원래 seq 1 한 행으로 정확했으므로 변경하지 않고, active work·seed DB의 `G0185_0000`에서 legacy `WORD_TABLE.발음2='G2767'` 두 셀만 `NULL`로 수선했다.
+
+work SHA-256은 `9aa81325dc20e48c3fe59236a8d95f5d3602700bd3912d9bbdfaa92cc3cbeef4`에서 `e5fff68a1538fe56826455133d1b4dd7fbdf23fd9d94ac7f08a6dcfa59585510`, seed SHA-256은 `c25cf32acdc8c1351ef84fed45bc304d7a72924660fbf135ae6c1e3bf5660697`에서 `7ca9da527bae12aedc2883c8886580070e5b2a82a1974cf3c1240a5792d0ee3e`로 변경됐다. schema, normalized expression·meaning, `WORD_RELATION`, `CHANGE_HISTORY`, G0185의 다른 legacy 컬럼과 다른 모든 단어는 전후 projection이 동일하다. 양쪽 `integrity_check`는 `ok`, foreign key 위반과 SQLite sidecar는 0이며, 동일 apply의 두 번째 실행은 backup·transaction·DB write·result rewrite 없이 `이미 적용됨 — 변경 0`을 확인했다.
+
+입력 manifest는 `tool/data_provenance/manifests/g0185_legacy_pronunciation_repair.json`, 파일 SHA-256 `359a45c4a4d1d1477377b764be18bfe480c15f218f0714ce28ffafbb4470f39c`, candidate projection SHA-256 `0b3f8240493528aa01d02e71517d66e06e691120a0616c8488e94b302f2bdce7`이다. 전용 도구와 targeted test는 각각 `tool/data_provenance/g0185_legacy_pronunciation_repair.py`, `tool/data_provenance/test_g0185_legacy_pronunciation_repair.py`이며, 결과 artifact는 `tool/data_provenance/migrations/g0185_legacy_pronunciation_repair_result.json`, 파일 SHA-256 `dc3540a63bc9564650b8d441b9a6e0f5b3930c9aeeabc1f7123eb0aea1909f2b`다. verified byte backup은 ignored 경로 `data/backups/g0185_legacy_pronunciation_repair/20260719T163238_681985Z`에 유지한다.
+
+Strong source reconciliation parity에서는 사용자 편집 `WORD_TABLE.비고`를 제외한다. 따라서 work의 `G0025_0000.비고='48-B3 백업 시점'`과 seed의 `NULL` 차이는 유지했고 양쪽 G0025 행을 변경하지 않았다. 이 repair는 repository active work·seed에만 적용했으며 Android runtime DB와 기존 설치 DB에는 아직 전파하지 않았다.
+
 `data/bbwdb_20260106.db`는 향후 사용하지 않기로 결정된 보존 원본이므로 pronunciation migration과 schema 변경 대상에서 제외한다. 이 파일을 수정·재생성·삭제하지 않는다. 현재 코드의 fallback 참조가 남아 있을 수 있다는 사실과 runtime 경로 제거는 별개다. 이 문서는 코드가 이미 해당 DB를 사용하지 않는다고 선언하지 않으며, 필요하면 후속 cleanup 또는 production 작업에서 다룬다.
 
 historical backup은 변형하지 않은 원본으로 보존한다. 전체 SQLite backup은 `pronunciation`을 별도로 정규화하거나 변환하지 않고 당시 DB 상태 그대로 포함한다.
