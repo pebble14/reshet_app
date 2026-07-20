@@ -1,1 +1,3 @@
 tool/data_provenance/manifests/phase50v_hebrew_aramaic_strong_notation.json text eol=lf
+tool/data_provenance/manifests/phase50w_hebrew20_source_import.json text eol=lf
+tool/data_provenance/migrations/phase50w_hebrew20_source_import_result.json text eol=lf
