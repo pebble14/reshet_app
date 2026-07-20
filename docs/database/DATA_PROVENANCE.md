@@ -166,6 +166,24 @@ python tool/data_provenance/strong_source_mapping.py parity `
 
 기존 `tool/data_provenance/strong_source_diff.py`는 사용자가 전달한 XML의 expression별 비교 결과를 확인하는 보조 도구로 유지한다. 해당 도구의 pronunciation-only·trimmed pronunciation을 포함한 독립 후보 선택은 migration 준비 mapping 계약으로 사용하지 않는다. 어느 도구의 일치 결과도 현행 값의 최초 출처, 승인된 IPA profile 또는 최종 IPA 원천 적합성을 입증하지 않는다.
 
+### 11.1 Strong parser·mapping v2 현행 계약
+
+`strong_sources.json`의 `parser_contract`는 historical replay를 위한 v1 기본값 `greek_headword_v1`·`hebrew_direct_w_v1`로 유지한다. v2는 `parser_contracts`의 `greek_forms_v2`·`hebrew_forms_v2`와 `meaning_projection_contract`의 `greek_meanings_v2`·`hebrew_meanings_v2`를 명시적으로 선택할 때만 사용한다. 기존 caller의 기본 dispatch를 v2로 바꾸지 않는다.
+
+Greek v2 form tuple은 `source_key`, `source_document_order`, `form_role`, `spelling`, `transliteration`, nullable `pronunciation`, `source_language`, `xml_context`로 구성한다. 각 entry의 첫 direct `strongs_derivation`·`strongs_def`·`kjv_def` 이전 direct `greek`만 source form이며, 바로 다음 direct element가 `pronunciation`일 때만 짝을 이룬다. 첫 form은 `primary`, 이후 form은 `alternate`다. 고정 source의 form 분포는 0개 101 entry, 1개 5,453 entry, 2개 51 entry, 3개 17 entry, 4개 2 entry로 총 5,614 form이다. form-bearing entry는 5,523, multi-form entry는 70, 최대 form은 4다. 101 placeholder는 `forms=[]`, `source_not_used`로 제외하며 빈 candidate를 합성하지 않는다. G1520은 `εἷς / heîs / hice`와 `ἕν / hén / NULL`의 두 form으로 보존한다.
+
+Hebrew·Aramaic v2 form tuple은 `source_key`, `source_document_order`, `form_role`, `spelling`, `transliteration`, `pronunciation`, `source_language_code`, `part_of_speech`, `xml_context`로 구성한다. 각 entry의 direct child `w` 정확히 하나만 `primary` form으로 사용하고 `source`·`note` 등에 포함된 nested `w`는 form이나 별도 expression으로 승격하지 않는다. 고정 source 8,674 entry의 언어 코드는 `heb` 5,393, `arc` 653, `x-pn` 2,628이다. `heb`는 `히브리어`, `arc`는 `아람어`로 매핑하며 `x-pn`은 derivation이나 기존 DB 언어로 추론하지 않고 `unresolved`로 유지한다. H0859 등의 nested variant import는 별도 phase 경계다.
+
+meaning v2는 신규 source-only word의 read-only import projection에만 사용한다. Greek은 nonblank direct `strongs_def`, nonblank direct `kjv_def`, 하나 이상의 definition이 있을 때 마지막 definition 뒤 nonblank entry-level postscript 순서다. Hebrew·Aramaic은 nonblank direct `meaning`, nonblank direct `usage` 순서이며 선택한 `meaning` 내부 inline `note`는 같은 행에 보존한다. 빈 결과는 행으로 만들지 않고 남은 행의 `seq`를 1부터 연속 부여한다. 기존 DB의 normalized·legacy meaning은 이 계약으로 갱신하지 않는다.
+
+plain-text renderer는 source order와 Unicode code point를 보존하고 Unicode normalization을 수행하지 않는다. XML whitespace `[ \t\r\n]+`만 ASCII space 하나로 축약하며, Strong 참조는 `G####`·`H####`, inline form은 spelling과 존재하는 `xlit`·`pron` marker, note는 `[note: …]`로 렌더링한다. 빈 attribute marker를 만들지 않고 source punctuation·case·기호와 중복 meaning을 보존한다. 승인되지 않은 inline tag는 누락하지 않고 fail-closed한다. 원천 XML은 수정하지 않으며 이 whitespace 축약·Strong ID 정규화·marker 렌더링은 Reshet 가공임을 attribution과 함께 표시한다.
+
+mapping v2는 form 값을 정렬 기준으로 사용하지 않고 source document order를 expected expression `seq`로 사용한다. source spelling·pronunciation은 canonical이고, 기존 DB transliteration이 nonblank이면 유지하며 blank 또는 `NULL`일 때만 source transliteration을 사용한다. source pronunciation이 있으면 notation은 `strong_dictionary`, notation name은 `NULL`이다. 첫 form만 representative다. G1520 alternate는 read-only `insert_expression_candidate`로만 표시하고 DB에 적용하지 않는다. 기존 source `arc`·DB `히브리어` 불일치 518건은 `source_db_language_mismatch_deferred`로 hold하며 이번 mapping에서 language update action을 만들지 않는다.
+
+source-only word는 `G####_0000`·`H####_0000` ID, source order expression·meaning, current schema의 `graph_expand_mode` 기본값, nullable `비고`, normalized·legacy projection과 relation 0건으로 계획한다. read-only projection은 `source_key ASC`, UTF-8, BOM 없음, `ensure_ascii=false`, key 정렬, compact JSONL object와 final LF로 직렬화한다. clear-language Hebrew source-only 20건은 H1564, H1618, H1653, H1655, H1656, H1674, H1833, H2020, H2251, H2491, H2646, H3958, H4200, H4461, H5005, H5229, H5807, H6306, H6378, H6772이며 H1655만 `아람어`, 나머지는 `히브리어`다. 이 20건은 향후 별도 DB production 후보이고 현재 계약은 read-only projection까지만 허용한다. source-only `x-pn` 12건 H1649, H1721, H2044, H2647, H2650, H3160, H3184, H3265, H3959, H5011, H7288, H8206은 `source_language_x_pn_unresolved`로 hold한다.
+
+Hebrew 원천과 모든 Hebrew 가공에는 CC BY 4.0과 `Open Scriptures Hebrew Bible Project` attribution을 유지한다. 20건 실제 import, 518건 language reconciliation, nested variant, 기존 meaning reconciliation과 active DB write는 각각 별도 승인 phase다. 이 v2 계약은 DB schema와 canonical storage structure를 바꾸지 않는다.
+
 ## 12. pronunciation profile·migration 현행 경계
 
 ### 12.1 active pronunciation 계약

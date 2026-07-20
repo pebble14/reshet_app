@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections import Counter
 import hashlib
 import json
 from pathlib import Path
@@ -47,6 +48,12 @@ class StrongSourceMappingTest(unittest.TestCase):
         parser_contract: str,
     ) -> dict[str, object]:
         owner_name = repository.removeprefix("https://github.com/")
+        v2_form_contract = (
+            "greek_forms_v2" if language == "G" else "hebrew_forms_v2"
+        )
+        meaning_contract = (
+            "greek_meanings_v2" if language == "G" else "hebrew_meanings_v2"
+        )
         return {
             "id": source_id,
             "language": language,
@@ -66,6 +73,8 @@ class StrongSourceMappingTest(unittest.TestCase):
             "fields_used": ["headword"],
             "fields_excluded": ["definition"],
             "parser_contract": parser_contract,
+            "parser_contracts": [parser_contract, v2_form_contract],
+            "meaning_projection_contract": meaning_contract,
         }
 
     def _write_manifest(self) -> None:
@@ -73,6 +82,9 @@ class StrongSourceMappingTest(unittest.TestCase):
         hebrew_commit = "b" * 40
         payload = {
             "schema_version": 1,
+            "contract_versions": {
+                "mapping_contract": "strong_mapping_v2",
+            },
             "sources": [
                 self._source(
                     "greek_fixture",
@@ -118,7 +130,7 @@ class StrongSourceMappingTest(unittest.TestCase):
             '''<?xml version="1.0" encoding="utf-8"?>
 <lexicon xmlns="http://openscriptures.github.com/morphhb/namespace">
   <entry id="H1">
-    <w pron="aleph" xlit="alef">א</w>
+    <w pron="aleph" xlit="alef" xml:lang="heb" pos="n">א</w>
     <note><w pron="ignored" xlit="ignored">무시</w></note>
   </entry>
 </lexicon>
@@ -133,7 +145,8 @@ class StrongSourceMappingTest(unittest.TestCase):
             CREATE TABLE WORD_TABLE (
               id TEXT PRIMARY KEY,
               "언어" TEXT,
-              "스트롱넘버" TEXT
+              "스트롱넘버" TEXT,
+              graph_expand_mode TEXT NOT NULL DEFAULT 'default'
             );
             CREATE TABLE word_expression_set (
               id INTEGER PRIMARY KEY,
@@ -191,7 +204,19 @@ class StrongSourceMappingTest(unittest.TestCase):
     def test_01_official_source_manifest_schema(self) -> None:
         raw, specs = mapping.load_source_manifest(self.manifest)
         self.assertEqual(raw["schema_version"], 1)
+        self.assertEqual(raw["contract_versions"]["mapping_contract"], "strong_mapping_v2")
         self.assertEqual([spec.language for spec in specs], ["G", "H"])
+        self.assertEqual(
+            [spec.parser_contract for spec in specs],
+            ["greek_headword_v1", "hebrew_direct_w_v1"],
+        )
+        self.assertEqual(
+            [spec.parser_contracts for spec in specs],
+            [
+                ("greek_headword_v1", "greek_forms_v2"),
+                ("hebrew_direct_w_v1", "hebrew_forms_v2"),
+            ],
+        )
         for field_name in mapping.REQUIRED_SOURCE_FIELDS:
             self.assertIn(field_name, raw["sources"][0])
 
@@ -477,6 +502,189 @@ class StrongSourceMappingTest(unittest.TestCase):
         parity = mapping.compare_database_projections(self.db, self.db)
         self.assertTrue(parity["semantic_projection_equal"])
         self.assertEqual(parity["left_only_count"], 0)
+
+    def test_31_v2_contract_is_explicit_and_v1_default_is_unchanged(self) -> None:
+        _, _, v1_datasets, v1_statuses = mapping.validate_sources(
+            self.manifest, self.cache
+        )
+        _, _, v2_datasets, v2_statuses = mapping.validate_source_projections_v2(
+            self.manifest, self.cache
+        )
+        self.assertEqual(
+            [status["parser_contract"] for status in v1_statuses],
+            ["greek_headword_v1", "hebrew_direct_w_v1"],
+        )
+        self.assertTrue(
+            all(isinstance(dataset, legacy.SourceDataset) for dataset in v1_datasets)
+        )
+        self.assertTrue(
+            all(isinstance(dataset, legacy.SourceDatasetV2) for dataset in v2_datasets)
+        )
+        self.assertEqual(
+            [status["form_parser_contract"] for status in v2_statuses],
+            ["greek_forms_v2", "hebrew_forms_v2"],
+        )
+
+    def test_32_mapping_v2_preserves_source_order_and_db_transliteration(self) -> None:
+        context = legacy.SourceXmlContextV2("G1520", "headword", 2, 3)
+        alternate_context = legacy.SourceXmlContextV2("G1520", "headword", 4, None)
+        entry = legacy.SourceEntryV2(
+            source_key="G1520",
+            source_language_code="G",
+            disposition="ready",
+            forms=(
+                legacy.GreekSourceFormV2(
+                    "G1520", 1, "primary", "εἷς", "heîs", "hice", "G", context
+                ),
+                legacy.GreekSourceFormV2(
+                    "G1520", 2, "alternate", "ἕν", "hén", None, "G", alternate_context
+                ),
+            ),
+            meanings=(),
+        )
+        expression = mapping.MappingExpression(
+            "G1520_0000",
+            "G1520",
+            "헬라어",
+            1,
+            1,
+            "εἷς",
+            "기존 음역",
+            "hice",
+            "strong_dictionary",
+            None,
+        )
+        word = mapping.MappingWord("G1520_0000", "G1520", "헬라어", [expression])
+        rows = mapping.build_mapping_v2({"G1520": entry}, [word])
+        self.assertEqual([row.source_form_order for row in rows], [1, 2])
+        self.assertEqual(rows[0].expected_values["transliteration"], "기존 음역")
+        self.assertEqual(rows[0].action, "no_change")
+        self.assertEqual(rows[1].action, "insert_expression_candidate")
+        self.assertIsNone(rows[1].source_pronunciation)
+        self.assertIsNone(rows[1].expected_values["pronunciation_notation"])
+
+    def test_33_source_only_projection_holds_x_pn_and_is_deterministic(self) -> None:
+        def entry(key: str, language_code: str) -> legacy.SourceEntryV2:
+            context = legacy.SourceXmlContextV2(key, "headword", 1)
+            return legacy.SourceEntryV2(
+                source_key=key,
+                source_language_code=language_code,
+                disposition=(
+                    "source_language_unresolved"
+                    if language_code == "x-pn"
+                    else "ready"
+                ),
+                forms=(
+                    legacy.HebrewSourceFormV2(
+                        key,
+                        1,
+                        "primary",
+                        "א",
+                        "alef",
+                        "aleph",
+                        language_code,
+                        "n",
+                        context,
+                    ),
+                ),
+                meanings=(
+                    legacy.SourceMeaningV2(key, 1, "meaning", "meaning", context),
+                ),
+            )
+
+        entries = {"H1649": entry("H1649", "x-pn"), "H1655": entry("H1655", "arc")}
+        rows = mapping.build_mapping_v2(entries, [])
+        hold = next(row for row in rows if row.source_key == "H1649")
+        self.assertEqual(hold.action, "hold")
+        self.assertEqual(hold.hold_reason, "source_language_x_pn_unresolved")
+        projections = mapping.build_source_only_import_projections(entries, [], "default")
+        self.assertEqual([item["source_key"] for item in projections], ["H1655"])
+        self.assertEqual(projections[0]["language"], "아람어")
+        self.assertEqual(projections[0]["expressions"][0]["is_representative"], 1)
+        self.assertEqual(
+            mapping.serialize_source_only_projections(projections),
+            mapping.serialize_source_only_projections(list(reversed(projections))),
+        )
+
+    @unittest.skipUnless(
+        (Path(__file__).with_name(".source_cache") / "strongsgreek.xml").is_file()
+        and (Path(__file__).with_name(".source_cache") / "HebrewStrong.xml").is_file()
+        and (Path(__file__).parents[2] / "data" / "reshet_work.db").is_file(),
+        "고정 Strong source cache와 active work DB가 필요함",
+    )
+    def test_34_official_mapping_v2_source_only_projection(self) -> None:
+        repository = Path(__file__).parents[2]
+        manifest = Path(__file__).with_name("manifests") / "strong_sources.json"
+        cache = Path(__file__).with_name(".source_cache")
+        _, _, datasets, _ = mapping.validate_source_projections_v2(manifest, cache)
+        entries = mapping.combine_v2_datasets(datasets)
+        snapshot = mapping.load_database_snapshot(repository / "data" / "reshet_work.db")
+        rows = mapping.build_mapping_v2(entries, snapshot.words)
+        projections = mapping.build_source_only_import_projections(
+            entries,
+            snapshot.words,
+            str(snapshot.metadata["graph_expand_mode_default"]),
+        )
+
+        expected_source_only = {
+            "H1564", "H1618", "H1653", "H1655", "H1656", "H1674", "H1833", "H2020",
+            "H2251", "H2491", "H2646", "H3958", "H4200", "H4461", "H5005", "H5229",
+            "H5807", "H6306", "H6378", "H6772",
+        }
+        expected_x_pn = {
+            "H1649", "H1721", "H2044", "H2647", "H2650", "H3160",
+            "H3184", "H3265", "H3959", "H5011", "H7288", "H8206",
+        }
+        self.assertEqual({item["source_key"] for item in projections}, expected_source_only)
+        self.assertEqual(
+            Counter(item["language"] for item in projections),
+            Counter({"히브리어": 19, "아람어": 1}),
+        )
+        self.assertEqual(
+            next(item for item in projections if item["source_key"] == "H1655")["language"],
+            "아람어",
+        )
+        self.assertEqual(
+            {
+                row.source_key
+                for row in rows
+                if row.current_word_id is None
+                and row.hold_reason == "source_language_x_pn_unresolved"
+            },
+            expected_x_pn,
+        )
+        g1520_alternate = next(
+            row
+            for row in rows
+            if row.source_key == "G1520" and row.source_form_order == 2
+        )
+        self.assertEqual(g1520_alternate.action, "insert_expression_candidate")
+        self.assertIsNone(g1520_alternate.source_pronunciation)
+        self.assertEqual(
+            len(
+                {
+                    row.source_key
+                    for row in rows
+                    if row.hold_reason == "source_db_language_mismatch_deferred"
+                }
+            ),
+            518,
+        )
+        self.assertEqual(
+            sum(
+                row.current_word_id is not None and "meaning" in row.action
+                for row in rows
+            ),
+            0,
+        )
+        serialized = mapping.serialize_source_only_projections(projections)
+        self.assertFalse(serialized.startswith(b"\xef\xbb\xbf"))
+        self.assertTrue(serialized.endswith(b"\n"))
+        self.assertEqual(len(serialized.decode("utf-8").splitlines()), 20)
+        self.assertEqual(
+            mapping.source_only_projection_sha256(projections),
+            "acde4da26bdf17a4116f4671027d869adbf4cf5056eafae0e870b03b70b219f3",
+        )
 
 
 if __name__ == "__main__":

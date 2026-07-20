@@ -1,5 +1,56 @@
 {
   "schema_version": 1,
+  "contract_versions": {
+    "default_form_parser_contracts": {
+      "G": "greek_headword_v1",
+      "H": "hebrew_direct_w_v1"
+    },
+    "available_form_parser_contracts": {
+      "G": [
+        "greek_headword_v1",
+        "greek_forms_v2"
+      ],
+      "H": [
+        "hebrew_direct_w_v1",
+        "hebrew_forms_v2"
+      ]
+    },
+    "meaning_projection_contracts": {
+      "G": "greek_meanings_v2",
+      "H": "hebrew_meanings_v2"
+    },
+    "mapping_contract": "strong_mapping_v2",
+    "language_mapping": {
+      "G": "헬라어",
+      "heb": "히브리어",
+      "arc": "아람어",
+      "x-pn": "unresolved"
+    },
+    "hold_contract": {
+      "x-pn": "source_language_x_pn_unresolved"
+    },
+    "rendering_contract": {
+      "source_order": "preserve",
+      "unicode_normalization": "none",
+      "xml_whitespace": "[ \\t\\r\\n]+를 ASCII space 하나로 축약하고 양 끝에서 제거",
+      "unknown_inline_tag": "fail_closed",
+      "empty_row": "omit"
+    },
+    "projection_serialization_contract": {
+      "sort": "source_key ASC",
+      "encoding": "UTF-8",
+      "bom": false,
+      "format": "JSONL object",
+      "ensure_ascii": false,
+      "sort_keys": true,
+      "separators": [
+        ",",
+        ":"
+      ],
+      "final_lf": true
+    },
+    "source_modification_rendering_notice": "원천 XML은 수정하지 않는다. v2 form·meaning은 source document order와 Unicode code point를 보존하는 결정적 projection이며, XML whitespace 축약·Strong 참조 정규화·inline marker 렌더링은 Reshet가 수행한 가공이다."
+  },
   "sources": [
     {
       "id": "morphgnt_strongs_greek_1_9",
@@ -27,7 +78,22 @@
         "kjv_def",
         "참조용 중첩 요소"
       ],
-      "parser_contract": "greek_headword_v1"
+      "parser_contract": "greek_headword_v1",
+      "parser_contracts": [
+        "greek_headword_v1",
+        "greek_forms_v2"
+      ],
+      "meaning_projection_contract": "greek_meanings_v2",
+      "v2_fields_used": [
+        "첫 direct strongs_derivation·strongs_def·kjv_def 이전의 direct greek@unicode·@translit",
+        "해당 greek 직후 direct pronunciation@strongs",
+        "direct strongs_def·kjv_def와 마지막 definition 뒤 entry-level postscript"
+      ],
+      "v2_fields_excluded": [
+        "definition·derivation·postscript 내부 또는 이후의 form용 greek",
+        "strongsref를 form으로 승격",
+        "BETA와 임의 번역·요약·Unicode normalization"
+      ]
     },
     {
       "id": "openscriptures_hebrew_strong_2019",
@@ -55,7 +121,21 @@
         "definition·설명문",
         "LexicalIndex.xml 및 Strong 외 lexical index 콘텐츠"
       ],
-      "parser_contract": "hebrew_direct_w_v1"
+      "parser_contract": "hebrew_direct_w_v1",
+      "parser_contracts": [
+        "hebrew_direct_w_v1",
+        "hebrew_forms_v2"
+      ],
+      "meaning_projection_contract": "hebrew_meanings_v2",
+      "v2_fields_used": [
+        "entry의 direct w 본문·@xlit·@pron·@xml:lang·@pos",
+        "direct meaning·usage와 승인된 inline def·w·note"
+      ],
+      "v2_fields_excluded": [
+        "source·note 아래 nested w를 form 또는 별도 meaning으로 승격",
+        "direct source·direct note",
+        "x-pn의 derivation 기반 언어 추론과 임의 번역·축약"
+      ]
     }
   ]
 }

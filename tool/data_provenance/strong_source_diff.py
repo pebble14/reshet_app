@@ -83,6 +83,78 @@ class SourceDataset:
 
 
 @dataclass(frozen=True)
+class SourceXmlContextV2:
+    source_key: str
+    section: str
+    direct_child_position: int
+    paired_direct_child_position: int | None = None
+
+
+@dataclass(frozen=True)
+class GreekSourceFormV2:
+    source_key: str
+    source_document_order: int
+    form_role: str
+    spelling: str
+    transliteration: str | None
+    pronunciation: str | None
+    source_language: str
+    xml_context: SourceXmlContextV2
+
+
+@dataclass(frozen=True)
+class HebrewSourceFormV2:
+    source_key: str
+    source_document_order: int
+    form_role: str
+    spelling: str
+    transliteration: str | None
+    pronunciation: str | None
+    source_language_code: str
+    part_of_speech: str | None
+    xml_context: SourceXmlContextV2
+
+
+SourceFormV2 = GreekSourceFormV2 | HebrewSourceFormV2
+
+
+@dataclass(frozen=True)
+class SourceMeaningV2:
+    source_key: str
+    seq: int
+    meaning_role: str
+    text: str
+    xml_context: SourceXmlContextV2
+
+
+@dataclass(frozen=True)
+class SourceEntryV2:
+    source_key: str
+    source_language_code: str
+    disposition: str
+    forms: tuple[SourceFormV2, ...]
+    meanings: tuple[SourceMeaningV2, ...]
+
+
+@dataclass
+class SourceDatasetV2:
+    prefix: str
+    path: Path
+    root_tag: str
+    entry_count: int
+    invalid_entry_count: int
+    entries: dict[str, SourceEntryV2] = field(default_factory=dict)
+
+    @property
+    def form_count(self) -> int:
+        return sum(len(entry.forms) for entry in self.entries.values())
+
+    @property
+    def meaning_count(self) -> int:
+        return sum(len(entry.meanings) for entry in self.entries.values())
+
+
+@dataclass(frozen=True)
 class DbExpression:
     word_id: str
     strong_number: str
@@ -348,6 +420,380 @@ def parse_hebrew_xml(path: Path) -> SourceDataset:
         entry_count=len(entries),
         invalid_entry_count=invalid_count,
         candidates=dict(candidates),
+    )
+
+
+XML_LANGUAGE_ATTRIBUTE = "{http://www.w3.org/XML/1998/namespace}lang"
+XML_WHITESPACE_RE = re.compile(r"[ \t\r\n]+")
+XML_WHITESPACE = " \t\r\n"
+
+
+def _collapse_xml_whitespace(value: str) -> str:
+    return XML_WHITESPACE_RE.sub(" ", value).strip(XML_WHITESPACE)
+
+
+def _optional_source_value(value: str | None) -> str | None:
+    if value is None or not value.strip(XML_WHITESPACE):
+        return None
+    return value
+
+
+def _needs_inline_space(left: str, right: str) -> bool:
+    if not left or not right:
+        return False
+    if left[-1] in XML_WHITESPACE or right[0] in XML_WHITESPACE:
+        return False
+    left_connects = left[-1].isalnum() or left[-1] in "]'’\"”"
+    right_connects = right[0].isalnum() or right[0] in "[\"“'‘"
+    return left_connects and right_connects
+
+
+def _join_xml_segments(segments: list[str]) -> str:
+    rendered = ""
+    for segment in segments:
+        if not segment:
+            continue
+        if _needs_inline_space(rendered, segment):
+            rendered += " "
+        rendered += segment
+    return _collapse_xml_whitespace(rendered)
+
+
+def _render_strong_reference(element: ET.Element) -> str:
+    language = (element.get("language") or "").upper()
+    prefix = {"GREEK": "G", "HEBREW": "H"}.get(language)
+    if prefix is None:
+        raise SourceSchemaError(
+            f"알 수 없는 strongsref language: {element.get('language')!r}"
+        )
+    strong = normalize_strong_number(element.get("strongs"), prefix)
+    if strong is None:
+        raise SourceSchemaError(
+            f"유효하지 않은 strongsref: language={language!r}, "
+            f"strongs={element.get('strongs')!r}"
+        )
+    return strong
+
+
+def _render_marker_text(spelling: str, markers: list[str]) -> str:
+    parts = [spelling] if spelling else []
+    if markers:
+        parts.append("[" + "; ".join(markers) + "]")
+    return " ".join(parts)
+
+
+def _render_mixed_content(element: ET.Element) -> str:
+    segments = [element.text or ""]
+    for child in element:
+        segments.append(_render_inline_element(child))
+        segments.append(child.tail or "")
+    return _join_xml_segments(segments)
+
+
+def _render_inline_element(element: ET.Element) -> str:
+    name = local_name(element.tag)
+    if name == "strongsref":
+        return _render_strong_reference(element)
+    if name == "greek":
+        spelling = element.get("unicode") or ""
+        transliteration = _optional_source_value(element.get("translit"))
+        markers = [f"xlit={transliteration}"] if transliteration is not None else []
+        return _render_marker_text(spelling, markers)
+    if name == "pronunciation":
+        pronunciation = _optional_source_value(element.get("strongs"))
+        return f"[pron={pronunciation}]" if pronunciation is not None else ""
+    if name in {"latin", "def"}:
+        return _render_mixed_content(element)
+    if name == "w":
+        source = _optional_source_value(element.get("src"))
+        if source is not None:
+            strong = normalize_strong_number(source, "H")
+            if strong is None:
+                raise SourceSchemaError(f"유효하지 않은 Hebrew w@src: {source!r}")
+            return strong
+        spelling = _render_mixed_content(element)
+        transliteration = _optional_source_value(element.get("xlit"))
+        pronunciation = _optional_source_value(element.get("pron"))
+        markers: list[str] = []
+        if transliteration is not None:
+            markers.append(f"xlit={transliteration}")
+        if pronunciation is not None:
+            markers.append(f"pron={pronunciation}")
+        return _render_marker_text(spelling, markers)
+    if name == "note":
+        note = _render_mixed_content(element)
+        return f"[note: {note}]" if note else ""
+    raise SourceSchemaError(f"지원하지 않는 inline XML tag: {name}")
+
+
+def render_plain_text_v2(element: ET.Element) -> str:
+    """승인된 inline tag만 source order로 렌더링하고 나머지는 fail-closed한다."""
+
+    name = local_name(element.tag)
+    if name in {"strongs_def", "kjv_def", "meaning", "usage"}:
+        return _render_mixed_content(element)
+    return _render_inline_element(element)
+
+
+def _render_greek_postscript(children: list[ET.Element], last_definition: int) -> str:
+    segments = [children[last_definition].tail or ""]
+    for child in children[last_definition + 1 :]:
+        segments.append(_render_inline_element(child))
+        segments.append(child.tail or "")
+    return _join_xml_segments(segments)
+
+
+def _greek_meanings_v2(
+    source_key: str,
+    children: list[ET.Element],
+    *,
+    include_postscript: bool,
+) -> tuple[SourceMeaningV2, ...]:
+    selected: list[tuple[str, int, str]] = []
+    for role in ("strongs_def", "kjv_def"):
+        for index, child in enumerate(children):
+            if local_name(child.tag) != role:
+                continue
+            text = render_plain_text_v2(child)
+            if text:
+                selected.append((role, index, text))
+
+    meanings: list[SourceMeaningV2] = []
+    for role, index, text in selected:
+        meanings.append(
+            SourceMeaningV2(
+                source_key=source_key,
+                seq=len(meanings) + 1,
+                meaning_role=role,
+                text=text,
+                xml_context=SourceXmlContextV2(
+                    source_key=source_key,
+                    section="definition",
+                    direct_child_position=index + 1,
+                ),
+            )
+        )
+    if include_postscript and selected:
+        last_definition = max(index for _, index, _ in selected)
+        postscript = _render_greek_postscript(children, last_definition)
+        if postscript:
+            meanings.append(
+                SourceMeaningV2(
+                    source_key=source_key,
+                    seq=len(meanings) + 1,
+                    meaning_role="postscript",
+                    text=postscript,
+                    xml_context=SourceXmlContextV2(
+                        source_key=source_key,
+                        section="entry_postscript",
+                        direct_child_position=last_definition + 1,
+                    ),
+                )
+            )
+    return tuple(meanings)
+
+
+def parse_greek_xml_v2(path: Path) -> SourceDatasetV2:
+    try:
+        root = ET.parse(path).getroot()
+    except ET.ParseError as error:
+        raise SourceSchemaError(
+            f"XML parsing 실패: 파일={path}; root tag=확인 불가; "
+            f"예상 핵심 구조=strongsdictionary/entries/entry; 추출 항목 수=0; {error}"
+        ) from error
+    if local_name(root.tag) != "strongsdictionary":
+        raise _schema_error(
+            path, root.tag, "strongsdictionary/entries/entry@strongs", 0
+        )
+    entries_node = next(
+        (child for child in root if local_name(child.tag) == "entries"), None
+    )
+    entries = (
+        [child for child in entries_node if local_name(child.tag) == "entry"]
+        if entries_node is not None
+        else []
+    )
+    if not entries:
+        raise _schema_error(
+            path, root.tag, "strongsdictionary/entries/entry@strongs", 0
+        )
+
+    projections: dict[str, SourceEntryV2] = {}
+    invalid_count = 0
+    for entry in entries:
+        source_key = normalize_strong_number(entry.get("strongs"), "G")
+        if source_key is None:
+            invalid_count += 1
+            continue
+        children = list(entry)
+        forms: list[GreekSourceFormV2] = []
+        for index, child in enumerate(children):
+            name = local_name(child.tag)
+            if name in {"strongs_derivation", "strongs_def", "kjv_def"}:
+                break
+            if name != "greek":
+                continue
+            spelling = child.get("unicode") or ""
+            if not spelling:
+                raise SourceSchemaError(f"Greek v2 form spelling 누락: {source_key}")
+            paired_position: int | None = None
+            pronunciation: str | None = None
+            if (
+                index + 1 < len(children)
+                and local_name(children[index + 1].tag) == "pronunciation"
+            ):
+                paired_position = index + 2
+                pronunciation = _optional_source_value(
+                    children[index + 1].get("strongs")
+                )
+            forms.append(
+                GreekSourceFormV2(
+                    source_key=source_key,
+                    source_document_order=len(forms) + 1,
+                    form_role="primary" if not forms else "alternate",
+                    spelling=spelling,
+                    transliteration=_optional_source_value(child.get("translit")),
+                    pronunciation=pronunciation,
+                    source_language="G",
+                    xml_context=SourceXmlContextV2(
+                        source_key=source_key,
+                        section="headword",
+                        direct_child_position=index + 1,
+                        paired_direct_child_position=paired_position,
+                    ),
+                )
+            )
+        disposition = "ready" if forms else "source_not_used"
+        meanings = _greek_meanings_v2(
+            source_key,
+            children,
+            include_postscript=bool(forms),
+        )
+        if not forms:
+            meanings = ()
+        projections[source_key] = SourceEntryV2(
+            source_key=source_key,
+            source_language_code="G",
+            disposition=disposition,
+            forms=tuple(forms),
+            meanings=meanings,
+        )
+
+    if not projections:
+        raise _schema_error(
+            path,
+            root.tag,
+            "entry@strongs + definition 이전 직접 자식 greek@unicode",
+            0,
+        )
+    return SourceDatasetV2(
+        prefix="G",
+        path=path,
+        root_tag=root.tag,
+        entry_count=len(entries),
+        invalid_entry_count=invalid_count,
+        entries=projections,
+    )
+
+
+def parse_hebrew_xml_v2(path: Path) -> SourceDatasetV2:
+    try:
+        root = ET.parse(path).getroot()
+    except ET.ParseError as error:
+        raise SourceSchemaError(
+            f"XML parsing 실패: 파일={path}; root tag=확인 불가; "
+            f"예상 핵심 구조=lexicon/entry; 추출 항목 수=0; {error}"
+        ) from error
+    if local_name(root.tag) != "lexicon":
+        raise _schema_error(path, root.tag, "lexicon/entry@id/w", 0)
+    entries = [child for child in root if local_name(child.tag) == "entry"]
+    if not entries:
+        raise _schema_error(path, root.tag, "lexicon/entry@id/w", 0)
+
+    projections: dict[str, SourceEntryV2] = {}
+    invalid_count = 0
+    for entry in entries:
+        source_key = normalize_strong_number(entry.get("id"), "H")
+        if source_key is None:
+            invalid_count += 1
+            continue
+        children = list(entry)
+        direct_words = [
+            (index, child)
+            for index, child in enumerate(children)
+            if local_name(child.tag) == "w"
+        ]
+        if len(direct_words) != 1:
+            raise SourceSchemaError(
+                f"Hebrew v2 direct w 수 불일치: {source_key}: {len(direct_words)}"
+            )
+        word_index, word = direct_words[0]
+        spelling = (word.text or "").strip(XML_WHITESPACE)
+        if not spelling:
+            raise SourceSchemaError(f"Hebrew v2 form spelling 누락: {source_key}")
+        language_code = word.get(XML_LANGUAGE_ATTRIBUTE) or ""
+        if not language_code:
+            raise SourceSchemaError(f"Hebrew v2 xml:lang 누락: {source_key}")
+        form = HebrewSourceFormV2(
+            source_key=source_key,
+            source_document_order=1,
+            form_role="primary",
+            spelling=spelling,
+            transliteration=_optional_source_value(word.get("xlit")),
+            pronunciation=_optional_source_value(word.get("pron")),
+            source_language_code=language_code,
+            part_of_speech=_optional_source_value(word.get("pos")),
+            xml_context=SourceXmlContextV2(
+                source_key=source_key,
+                section="headword",
+                direct_child_position=word_index + 1,
+            ),
+        )
+        meanings: list[SourceMeaningV2] = []
+        for role in ("meaning", "usage"):
+            for index, child in enumerate(children):
+                if local_name(child.tag) != role:
+                    continue
+                text = render_plain_text_v2(child)
+                if not text:
+                    continue
+                meanings.append(
+                    SourceMeaningV2(
+                        source_key=source_key,
+                        seq=len(meanings) + 1,
+                        meaning_role=role,
+                        text=text,
+                        xml_context=SourceXmlContextV2(
+                            source_key=source_key,
+                            section="definition",
+                            direct_child_position=index + 1,
+                        ),
+                    )
+                )
+        projections[source_key] = SourceEntryV2(
+            source_key=source_key,
+            source_language_code=language_code,
+            disposition=(
+                "source_language_unresolved" if language_code == "x-pn" else "ready"
+            ),
+            forms=(form,),
+            meanings=tuple(meanings),
+        )
+
+    if not projections:
+        raise _schema_error(
+            path,
+            root.tag,
+            "entry@id + 직접 자식 w 본문/@xlit/@pron/@xml:lang/@pos",
+            0,
+        )
+    return SourceDatasetV2(
+        prefix="H",
+        path=path,
+        root_tag=root.tag,
+        entry_count=len(entries),
+        invalid_entry_count=invalid_count,
+        entries=projections,
     )
 
 

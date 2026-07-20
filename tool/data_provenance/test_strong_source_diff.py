@@ -2,11 +2,13 @@
 
 from __future__ import annotations
 
+from collections import Counter
 import json
 from pathlib import Path
 import sqlite3
 import tempfile
 import unittest
+import xml.etree.ElementTree as ET
 
 import strong_source_diff as diff
 
@@ -312,6 +314,139 @@ class StrongSourceDiffTest(unittest.TestCase):
         self.assertEqual(result["summary"]["database"]["strong_word_count"], 1)
         self.assertTrue(
             all(row["strong_number"] == "G0001" for row in result["expression_rows"])
+        )
+
+    def test_18_v2_greek_form_and_meaning_contract(self) -> None:
+        source = self.root / "greek_v2.xml"
+        source.write_text(
+            '''<strongsdictionary><entries>
+  <entry strongs="01520"><strongs>1520</strongs>
+    <greek unicode="εἷς" translit="heîs"/><pronunciation strongs="hice"/>
+    text <greek unicode="ἕν" translit="hén"/>;
+    <strongs_derivation>from <greek unicode="제외" translit="ignored"/></strongs_derivation>
+    <strongs_def> one</strongs_def><kjv_def>:--one.</kjv_def>
+    See also <strongsref language="GREEK" strongs="1527"/>.
+  </entry>
+  <entry strongs="02022"><greek unicode="ἐπιχέω" translit="epichéō"/>
+    <pronunciation strongs="ep-ee-kheh'-o"/>
+    <strongs_derivation>fixture</strongs_derivation>
+    <strongs_def> \t\r\n </strongs_def><kjv_def>--pour in.</kjv_def>
+  </entry>
+  <entry strongs="00001">Not Used<strongs_def>Not Used</strongs_def></entry>
+</entries></strongsdictionary>''',
+            encoding="utf-8",
+        )
+        v1 = diff.parse_greek_xml(source)
+        v2 = diff.parse_greek_xml_v2(source)
+        self.assertEqual(
+            v1.candidates["G1520"],
+            [
+                diff.SourceCandidate("εἷς", "heîs", "hice"),
+                diff.SourceCandidate("ἕν", "hén", ""),
+            ],
+        )
+        entry = v2.entries["G1520"]
+        self.assertEqual(
+            [(form.source_document_order, form.form_role) for form in entry.forms],
+            [(1, "primary"), (2, "alternate")],
+        )
+        self.assertEqual(entry.forms[1].pronunciation, None)
+        self.assertEqual([form.spelling for form in entry.forms], ["εἷς", "ἕν"])
+        self.assertEqual(
+            [(meaning.seq, meaning.meaning_role, meaning.text) for meaning in entry.meanings],
+            [
+                (1, "strongs_def", "one"),
+                (2, "kjv_def", ":--one."),
+                (3, "postscript", "See also G1527."),
+            ],
+        )
+        self.assertEqual(
+            [(row.seq, row.meaning_role, row.text) for row in v2.entries["G2022"].meanings],
+            [(1, "kjv_def", "--pour in.")],
+        )
+        self.assertEqual(v2.entries["G0001"].forms, ())
+        self.assertEqual(v2.entries["G0001"].meanings, ())
+        self.assertEqual(v2.entries["G0001"].disposition, "source_not_used")
+
+    def test_19_v2_plain_text_renderer_and_fail_closed(self) -> None:
+        greek = ET.fromstring(
+            '''<strongs_def>from <strongsref language="GREEK" strongs="4461"/>,
+            <strongsref language="HEBREW" strongs="058"/>;
+            <greek unicode="λόγος" translit="lógos"/>
+            <pronunciation strongs="log'-os"/> <latin>via</latin>.</strongs_def>'''
+        )
+        self.assertEqual(
+            diff.render_plain_text_v2(greek),
+            "from G4461, H0058; λόγος [xlit=lógos] [pron=log'-os] via.",
+        )
+        hebrew = ET.fromstring(
+            '''<meaning xmlns="urn:fixture">a <def>sister</def> like
+            <w src="H1">1</w><note>corrected</note>,
+            <w xlit="x" pron="p">철자</w>.</meaning>'''
+        )
+        self.assertEqual(
+            diff.render_plain_text_v2(hebrew),
+            "a sister like H0001 [note: corrected], 철자 [xlit=x; pron=p].",
+        )
+        with self.assertRaisesRegex(diff.SourceSchemaError, "지원하지 않는 inline XML tag"):
+            diff.render_plain_text_v2(ET.fromstring("<meaning><unknown>x</unknown></meaning>"))
+
+    @unittest.skipUnless(
+        (Path(__file__).with_name(".source_cache") / "strongsgreek.xml").is_file()
+        and (Path(__file__).with_name(".source_cache") / "HebrewStrong.xml").is_file(),
+        "고정 Strong source cache가 필요함",
+    )
+    def test_20_official_v1_compatibility_and_v2_aggregate(self) -> None:
+        cache = Path(__file__).with_name(".source_cache")
+        greek_v1 = diff.parse_greek_xml(cache / "strongsgreek.xml")
+        hebrew_v1 = diff.parse_hebrew_xml(cache / "HebrewStrong.xml")
+        greek = diff.parse_greek_xml_v2(cache / "strongsgreek.xml")
+        hebrew = diff.parse_hebrew_xml_v2(cache / "HebrewStrong.xml")
+
+        self.assertEqual((greek_v1.entry_count, greek_v1.candidate_count), (5624, 5715))
+        self.assertEqual((hebrew_v1.entry_count, hebrew_v1.candidate_count), (8674, 8674))
+        form_distribution = Counter(len(entry.forms) for entry in greek.entries.values())
+        self.assertEqual(form_distribution, Counter({0: 101, 1: 5453, 2: 51, 3: 17, 4: 2}))
+        self.assertEqual(greek.form_count, 5614)
+        self.assertEqual(sum(count for size, count in form_distribution.items() if size), 5523)
+        self.assertEqual(sum(count for size, count in form_distribution.items() if size > 1), 70)
+        self.assertEqual(max(form_distribution), 4)
+        self.assertEqual(
+            sum(
+                any(meaning.meaning_role == "postscript" for meaning in entry.meanings)
+                for entry in greek.entries.values()
+            ),
+            154,
+        )
+        self.assertEqual(max(len(entry.meanings) for entry in greek.entries.values()), 3)
+        self.assertEqual(
+            [(form.spelling, form.transliteration, form.pronunciation) for form in greek.entries["G1520"].forms],
+            [("εἷς", "heîs", "hice"), ("ἕν", "hén", None)],
+        )
+        self.assertEqual(
+            [(meaning.seq, meaning.meaning_role) for meaning in greek.entries["G2022"].meanings],
+            [(1, "kjv_def")],
+        )
+
+        self.assertEqual(hebrew.form_count, 8674)
+        self.assertEqual(
+            Counter(entry.source_language_code for entry in hebrew.entries.values()),
+            Counter({"heb": 5393, "arc": 653, "x-pn": 2628}),
+        )
+        self.assertEqual(max(len(entry.meanings) for entry in hebrew.entries.values()), 2)
+        self.assertEqual(hebrew.entries["H3390"].meanings, ())
+        self.assertEqual(len(hebrew.entries["H0859"].forms), 1)
+        self.assertIn(
+            "[note: number 250, corrected to 251]",
+            hebrew.entries["H0269"].meanings[0].text,
+        )
+        self.assertEqual(
+            sum(len(entry.forms) > 6 for entry in (*greek.entries.values(), *hebrew.entries.values())),
+            0,
+        )
+        self.assertEqual(
+            sum(len(entry.meanings) > 7 for entry in (*greek.entries.values(), *hebrew.entries.values())),
+            0,
         )
 
 

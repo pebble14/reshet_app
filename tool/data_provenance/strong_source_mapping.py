@@ -42,8 +42,32 @@ REQUIRED_SOURCE_FIELDS = {
     "parser_contract",
 }
 PARSER_CONTRACTS = {
-    "G": ("greek_headword_v1", legacy.parse_greek_xml),
-    "H": ("hebrew_direct_w_v1", legacy.parse_hebrew_xml),
+    "G": {
+        "greek_headword_v1": legacy.parse_greek_xml,
+        "greek_forms_v2": legacy.parse_greek_xml_v2,
+    },
+    "H": {
+        "hebrew_direct_w_v1": legacy.parse_hebrew_xml,
+        "hebrew_forms_v2": legacy.parse_hebrew_xml_v2,
+    },
+}
+DEFAULT_PARSER_CONTRACTS = {
+    "G": "greek_headword_v1",
+    "H": "hebrew_direct_w_v1",
+}
+V2_FORM_PARSER_CONTRACTS = {
+    "G": "greek_forms_v2",
+    "H": "hebrew_forms_v2",
+}
+V2_MEANING_PROJECTION_CONTRACTS = {
+    "G": "greek_meanings_v2",
+    "H": "hebrew_meanings_v2",
+}
+SOURCE_LANGUAGE_MAPPING = {
+    "G": "헬라어",
+    "heb": "히브리어",
+    "arc": "아람어",
+    "x-pn": None,
 }
 MAPPING_RULES = (
     "raw_spelling_exact_pronunciation",
@@ -74,6 +98,8 @@ class SourceSpec:
     fields_used: tuple[str, ...]
     fields_excluded: tuple[str, ...]
     parser_contract: str
+    parser_contracts: tuple[str, ...]
+    meaning_projection_contract: str | None
 
 
 @dataclass(frozen=True)
@@ -132,6 +158,26 @@ class DatabaseSnapshot:
     metadata: dict[str, object]
 
 
+@dataclass(frozen=True)
+class MappingV2Row:
+    source_key: str
+    source_form_order: int | None
+    source_form_role: str | None
+    source_language: str | None
+    source_spelling: str | None
+    source_transliteration: str | None
+    source_pronunciation: str | None
+    source_meaning_rows: tuple[tuple[int, str], ...]
+    xml_context: legacy.SourceXmlContextV2 | None
+    current_word_id: str | None
+    current_expression_seq: int | None
+    expected_expression_seq: int | None
+    current_values: dict[str, object] | None
+    expected_values: dict[str, object] | None
+    action: str
+    hold_reason: str | None
+
+
 def _require_string(source: dict[str, object], field_name: str) -> str:
     value = source[field_name]
     if not isinstance(value, str) or not value:
@@ -168,6 +214,9 @@ def load_source_manifest(path: Path) -> tuple[dict[str, object], list[SourceSpec
         raise ManifestError(f"source manifest를 읽을 수 없음: {path}: {error}") from error
     if not isinstance(raw, dict) or raw.get("schema_version") != 1:
         raise ManifestError("source manifest schema_version은 1이어야 함")
+    contract_versions = raw.get("contract_versions")
+    if contract_versions is not None and not isinstance(contract_versions, dict):
+        raise ManifestError("source manifest contract_versions는 object여야 함")
     raw_sources = raw.get("sources")
     if not isinstance(raw_sources, list) or not raw_sources:
         raise ManifestError("source manifest sources는 비어 있지 않은 배열이어야 함")
@@ -192,6 +241,8 @@ def load_source_manifest(path: Path) -> tuple[dict[str, object], list[SourceSpec
         license_reference = _require_string(raw_source, "license_reference")
         modification_notice = _require_string(raw_source, "modification_notice")
         parser_contract = _require_string(raw_source, "parser_contract")
+        parser_contracts = raw_source.get("parser_contracts", [parser_contract])
+        meaning_projection_contract = raw_source.get("meaning_projection_contract")
         fields_used = raw_source["fields_used"]
         fields_excluded = raw_source["fields_excluded"]
         attribution = raw_source["required_attribution"]
@@ -219,6 +270,16 @@ def load_source_manifest(path: Path) -> tuple[dict[str, object], list[SourceSpec
             isinstance(value, str) and value for value in fields_excluded
         ):
             raise ManifestError("fields_excluded는 비어 있지 않은 문자열 배열이어야 함")
+        if not isinstance(parser_contracts, list) or not all(
+            isinstance(value, str) and value for value in parser_contracts
+        ):
+            raise ManifestError("parser_contracts는 비어 있지 않은 문자열 배열이어야 함")
+        if len(parser_contracts) != len(set(parser_contracts)):
+            raise ManifestError("parser_contracts에는 중복을 둘 수 없음")
+        if meaning_projection_contract is not None and not isinstance(
+            meaning_projection_contract, str
+        ):
+            raise ManifestError("meaning_projection_contract는 문자열 또는 null이어야 함")
         _validate_relative_source_path(file_path)
         expected_location = _expected_download_location(repository, commit, file_path)
         if download_location != expected_location:
@@ -226,12 +287,21 @@ def load_source_manifest(path: Path) -> tuple[dict[str, object], list[SourceSpec
                 "download_location이 repository·commit·file_path에서 재구성한 "
                 f"공식 URL과 다름: {download_location}"
             )
-        expected_contract = PARSER_CONTRACTS[language][0]
+        expected_contract = DEFAULT_PARSER_CONTRACTS[language]
         if parser_contract != expected_contract:
             raise ManifestError(
                 f"{language} parser_contract 불일치: "
                 f"expected={expected_contract}, actual={parser_contract}"
             )
+        unsupported_contracts = sorted(
+            set(parser_contracts) - set(PARSER_CONTRACTS[language])
+        )
+        if unsupported_contracts:
+            raise ManifestError(
+                f"{language} 지원하지 않는 parser_contracts: {unsupported_contracts}"
+            )
+        if parser_contract not in parser_contracts:
+            raise ManifestError("parser_contract는 parser_contracts에 포함되어야 함")
 
         specs.append(
             SourceSpec(
@@ -250,6 +320,8 @@ def load_source_manifest(path: Path) -> tuple[dict[str, object], list[SourceSpec
                 fields_used=tuple(fields_used),
                 fields_excluded=tuple(fields_excluded),
                 parser_contract=parser_contract,
+                parser_contracts=tuple(parser_contracts),
+                meaning_projection_contract=meaning_projection_contract,
             )
         )
         seen_ids.add(source_id)
@@ -314,7 +386,7 @@ def validate_sources(
                 f"source hash 불일치: id={spec.id}; "
                 f"expected={spec.sha256}; actual={actual_hash}"
             )
-        parser = PARSER_CONTRACTS[spec.language][1]
+        parser = PARSER_CONTRACTS[spec.language][spec.parser_contract]
         dataset = parser(source_path)
         datasets.append(dataset)
         statuses.append(
@@ -341,6 +413,69 @@ def validate_sources(
     return raw_manifest, specs, datasets, statuses
 
 
+def validate_source_projections_v2(
+    manifest_path: Path,
+    cache_dir: Path,
+) -> tuple[
+    dict[str, object],
+    list[SourceSpec],
+    list[legacy.SourceDatasetV2],
+    list[dict[str, object]],
+]:
+    raw_manifest, specs = load_source_manifest(manifest_path)
+    datasets: list[legacy.SourceDatasetV2] = []
+    statuses: list[dict[str, object]] = []
+    for spec in specs:
+        parser_contract = V2_FORM_PARSER_CONTRACTS[spec.language]
+        meaning_contract = V2_MEANING_PROJECTION_CONTRACTS[spec.language]
+        if parser_contract not in spec.parser_contracts:
+            raise ManifestError(
+                f"{spec.language} v2 parser contract가 manifest에 없음: {parser_contract}"
+            )
+        if spec.meaning_projection_contract != meaning_contract:
+            raise ManifestError(
+                f"{spec.language} meaning projection contract 불일치: "
+                f"expected={meaning_contract}, actual={spec.meaning_projection_contract}"
+            )
+        source_path = source_cache_path(cache_dir, spec)
+        if not source_path.is_file():
+            raise FileNotFoundError(
+                f"source cache 파일을 찾을 수 없음: {source_path}; fetch 명령 필요"
+            )
+        actual_hash = legacy.sha256_file(source_path)
+        if actual_hash != spec.sha256:
+            raise RuntimeError(
+                f"source hash 불일치: id={spec.id}; "
+                f"expected={spec.sha256}; actual={actual_hash}"
+            )
+        parser = PARSER_CONTRACTS[spec.language][parser_contract]
+        dataset = parser(source_path)
+        if not isinstance(dataset, legacy.SourceDatasetV2):
+            raise RuntimeError(f"v2 parser 결과 형식 불일치: {parser_contract}")
+        datasets.append(dataset)
+        statuses.append(
+            {
+                "id": spec.id,
+                "language": spec.language,
+                "repository": spec.repository,
+                "commit": spec.commit,
+                "file_path": spec.file_path,
+                "expected_sha256": spec.sha256,
+                "actual_sha256": actual_hash,
+                "hash_verified": True,
+                "default_parser_contract": spec.parser_contract,
+                "form_parser_contract": parser_contract,
+                "meaning_projection_contract": meaning_contract,
+                "entry_count": dataset.entry_count,
+                "form_count": dataset.form_count,
+                "meaning_count": dataset.meaning_count,
+                "license": spec.license,
+                "required_attribution": spec.required_attribution,
+            }
+        )
+    return raw_manifest, specs, datasets, statuses
+
+
 def load_database_snapshot(path: Path) -> DatabaseSnapshot:
     path = path.resolve()
     if not path.is_file():
@@ -348,6 +483,15 @@ def load_database_snapshot(path: Path) -> DatabaseSnapshot:
     before = legacy.file_metadata(path)
     connection, query_only, integrity_check = legacy.open_read_only_database(path)
     try:
+        word_columns = connection.execute("PRAGMA table_info(WORD_TABLE)").fetchall()
+        graph_default_raw = next(
+            (
+                row["dflt_value"]
+                for row in word_columns
+                if str(row["name"]) == "graph_expand_mode"
+            ),
+            None,
+        )
         rows = connection.execute(
             '''
             SELECT
@@ -417,6 +561,9 @@ def load_database_snapshot(path: Path) -> DatabaseSnapshot:
         raise RuntimeError(
             "DB 파일 무결성 변경 감지: 실행 전후 크기, mtime 또는 SHA-256이 다름"
         )
+    graph_expand_mode_default = (
+        str(graph_default_raw).strip("'\"") if graph_default_raw is not None else None
+    )
     metadata = {
         "path": str(path),
         "size_bytes": before["size_bytes"],
@@ -427,6 +574,7 @@ def load_database_snapshot(path: Path) -> DatabaseSnapshot:
         "unchanged": before == after,
         "query_only": query_only,
         "integrity_check": integrity_check,
+        "graph_expand_mode_default": graph_expand_mode_default,
     }
     return DatabaseSnapshot(
         path=path,
@@ -434,6 +582,307 @@ def load_database_snapshot(path: Path) -> DatabaseSnapshot:
         projection=projection,
         metadata=metadata,
     )
+
+
+def combine_v2_datasets(
+    datasets: list[legacy.SourceDatasetV2],
+) -> dict[str, legacy.SourceEntryV2]:
+    entries: dict[str, legacy.SourceEntryV2] = {}
+    for dataset in datasets:
+        overlap = set(entries) & set(dataset.entries)
+        if overlap:
+            raise RuntimeError(f"v2 source key 중복: {sorted(overlap)[:10]}")
+        entries.update(dataset.entries)
+    return dict(sorted(entries.items()))
+
+
+def _source_language(entry: legacy.SourceEntryV2) -> str | None:
+    return SOURCE_LANGUAGE_MAPPING.get(entry.source_language_code)
+
+
+def _form_source_values(form: legacy.SourceFormV2) -> dict[str, object]:
+    pronunciation = form.pronunciation
+    return {
+        "spelling": form.spelling,
+        "transliteration": form.transliteration,
+        "pronunciation": pronunciation,
+        "pronunciation_notation": (
+            "strong_dictionary" if pronunciation is not None else None
+        ),
+        "pronunciation_notation_name": None,
+        "is_representative": 1 if form.source_document_order == 1 else 0,
+    }
+
+
+def _mapping_expression_values(expression: MappingExpression) -> dict[str, object]:
+    return {
+        "spelling": expression.spelling,
+        "transliteration": expression.transliteration,
+        "pronunciation": expression.pronunciation,
+        "pronunciation_notation": expression.pronunciation_notation,
+        "pronunciation_notation_name": expression.pronunciation_notation_name,
+        "is_representative": expression.is_representative,
+    }
+
+
+def _expected_existing_values(
+    form: legacy.SourceFormV2,
+    expression: MappingExpression | None,
+) -> dict[str, object]:
+    values = _form_source_values(form)
+    if (
+        expression is not None
+        and expression.transliteration is not None
+        and expression.transliteration.strip()
+    ):
+        values["transliteration"] = expression.transliteration
+    return values
+
+
+def build_mapping_v2(
+    entries: dict[str, legacy.SourceEntryV2],
+    words: list[MappingWord],
+) -> list[MappingV2Row]:
+    words_by_strong: dict[str, list[MappingWord]] = defaultdict(list)
+    for word in words:
+        strong = legacy.normalize_strong_number(word.strong_number)
+        if strong is not None:
+            words_by_strong[strong].append(word)
+
+    rows: list[MappingV2Row] = []
+    for source_key, entry in sorted(entries.items()):
+        meanings = tuple((meaning.seq, meaning.text) for meaning in entry.meanings)
+        source_language = _source_language(entry)
+        targets = sorted(
+            words_by_strong.get(source_key, []), key=lambda word: word.word_id
+        )
+        word = targets[0] if len(targets) == 1 else None
+        if not entry.forms:
+            rows.append(
+                MappingV2Row(
+                    source_key=source_key,
+                    source_form_order=None,
+                    source_form_role=None,
+                    source_language=source_language,
+                    source_spelling=None,
+                    source_transliteration=None,
+                    source_pronunciation=None,
+                    source_meaning_rows=meanings,
+                    xml_context=None,
+                    current_word_id=word.word_id if word is not None else None,
+                    current_expression_seq=None,
+                    expected_expression_seq=None,
+                    current_values=None,
+                    expected_values=None,
+                    action="exclude",
+                    hold_reason="source_not_used",
+                )
+            )
+            continue
+
+        for form in entry.forms:
+            current_expression = None
+            if word is not None:
+                current_expression = next(
+                    (
+                        expression
+                        for expression in word.expressions
+                        if expression.seq == form.source_document_order
+                    ),
+                    None,
+                )
+            current_values = (
+                _mapping_expression_values(current_expression)
+                if current_expression is not None
+                else None
+            )
+            expected_values = _expected_existing_values(form, current_expression)
+            if len(targets) > 1:
+                action = "hold"
+                hold_reason = "multiple_current_word_targets"
+            elif entry.source_language_code == "x-pn":
+                action = "hold"
+                hold_reason = "source_language_x_pn_unresolved"
+            elif source_language is None:
+                action = "hold"
+                hold_reason = "source_language_unresolved"
+            elif word is None:
+                action = "insert_word_candidate"
+                hold_reason = None
+            elif word.language != source_language:
+                action = "hold"
+                hold_reason = "source_db_language_mismatch_deferred"
+            elif current_expression is None:
+                action = "insert_expression_candidate"
+                hold_reason = None
+            elif current_values == expected_values:
+                action = "no_change"
+                hold_reason = None
+            else:
+                action = "update_expression_candidate"
+                hold_reason = None
+            rows.append(
+                MappingV2Row(
+                    source_key=source_key,
+                    source_form_order=form.source_document_order,
+                    source_form_role=form.form_role,
+                    source_language=source_language,
+                    source_spelling=form.spelling,
+                    source_transliteration=form.transliteration,
+                    source_pronunciation=form.pronunciation,
+                    source_meaning_rows=meanings,
+                    xml_context=form.xml_context,
+                    current_word_id=word.word_id if word is not None else None,
+                    current_expression_seq=(
+                        current_expression.seq
+                        if current_expression is not None
+                        else None
+                    ),
+                    expected_expression_seq=form.source_document_order,
+                    current_values=current_values,
+                    expected_values=expected_values,
+                    action=action,
+                    hold_reason=hold_reason,
+                )
+            )
+    return rows
+
+
+def mapping_v2_row_payload(row: MappingV2Row) -> dict[str, object]:
+    context = row.xml_context
+    return {
+        "source_key": row.source_key,
+        "source_form_order": row.source_form_order,
+        "source_form_role": row.source_form_role,
+        "source_language": row.source_language,
+        "source_spelling": row.source_spelling,
+        "source_transliteration": row.source_transliteration,
+        "source_pronunciation": row.source_pronunciation,
+        "source_meaning_rows": [
+            {"seq": seq, "text": text} for seq, text in row.source_meaning_rows
+        ],
+        "xml_context": (
+            {
+                "source_key": context.source_key,
+                "section": context.section,
+                "direct_child_position": context.direct_child_position,
+                "paired_direct_child_position": context.paired_direct_child_position,
+            }
+            if context is not None
+            else None
+        ),
+        "current_word_id": row.current_word_id,
+        "current_expression_seq": row.current_expression_seq,
+        "expected_expression_seq": row.expected_expression_seq,
+        "current_values": row.current_values,
+        "expected_values": row.expected_values,
+        "action": row.action,
+        "hold_reason": row.hold_reason,
+    }
+
+
+def build_source_only_import_projections(
+    entries: dict[str, legacy.SourceEntryV2],
+    words: list[MappingWord],
+    graph_expand_mode_default: str,
+) -> list[dict[str, object]]:
+    if not graph_expand_mode_default:
+        raise ValueError("graph_expand_mode canonical default가 필요함")
+    represented = {
+        strong
+        for word in words
+        if (strong := legacy.normalize_strong_number(word.strong_number)) is not None
+    }
+    projections: list[dict[str, object]] = []
+    for source_key, entry in sorted(entries.items()):
+        if source_key in represented or not entry.forms:
+            continue
+        language = _source_language(entry)
+        if language is None:
+            continue
+        if len(entry.forms) > 6:
+            raise ValueError(f"legacy expression slot 6개 초과: {source_key}")
+        if len(entry.meanings) > 7:
+            raise ValueError(f"legacy meaning slot 7개 초과: {source_key}")
+        expressions = [
+            {
+                "seq": form.source_document_order,
+                "is_representative": 1 if form.source_document_order == 1 else 0,
+                "spelling": form.spelling,
+                "transliteration": form.transliteration,
+                "pronunciation": form.pronunciation,
+                "pronunciation_notation": (
+                    "strong_dictionary" if form.pronunciation is not None else None
+                ),
+                "pronunciation_notation_name": None,
+            }
+            for form in entry.forms
+        ]
+        meanings = [
+            {"seq": meaning.seq, "text": meaning.text}
+            for meaning in entry.meanings
+        ]
+        legacy_expressions: dict[str, object] = {}
+        for index in range(1, 7):
+            expression = expressions[index - 1] if index <= len(expressions) else None
+            legacy_expressions[f"표기{index}"] = (
+                expression["spelling"] if expression is not None else None
+            )
+            legacy_expressions[f"음역{index}"] = (
+                expression["transliteration"] if expression is not None else None
+            )
+            legacy_expressions[f"발음{index}"] = (
+                expression["pronunciation"] if expression is not None else None
+            )
+        legacy_meanings = {
+            f"의미{index}": (
+                meanings[index - 1]["text"] if index <= len(meanings) else None
+            )
+            for index in range(1, 8)
+        }
+        projections.append(
+            {
+                "source_key": source_key,
+                "word_id": f"{source_key}_0000",
+                "strong_number": source_key,
+                "language": language,
+                "source_language_code": entry.source_language_code,
+                "note": None,
+                "graph_expand_mode": graph_expand_mode_default,
+                "expressions": expressions,
+                "meanings": meanings,
+                "legacy_expression_projection": legacy_expressions,
+                "legacy_meaning_projection": legacy_meanings,
+                "relations": [],
+                "action": "insert_word_candidate",
+                "reason": "source_only_clear_language",
+            }
+        )
+    return projections
+
+
+def serialize_source_only_projections(
+    projections: list[dict[str, object]],
+) -> bytes:
+    ordered = sorted(projections, key=lambda item: str(item["source_key"]))
+    lines = [
+        json.dumps(
+            item,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        )
+        for item in ordered
+    ]
+    return (("\n".join(lines) + "\n") if lines else "").encode("utf-8")
+
+
+def source_only_projection_sha256(projections: list[dict[str, object]]) -> str:
+    return hashlib.sha256(serialize_source_only_projections(projections)).hexdigest()
+
+
+def source_only_item_sha256(projection: dict[str, object]) -> str:
+    return hashlib.sha256(serialize_source_only_projections([projection])).hexdigest()
 
 
 def compare_database_projections(left_path: Path, right_path: Path) -> dict[str, object]:
