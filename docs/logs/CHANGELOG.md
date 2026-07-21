@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2026-07-21 HebrewStrong source `arc` 518건 DB 언어 정합화
+
+- 고정 `openscriptures/HebrewLexicon` commit `21c9add13bc727d3a951361778e97e3ff7afd1ce`의 `HebrewStrong.xml`에서 `xml:lang=arc`인 653건 중 DB가 `히브리어`였던 Strong 518건을 work·seed 모두 `아람어`로 변경했다.
+- `tool/data_provenance/manifests/hebrewstrong_arc_language_reconciliation.json`에 518개 Strong·word identity 전체와 source commit·manifest/XML SHA를 고정하고, 전용 도구가 work·seed를 단일 ATTACH transaction으로 적용하도록 했다.
+- source `arc` DB 언어는 두 DB 모두 적용 전 `히브리어` 518·`아람어` 135에서 적용 후 `아람어` 653·`히브리어` 0이 됐다. work SHA는 `9545e8b49038f453cd969581a169ea8debfe441b7cea0745dd9bcd7bec8c36c5` → `28c9a0ccdc5c951120eb95ed17465d9e161f869ea71eb951838042b489130168`, seed SHA는 `27c2f5d20fbb03e7aac1a822d0e48700626bf37a6a53b20001ab995654f72e0a` → `1a5ee7f23f812ff936137800f60346a1c84275f0a31e365c44b0f7eb32947a7b`다.
+- target 언어 외 값, non-target word, expression·notation provenance, meaning, relation, history와 schema projection은 불변이고, 두 DB의 `integrity_check`는 `ok`, foreign key 위반은 0이다. 잘못된 사전 조건 fail-closed, transaction 중간 실패 양쪽 복원, active 2차 실행 변경 0을 검증했다.
+- 표기 불일치 59건, 발음 불일치 505건, x-pn 누락 12건과 nested lexical form은 변경하지 않았다. 기존 Android 설치 runtime DB 전파는 최종 DB 확정 뒤 조건부·idempotent migration과 release 검증을 수행하는 기존 배포 blocker로 유지한다.
+- 클라이언트가 H1325 검색, 표기 `בַּת` 상세 진입과 언어 `아람어` 표시를 확인해 UI 수동 테스트를 통과했다. 표기·음역·발음의 원천 정합성은 이번 UI 테스트 범위가 아니다.
+
 ## 2026-06-18 Phase 22-B Explorer full-detail 편집 action 경계 정리
 
 - Large-screen embedded Explorer detail pane의 direct `편집` action은 유지했다.

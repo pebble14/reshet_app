@@ -4,6 +4,14 @@
 >
 > 이 문서는 서로 다른 시점의 개발 단계와 당시 상태를 보존하며 최신 active authority가 아니다. 현재 구조와 기능은 [프로젝트 README](../../README.md)와 [문서 중앙 index](../README.md)에 연결된 active architecture/database/UX 문서를 따른다. 아래의 `현재 상태` 표현은 각 날짜·Phase 당시의 기록으로 읽는다.
 
+## 현재 상태 (2026-07-21 HebrewStrong source `arc` 518건 언어 정합화)
+
+- 현재 상태: 고정 HebrewStrong 원천의 `arc` 653건 중 DB가 `히브리어`였던 518건을 repository work·seed에서 모두 `아람어`로 정합화했고, source `arc` → DB `아람어` 653건·`히브리어` 0건이다.
+- 적용 identity: `tool/data_provenance/manifests/hebrewstrong_arc_language_reconciliation.json`의 Strong·word 518건과 source commit·manifest/XML SHA를 사용한다.
+- 검증 상태: target 언어 외 값, non-target word, expression·notation provenance, meaning, relation, history와 schema projection 불변, 두 DB integrity/FK 정상, active 2차 실행 변경 0을 확인했다.
+- 보류 범위: 표기 59건, 발음 505건, x-pn 누락 12건, nested lexical form은 변경하지 않았고 기존 Android 설치 runtime DB 전파는 최종 DB 확정 뒤 통합 migration·release 검증 대상으로 유지한다.
+- UI 상태: 클라이언트가 H1325 검색, 표기 `בַּת` 상세 진입과 언어 `아람어` 표시를 확인해 수동 테스트를 통과했다. 표기·음역·발음의 원천 정합성은 이번 확인 범위가 아니다.
+
 ## 현재 상태 (2026-05-16 Phase 4-D)
 
 - Phase 4-D는 **ExplorerWorkspace preview-local interaction boundary** 검증 단계다.
