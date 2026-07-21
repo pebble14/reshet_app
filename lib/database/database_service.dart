@@ -28,6 +28,27 @@ class DatabaseService {
   /// 과거 파일명 호환(기존 사용 중인 DB)
   static const String _legacySeedFileName = 'bbwdb_20260106.db';
 
+  static const Map<String, String> _wordRelationIndexDefinitions = {
+    'idx_word_relation_signature_lookup': '''
+      CREATE INDEX idx_word_relation_signature_lookup
+      ON WORD_RELATION(
+        word_id_1,
+        word_id_2,
+        COALESCE(relation_type, ''),
+        COALESCE(direction_code, 'unknown')
+      )
+    ''',
+    'idx_word_relation_pair_type_direction_unique': '''
+      CREATE UNIQUE INDEX idx_word_relation_pair_type_direction_unique
+      ON WORD_RELATION(
+        word_id_1,
+        word_id_2,
+        COALESCE(relation_type, ''),
+        COALESCE(direction_code, 'unknown')
+      )
+    ''',
+  };
+
   static const List<
     ({String code, String label, String description, int sortOrder})
   >
@@ -634,28 +655,13 @@ class DatabaseService {
 
   /// WORD_RELATION 테이블 v2 무결성/성능 보강
   /// 1) v1 pair-only 인덱스 제거
-  /// 2) signature 조회용 인덱스 보장
+  /// 2) 정의가 다를 때만 signature 조회용 인덱스 교체
   /// 3) 충돌이 없을 때만 v2 UNIQUE 인덱스 생성
   /// 4) 조회 성능 인덱스 추가
   static Future<void> _ensureWordRelationIndexes(Database db) async {
     await db.transaction((txn) async {
       await txn.execute('DROP INDEX IF EXISTS idx_word_relation_pair');
-      await txn.execute(
-        'DROP INDEX IF EXISTS idx_word_relation_pair_type_direction_unique',
-      );
-      await txn.execute(
-        'DROP INDEX IF EXISTS idx_word_relation_signature_lookup',
-      );
-
-      await txn.execute('''
-        CREATE INDEX IF NOT EXISTS idx_word_relation_signature_lookup
-        ON WORD_RELATION(
-          word_id_1,
-          word_id_2,
-          COALESCE(relation_type, ''),
-          COALESCE(direction_code, 'unknown')
-        )
-      ''');
+      await _ensureWordRelationIndex(txn, 'idx_word_relation_signature_lookup');
 
       final conflicts = await _findWordRelationSignatureConflicts(txn);
 
@@ -663,15 +669,15 @@ class DatabaseService {
       print('[DB] WORD_RELATION v2 signature 충돌 후보: ${conflicts.length}건');
 
       if (conflicts.isEmpty) {
-        await txn.execute('''
-          CREATE UNIQUE INDEX IF NOT EXISTS idx_word_relation_pair_type_direction_unique
-          ON WORD_RELATION(
-            word_id_1,
-            word_id_2,
-            COALESCE(relation_type, ''),
-            COALESCE(direction_code, 'unknown')
-          )
-        ''');
+        await _ensureWordRelationIndex(
+          txn,
+          'idx_word_relation_pair_type_direction_unique',
+        );
+      } else {
+        await _dropWordRelationIndexIfPresent(
+          txn,
+          'idx_word_relation_pair_type_direction_unique',
+        );
       }
 
       await txn.execute('''
@@ -683,6 +689,88 @@ class DatabaseService {
         ON WORD_RELATION(word_id_2)
       ''');
     });
+  }
+
+  static Future<void> _ensureWordRelationIndex(
+    DatabaseExecutor db,
+    String indexName,
+  ) async {
+    final expectedSql = _wordRelationIndexDefinitions[indexName]!;
+    final existingSql = await _readIndexSql(db, indexName);
+    if (existingSql != null &&
+        _normalizeIndexSql(existingSql) == _normalizeIndexSql(expectedSql)) {
+      return;
+    }
+
+    if (existingSql != null) {
+      await db.execute('DROP INDEX $indexName');
+    }
+    await db.execute(expectedSql);
+  }
+
+  static Future<void> _dropWordRelationIndexIfPresent(
+    DatabaseExecutor db,
+    String indexName,
+  ) async {
+    if (await _readIndexSql(db, indexName) != null) {
+      await db.execute('DROP INDEX $indexName');
+    }
+  }
+
+  static Future<String?> _readIndexSql(
+    DatabaseExecutor db,
+    String indexName,
+  ) async {
+    final rows = await db.rawQuery(
+      '''
+      SELECT sql
+      FROM sqlite_master
+      WHERE type = 'index'
+        AND name = ?
+      ''',
+      [indexName],
+    );
+    if (rows.isEmpty) {
+      return null;
+    }
+    return rows.single['sql'] as String?;
+  }
+
+  static String _normalizeIndexSql(String sql) {
+    final normalized = StringBuffer();
+    var inStringLiteral = false;
+
+    for (var index = 0; index < sql.length; index++) {
+      final character = sql[index];
+      if (character == "'") {
+        normalized.write(character);
+        final isEscapedQuote =
+            inStringLiteral && index + 1 < sql.length && sql[index + 1] == "'";
+        if (isEscapedQuote) {
+          normalized.write(sql[index + 1]);
+          index++;
+        } else {
+          inStringLiteral = !inStringLiteral;
+        }
+        continue;
+      }
+
+      if (inStringLiteral) {
+        normalized.write(character);
+      } else if (!_isSqlWhitespace(character)) {
+        normalized.write(character.toLowerCase());
+      }
+    }
+
+    return normalized.toString();
+  }
+
+  static bool _isSqlWhitespace(String character) {
+    return character == ' ' ||
+        character == '\n' ||
+        character == '\r' ||
+        character == '\t' ||
+        character == '\f';
   }
 
   /// 변경 이력 테이블 보장

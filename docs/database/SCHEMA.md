@@ -280,6 +280,8 @@ H0001_0000
 - 실제 스키마에는 `CHECK(word_id_1 < word_id_2)` 제약이 있어 두 단어 ID는 정렬 저장을 전제로 한다.
 - `relation_type`은 방향성을 포함하지 않으며, 방향 해석은 `direction_code`가 담당한다.
 - `status_code`의 스키마 기본값은 `asserted`다.
+- runtime schema 보정은 `idx_word_relation_signature_lookup`과 `idx_word_relation_pair_type_direction_unique`의 `sqlite_master.sql`을 기대 정의와 비교한다. 인덱스가 없거나 정의가 다를 때만 생성·교체하며, 공백·대소문자 차이만 있는 동일 정의에는 DDL을 실행하지 않는다.
+- signature 충돌 조회는 계속 수행하며, `idx_word_relation_pair_type_direction_unique`는 충돌이 없을 때만 보장한다.
 
 ## direction_code
 
