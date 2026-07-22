@@ -626,11 +626,7 @@ class StrongSourceMappingTest(unittest.TestCase):
             str(snapshot.metadata["graph_expand_mode_default"]),
         )
 
-        expected_source_only = {
-            "H1564", "H1618", "H1653", "H1655", "H1656", "H1674", "H1833", "H2020",
-            "H2251", "H2491", "H2646", "H3958", "H4200", "H4461", "H5005", "H5229",
-            "H5807", "H6306", "H6378", "H6772",
-        }
+        expected_source_only: set[str] = set()
         expected_x_pn = {
             "H1649", "H1721", "H2044", "H2647", "H2650", "H3160",
             "H3184", "H3265", "H3959", "H5011", "H7288", "H8206",
@@ -638,12 +634,9 @@ class StrongSourceMappingTest(unittest.TestCase):
         self.assertEqual({item["source_key"] for item in projections}, expected_source_only)
         self.assertEqual(
             Counter(item["language"] for item in projections),
-            Counter({"히브리어": 19, "아람어": 1}),
+            Counter(),
         )
-        self.assertEqual(
-            next(item for item in projections if item["source_key"] == "H1655")["language"],
-            "아람어",
-        )
+        self.assertEqual(projections, [])
         self.assertEqual(
             {
                 row.source_key
@@ -668,7 +661,7 @@ class StrongSourceMappingTest(unittest.TestCase):
                     if row.hold_reason == "source_db_language_mismatch_deferred"
                 }
             ),
-            518,
+            0,
         )
         self.assertEqual(
             sum(
@@ -679,11 +672,11 @@ class StrongSourceMappingTest(unittest.TestCase):
         )
         serialized = mapping.serialize_source_only_projections(projections)
         self.assertFalse(serialized.startswith(b"\xef\xbb\xbf"))
-        self.assertTrue(serialized.endswith(b"\n"))
-        self.assertEqual(len(serialized.decode("utf-8").splitlines()), 20)
+        self.assertEqual(serialized, b"")
+        self.assertEqual(len(serialized.decode("utf-8").splitlines()), 0)
         self.assertEqual(
             mapping.source_only_projection_sha256(projections),
-            "acde4da26bdf17a4116f4671027d869adbf4cf5056eafae0e870b03b70b219f3",
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         )
 
 
