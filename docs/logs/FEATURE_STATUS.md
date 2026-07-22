@@ -4,12 +4,21 @@
 >
 > 이 문서는 서로 다른 시점의 개발 단계와 당시 상태를 보존하며 최신 active authority가 아니다. 현재 구조와 기능은 [프로젝트 README](../../README.md)와 [문서 중앙 index](../README.md)에 연결된 active architecture/database/UX 문서를 따른다. 아래의 `현재 상태` 표현은 각 날짜·Phase 당시의 기록으로 읽는다.
 
+## 현재 상태 (2026-07-22 HebrewStrong source `arc` 12건 표기 정합화)
+
+- 현재 상태: 고정 HebrewStrong source와 기존 결정적 mapping을 교차해 source `arc` 표기 후보를 재현했고, 과거 provenance 없는 59건 집계를 쓰기 기준으로 재사용하지 않은 채 work·seed 공통 12건을 확정·적용했다.
+- 적용 identity: `tool/data_provenance/manifests/hebrewstrong_arc_spelling_sync.json`의 Strong·word·seq 12건과 source commit·manifest/XML SHA, parser·mapping tool SHA, code-point projection SHA `0dbaa9ead5f2f4901c8cd05be181f24abdf1ec0bd06d30e03bc9800982d8c316`을 사용한다.
+- 변경 상태: work·seed 각각 `word_expression_set.spelling` 12행과 대응 `WORD_TABLE.표기1` 12행만 source code point로 정합화했다. work SHA는 `28c9a0ccdc5c951120eb95ed17465d9e161f869ea71eb951838042b489130168` → `386fa3766ea0e8163376cc759c7357d37aed87632bd7bab302e1659696d4eec0`, seed SHA는 `1a5ee7f23f812ff936137800f60346a1c84275f0a31e365c44b0f7eb32947a7b` → `1d431b7e379dfe7cb1ab40ac01dc2a7a7174146371b5248a21d0a41a63c584d8`다.
+- 검증 상태: target의 legacy-normalized 동일 슬롯 정합화, 비대상 word/expression과 그 밖의 모든 table·schema·row count 불변, source `arc` 653단어·654 expression 및 DB 언어 `아람어` 653건 유지, 두 DB integrity/FK 정상, active 2차 실행 변경 0을 확인했다.
+- 보류 범위: 기존 mapping에서 auto bijection이 확정되지 않은 source `arc` 79단어·80 expression, 발음 505건, x-pn 누락 12건, nested lexical form과 기존 Android 설치 runtime DB 전파는 이번 변경에 포함하지 않았다.
+- UI 상태: 앱 코드·read 경로·데이터 로딩 방식을 바꾸지 않은 data-only 작업이므로 클라이언트 UI 수동 테스트는 N/A다.
+
 ## 현재 상태 (2026-07-21 HebrewStrong source `arc` 518건 언어 정합화)
 
 - 현재 상태: 고정 HebrewStrong 원천의 `arc` 653건 중 DB가 `히브리어`였던 518건을 repository work·seed에서 모두 `아람어`로 정합화했고, source `arc` → DB `아람어` 653건·`히브리어` 0건이다.
 - 적용 identity: `tool/data_provenance/manifests/hebrewstrong_arc_language_reconciliation.json`의 Strong·word 518건과 source commit·manifest/XML SHA를 사용한다.
 - 검증 상태: target 언어 외 값, non-target word, expression·notation provenance, meaning, relation, history와 schema projection 불변, 두 DB integrity/FK 정상, active 2차 실행 변경 0을 확인했다.
-- 보류 범위: 표기 59건, 발음 505건, x-pn 누락 12건, nested lexical form은 변경하지 않았고 기존 Android 설치 runtime DB 전파는 최종 DB 확정 뒤 통합 migration·release 검증 대상으로 유지한다.
+- 보류 범위: 표기는 당시 정확한 cohort와 비교 provenance가 보존되지 않은 집계만 있어 변경하지 않았다. 이후 2026-07-22 고정 source와 기존 mapping으로 12건을 별도 확정·적용했으며, 발음 505건, x-pn 누락 12건, nested lexical form과 기존 Android 설치 runtime DB 전파는 계속 별도 범위다.
 - UI 상태: 클라이언트가 H1325 검색, 표기 `בַּת` 상세 진입과 언어 `아람어` 표시를 확인해 수동 테스트를 통과했다. 표기·음역·발음의 원천 정합성은 이번 확인 범위가 아니다.
 
 ## 현재 상태 (2026-05-16 Phase 4-D)

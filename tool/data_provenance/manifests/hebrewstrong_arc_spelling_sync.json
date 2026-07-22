@@ -1,0 +1,784 @@
+{
+  "allowed_changes": [
+    "word_expression_set.spelling",
+    "WORD_TABLE.표기1"
+  ],
+  "cohort": {
+    "excluded_non_auto_word_count": 79,
+    "excluded_reason": "기존 mapping에서 auto bijection이 확정되지 않음",
+    "raw_code_point_spelling_mismatch_count": 90,
+    "selected_target_count": 12,
+    "source_arc_entry_count": 653,
+    "source_arc_expression_count": 654,
+    "source_arc_expression_disposition_counts": {
+      "auto": 574,
+      "exception": 80
+    },
+    "source_arc_language_counts": {
+      "아람어": 654
+    },
+    "source_arc_word_disposition_counts": {
+      "auto": 574,
+      "exception": 79
+    }
+  },
+  "contracts": {
+    "cohort_selector": "source_language_code=arc AND primary_disposition=auto AND mapping_rule=nfc_spelling_exact_pronunciation AND expected_field_changes=[spelling]",
+    "db_word_connection": "normalized Strong ID with exactly one current word",
+    "expression_slot": "source document order equals word_expression_set.seq",
+    "form_parser_contract": "hebrew_forms_v2",
+    "historical_pairing_parser_contract": "hebrew_direct_w_v1",
+    "mapping_contract": "strong_mapping_v2",
+    "mapping_rule": "raw spelling + exact pronunciation, NFC spelling + exact pronunciation, raw spelling, NFC spelling 순서의 degree-1 pair",
+    "matching_key": "normalized Strong ID",
+    "source_entry_selection": "entry direct child w exactly one",
+    "unicode_normalization": "comparison uses NFC equivalence; stored source spelling preserves source code points without normalization"
+  },
+  "expected_initial_database_sha256": {
+    "seed": "1a5ee7f23f812ff936137800f60346a1c84275f0a31e365c44b0f7eb32947a7b",
+    "work": "28c9a0ccdc5c951120eb95ed17465d9e161f869ea71eb951838042b489130168"
+  },
+  "migration_id": "hebrewstrong_arc_spelling_sync",
+  "protected_boundaries": [
+    "target identity/language/seq/is_representative/transliteration/pronunciation/notation",
+    "cohort 밖 word_expression_set와 WORD_TABLE expression slot",
+    "WORD_TABLE 비표기 semantic field",
+    "word_meaning_set",
+    "WORD_RELATION",
+    "CHANGE_HISTORY",
+    "schema"
+  ],
+  "schema_version": 1,
+  "source": {
+    "actual_sha256": "a628f4f89f8bdaf2483fd3faf1abc8653cc6717758dfc9f24beb7571d9bdd0c4",
+    "commit": "21c9add13bc727d3a951361778e97e3ff7afd1ce",
+    "license": "CC BY 4.0",
+    "license_reference": "https://raw.githubusercontent.com/openscriptures/HebrewLexicon/21c9add13bc727d3a951361778e97e3ff7afd1ce/readme.md",
+    "mapping_tool_path": "tool/data_provenance/strong_source_mapping.py",
+    "mapping_tool_sha256": "a00cb795b2b89483aec1a59333814bd12985dcee709d1c11a9aad983228be68b",
+    "parser_tool_path": "tool/data_provenance/strong_source_diff.py",
+    "parser_tool_sha256": "277e905f929510a2ae553f8c1b36c14ef3a0eb1fd002ec625426a5f7c47c30da",
+    "path": "HebrewStrong.xml",
+    "repository": "https://github.com/openscriptures/HebrewLexicon",
+    "required_attribution": "Open Scriptures Hebrew Bible Project",
+    "sha256": "a628f4f89f8bdaf2483fd3faf1abc8653cc6717758dfc9f24beb7571d9bdd0c4",
+    "source_language_code_counts": {
+      "G": 5624,
+      "arc": 653,
+      "heb": 5393,
+      "x-pn": 2628
+    },
+    "source_manifest_path": "tool/data_provenance/manifests/strong_sources.json",
+    "source_manifest_sha256": "29ef7dc4a7281c77c28bdb1fd6337b25d1e363f200e4ff93fe84bee6f8464fc5"
+  },
+  "target_projection_contract": {
+    "bom": false,
+    "encoding": "UTF-8",
+    "ensure_ascii": false,
+    "fields": [
+      "strong_id",
+      "word_id",
+      "seq",
+      "mapping_rule",
+      "current_spelling",
+      "expected_spelling"
+    ],
+    "final_lf": true,
+    "format": "JSONL object",
+    "separators": [
+      ",",
+      ":"
+    ],
+    "sort": [
+      "strong_id ASC",
+      "seq ASC"
+    ],
+    "sort_keys": true
+  },
+  "target_projection_sha256": "0dbaa9ead5f2f4901c8cd05be181f24abdf1ec0bd06d30e03bc9800982d8c316",
+  "targets": [
+    {
+      "change_classification": "nfc_only_match",
+      "current_spelling_code_points": [
+        "U+05D1",
+        "U+05B5",
+        "U+05BC",
+        "U+05DF"
+      ],
+      "current_values": {
+        "pronunciation": "bane",
+        "pronunciation_notation": "strong_dictionary",
+        "pronunciation_notation_name": null,
+        "spelling": "בֵּן",
+        "transliteration": "벤"
+      },
+      "database_current_values": {
+        "seed": {
+          "legacy_spelling": "בֵּן",
+          "normalized_spelling": "בֵּן"
+        },
+        "work": {
+          "legacy_spelling": "בֵּן",
+          "normalized_spelling": "בֵּן"
+        }
+      },
+      "expected_field_changes": [
+        "spelling"
+      ],
+      "expected_values": {
+        "pronunciation": "bane",
+        "pronunciation_notation": "strong_dictionary",
+        "pronunciation_notation_name": null,
+        "spelling": "בֵּן",
+        "transliteration": "벤"
+      },
+      "is_representative": 1,
+      "language": "아람어",
+      "mapping_rule": "nfc_spelling_exact_pronunciation",
+      "nfc_equivalent": true,
+      "seq": 1,
+      "source_form_order": 1,
+      "source_language_code": "arc",
+      "source_spelling_code_points": [
+        "U+05D1",
+        "U+05BC",
+        "U+05B5",
+        "U+05DF"
+      ],
+      "strong_id": "H1123",
+      "word_id": "H1123_0000"
+    },
+    {
+      "change_classification": "nfc_only_match",
+      "current_spelling_code_points": [
+        "U+05D1",
+        "U+05B7",
+        "U+05BC",
+        "U+05E8"
+      ],
+      "current_values": {
+        "pronunciation": "bar",
+        "pronunciation_notation": "strong_dictionary",
+        "pronunciation_notation_name": null,
+        "spelling": "בַּר",
+        "transliteration": "바르"
+      },
+      "database_current_values": {
+        "seed": {
+          "legacy_spelling": "בַּר",
+          "normalized_spelling": "בַּר"
+        },
+        "work": {
+          "legacy_spelling": "בַּר",
+          "normalized_spelling": "בַּר"
+        }
+      },
+      "expected_field_changes": [
+        "spelling"
+      ],
+      "expected_values": {
+        "pronunciation": "bar",
+        "pronunciation_notation": "strong_dictionary",
+        "pronunciation_notation_name": null,
+        "spelling": "בַּר",
+        "transliteration": "바르"
+      },
+      "is_representative": 1,
+      "language": "아람어",
+      "mapping_rule": "nfc_spelling_exact_pronunciation",
+      "nfc_equivalent": true,
+      "seq": 1,
+      "source_form_order": 1,
+      "source_language_code": "arc",
+      "source_spelling_code_points": [
+        "U+05D1",
+        "U+05BC",
+        "U+05B7",
+        "U+05E8"
+      ],
+      "strong_id": "H1247",
+      "word_id": "H1247_0000"
+    },
+    {
+      "change_classification": "nfc_only_match",
+      "current_spelling_code_points": [
+        "U+05D9",
+        "U+05B4",
+        "U+05E9",
+        "U+05B0",
+        "U+05C2",
+        "U+05E8",
+        "U+05B8",
+        "U+05D0",
+        "U+05B5",
+        "U+05DC"
+      ],
+      "current_values": {
+        "pronunciation": "yis-raw-ale'",
+        "pronunciation_notation": "strong_dictionary",
+        "pronunciation_notation_name": null,
+        "spelling": "יִשְׂרָאֵל",
+        "transliteration": "이스라엘"
+      },
+      "database_current_values": {
+        "seed": {
+          "legacy_spelling": "יִשְׂרָאֵל",
+          "normalized_spelling": "יִשְׂרָאֵל"
+        },
+        "work": {
+          "legacy_spelling": "יִשְׂרָאֵל",
+          "normalized_spelling": "יִשְׂרָאֵל"
+        }
+      },
+      "expected_field_changes": [
+        "spelling"
+      ],
+      "expected_values": {
+        "pronunciation": "yis-raw-ale'",
+        "pronunciation_notation": "strong_dictionary",
+        "pronunciation_notation_name": null,
+        "spelling": "יִשְׂרָאֵל",
+        "transliteration": "이스라엘"
+      },
+      "is_representative": 1,
+      "language": "아람어",
+      "mapping_rule": "nfc_spelling_exact_pronunciation",
+      "nfc_equivalent": true,
+      "seq": 1,
+      "source_form_order": 1,
+      "source_language_code": "arc",
+      "source_spelling_code_points": [
+        "U+05D9",
+        "U+05B4",
+        "U+05E9",
+        "U+05C2",
+        "U+05B0",
+        "U+05E8",
+        "U+05B8",
+        "U+05D0",
+        "U+05B5",
+        "U+05DC"
+      ],
+      "strong_id": "H3479",
+      "word_id": "H3479_0000"
+    },
+    {
+      "change_classification": "nfc_only_match",
+      "current_spelling_code_points": [
+        "U+05DE",
+        "U+05B0",
+        "U+05E9",
+        "U+05B7",
+        "U+05C1",
+        "U+05D7"
+      ],
+      "current_values": {
+        "pronunciation": "mesh-akh'",
+        "pronunciation_notation": "strong_dictionary",
+        "pronunciation_notation_name": null,
+        "spelling": "מְשַׁח",
+        "transliteration": "므샤흐/메샤흐"
+      },
+      "database_current_values": {
+        "seed": {
+          "legacy_spelling": "מְשַׁח",
+          "normalized_spelling": "מְשַׁח"
+        },
+        "work": {
+          "legacy_spelling": "מְשַׁח",
+          "normalized_spelling": "מְשַׁח"
+        }
+      },
+      "expected_field_changes": [
+        "spelling"
+      ],
+      "expected_values": {
+        "pronunciation": "mesh-akh'",
+        "pronunciation_notation": "strong_dictionary",
+        "pronunciation_notation_name": null,
+        "spelling": "מְשַׁח",
+        "transliteration": "므샤흐/메샤흐"
+      },
+      "is_representative": 1,
+      "language": "아람어",
+      "mapping_rule": "nfc_spelling_exact_pronunciation",
+      "nfc_equivalent": true,
+      "seq": 1,
+      "source_form_order": 1,
+      "source_language_code": "arc",
+      "source_spelling_code_points": [
+        "U+05DE",
+        "U+05B0",
+        "U+05E9",
+        "U+05C1",
+        "U+05B7",
+        "U+05D7"
+      ],
+      "strong_id": "H4887",
+      "word_id": "H4887_0000"
+    },
+    {
+      "change_classification": "nfc_only_match",
+      "current_spelling_code_points": [
+        "U+05E4",
+        "U+05B0",
+        "U+05BC",
+        "U+05EA",
+        "U+05B7",
+        "U+05D7"
+      ],
+      "current_values": {
+        "pronunciation": "peth-akh'",
+        "pronunciation_notation": "strong_dictionary",
+        "pronunciation_notation_name": null,
+        "spelling": "פְּתַח",
+        "transliteration": "프타흐/페타흐"
+      },
+      "database_current_values": {
+        "seed": {
+          "legacy_spelling": "פְּתַח",
+          "normalized_spelling": "פְּתַח"
+        },
+        "work": {
+          "legacy_spelling": "פְּתַח",
+          "normalized_spelling": "פְּתַח"
+        }
+      },
+      "expected_field_changes": [
+        "spelling"
+      ],
+      "expected_values": {
+        "pronunciation": "peth-akh'",
+        "pronunciation_notation": "strong_dictionary",
+        "pronunciation_notation_name": null,
+        "spelling": "פְּתַח",
+        "transliteration": "프타흐/페타흐"
+      },
+      "is_representative": 1,
+      "language": "아람어",
+      "mapping_rule": "nfc_spelling_exact_pronunciation",
+      "nfc_equivalent": true,
+      "seq": 1,
+      "source_form_order": 1,
+      "source_language_code": "arc",
+      "source_spelling_code_points": [
+        "U+05E4",
+        "U+05BC",
+        "U+05B0",
+        "U+05EA",
+        "U+05B7",
+        "U+05D7"
+      ],
+      "strong_id": "H6606",
+      "word_id": "H6606_0000"
+    },
+    {
+      "change_classification": "nfc_only_match",
+      "current_spelling_code_points": [
+        "U+05E9",
+        "U+05B0",
+        "U+05C1",
+        "U+05D0",
+        "U+05B5",
+        "U+05DC"
+      ],
+      "current_values": {
+        "pronunciation": "sheh-ale'",
+        "pronunciation_notation": "strong_dictionary",
+        "pronunciation_notation_name": null,
+        "spelling": "שְׁאֵל",
+        "transliteration": "쉬엘/셰엘"
+      },
+      "database_current_values": {
+        "seed": {
+          "legacy_spelling": "שְׁאֵל",
+          "normalized_spelling": "שְׁאֵל"
+        },
+        "work": {
+          "legacy_spelling": "שְׁאֵל",
+          "normalized_spelling": "שְׁאֵל"
+        }
+      },
+      "expected_field_changes": [
+        "spelling"
+      ],
+      "expected_values": {
+        "pronunciation": "sheh-ale'",
+        "pronunciation_notation": "strong_dictionary",
+        "pronunciation_notation_name": null,
+        "spelling": "שְׁאֵל",
+        "transliteration": "쉬엘/셰엘"
+      },
+      "is_representative": 1,
+      "language": "아람어",
+      "mapping_rule": "nfc_spelling_exact_pronunciation",
+      "nfc_equivalent": true,
+      "seq": 1,
+      "source_form_order": 1,
+      "source_language_code": "arc",
+      "source_spelling_code_points": [
+        "U+05E9",
+        "U+05C1",
+        "U+05B0",
+        "U+05D0",
+        "U+05B5",
+        "U+05DC"
+      ],
+      "strong_id": "H7593",
+      "word_id": "H7593_0000"
+    },
+    {
+      "change_classification": "nfc_only_match",
+      "current_spelling_code_points": [
+        "U+05E9",
+        "U+05B0",
+        "U+05C1",
+        "U+05D0",
+        "U+05B5",
+        "U+05DC",
+        "U+05B8",
+        "U+05D0"
+      ],
+      "current_values": {
+        "pronunciation": "sheh-ay-law'",
+        "pronunciation_notation": "strong_dictionary",
+        "pronunciation_notation_name": null,
+        "spelling": "שְׁאֵלָא",
+        "transliteration": "쉬엘라/셰엘라"
+      },
+      "database_current_values": {
+        "seed": {
+          "legacy_spelling": "שְׁאֵלָא",
+          "normalized_spelling": "שְׁאֵלָא"
+        },
+        "work": {
+          "legacy_spelling": "שְׁאֵלָא",
+          "normalized_spelling": "שְׁאֵלָא"
+        }
+      },
+      "expected_field_changes": [
+        "spelling"
+      ],
+      "expected_values": {
+        "pronunciation": "sheh-ay-law'",
+        "pronunciation_notation": "strong_dictionary",
+        "pronunciation_notation_name": null,
+        "spelling": "שְׁאֵלָא",
+        "transliteration": "쉬엘라/셰엘라"
+      },
+      "is_representative": 1,
+      "language": "아람어",
+      "mapping_rule": "nfc_spelling_exact_pronunciation",
+      "nfc_equivalent": true,
+      "seq": 1,
+      "source_form_order": 1,
+      "source_language_code": "arc",
+      "source_spelling_code_points": [
+        "U+05E9",
+        "U+05C1",
+        "U+05B0",
+        "U+05D0",
+        "U+05B5",
+        "U+05DC",
+        "U+05B8",
+        "U+05D0"
+      ],
+      "strong_id": "H7595",
+      "word_id": "H7595_0000"
+    },
+    {
+      "change_classification": "nfc_only_match",
+      "current_spelling_code_points": [
+        "U+05E9",
+        "U+05B0",
+        "U+05C1",
+        "U+05D0",
+        "U+05B7",
+        "U+05DC",
+        "U+05B0",
+        "U+05EA",
+        "U+05B4",
+        "U+05BC",
+        "U+05D9",
+        "U+05D0",
+        "U+05B5",
+        "U+05DC"
+      ],
+      "current_values": {
+        "pronunciation": "sheh-al-tee-ale'",
+        "pronunciation_notation": "strong_dictionary",
+        "pronunciation_notation_name": null,
+        "spelling": "שְׁאַלְתִּיאֵל",
+        "transliteration": "쉬알티이엘/셰알티이엘"
+      },
+      "database_current_values": {
+        "seed": {
+          "legacy_spelling": "שְׁאַלְתִּיאֵל",
+          "normalized_spelling": "שְׁאַלְתִּיאֵל"
+        },
+        "work": {
+          "legacy_spelling": "שְׁאַלְתִּיאֵל",
+          "normalized_spelling": "שְׁאַלְתִּיאֵל"
+        }
+      },
+      "expected_field_changes": [
+        "spelling"
+      ],
+      "expected_values": {
+        "pronunciation": "sheh-al-tee-ale'",
+        "pronunciation_notation": "strong_dictionary",
+        "pronunciation_notation_name": null,
+        "spelling": "שְׁאַלְתִּיאֵל",
+        "transliteration": "쉬알티이엘/셰알티이엘"
+      },
+      "is_representative": 1,
+      "language": "아람어",
+      "mapping_rule": "nfc_spelling_exact_pronunciation",
+      "nfc_equivalent": true,
+      "seq": 1,
+      "source_form_order": 1,
+      "source_language_code": "arc",
+      "source_spelling_code_points": [
+        "U+05E9",
+        "U+05C1",
+        "U+05B0",
+        "U+05D0",
+        "U+05B7",
+        "U+05DC",
+        "U+05B0",
+        "U+05EA",
+        "U+05BC",
+        "U+05B4",
+        "U+05D9",
+        "U+05D0",
+        "U+05B5",
+        "U+05DC"
+      ],
+      "strong_id": "H7598",
+      "word_id": "H7598_0000"
+    },
+    {
+      "change_classification": "nfc_only_match",
+      "current_spelling_code_points": [
+        "U+05E9",
+        "U+05B0",
+        "U+05C1",
+        "U+05D1",
+        "U+05B7",
+        "U+05E7"
+      ],
+      "current_values": {
+        "pronunciation": "sheb-ak'",
+        "pronunciation_notation": "strong_dictionary",
+        "pronunciation_notation_name": null,
+        "spelling": "שְׁבַק",
+        "transliteration": "쉬바크/셰바크"
+      },
+      "database_current_values": {
+        "seed": {
+          "legacy_spelling": "שְׁבַק",
+          "normalized_spelling": "שְׁבַק"
+        },
+        "work": {
+          "legacy_spelling": "שְׁבַק",
+          "normalized_spelling": "שְׁבַק"
+        }
+      },
+      "expected_field_changes": [
+        "spelling"
+      ],
+      "expected_values": {
+        "pronunciation": "sheb-ak'",
+        "pronunciation_notation": "strong_dictionary",
+        "pronunciation_notation_name": null,
+        "spelling": "שְׁבַק",
+        "transliteration": "쉬바크/셰바크"
+      },
+      "is_representative": 1,
+      "language": "아람어",
+      "mapping_rule": "nfc_spelling_exact_pronunciation",
+      "nfc_equivalent": true,
+      "seq": 1,
+      "source_form_order": 1,
+      "source_language_code": "arc",
+      "source_spelling_code_points": [
+        "U+05E9",
+        "U+05C1",
+        "U+05B0",
+        "U+05D1",
+        "U+05B7",
+        "U+05E7"
+      ],
+      "strong_id": "H7662",
+      "word_id": "H7662_0000"
+    },
+    {
+      "change_classification": "nfc_only_match",
+      "current_spelling_code_points": [
+        "U+05E9",
+        "U+05B0",
+        "U+05C1",
+        "U+05DC",
+        "U+05B7",
+        "U+05D7"
+      ],
+      "current_values": {
+        "pronunciation": "shel-akh'",
+        "pronunciation_notation": "strong_dictionary",
+        "pronunciation_notation_name": null,
+        "spelling": "שְׁלַח",
+        "transliteration": "쉴라흐/셸라흐"
+      },
+      "database_current_values": {
+        "seed": {
+          "legacy_spelling": "שְׁלַח",
+          "normalized_spelling": "שְׁלַח"
+        },
+        "work": {
+          "legacy_spelling": "שְׁלַח",
+          "normalized_spelling": "שְׁלַח"
+        }
+      },
+      "expected_field_changes": [
+        "spelling"
+      ],
+      "expected_values": {
+        "pronunciation": "shel-akh'",
+        "pronunciation_notation": "strong_dictionary",
+        "pronunciation_notation_name": null,
+        "spelling": "שְׁלַח",
+        "transliteration": "쉴라흐/셸라흐"
+      },
+      "is_representative": 1,
+      "language": "아람어",
+      "mapping_rule": "nfc_spelling_exact_pronunciation",
+      "nfc_equivalent": true,
+      "seq": 1,
+      "source_form_order": 1,
+      "source_language_code": "arc",
+      "source_spelling_code_points": [
+        "U+05E9",
+        "U+05C1",
+        "U+05B0",
+        "U+05DC",
+        "U+05B7",
+        "U+05D7"
+      ],
+      "strong_id": "H7972",
+      "word_id": "H7972_0000"
+    },
+    {
+      "change_classification": "nfc_only_match",
+      "current_spelling_code_points": [
+        "U+05E9",
+        "U+05B0",
+        "U+05C1",
+        "U+05DE",
+        "U+05B7",
+        "U+05E2"
+      ],
+      "current_values": {
+        "pronunciation": "shem-ah'",
+        "pronunciation_notation": "strong_dictionary",
+        "pronunciation_notation_name": null,
+        "spelling": "שְׁמַע",
+        "transliteration": "쉬마/셰마"
+      },
+      "database_current_values": {
+        "seed": {
+          "legacy_spelling": "שְׁמַע",
+          "normalized_spelling": "שְׁמַע"
+        },
+        "work": {
+          "legacy_spelling": "שְׁמַע",
+          "normalized_spelling": "שְׁמַע"
+        }
+      },
+      "expected_field_changes": [
+        "spelling"
+      ],
+      "expected_values": {
+        "pronunciation": "shem-ah'",
+        "pronunciation_notation": "strong_dictionary",
+        "pronunciation_notation_name": null,
+        "spelling": "שְׁמַע",
+        "transliteration": "쉬마/셰마"
+      },
+      "is_representative": 1,
+      "language": "아람어",
+      "mapping_rule": "nfc_spelling_exact_pronunciation",
+      "nfc_equivalent": true,
+      "seq": 1,
+      "source_form_order": 1,
+      "source_language_code": "arc",
+      "source_spelling_code_points": [
+        "U+05E9",
+        "U+05C1",
+        "U+05B0",
+        "U+05DE",
+        "U+05B7",
+        "U+05E2"
+      ],
+      "strong_id": "H8086",
+      "word_id": "H8086_0000"
+    },
+    {
+      "change_classification": "nfc_only_match",
+      "current_spelling_code_points": [
+        "U+05E9",
+        "U+05B6",
+        "U+05C1",
+        "U+05DE",
+        "U+05B6",
+        "U+05E9",
+        "U+05C1"
+      ],
+      "current_values": {
+        "pronunciation": "sheh'-mesh",
+        "pronunciation_notation": "strong_dictionary",
+        "pronunciation_notation_name": null,
+        "spelling": "שֶׁמֶשׁ",
+        "transliteration": "셰메쉬"
+      },
+      "database_current_values": {
+        "seed": {
+          "legacy_spelling": "שֶׁמֶשׁ",
+          "normalized_spelling": "שֶׁמֶשׁ"
+        },
+        "work": {
+          "legacy_spelling": "שֶׁמֶשׁ",
+          "normalized_spelling": "שֶׁמֶשׁ"
+        }
+      },
+      "expected_field_changes": [
+        "spelling"
+      ],
+      "expected_values": {
+        "pronunciation": "sheh'-mesh",
+        "pronunciation_notation": "strong_dictionary",
+        "pronunciation_notation_name": null,
+        "spelling": "שֶׁמֶשׁ",
+        "transliteration": "셰메쉬"
+      },
+      "is_representative": 1,
+      "language": "아람어",
+      "mapping_rule": "nfc_spelling_exact_pronunciation",
+      "nfc_equivalent": true,
+      "seq": 1,
+      "source_form_order": 1,
+      "source_language_code": "arc",
+      "source_spelling_code_points": [
+        "U+05E9",
+        "U+05C1",
+        "U+05B6",
+        "U+05DE",
+        "U+05B6",
+        "U+05E9",
+        "U+05C1"
+      ],
+      "strong_id": "H8122",
+      "word_id": "H8122_0000"
+    }
+  ],
+  "tool_version": "1.0.0"
+}

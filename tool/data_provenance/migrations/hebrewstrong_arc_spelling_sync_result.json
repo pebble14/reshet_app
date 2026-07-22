@@ -1,0 +1,228 @@
+{
+  "schema_version": 1,
+  "migration_id": "hebrewstrong_arc_spelling_sync",
+  "tool_version": "1.0.0",
+  "executed_at_utc": "2026-07-22T14:12:44.507564+00:00",
+  "input_manifest_path": "tool/data_provenance/manifests/hebrewstrong_arc_spelling_sync.json",
+  "input_manifest_sha256": "9333431060a82a793d7d37b79747a46b90c96adf537ef5f96adce5879b7954dd",
+  "target_projection_sha256": "0dbaa9ead5f2f4901c8cd05be181f24abdf1ec0bd06d30e03bc9800982d8c316",
+  "source": {
+    "repository": "https://github.com/openscriptures/HebrewLexicon",
+    "commit": "21c9add13bc727d3a951361778e97e3ff7afd1ce",
+    "path": "HebrewStrong.xml",
+    "sha256": "a628f4f89f8bdaf2483fd3faf1abc8653cc6717758dfc9f24beb7571d9bdd0c4",
+    "actual_sha256": "a628f4f89f8bdaf2483fd3faf1abc8653cc6717758dfc9f24beb7571d9bdd0c4",
+    "license": "CC BY 4.0",
+    "license_reference": "https://raw.githubusercontent.com/openscriptures/HebrewLexicon/21c9add13bc727d3a951361778e97e3ff7afd1ce/readme.md",
+    "required_attribution": "Open Scriptures Hebrew Bible Project",
+    "source_manifest_path": "tool/data_provenance/manifests/strong_sources.json",
+    "source_manifest_sha256": "29ef7dc4a7281c77c28bdb1fd6337b25d1e363f200e4ff93fe84bee6f8464fc5",
+    "source_language_code_counts": {
+      "G": 5624,
+      "heb": 5393,
+      "arc": 653,
+      "x-pn": 2628
+    },
+    "parser_tool_path": "tool/data_provenance/strong_source_diff.py",
+    "parser_tool_sha256": "277e905f929510a2ae553f8c1b36c14ef3a0eb1fd002ec625426a5f7c47c30da",
+    "mapping_tool_path": "tool/data_provenance/strong_source_mapping.py",
+    "mapping_tool_sha256": "a00cb795b2b89483aec1a59333814bd12985dcee709d1c11a9aad983228be68b"
+  },
+  "database_sha256_before": {
+    "work": "28c9a0ccdc5c951120eb95ed17465d9e161f869ea71eb951838042b489130168",
+    "seed": "1a5ee7f23f812ff936137800f60346a1c84275f0a31e365c44b0f7eb32947a7b"
+  },
+  "database_sha256_after": {
+    "work": "386fa3766ea0e8163376cc759c7357d37aed87632bd7bab302e1659696d4eec0",
+    "seed": "1d431b7e379dfe7cb1ab40ac01dc2a7a7174146371b5248a21d0a41a63c584d8"
+  },
+  "logical_target_count": 12,
+  "physical_update_counts": {
+    "work_normalized": 12,
+    "work_legacy": 12,
+    "seed_normalized": 12,
+    "seed_legacy": 12,
+    "already_expected": 0
+  },
+  "sql": {
+    "normalized": "UPDATE word_expression_set SET spelling=?, pronunciation=?, pronunciation_notation=?, pronunciation_notation_name=? WHERE word_id=? AND seq=?",
+    "legacy": "UPDATE WORD_TABLE SET 표기1=?, 발음1=? WHERE id=?",
+    "semantic_changes": [
+      "word_expression_set.spelling",
+      "WORD_TABLE.표기1"
+    ]
+  },
+  "temporary_copy_validation": {
+    "work_change_counts": {
+      "auto_word_count": 12,
+      "auto_expression_count": 12,
+      "actual_changed_word_count": 12,
+      "actual_changed_expression_count": 12,
+      "spelling_change_count": 12,
+      "pronunciation_change_count": 0,
+      "notation_change_count": 0,
+      "notation_only_change_count": 0,
+      "nfc_equivalent_spelling_change_count": 12,
+      "legacy_spelling_slot_change_count": 12,
+      "legacy_pronunciation_slot_change_count": 0,
+      "already_expected_noop_count": 0
+    },
+    "seed_change_counts": {
+      "auto_word_count": 12,
+      "auto_expression_count": 12,
+      "actual_changed_word_count": 12,
+      "actual_changed_expression_count": 12,
+      "spelling_change_count": 12,
+      "pronunciation_change_count": 0,
+      "notation_change_count": 0,
+      "notation_only_change_count": 0,
+      "nfc_equivalent_spelling_change_count": 12,
+      "legacy_spelling_slot_change_count": 12,
+      "legacy_pronunciation_slot_change_count": 0,
+      "already_expected_noop_count": 0
+    },
+    "parity_after": {
+      "semantic_projection_equal": true,
+      "left_projection_count": 14385,
+      "right_projection_count": 14385,
+      "left_projection_sha256": "4b8e989fb5afe8a718792e89ab56db0e144579d27997def537646b031e75261e",
+      "right_projection_sha256": "4b8e989fb5afe8a718792e89ab56db0e144579d27997def537646b031e75261e"
+    },
+    "second_run": {
+      "work_change_counts": {
+        "auto_word_count": 12,
+        "auto_expression_count": 12,
+        "actual_changed_word_count": 0,
+        "actual_changed_expression_count": 0,
+        "spelling_change_count": 0,
+        "pronunciation_change_count": 0,
+        "notation_change_count": 0,
+        "notation_only_change_count": 0,
+        "nfc_equivalent_spelling_change_count": 0,
+        "legacy_spelling_slot_change_count": 0,
+        "legacy_pronunciation_slot_change_count": 0,
+        "already_expected_noop_count": 12
+      },
+      "seed_change_counts": {
+        "auto_word_count": 12,
+        "auto_expression_count": 12,
+        "actual_changed_word_count": 0,
+        "actual_changed_expression_count": 0,
+        "spelling_change_count": 0,
+        "pronunciation_change_count": 0,
+        "notation_change_count": 0,
+        "notation_only_change_count": 0,
+        "nfc_equivalent_spelling_change_count": 0,
+        "legacy_spelling_slot_change_count": 0,
+        "legacy_pronunciation_slot_change_count": 0,
+        "already_expected_noop_count": 12
+      },
+      "database_hash_unchanged": true
+    }
+  },
+  "backup": {
+    "directory": "data/backups/hebrewstrong_arc_spelling_sync/20260722T141244_507564Z",
+    "work": {
+      "original_sha256": "28c9a0ccdc5c951120eb95ed17465d9e161f869ea71eb951838042b489130168",
+      "backup_sha256": "28c9a0ccdc5c951120eb95ed17465d9e161f869ea71eb951838042b489130168",
+      "byte_identical": true,
+      "integrity_check": "ok"
+    },
+    "seed": {
+      "original_sha256": "1a5ee7f23f812ff936137800f60346a1c84275f0a31e365c44b0f7eb32947a7b",
+      "backup_sha256": "1a5ee7f23f812ff936137800f60346a1c84275f0a31e365c44b0f7eb32947a7b",
+      "byte_identical": true,
+      "integrity_check": "ok"
+    }
+  },
+  "work": {
+    "input_sha256": "28c9a0ccdc5c951120eb95ed17465d9e161f869ea71eb951838042b489130168",
+    "output_sha256": "386fa3766ea0e8163376cc759c7357d37aed87632bd7bab302e1659696d4eec0",
+    "change_counts": {
+      "auto_word_count": 12,
+      "auto_expression_count": 12,
+      "actual_changed_word_count": 12,
+      "actual_changed_expression_count": 12,
+      "spelling_change_count": 12,
+      "pronunciation_change_count": 0,
+      "notation_change_count": 0,
+      "notation_only_change_count": 0,
+      "nfc_equivalent_spelling_change_count": 12,
+      "legacy_spelling_slot_change_count": 12,
+      "legacy_pronunciation_slot_change_count": 0,
+      "already_expected_noop_count": 0
+    },
+    "protection": {
+      "word_count": 15029,
+      "expression_count": 15257,
+      "word_immutable_sha256": "c1e0af214fd8089c393cb45057df0e4232e3d8d72053e8d9e154bcd712543ce7",
+      "expression_immutable_sha256": "664d46dce48d5ecf166126e7d0c412cadc61e99d6b7874ace4259045f70fd606",
+      "non_target_expression_sha256": "c8e6c0a4b13e2835abcac0648b4c18d3f8b97ffcdefcb47107262fe2df1be55f",
+      "non_target_legacy_sha256": "2a9b3b7758dcb10c7c9908f6bef20af79744e0d1518d2dda10baa7ab4d9eb8b2",
+      "change_history_row_count": 1413,
+      "change_history_sha256": "1529b0d7311b96effbeba85224ddf3f63a455da4e4c4ca5ea17f8cf21db3d9b2",
+      "schema_sha256": "8d5836f71f26239e54abd180713e9649ab8f1105bd6f04b018e659981a71d580"
+    },
+    "health": {
+      "integrity_check": "ok",
+      "foreign_key_violation_count": 0,
+      "required_schema_present": true
+    }
+  },
+  "seed": {
+    "input_sha256": "1a5ee7f23f812ff936137800f60346a1c84275f0a31e365c44b0f7eb32947a7b",
+    "output_sha256": "1d431b7e379dfe7cb1ab40ac01dc2a7a7174146371b5248a21d0a41a63c584d8",
+    "change_counts": {
+      "auto_word_count": 12,
+      "auto_expression_count": 12,
+      "actual_changed_word_count": 12,
+      "actual_changed_expression_count": 12,
+      "spelling_change_count": 12,
+      "pronunciation_change_count": 0,
+      "notation_change_count": 0,
+      "notation_only_change_count": 0,
+      "nfc_equivalent_spelling_change_count": 12,
+      "legacy_spelling_slot_change_count": 12,
+      "legacy_pronunciation_slot_change_count": 0,
+      "already_expected_noop_count": 0
+    },
+    "protection": {
+      "word_count": 15029,
+      "expression_count": 15257,
+      "word_immutable_sha256": "45600d547c3307056f6451e7f3d8160dec426628c875263cde415c101dd93d2a",
+      "expression_immutable_sha256": "d298169bb78d3ba757607c0ee390280b54694607b9c720a914e7362ed3e8bbd9",
+      "non_target_expression_sha256": "c8e6c0a4b13e2835abcac0648b4c18d3f8b97ffcdefcb47107262fe2df1be55f",
+      "non_target_legacy_sha256": "2a9b3b7758dcb10c7c9908f6bef20af79744e0d1518d2dda10baa7ab4d9eb8b2",
+      "change_history_row_count": 1412,
+      "change_history_sha256": "653e4dcbde8b6fa7267ac0855c4c05eefb762942483d26f8b87d9f1fc4ea3cbd",
+      "schema_sha256": "8d5836f71f26239e54abd180713e9649ab8f1105bd6f04b018e659981a71d580"
+    },
+    "health": {
+      "integrity_check": "ok",
+      "foreign_key_violation_count": 0,
+      "required_schema_present": true
+    }
+  },
+  "parity_before": {
+    "semantic_projection_equal": true,
+    "left_projection_count": 14385,
+    "right_projection_count": 14385,
+    "left_projection_sha256": "c8a9fadd269f2a4b4199512709ab37b27bd23a500e3ebd4eaf82706ae91ce11f",
+    "right_projection_sha256": "c8a9fadd269f2a4b4199512709ab37b27bd23a500e3ebd4eaf82706ae91ce11f"
+  },
+  "parity_after": {
+    "semantic_projection_equal": true,
+    "left_projection_count": 14385,
+    "right_projection_count": 14385,
+    "left_projection_sha256": "4b8e989fb5afe8a718792e89ab56db0e144579d27997def537646b031e75261e",
+    "right_projection_sha256": "4b8e989fb5afe8a718792e89ab56db0e144579d27997def537646b031e75261e"
+  },
+  "second_run_contract": {
+    "status": "already_applied_noop_verified",
+    "expected_change_count": 0,
+    "backup_created": false,
+    "transaction_started": false,
+    "result_unchanged": true
+  },
+  "runtime_migration_added": false
+}

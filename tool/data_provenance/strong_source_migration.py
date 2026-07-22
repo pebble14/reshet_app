@@ -487,12 +487,15 @@ def _select_legacy(
     return rows[0]
 
 
-def _normalize_greek_strong(value: object) -> str | None:
+def _normalize_strong(value: object, expected_prefix: str) -> str | None:
     compact = re.sub(r"\s+", "", str(value or "")).upper()
-    matched = re.fullmatch(r"G?0*(\d+)", compact)
+    matched = re.fullmatch(r"([GH])?0*(\d+)", compact)
     if matched is None:
         return None
-    return f"G{int(matched.group(1)):04d}"
+    prefix = matched.group(1) or expected_prefix
+    if prefix != expected_prefix:
+        return None
+    return f"{prefix}{int(matched.group(2)):04d}"
 
 
 def _verify_word_identity(
@@ -510,7 +513,9 @@ def _verify_word_identity(
         raise MigrationError(
             f"WORD_TABLE identity row count 불일치: word_id={plan_row.word_id}, count={len(rows)}"
         )
-    actual_strong = _normalize_greek_strong(rows[0]["strong_number"])
+    actual_strong = _normalize_strong(
+        rows[0]["strong_number"], plan_row.strong_id[:1]
+    )
     if actual_strong != plan_row.strong_id:
         raise MigrationError(
             f"Strong ID precondition 실패: word_id={plan_row.word_id}, "
@@ -887,7 +892,7 @@ def verify_g0153_exact_precondition(
         )
     word = word_rows[0]
     target = target_rows[0]
-    if _normalize_greek_strong(word["strong_number"]) != G0153_STRONG_ID:
+    if _normalize_strong(word["strong_number"], "G") != G0153_STRONG_ID:
         raise MigrationError(f"G0153 Strong precondition 불일치: {word['strong_number']!r}")
     if word["language"] != "헬라어":
         raise MigrationError(f"G0153 language precondition 불일치: {word['language']!r}")
