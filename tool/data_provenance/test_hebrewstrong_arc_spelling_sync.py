@@ -157,6 +157,14 @@ class HebrewStrongArcSpellingSyncTest(unittest.TestCase):
         )
 
     def test_manifest_contract_and_preflight_are_exact(self) -> None:
+        manifest_bytes = sync.DEFAULT_MANIFEST.read_bytes()
+        result_bytes = sync.DEFAULT_RESULT.read_bytes()
+        self.assertNotIn(b"\r\n", manifest_bytes)
+        self.assertNotIn(b"\r\n", result_bytes)
+        self.assertEqual(
+            hashlib.sha256(manifest_bytes).hexdigest(),
+            "9333431060a82a793d7d37b79747a46b90c96adf537ef5f96adce5879b7954dd",
+        )
         loaded = sync.load_manifest(self.fixture_manifest)
         self.assertEqual(len(loaded.plan), sync.EXPECTED_TARGET_COUNT)
         self.assertEqual(

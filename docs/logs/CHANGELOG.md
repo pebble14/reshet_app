@@ -7,7 +7,7 @@
 - `tool/data_provenance/manifests/hebrewstrong_arc_spelling_sync.json`에 source·parser/mapping·word/seq·work/seed 기존값·source code point를 고정하고, `tool/data_provenance/hebrewstrong_arc_spelling_sync.py`가 기존 Strong migration의 exact precondition, transaction, verified backup, 양 DB 복원과 비대상 projection 보호를 재사용하도록 했다.
 - work·seed 각각 `word_expression_set.spelling` 12행과 대응 `WORD_TABLE.표기1` 12행만 변경했다. 발음·notation·언어·Strong·음역·표현 개수/순서/대표 상태의 변경은 0건이다. work SHA는 `28c9a0ccdc5c951120eb95ed17465d9e161f869ea71eb951838042b489130168` → `386fa3766ea0e8163376cc759c7357d37aed87632bd7bab302e1659696d4eec0`, seed SHA는 `1a5ee7f23f812ff936137800f60346a1c84275f0a31e365c44b0f7eb32947a7b` → `1d431b7e379dfe7cb1ab40ac01dc2a7a7174146371b5248a21d0a41a63c584d8`다.
 - verified backup 대비 target 외 word/expression과 다른 모든 table·schema·row count 불변, source `arc` DB 언어 `아람어` 653건 유지, work·seed 최종 target 및 전체 Strong projection 동치, `integrity_check=ok`, foreign key 위반 0을 확인했다. active 2차 apply는 backup·transaction 없이 `이미 적용됨 — 변경 0`이었다.
-- 결과 artifact는 `tool/data_provenance/migrations/hebrewstrong_arc_spelling_sync_result.json`, SHA-256 `f5bae3112c7e6345669c9b3982481cb8f6ef4daa2aa2bc79dbd6b958a680a9b7`다. 앱 코드·read 경로·Android runtime migration은 변경하지 않았고 UI 수동 테스트는 N/A다.
+- manifest와 결과 artifact의 LF를 고정해 Git checkout 환경과 무관한 바이트 identity를 보존했다. 결과 artifact는 `tool/data_provenance/migrations/hebrewstrong_arc_spelling_sync_result.json`, SHA-256 `b05d690489a899c2745a1519347d7cca839bb75f99c3f75f88a10e4abc6e1059`다. 앱 코드·read 경로·Android runtime migration은 변경하지 않았고 UI 수동 테스트는 N/A다.
 
 ## 2026-07-21 HebrewStrong source `arc` 518건 DB 언어 정합화
 
