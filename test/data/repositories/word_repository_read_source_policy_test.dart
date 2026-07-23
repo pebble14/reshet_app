@@ -243,7 +243,20 @@ void main() {
             is_representative INTEGER,
             spelling TEXT,
             transliteration TEXT,
-            pronunciation TEXT
+            pronunciation TEXT,
+            pronunciation_notation TEXT CHECK (
+              pronunciation_notation IS NULL OR pronunciation_notation IN (
+                'strong_dictionary',
+                'ipa_phonemic',
+                'ipa_phonetic',
+                'other',
+                'unknown'
+              )
+            ),
+            pronunciation_notation_name TEXT CHECK (
+              pronunciation_notation_name IS NULL OR
+              LENGTH(TRIM(pronunciation_notation_name)) > 0
+            )
           )
           ''');
 
