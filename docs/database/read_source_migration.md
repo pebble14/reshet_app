@@ -1,5 +1,34 @@
 # Read Source Migration
 
+## 2026-07-24 Home display 표현 read-source `NORMALIZED_ONLY` 전환
+
+### 적용 범위
+
+- `getStrongWordsMap`
+- `searchStrongExactMap`
+- `searchWordsMap`
+
+위 세 Home display context는 debug policy override가 없을 때
+`NORMALIZED_ONLY`를 요청한다. debug override 우선순위는 유지한다.
+
+### 유지 범위
+
+- 상세, Explorer, graph, 편집, save, undo 및 raw single-word context는 기존
+  `NORMALIZED_WITH_FALLBACK` 정책을 유지한다.
+- 검색 후보 산출·정렬, public contract, 공용 fallback resolver와 관측 구조,
+  `WORD_TABLE` compatibility projection은 변경하지 않았다.
+- 이번 제한적 전환을 Reshet 전체의 fallback 제거 또는
+  `word_expression_set` read-source 전환 완료로 해석하지 않는다.
+
+### 검증 결과
+
+- repository read-source 정책 테스트 21개를 통과했다.
+- Windows Desktop debug에서 Home 초기화, `H1325`, `아브` 검색을 확인했다.
+- 세 대상 context의 관측 사건은 모두
+  `policy=NORMALIZED_ONLY`, `resolved=normalized`, `final=normalized`,
+  `reason=-`였고 `legacy_fallback`과 `normalized_failure`는 0건이었다.
+- 관측 사건 수는 repository 호출 수나 검증 데이터 건수로 일반화하지 않는다.
+
 ## 2026-05-13 Phase 8-3A GraphBuilder dormant compatibility 표시
 
 ### 요약

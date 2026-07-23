@@ -309,8 +309,11 @@ class WordRepository {
       return override;
     }
 
+    if (_phase32HomeDisplayContexts.contains(context)) {
+      return ReadSourcePolicy.normalizedOnly;
+    }
+
     if (context == _detailScreenDisplayItemReadContext ||
-        _phase32HomeDisplayContexts.contains(context) ||
         _phase33SaveSingleWordContexts.contains(context) ||
         _phase33UndoSingleWordContexts.contains(context) ||
         _phaseEditSeedContexts.contains(context) ||

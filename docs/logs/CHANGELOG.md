@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2026-07-24 Home display 표현 read-source `NORMALIZED_ONLY` 전환
+
+- `getStrongWordsMap`, `searchStrongExactMap`, `searchWordsMap` 세 Home display context만 `NORMALIZED_ONLY`로 전환했다.
+- debug policy override 우선순위와 나머지 상세·Explorer·graph·편집·save·undo·raw single-word context의 `NORMALIZED_WITH_FALLBACK` 정책은 유지했다.
+- 기존 repository 정책 테스트를 보강해 세 context의 normalized 성공과 대표 Home query failure의 비-legacy-fallback 동작을 검증했으며, 지정 테스트 21개가 통과했다.
+- Windows Desktop debug에서 Home 초기화, `H1325`, `아브` 검색 결과를 확인했고 세 대상 context의 관측 사건은 모두 normalized로 끝났다. `legacy_fallback`과 `normalized_failure`는 0건이었다.
+- 검색 후보·정렬, public contract, DB schema·migration·데이터, `WORD_TABLE` compatibility projection은 변경하지 않았으며 전체 read-source 전환 완료로 선언하지 않는다.
+
 ## 2026-07-22 HebrewStrong source `arc` 12건 표기 정합화
 
 - 과거 문서의 표기 59건은 정확한 cohort·비교 provenance가 보존되지 않은 집계라 Production 쓰기 기준으로 재사용하지 않았다. 고정 `openscriptures/HebrewLexicon` commit `21c9add13bc727d3a951361778e97e3ff7afd1ce`의 `HebrewStrong.xml`과 기존 결정적 mapping을 다시 실행해 work·seed 공통 12건을 확정했다.

@@ -449,17 +449,29 @@ void main() {
         );
         _expectNormalizedSnapshot(targetWordId, 'readForGraphBatch');
         final strongItems = await repository.getStrongWordsMap();
-        _expectNormalizedSnapshot(targetWordId, 'getStrongWordsMap');
+        _expectNormalizedSnapshot(
+          targetWordId,
+          'getStrongWordsMap',
+          expectedPolicy: ReadSourcePolicy.normalizedOnly,
+        );
         final searchItems = await repository.searchWordsMap(
           canonicalTitle,
           limit: 20,
         );
-        _expectNormalizedSnapshot(targetWordId, 'searchWordsMap');
+        _expectNormalizedSnapshot(
+          targetWordId,
+          'searchWordsMap',
+          expectedPolicy: ReadSourcePolicy.normalizedOnly,
+        );
         final strongExactItems = await repository.searchStrongExactMap(
           strongNumber,
           limit: 20,
         );
-        _expectNormalizedSnapshot(targetWordId, 'searchStrongExactMap');
+        _expectNormalizedSnapshot(
+          targetWordId,
+          'searchStrongExactMap',
+          expectedPolicy: ReadSourcePolicy.normalizedOnly,
+        );
         final detailSeed = await repository.getWordEditSeedForDetailEdit(
           targetWordId,
         );
@@ -531,6 +543,46 @@ void main() {
         expect(afterSaveRow['의미1'], canonicalMeaning);
         expect(afterUndoRow!['표기1'], canonicalTitle);
         expect(afterUndoRow['의미1'], canonicalMeaning);
+      },
+    );
+
+    test(
+      'Home normalized-only query failure does not use legacy fallback',
+      () async {
+        final previousDebugPrint = debugPrint;
+        debugPrint = (String? message, {int? wrapWidth}) {};
+        addTearDown(() {
+          debugPrint = previousDebugPrint;
+        });
+
+        final repository = WordRepository();
+        final db = await DatabaseService.openDatabaseFile();
+        const wordId = 'T9000_RS_HOME_STRICT_FAILURE';
+
+        await db.insert('WORD_TABLE', {
+          'id': wordId,
+          '언어': '테스트',
+          '스트롱넘버': 'H0',
+          '표기1': 'home-strict-failure',
+        });
+        await db.execute('DROP TABLE word_expression_set');
+
+        final items = await repository.getStrongWordsMap(limit: 1);
+        final snapshot =
+            repository.debugLastWordExpressionReadSnapshots[wordId]!;
+
+        expect(items.single.wordId, wordId);
+        expect(snapshot.context, 'getStrongWordsMap');
+        expect(snapshot.requestedPolicy, ReadSourcePolicy.normalizedOnly);
+        expect(snapshot.resolvedSource, ResolvedReadSource.normalized);
+        expect(
+          snapshot.finalResultSource,
+          FinalReadResultSource.normalizedFailure,
+        );
+        expect(
+          snapshot.finalResultSource,
+          isNot(FinalReadResultSource.legacyFallback),
+        );
       },
     );
 
@@ -1233,10 +1285,14 @@ WordExpressionReadSnapshot _lastSnapshotFor(String wordId, String context) {
       );
 }
 
-void _expectNormalizedSnapshot(String wordId, String context) {
+void _expectNormalizedSnapshot(
+  String wordId,
+  String context, {
+  ReadSourcePolicy expectedPolicy = ReadSourcePolicy.normalizedWithFallback,
+}) {
   final snapshot = _lastSnapshotFor(wordId, context);
 
-  expect(snapshot.requestedPolicy, ReadSourcePolicy.normalizedWithFallback);
+  expect(snapshot.requestedPolicy, expectedPolicy);
   expect(snapshot.finalResultSource, FinalReadResultSource.normalized);
   expect(snapshot.didFallback, isFalse);
   expect(snapshot.legacyResultAvailable, isTrue);
