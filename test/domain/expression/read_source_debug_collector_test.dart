@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:reshet_app/domain/expression/expression_read_models.dart';
 import 'package:reshet_app/domain/expression/read_source_debug_collector.dart';
@@ -89,6 +90,44 @@ void main() {
         contains('reason=user_visible_display_mismatch'),
       );
     });
+
+    test('logs normalized failure without word data or exception detail', () {
+      final logs = <String>[];
+      final previousDebugPrint = debugPrint;
+      debugPrint = (String? message, {int? wrapWidth}) {
+        if (message != null) {
+          logs.add(message);
+        }
+      };
+      addTearDown(() {
+        debugPrint = previousDebugPrint;
+      });
+
+      ReadSourceDebugCollector.instance.record(
+        _buildSnapshot(
+          wordId: 'SECRET_WORD_ID',
+          context: 'getWordMapById',
+          requestedPolicy: ReadSourcePolicy.normalizedOnly,
+          finalResultSource: FinalReadResultSource.normalizedFailure,
+          resolvedSource: ResolvedReadSource.normalized,
+          fallbackReason: ReadFallbackReason.queryFailed,
+          fallbackDetail: 'SECRET_EXCEPTION_DETAIL',
+          includeNormalizedResult: false,
+        ),
+      );
+
+      expect(logs, [
+        '[ExpressionReadSource] '
+            'context=getWordMapById '
+            'policy=NORMALIZED_ONLY '
+            'resolved=normalized '
+            'final=normalized_failure '
+            'reason=query_failed',
+      ]);
+      expect(logs.single, isNot(contains('SECRET_WORD_ID')));
+      expect(logs.single, isNot(contains('SECRET_EXCEPTION_DETAIL')));
+      expect(logs.single, isNot(contains('detail=')));
+    });
   });
 }
 
@@ -96,6 +135,7 @@ WordExpressionReadSnapshot _buildSnapshot({
   required String wordId,
   required String context,
   required FinalReadResultSource finalResultSource,
+  ReadSourcePolicy requestedPolicy = ReadSourcePolicy.normalizedWithFallback,
   ResolvedReadSource? resolvedSource,
   ReadFallbackReason? fallbackReason,
   String? fallbackDetail,
@@ -132,7 +172,7 @@ WordExpressionReadSnapshot _buildSnapshot({
   return WordExpressionReadSnapshot(
     wordId: wordId,
     context: context,
-    requestedPolicy: ReadSourcePolicy.normalizedWithFallback,
+    requestedPolicy: requestedPolicy,
     resolvedSource:
         resolvedSource ??
         (fallbackReason == null
@@ -155,7 +195,7 @@ WordExpressionReadSnapshot _buildSnapshot({
         ? null
         : ReadFallbackObservation(
             wordId: wordId,
-            policy: ReadSourcePolicy.normalizedWithFallback,
+            policy: requestedPolicy,
             reason: fallbackReason,
             context: context,
             detail: fallbackDetail,

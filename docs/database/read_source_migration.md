@@ -1695,6 +1695,16 @@ recent raw event 기본 항목:
 - `normalizedSetCount`
 - `finalSetCount`
 
+### 개발 실행 로그 연결
+
+- debug 빌드에서는 collector가 기록한 event마다 `[ExpressionReadSource]` prefix의 1행 로그를 출력한다.
+- 로그 필드는 `context`, `policy`, `resolved`, `final`, `reason`으로 제한한다.
+- 실제 legacy fallback 사용 건수는 `final=legacy_fallback`만 집계하며, normalized 실패 후 fallback 없이 종료된 사건은 `final=normalized_failure`로 구분한다.
+- `wordId`, 표현 원문, fallback detail, 전체 SQL, 전체 exception 문자열과 stack trace는 출력하지 않는다.
+- release 빌드는 기존 `kDebugMode` gating으로 해당 출력을 만들지 않는다.
+- 별도 session summary나 영구 저장소를 두지 않고, 캡처한 로그를 prefix로 필터링한 뒤 호출 문맥·최종 source·reason별 횟수를 사후 집계한다.
+- 로그가 존재한다는 사실은 실제 사용 구간의 fallback 0건을 의미하지 않는다. 결과는 캡처한 실행 구간과 호출 문맥에 한정해 해석한다.
+
 ### fallback reason 분류 유지
 
 Phase 2.5에서는 fallback reason 자체를 변경하지 않는다.

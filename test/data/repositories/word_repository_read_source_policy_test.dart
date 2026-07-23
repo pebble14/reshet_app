@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:reshet_app/data/adapters/legacy_word_expression_read_adapter.dart';
@@ -56,6 +57,17 @@ void main() {
     test(
       'keeps the global default as LEGACY while raw single-word read uses NORMALIZED_WITH_FALLBACK',
       () async {
+        final logs = <String>[];
+        final previousDebugPrint = debugPrint;
+        debugPrint = (String? message, {int? wrapWidth}) {
+          if (message != null) {
+            logs.add(message);
+          }
+        };
+        addTearDown(() {
+          debugPrint = previousDebugPrint;
+        });
+
         expect(
           WordRepository.debugCurrentReadSourcePolicy,
           ReadSourcePolicy.legacy,
@@ -78,6 +90,21 @@ void main() {
         expect(snapshot.legacyResultAvailable, isTrue);
         expect(snapshot.normalizedResultAvailable, isTrue);
         expect(snapshot.readResult.sets, hasLength(2));
+
+        final observationLog = logs.singleWhere(
+          (line) => line.startsWith('[ExpressionReadSource] '),
+        );
+        expect(
+          observationLog,
+          '[ExpressionReadSource] '
+          'context=getWordMapById '
+          'policy=NORMALIZED_WITH_FALLBACK '
+          'resolved=normalized '
+          'final=normalized '
+          'reason=-',
+        );
+        expect(observationLog, isNot(contains('E0000_0010')));
+        expect(observationLog, isNot(contains('Eva')));
       },
     );
 
@@ -147,6 +174,17 @@ void main() {
     test(
       'records query-failed fallback observation when normalized table is unavailable',
       () async {
+        final logs = <String>[];
+        final previousDebugPrint = debugPrint;
+        debugPrint = (String? message, {int? wrapWidth}) {
+          if (message != null) {
+            logs.add(message);
+          }
+        };
+        addTearDown(() {
+          debugPrint = previousDebugPrint;
+        });
+
         WordRepository.debugSetReadSourcePolicyOverride(
           ReadSourcePolicy.normalizedWithFallback,
         );
@@ -172,6 +210,25 @@ void main() {
           ReadFallbackReason.queryFailed,
         );
         expect(snapshot.fallbackObservation!.detail, isNotEmpty);
+
+        final observationLog = logs.singleWhere(
+          (line) => line.startsWith('[ExpressionReadSource] '),
+        );
+        expect(
+          observationLog,
+          '[ExpressionReadSource] '
+          'context=getWordMapById '
+          'policy=NORMALIZED_WITH_FALLBACK '
+          'resolved=legacy '
+          'final=legacy_fallback '
+          'reason=query_failed',
+        );
+        expect(observationLog, isNot(contains('E0000_0001')));
+        expect(
+          observationLog,
+          isNot(contains(snapshot.fallbackObservation!.detail!)),
+        );
+        expect(observationLog, isNot(contains('word_expression_set')));
       },
     );
 

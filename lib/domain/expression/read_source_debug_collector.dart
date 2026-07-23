@@ -1,5 +1,7 @@
 import 'dart:collection';
 
+import 'package:flutter/foundation.dart' show debugPrint, kDebugMode;
+
 import 'read_source_policy.dart';
 
 class ReadSourceRawEvent {
@@ -223,6 +225,10 @@ class ReadSourceDebugCollector {
             ),
           )
           .record(event);
+    }
+
+    if (kDebugMode) {
+      debugPrint(_formatRuntimeObservationLine(event));
     }
   }
 
@@ -517,4 +523,13 @@ Map<FinalReadResultSource, int> _sortedFinalSourceCounts(
     ..sort((left, right) => left.key.code.compareTo(right.key.code));
 
   return {for (final entry in entries) entry.key: entry.value};
+}
+
+String _formatRuntimeObservationLine(ReadSourceRawEvent event) {
+  return '[ExpressionReadSource] '
+      'context=${event.context} '
+      'policy=${event.requestedPolicy.code} '
+      'resolved=${event.resolvedSource.name} '
+      'final=${event.finalResultSource.code} '
+      'reason=${event.fallbackReason?.code ?? "-"}';
 }
