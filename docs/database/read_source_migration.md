@@ -1,5 +1,37 @@
 # Read Source Migration
 
+## 2026-07-24 Explorer split-view 표현 read-source `NORMALIZED_ONLY` 전환
+
+### 적용 범위
+
+- `readForSplitViewSingleWord`
+
+Explorer large-screen 우측 상세 패널의 typed display context 하나만
+debug policy override가 없을 때 `NORMALIZED_ONLY`를 요청한다.
+debug override 우선순위는 유지한다.
+
+### 유지 범위
+
+- detail screen, Explorer raw single-word, graph, 편집, save, undo 및
+  graph create post-save context는 기존 `NORMALIZED_WITH_FALLBACK` 정책을 유지한다.
+- 단어 존재 확인과 compatibility materialization에 필요한 `WORD_TABLE` 접근,
+  공용 fallback 구현, repository public API와 반환 model은 변경하지 않았다.
+- 이번 제한적 전환을 전체 read-source 전환 완료나 fallback 제거로 해석하지 않는다.
+
+### 검증 결과
+
+- 변경 전 Windows Desktop debug에서 `H1325`의 `בַּת`와
+  `아브` 검색 결과 `H1`의 `אָב`를 Explorer 우측 패널에 표시했다.
+  대상 context의 관측 사건은 모두 `policy=NORMALIZED_WITH_FALLBACK`,
+  `resolved=normalized`, `final=normalized`, `reason=-`였고
+  `legacy_fallback`과 `normalized_failure`는 0건이었다.
+- repository read-source 정책 테스트 21개를 통과했다.
+- 변경 후 같은 두 단어를 다시 확인했고 대상 context의 관측 사건은 모두
+  `policy=NORMALIZED_ONLY`, `resolved=normalized`, `final=normalized`,
+  `reason=-`였다. `legacy_fallback`과 `normalized_failure`는 0건이었다.
+- 클라이언트는 표기, 음역, 발음, 의미, 언어, Strong 번호와
+  우측 패널의 오류 없는 표시가 유지됨을 확인했다.
+
 ## 2026-07-24 Home display 표현 read-source `NORMALIZED_ONLY` 전환
 
 ### 적용 범위

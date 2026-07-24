@@ -430,7 +430,11 @@ void main() {
         );
         final splitViewDisplay = await repository
             .getWordDetailLikeDisplayItemByIdForSplitView(targetWordId);
-        _expectNormalizedSnapshot(targetWordId, 'readForSplitViewSingleWord');
+        _expectNormalizedSnapshot(
+          targetWordId,
+          'readForSplitViewSingleWord',
+          expectedPolicy: ReadSourcePolicy.normalizedOnly,
+        );
         final explorerRow = await repository
             .getWordMapByIdForExplorerSingleWord(targetWordId);
         _expectNormalizedSnapshot(targetWordId, 'readForExplorerSingleWord');
@@ -613,7 +617,7 @@ void main() {
 
   group('WordRepository split view single-word path', () {
     test(
-      'split view and explorer single-word reads use NORMALIZED_WITH_FALLBACK while contexts stay separated',
+      'split view uses NORMALIZED_ONLY while explorer single-word read keeps NORMALIZED_WITH_FALLBACK',
       () async {
         final repository = WordRepository();
 
@@ -643,7 +647,7 @@ void main() {
         expect(explorerRow, isNotNull);
         expect(
           splitViewSnapshot.requestedPolicy,
-          ReadSourcePolicy.normalizedWithFallback,
+          ReadSourcePolicy.normalizedOnly,
         );
         expect(
           splitViewSnapshot.finalResultSource,
@@ -713,10 +717,7 @@ void main() {
             );
 
         expect(splitViewRow, isNotNull);
-        expect(
-          snapshot.requestedPolicy,
-          ReadSourcePolicy.normalizedWithFallback,
-        );
+        expect(snapshot.requestedPolicy, ReadSourcePolicy.normalizedOnly);
         expect(snapshot.finalResultSource, FinalReadResultSource.normalized);
         expect(snapshot.didFallback, isFalse);
         expect(snapshot.legacyResultAvailable, isTrue);

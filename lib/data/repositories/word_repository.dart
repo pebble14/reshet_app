@@ -309,7 +309,8 @@ class WordRepository {
       return override;
     }
 
-    if (_phase32HomeDisplayContexts.contains(context)) {
+    if (_phase32HomeDisplayContexts.contains(context) ||
+        _phase4SplitViewSingleWordContexts.contains(context)) {
       return ReadSourcePolicy.normalizedOnly;
     }
 
@@ -317,7 +318,6 @@ class WordRepository {
         _phase33SaveSingleWordContexts.contains(context) ||
         _phase33UndoSingleWordContexts.contains(context) ||
         _phaseEditSeedContexts.contains(context) ||
-        _phase4SplitViewSingleWordContexts.contains(context) ||
         _phase4GraphCenterSingleWordContexts.contains(context) ||
         _phase4GraphBatchContexts.contains(context) ||
         _phaseGraphCreatePostSavePayloadContexts.contains(context) ||

@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2026-07-24 Explorer split-view 표현 read-source `NORMALIZED_ONLY` 전환
+
+- Explorer large-screen 우측 상세 패널의 `readForSplitViewSingleWord` context 하나만 `NORMALIZED_ONLY`로 전환했다.
+- debug policy override 우선순위와 다른 detail·Explorer raw·graph·편집·save·undo·graph create post-save context의 `NORMALIZED_WITH_FALLBACK` 정책은 유지했다.
+- 공용 fallback 구현, repository public API와 반환 model, 검색 정책, DB schema·migration·데이터 및 `WORD_TABLE` compatibility materialization은 변경하지 않았다.
+- 변경 전·후 Windows Desktop debug에서 `H1325 / בַּת`와 `H1 / אָב`의 Explorer 우측 패널 표시를 확인했다. 변경 후 대상 context는 `NORMALIZED_ONLY`에서 normalized로 끝났고 `legacy_fallback`과 `normalized_failure`는 0건이었다.
+- repository read-source 정책 테스트 21개가 통과했고, 클라이언트는 표기·음역·발음·의미·언어·Strong 번호와 오류 없는 표시가 유지됨을 확인했다. 전체 read-source 전환 완료나 fallback 제거로 선언하지 않는다.
+
 ## 2026-07-24 Home display 표현 read-source `NORMALIZED_ONLY` 전환
 
 - `getStrongWordsMap`, `searchStrongExactMap`, `searchWordsMap` 세 Home display context만 `NORMALIZED_ONLY`로 전환했다.
