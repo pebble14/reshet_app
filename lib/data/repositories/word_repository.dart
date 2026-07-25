@@ -309,13 +309,13 @@ class WordRepository {
       return override;
     }
 
-    if (_phase32HomeDisplayContexts.contains(context) ||
+    if (context == _detailScreenDisplayItemReadContext ||
+        _phase32HomeDisplayContexts.contains(context) ||
         _phase4SplitViewSingleWordContexts.contains(context)) {
       return ReadSourcePolicy.normalizedOnly;
     }
 
-    if (context == _detailScreenDisplayItemReadContext ||
-        _phase33SaveSingleWordContexts.contains(context) ||
+    if (_phase33SaveSingleWordContexts.contains(context) ||
         _phase33UndoSingleWordContexts.contains(context) ||
         _phaseEditSeedContexts.contains(context) ||
         _phase4GraphCenterSingleWordContexts.contains(context) ||

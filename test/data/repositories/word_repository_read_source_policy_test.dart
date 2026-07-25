@@ -427,6 +427,7 @@ void main() {
         _expectNormalizedSnapshot(
           targetWordId,
           'getWordDetailLikeDisplayItemByIdForDetailScreen',
+          expectedPolicy: ReadSourcePolicy.normalizedOnly,
         );
         final splitViewDisplay = await repository
             .getWordDetailLikeDisplayItemByIdForSplitView(targetWordId);
@@ -1068,7 +1069,7 @@ void main() {
 
   group('WordRepository detail screen display item path', () {
     test(
-      'keeps the global default as LEGACY while detail screen display item read uses NORMALIZED_WITH_FALLBACK',
+      'keeps the global default as LEGACY while detail screen display item read uses NORMALIZED_ONLY',
       () async {
         final repository = WordRepository();
 
@@ -1093,10 +1094,7 @@ void main() {
           rawSingleWordSnapshot!.requestedPolicy,
           ReadSourcePolicy.normalizedWithFallback,
         );
-        expect(
-          detailSnapshot.requestedPolicy,
-          ReadSourcePolicy.normalizedWithFallback,
-        );
+        expect(detailSnapshot.requestedPolicy, ReadSourcePolicy.normalizedOnly);
         expect(
           detailSnapshot.finalResultSource,
           FinalReadResultSource.normalized,
@@ -1138,10 +1136,7 @@ void main() {
             );
 
         expect(detailRow, isNotNull);
-        expect(
-          snapshot.requestedPolicy,
-          ReadSourcePolicy.normalizedWithFallback,
-        );
+        expect(snapshot.requestedPolicy, ReadSourcePolicy.normalizedOnly);
         expect(snapshot.finalResultSource, FinalReadResultSource.normalized);
         expect(snapshot.didFallback, isFalse);
         expect(snapshot.legacyResultAvailable, isTrue);
@@ -1201,10 +1196,7 @@ void main() {
             );
 
         expect(detailRow, isNotNull);
-        expect(
-          snapshot.requestedPolicy,
-          ReadSourcePolicy.normalizedWithFallback,
-        );
+        expect(snapshot.requestedPolicy, ReadSourcePolicy.normalizedOnly);
         expect(snapshot.finalResultSource, FinalReadResultSource.normalized);
         expect(snapshot.didFallback, isFalse);
         expect(snapshot.legacyResultAvailable, isTrue);

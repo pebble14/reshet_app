@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2026-07-25 상세 표시 표현 read-source `NORMALIZED_ONLY` 전환
+
+- `getWordDetailLikeDisplayItemByIdForDetailScreen` context 하나만 `NORMALIZED_ONLY`로 전환했다.
+- 직접 production 호출부는 Home 상세 진입, `WordDetailScreen` 재조회·상세 검색, `WordGraphScreen` 상세 검색·선택 단어 미리보기의 세 owner다. 기존 typed `WordDetailLikeDisplayItem` contract와 debug override 우선순위는 유지했다.
+- Home 표시 context 3개와 split-view의 기존 `NORMALIZED_ONLY`, Explorer raw·graph 전용·edit·save·undo·graph create post-save context의 기존 정책은 변경하지 않았다.
+- 공용 fallback, repository public API와 반환 model, DB schema·migration·데이터 및 `WORD_TABLE` compatibility materialization은 변경하지 않았으며 전체 read-source 전환 완료나 fallback 제거로 선언하지 않는다.
+- 변경 전 `H1325 / בַּת`와 `H1 / אָב`의 대상 context는 `NORMALIZED_WITH_FALLBACK`에서 normalized로 끝났고, 변경 후 같은 production surface에서 필터링한 대상 context 9건은 모두 `NORMALIZED_ONLY`에서 normalized로 끝났다. 두 관측 구간 모두 `legacy_fallback`과 `normalized_failure`는 0건이었다.
+- repository read-source 정책 테스트 21개가 통과했고, 클라이언트는 표기·음역·발음·의미·언어·Strong 번호와 오류 없는 상세·미리보기 표시가 유지됨을 확인했다.
+
 ## 2026-07-24 Explorer split-view 표현 read-source `NORMALIZED_ONLY` 전환
 
 - Explorer large-screen 우측 상세 패널의 `readForSplitViewSingleWord` context 하나만 `NORMALIZED_ONLY`로 전환했다.

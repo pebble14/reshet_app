@@ -1,5 +1,42 @@
 # Read Source Migration
 
+## 2026-07-25 상세 표시 표현 read-source `NORMALIZED_ONLY` 전환
+
+### 적용 범위
+
+- `getWordDetailLikeDisplayItemByIdForDetailScreen`
+
+위 context 하나만 debug policy override가 없을 때 `NORMALIZED_ONLY`를 요청한다.
+직접 production 호출부는 Home의 상세 진입, `WordDetailScreen`의 재조회와 상세 검색,
+`WordGraphScreen`의 상세 검색과 선택 단어 미리보기이며, 세 production owner가
+같은 typed `WordDetailLikeDisplayItem` contract를 사용한다.
+debug override 우선순위는 유지한다.
+
+### 유지 범위
+
+- Home 표시 context 3개와 `readForSplitViewSingleWord`의 기존
+  `NORMALIZED_ONLY` 정책은 유지한다.
+- Explorer raw, graph 전용 center·batch·single-word, edit seed,
+  save·undo reread와 graph create post-save context는 기존 정책을 유지한다.
+- 공용 fallback 구현, 단어 존재 확인과 compatibility materialization에 필요한
+  `WORD_TABLE` 접근, repository public API와 반환 model은 변경하지 않았다.
+- DB schema·migration·데이터 변경은 없으며, 이번 제한적 전환을 전체
+  read-source 전환 완료나 fallback 제거로 해석하지 않는다.
+
+### 검증 결과
+
+- 변경 전 Windows Desktop debug에서 `H1325 / בַּת`와 `H1 / אָב`를
+  Home 상세, 상세 화면 재조회와 Graph 선택 미리보기 흐름으로 확인했다.
+  대상 context는 `policy=NORMALIZED_WITH_FALLBACK`, `resolved=normalized`,
+  `final=normalized`, `reason=-`였고 `legacy_fallback`과
+  `normalized_failure`는 0건이었다.
+- repository read-source 정책 테스트 21개를 통과했다.
+- 변경 후 같은 production surface와 단어 조합에서 필터링한 대상 context 9건은
+  모두 `policy=NORMALIZED_ONLY`, `resolved=normalized`, `final=normalized`,
+  `reason=-`였고 `legacy_fallback`과 `normalized_failure`는 0건이었다.
+- 클라이언트는 표기, 음역, 발음, 의미, 언어, Strong 번호와
+  오류 없는 상세·미리보기 표시가 유지됨을 확인했다.
+
 ## 2026-07-24 Explorer split-view 표현 read-source `NORMALIZED_ONLY` 전환
 
 ### 적용 범위
