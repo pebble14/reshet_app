@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2026-07-25 그래프 본체 표현 read-source `NORMALIZED_ONLY` 전환
+
+- 활성 `WordGraphScreen._loadConnectedWords()`에서 중심 표현을 읽는 `readForGraphCenterSingleWord`와 연결 단어 표현을 읽는 `readForGraphBatch`를 최소 응집 단위로 함께 `NORMALIZED_ONLY`로 전환했다.
+- Home large-screen에서는 검색 결과 행 선택으로 Explorer의 그래프·상세가 함께 갱신되며, 별도 standalone 그래프 아이콘은 검증 필수 경로가 아니다. dormant `readForGraphSingleWord`와 graph create·edit·save·undo 등 다른 context는 변경하지 않았다.
+- 변경 전 `G0011 / Ἀβραάμ` 그래프의 center 1건·non-empty batch 8건은 모두 `NORMALIZED_WITH_FALLBACK`에서 normalized로 끝났다. 변경 후 fresh process의 필터 구간 center 4건·batch 13건은 모두 `NORMALIZED_ONLY`에서 normalized로 끝났고 두 구간 모두 fallback과 normalized failure는 0건이었다.
+- repository read-source 정책 테스트 21개가 통과했고, 클라이언트는 변경 전·후 중심·연결 단어의 표기·음역·발음·의미·언어·Strong 번호와 노드 선택·미리보기에 오류·누락이 없음을 확인했다.
+- 공용 resolver와 fallback, public API·반환 contract, DB schema·migration·데이터 및 `WORD_TABLE` compatibility 경계는 변경하지 않았으며 전체 fallback 제거로 선언하지 않는다.
+
 ## 2026-07-25 상세 표시 표현 read-source `NORMALIZED_ONLY` 전환
 
 - `getWordDetailLikeDisplayItemByIdForDetailScreen` context 하나만 `NORMALIZED_ONLY`로 전환했다.

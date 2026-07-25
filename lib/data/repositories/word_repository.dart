@@ -311,15 +311,15 @@ class WordRepository {
 
     if (context == _detailScreenDisplayItemReadContext ||
         _phase32HomeDisplayContexts.contains(context) ||
-        _phase4SplitViewSingleWordContexts.contains(context)) {
+        _phase4SplitViewSingleWordContexts.contains(context) ||
+        _phase4GraphCenterSingleWordContexts.contains(context) ||
+        _phase4GraphBatchContexts.contains(context)) {
       return ReadSourcePolicy.normalizedOnly;
     }
 
     if (_phase33SaveSingleWordContexts.contains(context) ||
         _phase33UndoSingleWordContexts.contains(context) ||
         _phaseEditSeedContexts.contains(context) ||
-        _phase4GraphCenterSingleWordContexts.contains(context) ||
-        _phase4GraphBatchContexts.contains(context) ||
         _phaseGraphCreatePostSavePayloadContexts.contains(context) ||
         _phase5GraphSingleWordContexts.contains(context) ||
         _phase8ARawSingleWordContexts.contains(context)) {

@@ -444,7 +444,11 @@ void main() {
         _expectNormalizedSnapshot(targetWordId, 'readForGraphSingleWord');
         final graphCenterRow = await repository
             .getWordMapByIdForGraphCenterSingleWord(targetWordId);
-        _expectNormalizedSnapshot(targetWordId, 'readForGraphCenterSingleWord');
+        _expectNormalizedSnapshot(
+          targetWordId,
+          'readForGraphCenterSingleWord',
+          expectedPolicy: ReadSourcePolicy.normalizedOnly,
+        );
         final graphCenterDisplay = await repository
             .getGraphCenterWordDisplayItemByIdForGraphCenterSingleWord(
               targetWordId,
@@ -452,7 +456,11 @@ void main() {
         final graphData = await repository.getVisibleGraphDataForGraph(
           centerWordId,
         );
-        _expectNormalizedSnapshot(targetWordId, 'readForGraphBatch');
+        _expectNormalizedSnapshot(
+          targetWordId,
+          'readForGraphBatch',
+          expectedPolicy: ReadSourcePolicy.normalizedOnly,
+        );
         final strongItems = await repository.getStrongWordsMap();
         _expectNormalizedSnapshot(
           targetWordId,
@@ -797,10 +805,7 @@ void main() {
         expect(genericRows, hasLength(1));
         expect(genericRows.single['id'], childWordId);
 
-        expect(
-          graphSnapshot.requestedPolicy,
-          ReadSourcePolicy.normalizedWithFallback,
-        );
+        expect(graphSnapshot.requestedPolicy, ReadSourcePolicy.normalizedOnly);
         expect(
           graphSnapshot.finalResultSource,
           FinalReadResultSource.normalized,
@@ -883,10 +888,7 @@ void main() {
         expect(graphData.connectedWords, isA<List<GraphVisibleWord>>());
         expect(graphData.connectedWords.single.wordId, childWordId);
         expect(graphData.connectedWords.single.fallbackSpelling, 'alpha');
-        expect(
-          snapshot.requestedPolicy,
-          ReadSourcePolicy.normalizedWithFallback,
-        );
+        expect(snapshot.requestedPolicy, ReadSourcePolicy.normalizedOnly);
         expect(snapshot.finalResultSource, FinalReadResultSource.normalized);
         expect(snapshot.didFallback, isFalse);
         expect(snapshot.legacyResultAvailable, isTrue);

@@ -1,5 +1,47 @@
 # Read Source Migration
 
+## 2026-07-25 그래프 본체 표현 read-source `NORMALIZED_ONLY` 전환
+
+### 적용 범위
+
+- `readForGraphCenterSingleWord`
+- `readForGraphBatch`
+
+위 두 context는 같은 활성 `WordGraphScreen._loadConnectedWords()`에서 각각 중심
+단어와 연결 단어 표현을 구성하므로 최소 응집 단위로 함께 전환했다. Home
+large-screen에서는 검색 결과 행 선택으로 Explorer의 그래프와 상세가 함께
+갱신되며, 별도 standalone 그래프 아이콘 진입은 이 검증의 필수 경로가 아니다.
+두 context는 debug policy override가 없을 때 `NORMALIZED_ONLY`를 요청한다.
+
+### 유지 범위
+
+- `readForGraphSingleWord`는 deprecated
+  `GraphBuilder.buildFromRepository()`에만 남은 dormant compatibility 경계이므로
+  기존 `NORMALIZED_WITH_FALLBACK` 정책을 유지한다.
+- graph create edit seed와 post-save payload, edit·save·undo, Explorer raw 등
+  쓰기 연계 또는 별도 read context는 변경하지 않았다.
+- 공용 resolver와 fallback 구현, repository public API와 반환 contract,
+  DB schema·migration·데이터 및 `WORD_TABLE` compatibility materialization은
+  변경하지 않았다.
+- 이번 제한적 전환을 graph 전체 fallback 제거 또는 전체 read-source 전환
+  완료로 해석하지 않는다.
+
+### 검증 결과
+
+- 읽기 전용 SQL로 `G0011 / Ἀβραάμ` 중심과 `H0085 / אַבְרָהָם` 연결을
+  확인해 변경 전·후 동일 대상으로 사용했다.
+- 변경 전 Windows Desktop debug에서 center 1건과 non-empty batch 8건이 모두
+  `policy=NORMALIZED_WITH_FALLBACK`, `resolved=normalized`,
+  `final=normalized`, `reason=-`였고 fallback과 normalized failure는 0건이었다.
+- repository read-source 정책 테스트 21개를 통과했다.
+- 변경 후 fresh process의 필터링된 `H0085 → G0011` 전환 구간에서 center 4건과
+  batch 13건이 모두 `policy=NORMALIZED_ONLY`, `resolved=normalized`,
+  `final=normalized`, `reason=-`였다. `G0011`의 non-empty batch를 포함하며
+  fallback과 normalized failure는 0건이었다. 이 관측 건수는 일반 호출 수로
+  일반화하지 않는다.
+- 클라이언트는 변경 전·후 모두 중심·연결 단어의 표기, 음역, 발음, 의미,
+  언어, Strong 번호와 노드 선택·미리보기에서 오류·누락이 없음을 확인했다.
+
 ## 2026-07-25 상세 표시 표현 read-source `NORMALIZED_ONLY` 전환
 
 ### 적용 범위
