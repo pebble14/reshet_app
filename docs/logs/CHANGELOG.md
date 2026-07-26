@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2026-07-26 undo 후 미사용 단건 reread 경계 정리
+
+- undo 후 반환값이 소비되지 않던 `readAfterUndoSingleWord` context와 `WordRepository.getWordMapByIdForReadAfterUndoSingleWord` API를 제거했다.
+- 해당 reread만 지원하던 `UndoLastChangeResult.primaryWordId` 결과 계약과 후보 산정·존재 확인 query 및 전용 테스트 계약을 함께 제거하고 `didUndo` 계약은 유지했다.
+- undo 데이터 복원, 그래프 캐시 정리, Home 목록 갱신과 기존 성공·실패 microcopy는 유지했다.
+- 명시적 `NORMALIZED_WITH_FALLBACK` context 수는 6개에서 5개로 줄었으며, 이번 Cleanup은 `NORMALIZED_ONLY` 전환이 아니다.
+- DB schema·migration·데이터, UI, write, 공용 resolver·fallback과 dependency는 변경하지 않았다.
+
 ## 2026-07-26 그래프 생성 후 payload 표현 read-source `NORMALIZED_ONLY` 전환
 
 - `readForGraphCreatePostSavePayload` context 하나만 `NORMALIZED_ONLY`로 전환해 그래프 신규 단어 생성 후 payload의 대표 표기가 normalized expression authority를 사용하도록 했다.

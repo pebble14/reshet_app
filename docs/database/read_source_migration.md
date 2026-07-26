@@ -1,5 +1,30 @@
 # Read Source Migration
 
+## 2026-07-26 undo 후 미사용 단건 reread 경계 정리
+
+### 현재 상태
+
+- undo 후 반환값이 소비되지 않던 `readAfterUndoSingleWord` context와
+  `WordRepository.getWordMapByIdForReadAfterUndoSingleWord` API를 제거했다.
+- 해당 reread만 지원하던 `UndoLastChangeResult.primaryWordId` 결과 계약과 후보
+  산정·존재 확인 query도 함께 제거했다. `didUndo` 결과 계약은 유지한다.
+- 명시적 `NORMALIZED_WITH_FALLBACK` context 수는 정책 코드 기준 6개에서 5개로
+  줄었다. 이번 Cleanup은 `NORMALIZED_ONLY` 전환이 아니라 사용되지 않는 실행
+  경계를 제거한 작업이다.
+
+### 유지 범위
+
+- undo 데이터 복원, 그래프 캐시 정리와 Home 목록 갱신은 유지한다.
+- DB schema·migration·seed/work DB·데이터, UI와 microcopy, repository write,
+  공용 read-source resolver·fallback은 변경하지 않았다.
+
+### 역사 기록 해석
+
+- 아래 Phase 3.3 undo 기록은 당시 `primaryWordId` 기반 단건 reread 경계가
+  사용됐던 과거 상태로 유지한다.
+- 최신 현재 상태는 해당 반환값 미사용 reread와 전용 지원 계약이 제거된 것으로
+  해석한다.
+
 ## 2026-07-26 그래프 생성 후 payload 표현 read-source `NORMALIZED_ONLY` 전환
 
 ### 현재 상태

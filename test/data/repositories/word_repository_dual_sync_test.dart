@@ -304,7 +304,6 @@ void main() {
 
         final undone = await repository.undoLastChange();
         expect(undone.didUndo, isTrue);
-        expect(undone.primaryWordId, wordId);
         expect(await _loadActualSemanticRows(wordId), [
           for (var index = 1; index <= 7; index++)
             (
@@ -464,16 +463,9 @@ void main() {
 
         final undone = await repository.undoLastChange();
         expect(undone.didUndo, isTrue);
-        expect(undone.primaryWordId, wordId);
 
         await _expectSemanticSync(wordId);
         await _expectMeaningSync(wordId);
-
-        final rereadAfterUndo = await repository
-            .getWordMapByIdForReadAfterUndoSingleWord(wordId);
-        expect(rereadAfterUndo, isNotNull);
-        expect(rereadAfterUndo!['표기1'], 'gamma');
-        expect(rereadAfterUndo['표기2'], 'gimel');
       },
     );
 
@@ -499,7 +491,6 @@ void main() {
 
       final undone = await repository.undoLastChange();
       expect(undone.didUndo, isTrue);
-      expect(undone.primaryWordId, isNull);
 
       final db = await DatabaseService.openDatabaseFile();
       final word = await repository.getWordMapById(wordId);
@@ -569,7 +560,6 @@ void main() {
 
       final undone = await repository.undoLastChange();
       expect(undone.didUndo, isTrue);
-      expect(undone.primaryWordId, wordId);
 
       await _expectSemanticSync(wordId);
       await _expectMeaningSync(wordId);
@@ -655,7 +645,6 @@ void main() {
 
         final undone = await repository.undoLastChange();
         expect(undone.didUndo, isTrue);
-        expect(undone.primaryWordId, wordId);
 
         expect(await _loadActualMeaningRows(wordId), [
           for (var index = 1; index <= 8; index++)
@@ -747,7 +736,6 @@ void main() {
 
         final undone = await repository.undoLastChange();
         expect(undone.didUndo, isTrue);
-        expect(undone.primaryWordId, wordId);
 
         final restoredWordRow = await _loadWordTableRow(wordId);
         final restoredNormalizedRows = await _loadActualSemanticRows(wordId);
@@ -841,7 +829,6 @@ void main() {
 
         final undone = await repository.undoLastChange();
         expect(undone.didUndo, isTrue);
-        expect(undone.primaryWordId, wordId);
 
         await _expectSemanticSync(wordId);
 

@@ -222,42 +222,6 @@ void main() {
         expect(graphCreateSeed.hiddenSlotIssues, isEmpty);
       },
     );
-
-    test('keeps undo reread context unchanged', () async {
-      final repository = WordRepository();
-      final db = await DatabaseService.openDatabaseFile();
-      const wordId = 'T9000_EDIT_SEED_REREAD_CONTEXTS';
-
-      await _insertWord(
-        db,
-        id: wordId,
-        legacySpelling: 'reread-context-title',
-        legacyTransliteration: 'reread-context-translit',
-        legacyPronunciation: 'reread-context-pron',
-        meaning1: 'reread context meaning',
-        expressionRows: const [
-          {
-            'seq': 1,
-            'is_representative': 1,
-            'spelling': 'reread-context-title',
-            'transliteration': 'reread-context-translit',
-            'pronunciation': 'reread-context-pron',
-          },
-        ],
-      );
-
-      final undoRow = await repository.getWordMapByIdForReadAfterUndoSingleWord(
-        wordId,
-      );
-      final undoSnapshot = _lastSnapshotFor(wordId, 'readAfterUndoSingleWord');
-
-      expect(undoRow, isNotNull);
-      expect(
-        undoSnapshot.requestedPolicy,
-        ReadSourcePolicy.normalizedWithFallback,
-      );
-      expect(undoSnapshot.context, 'readAfterUndoSingleWord');
-    });
   });
 }
 

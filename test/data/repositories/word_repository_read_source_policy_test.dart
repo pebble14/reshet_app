@@ -500,9 +500,6 @@ void main() {
           'readForGraphCreatePostSavePayload',
           expectedPolicy: ReadSourcePolicy.normalizedOnly,
         );
-        final afterUndoRow = await repository
-            .getWordMapByIdForReadAfterUndoSingleWord(targetWordId);
-        _expectNormalizedSnapshot(targetWordId, 'readAfterUndoSingleWord');
 
         final graphChild = graphData.connectedWords.singleWhere(
           (word) => word.wordId == targetWordId,
@@ -545,8 +542,6 @@ void main() {
           canonicalTitle,
         );
         expect(graphPostSavePayload!.representativeSpelling, canonicalTitle);
-        expect(afterUndoRow!['표기1'], canonicalTitle);
-        expect(afterUndoRow['의미1'], canonicalMeaning);
       },
     );
 

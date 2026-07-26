@@ -768,12 +768,6 @@ class _HomeScreenState extends State<HomeScreen> {
       final undoResult = await repository.undoLastChange();
       if (undoResult.didUndo) {
         WordGraphDataCache.clear();
-        final primaryWordId = undoResult.primaryWordId;
-        if (primaryWordId != null) {
-          await repository.getWordMapByIdForReadAfterUndoSingleWord(
-            primaryWordId,
-          );
-        }
       }
 
       if (!mounted) return;
