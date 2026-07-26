@@ -142,10 +142,40 @@ void main() {
         expect(detailSeed.hiddenSlotIssues, rawSeed.hiddenSlotIssues);
         expect(detailExpressionSet.spelling, 'edit-seed-title');
         expect(explorerSeed!.wordId, rawSeed.wordId);
+        expect(explorerSeed.language, rawSeed.language);
+        expect(explorerSeed.strongNumber, rawSeed.strongNumber);
+        expect(explorerSeed.note, rawSeed.note);
+        expect(explorerSeed.meanings, rawSeed.meanings);
+        expect(explorerSeed.expressionReadResult.sets, hasLength(1));
+        final explorerExpressionSet =
+            explorerSeed.expressionReadResult.sets.single;
+        expect(explorerExpressionSet.spelling, rawExpressionSet.spelling);
         expect(
-          explorerSeed.expressionReadResult.sets.single.spelling,
-          detailExpressionSet.spelling,
+          explorerExpressionSet.transliteration,
+          rawExpressionSet.transliteration,
         );
+        expect(
+          explorerExpressionSet.pronunciation,
+          rawExpressionSet.pronunciation,
+        );
+        expect(
+          explorerExpressionSet.pronunciationNotation,
+          rawExpressionSet.pronunciationNotation,
+        );
+        expect(
+          explorerExpressionSet.pronunciationNotationName,
+          rawExpressionSet.pronunciationNotationName,
+        );
+        expect(explorerExpressionSet.seq, rawExpressionSet.seq);
+        expect(
+          explorerExpressionSet.isRepresentative,
+          rawExpressionSet.isRepresentative,
+        );
+        expect(
+          explorerSeed.expressionReadResult.issues,
+          rawSeed.expressionReadResult.issues,
+        );
+        expect(explorerSeed.hiddenSlotIssues, rawSeed.hiddenSlotIssues);
         expect(graphCreateSeed!.wordId, rawSeed.wordId);
         expect(
           graphCreateSeed.expressionReadResult.sets.single.spelling,
@@ -155,7 +185,7 @@ void main() {
         expect(detailSnapshot.requestedPolicy, ReadSourcePolicy.normalizedOnly);
         expect(
           explorerSnapshot.requestedPolicy,
-          ReadSourcePolicy.normalizedWithFallback,
+          ReadSourcePolicy.normalizedOnly,
         );
         expect(
           graphCreateSnapshot.requestedPolicy,

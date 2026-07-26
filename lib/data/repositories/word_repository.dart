@@ -138,7 +138,6 @@ class WordRepository {
     'searchWordsMap',
   };
   static const Set<String> _phaseEditSeedFallbackContexts = {
-    _readForExplorerEditSeedContext,
     _readForGraphCreateEditSeedContext,
   };
   static const Set<String> _phase4SplitViewSingleWordContexts = {
@@ -283,6 +282,7 @@ class WordRepository {
 
     if (context == _detailScreenDisplayItemReadContext ||
         context == _readForDetailEditSeedContext ||
+        context == _readForExplorerEditSeedContext ||
         _phase32HomeDisplayContexts.contains(context) ||
         _phase4SplitViewSingleWordContexts.contains(context) ||
         _phase4GraphCenterSingleWordContexts.contains(context) ||

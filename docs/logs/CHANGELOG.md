@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2026-07-26 Explorer edit-seed 표현 read-source `NORMALIZED_ONLY` 전환 및 strict failure 차단
+
+- `readForExplorerEditSeed` context를 `NORMALIZED_ONLY`로 전환했다. normalized query failure와 mapping-invalid에서는 기존 snapshot·failure observation을 유지하고 `WordEditSeed?`에서 `null`을 반환하며, legacy expression result로 Explorer edit seed를 재구성하지 않는다.
+- normalized 성공 시 기존 Explorer edit seed의 모든 필드와 값을 유지하고, canonical empty는 normalized 성공인 non-null seed와 빈 expression set으로 유지했다.
+- Detail edit-seed의 strict failure 계약과 graph-create edit-seed의 `NORMALIZED_WITH_FALLBACK` 계약은 유지했다.
+- 지정된 repository 테스트 21개가 통과했고, 변경 Dart 파일 focused analyze는 종료 코드 0, error·warning 0건이며 기존 `sqflite_common` 직접 의존성 info 1건만 유지된다.
+- public API·model·UI·caller·DB schema·migration·seed/work DB·데이터·normalized query·mapping·repository write·dependency는 변경하지 않았다.
+
 ## 2026-07-26 Detail edit-seed 표현 read-source `NORMALIZED_ONLY` 전환 및 strict failure 차단
 
 - `readForDetailEditSeed` context를 `NORMALIZED_ONLY`로 전환하고, 실제 요청 정책이 `NORMALIZED_ONLY`인 read가 `normalizedFailure`로 끝나면 snapshot·failure observation을 남긴 뒤 `WordEditSeed?`에서 `null`을 반환하도록 했다. legacy expression result로 Detail edit seed를 재구성하지 않는다.

@@ -1,5 +1,39 @@
 # Read Source Migration
 
+## 2026-07-26 Explorer edit-seed 표현 read-source `NORMALIZED_ONLY` 전환 및 strict failure 차단
+
+### 현재 상태
+
+- `readForDetailEditSeed`와 `readForExplorerEditSeed` context는 debug policy
+  override가 없을 때 `NORMALIZED_ONLY`를 요청한다.
+- Explorer edit-seed read가 query failure 또는 mapping-invalid로
+  `normalizedFailure`에 도달하면 snapshot과 failure observation을 기록한 뒤
+  `WordEditSeed?`에서 `null`을 반환한다. meaning materialization과 edit-seed
+  구성은 진행하지 않으며 legacy expression result로 seed를 재구성하지 않는다.
+- normalized row가 없는 canonical empty는 normalized 성공으로 유지하며,
+  non-null Explorer seed와 빈 expression set을 반환한다.
+- `readForGraphCreateEditSeed`만 `NORMALIZED_WITH_FALLBACK`을 유지한다.
+
+### 유지 범위
+
+- normalized 성공 시 Explorer edit seed의 기존 필드와 값을 유지한다.
+- Detail의 strict failure 계약과 graph-create의 legacy seed fallback 계약을
+  유지한다.
+- 세 edit-seed public API와 `WordEditSeed` model, UI 코드·호출 흐름·microcopy,
+  normalized query·mapping, repository write를 변경하지 않았다.
+- DB schema·migration·seed/work DB·데이터와 dependency를 변경하지 않았다.
+- graph-create fallback이 남아 있으므로 일반 hybrid transition 상태와
+  fallback governance를 유지한다.
+
+### 검증
+
+- 지정된 repository read-source policy 및 edit-seed context 테스트 21개가
+  통과했다.
+- 변경 Dart 파일 3개 focused analyze는 종료 코드 0, error·warning 0건이다.
+  기존 `sqflite_common` 직접 의존성 관련 info 1건은 유지된다.
+- SQL 검증, 전체 테스트, 광범위 analyze와 CodeX UI 테스트는 이번 변경
+  범위에서 N/A다.
+
 ## 2026-07-26 Detail edit-seed 표현 read-source `NORMALIZED_ONLY` 전환 및 strict failure 차단
 
 ### 현재 상태
