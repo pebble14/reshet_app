@@ -418,91 +418,6 @@ class GraphBuilder {
     );
   }
 
-  /// Dormant repository-driven compatibility path. Production graph UI reads
-  /// visible graph data in the repository layer and assembles it through
-  /// [buildMergedVisibleGraphData].
-  @Deprecated(
-    'Dormant compatibility path. Use repository graph data + buildMergedVisibleGraphData instead.',
-  )
-  Future<GraphViewData> buildFromRepository({
-    required WordRepository repository,
-    required GraphBuildOptions options,
-  }) async {
-    final centerWordRow = await repository.getWordMapByIdForGraphSingleWord(
-      options.centerWordId,
-    );
-    if (centerWordRow == null) {
-      throw StateError(
-        'GraphBuilder center word not found: ${options.centerWordId}',
-      );
-    }
-
-    final centerWord = Word.fromMap(centerWordRow);
-    final allRelationRows = await repository.getRelationsForWord(
-      options.centerWordId,
-    );
-    final visibleRelationRows = _selectVisibleRelationRows(
-      relationRows: allRelationRows,
-      options: options,
-    );
-    final relatedWordIds = _collectRelatedWordIds(
-      centerWordId: options.centerWordId,
-      relationRows: visibleRelationRows,
-    );
-    final relatedWordRows = relatedWordIds.isEmpty
-        ? const <Map<String, dynamic>>[]
-        : await repository.getWordsByIdsForGraphBatch(relatedWordIds);
-    final relatedWords = relatedWordRows
-        .map(Word.fromMap)
-        .toList(growable: false);
-    final labelDisplays = await repository
-        .getWordLabelDisplayItemsByIdsForGraphBatch([
-          options.centerWordId,
-          ...relatedWordIds,
-        ]);
-    final labelDisplaysByWordId = <String, GraphWordLabelDisplayItem>{
-      for (final labelDisplay in labelDisplays)
-        labelDisplay.wordId.trim(): labelDisplay,
-    };
-    final relationCountsByWordId = _countRelationsByOtherWordId(
-      centerWordId: options.centerWordId,
-      relationRows: visibleRelationRows,
-    );
-
-    final centerNode = _buildGraphNodeForWord(
-      word: centerWord,
-      depth: 0,
-      isCenter: true,
-      expansionSourceId: null,
-      weight: visibleRelationRows.isEmpty
-          ? 1.0
-          : visibleRelationRows.length.toDouble(),
-      labelDisplaysByWordId: labelDisplaysByWordId,
-    );
-    final nodes = relatedWords
-        .map(
-          (word) => _buildGraphNodeForWord(
-            word: word,
-            depth: 1,
-            isCenter: false,
-            expansionSourceId: null,
-            weight: relationCountsByWordId[word.id]?.toDouble() ?? 1.0,
-            labelDisplaysByWordId: labelDisplaysByWordId,
-          ),
-        )
-        .toList(growable: false);
-    final edges = visibleRelationRows
-        .map(_buildGraphEdgeFromRow)
-        .toList(growable: false);
-
-    return build(
-      options: options,
-      centerNode: centerNode,
-      nodes: nodes,
-      edges: edges,
-    );
-  }
-
   GraphViewData build({
     required GraphBuildOptions options,
     required GraphNode centerNode,
@@ -627,72 +542,6 @@ class GraphBuilder {
       ..sort(_compareEdges);
 
     return List<GraphEdge>.unmodifiable(normalizedEdges);
-  }
-
-  List<Map<String, dynamic>> _selectVisibleRelationRows({
-    required List<Map<String, dynamic>> relationRows,
-    required GraphBuildOptions options,
-  }) {
-    if (options.maxDepth < 1 || relationRows.isEmpty) {
-      return const [];
-    }
-
-    final visibleRows = <Map<String, dynamic>>[];
-
-    for (final row in relationRows) {
-      final relationType = _stringOrNull(row['relation_type']);
-      if (!options.allowsRelationType(relationType)) {
-        continue;
-      }
-
-      final statusCode = _stringOrNull(row['status_code']);
-      if (!options.allowsStatusCode(statusCode)) {
-        continue;
-      }
-
-      visibleRows.add(row);
-    }
-
-    return List.unmodifiable(visibleRows);
-  }
-
-  List<String> _collectRelatedWordIds({
-    required String centerWordId,
-    required List<Map<String, dynamic>> relationRows,
-  }) {
-    final relatedWordIds = <String>[];
-    final seenIds = <String>{};
-
-    for (final row in relationRows) {
-      final otherWordId = _otherWordId(
-        centerWordId: centerWordId,
-        wordId1: row['word_id_1'] as String,
-        wordId2: row['word_id_2'] as String,
-      );
-      if (seenIds.add(otherWordId)) {
-        relatedWordIds.add(otherWordId);
-      }
-    }
-
-    return List.unmodifiable(relatedWordIds);
-  }
-
-  Map<String, int> _countRelationsByOtherWordId({
-    required String centerWordId,
-    required List<Map<String, dynamic>> relationRows,
-  }) {
-    final counts = <String, int>{};
-
-    for (final row in relationRows) {
-      final otherWordId = _otherWordId(
-        centerWordId: centerWordId,
-        wordId1: row['word_id_1'] as String,
-        wordId2: row['word_id_2'] as String,
-      );
-      counts.update(otherWordId, (count) => count + 1, ifAbsent: () => 1);
-    }
-
-    return counts;
   }
 
   bool _isCoreMust(WordRelationEdgeInfo edgeInfo) {
@@ -1087,21 +936,6 @@ class GraphBuilder {
     return '$_morePlaceholderNodePrefix::center::$centerWordId';
   }
 
-  GraphEdge _buildGraphEdgeFromRow(Map<String, dynamic> row) {
-    return GraphEdge(
-      sourceId: row['word_id_1'] as String,
-      targetId: row['word_id_2'] as String,
-      relationId: _intOrNull(row['id']),
-      relationType: _stringOrNull(row['relation_type']),
-      categoryCode: _stringOrNull(row['category_code']),
-      statusCode: _stringOrNull(row['status_code']),
-      directionCode: _stringOrNull(row['direction_code']),
-      description: _stringOrNull(row['description']),
-      weight: 1.0,
-      isHighlighted: false,
-    );
-  }
-
   GraphEdge _buildGraphEdgeFromEdgeInfo(WordRelationEdgeInfo info) {
     return GraphEdge(
       sourceId: info.wordId1,
@@ -1225,25 +1059,6 @@ class GraphBuilder {
     }
 
     return trimmedId.substring(0, 1).toUpperCase();
-  }
-
-  String _otherWordId({
-    required String centerWordId,
-    required String wordId1,
-    required String wordId2,
-  }) {
-    return wordId1 == centerWordId ? wordId2 : wordId1;
-  }
-
-  String? _stringOrNull(Object? value) {
-    final trimmed = (value ?? '').toString().trim();
-    return trimmed.isEmpty ? null : trimmed;
-  }
-
-  int? _intOrNull(Object? value) {
-    if (value is int) return value;
-    if (value is num) return value.toInt();
-    return int.tryParse((value ?? '').toString().trim());
   }
 
   int _compareNodes(GraphNode left, GraphNode right) {

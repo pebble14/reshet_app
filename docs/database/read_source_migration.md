@@ -1,5 +1,34 @@
 # Read Source Migration
 
+## 2026-07-26 미사용 그래프 단건 read-source 경계 정리
+
+### 현재 상태
+
+- production 호출부가 없던 `readForGraphSingleWord` context,
+  `WordRepository.getWordMapByIdForGraphSingleWord`,
+  `WordRepository.getWordByIdForGraphSingleWord`,
+  `GraphBuilder.buildFromRepository`를 제거했다.
+- 해당 경계만 지원하던 정책 집합·전용 검증물과 builder private helper를 함께
+  정리했다.
+- 명시적 `NORMALIZED_WITH_FALLBACK` context 수는 정책 코드 기준 5개에서 4개로
+  줄었다. 이번 Cleanup은 `NORMALIZED_ONLY` 전환이 아니라 사용되지 않는 실행
+  경계를 제거한 작업이다.
+
+### 유지 범위
+
+- 활성 graph center·batch·create 흐름과 `GraphBuilder.buildMergedVisibleGraphData`
+  조립 경로는 유지한다.
+- 공용 read-source resolver·fallback, 편집 seed context 3개, generic 단건 read,
+  graph cache·navigation, repository write·dual-sync를 변경하지 않았다.
+- DB schema·migration·seed/work DB·데이터, UI·UX·microcopy는 변경하지 않았다.
+
+### 역사 기록 해석
+
+- 아래 Phase 5와 dormant compatibility 기록은 당시 graph single-word 경계가
+  존재했던 과거 상태로 유지한다.
+- 최신 현재 상태는 해당 context·전용 API와 repository-driven builder가 제거된
+  것으로 해석한다.
+
 ## 2026-07-26 undo 후 미사용 단건 reread 경계 정리
 
 ### 현재 상태

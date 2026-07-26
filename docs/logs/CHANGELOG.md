@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-07-26 미사용 그래프 단건 read-source 경계 정리
+
+- production에서 미사용이던 `readForGraphSingleWord` context와 전용 repository API, `GraphBuilder.buildFromRepository`를 제거했다.
+- 해당 경계만 지원하던 정책·테스트·검증 도구와 builder private helper를 정리해 명시적 `NORMALIZED_WITH_FALLBACK` context 수를 5개에서 4개로 줄였다.
+- 활성 graph center·batch·create 흐름과 `buildMergedVisibleGraphData`, 공용 resolver·fallback, DB·write·UI는 변경하지 않았다.
+
 ## 2026-07-26 undo 후 미사용 단건 reread 경계 정리
 
 - undo 후 반환값이 소비되지 않던 `readAfterUndoSingleWord` context와 `WordRepository.getWordMapByIdForReadAfterUndoSingleWord` API를 제거했다.

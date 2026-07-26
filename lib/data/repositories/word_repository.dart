@@ -125,7 +125,6 @@ class WordRepository {
       'readForExplorerEditSeed';
   static const String _readForGraphCreateEditSeedContext =
       'readForGraphCreateEditSeed';
-  static const String _readForGraphSingleWordContext = 'readForGraphSingleWord';
   static const String _readForGraphCenterSingleWordContext =
       'readForGraphCenterSingleWord';
   static const String _readForGraphBatchContext = 'readForGraphBatch';
@@ -156,9 +155,6 @@ class WordRepository {
   static const Set<String> _phaseGraphCreatePostSavePayloadContexts = {
     _readForGraphCreatePostSavePayloadContext,
   };
-  static const Set<String> _phase5GraphSingleWordContexts = {
-    _readForGraphSingleWordContext,
-  };
   static const Set<String> _phase8ARawSingleWordContexts = {
     _getWordMapByIdContext,
   };
@@ -167,7 +163,6 @@ class WordRepository {
     _readForDetailEditSeedContext,
     _readForExplorerEditSeedContext,
     _readForGraphCreateEditSeedContext,
-    _readForGraphSingleWordContext,
     _readForGraphCenterSingleWordContext,
     _readForGraphBatchContext,
     _readForGraphCreatePostSavePayloadContext,
@@ -302,7 +297,6 @@ class WordRepository {
     }
 
     if (_phaseEditSeedContexts.contains(context) ||
-        _phase5GraphSingleWordContexts.contains(context) ||
         _phase8ARawSingleWordContexts.contains(context)) {
       return ReadSourcePolicy.normalizedWithFallback;
     }
@@ -2094,18 +2088,6 @@ class WordRepository {
     return _buildWordDetailLikeDisplayItem(wordRow);
   }
 
-  /// Graph single-word boundary stays limited to create-flow follow-up reads in
-  /// this phase. Keep its controlled policy isolated from graph center, graph
-  /// batch, and safe-zone single-word reads.
-  Future<Map<String, dynamic>?> getWordMapByIdForGraphSingleWord(
-    String id,
-  ) async {
-    return _getResolvedWordRowForDetailLikeSingleWordRead(
-      id,
-      context: _readForGraphSingleWordContext,
-    );
-  }
-
   /// Graph center display is graph-owned and stays separate from both the
   /// graph batch zone and the create-follow-up single-word path.
   Future<Map<String, dynamic>?> getWordMapByIdForGraphCenterSingleWord(
@@ -2452,18 +2434,6 @@ class WordRepository {
 
   Future<Word?> getWordById(String id) async {
     final row = await getWordMapById(id);
-    if (row == null) return null;
-    return Word.fromMap(row);
-  }
-
-  /// Dormant compatibility helper that converts the graph single-word raw row
-  /// into a full [Word]. The active graph production path keeps typed graph
-  /// payloads instead of this post-conversion helper.
-  @Deprecated(
-    'Dormant compatibility helper. Use typed graph payload paths instead.',
-  )
-  Future<Word?> getWordByIdForGraphSingleWord(String id) async {
-    final row = await getWordMapByIdForGraphSingleWord(id);
     if (row == null) return null;
     return Word.fromMap(row);
   }

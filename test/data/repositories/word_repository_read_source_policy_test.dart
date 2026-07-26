@@ -436,9 +436,6 @@ void main() {
           'readForSplitViewSingleWord',
           expectedPolicy: ReadSourcePolicy.normalizedOnly,
         );
-        final graphSingleRow = await repository
-            .getWordMapByIdForGraphSingleWord(targetWordId);
-        _expectNormalizedSnapshot(targetWordId, 'readForGraphSingleWord');
         final graphCenterRow = await repository
             .getWordMapByIdForGraphCenterSingleWord(targetWordId);
         _expectNormalizedSnapshot(
@@ -519,7 +516,6 @@ void main() {
         expect(detailDisplay.meanings, [canonicalMeaning]);
         expect(splitViewDisplay, isNotNull);
         expect(splitViewDisplay!.representativeSpelling, canonicalTitle);
-        expect(graphSingleRow!['표기1'], canonicalTitle);
         expect(graphCenterRow!['표기1'], canonicalTitle);
         expect(graphCenterDisplay, isNotNull);
         expect(graphCenterDisplay!.representativeSpelling, canonicalTitle);
@@ -909,129 +905,6 @@ void main() {
         expect(edges, hasLength(8));
         expect(edges.last.otherWordId, childWordIds.last);
         expect(edges.last.statusCode, 'hypothesized');
-      },
-    );
-  });
-
-  group('WordRepository graph single-word path', () {
-    test(
-      'graph single uses NORMALIZED_WITH_FALLBACK and keeps its collector context isolated',
-      () async {
-        final repository = WordRepository();
-        final db = await DatabaseService.openDatabaseFile();
-        const wordId = 'T9000_RS_GRAPH_SINGLE_STABLE';
-
-        final legacyWordRow = {
-          'id': wordId,
-          '\uC5B8\uC5B4': '\uD14C\uC2A4\uD2B8',
-          '\uD45C\uAE301': 'graph-single-stable',
-          '\uC74C\uC5ED1': 'graph-single-stable',
-          '\uBC1C\uC74C1': 'graph-single-stable',
-          '\uC758\uBBF81': 'graph single stable',
-        };
-
-        await db.insert('WORD_TABLE', legacyWordRow);
-        await db.insert('word_expression_set', {
-          'word_id': wordId,
-          'seq': 1,
-          'is_representative': 1,
-          'spelling': 'graph-single-stable',
-          'transliteration': 'graph-single-stable',
-          'pronunciation': 'graph-single-stable',
-        });
-
-        final graphSingleRow = await repository
-            .getWordMapByIdForGraphSingleWord(wordId);
-        final snapshot = WordRepository.debugReadSourceCollector
-            .debugRecentSnapshots()
-            .lastWhere(
-              (entry) =>
-                  entry.wordId == wordId &&
-                  entry.context == 'readForGraphSingleWord',
-            );
-        final summary = WordRepository.debugReadSourceCollector.summaryForWord(
-          wordId,
-        );
-
-        expect(graphSingleRow, isNotNull);
-        expect(
-          snapshot.requestedPolicy,
-          ReadSourcePolicy.normalizedWithFallback,
-        );
-        expect(snapshot.finalResultSource, FinalReadResultSource.normalized);
-        expect(snapshot.didFallback, isFalse);
-        expect(snapshot.legacyResultAvailable, isTrue);
-        expect(snapshot.normalizedResultAvailable, isTrue);
-        expect(summary, isNotNull);
-        expect(summary!.contexts, ['readForGraphSingleWord']);
-        expect(graphSingleRow!['표기1'], 'graph-single-stable');
-      },
-    );
-
-    test(
-      'graph single uses canonical rows when normalized success changes the visible detail display',
-      () async {
-        final repository = WordRepository();
-        final db = await DatabaseService.openDatabaseFile();
-        const wordId = 'T9000_RS_GRAPH_SINGLE_MISMATCH';
-
-        final legacyWordRow = {
-          'id': wordId,
-          '\uC5B8\uC5B4': '\uD14C\uC2A4\uD2B8',
-          '\uD45C\uAE301': 'alpha',
-          '\uC74C\uC5ED1': '\uC54C\uD30C',
-          '\uBC1C\uC74C1': 'alpha',
-          '\uD45C\uAE302': 'aleph',
-          '\uC74C\uC5ED2': '\uC54C\uB808\uD504',
-          '\uBC1C\uC74C2': 'aleph',
-          '\uC758\uBBF81': 'graph single mismatch',
-        };
-
-        await db.insert('WORD_TABLE', legacyWordRow);
-        await db.insert('word_expression_set', {
-          'word_id': wordId,
-          'seq': 1,
-          'is_representative': 0,
-          'spelling': 'alpha',
-          'transliteration': '\uC54C\uD30C',
-          'pronunciation': 'alpha',
-        });
-        await db.insert('word_expression_set', {
-          'word_id': wordId,
-          'seq': 2,
-          'is_representative': 1,
-          'spelling': 'aleph',
-          'transliteration': '\uC54C\uB808\uD504',
-          'pronunciation': 'aleph',
-        });
-
-        final graphSingleRow = await repository
-            .getWordMapByIdForGraphSingleWord(wordId);
-        final snapshot = WordRepository.debugReadSourceCollector
-            .debugRecentSnapshots()
-            .lastWhere(
-              (entry) =>
-                  entry.wordId == wordId &&
-                  entry.context == 'readForGraphSingleWord',
-            );
-        final summary = WordRepository.debugReadSourceCollector.summaryForWord(
-          wordId,
-        );
-
-        expect(graphSingleRow, isNotNull);
-        expect(
-          snapshot.requestedPolicy,
-          ReadSourcePolicy.normalizedWithFallback,
-        );
-        expect(snapshot.finalResultSource, FinalReadResultSource.normalized);
-        expect(snapshot.didFallback, isFalse);
-        expect(snapshot.legacyResultAvailable, isTrue);
-        expect(snapshot.normalizedResultAvailable, isTrue);
-        expect(snapshot.fallbackObservation, isNull);
-        expect(summary, isNotNull);
-        expect(summary!.contexts, ['readForGraphSingleWord']);
-        expect(graphSingleRow!['표기1'], 'alpha');
-        expect(graphSingleRow['표기2'], 'aleph');
       },
     );
   });
