@@ -385,12 +385,6 @@ void main() {
         expect(actualRows.first.spelling, 'beth');
         expect(actualRows.first.isRepresentative, 1);
 
-        final rereadAfterSave = await repository
-            .getWordMapByIdForReadAfterSaveSingleWord(wordId);
-        expect(rereadAfterSave, isNotNull);
-        expect(rereadAfterSave!['표기1'], 'beth');
-        expect(rereadAfterSave['표기2'], 'beta');
-
         final updateHistoryBefore = await _loadLatestWordHistorySnapshot(
           wordId: wordId,
           actionType: 'update',

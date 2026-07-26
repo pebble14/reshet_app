@@ -223,7 +223,7 @@ void main() {
       },
     );
 
-    test('keeps after-save and undo reread contexts unchanged', () async {
+    test('keeps undo reread context unchanged', () async {
       final repository = WordRepository();
       final db = await DatabaseService.openDatabaseFile();
       const wordId = 'T9000_EDIT_SEED_REREAD_CONTEXTS';
@@ -246,28 +246,16 @@ void main() {
         ],
       );
 
-      final afterSaveRow = await repository
-          .getWordMapByIdForReadAfterSaveSingleWord(wordId);
       final undoRow = await repository.getWordMapByIdForReadAfterUndoSingleWord(
         wordId,
       );
-      final afterSaveSnapshot = _lastSnapshotFor(
-        wordId,
-        'readAfterSaveSingleWord',
-      );
       final undoSnapshot = _lastSnapshotFor(wordId, 'readAfterUndoSingleWord');
 
-      expect(afterSaveRow, isNotNull);
       expect(undoRow, isNotNull);
-      expect(
-        afterSaveSnapshot.requestedPolicy,
-        ReadSourcePolicy.normalizedWithFallback,
-      );
       expect(
         undoSnapshot.requestedPolicy,
         ReadSourcePolicy.normalizedWithFallback,
       );
-      expect(afterSaveSnapshot.context, 'readAfterSaveSingleWord');
       expect(undoSnapshot.context, 'readAfterUndoSingleWord');
     });
   });

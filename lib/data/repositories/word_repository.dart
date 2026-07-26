@@ -121,8 +121,6 @@ class WordRepository {
       ReadSourcePolicy.legacy;
   static const String _detailScreenDisplayItemReadContext =
       'getWordDetailLikeDisplayItemByIdForDetailScreen';
-  static const String _readAfterSaveSingleWordContext =
-      'readAfterSaveSingleWord';
   static const String _readAfterUndoSingleWordContext =
       'readAfterUndoSingleWord';
   static const String _readForDetailEditSeedContext = 'readForDetailEditSeed';
@@ -143,9 +141,6 @@ class WordRepository {
     'getStrongWordsMap',
     'searchStrongExactMap',
     'searchWordsMap',
-  };
-  static const Set<String> _phase33SaveSingleWordContexts = {
-    _readAfterSaveSingleWordContext,
   };
   static const Set<String> _phase33UndoSingleWordContexts = {
     _readAfterUndoSingleWordContext,
@@ -175,7 +170,6 @@ class WordRepository {
   };
   static const Set<String> _canonicalExpressionAuthorityContexts = {
     _detailScreenDisplayItemReadContext,
-    _readAfterSaveSingleWordContext,
     _readAfterUndoSingleWordContext,
     _readForDetailEditSeedContext,
     _readForExplorerEditSeedContext,
@@ -313,8 +307,7 @@ class WordRepository {
       return ReadSourcePolicy.normalizedOnly;
     }
 
-    if (_phase33SaveSingleWordContexts.contains(context) ||
-        _phase33UndoSingleWordContexts.contains(context) ||
+    if (_phase33UndoSingleWordContexts.contains(context) ||
         _phaseEditSeedContexts.contains(context) ||
         _phaseGraphCreatePostSavePayloadContexts.contains(context) ||
         _phase5GraphSingleWordContexts.contains(context) ||
@@ -2114,15 +2107,6 @@ class WordRepository {
     }
 
     return _buildWordDetailLikeDisplayItem(wordRow);
-  }
-
-  Future<Map<String, dynamic>?> getWordMapByIdForReadAfterSaveSingleWord(
-    String id,
-  ) async {
-    return _getWordMapByIdForPhase33SingleWordReread(
-      id,
-      context: _readAfterSaveSingleWordContext,
-    );
   }
 
   Future<Map<String, dynamic>?> getWordMapByIdForReadAfterUndoSingleWord(

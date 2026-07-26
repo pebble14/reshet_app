@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-07-26 저장 후 단건 raw 재조회 잔존 경계 정리
+
+- production에서 미사용이던 `readAfterSaveSingleWord` context와 `WordRepository.getWordMapByIdForReadAfterSaveSingleWord` API를 제거했다.
+- 삭제된 API의 `NORMALIZED_WITH_FALLBACK` 정책과 저장 후 raw reread를 고정하던 오래된 테스트 계약을 정리했다.
+- 이번 Cleanup은 `NORMALIZED_ONLY` 전환이 아니며, 활성 undo·edit seed·graph post-save context와 repository 공용 read/write 구현을 변경하지 않았다.
+- DB schema·migration·데이터 및 UI 동작은 변경하지 않았다.
+
 ## 2026-07-26 Explorer 단건 raw 읽기 잔존 경계 정리
 
 - production에서 미사용이던 `readForExplorerSingleWord` context와 `WordRepository.getWordMapByIdForExplorerSingleWord` API를 제거했다.

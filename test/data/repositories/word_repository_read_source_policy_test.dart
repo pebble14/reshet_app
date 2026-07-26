@@ -499,9 +499,6 @@ void main() {
           targetWordId,
           'readForGraphCreatePostSavePayload',
         );
-        final afterSaveRow = await repository
-            .getWordMapByIdForReadAfterSaveSingleWord(targetWordId);
-        _expectNormalizedSnapshot(targetWordId, 'readAfterSaveSingleWord');
         final afterUndoRow = await repository
             .getWordMapByIdForReadAfterUndoSingleWord(targetWordId);
         _expectNormalizedSnapshot(targetWordId, 'readAfterUndoSingleWord');
@@ -547,8 +544,6 @@ void main() {
           canonicalTitle,
         );
         expect(graphPostSavePayload!.representativeSpelling, canonicalTitle);
-        expect(afterSaveRow!['표기1'], canonicalTitle);
-        expect(afterSaveRow['의미1'], canonicalMeaning);
         expect(afterUndoRow!['표기1'], canonicalTitle);
         expect(afterUndoRow['의미1'], canonicalMeaning);
       },

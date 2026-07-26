@@ -1,5 +1,23 @@
 # Read Source Migration
 
+## 2026-07-26 저장 후 단건 raw 재조회 잔존 경계 정리
+
+### 현재 상태
+
+- production 호출부가 없던 `readAfterSaveSingleWord` context와
+  `WordRepository.getWordMapByIdForReadAfterSaveSingleWord` API를 제거했다.
+- 이번 Cleanup은 `NORMALIZED_ONLY` 전환이 아니며, 활성 undo·edit seed·graph
+  post-save context와 공용 read-source resolver·fallback을 변경하지 않았다.
+- repository read/write 구현, DB schema·migration·데이터 및 UI 동작은 변경하지
+  않았다.
+
+### 역사 기록 해석
+
+- 아래 Phase 3.3 및 context 분리 기록은 저장 후 단건 reread 경계가 사용됐던
+  과거 상태로 유지한다.
+- 현재 저장 흐름은 해당 API를 호출하지 않으며, 이번 Cleanup에서는 이후
+  dormant 상태로 남은 context·API와 전용 테스트 계약만 정리했다.
+
 ## 2026-07-26 Explorer 단건 raw 읽기 잔존 경계 정리
 
 ### 현재 상태
