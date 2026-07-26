@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 2026-07-26 Graph-create edit-seed 표현 read-source `NORMALIZED_ONLY` 전환 및 cleanup 실패 차단
+
+- `readForGraphCreateEditSeed`를 `NORMALIZED_ONLY`로 전환했다. normalized query failure와 mapping-invalid에서는 snapshot·failure observation을 유지하고 `WordEditSeed?`에서 `null`을 반환하며 legacy expression result로 seed를 재구성하지 않는다.
+- normalized 성공 시 기존 graph-create edit seed 필드와 값을 유지하고, canonical empty는 non-null seed와 빈 expression set으로 유지했다.
+- strict failure 또는 editor 취소 뒤 cleanup은 기존 transaction의 best effort로 유지했다. 성공 시 word·expression·meaning 삭제와 create history `undone_at` 처리를 수행한다.
+- cleanup guard 거부 시 커밋된 단어와 active create history를 유지하고 post-save·관계 생성·center/navigation 후처리를 중단한다. cleanup 예외는 caller에서 차단하며 별도 부분 삭제나 추가 graph reload 없이 사용자에게 단어가 남을 수 있음을 안내한다. edit-seed await 중 화면이 unmount되면 cleanup과 UI 후처리를 시작하지 않아 커밋된 단어를 유지한다.
+- production `NORMALIZED_WITH_FALLBACK` context는 더 이상 남지 않는다. 공용 fallback resolver·debug override, legacy 기본 read, compatibility projection은 유지한다.
+- 클라이언트 UI 테스트에서 graph-create 정상 저장과 graph 반영, editor 취소 후 생성 단어 제거와 기존 graph 유지가 모두 성공했음을 확인했다.
+- repository cleanup 테스트 4개, read-source policy·edit-seed context 테스트 21개, graph-create caller 테스트 2개가 통과했다.
+- public API·DTO/model·DB schema·migration·seed/work DB·실제 데이터·repository transaction·workspace ownership·dependency는 변경하지 않았다.
+
 ## 2026-07-26 Explorer edit-seed 표현 read-source `NORMALIZED_ONLY` 전환 및 strict failure 차단
 
 - `readForExplorerEditSeed` context를 `NORMALIZED_ONLY`로 전환했다. normalized query failure와 mapping-invalid에서는 기존 snapshot·failure observation을 유지하고 `WordEditSeed?`에서 `null`을 반환하며, legacy expression result로 Explorer edit seed를 재구성하지 않는다.

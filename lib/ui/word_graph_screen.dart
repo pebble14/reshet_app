@@ -6604,6 +6604,23 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     await _loadConnectedWords();
   }
 
+  Future<bool?> _discardCreatedWordForGraphCreateFlowSafely(
+    String wordId,
+  ) async {
+    try {
+      return await _repository.discardCreatedWordForGraphCreateFlow(wordId);
+    } catch (error, stackTrace) {
+      debugPrint('[GraphCreateCleanup] discard failed: $error\n$stackTrace');
+      return null;
+    }
+  }
+
+  void _showGraphCreateCleanupFailureSnackBar() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('편집 화면을 열지 못했습니다. 생성된 단어가 남아 있을 수 있습니다.')),
+    );
+  }
+
   /// [단어 추가] 전체 흐름
   /// 1) 단어 입력
   /// 2) 중복 후보 경고
@@ -6644,8 +6661,13 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     if (!mounted) return;
 
     if (editSeed == null) {
-      final didDiscardCreatedWord = await _repository
-          .discardCreatedWordForGraphCreateFlow(newId);
+      final didDiscardCreatedWord =
+          await _discardCreatedWordForGraphCreateFlowSafely(newId);
+      if (!mounted) return;
+      if (didDiscardCreatedWord == null) {
+        _showGraphCreateCleanupFailureSnackBar();
+        return;
+      }
       if (didDiscardCreatedWord) {
         WordGraphDataCache.invalidateMany([_centerWordId, newId]);
       }
@@ -6675,8 +6697,13 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       createdWordPayload = await _repository
           .getGraphCreatePostSavePayloadAfterEdit(editResult.wordId);
     } else {
-      final didDiscardCreatedWord = await _repository
-          .discardCreatedWordForGraphCreateFlow(newId);
+      final didDiscardCreatedWord =
+          await _discardCreatedWordForGraphCreateFlowSafely(newId);
+      if (!mounted) return;
+      if (didDiscardCreatedWord == null) {
+        _showGraphCreateCleanupFailureSnackBar();
+        return;
+      }
       if (didDiscardCreatedWord) {
         WordGraphDataCache.invalidateMany([_centerWordId, newId]);
         await _loadConnectedWords();
@@ -6686,9 +6713,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         ).showSnackBar(const SnackBar(content: Text('단어 추가를 취소했습니다.')));
         return;
       }
-
-      createdWordPayload = await _repository
-          .getGraphCreatePostSavePayloadAfterEdit(newId);
+      return;
     }
 
     bool didCreateRelation = false;

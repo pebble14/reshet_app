@@ -177,10 +177,40 @@ void main() {
         );
         expect(explorerSeed.hiddenSlotIssues, rawSeed.hiddenSlotIssues);
         expect(graphCreateSeed!.wordId, rawSeed.wordId);
+        expect(graphCreateSeed.language, rawSeed.language);
+        expect(graphCreateSeed.strongNumber, rawSeed.strongNumber);
+        expect(graphCreateSeed.note, rawSeed.note);
+        expect(graphCreateSeed.meanings, rawSeed.meanings);
+        expect(graphCreateSeed.expressionReadResult.sets, hasLength(1));
+        final graphCreateExpressionSet =
+            graphCreateSeed.expressionReadResult.sets.single;
+        expect(graphCreateExpressionSet.spelling, rawExpressionSet.spelling);
         expect(
-          graphCreateSeed.expressionReadResult.sets.single.spelling,
-          detailExpressionSet.spelling,
+          graphCreateExpressionSet.transliteration,
+          rawExpressionSet.transliteration,
         );
+        expect(
+          graphCreateExpressionSet.pronunciation,
+          rawExpressionSet.pronunciation,
+        );
+        expect(
+          graphCreateExpressionSet.pronunciationNotation,
+          rawExpressionSet.pronunciationNotation,
+        );
+        expect(
+          graphCreateExpressionSet.pronunciationNotationName,
+          rawExpressionSet.pronunciationNotationName,
+        );
+        expect(graphCreateExpressionSet.seq, rawExpressionSet.seq);
+        expect(
+          graphCreateExpressionSet.isRepresentative,
+          rawExpressionSet.isRepresentative,
+        );
+        expect(
+          graphCreateSeed.expressionReadResult.issues,
+          rawSeed.expressionReadResult.issues,
+        );
+        expect(graphCreateSeed.hiddenSlotIssues, rawSeed.hiddenSlotIssues);
 
         expect(detailSnapshot.requestedPolicy, ReadSourcePolicy.normalizedOnly);
         expect(
@@ -189,7 +219,7 @@ void main() {
         );
         expect(
           graphCreateSnapshot.requestedPolicy,
-          ReadSourcePolicy.normalizedWithFallback,
+          ReadSourcePolicy.normalizedOnly,
         );
         expect(
           detailSnapshot.finalResultSource,

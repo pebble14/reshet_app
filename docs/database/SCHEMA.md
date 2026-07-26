@@ -141,7 +141,7 @@ H0001_0000
   `DatabaseService.openDatabaseFile()`이 `word_expression_set` 테이블과 인덱스를
   보장하고, 테이블이 비어 있을 때만 legacy expression slot에서 최소 backfill한다.
 - runtime ensure는 기존 테이블에 nullable `pronunciation_notation`, `pronunciation_notation_name` 열이 없으면 안전한 `ALTER TABLE ... ADD COLUMN`으로 추가한다. 기존 pronunciation 본문은 변경하지 않고, 본문이 있는 미분류 행만 `unknown`으로 멱등 보강한다.
-- 현재 앱 read source는 아직 전면 normalized-only가 아니며, legacy `WORD_TABLE` 표현 컬럼과 일부 `NORMALIZED_WITH_FALLBACK` context가 공존한다.
+- 현재 앱 read source는 아직 전면 normalized-only가 아니며, legacy `WORD_TABLE` 표현 컬럼을 사용하는 기본 context와 owner-specific `NORMALIZED_ONLY` context가 공존한다. production `NORMALIZED_WITH_FALLBACK` context는 남아 있지 않지만 공용 fallback resolver와 debug policy override는 유지한다.
 - 현재 앱 expression write path는 `word_expression_set`를 우선 갱신하고 `WORD_TABLE` expression slot을 compatibility projection으로 함께 유지하는 dual-write 구조를 사용한다.
 - `word_expression_set.id`는 surrogate key이다.
 - 의미 비교와 정합성 검증은 `(word_id, seq)`를 natural identity로 본다.

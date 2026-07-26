@@ -1,5 +1,45 @@
 # Read Source Migration
 
+## 2026-07-26 Graph-create edit-seed 표현 read-source `NORMALIZED_ONLY` 전환 및 cleanup 실패 차단
+
+### 현재 상태
+
+- `readForDetailEditSeed`, `readForExplorerEditSeed`,
+  `readForGraphCreateEditSeed` 세 context는 debug policy override가 없을 때
+  `NORMALIZED_ONLY`를 요청한다.
+- graph-create edit-seed read가 query failure 또는 mapping-invalid로
+  `normalizedFailure`에 도달하면 snapshot과 failure observation을 유지한 채
+  `WordEditSeed?`에서 `null`을 반환한다. meaning materialization과 edit-seed
+  구성은 진행하지 않으며 legacy expression result로 seed를 재구성하지 않는다.
+- normalized row가 없는 canonical empty는 normalized 성공으로 유지하며,
+  non-null graph-create seed와 빈 expression set을 반환한다.
+- production `NORMALIZED_WITH_FALLBACK` context는 더 이상 남지 않는다. 공용
+  fallback resolver와 debug policy override는 transition 검증 경계로 유지한다.
+
+### Graph-create cleanup 계약
+
+- strict failure 또는 editor 취소 뒤의 cleanup은 기존
+  `discardCreatedWordForGraphCreateFlow` transaction을 사용하는 best effort다.
+- cleanup 성공 시 word·expression·meaning을 삭제하고 create history를
+  `undone_at` 상태로 만든다.
+- cleanup guard가 거부되면 커밋된 단어와 active create history를 유지하고
+  post-save·관계 생성·center/navigation 후처리에 진입하지 않는다.
+- cleanup 예외는 graph-create caller에서 차단한다. 별도 부분 삭제나 추가 graph
+  reload를 시도하지 않으며, mounted 상태에서는 생성된 단어가 남을 수 있음을
+  안내한다.
+- edit-seed repository await 중 화면이 unmount되면 cleanup을 시작하지 않아
+  커밋된 단어를 유지하고 UI 후처리를 진행하지 않는다.
+
+### 유지 범위와 검증
+
+- 세 edit-seed public API와 `WordEditSeed` model, DB transaction, 공용 normalized
+  query·mapping, repository write·dual-sync를 변경하지 않았다.
+- DB schema·migration·seed/work DB·실제 데이터와 dependency를 변경하지 않았다.
+- repository cleanup 테스트 4개, read-source policy·edit-seed context 테스트
+  21개, graph-create caller 테스트 2개가 통과했다.
+- 별도 실제 DB SQL 검증은 N/A다. 실패 후 상태는 격리 SQLite targeted
+  테스트에서 확인했다.
+
 ## 2026-07-26 Explorer edit-seed 표현 read-source `NORMALIZED_ONLY` 전환 및 strict failure 차단
 
 ### 현재 상태

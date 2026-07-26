@@ -18,7 +18,7 @@ write authority = canonicalized
 read authority = hybrid transition
 ```
 
-즉 expression write 기준은 repository 내부 canonical expression set과 `word_expression_set` write path를 우선한다. 그러나 read 기준은 아직 normalized-only 완료 상태가 아니다. `LEGACY`와 `NORMALIZED_WITH_FALLBACK` context가 공존하며, fallback governance와 compatibility projection이 유지된다.
+즉 expression write 기준은 repository 내부 canonical expression set과 `word_expression_set` write path를 우선한다. 그러나 read 기준은 아직 normalized-only 완료 상태가 아니다. production에서는 `LEGACY`와 `NORMALIZED_ONLY` context가 공존하며, 공용 fallback resolver·debug policy override와 compatibility projection이 유지된다.
 
 이 문서의 목적은 다음 경계를 active authority로 고정하는 것이다.
 
@@ -159,16 +159,22 @@ Read source policy는 다음 세 상태를 기준으로 해석한다.
 현재 active 상태는 다음과 같다.
 
 - global read는 normalized-only 완료 상태가 아니다.
-- legacy 기본 context와 `NORMALIZED_WITH_FALLBACK` context가 공존한다.
+- legacy 기본 context와 owner-specific `NORMALIZED_ONLY` context가 공존한다.
+- production `NORMALIZED_WITH_FALLBACK` context는 남아 있지 않다. 해당 policy와
+  공용 resolver는 debug override와 transition 검증 경계로 유지한다.
 - controlled 또는 owner-specific context만 단계적으로 normalized read 후보가 될 수 있다.
 - fallback governance와 collector observation은 read transition의 일부다.
 
-Detail·Explorer edit-seed 경계의 active policy는 다음과 같다.
+Detail·Explorer·graph-create edit-seed 경계의 active policy는 다음과 같다.
 
-- debug policy override가 없을 때 `readForDetailEditSeed`와 `readForExplorerEditSeed`는 `NORMALIZED_ONLY`를 요청한다.
-- 두 context의 실제 요청 정책이 `NORMALIZED_ONLY`이고 최종 결과가 `normalizedFailure`이면, repository는 snapshot과 failure observation을 기록한 뒤 nullable `WordEditSeed` contract에서 `null`을 반환한다. 이때 legacy expression result로 edit seed를 재구성하지 않는다.
+- debug policy override가 없을 때 `readForDetailEditSeed`,
+  `readForExplorerEditSeed`, `readForGraphCreateEditSeed`는
+  `NORMALIZED_ONLY`를 요청한다.
+- 세 context의 실제 요청 정책이 `NORMALIZED_ONLY`이고 최종 결과가
+  `normalizedFailure`이면, repository는 snapshot과 failure observation을
+  기록한 뒤 nullable `WordEditSeed` contract에서 `null`을 반환한다. 이때
+  legacy expression result로 edit seed를 재구성하지 않는다.
 - normalized row가 없는 canonical empty는 normalized 성공 결과이므로 non-null edit seed와 빈 expression set을 반환한다.
-- `readForGraphCreateEditSeed`는 `NORMALIZED_WITH_FALLBACK`을 유지한다.
 
 Normalized read는 source-specific raw row를 public contract로 직접 노출하지 않는다. Repository는 normalized read adapter가 만든 canonical expression result를 기준으로 final materialized result를 만든다.
 

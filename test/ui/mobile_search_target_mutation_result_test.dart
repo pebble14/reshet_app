@@ -3,8 +3,14 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
+import 'package:reshet_app/data/repositories/word_repository.dart';
 import 'package:reshet_app/database/database_service.dart';
+import 'package:reshet_app/domain/graph/graph_create_post_save_payload.dart';
+import 'package:reshet_app/domain/graph/graph_center_word_display_item.dart';
+import 'package:reshet_app/domain/graph/graph_visible_word.dart';
+import 'package:reshet_app/domain/graph/graph_word_label_display_item.dart';
 import 'package:reshet_app/domain/word/word_detail_like_display_item.dart';
+import 'package:reshet_app/domain/word/word_edit_seed.dart';
 import 'package:reshet_app/ui/mobile_word_search_screen.dart';
 import 'package:reshet_app/ui/word_detail_route_result.dart';
 import 'package:reshet_app/ui/word_detail_screen.dart';
@@ -40,10 +46,14 @@ void main() {
     WordGraphDataCache.clear();
     isolatedRoot = await _createIsolatedWorkspace(sourceWorkDbPath);
     Directory.current = isolatedRoot!.path;
+    DatabaseService.setDataRootOverrideForTest(
+      p.join(isolatedRoot!.path, 'data'),
+    );
   });
 
   tearDown(() async {
     await DatabaseService.closeDatabase();
+    DatabaseService.setDataRootOverrideForTest(null);
     WordGraphDataCache.clear();
     Directory.current = repoRootPath;
     if (isolatedRoot case final root? when root.existsSync()) {
@@ -154,6 +164,149 @@ void main() {
   });
 
   group('Mobile Search target mutation origin 반영', () {
+    testWidgets('Graph-create editor 취소 뒤 discard guard 거부 시 후처리를 중단한다', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(800, 900));
+      final repository = _ControlledGraphCreateDiscardRepository(
+        discardResult: false,
+      );
+      final requestedCenterWordIds = <String>[];
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WordGraphScreen(
+            centerWordId: _representativeWordId,
+            repositoryForTesting: repository,
+            onChangeCenterWordId: requestedCenterWordIds.add,
+          ),
+        ),
+      );
+      await _waitForGraphBootstrap(tester);
+      final originElement = tester.element(find.byType(WordGraphScreen));
+
+      await _openGraphCreateDialog(tester);
+      await tester.enterText(
+        find.widgetWithText(TextField, '표기'),
+        'Phase graph create discard guard retained',
+      );
+      await tester.tap(find.widgetWithText(ElevatedButton, '저장'));
+      await _pumpUntil(
+        tester,
+        () => find.byType(WordEditScreen).evaluate().length == 1,
+        reason: '정상 edit seed로 editor에 진입해야 한다.',
+      );
+
+      await tester.binding.handlePopRoute();
+      await tester.pump();
+      await _pumpUntil(
+        tester,
+        () =>
+            repository.discardedWordId != null &&
+            find.byType(WordEditScreen).evaluate().isEmpty,
+        reason: 'editor route가 닫히고 graph-create discard guard를 확인해야 한다.',
+      );
+
+      expect(tester.takeException(), isNull);
+      expect(tester.element(find.byType(WordGraphScreen)), same(originElement));
+      expect(
+        find.byKey(
+          const ValueKey<String>('graph-center-node:$_representativeWordId'),
+        ),
+        findsOneWidget,
+      );
+      expect(requestedCenterWordIds, isEmpty);
+      expect(repository.postSavePayloadReadCount, 0);
+      await tester.runAsync(
+        () => _expectCommittedGraphCreateWordRetained(
+          repository.discardedWordId!,
+        ),
+      );
+
+      await _disposeRuntimeApp(tester);
+    });
+
+    testWidgets('Graph-create strict failure cleanup 예외를 caller에서 차단한다', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(800, 900));
+      final repository = _ControlledGraphCreateDiscardRepository(
+        throwOnDiscard: true,
+        forceStrictSeedFailure: true,
+      );
+      final requestedCenterWordIds = <String>[];
+      final logs = <String>[];
+      final previousDebugPrint = debugPrint;
+      debugPrint = (String? message, {int? wrapWidth}) {
+        if (message != null) {
+          logs.add(message);
+        }
+      };
+      addTearDown(() {
+        debugPrint = previousDebugPrint;
+      });
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WordGraphScreen(
+            centerWordId: _representativeWordId,
+            repositoryForTesting: repository,
+            onChangeCenterWordId: requestedCenterWordIds.add,
+          ),
+        ),
+      );
+      await _waitForGraphBootstrap(tester);
+      final originElement = tester.element(find.byType(WordGraphScreen));
+      final centerReadCountBeforeCreate = repository.centerReadCount;
+
+      await _openGraphCreateDialog(tester);
+      await tester.enterText(
+        find.widgetWithText(TextField, '표기'),
+        'Phase graph create cleanup exception retained',
+      );
+      await tester.tap(find.widgetWithText(ElevatedButton, '저장'));
+      await _pumpUntil(
+        tester,
+        () => find
+            .text('편집 화면을 열지 못했습니다. 생성된 단어가 남아 있을 수 있습니다.')
+            .evaluate()
+            .isNotEmpty,
+        reason: 'cleanup 예외 안내가 표시되어야 한다.',
+      );
+
+      expect(tester.takeException(), isNull);
+      expect(repository.discardedWordId, isNotNull);
+      expect(find.byType(WordEditScreen), findsNothing);
+      expect(tester.element(find.byType(WordGraphScreen)), same(originElement));
+      expect(
+        find.byKey(
+          const ValueKey<String>('graph-center-node:$_representativeWordId'),
+        ),
+        findsOneWidget,
+      );
+      expect(requestedCenterWordIds, isEmpty);
+      expect(repository.postSavePayloadReadCount, 0);
+      expect(repository.centerReadCount, centerReadCountBeforeCreate);
+      expect(
+        logs,
+        contains(
+          predicate<String>(
+            (line) =>
+                line.contains('[GraphCreateCleanup] discard failed:') &&
+                line.contains('injected graph-create discard failure') &&
+                line.contains('discardCreatedWordForGraphCreateFlow'),
+          ),
+        ),
+      );
+      await tester.runAsync(
+        () => _expectCommittedGraphCreateWordRetained(
+          repository.discardedWordId!,
+        ),
+      );
+      debugPrint = previousDebugPrint;
+
+      await _disposeRuntimeApp(tester);
+    });
+
     testWidgets('Graph target local retarget이 route result owner를 보존한다', (
       tester,
     ) async {
@@ -571,6 +724,49 @@ Future<String> _createUnrelatedWordFromActiveGraph(
   return centerKey.value.substring('graph-center-node:'.length);
 }
 
+Future<void> _openGraphCreateDialog(WidgetTester tester) async {
+  await tester.tap(find.byKey(_mobileGraphOverflowKey));
+  await tester.pumpAndSettle();
+  await tester.tap(find.text('단어 추가'));
+  await tester.pumpAndSettle();
+  expect(find.text('신규 단어 생성'), findsOneWidget);
+}
+
+Future<void> _expectCommittedGraphCreateWordRetained(String wordId) async {
+  final db = await DatabaseService.openDatabaseFile();
+  final wordRows = await db.query(
+    'WORD_TABLE',
+    columns: ['id'],
+    where: 'id = ?',
+    whereArgs: [wordId],
+  );
+  final expressionRows = await db.query(
+    'word_expression_set',
+    columns: ['id'],
+    where: 'word_id = ?',
+    whereArgs: [wordId],
+  );
+  final activeCreateHistoryRows = await db.query(
+    'CHANGE_HISTORY',
+    columns: ['id'],
+    where:
+        'entity_type = ? AND entity_id = ? AND action_type = ? '
+        'AND undone_at IS NULL',
+    whereArgs: ['word', wordId, 'create'],
+  );
+  final relationRows = await db.query(
+    'WORD_RELATION',
+    columns: ['id'],
+    where: 'word_id_1 = ? OR word_id_2 = ?',
+    whereArgs: [wordId, wordId],
+  );
+
+  expect(wordRows, hasLength(1));
+  expect(expressionRows, hasLength(1));
+  expect(activeCreateHistoryRows, hasLength(1));
+  expect(relationRows, isEmpty);
+}
+
 Future<void> _openSearchAndSubmit(WidgetTester tester, String query) async {
   await tester.tap(find.byKey(_mobileSearchActionKey));
   await tester.pumpAndSettle();
@@ -657,4 +853,90 @@ Future<void> _deleteIsolatedWorkspace(Directory isolatedRoot) async {
     }
   }
   await isolatedRoot.delete(recursive: true);
+}
+
+class _ControlledGraphCreateDiscardRepository extends WordRepository {
+  final bool discardResult;
+  final bool throwOnDiscard;
+  final bool forceStrictSeedFailure;
+
+  String? discardedWordId;
+  int centerReadCount = 0;
+  int postSavePayloadReadCount = 0;
+
+  _ControlledGraphCreateDiscardRepository({
+    this.discardResult = true,
+    this.throwOnDiscard = false,
+    this.forceStrictSeedFailure = false,
+  });
+
+  @override
+  Future<Map<String, dynamic>?> getWordMapByIdForGraphCenterSingleWord(
+    String id,
+  ) async {
+    centerReadCount++;
+    return {
+      'id': id,
+      '\uC5B8\uC5B4': 'Graph create caller test',
+      '\uD45C\uAE301': id,
+    };
+  }
+
+  @override
+  Future<GraphCenterWordDisplayItem?>
+  getGraphCenterWordDisplayItemByIdForGraphCenterSingleWord(String id) async {
+    return GraphCenterWordDisplayItem(
+      wordId: id,
+      language: 'Graph create caller test',
+      displayStrongNumber: '',
+      representativeSpelling: id,
+      representativeTransliteration: '',
+      representativePronunciation: '',
+      primaryMeaning: '',
+    );
+  }
+
+  @override
+  Future<VisibleWordGraphData> getVisibleGraphDataForGraph(
+    String centerWordId,
+  ) async {
+    return const (
+      connectedWords: <GraphVisibleWord>[],
+      wordLabels: <GraphWordLabelDisplayItem>[],
+      relationEdges: <WordRelationEdgeInfo>[],
+    );
+  }
+
+  @override
+  Future<Set<String>>
+  findWordIdsInDbWideLanguageSpellingTransliterationCollisionGroups(
+    Iterable<String> wordIds,
+  ) async {
+    return const <String>{};
+  }
+
+  @override
+  Future<WordEditSeed?> getWordEditSeedForGraphCreateEdit(String id) {
+    if (forceStrictSeedFailure) {
+      return Future<WordEditSeed?>.value();
+    }
+    return super.getWordEditSeedForGraphCreateEdit(id);
+  }
+
+  @override
+  Future<bool> discardCreatedWordForGraphCreateFlow(String wordId) async {
+    discardedWordId = wordId;
+    if (throwOnDiscard) {
+      throw StateError('injected graph-create discard failure');
+    }
+    return discardResult;
+  }
+
+  @override
+  Future<GraphCreatePostSavePayload?> getGraphCreatePostSavePayloadAfterEdit(
+    String id,
+  ) {
+    postSavePayloadReadCount++;
+    return super.getGraphCreatePostSavePayloadAfterEdit(id);
+  }
 }

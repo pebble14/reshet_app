@@ -56,6 +56,7 @@ void main() {
 
         expect(await _wordExists(wordId), isTrue);
         expect(await _wordExpressionRowCount(wordId), 1);
+        expect(await _wordMeaningRowCount(wordId), 1);
 
         final didDiscard = await repository
             .discardCreatedWordForGraphCreateFlow(wordId);
@@ -63,6 +64,8 @@ void main() {
         expect(didDiscard, isTrue);
         expect(await _wordExists(wordId), isFalse);
         expect(await _wordExpressionRowCount(wordId), 0);
+        expect(await _wordMeaningRowCount(wordId), 0);
+        expect(await repository.countRelationsForWord(wordId), 0);
 
         final historyRows = await _historyRowsForWord(wordId);
         expect(historyRows, hasLength(1));
@@ -237,6 +240,19 @@ Future<int> _wordExpressionRowCount(String wordId) async {
     '''
     SELECT COUNT(*) AS count
     FROM word_expression_set
+    WHERE word_id = ?
+    ''',
+    [wordId],
+  );
+  return (rows.single['count'] as int?) ?? 0;
+}
+
+Future<int> _wordMeaningRowCount(String wordId) async {
+  final db = await DatabaseService.openDatabaseFile();
+  final rows = await db.rawQuery(
+    '''
+    SELECT COUNT(*) AS count
+    FROM word_meaning_set
     WHERE word_id = ?
     ''',
     [wordId],

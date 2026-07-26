@@ -139,7 +139,7 @@ void main() {
     );
 
     test(
-      'keeps Detail and Explorer canonical empty as non-null normalized-only seeds',
+      'keeps Detail, Explorer, and Graph-create canonical empty as non-null normalized-only seeds',
       () async {
         final repository = WordRepository();
         final db = await DatabaseService.openDatabaseFile();
@@ -158,6 +158,8 @@ void main() {
         final explorerSeed = await repository.getWordEditSeedForExplorerEdit(
           'T9000_RS_EMPTY',
         );
+        final graphCreateSeed = await repository
+            .getWordEditSeedForGraphCreateEdit('T9000_RS_EMPTY');
         final detailSnapshot = _lastSnapshotFor(
           'T9000_RS_EMPTY',
           'readForDetailEditSeed',
@@ -165,6 +167,10 @@ void main() {
         final explorerSnapshot = _lastSnapshotFor(
           'T9000_RS_EMPTY',
           'readForExplorerEditSeed',
+        );
+        final graphCreateSnapshot = _lastSnapshotFor(
+          'T9000_RS_EMPTY',
+          'readForGraphCreateEditSeed',
         );
 
         expect(detailSeed, isNotNull);
@@ -197,11 +203,31 @@ void main() {
         expect(explorerSnapshot.readResult.sets, isEmpty);
         expect(explorerSnapshot.legacyResultAvailable, isTrue);
         expect(explorerSnapshot.normalizedResultAvailable, isTrue);
+
+        expect(graphCreateSeed, isNotNull);
+        expect(graphCreateSeed!.expressionReadResult.sets, isEmpty);
+        expect(
+          graphCreateSnapshot.requestedPolicy,
+          ReadSourcePolicy.normalizedOnly,
+        );
+        expect(
+          graphCreateSnapshot.resolvedSource,
+          ResolvedReadSource.normalized,
+        );
+        expect(
+          graphCreateSnapshot.finalResultSource,
+          FinalReadResultSource.normalized,
+        );
+        expect(graphCreateSnapshot.didFallback, isFalse);
+        expect(graphCreateSnapshot.fallbackObservation, isNull);
+        expect(graphCreateSnapshot.readResult.sets, isEmpty);
+        expect(graphCreateSnapshot.legacyResultAvailable, isTrue);
+        expect(graphCreateSnapshot.normalizedResultAvailable, isTrue);
       },
     );
 
     test(
-      'fails Detail and Explorer closed while Graph-create keeps legacy on query failure',
+      'fails Detail, Explorer, and Graph-create closed on query failure',
       () async {
         final logs = <String>[];
         final previousDebugPrint = debugPrint;
@@ -278,19 +304,31 @@ void main() {
         expect(explorerSnapshot.legacyReadResult!.sets, isNotEmpty);
         expect(explorerSnapshot.fallbackObservation!.detail, isNotEmpty);
 
-        expect(graphCreateSeed, isNotNull);
+        expect(graphCreateSeed, isNull);
         expect(
           graphCreateSnapshot.requestedPolicy,
-          ReadSourcePolicy.normalizedWithFallback,
+          ReadSourcePolicy.normalizedOnly,
+        );
+        expect(
+          graphCreateSnapshot.resolvedSource,
+          ResolvedReadSource.normalized,
         );
         expect(
           graphCreateSnapshot.finalResultSource,
-          FinalReadResultSource.legacyFallback,
+          FinalReadResultSource.normalizedFailure,
         );
         expect(
-          graphCreateSeed!.expressionReadResult.sets.first.spelling,
-          graphCreateSnapshot.legacyReadResult!.sets.first.spelling,
+          graphCreateSnapshot.finalResultSource,
+          isNot(FinalReadResultSource.legacyFallback),
         );
+        expect(graphCreateSnapshot.didFallback, isTrue);
+        expect(
+          graphCreateSnapshot.fallbackObservation!.reason,
+          ReadFallbackReason.queryFailed,
+        );
+        expect(graphCreateSnapshot.readResult.sets, isEmpty);
+        expect(graphCreateSnapshot.legacyReadResult!.sets, isNotEmpty);
+        expect(graphCreateSnapshot.fallbackObservation!.detail, isNotEmpty);
 
         final detailObservationLog = logs.singleWhere(
           (line) =>
@@ -333,6 +371,30 @@ void main() {
           isNot(contains(explorerSnapshot.fallbackObservation!.detail!)),
         );
         expect(explorerObservationLog, isNot(contains('word_expression_set')));
+
+        final graphCreateObservationLog = logs.singleWhere(
+          (line) =>
+              line.startsWith('[ExpressionReadSource] ') &&
+              line.contains('context=readForGraphCreateEditSeed '),
+        );
+        expect(
+          graphCreateObservationLog,
+          '[ExpressionReadSource] '
+          'context=readForGraphCreateEditSeed '
+          'policy=NORMALIZED_ONLY '
+          'resolved=normalized '
+          'final=normalized_failure '
+          'reason=query_failed',
+        );
+        expect(graphCreateObservationLog, isNot(contains('E0000_0001')));
+        expect(
+          graphCreateObservationLog,
+          isNot(contains(graphCreateSnapshot.fallbackObservation!.detail!)),
+        );
+        expect(
+          graphCreateObservationLog,
+          isNot(contains('word_expression_set')),
+        );
       },
     );
 
@@ -389,7 +451,7 @@ void main() {
     );
 
     test(
-      'fails Detail and Explorer closed while Graph-create keeps legacy on mapping-invalid rows',
+      'fails Detail, Explorer, and Graph-create closed on mapping-invalid rows',
       () async {
         final repository = WordRepository();
         final db = await DatabaseService.openDatabaseFile();
@@ -505,19 +567,34 @@ void main() {
         expect(explorerSnapshot.readResult.sets, isEmpty);
         expect(explorerSnapshot.legacyReadResult!.sets, isNotEmpty);
 
-        expect(graphCreateSeed, isNotNull);
+        expect(graphCreateSeed, isNull);
         expect(
           graphCreateSnapshot.requestedPolicy,
-          ReadSourcePolicy.normalizedWithFallback,
+          ReadSourcePolicy.normalizedOnly,
+        );
+        expect(
+          graphCreateSnapshot.resolvedSource,
+          ResolvedReadSource.normalized,
         );
         expect(
           graphCreateSnapshot.finalResultSource,
-          FinalReadResultSource.legacyFallback,
+          FinalReadResultSource.normalizedFailure,
         );
         expect(
-          graphCreateSeed!.expressionReadResult.sets.first.spelling,
-          graphCreateSnapshot.legacyReadResult!.sets.first.spelling,
+          graphCreateSnapshot.finalResultSource,
+          isNot(FinalReadResultSource.legacyFallback),
         );
+        expect(graphCreateSnapshot.didFallback, isTrue);
+        expect(
+          graphCreateSnapshot.fallbackObservation!.reason,
+          ReadFallbackReason.mappingInvalid,
+        );
+        expect(
+          graphCreateSnapshot.fallbackObservation!.detail,
+          contains('duplicate seq'),
+        );
+        expect(graphCreateSnapshot.readResult.sets, isEmpty);
+        expect(graphCreateSnapshot.legacyReadResult!.sets, isNotEmpty);
       },
     );
 
@@ -663,7 +740,11 @@ void main() {
         );
         final graphEditSeed = await repository
             .getWordEditSeedForGraphCreateEdit(targetWordId);
-        _expectNormalizedSnapshot(targetWordId, 'readForGraphCreateEditSeed');
+        _expectNormalizedSnapshot(
+          targetWordId,
+          'readForGraphCreateEditSeed',
+          expectedPolicy: ReadSourcePolicy.normalizedOnly,
+        );
         final graphPostSavePayload = await repository
             .getGraphCreatePostSavePayloadAfterEdit(targetWordId);
         _expectNormalizedSnapshot(

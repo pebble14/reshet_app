@@ -137,9 +137,6 @@ class WordRepository {
     'searchStrongExactMap',
     'searchWordsMap',
   };
-  static const Set<String> _phaseEditSeedFallbackContexts = {
-    _readForGraphCreateEditSeedContext,
-  };
   static const Set<String> _phase4SplitViewSingleWordContexts = {
     _readForSplitViewSingleWordContext,
   };
@@ -283,16 +280,13 @@ class WordRepository {
     if (context == _detailScreenDisplayItemReadContext ||
         context == _readForDetailEditSeedContext ||
         context == _readForExplorerEditSeedContext ||
+        context == _readForGraphCreateEditSeedContext ||
         _phase32HomeDisplayContexts.contains(context) ||
         _phase4SplitViewSingleWordContexts.contains(context) ||
         _phase4GraphCenterSingleWordContexts.contains(context) ||
         _phase4GraphBatchContexts.contains(context) ||
         _phaseGraphCreatePostSavePayloadContexts.contains(context)) {
       return ReadSourcePolicy.normalizedOnly;
-    }
-
-    if (_phaseEditSeedFallbackContexts.contains(context)) {
-      return ReadSourcePolicy.normalizedWithFallback;
     }
 
     return _defaultReadSourcePolicy;
