@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2026-07-26 Detail edit-seed 표현 read-source `NORMALIZED_ONLY` 전환 및 strict failure 차단
+
+- `readForDetailEditSeed` context를 `NORMALIZED_ONLY`로 전환하고, 실제 요청 정책이 `NORMALIZED_ONLY`인 read가 `normalizedFailure`로 끝나면 snapshot·failure observation을 남긴 뒤 `WordEditSeed?`에서 `null`을 반환하도록 했다. legacy expression result로 Detail edit seed를 재구성하지 않는다.
+- canonical empty는 normalized 성공으로 취급해 non-null seed와 빈 expression set을 유지했다.
+- `readForExplorerEditSeed`와 `readForGraphCreateEditSeed`는 `NORMALIZED_WITH_FALLBACK`과 query failure·mapping-invalid의 legacy seed fallback을 유지했다.
+- targeted test에서 Detail normalized 성공 seed 필드, canonical empty, query failure, mapping-invalid와 세 owner context 정책을 검증했다. 기존 edit-seed context 테스트는 명시적 test data-root override와 격리 사본 fixture 정리를 사용하도록 보강했다.
+- 지정 테스트 21개가 통과했다. focused analyze는 종료 코드 0, error·warning 0건이며 기존 `sqflite_common` 직접 의존성 info 1건만 유지된다.
+- public API·model·UI 코드·DB schema·migration·seed/work DB·데이터·repository write·dependency는 변경하지 않았다.
+
 ## 2026-07-26 미사용 generic 단건 read-source 경계 정리
 
 - production에서 미사용이던 `WordRepository.getWordMapById`, `WordRepository.getWordById`와 전용 `getWordMapById` context를 제거했다.

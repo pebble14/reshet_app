@@ -137,8 +137,7 @@ class WordRepository {
     'searchStrongExactMap',
     'searchWordsMap',
   };
-  static const Set<String> _phaseEditSeedContexts = {
-    _readForDetailEditSeedContext,
+  static const Set<String> _phaseEditSeedFallbackContexts = {
     _readForExplorerEditSeedContext,
     _readForGraphCreateEditSeedContext,
   };
@@ -283,6 +282,7 @@ class WordRepository {
     }
 
     if (context == _detailScreenDisplayItemReadContext ||
+        context == _readForDetailEditSeedContext ||
         _phase32HomeDisplayContexts.contains(context) ||
         _phase4SplitViewSingleWordContexts.contains(context) ||
         _phase4GraphCenterSingleWordContexts.contains(context) ||
@@ -291,7 +291,7 @@ class WordRepository {
       return ReadSourcePolicy.normalizedOnly;
     }
 
-    if (_phaseEditSeedContexts.contains(context)) {
+    if (_phaseEditSeedFallbackContexts.contains(context)) {
       return ReadSourcePolicy.normalizedWithFallback;
     }
 
@@ -2010,6 +2010,7 @@ class WordRepository {
     final wordRow = await _getResolvedWordRowForDetailLikeSingleWordRead(
       id,
       context: context,
+      failClosedOnNormalizedFailure: true,
     );
     if (wordRow == null) {
       return null;
@@ -2021,6 +2022,7 @@ class WordRepository {
   Future<Map<String, dynamic>?> _getResolvedWordRowForDetailLikeSingleWordRead(
     String id, {
     required String context,
+    bool failClosedOnNormalizedFailure = false,
   }) async {
     final normalizedId = id.trim();
     if (normalizedId.isEmpty) return null;
@@ -2052,6 +2054,13 @@ class WordRepository {
       snapshot: snapshot,
     );
     _recordWordExpressionReadSnapshots([resolvedResult.snapshot]);
+    if (failClosedOnNormalizedFailure &&
+        resolvedResult.snapshot.requestedPolicy ==
+            ReadSourcePolicy.normalizedOnly &&
+        resolvedResult.snapshot.finalResultSource ==
+            FinalReadResultSource.normalizedFailure) {
+      return null;
+    }
     final materializedRows =
         await _materializeCanonicalMeaningsForNormalRuntime(db, [
           resolvedResult.wordRow,

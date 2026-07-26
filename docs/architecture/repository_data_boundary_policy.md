@@ -163,6 +163,13 @@ Read source policy는 다음 세 상태를 기준으로 해석한다.
 - controlled 또는 owner-specific context만 단계적으로 normalized read 후보가 될 수 있다.
 - fallback governance와 collector observation은 read transition의 일부다.
 
+Detail edit-seed 경계의 active policy는 다음과 같다.
+
+- debug policy override가 없을 때 `readForDetailEditSeed`는 `NORMALIZED_ONLY`를 요청한다.
+- 실제 요청 정책이 `NORMALIZED_ONLY`이고 최종 결과가 `normalizedFailure`이면, repository는 snapshot과 failure observation을 기록한 뒤 nullable `WordEditSeed` contract에서 `null`을 반환한다. 이때 legacy expression result로 edit seed를 재구성하지 않는다.
+- normalized row가 없는 canonical empty는 normalized 성공 결과이므로 non-null edit seed와 빈 expression set을 반환한다.
+- `readForExplorerEditSeed`와 `readForGraphCreateEditSeed`는 `NORMALIZED_WITH_FALLBACK`을 유지한다.
+
 Normalized read는 source-specific raw row를 public contract로 직접 노출하지 않는다. Repository는 normalized read adapter가 만든 canonical expression result를 기준으로 final materialized result를 만든다.
 
 Read source가 달라도 public contract는 source 차이를 직접 드러내지 않아야 한다. 다만 fallback, collector, debug observation은 repository boundary 내부에서 검증 가능해야 한다.

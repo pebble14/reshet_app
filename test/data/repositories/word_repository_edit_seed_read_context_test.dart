@@ -25,6 +25,7 @@ void main() {
     );
 
     await DatabaseService.closeDatabase();
+    DatabaseService.setDataRootOverrideForTest(null);
     await DatabaseService.initialize();
   });
 
@@ -36,14 +37,16 @@ void main() {
       repoRootPath,
       sourceWorkDbPath,
     );
-    Directory.current = isolatedRoot!.path;
+    DatabaseService.setDataRootOverrideForTest(
+      p.join(isolatedRoot!.path, 'data'),
+    );
   });
 
   tearDown(() async {
     await DatabaseService.closeDatabase();
+    DatabaseService.setDataRootOverrideForTest(null);
     WordRepository.debugSetReadSourcePolicyOverride(null);
     WordRepository.debugReadSourceCollector.debugReset();
-    Directory.current = repoRootPath;
 
     if (isolatedRoot != null && isolatedRoot!.existsSync()) {
       await isolatedRoot!.delete(recursive: true);
@@ -108,25 +111,48 @@ void main() {
         expect(detailSeed.note, rawSeed.note);
         expect(detailSeed.meanings, rawSeed.meanings);
         expect(detailSeed.expressionReadResult.sets, hasLength(1));
+        final rawExpressionSet = rawSeed.expressionReadResult.sets.single;
+        final detailExpressionSet = detailSeed.expressionReadResult.sets.single;
+        expect(detailExpressionSet.spelling, rawExpressionSet.spelling);
         expect(
-          detailSeed.expressionReadResult.sets.single.spelling,
-          'edit-seed-title',
+          detailExpressionSet.transliteration,
+          rawExpressionSet.transliteration,
         );
+        expect(
+          detailExpressionSet.pronunciation,
+          rawExpressionSet.pronunciation,
+        );
+        expect(
+          detailExpressionSet.pronunciationNotation,
+          rawExpressionSet.pronunciationNotation,
+        );
+        expect(
+          detailExpressionSet.pronunciationNotationName,
+          rawExpressionSet.pronunciationNotationName,
+        );
+        expect(detailExpressionSet.seq, rawExpressionSet.seq);
+        expect(
+          detailExpressionSet.isRepresentative,
+          rawExpressionSet.isRepresentative,
+        );
+        expect(
+          detailSeed.expressionReadResult.issues,
+          rawSeed.expressionReadResult.issues,
+        );
+        expect(detailSeed.hiddenSlotIssues, rawSeed.hiddenSlotIssues);
+        expect(detailExpressionSet.spelling, 'edit-seed-title');
         expect(explorerSeed!.wordId, rawSeed.wordId);
         expect(
           explorerSeed.expressionReadResult.sets.single.spelling,
-          detailSeed.expressionReadResult.sets.single.spelling,
+          detailExpressionSet.spelling,
         );
         expect(graphCreateSeed!.wordId, rawSeed.wordId);
         expect(
           graphCreateSeed.expressionReadResult.sets.single.spelling,
-          detailSeed.expressionReadResult.sets.single.spelling,
+          detailExpressionSet.spelling,
         );
 
-        expect(
-          detailSnapshot.requestedPolicy,
-          ReadSourcePolicy.normalizedWithFallback,
-        );
+        expect(detailSnapshot.requestedPolicy, ReadSourcePolicy.normalizedOnly);
         expect(
           explorerSnapshot.requestedPolicy,
           ReadSourcePolicy.normalizedWithFallback,
@@ -246,6 +272,10 @@ Future<Map<String, dynamic>> _insertWord(
   String? note,
   required List<Map<String, Object?>> expressionRows,
 }) async {
+  await db.delete('word_expression_set', where: 'word_id = ?', whereArgs: [id]);
+  await db.delete('word_meaning_set', where: 'word_id = ?', whereArgs: [id]);
+  await db.delete('WORD_TABLE', where: 'id = ?', whereArgs: [id]);
+
   final wordRow = <String, dynamic>{
     'id': id,
     '\uC5B8\uC5B4': language,

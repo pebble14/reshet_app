@@ -1,5 +1,39 @@
 # Read Source Migration
 
+## 2026-07-26 Detail edit-seed 표현 read-source `NORMALIZED_ONLY` 전환 및 strict failure 차단
+
+### 현재 상태
+
+- `readForDetailEditSeed` context는 debug policy override가 없을 때
+  `NORMALIZED_ONLY`를 요청한다.
+- Detail edit-seed read의 실제 요청 정책이 `NORMALIZED_ONLY`이고 최종 결과가
+  `normalizedFailure`이면, repository는 snapshot과 failure observation을 기록한
+  뒤 `WordEditSeed?`에서 `null`을 반환한다. legacy expression result로 seed를
+  재구성하지 않는다.
+- normalized row가 없는 canonical empty는 normalized 성공으로 유지하며,
+  non-null seed와 빈 expression set을 반환한다.
+- `readForExplorerEditSeed`와 `readForGraphCreateEditSeed`는
+  `NORMALIZED_WITH_FALLBACK`을 유지한다. query failure와 mapping-invalid에서
+  기존 legacy seed fallback도 유지한다.
+
+### 유지 범위
+
+- 세 edit-seed public API와 `WordEditSeed` model, UI 코드·호출 흐름·microcopy는
+  변경하지 않았다.
+- 공용 fallback resolver와 collector, repository write·dual-sync·undo,
+  graph post-save payload 정책은 유지한다.
+- DB schema·migration·seed/work DB·데이터와 dependency는 변경하지 않았다.
+- 전체 read-source 전환 완료 또는 fallback 제거 상태로 선언하지 않는다.
+
+### 검증
+
+- 지정된 repository read-source policy 및 edit-seed context 테스트 21개가
+  통과했다.
+- 지정된 3개 Dart 파일 focused analyze는 종료 코드 0, error·warning 0건이다.
+  기존 `sqflite_common` 직접 의존성 관련 info 1건은 유지된다.
+- SQL 검증과 클라이언트 UI 테스트는 이번 command-based 구현 검증 범위에서
+  N/A다.
+
 ## 2026-07-26 미사용 generic 단건 read-source 경계 정리
 
 ### 현재 상태
