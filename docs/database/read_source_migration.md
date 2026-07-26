@@ -1,5 +1,31 @@
 # Read Source Migration
 
+## 2026-07-26 그래프 생성 후 payload 표현 read-source `NORMALIZED_ONLY` 전환
+
+### 현재 상태
+
+- `readForGraphCreatePostSavePayload` context는 debug policy override가 없을 때
+  `NORMALIZED_ONLY`를 요청한다.
+- 그래프 신규 단어 생성 후 관계 추가 payload의 대표 표기는 normalized
+  expression authority에서 구성한다.
+- 명시적 `NORMALIZED_WITH_FALLBACK` context 수는 정책 코드 기준 7개에서 6개로
+  줄었다. 나머지 context의 active/dormant 재분류는 이번 범위에 포함하지 않았다.
+
+### 유지 범위
+
+- `GraphCreatePostSavePayload` 타입과 repository public API, `WordGraphScreen`의
+  호출·표시 흐름 및 사용자 동작은 변경하지 않았다.
+- repository create/update write 구현과 dual-sync 정책은 유지한다.
+- DB schema·migration·seed/work DB·데이터와 `WORD_TABLE` compatibility
+  materialization은 변경하지 않았다.
+- `WORD_TABLE` 기본 행 조회 또는 반복 표현 컬럼의 물리적 제거는 이번 작업이
+  아니다.
+
+### 역사 기록 해석
+
+- 아래 2026-05-10 기록은 당시 이 context가
+  `NORMALIZED_WITH_FALLBACK`에 연결됐던 과거 상태로 유지한다.
+
 ## 2026-07-26 저장 후 단건 raw 재조회 잔존 경계 정리
 
 ### 현재 상태

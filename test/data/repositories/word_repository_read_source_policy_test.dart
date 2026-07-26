@@ -498,6 +498,7 @@ void main() {
         _expectNormalizedSnapshot(
           targetWordId,
           'readForGraphCreatePostSavePayload',
+          expectedPolicy: ReadSourcePolicy.normalizedOnly,
         );
         final afterUndoRow = await repository
             .getWordMapByIdForReadAfterUndoSingleWord(targetWordId);

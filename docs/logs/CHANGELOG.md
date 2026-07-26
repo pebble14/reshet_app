@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-07-26 그래프 생성 후 payload 표현 read-source `NORMALIZED_ONLY` 전환
+
+- `readForGraphCreatePostSavePayload` context 하나만 `NORMALIZED_ONLY`로 전환해 그래프 신규 단어 생성 후 payload의 대표 표기가 normalized expression authority를 사용하도록 했다.
+- `GraphCreatePostSavePayload` 타입, repository public API, `WordGraphScreen` 호출·표시 흐름과 사용자 동작은 변경하지 않았다.
+- repository create/update write 구현과 dual-sync는 유지했으며, DB schema·migration·seed/work DB·데이터를 변경하지 않았다.
+- `WORD_TABLE` 기본 행 조회나 반복 표현 컬럼의 물리적 제거, 나머지 fallback context 재분류는 이번 범위에 포함하지 않았다.
+
 ## 2026-07-26 저장 후 단건 raw 재조회 잔존 경계 정리
 
 - production에서 미사용이던 `readAfterSaveSingleWord` context와 `WordRepository.getWordMapByIdForReadAfterSaveSingleWord` API를 제거했다.

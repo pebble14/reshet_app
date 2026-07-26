@@ -87,10 +87,7 @@ void main() {
         expect(payload, isA<GraphCreatePostSavePayload>());
         expect(payload!.wordId, wordId);
         expect(payload.representativeSpelling, 'graph-post-save-title');
-        expect(
-          snapshot.requestedPolicy,
-          ReadSourcePolicy.normalizedWithFallback,
-        );
+        expect(snapshot.requestedPolicy, ReadSourcePolicy.normalizedOnly);
         expect(snapshot.finalResultSource, FinalReadResultSource.normalized);
         expect(snapshot.didFallback, isFalse);
         expect(snapshot.context, 'readForGraphCreatePostSavePayload');
@@ -135,10 +132,7 @@ void main() {
         expect(payload!.wordId, wordId);
         expect(payload.representativeSpelling, 'normalized-post-save-title');
         expect(payload.representativeSpelling, isNot('legacy-hidden-translit'));
-        expect(
-          snapshot.requestedPolicy,
-          ReadSourcePolicy.normalizedWithFallback,
-        );
+        expect(snapshot.requestedPolicy, ReadSourcePolicy.normalizedOnly);
         expect(snapshot.finalResultSource, FinalReadResultSource.normalized);
         expect(snapshot.didFallback, isFalse);
         expect(snapshot.fallbackObservation, isNull);
