@@ -106,7 +106,7 @@ void main() {
       ReadSourceDebugCollector.instance.record(
         _buildSnapshot(
           wordId: 'SECRET_WORD_ID',
-          context: 'getWordMapById',
+          context: 'normalized-failure-fixture',
           requestedPolicy: ReadSourcePolicy.normalizedOnly,
           finalResultSource: FinalReadResultSource.normalizedFailure,
           resolvedSource: ResolvedReadSource.normalized,
@@ -118,7 +118,7 @@ void main() {
 
       expect(logs, [
         '[ExpressionReadSource] '
-            'context=getWordMapById '
+            'context=normalized-failure-fixture '
             'policy=NORMALIZED_ONLY '
             'resolved=normalized '
             'final=normalized_failure '

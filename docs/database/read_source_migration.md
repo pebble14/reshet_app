@@ -1,5 +1,35 @@
 # Read Source Migration
 
+## 2026-07-26 미사용 generic 단건 read-source 경계 정리
+
+### 현재 상태
+
+- production 호출부가 없던 `WordRepository.getWordMapById`,
+  `WordRepository.getWordById`와 전용 `getWordMapById` context를 제거했다.
+- 해당 context만 지원하던 정책 집합·분기와 canonical expression authority
+  membership을 함께 정리했다.
+- 명시적 `NORMALIZED_WITH_FALLBACK` context는
+  `readForDetailEditSeed`, `readForExplorerEditSeed`,
+  `readForGraphCreateEditSeed` 세 개만 남는다.
+- 이번 Cleanup은 활성 경로의 `NORMALIZED_ONLY` 전환이나 공용 fallback 의미
+  변경이 아니라 미사용 production 경계를 제거한 작업이다.
+
+### 유지 범위
+
+- 세 edit-seed public API와 공용 단건 read helper, normalized/legacy
+  materialization 경로를 유지한다.
+- `Word.fromMap` 일반 계약과 graph center·batch·create 활성 경계,
+  repository write·dual-sync·undo를 변경하지 않았다.
+- DB schema·migration·seed/work DB·데이터와 UI·UX·navigation·microcopy는
+  변경하지 않았다.
+
+### 역사 기록 해석
+
+- 아래 Phase 8-A와 generic 단건 read 관련 기록은 해당 경계가 존재했던 당시
+  사실로 유지한다.
+- 최신 현재 상태는 generic 두 API와 전용 context·정책 요소가 제거된 것으로
+  해석한다.
+
 ## 2026-07-26 미사용 그래프 단건 read-source 경계 정리
 
 ### 현재 상태

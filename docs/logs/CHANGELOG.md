@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-07-26 미사용 generic 단건 read-source 경계 정리
+
+- production에서 미사용이던 `WordRepository.getWordMapById`, `WordRepository.getWordById`와 전용 `getWordMapById` context를 제거했다.
+- generic context만 지원하던 `NORMALIZED_WITH_FALLBACK` 정책 집합·분기와 canonical expression authority membership을 정리해, 명시적 fallback context는 세 edit-seed context만 남겼다.
+- obsolete Phase 8-A generic 단건 테스트 계약을 제거하고, 공용 resolver·fallback 검증은 활성 detail edit-seed API 기준으로 유지했다. dual-sync의 삭제·undo 부재 확인은 test DB 직접 조회로 전환했다.
+- graph 활성 경계, `Word.fromMap` 일반 계약, DB schema·migration·데이터, repository write·dual-sync·undo 동작과 UI는 변경하지 않았다.
+
 ## 2026-07-26 미사용 그래프 단건 read-source 경계 정리
 
 - production에서 미사용이던 `readForGraphSingleWord` context와 전용 repository API, `GraphBuilder.buildFromRepository`를 제거했다.

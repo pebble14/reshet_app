@@ -132,7 +132,6 @@ class WordRepository {
       'readForGraphCreatePostSavePayload';
   static const String _readForSplitViewSingleWordContext =
       'readForSplitViewSingleWord';
-  static const String _getWordMapByIdContext = 'getWordMapById';
   static const Set<String> _phase32HomeDisplayContexts = {
     'getStrongWordsMap',
     'searchStrongExactMap',
@@ -155,9 +154,6 @@ class WordRepository {
   static const Set<String> _phaseGraphCreatePostSavePayloadContexts = {
     _readForGraphCreatePostSavePayloadContext,
   };
-  static const Set<String> _phase8ARawSingleWordContexts = {
-    _getWordMapByIdContext,
-  };
   static const Set<String> _canonicalExpressionAuthorityContexts = {
     _detailScreenDisplayItemReadContext,
     _readForDetailEditSeedContext,
@@ -167,7 +163,6 @@ class WordRepository {
     _readForGraphBatchContext,
     _readForGraphCreatePostSavePayloadContext,
     _readForSplitViewSingleWordContext,
-    _getWordMapByIdContext,
     'getStrongWordsMap',
     'searchStrongExactMap',
     'searchWordsMap',
@@ -296,8 +291,7 @@ class WordRepository {
       return ReadSourcePolicy.normalizedOnly;
     }
 
-    if (_phaseEditSeedContexts.contains(context) ||
-        _phase8ARawSingleWordContexts.contains(context)) {
+    if (_phaseEditSeedContexts.contains(context)) {
       return ReadSourcePolicy.normalizedWithFallback;
     }
 
@@ -1970,13 +1964,6 @@ class WordRepository {
     );
   }
 
-  Future<Map<String, dynamic>?> getWordMapById(String id) async {
-    return _getResolvedWordRowForDetailLikeSingleWordRead(
-      id,
-      context: _getWordMapByIdContext,
-    );
-  }
-
   Future<WordEditSeed?> getWordEditSeedForDetailEdit(String id) async {
     return _getWordEditSeedWithContext(
       id,
@@ -2430,12 +2417,6 @@ class WordRepository {
     return rows
         .map((row) => Map<String, dynamic>.from(row))
         .toList(growable: false);
-  }
-
-  Future<Word?> getWordById(String id) async {
-    final row = await getWordMapById(id);
-    if (row == null) return null;
-    return Word.fromMap(row);
   }
 
   /// 특정 단어와 연결된 모든 단어 목록 조회 (WORD_RELATION 기반)

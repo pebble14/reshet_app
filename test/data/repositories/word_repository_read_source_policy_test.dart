@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
-import 'package:reshet_app/data/adapters/legacy_word_expression_read_adapter.dart';
 import 'package:reshet_app/data/repositories/word_repository.dart';
 import 'package:reshet_app/database/database_service.dart';
 import 'package:reshet_app/domain/expression/read_source_policy.dart';
@@ -55,7 +54,7 @@ void main() {
 
   group('WordRepository read source foundation', () {
     test(
-      'keeps the global default as LEGACY while raw single-word read uses NORMALIZED_WITH_FALLBACK',
+      'keeps the global default as LEGACY while detail edit seed uses NORMALIZED_WITH_FALLBACK',
       () async {
         final logs = <String>[];
         final previousDebugPrint = debugPrint;
@@ -74,11 +73,13 @@ void main() {
         );
 
         final repository = WordRepository();
-        final row = await repository.getWordMapById('E0000_0010');
+        final seed = await repository.getWordEditSeedForDetailEdit(
+          'E0000_0010',
+        );
         final snapshot = WordRepository.debugReadSourceCollector
             .debugLastSnapshotForWord('E0000_0010');
 
-        expect(row, isNotNull);
+        expect(seed, isNotNull);
         expect(snapshot, isNotNull);
         expect(
           snapshot!.requestedPolicy,
@@ -97,7 +98,7 @@ void main() {
         expect(
           observationLog,
           '[ExpressionReadSource] '
-          'context=getWordMapById '
+          'context=readForDetailEditSeed '
           'policy=NORMALIZED_WITH_FALLBACK '
           'resolved=normalized '
           'final=normalized '
@@ -116,12 +117,14 @@ void main() {
         );
         final repository = WordRepository();
 
-        final row = await repository.getWordMapById('E0000_0010');
+        final seed = await repository.getWordEditSeedForDetailEdit(
+          'E0000_0010',
+        );
         final snapshot = WordRepository.debugReadSourceCollector
             .debugLastSnapshotForWord('E0000_0010');
 
-        expect(row, isNotNull);
-        expect(row!['표기1'], 'Eva');
+        expect(seed, isNotNull);
+        expect(seed!.expressionReadResult.sets.first.spelling, 'Eva');
         expect(snapshot, isNotNull);
         expect(
           snapshot!.requestedPolicy,
@@ -155,11 +158,13 @@ void main() {
           '발음1': 'fallback',
         });
 
-        final row = await repository.getWordMapById('T9000_RS_EMPTY');
+        final seed = await repository.getWordEditSeedForDetailEdit(
+          'T9000_RS_EMPTY',
+        );
         final snapshot = WordRepository.debugReadSourceCollector
             .debugLastSnapshotForWord('T9000_RS_EMPTY');
 
-        expect(row, isNotNull);
+        expect(seed, isNotNull);
         expect(snapshot, isNotNull);
         expect(snapshot!.resolvedSource, ResolvedReadSource.normalized);
         expect(snapshot.finalResultSource, FinalReadResultSource.normalized);
@@ -193,11 +198,13 @@ void main() {
 
         await db.execute('DROP TABLE word_expression_set');
 
-        final row = await repository.getWordMapById('E0000_0001');
+        final seed = await repository.getWordEditSeedForDetailEdit(
+          'E0000_0001',
+        );
         final snapshot = WordRepository.debugReadSourceCollector
             .debugLastSnapshotForWord('E0000_0001');
 
-        expect(row, isNotNull);
+        expect(seed, isNotNull);
         expect(snapshot, isNotNull);
         expect(snapshot!.resolvedSource, ResolvedReadSource.legacy);
         expect(
@@ -217,7 +224,7 @@ void main() {
         expect(
           observationLog,
           '[ExpressionReadSource] '
-          'context=getWordMapById '
+          'context=readForDetailEditSeed '
           'policy=NORMALIZED_WITH_FALLBACK '
           'resolved=legacy '
           'final=legacy_fallback '
@@ -259,11 +266,13 @@ void main() {
         });
         await db.execute('PRAGMA ignore_check_constraints = OFF');
 
-        final row = await repository.getWordMapById('T9000_RS_MIN_EXPR');
+        final seed = await repository.getWordEditSeedForDetailEdit(
+          'T9000_RS_MIN_EXPR',
+        );
         final snapshot = WordRepository.debugReadSourceCollector
             .debugLastSnapshotForWord('T9000_RS_MIN_EXPR');
 
-        expect(row, isNotNull);
+        expect(seed, isNotNull);
         expect(snapshot, isNotNull);
         expect(snapshot!.resolvedSource, ResolvedReadSource.legacy);
         expect(
@@ -337,11 +346,13 @@ void main() {
           'spelling': 'aleph',
         });
 
-        final row = await repository.getWordMapById('T9000_RS_MAPPING');
+        final seed = await repository.getWordEditSeedForDetailEdit(
+          'T9000_RS_MAPPING',
+        );
         final snapshot = WordRepository.debugReadSourceCollector
             .debugLastSnapshotForWord('T9000_RS_MAPPING');
 
-        expect(row, isNotNull);
+        expect(seed, isNotNull);
         expect(snapshot, isNotNull);
         expect(snapshot!.resolvedSource, ResolvedReadSource.legacy);
         expect(
@@ -372,11 +383,13 @@ void main() {
           '표기1': 'strict-only',
         });
 
-        final row = await repository.getWordMapById('T9000_RS_STRICT');
+        final seed = await repository.getWordEditSeedForDetailEdit(
+          'T9000_RS_STRICT',
+        );
         final snapshot = WordRepository.debugReadSourceCollector
             .debugLastSnapshotForWord('T9000_RS_STRICT');
 
-        expect(row, isNotNull);
+        expect(seed, isNotNull);
         expect(snapshot, isNotNull);
         expect(snapshot!.resolvedSource, ResolvedReadSource.normalized);
         expect(snapshot.finalResultSource, FinalReadResultSource.normalized);
@@ -915,9 +928,10 @@ void main() {
       () async {
         final repository = WordRepository();
 
-        final rawSingleWordRow = await repository.getWordMapById('E0000_0010');
-        final rawSingleWordSnapshot = WordRepository.debugReadSourceCollector
-            .debugLastSnapshotForWord('E0000_0010');
+        expect(
+          WordRepository.debugCurrentReadSourcePolicy,
+          ReadSourcePolicy.legacy,
+        );
         final detailRow = await repository
             .getWordDetailLikeDisplayItemByIdForDetailScreen('E0000_0010');
         final detailSnapshot = WordRepository.debugReadSourceCollector
@@ -929,13 +943,7 @@ void main() {
                       'getWordDetailLikeDisplayItemByIdForDetailScreen',
             );
 
-        expect(rawSingleWordRow, isNotNull);
         expect(detailRow, isNotNull);
-        expect(rawSingleWordSnapshot, isNotNull);
-        expect(
-          rawSingleWordSnapshot!.requestedPolicy,
-          ReadSourcePolicy.normalizedWithFallback,
-        );
         expect(detailSnapshot.requestedPolicy, ReadSourcePolicy.normalizedOnly);
         expect(
           detailSnapshot.finalResultSource,
@@ -944,7 +952,6 @@ void main() {
         expect(detailSnapshot.didFallback, isFalse);
         expect(detailSnapshot.legacyResultAvailable, isTrue);
         expect(detailSnapshot.normalizedResultAvailable, isTrue);
-        _expectSameDetailDisplay(rawSingleWordRow!, detailRow!);
       },
     );
 
@@ -1057,8 +1064,6 @@ void main() {
         final repository = WordRepository();
         final db = await DatabaseService.openDatabaseFile();
 
-        await repository.getWordMapById('E0000_0010');
-
         await db.insert('WORD_TABLE', {
           'id': 'T9000_RS_SUMMARY',
           '언어': '테스트',
@@ -1167,107 +1172,13 @@ Future<void> _insertCanonicalClosureWord(
   });
 }
 
-void _expectSameDetailDisplay(Object expectedDetail, Object actualDetail) {
-  final expected = _buildDetailDisplaySummary(expectedDetail);
-  final actual = _buildDetailDisplaySummary(actualDetail);
-
+void _expectSameDetailDisplay(
+  WordDetailLikeDisplayItem expected,
+  WordDetailLikeDisplayItem actual,
+) {
   expect(actual.representativeSpelling, expected.representativeSpelling);
   expect(actual.spellings, equals(expected.spellings));
   expect(actual.transliterations, equals(expected.transliterations));
   expect(actual.pronunciations, equals(expected.pronunciations));
   expect(actual.meanings, equals(expected.meanings));
-}
-
-({
-  String? representativeSpelling,
-  List<String> spellings,
-  List<String> transliterations,
-  List<String> pronunciations,
-  List<String> meanings,
-})
-_buildDetailDisplaySummary(Object detail) {
-  if (detail is WordDetailLikeDisplayItem) {
-    return (
-      representativeSpelling: detail.representativeSpelling,
-      spellings: detail.spellings,
-      transliterations: detail.transliterations,
-      pronunciations: detail.pronunciations,
-      meanings: detail.meanings,
-    );
-  }
-
-  if (detail is! Map<String, dynamic>) {
-    throw ArgumentError.value(
-      detail,
-      'detail',
-      'Map<String, dynamic> 또는 WordDetailLikeDisplayItem만 비교할 수 있습니다.',
-    );
-  }
-
-  final wordRow = detail;
-  final readResult = readLegacyWordExpressionRow(wordRow);
-  final representativeSpelling = readResult.sets.isEmpty
-      ? null
-      : _nullIfEmptyString(
-          readResult.sets
-              .firstWhere(
-                (set) => set.isRepresentative,
-                orElse: () => readResult.sets.first,
-              )
-              .spelling,
-        );
-
-  return (
-    representativeSpelling: representativeSpelling,
-    spellings: _collectUniqueNonEmptyValues(
-      readResult.sets.map((set) => set.spelling),
-    ),
-    transliterations: _collectUniqueNonEmptyValues(
-      readResult.sets.map((set) => set.transliteration),
-    ),
-    pronunciations: _collectUniqueNonEmptyValues(
-      readResult.sets.map((set) => set.pronunciation),
-    ),
-    meanings: _collectSeries(wordRow, '의미', 7),
-  );
-}
-
-String? _nullIfEmptyString(String value) {
-  final trimmed = value.trim();
-  if (trimmed.isEmpty) {
-    return null;
-  }
-  return trimmed;
-}
-
-List<String> _collectUniqueNonEmptyValues(Iterable<String?> values) {
-  final collectedValues = <String>[];
-
-  for (final value in values) {
-    final trimmed = (value ?? '').trim();
-    if (trimmed.isEmpty || collectedValues.contains(trimmed)) {
-      continue;
-    }
-    collectedValues.add(trimmed);
-  }
-
-  return collectedValues;
-}
-
-List<String> _collectSeries(
-  Map<String, dynamic> wordRow,
-  String prefix,
-  int count,
-) {
-  final values = <String>[];
-
-  for (var index = 1; index <= count; index++) {
-    final value = (wordRow['$prefix$index'] ?? '').toString().trim();
-    if (value.isEmpty || values.contains(value)) {
-      continue;
-    }
-    values.add(value);
-  }
-
-  return values;
 }

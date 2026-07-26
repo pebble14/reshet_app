@@ -435,7 +435,13 @@ void main() {
         await repository.deleteWord(wordId);
 
         final db = await DatabaseService.openDatabaseFile();
-        final deletedWord = await repository.getWordMapById(wordId);
+        final deletedWordRows = await db.query(
+          'WORD_TABLE',
+          columns: const ['id'],
+          where: 'id = ?',
+          whereArgs: [wordId],
+          limit: 1,
+        );
         final remainingRows = await db.query(
           'word_expression_set',
           where: 'word_id = ?',
@@ -447,7 +453,7 @@ void main() {
           whereArgs: [wordId],
         );
 
-        expect(deletedWord, isNull);
+        expect(deletedWordRows, isEmpty);
         expect(remainingRows, isEmpty);
         expect(remainingMeaningRows, isEmpty);
 
@@ -493,7 +499,13 @@ void main() {
       expect(undone.didUndo, isTrue);
 
       final db = await DatabaseService.openDatabaseFile();
-      final word = await repository.getWordMapById(wordId);
+      final wordRows = await db.query(
+        'WORD_TABLE',
+        columns: const ['id'],
+        where: 'id = ?',
+        whereArgs: [wordId],
+        limit: 1,
+      );
       final rows = await db.query(
         'word_expression_set',
         where: 'word_id = ?',
@@ -505,7 +517,7 @@ void main() {
         whereArgs: [wordId],
       );
 
-      expect(word, isNull);
+      expect(wordRows, isEmpty);
       expect(rows, isEmpty);
       expect(meaningRows, isEmpty);
     });
