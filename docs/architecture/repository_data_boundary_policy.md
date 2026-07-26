@@ -477,7 +477,7 @@ Repository Data Boundary Policy는 Reshet의 active repository/data authority다
 
 현재 expression write authority는 repository 내부 canonical expression set과 `word_expression_set` write path를 우선한다. `WORD_TABLE` expression slot은 compatibility projection이다.
 
-Read authority는 아직 hybrid transition 상태다. `LEGACY`와 `NORMALIZED_WITH_FALLBACK` context가 공존하며, normalized-only 완료나 fallback 제거는 선언하지 않는다.
+현재 active production owner-specific read context는 모두 `NORMALIZED_ONLY`이며, `_defaultReadSourcePolicy`의 `LEGACY`는 미등록 context를 위한 generic 호환 기본 정책으로 남아 있다. `NORMALIZED_WITH_FALLBACK` 처리 분기와 `legacyReadResult` 구성은 debug·transition 비교·검증 능력을 위해 유지되지만, 활성 production `NORMALIZED_WITH_FALLBACK` context는 없다. 이는 repository 전체 normalized-only 완료나 legacy/fallback 코드 제거 완료를 의미하지 않는다.
 
 Controlled zone은 normalized read 확대를 owner-specific display contract, fallback observation, collector 해석 가능성 안에서 제한하기 위한 governance다.
 
