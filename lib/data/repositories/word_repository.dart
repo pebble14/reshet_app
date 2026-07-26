@@ -138,8 +138,6 @@ class WordRepository {
       'readForGraphCreatePostSavePayload';
   static const String _readForSplitViewSingleWordContext =
       'readForSplitViewSingleWord';
-  static const String _readForExplorerSingleWordContext =
-      'readForExplorerSingleWord';
   static const String _getWordMapByIdContext = 'getWordMapById';
   static const Set<String> _phase32HomeDisplayContexts = {
     'getStrongWordsMap',
@@ -174,7 +172,6 @@ class WordRepository {
   };
   static const Set<String> _phase8ARawSingleWordContexts = {
     _getWordMapByIdContext,
-    _readForExplorerSingleWordContext,
   };
   static const Set<String> _canonicalExpressionAuthorityContexts = {
     _detailScreenDisplayItemReadContext,
@@ -188,7 +185,6 @@ class WordRepository {
     _readForGraphBatchContext,
     _readForGraphCreatePostSavePayloadContext,
     _readForSplitViewSingleWordContext,
-    _readForExplorerSingleWordContext,
     _getWordMapByIdContext,
     'getStrongWordsMap',
     'searchStrongExactMap',
@@ -2253,15 +2249,6 @@ class WordRepository {
     return _getWordDetailLikeDisplayItemByIdWithContext(
       id,
       context: _readForSplitViewSingleWordContext,
-    );
-  }
-
-  Future<Map<String, dynamic>?> getWordMapByIdForExplorerSingleWord(
-    String id,
-  ) async {
-    return _getResolvedWordRowForDetailLikeSingleWordRead(
-      id,
-      context: _readForExplorerSingleWordContext,
     );
   }
 

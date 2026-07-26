@@ -436,9 +436,6 @@ void main() {
           'readForSplitViewSingleWord',
           expectedPolicy: ReadSourcePolicy.normalizedOnly,
         );
-        final explorerRow = await repository
-            .getWordMapByIdForExplorerSingleWord(targetWordId);
-        _expectNormalizedSnapshot(targetWordId, 'readForExplorerSingleWord');
         final graphSingleRow = await repository
             .getWordMapByIdForGraphSingleWord(targetWordId);
         _expectNormalizedSnapshot(targetWordId, 'readForGraphSingleWord');
@@ -527,8 +524,6 @@ void main() {
         expect(detailDisplay.meanings, [canonicalMeaning]);
         expect(splitViewDisplay, isNotNull);
         expect(splitViewDisplay!.representativeSpelling, canonicalTitle);
-        expect(explorerRow!['표기1'], canonicalTitle);
-        expect(explorerRow['의미1'], canonicalMeaning);
         expect(graphSingleRow!['표기1'], canonicalTitle);
         expect(graphCenterRow!['표기1'], canonicalTitle);
         expect(graphCenterDisplay, isNotNull);
@@ -626,7 +621,7 @@ void main() {
 
   group('WordRepository split view single-word path', () {
     test(
-      'split view uses NORMALIZED_ONLY while explorer single-word read keeps NORMALIZED_WITH_FALLBACK',
+      'split view uses NORMALIZED_ONLY and matches detail display',
       () async {
         final repository = WordRepository();
 
@@ -634,8 +629,6 @@ void main() {
             .getWordDetailLikeDisplayItemByIdForSplitView('E0000_0010');
         final detailRow = await repository
             .getWordDetailLikeDisplayItemByIdForDetailScreen('E0000_0010');
-        final explorerRow = await repository
-            .getWordMapByIdForExplorerSingleWord('E0000_0010');
         final splitViewSnapshot = WordRepository.debugReadSourceCollector
             .debugRecentSnapshots()
             .lastWhere(
@@ -643,17 +636,9 @@ void main() {
                   snapshot.wordId == 'E0000_0010' &&
                   snapshot.context == 'readForSplitViewSingleWord',
             );
-        final explorerSnapshot = WordRepository.debugReadSourceCollector
-            .debugRecentSnapshots()
-            .lastWhere(
-              (snapshot) =>
-                  snapshot.wordId == 'E0000_0010' &&
-                  snapshot.context == 'readForExplorerSingleWord',
-            );
 
         expect(splitViewRow, isNotNull);
         expect(detailRow, isNotNull);
-        expect(explorerRow, isNotNull);
         expect(
           splitViewSnapshot.requestedPolicy,
           ReadSourcePolicy.normalizedOnly,
@@ -665,15 +650,6 @@ void main() {
         expect(splitViewSnapshot.didFallback, isFalse);
         expect(splitViewSnapshot.legacyResultAvailable, isTrue);
         expect(splitViewSnapshot.normalizedResultAvailable, isTrue);
-        expect(
-          explorerSnapshot.requestedPolicy,
-          ReadSourcePolicy.normalizedWithFallback,
-        );
-        expect(
-          explorerSnapshot.finalResultSource,
-          FinalReadResultSource.normalized,
-        );
-        expect(explorerSnapshot.didFallback, isFalse);
         _expectSameDetailDisplay(detailRow!, splitViewRow!);
       },
     );

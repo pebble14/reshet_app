@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-07-26 Explorer 단건 raw 읽기 잔존 경계 정리
+
+- production에서 미사용이던 `readForExplorerSingleWord` context와 `WordRepository.getWordMapByIdForExplorerSingleWord` API를 제거했다.
+- 삭제된 API의 `NORMALIZED_WITH_FALLBACK` 정책과 visible mismatch fallback을 고정하던 오래된 targeted test 계약을 정리했다.
+- 활성 Explorer의 graph-center typed read, split-view typed read, `probeExistingWordIdsForExplorerHistory` ID probe와 공용 fallback·materialization 경계는 변경하지 않았다.
+
 ## 2026-07-25 그래프 본체 표현 read-source `NORMALIZED_ONLY` 전환
 
 - 활성 `WordGraphScreen._loadConnectedWords()`에서 중심 표현을 읽는 `readForGraphCenterSingleWord`와 연결 단어 표현을 읽는 `readForGraphBatch`를 최소 응집 단위로 함께 `NORMALIZED_ONLY`로 전환했다.

@@ -1,5 +1,23 @@
 # Read Source Migration
 
+## 2026-07-26 Explorer 단건 raw 읽기 잔존 경계 정리
+
+### 현재 상태
+
+- production 호출부가 없던 `readForExplorerSingleWord` context와
+  `WordRepository.getWordMapByIdForExplorerSingleWord` API를 제거했다.
+- 활성 Explorer는 graph-center typed read, split-view typed read,
+  `probeExistingWordIdsForExplorerHistory` ID probe를 계속 사용한다.
+- 공용 read-source resolver와 fallback, expression·meaning materialization,
+  edit·save·undo·create·post-save 및 repository write 경로는 변경하지 않았다.
+
+### 역사 기록 해석
+
+- 아래 Phase 8-A 기록은 당시 Explorer history 확인에서 단건 raw read가
+  사용됐던 과거 상태로 유지한다.
+- Phase 8-H-16에서 history 확인을 ID probe로 대체했고, 이번 Cleanup에서는
+  이후 dormant 상태로 남은 context·API와 전용 테스트 계약만 정리했다.
+
 ## 2026-07-25 그래프 본체 표현 read-source `NORMALIZED_ONLY` 전환
 
 ### 적용 범위
@@ -991,7 +1009,10 @@ debug override 우선순위는 유지한다.
 - 이번 단계에서는 route payload를 `initialWordId`로 줄였다.
 - explorer는 init bootstrap에서 graph center read와 split-view read를 각각 호출해 초기 상태를 구성한다.
 - history snapshot은 full selected row 대신 selected word id만 보관한다.
-- history availability probe는 기존처럼 `readForExplorerSingleWord` / `probeExistingWordIdsForExplorerHistory` 경로를 유지한다.
+- 이 단계 당시 history availability 확인은 `readForExplorerSingleWord` raw
+  단건 read를 유지했다. 이후 Phase 8-H-16에서
+  `probeExistingWordIdsForExplorerHistory` ID probe로 대체했고,
+  2026-07-26 Cleanup에서 dormant context·API를 제거했다.
 
 ### 구조 결과
 
