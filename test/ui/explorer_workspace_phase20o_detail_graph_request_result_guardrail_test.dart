@@ -8,7 +8,9 @@ void main() {
     late String detailSource;
     late String detailWidgetSource;
     late String openGraphSource;
-    late String openSelectedWordDetailSource;
+    late String explorerSource;
+    late String splitBodySource;
+    late String focusSelectedWordDetailPaneSource;
     late String embeddedDetailPanelSource;
     late String homeDetailRouteSource;
     late String wordGraphSource;
@@ -30,17 +32,22 @@ void main() {
         'Future<void> _confirmDelete() async {',
       );
 
-      final explorerSource = File(
+      explorerSource = File(
         'lib/ui/word_explorer_screen.dart',
       ).readAsStringSync();
-      openSelectedWordDetailSource = _sourceBetween(
+      splitBodySource = _sourceBetween(
         explorerSource,
-        'Future<void> _openSelectedWordDetail() async {',
+        'Widget _buildResizableExplorerBody() {',
+        '_GraphDetailSplitMetrics _resolveGraphDetailSplitMetrics(',
+      );
+      focusSelectedWordDetailPaneSource = _sourceBetween(
+        explorerSource,
+        'void _focusSelectedWordDetailPane(double usableWidth) {',
         'void _showWordNavigationUnavailableSnackBar() {',
       );
       embeddedDetailPanelSource = _sourceBetween(
         explorerSource,
-        'Widget _buildDetailPanel() {',
+        'Widget _buildDetailPanel({required double usableWidth}) {',
         'Widget _buildNoSelectionDetailPanel() {',
       );
 
@@ -91,8 +98,9 @@ void main() {
       );
       expect(
         openGraphSource,
-        contains('WordGraphScreen(centerWordId: _wordId)'),
+        contains('builder: (context) => WordGraphScreen('),
       );
+      expect(openGraphSource, contains('centerWordId: _wordId'));
     });
 
     test('returns graph request only after existing availability guard', () {
@@ -119,61 +127,60 @@ void main() {
       expect(standalonePushIndex, greaterThan(resultIndex));
     });
 
-    test('uses return-to-caller mode only for explorer full-detail route', () {
+    test('keeps return-to-caller contract dormant outside explorer', () {
+      expect(explorerSource, isNot(contains('WordDetailGraphRequestedResult')));
       expect(
-        openSelectedWordDetailSource,
-        contains('graphActionMode: WordDetailGraphActionMode.returnToCaller'),
+        explorerSource,
+        isNot(
+          contains('graphActionMode: WordDetailGraphActionMode.returnToCaller'),
+        ),
       );
+      expect(focusSelectedWordDetailPaneSource, isNot(contains('Navigator.')));
       expect(homeDetailRouteSource, isNot(contains('graphActionMode:')));
       expect(homeDetailRouteSource, contains('WordDetailScreen('));
       expect(homeDetailRouteSource, contains('_refreshWords();'));
     });
 
-    test('retargets explorer center for graph request result', () {
+    test('keeps embedded graph center change as the center owner path', () {
       expect(
-        openSelectedWordDetailSource,
-        contains('if (detailResult is WordDetailGraphRequestedResult)'),
+        splitBodySource,
+        contains('onChangeCenterWordId: (centerWordId) async {'),
       );
       expect(
-        openSelectedWordDetailSource,
-        contains(
-          'await _selectWord(detailResult.wordId, changeCenterWord: true)',
-        ),
+        splitBodySource,
+        contains('await _selectWord(centerWordId, changeCenterWord: true)'),
       );
     });
 
-    test('keeps explorer delete and ordinary refresh paths', () {
-      final deleteIndex = openSelectedWordDetailSource.indexOf(
-        'if (detailResult is WordDetailDeletedResult)',
-      );
-      final graphRequestIndex = openSelectedWordDetailSource.indexOf(
-        'if (detailResult is WordDetailGraphRequestedResult)',
-      );
-      final refreshIndex = openSelectedWordDetailSource.lastIndexOf(
-        'await _refreshSelectedWord(',
-      );
-
-      expect(deleteIndex, greaterThanOrEqualTo(0));
+    test('pane focus does not retarget selection, center, or graph state', () {
       expect(
-        openSelectedWordDetailSource,
-        contains('_handleDeletedSelectedWord(wasCenterWord: wasCenterWord)'),
+        focusSelectedWordDetailPaneSource,
+        contains('_graphPaneFraction = focusedFraction'),
       );
-      expect(graphRequestIndex, greaterThan(deleteIndex));
-      expect(refreshIndex, greaterThan(graphRequestIndex));
-      expect(
-        openSelectedWordDetailSource,
-        contains('refreshGraphIfChanged: true'),
-      );
+      for (final ownerField in [
+        '_selectedWordId',
+        '_centerWordId',
+        '_history',
+        '_graphRevision',
+      ]) {
+        expect(
+          focusSelectedWordDetailPaneSource,
+          isNot(contains(ownerField)),
+          reason: '$ownerField must remain owned by the existing graph flow.',
+        );
+      }
     });
 
-    test('keeps embedded pane actions limited to edit and full-detail', () {
+    test('keeps embedded pane actions limited to edit and pane focus', () {
       expect(
         embeddedDetailPanelSource,
         contains('onEdit: _openEditSelectedWord'),
       );
       expect(
         embeddedDetailPanelSource,
-        contains('onOpenDetail: _openSelectedWordDetail'),
+        contains(
+          'onFocusDetail: () => _focusSelectedWordDetailPane(usableWidth)',
+        ),
       );
       expect(embeddedDetailPanelSource, isNot(contains('onDelete:')));
       expect(embeddedDetailPanelSource, isNot(contains('onShowGraph:')));

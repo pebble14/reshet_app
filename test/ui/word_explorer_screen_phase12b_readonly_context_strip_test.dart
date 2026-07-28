@@ -14,7 +14,7 @@ void main() {
       wordExplorerSource = File(wordExplorerSourcePath).readAsStringSync();
       detailPaneSource = _extractBetween(
         wordExplorerSource,
-        '  Widget _buildDetailPane() {',
+        '  Widget _buildDetailPane({required double usableWidth}) {',
         '  Future<void> _selectWord(',
       );
       contextStripSource = _extractBetween(
@@ -26,11 +26,17 @@ void main() {
 
     test('mounts the strip only inside the existing detail pane', () {
       expect(wordExplorerSource, contains('width: splitMetrics.detailWidth'));
-      expect(wordExplorerSource, contains('child: _buildDetailPane()'));
+      expect(wordExplorerSource, contains('child: _buildDetailPane('));
+      expect(
+        wordExplorerSource,
+        contains('usableWidth: splitMetrics.usableWidth'),
+      );
       expect(detailPaneSource, contains('_buildDetailPaneContextStrip()'));
       expect(
         detailPaneSource,
-        contains('Expanded(child: _buildDetailPanel())'),
+        contains(
+          'Expanded(child: _buildDetailPanel(usableWidth: usableWidth))',
+        ),
       );
       expect(
         wordExplorerSource,

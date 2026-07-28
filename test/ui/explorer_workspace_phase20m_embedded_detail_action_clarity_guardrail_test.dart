@@ -7,7 +7,7 @@ void main() {
     const wordExplorerSourcePath = 'lib/ui/word_explorer_screen.dart';
 
     late String embeddedDetailPanelSource;
-    late String openSelectedWordDetailSource;
+    late String focusSelectedWordDetailPaneSource;
 
     setUpAll(() {
       final wordExplorerSource = File(
@@ -15,17 +15,17 @@ void main() {
       ).readAsStringSync();
       embeddedDetailPanelSource = _sourceBetween(
         wordExplorerSource,
-        'Widget _buildDetailPanel() {',
+        'Widget _buildDetailPanel({required double usableWidth}) {',
         'Widget _buildNoSelectionDetailPanel() {',
       );
-      openSelectedWordDetailSource = _sourceBetween(
+      focusSelectedWordDetailPaneSource = _sourceBetween(
         wordExplorerSource,
-        'Future<void> _openSelectedWordDetail() async {',
+        'void _focusSelectedWordDetailPane(double usableWidth) {',
         'void _showWordNavigationUnavailableSnackBar() {',
       );
     });
 
-    test('keeps embedded detail actions limited to edit and full-detail', () {
+    test('keeps embedded detail actions limited to edit and pane focus', () {
       expect(embeddedDetailPanelSource, contains('return WordInfoPanel('));
       expect(
         embeddedDetailPanelSource,
@@ -33,32 +33,59 @@ void main() {
       );
       expect(
         embeddedDetailPanelSource,
-        contains('onOpenDetail: _openSelectedWordDetail'),
+        contains(
+          'onFocusDetail: () => _focusSelectedWordDetailPane(usableWidth)',
+        ),
       );
       expect(embeddedDetailPanelSource, isNot(contains('onDelete:')));
       expect(embeddedDetailPanelSource, isNot(contains('onShowGraph:')));
     });
 
-    test('keeps full-detail route result and refresh contracts unchanged', () {
-      expect(
-        openSelectedWordDetailSource,
-        contains('Navigator.push<WordDetailRouteResult>('),
-      );
-      expect(openSelectedWordDetailSource, contains('WordDetailScreen('));
-      expect(
-        openSelectedWordDetailSource,
-        contains('if (detailResult is WordDetailDeletedResult)'),
-      );
-      expect(
-        openSelectedWordDetailSource,
-        contains('_handleDeletedSelectedWord(wasCenterWord: wasCenterWord)'),
-      );
-      expect(openSelectedWordDetailSource, contains('_refreshSelectedWord('));
-      expect(
-        openSelectedWordDetailSource,
-        contains('refreshGraphIfChanged: true'),
-      );
-    });
+    test(
+      'focuses detail locally without route, persistence, or owner changes',
+      () {
+        expect(
+          focusSelectedWordDetailPaneSource,
+          contains('_clampGraphPaneFractionForWidth(usableWidth, 0.0)'),
+        );
+        expect(
+          focusSelectedWordDetailPaneSource,
+          contains('(focusedFraction - _graphPaneFraction).abs() < 0.0001'),
+        );
+        expect(
+          focusSelectedWordDetailPaneSource,
+          contains('_graphPaneFraction = focusedFraction'),
+        );
+        expect(
+          focusSelectedWordDetailPaneSource,
+          isNot(contains('Navigator.')),
+        );
+        expect(
+          focusSelectedWordDetailPaneSource,
+          isNot(contains('_persistGraphPaneFractionForWidth')),
+        );
+        expect(
+          focusSelectedWordDetailPaneSource,
+          isNot(contains('SharedPreferences')),
+        );
+        for (final ownerField in [
+          '_selectedWordId',
+          '_centerWordId',
+          '_history',
+          '_graphRevision',
+        ]) {
+          expect(
+            focusSelectedWordDetailPaneSource,
+            isNot(contains(ownerField)),
+            reason: '$ownerField must not change during pane-local focus.',
+          );
+        }
+        expect(
+          focusSelectedWordDetailPaneSource,
+          isNot(contains('WordDetailScreen')),
+        );
+      },
+    );
   });
 }
 

@@ -1,5 +1,10 @@
 # CHANGELOG
 
+- `2026-07-28` large-screen embedded Explorer의 `상세 영역 넓게 보기`를 별도 `WordDetailScreen` route 대신 pane-local focus로 전환했다. 기존 graph 최소 폭 360px clamp를 재사용하고 `_graphPaneFraction`만 임시 변경해 저장된 divider 비율과 selection·center·history·graph revision owner를 유지한다.
+- 좁은 embedded graph의 AppBar는 전체 화면 폭이 아닌 실제 local constraints를 기준으로 기존 overflow menu를 재사용한다. Explorer 이전·다음 action은 직접 표시하고 graph command 6개는 menu로 전환하며, 충분히 넓은 embedded/standalone graph의 direct action과 모든 기존 handler·활성 조건은 유지한다.
+- 직접 관련 guard/widget/delete 테스트 75개, Home runtime 7개, graph responsive/mobile 테스트 7개가 통과했다. 변경 Dart 파일 focused analyze는 종료 코드 0이며 기존 info 8건 외 error·warning은 없다.
+- 사용자 UI 수동 테스트는 정확한 픽셀 크기 대신 graph/detail 동시 표시와 small-screen 전환을 기준으로 수행했다. large-screen Explorer에서 새 route·AppBar 없이 상세 영역이 확장되고 graph가 약 360px로 유지됐으며, layout overflow 없이 menu의 graph command 6개에 접근할 수 있었다. divider를 graph 최소 폭까지 옮긴 경우에도 overflow가 없었고 selection·center·history와 중심 변경·삭제 동작, 저장된 divider 비율의 비덮어쓰기와 앱 재실행 후 복원, small-screen 상세→그래프 route가 모두 유지됐다.
+
 ## 2026-07-26 Graph-create edit-seed 표현 read-source `NORMALIZED_ONLY` 전환 및 cleanup 실패 차단
 
 - `readForGraphCreateEditSeed`를 `NORMALIZED_ONLY`로 전환했다. normalized query failure와 mapping-invalid에서는 snapshot·failure observation을 유지하고 `WordEditSeed?`에서 `null`을 반환하며 legacy expression result로 seed를 재구성하지 않는다.

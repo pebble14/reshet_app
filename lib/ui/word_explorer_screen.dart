@@ -9,8 +9,6 @@ import '../domain/word/word_detail_like_display_item.dart';
 import '../domain/word/word_edit_save_result.dart';
 import 'explorer_workspace/explorer_workspace_contract.dart';
 import 'explorer_workspace/word_explorer_workspace_projection_adapter.dart';
-import 'word_detail_route_result.dart';
-import 'word_detail_screen.dart';
 import 'word_edit_screen.dart';
 import 'word_graph_screen.dart';
 import 'word_info_panel.dart';
@@ -347,7 +345,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
             _buildGraphDetailSplitDivider(splitMetrics.usableWidth),
             SizedBox(
               width: splitMetrics.detailWidth,
-              child: _buildDetailPane(),
+              child: _buildDetailPane(usableWidth: splitMetrics.usableWidth),
             ),
           ],
         );
@@ -500,13 +498,13 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
     }
   }
 
-  Widget _buildDetailPane() {
+  Widget _buildDetailPane({required double usableWidth}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _buildDetailPaneContextStrip(),
         const Divider(height: 1),
-        Expanded(child: _buildDetailPanel()),
+        Expanded(child: _buildDetailPanel(usableWidth: usableWidth)),
       ],
     );
   }
@@ -842,60 +840,19 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
     ).showSnackBar(const SnackBar(content: Text('단어 정보가 수정되었습니다.')));
   }
 
-  Future<void> _openSelectedWordDetail() async {
-    final selectedWordId = _selectedWordId;
-    final selectedDisplayItem = _selectedWordDisplayItem;
-    if (selectedWordId == null || selectedDisplayItem == null) return;
-
-    final wasCenterWord = _centerWordId == selectedWordId;
-
-    final detailResult = await Navigator.push<WordDetailRouteResult>(
-      context,
-      MaterialPageRoute(
-        builder: (_) => WordDetailScreen(
-          wordId: selectedWordId,
-          initialDisplayItem: selectedDisplayItem,
-          editActionMode: WordDetailEditActionMode.returnToCaller,
-          graphActionMode: WordDetailGraphActionMode.returnToCaller,
-          showEditAction: false,
-        ),
-      ),
-    );
-
-    if (!mounted || selectedWordId.isEmpty) return;
-
-    if (detailResult is WordDetailDeletedResult) {
-      final deletedWordId = detailResult.wordId.trim();
-      final expectedDeletedWordId = selectedWordId.trim();
-
-      if (deletedWordId != expectedDeletedWordId) {
-        await _refreshSelectedWord(
-          wordId: selectedWordId,
-          syncCenterWord: wasCenterWord,
-          refreshGraphIfChanged: true,
-        );
-        return;
-      }
-
-      await _handleDeletedSelectedWord(wasCenterWord: wasCenterWord);
+  void _focusSelectedWordDetailPane(double usableWidth) {
+    if (!usableWidth.isFinite || usableWidth <= 0) {
       return;
     }
 
-    if (detailResult is WordDetailEditRequestedResult) {
-      await _openEditSelectedWord();
+    final focusedFraction = _clampGraphPaneFractionForWidth(usableWidth, 0.0);
+    if ((focusedFraction - _graphPaneFraction).abs() < 0.0001) {
       return;
     }
 
-    if (detailResult is WordDetailGraphRequestedResult) {
-      await _selectWord(detailResult.wordId, changeCenterWord: true);
-      return;
-    }
-
-    await _refreshSelectedWord(
-      wordId: selectedWordId,
-      syncCenterWord: wasCenterWord,
-      refreshGraphIfChanged: true,
-    );
+    setState(() {
+      _graphPaneFraction = focusedFraction;
+    });
   }
 
   void _showWordNavigationUnavailableSnackBar() {
@@ -1248,7 +1205,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
     return '$label: 중심\n${parts.join('\n')}';
   }
 
-  Widget _buildDetailPanel() {
+  Widget _buildDetailPanel({required double usableWidth}) {
     if (_isDetailLoading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -1269,7 +1226,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
     return WordInfoPanel(
       displayItem: displayItem,
       onEdit: _openEditSelectedWord,
-      onOpenDetail: _openSelectedWordDetail,
+      onFocusDetail: () => _focusSelectedWordDetailPane(usableWidth),
     );
   }
 

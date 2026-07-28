@@ -6,10 +6,9 @@ void main() {
   group('Phase 20-V delete owner boundary guardrail', () {
     late String confirmDeleteSource;
     late String detailSource;
-    late String deletedResultBranchSource;
+    late String graphDeleteCallbackSource;
     late String explorerSource;
     late String homeDetailRouteSource;
-    late String openSelectedWordDetailSource;
     late String productionSource;
     late String routeResultSource;
 
@@ -28,15 +27,10 @@ void main() {
       explorerSource = File(
         'lib/ui/word_explorer_screen.dart',
       ).readAsStringSync();
-      openSelectedWordDetailSource = _sourceBetween(
+      graphDeleteCallbackSource = _sourceBetween(
         explorerSource,
-        'Future<void> _openSelectedWordDetail() async {',
-        'void _showWordNavigationUnavailableSnackBar() {',
-      );
-      deletedResultBranchSource = _sourceBetween(
-        openSelectedWordDetailSource,
-        'if (detailResult is WordDetailDeletedResult) {',
-        'if (detailResult is WordDetailEditRequestedResult) {',
+        'Future<void> _handleGraphDeletedSelectedWord(',
+        'Future<void> _handleDeletedSelectedWord({required bool wasCenterWord})',
       );
 
       final homeSource = File('lib/ui/home_screen.dart').readAsStringSync();
@@ -90,42 +84,39 @@ void main() {
     });
 
     test(
-      'passes only edit and graph caller modes from explorer detail route',
+      'removes the detail route and keeps graph delete callback in explorer',
       () {
+        expect(explorerSource, isNot(contains('WordDetailScreen(')));
         expect(
-          openSelectedWordDetailSource,
-          contains('editActionMode: WordDetailEditActionMode.returnToCaller'),
+          explorerSource,
+          isNot(contains('WordDetailEditActionMode.returnToCaller')),
         );
         expect(
-          openSelectedWordDetailSource,
-          contains('graphActionMode: WordDetailGraphActionMode.returnToCaller'),
+          explorerSource,
+          isNot(contains('WordDetailGraphActionMode.returnToCaller')),
         );
         expect(
-          openSelectedWordDetailSource,
-          isNot(contains('deleteActionMode:')),
-        );
-        expect(
-          openSelectedWordDetailSource,
-          isNot(contains('WordDetailDeleteActionMode')),
+          explorerSource,
+          contains('onDeletedSelectedWord: _handleGraphDeletedSelectedWord'),
         );
       },
     );
 
-    test('keeps explorer as completed delete result interpreter', () {
-      final deletedWordIdIndex = deletedResultBranchSource.indexOf(
-        'final deletedWordId = detailResult.wordId.trim();',
+    test('keeps explorer as embedded graph delete callback interpreter', () {
+      final deletedWordIdIndex = graphDeleteCallbackSource.indexOf(
+        'final normalizedDeletedWordId = deletedWordId.trim();',
       );
-      final expectedDeletedWordIdIndex = deletedResultBranchSource.indexOf(
+      final expectedDeletedWordIdIndex = graphDeleteCallbackSource.indexOf(
         'final expectedDeletedWordId = selectedWordId.trim();',
       );
-      final mismatchIndex = deletedResultBranchSource.indexOf(
-        'if (deletedWordId != expectedDeletedWordId)',
+      final mismatchIndex = graphDeleteCallbackSource.indexOf(
+        'if (normalizedDeletedWordId != expectedDeletedWordId)',
       );
-      final mismatchReturnIndex = deletedResultBranchSource.indexOf(
+      final mismatchReturnIndex = graphDeleteCallbackSource.indexOf(
         'return;',
         mismatchIndex,
       );
-      final recoveryIndex = deletedResultBranchSource.indexOf(
+      final recoveryIndex = graphDeleteCallbackSource.indexOf(
         'await _handleDeletedSelectedWord(wasCenterWord: wasCenterWord);',
       );
 
@@ -138,8 +129,8 @@ void main() {
 
     test('refreshes mismatch without running delete recovery', () {
       final mismatchSource = _sourceBetween(
-        deletedResultBranchSource,
-        'if (deletedWordId != expectedDeletedWordId) {',
+        graphDeleteCallbackSource,
+        'if (normalizedDeletedWordId != expectedDeletedWordId) {',
         'await _handleDeletedSelectedWord(wasCenterWord: wasCenterWord);',
       );
 

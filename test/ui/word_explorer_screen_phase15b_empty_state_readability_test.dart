@@ -14,7 +14,7 @@ void main() {
       wordExplorerSource = File(wordExplorerSourcePath).readAsStringSync();
       detailPaneSource = _extractBetween(
         wordExplorerSource,
-        '  Widget _buildDetailPane() {',
+        '  Widget _buildDetailPane({required double usableWidth}) {',
         '  Widget _buildNoSelectionDetailPanel() {',
       );
       emptyStateSource = _extractMethod(
@@ -38,7 +38,9 @@ void main() {
       );
       expect(
         wordExplorerSource,
-        contains('Expanded(child: _buildDetailPanel())'),
+        contains(
+          'Expanded(child: _buildDetailPanel(usableWidth: usableWidth))',
+        ),
       );
     });
 

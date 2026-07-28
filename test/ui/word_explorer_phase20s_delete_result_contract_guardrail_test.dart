@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('Phase 20-S delete result contract guardrail', () {
-    late String deletedResultBranchSource;
+    late String graphDeleteCallbackSource;
     late String centerDeleteFallbackSource;
     late String confirmDeleteSource;
     late String homeSource;
@@ -16,15 +16,10 @@ void main() {
       final explorerSource = File(
         'lib/ui/word_explorer_screen.dart',
       ).readAsStringSync();
-      final openSelectedWordDetailSource = _sourceBetween(
+      graphDeleteCallbackSource = _sourceBetween(
         explorerSource,
-        'Future<void> _openSelectedWordDetail() async {',
-        'void _showWordNavigationUnavailableSnackBar() {',
-      );
-      deletedResultBranchSource = _sourceBetween(
-        openSelectedWordDetailSource,
-        'if (detailResult is WordDetailDeletedResult) {',
-        'if (detailResult is WordDetailEditRequestedResult) {',
+        'Future<void> _handleGraphDeletedSelectedWord(',
+        'Future<void> _handleDeletedSelectedWord({required bool wasCenterWord})',
       );
       handleDeletedSelectedWordSource = _sourceBetween(
         explorerSource,
@@ -66,29 +61,26 @@ void main() {
           .join('\n');
     });
 
-    test(
-      'compares trimmed deleted result word id with route selected word id',
-      () {
-        final deletedWordIdIndex = deletedResultBranchSource.indexOf(
-          'final deletedWordId = detailResult.wordId.trim();',
-        );
-        final expectedDeletedWordIdIndex = deletedResultBranchSource.indexOf(
-          'final expectedDeletedWordId = selectedWordId.trim();',
-        );
-        final mismatchIndex = deletedResultBranchSource.indexOf(
-          'if (deletedWordId != expectedDeletedWordId)',
-        );
+    test('compares trimmed graph deleted word id with selected word id', () {
+      final deletedWordIdIndex = graphDeleteCallbackSource.indexOf(
+        'final normalizedDeletedWordId = deletedWordId.trim();',
+      );
+      final expectedDeletedWordIdIndex = graphDeleteCallbackSource.indexOf(
+        'final expectedDeletedWordId = selectedWordId.trim();',
+      );
+      final mismatchIndex = graphDeleteCallbackSource.indexOf(
+        'if (normalizedDeletedWordId != expectedDeletedWordId)',
+      );
 
-        expect(deletedWordIdIndex, greaterThanOrEqualTo(0));
-        expect(expectedDeletedWordIdIndex, greaterThan(deletedWordIdIndex));
-        expect(mismatchIndex, greaterThan(expectedDeletedWordIdIndex));
-      },
-    );
+      expect(deletedWordIdIndex, greaterThanOrEqualTo(0));
+      expect(expectedDeletedWordIdIndex, greaterThan(deletedWordIdIndex));
+      expect(mismatchIndex, greaterThan(expectedDeletedWordIdIndex));
+    });
 
     test('returns from mismatch refresh before deleted selection recovery', () {
       final mismatchSource = _sourceBetween(
-        deletedResultBranchSource,
-        'if (deletedWordId != expectedDeletedWordId) {',
+        graphDeleteCallbackSource,
+        'if (normalizedDeletedWordId != expectedDeletedWordId) {',
         'await _handleDeletedSelectedWord(wasCenterWord: wasCenterWord);',
       );
 
@@ -101,14 +93,14 @@ void main() {
     });
 
     test('keeps deleted selection recovery only after mismatch return', () {
-      final mismatchIndex = deletedResultBranchSource.indexOf(
-        'if (deletedWordId != expectedDeletedWordId)',
+      final mismatchIndex = graphDeleteCallbackSource.indexOf(
+        'if (normalizedDeletedWordId != expectedDeletedWordId)',
       );
-      final mismatchReturnIndex = deletedResultBranchSource.indexOf(
+      final mismatchReturnIndex = graphDeleteCallbackSource.indexOf(
         'return;',
         mismatchIndex,
       );
-      final handleIndex = deletedResultBranchSource.indexOf(
+      final handleIndex = graphDeleteCallbackSource.indexOf(
         'await _handleDeletedSelectedWord(wasCenterWord: wasCenterWord);',
       );
 
@@ -117,7 +109,7 @@ void main() {
       expect(handleIndex, greaterThan(mismatchReturnIndex));
       expect(
         '_handleDeletedSelectedWord(wasCenterWord: wasCenterWord)'.allMatches(
-          deletedResultBranchSource,
+          graphDeleteCallbackSource,
         ),
         hasLength(1),
       );

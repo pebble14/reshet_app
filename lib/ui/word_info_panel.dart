@@ -24,7 +24,7 @@ class WordInfoPanel extends StatelessWidget {
   final WordDetailLikeDisplayItem displayItem;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
-  final VoidCallback? onOpenDetail;
+  final VoidCallback? onFocusDetail;
   final VoidCallback? onShowGraph;
   final bool isDeleting;
   final bool showItemCopyActions;
@@ -34,7 +34,7 @@ class WordInfoPanel extends StatelessWidget {
     required this.displayItem,
     this.onEdit,
     this.onDelete,
-    this.onOpenDetail,
+    this.onFocusDetail,
     this.onShowGraph,
     this.isDeleting = false,
     this.showItemCopyActions = false,
@@ -119,13 +119,13 @@ class WordInfoPanel extends StatelessWidget {
                 icon: const Icon(Icons.edit),
                 label: const Text('편집'),
               ),
-            if (onOpenDetail != null)
+            if (onFocusDetail != null)
               Tooltip(
-                message: '삭제·그래프 보기 등 전체 작업용 상세 화면을 엽니다.',
+                message: '그래프를 최소 폭으로 유지하면서 상세 영역을 넓힙니다.',
                 child: OutlinedButton.icon(
-                  onPressed: onOpenDetail,
-                  icon: const Icon(Icons.open_in_new),
-                  label: const Text('상세 작업 화면 열기'),
+                  onPressed: onFocusDetail,
+                  icon: const Icon(Icons.open_in_full),
+                  label: const Text('상세 영역 넓게 보기'),
                 ),
               ),
             if (onShowGraph != null)

@@ -51,7 +51,7 @@ Phase 2-A에서는 구현하지 않는다.
 | --- | --- | --- |
 | 진입 허브 | `HomeScreen` | strong list, 검색, 화면 분기 |
 | explorer split view | `WordExplorerScreen` | graph와 detail panel 동시 구성, center/selection/history coordination |
-| graph only | `WordGraphScreen` | 그래프 렌더링, 중심 단어, 선택 노드, visible graph data, viewport |
+| graph only | `WordGraphScreen` | 그래프 렌더링, 중심 단어, 선택 노드, visible graph data, viewport, local 폭 기반 command 배치 |
 | detail mode | `WordDetailScreen` | 단일 단어 상세 읽기, 편집, 삭제, graph 진입 |
 | edit mode | `WordEditScreen` | 단어 수정 저장 후 결과 반환 |
 
@@ -63,7 +63,7 @@ Phase 2-A에서는 구현하지 않는다.
 | Home 기본 strong list / 검색 결과 | Explorer | `Navigator.push(... WordExplorerScreen(initialWordId: ...))` |
 | Home 기본 strong list / 검색 결과 | Graph | `Navigator.push(... WordGraphScreen(centerWordId: ...))` |
 | Detail | Graph | `Navigator.push(... WordGraphScreen(centerWordId: _wordId))` |
-| Explorer detail panel | Detail | `Navigator.push(... WordDetailScreen(...))` |
+| Explorer detail panel | pane-local detail focus | route push 없이 기존 graph 최소 폭 경계까지 detail pane 확장 |
 | Graph standalone 명시적 중심 보기 action | Graph recenter | `Navigator.push(... WordGraphScreen(centerWordId: word.id))` |
 | Graph standalone node 재탭 | 선택 유지 | route push 없음 |
 | Graph create 후 relation 미생성 | Graph recenter | callback이 없으면 `pushReplacement(... WordGraphScreen(centerWordId: ...))` |
@@ -76,7 +76,7 @@ Phase 2-A에서는 구현하지 않는다.
 | Home -> Explorer | `initialWordId` |
 | Home -> Graph | `centerWordId` |
 | Detail -> Graph | `centerWordId = _wordId` |
-| Explorer -> Detail | `selectedWordId`, `WordDetailLikeDisplayItem selectedDisplayItem` |
+| Explorer detail focus | route payload 없음, `_graphPaneFraction`만 임시 변경 |
 | Graph -> parent callback | `selectedWordId`, `centerWordId` |
 | Edit close result | `WordEditSaveResult(wordId)` |
 | Graph create post-save | `GraphCreatePostSavePayload(wordId, representativeSpelling)` |
@@ -131,7 +131,8 @@ Phase 2-A에서는 구현하지 않는다.
 
 - `_selectedWordDisplayItem`을 detail panel의 읽기 대상처럼 사용한다.
 - `WordInfoPanel`로 rendering한다.
-- detail route 진입 시 현재 display item을 payload로 넘긴다.
+- `상세 영역 넓게 보기`는 별도 detail route를 열지 않고 기존 graph 최소 폭 경계까지 detail pane을 넓힌다.
+- 이 presentation action은 `_graphPaneFraction`만 변경하며 저장된 divider 비율, selection, center, history를 갱신하지 않는다.
 
 #### Detail route
 
@@ -169,13 +170,13 @@ Phase 2-A에서는 구현하지 않는다.
 
 ## 5. navigation 흐름 조사
 
-### 5.1 Explorer -> Detail
+### 5.1 Explorer detail pane focus
 
-1. Explorer detail panel에서 `상세 화면에서 열기` 실행
-2. `WordExplorerScreen._openSelectedWordDetail()`
-3. `WordDetailScreen(wordId, initialDisplayItem)` push
-4. Detail route는 자체 reread 수행
-5. 복귀 후 Explorer는 선택 단어를 `_refreshSelectedWord(...)`로 다시 읽고 graph 갱신 여부를 판단
+1. Explorer detail panel에서 `상세 영역 넓게 보기` 실행
+2. `WordInfoPanel.onFocusDetail`
+3. `WordExplorerScreen._focusSelectedWordDetailPane(usableWidth)`
+4. 기존 `_clampGraphPaneFractionForWidth(...)`로 graph pane을 최소 360px까지 축소하고 detail pane을 확장
+5. route, AppBar, reread, persistence write 없이 현재 Explorer instance와 owner state를 유지
 
 ### 5.2 Explorer -> Graph
 
@@ -223,13 +224,6 @@ Phase 2-A에서는 구현하지 않는다.
 2. `WordEditScreen.fromSeed(...)`
 3. 저장 성공 시 `WordEditSaveResult`
 4. Detail 화면이 자체 reread 수행
-
-large-screen embedded Explorer가 연 full-detail route:
-
-1. `WordDetailScreen._openEdit()`이 `WordDetailEditRequestedResult` 반환
-2. `WordExplorerScreen._openSelectedWordDetail()`이 result 해석
-3. 기존 `WordExplorerScreen._openEditSelectedWord()` 재사용
-4. Explorer edit 정책에 따라 selected word, center seed, graph revision과 history snapshot 갱신
 
 #### Explorer edit
 
@@ -309,8 +303,6 @@ Phase 2-A의 문서 초안은 이 production path를 변경하지 않는다.
 
 ### 7.4 route 이동으로 동일 데이터를 다시 읽는 흐름
 
-- Explorer detail panel -> Detail route:
-  - 기존 selected display item을 넘긴 뒤 detail route가 다시 reread
 - Home -> Detail:
   - route 진입 전에 detail display item을 조회하고, Detail route가 다시 reread
 - Detail -> Graph:
@@ -551,6 +543,10 @@ Standalone graph에 대해서는 장기 reference 관점에서 다음 같은 재
 - `graphFocused` preset alias
 
 현재 active graph production path는 마지막까지 보호한다.
+
+- `WordGraphScreen`의 AppBar command 배치는 `LayoutBuilder`의 실제 local 폭을 기준으로 결정한다.
+- command 전체가 맞지 않는 좁은 embedded graph에서는 Explorer 이전·다음 history action을 직접 표시하고, graph command 6개(전체보기, 보기 초기화, 선택 노드 중앙 맞춤, 관계 추가, 선택 단어 삭제, 단어 추가)는 기존 overflow menu에서 제공한다.
+- command 전체가 맞는 embedded graph와 넓은 standalone graph에서는 기존 direct action 표시를 유지한다.
 
 ```text
 WordGraphScreen

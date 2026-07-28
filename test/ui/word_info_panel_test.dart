@@ -238,7 +238,7 @@ void main() {
                   meanings: ['selectable meaning'],
                 ),
                 onEdit: () {},
-                onOpenDetail: () {},
+                onFocusDetail: () {},
               ),
             ),
           ),
@@ -280,42 +280,49 @@ void main() {
         expect(
           find.descendant(
             of: selectionArea,
-            matching: find.text('상세 작업 화면 열기'),
+            matching: find.text('상세 영역 넓게 보기'),
           ),
           findsNothing,
         );
       },
     );
 
-    testWidgets(
-      'clarifies the full-detail action without exposing delete or graph actions',
-      (tester) async {
-        await tester.pumpWidget(
-          MaterialApp(
-            home: Scaffold(
-              body: WordInfoPanel(
-                displayItem: WordDetailLikeDisplayItem(
-                  representativeSpelling: 'Phase 20-M 확인 단어',
-                ),
-                onEdit: () {},
-                onOpenDetail: () {},
+    testWidgets('exposes pane focus without delete or graph actions', (
+      tester,
+    ) async {
+      var focusCallCount = 0;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: WordInfoPanel(
+              displayItem: WordDetailLikeDisplayItem(
+                representativeSpelling: 'Phase 20-M 확인 단어',
               ),
+              onEdit: () {},
+              onFocusDetail: () {
+                focusCallCount++;
+              },
             ),
           ),
-        );
+        ),
+      );
 
-        expect(find.text('편집'), findsOneWidget);
-        expect(find.text('복사'), findsOneWidget);
-        expect(find.text('상세 작업 화면 열기'), findsOneWidget);
-        expect(find.text('상세 화면에서 열기'), findsNothing);
-        expect(
-          find.byTooltip('삭제·그래프 보기 등 전체 작업용 상세 화면을 엽니다.'),
-          findsOneWidget,
-        );
-        expect(find.text('삭제'), findsNothing);
-        expect(find.text('그래프 보기'), findsNothing);
-      },
-    );
+      expect(find.text('편집'), findsOneWidget);
+      expect(find.text('복사'), findsOneWidget);
+      expect(find.text('상세 영역 넓게 보기'), findsOneWidget);
+      expect(find.text('상세 작업 화면 열기'), findsNothing);
+      expect(find.text('상세 화면에서 열기'), findsNothing);
+      expect(find.byTooltip('그래프를 최소 폭으로 유지하면서 상세 영역을 넓힙니다.'), findsOneWidget);
+      expect(find.text('삭제'), findsNothing);
+      expect(find.text('그래프 보기'), findsNothing);
+
+      await tester.tap(find.text('상세 영역 넓게 보기'));
+      await tester.pump();
+      await tester.tap(find.text('상세 영역 넓게 보기'));
+      await tester.pump();
+
+      expect(focusCallCount, 2);
+    });
 
     testWidgets(
       'shows item copy actions only when the small-layout flag is enabled',

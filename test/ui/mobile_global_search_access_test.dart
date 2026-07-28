@@ -39,11 +39,15 @@ void main() {
     WordGraphDataCache.clear();
     isolatedRoot = await _createIsolatedWorkspace(sourceWorkDbPath);
     Directory.current = isolatedRoot!.path;
+    DatabaseService.setDataRootOverrideForTest(
+      p.join(isolatedRoot!.path, 'data'),
+    );
   });
 
   tearDown(() async {
     await DatabaseService.closeDatabase();
     WordGraphDataCache.clear();
+    DatabaseService.setDataRootOverrideForTest(null);
     Directory.current = repoRootPath;
 
     if (isolatedRoot != null && isolatedRoot!.existsSync()) {
@@ -155,6 +159,99 @@ void main() {
 
       await _disposeRuntimeApp(tester);
     });
+
+    testWidgets(
+      'large-screen의 좁은 local graph pane만 기존 command overflow를 재사용한다',
+      (tester) async {
+        _setSurfaceSize(tester, const Size(1440, 900));
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Align(
+              alignment: Alignment.topLeft,
+              child: SizedBox(
+                width: 360,
+                height: 900,
+                child: WordGraphScreen(
+                  centerWordId: _representativeWordId,
+                  appBarActionPrefix: _buildEmbeddedHistoryActions(),
+                ),
+              ),
+            ),
+          ),
+        );
+        await _waitForGraphBootstrap(tester);
+
+        final graphFinder = find.byType(WordGraphScreen);
+        final initialGraphElement = tester.element(graphFinder);
+        final overflowFinder = find.byKey(_mobileGraphOverflowKey);
+        expect(find.byKey(_mobileSearchActionKey), findsNothing);
+        expect(overflowFinder, findsOneWidget);
+        expect(find.byTooltip('전체보기'), findsNothing);
+        expect(find.byTooltip('보기 초기화'), findsNothing);
+        expect(tester.takeException(), isNull);
+
+        final interactiveViewer = tester.widget<InteractiveViewer>(
+          find.byType(InteractiveViewer),
+        );
+        final transformController = interactiveViewer.transformationController!;
+        final changedTransform = transformController.value.clone()
+          ..setEntry(0, 0, 1.4)
+          ..setEntry(1, 1, 1.4)
+          ..setEntry(0, 3, 32)
+          ..setEntry(1, 3, 24);
+        transformController.value = changedTransform;
+        await tester.pump();
+
+        await tester.tap(overflowFinder);
+        await tester.pumpAndSettle();
+
+        const commandLabels = [
+          '전체보기',
+          '보기 초기화',
+          '선택 노드 중앙 맞춤',
+          '관계 추가',
+          '선택 단어 삭제',
+          '단어 추가',
+        ];
+        for (final label in commandLabels) {
+          expect(find.text(label), findsOneWidget);
+        }
+
+        await tester.tap(find.text('보기 초기화'));
+        await tester.pump();
+
+        expect(tester.element(graphFinder), same(initialGraphElement));
+        expect(transformController.value.storage[0], 1.0);
+        expect(transformController.value.storage[5], 1.0);
+        expect(tester.takeException(), isNull);
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Align(
+              alignment: Alignment.topLeft,
+              child: SizedBox(
+                width: 600,
+                height: 900,
+                child: WordGraphScreen(
+                  centerWordId: _representativeWordId,
+                  appBarActionPrefix: _buildEmbeddedHistoryActions(),
+                ),
+              ),
+            ),
+          ),
+        );
+        await _waitForGraphBootstrap(tester);
+
+        expect(find.byKey(_mobileSearchActionKey), findsNothing);
+        expect(find.byKey(_mobileGraphOverflowKey), findsNothing);
+        for (final label in commandLabels) {
+          expect(find.byTooltip(label), findsOneWidget);
+        }
+        expect(tester.takeException(), isNull);
+
+        await _disposeRuntimeApp(tester);
+      },
+    );
 
     testWidgets('Graph origin은 Search와 target을 제거한 뒤 camera와 selection을 보존한다', (
       tester,
@@ -302,6 +399,21 @@ void main() {
       await _disposeRuntimeApp(tester);
     });
   });
+}
+
+List<Widget> _buildEmbeddedHistoryActions() {
+  return [
+    IconButton(
+      tooltip: '이전 중심 단어',
+      icon: const Icon(Icons.arrow_back),
+      onPressed: () {},
+    ),
+    IconButton(
+      tooltip: '다음 중심 단어',
+      icon: const Icon(Icons.arrow_forward),
+      onPressed: () {},
+    ),
+  ];
 }
 
 Future<void> _openSearchAndSubmit(WidgetTester tester, String query) async {

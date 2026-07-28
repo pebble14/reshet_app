@@ -8,7 +8,8 @@ void main() {
     late String detailSource;
     late String detailWidgetSource;
     late String openEditSource;
-    late String openSelectedWordDetailSource;
+    late String explorerSource;
+    late String focusSelectedWordDetailPaneSource;
     late String openEditSelectedWordSource;
     late String confirmDeleteSource;
     late String openGraphSource;
@@ -41,17 +42,17 @@ void main() {
         'void _showWordNavigationUnavailableSnackBar() {',
       );
 
-      final explorerSource = File(
+      explorerSource = File(
         'lib/ui/word_explorer_screen.dart',
       ).readAsStringSync();
       openEditSelectedWordSource = _sourceBetween(
         explorerSource,
         'Future<void> _openEditSelectedWord() async {',
-        'Future<void> _openSelectedWordDetail() async {',
+        'void _focusSelectedWordDetailPane(double usableWidth) {',
       );
-      openSelectedWordDetailSource = _sourceBetween(
+      focusSelectedWordDetailPaneSource = _sourceBetween(
         explorerSource,
-        'Future<void> _openSelectedWordDetail() async {',
+        'void _focusSelectedWordDetailPane(double usableWidth) {',
         'void _showWordNavigationUnavailableSnackBar() {',
       );
 
@@ -113,16 +114,16 @@ void main() {
       expect(openEditSource, contains('_refreshDetailScreenDisplayItem()'));
     });
 
-    test('uses edit caller mode only for explorer full-detail route', () {
+    test('keeps caller edit mode contract but removes it from explorer', () {
+      expect(detailSource, contains('WordDetailEditActionMode.returnToCaller'));
+      expect(explorerSource, isNot(contains('WordDetailEditRequestedResult')));
       expect(
-        openSelectedWordDetailSource,
-        contains('editActionMode: WordDetailEditActionMode.returnToCaller'),
+        explorerSource,
+        isNot(
+          contains('editActionMode: WordDetailEditActionMode.returnToCaller'),
+        ),
       );
-      expect(
-        openSelectedWordDetailSource,
-        contains('graphActionMode: WordDetailGraphActionMode.returnToCaller'),
-      );
-      expect(openSelectedWordDetailSource, contains('showEditAction: false'));
+      expect(explorerSource, isNot(contains('WordDetailScreen(')));
       expect(
         detailSource,
         contains('onEdit: widget.showEditAction ? _openEdit : null'),
@@ -130,19 +131,8 @@ void main() {
       expect(homeDetailRouteSource, isNot(contains('editActionMode:')));
     });
 
-    test('reuses explorer direct edit for edit request result', () {
-      expect(
-        openSelectedWordDetailSource,
-        contains('if (detailResult is WordDetailEditRequestedResult)'),
-      );
-      expect(
-        openSelectedWordDetailSource,
-        contains('await _openEditSelectedWord()'),
-      );
-      expect(
-        openSelectedWordDetailSource,
-        isNot(contains('WordEditScreen.fromSeed')),
-      );
+    test('keeps explorer direct edit and graph refresh ownership', () {
+      expect(explorerSource, contains('onEdit: _openEditSelectedWord'));
       expect(
         openEditSelectedWordSource,
         contains('_repository.getWordEditSeedForExplorerEdit('),
@@ -153,33 +143,27 @@ void main() {
       );
     });
 
-    test('keeps delete edit graph and ordinary refresh result order', () {
-      final deleteIndex = openSelectedWordDetailSource.indexOf(
-        'if (detailResult is WordDetailDeletedResult)',
-      );
-      final editIndex = openSelectedWordDetailSource.indexOf(
-        'if (detailResult is WordDetailEditRequestedResult)',
-      );
-      final graphIndex = openSelectedWordDetailSource.indexOf(
-        'if (detailResult is WordDetailGraphRequestedResult)',
-      );
-      final refreshIndex = openSelectedWordDetailSource.lastIndexOf(
-        'await _refreshSelectedWord(',
-      );
-
-      expect(deleteIndex, greaterThanOrEqualTo(0));
-      expect(editIndex, greaterThan(deleteIndex));
-      expect(graphIndex, greaterThan(editIndex));
-      expect(refreshIndex, greaterThan(graphIndex));
+    test('focus action changes only the explorer split fraction', () {
       expect(
-        openSelectedWordDetailSource,
-        contains('_handleDeletedSelectedWord(wasCenterWord: wasCenterWord)'),
+        focusSelectedWordDetailPaneSource,
+        contains('_graphPaneFraction = focusedFraction'),
       );
+      for (final ownerField in [
+        '_selectedWordId',
+        '_centerWordId',
+        '_history',
+        '_graphRevision',
+      ]) {
+        expect(
+          focusSelectedWordDetailPaneSource,
+          isNot(contains(ownerField)),
+          reason: '$ownerField must not change during pane focus.',
+        );
+      }
+      expect(focusSelectedWordDetailPaneSource, isNot(contains('Navigator.')));
       expect(
-        openSelectedWordDetailSource,
-        contains(
-          'await _selectWord(detailResult.wordId, changeCenterWord: true)',
-        ),
+        focusSelectedWordDetailPaneSource,
+        isNot(contains('_persistGraphPaneFractionForWidth')),
       );
     });
 
@@ -196,8 +180,9 @@ void main() {
       );
       expect(
         openGraphSource,
-        contains('WordGraphScreen(centerWordId: _wordId)'),
+        contains('builder: (context) => WordGraphScreen('),
       );
+      expect(openGraphSource, contains('centerWordId: _wordId'));
     });
   });
 }

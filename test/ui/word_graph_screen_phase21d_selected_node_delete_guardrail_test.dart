@@ -32,7 +32,7 @@ void main() {
       splitBodySource = _sourceBetween(
         explorerSource,
         'Widget _buildResizableExplorerBody() {',
-        'Widget _buildDetailPane() {',
+        '_GraphDetailSplitMetrics _resolveGraphDetailSplitMetrics(',
       );
       explorerDeleteCallbackSource = _sourceBetween(
         explorerSource,
@@ -66,9 +66,34 @@ void main() {
             'final WordGraphSelectedWordDeletedCallback? onDeletedSelectedWord;',
           ),
         );
-        expect(graphSource, contains("tooltip: '선택 단어 삭제'"));
-        expect(graphSource, contains('icon: const Icon(Icons.delete_outline)'));
+        expect(graphSource, contains("label: '선택 단어 삭제'"));
+        expect(graphSource, contains('icon: Icons.delete_outline'));
         expect(graphSource, contains('onPressed: _confirmDeleteSelectedWord'));
+      },
+    );
+
+    test(
+      'uses local graph width to switch the same commands into overflow',
+      () {
+        expect(
+          graphSource,
+          contains('_shouldUseGraphCommandOverflowForLocalWidth('),
+        );
+        expect(graphSource, contains('localWidth: constraints.maxWidth'));
+        expect(
+          graphSource,
+          contains('directActionCount * kMinInteractiveDimension'),
+        );
+        expect(
+          graphSource,
+          contains("key: const Key('mobile-graph-command-overflow')"),
+        );
+        expect(graphSource, contains('graphCommands[index].onPressed?.call()'));
+        expect(graphSource, contains('enabled: command.onPressed != null'));
+        expect(
+          graphSource,
+          contains('graphCommands.map((command) => command.buildIconButton())'),
+        );
       },
     );
 
@@ -134,10 +159,7 @@ void main() {
         deleteFlowSource,
         contains('WordDetailDeletedResult(wordId: selectedWordId)'),
       );
-      expect(
-        deleteFlowSource,
-        contains('setState(() => _selectedWordId = null);'),
-      );
+      expect(deleteFlowSource, contains('_setSelectedWordId(null);'));
       expect(deleteFlowSource, contains('widget.onClearSelection?.call();'));
       expect(deleteFlowSource, contains('await _loadConnectedWords();'));
     });

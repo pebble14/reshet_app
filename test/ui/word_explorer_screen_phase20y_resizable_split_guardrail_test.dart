@@ -8,7 +8,7 @@ void main() {
     late String splitBodySource;
     late String dividerSource;
     late String persistenceSource;
-    late String openSelectedWordDetailSource;
+    late String focusSelectedWordDetailPaneSource;
 
     setUpAll(() {
       explorerSource = File(
@@ -17,7 +17,7 @@ void main() {
       splitBodySource = _sourceBetween(
         explorerSource,
         'Widget _buildResizableExplorerBody() {',
-        'Widget _buildDetailPane() {',
+        '_GraphDetailSplitMetrics _resolveGraphDetailSplitMetrics(',
       );
       dividerSource = _sourceBetween(
         explorerSource,
@@ -27,11 +27,11 @@ void main() {
       persistenceSource = _sourceBetween(
         explorerSource,
         'Future<void> _restoreGraphPaneFraction() async {',
-        'Widget _buildDetailPane() {',
+        'Widget _buildDetailPane({required double usableWidth}) {',
       );
-      openSelectedWordDetailSource = _sourceBetween(
+      focusSelectedWordDetailPaneSource = _sourceBetween(
         explorerSource,
-        'Future<void> _openSelectedWordDetail() async {',
+        'void _focusSelectedWordDetailPane(double usableWidth) {',
         'void _showWordNavigationUnavailableSnackBar() {',
       );
     });
@@ -66,12 +66,16 @@ void main() {
         contains('_buildGraphDetailSplitDivider(splitMetrics.usableWidth)'),
       );
       expect(splitBodySource, contains('width: splitMetrics.detailWidth'));
-      expect(splitBodySource, contains('child: _buildDetailPane()'));
+      expect(splitBodySource, contains('child: _buildDetailPane('));
+      expect(
+        splitBodySource,
+        contains('usableWidth: splitMetrics.usableWidth'),
+      );
       expect(splitBodySource, isNot(contains('Expanded(')));
       expect(splitBodySource, isNot(contains('VerticalDivider(')));
     });
 
-    test('keeps graph callbacks and detail action ownership unchanged', () {
+    test('keeps graph callbacks and moves detail action to local focus', () {
       expect(splitBodySource, contains('centerWordId: _centerWordId'));
       expect(splitBodySource, contains('selectedWordId: _selectedWordId'));
       expect(splitBodySource, contains('onSelectWordId: (selectedWordId)'));
@@ -79,18 +83,53 @@ void main() {
         splitBodySource,
         contains('onClearSelection: _clearSelectedWordPanel'),
       );
+      expect(
+        splitBodySource,
+        contains('onDeletedSelectedWord: _handleGraphDeletedSelectedWord'),
+      );
       expect(splitBodySource, contains('onChangeCenterWordId: (centerWordId)'));
       expect(
-        openSelectedWordDetailSource,
-        contains('Navigator.push<WordDetailRouteResult>('),
+        focusSelectedWordDetailPaneSource,
+        contains('_clampGraphPaneFractionForWidth(usableWidth, 0.0)'),
       );
       expect(
-        openSelectedWordDetailSource,
-        contains('graphActionMode: WordDetailGraphActionMode.returnToCaller'),
+        focusSelectedWordDetailPaneSource,
+        contains('_graphPaneFraction = focusedFraction'),
       );
+      expect(focusSelectedWordDetailPaneSource, isNot(contains('Navigator.')));
       expect(explorerSource, isNot(contains('DeleteWordCommand')));
       expect(explorerSource, isNot(contains('WordWriteService')));
     });
+
+    test(
+      'focus is idempotent and does not persist or mutate explorer owners',
+      () {
+        expect(
+          focusSelectedWordDetailPaneSource,
+          contains('(focusedFraction - _graphPaneFraction).abs() < 0.0001'),
+        );
+        expect(
+          focusSelectedWordDetailPaneSource,
+          isNot(contains('_persistGraphPaneFractionForWidth')),
+        );
+        expect(
+          focusSelectedWordDetailPaneSource,
+          isNot(contains('SharedPreferences')),
+        );
+        for (final ownerField in [
+          '_selectedWordId',
+          '_centerWordId',
+          '_history',
+          '_graphRevision',
+        ]) {
+          expect(
+            focusSelectedWordDetailPaneSource,
+            isNot(contains(ownerField)),
+            reason: '$ownerField must not change during pane focus.',
+          );
+        }
+      },
+    );
 
     test('uses a draggable vertical divider and saves only on drag end', () {
       expect(dividerSource, contains('MouseRegion('));

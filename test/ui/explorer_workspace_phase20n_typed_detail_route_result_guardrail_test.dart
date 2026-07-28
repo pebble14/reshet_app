@@ -8,7 +8,8 @@ void main() {
     late String detailWidgetSource;
     late String confirmDeleteSource;
     late String openGraphSource;
-    late String openSelectedWordDetailSource;
+    late String explorerSource;
+    late String focusSelectedWordDetailPaneSource;
     late String embeddedDetailPanelSource;
     late String homeDetailRouteSource;
 
@@ -36,17 +37,17 @@ void main() {
         'Future<void> _confirmDelete() async {',
       );
 
-      final explorerSource = File(
+      explorerSource = File(
         'lib/ui/word_explorer_screen.dart',
       ).readAsStringSync();
-      openSelectedWordDetailSource = _sourceBetween(
+      focusSelectedWordDetailPaneSource = _sourceBetween(
         explorerSource,
-        'Future<void> _openSelectedWordDetail() async {',
+        'void _focusSelectedWordDetailPane(double usableWidth) {',
         'void _showWordNavigationUnavailableSnackBar() {',
       );
       embeddedDetailPanelSource = _sourceBetween(
         explorerSource,
-        'Widget _buildDetailPanel() {',
+        'Widget _buildDetailPanel({required double usableWidth}) {',
         'Widget _buildNoSelectionDetailPanel() {',
       );
 
@@ -83,28 +84,14 @@ void main() {
       );
     });
 
-    test('keeps explorer delete and ordinary refresh paths', () {
+    test('removes the typed detail route only from embedded explorer', () {
+      expect(explorerSource, isNot(contains('WordDetailScreen(')));
+      expect(explorerSource, isNot(contains('WordDetailDeletedResult')));
       expect(
-        openSelectedWordDetailSource,
-        contains('Navigator.push<WordDetailRouteResult>('),
+        focusSelectedWordDetailPaneSource,
+        contains('_graphPaneFraction = focusedFraction'),
       );
-      expect(
-        openSelectedWordDetailSource,
-        contains('if (detailResult is WordDetailDeletedResult)'),
-      );
-      expect(
-        openSelectedWordDetailSource,
-        contains('_handleDeletedSelectedWord(wasCenterWord: wasCenterWord)'),
-      );
-      expect(openSelectedWordDetailSource, contains('_refreshSelectedWord('));
-      expect(
-        openSelectedWordDetailSource,
-        contains('refreshGraphIfChanged: true'),
-      );
-      expect(
-        openSelectedWordDetailSource,
-        isNot(contains('Navigator.push<bool?>(')),
-      );
+      expect(focusSelectedWordDetailPaneSource, isNot(contains('Navigator.')));
     });
 
     test('keeps home detail route typed and refresh behavior unchanged', () {
@@ -116,14 +103,16 @@ void main() {
       expect(homeDetailRouteSource, contains('_refreshWords();'));
     });
 
-    test('keeps embedded detail actions limited to edit and full-detail', () {
+    test('keeps embedded detail actions limited to edit and pane focus', () {
       expect(
         embeddedDetailPanelSource,
         contains('onEdit: _openEditSelectedWord'),
       );
       expect(
         embeddedDetailPanelSource,
-        contains('onOpenDetail: _openSelectedWordDetail'),
+        contains(
+          'onFocusDetail: () => _focusSelectedWordDetailPane(usableWidth)',
+        ),
       );
       expect(embeddedDetailPanelSource, isNot(contains('onDelete:')));
       expect(embeddedDetailPanelSource, isNot(contains('onShowGraph:')));
@@ -136,11 +125,15 @@ void main() {
           'this.graphActionMode = WordDetailGraphActionMode.standaloneRoute',
         ),
       );
-      expect(openGraphSource, contains('Navigator.push('));
       expect(
         openGraphSource,
-        contains('WordGraphScreen(centerWordId: _wordId)'),
+        contains('Navigator.push<WordDetailRouteResult>('),
       );
+      expect(
+        openGraphSource,
+        contains('builder: (context) => WordGraphScreen('),
+      );
+      expect(openGraphSource, contains('centerWordId: _wordId'));
     });
   });
 }

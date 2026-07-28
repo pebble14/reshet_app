@@ -54,6 +54,21 @@ class _GraphAppBarCommand {
   }
 }
 
+bool _shouldUseGraphCommandOverflowForLocalWidth({
+  required double localWidth,
+  required int directPrefixActionCount,
+  required int graphCommandCount,
+}) {
+  if (!localWidth.isFinite || localWidth <= 0) {
+    return true;
+  }
+
+  final directActionCount = directPrefixActionCount + graphCommandCount;
+  final requiredDirectActionWidth =
+      directActionCount * kMinInteractiveDimension;
+  return requiredDirectActionWidth > localWidth;
+}
+
 const double _centerNodeSize = 180.0;
 const double _centerNodeHalf = _centerNodeSize / 2;
 const double _connectedNodeSize = 80.0;
@@ -2346,47 +2361,63 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     List<_GraphAppBarCommand>? commands,
   }) {
     final graphCommands = commands ?? const <_GraphAppBarCommand>[];
-    final isMobile = !isExplorerLargeScreenWidth(
-      MediaQuery.sizeOf(context).width,
-    );
-    final mergedActions = isMobile
-        ? <Widget>[
-            ...widget.appBarActionPrefix,
-            IconButton(
-              key: const Key('mobile-global-search-action'),
-              tooltip: '검색',
-              icon: const Icon(Icons.search),
-              onPressed: _openMobileSearch,
-            ),
-            if (graphCommands.isNotEmpty)
-              PopupMenuButton<int>(
-                key: const Key('mobile-graph-command-overflow'),
-                onSelected: (index) => graphCommands[index].onPressed?.call(),
-                itemBuilder: (context) =>
-                    List.generate(graphCommands.length, (index) {
-                      final command = graphCommands[index];
-                      return PopupMenuItem<int>(
-                        value: index,
-                        enabled: command.onPressed != null,
-                        child: Row(
-                          children: [
-                            Icon(command.icon),
-                            const SizedBox(width: 12),
-                            Text(command.label),
-                          ],
-                        ),
-                      );
-                    }),
-              ),
-          ]
-        : <Widget>[
-            ...widget.appBarActionPrefix,
-            ...graphCommands.map((command) => command.buildIconButton()),
-          ];
+    return PreferredSize(
+      preferredSize: const Size.fromHeight(kToolbarHeight),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final isMobile = !isExplorerLargeScreenWidth(
+            MediaQuery.sizeOf(context).width,
+          );
+          final useGraphCommandOverflow =
+              isMobile ||
+              _shouldUseGraphCommandOverflowForLocalWidth(
+                localWidth: constraints.maxWidth,
+                directPrefixActionCount: widget.appBarActionPrefix.length,
+                graphCommandCount: graphCommands.length,
+              );
+          final mergedActions = useGraphCommandOverflow
+              ? <Widget>[
+                  ...widget.appBarActionPrefix,
+                  if (isMobile)
+                    IconButton(
+                      key: const Key('mobile-global-search-action'),
+                      tooltip: '검색',
+                      icon: const Icon(Icons.search),
+                      onPressed: _openMobileSearch,
+                    ),
+                  if (graphCommands.isNotEmpty)
+                    PopupMenuButton<int>(
+                      key: const Key('mobile-graph-command-overflow'),
+                      onSelected: (index) =>
+                          graphCommands[index].onPressed?.call(),
+                      itemBuilder: (context) =>
+                          List.generate(graphCommands.length, (index) {
+                            final command = graphCommands[index];
+                            return PopupMenuItem<int>(
+                              value: index,
+                              enabled: command.onPressed != null,
+                              child: Row(
+                                children: [
+                                  Icon(command.icon),
+                                  const SizedBox(width: 12),
+                                  Text(command.label),
+                                ],
+                              ),
+                            );
+                          }),
+                    ),
+                ]
+              : <Widget>[
+                  ...widget.appBarActionPrefix,
+                  ...graphCommands.map((command) => command.buildIconButton()),
+                ];
 
-    return AppBar(
-      title: title ?? const Text('단어 그래프'),
-      actions: mergedActions.isEmpty ? null : mergedActions,
+          return AppBar(
+            title: title ?? const Text('단어 그래프'),
+            actions: mergedActions.isEmpty ? null : mergedActions,
+          );
+        },
+      ),
     );
   }
 

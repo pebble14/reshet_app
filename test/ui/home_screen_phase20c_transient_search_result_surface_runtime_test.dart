@@ -8,7 +8,19 @@ import 'package:reshet_app/database/database_service.dart';
 import 'package:reshet_app/ui/home_screen.dart';
 import 'package:reshet_app/ui/word_detail_screen.dart';
 import 'package:reshet_app/ui/word_explorer_screen.dart';
+import 'package:reshet_app/ui/word_graph_screen.dart';
+import 'package:reshet_app/ui/word_info_panel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+const _graphCommandOverflowKey = Key('mobile-graph-command-overflow');
+const _graphCommandLabels = [
+  '전체보기',
+  '보기 초기화',
+  '선택 노드 중앙 맞춤',
+  '관계 추가',
+  '선택 단어 삭제',
+  '단어 추가',
+];
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -35,6 +47,9 @@ void main() {
     await DatabaseService.closeDatabase();
     isolatedRoot = await _createIsolatedWorkspace(sourceWorkDbPath);
     Directory.current = isolatedRoot!.path;
+    DatabaseService.setDataRootOverrideForTest(
+      p.join(isolatedRoot!.path, 'data'),
+    );
     SharedPreferences.setMockInitialValues({
       'first_run_brand_intro_seen': true,
     });
@@ -43,6 +58,7 @@ void main() {
   tearDown(() async {
     await Future<void>.delayed(const Duration(milliseconds: 100));
     await DatabaseService.closeDatabase();
+    DatabaseService.setDataRootOverrideForTest(null);
     Directory.current = repoRootPath;
 
     if (isolatedRoot != null && isolatedRoot!.existsSync()) {
@@ -499,8 +515,227 @@ void main() {
       expect(find.byType(WordExplorerScreen), findsNothing);
       expect(find.byType(WordDetailScreen), findsOneWidget);
 
+      final graphAction = find.text('그래프 보기');
+      await tester.ensureVisible(graphAction);
+      await tester.tap(graphAction);
+      await _pumpUntil(
+        tester,
+        () => find.byType(WordGraphScreen).evaluate().length == 1,
+        reason: 'small-screen detail graph action must open the graph route.',
+      );
+
+      expect(find.byType(WordGraphScreen), findsOneWidget);
+      expect(find.byType(WordExplorerScreen), findsNothing);
+
       await _disposeRuntimeApp(tester);
     });
+
+    testWidgets(
+      'large-screen detail focus widens the pane without route or owner changes',
+      (tester) async {
+        SharedPreferences.setMockInitialValues({
+          'first_run_brand_intro_seen': true,
+          'explorer_graph_detail_split_fraction': 0.60,
+        });
+        final preferences = await SharedPreferences.getInstance();
+
+        _setSurfaceSize(tester, const Size(1440, 1000));
+        await tester.pumpWidget(const MaterialApp(home: HomeScreen()));
+        await _pumpUntil(
+          tester,
+          () => find.byType(WordExplorerScreen).evaluate().length == 1,
+          reason: 'large-screen Explorer pane must mount after DB bootstrap.',
+        );
+        await _waitForExplorerBootstrap(tester);
+        await _pumpUntil(
+          tester,
+          () => find.text('상세 영역 넓게 보기').evaluate().length == 1,
+          reason: 'Explorer detail focus action must render after bootstrap.',
+        );
+        await _pumpUntil(
+          tester,
+          () => find.byTooltip('전체보기').evaluate().length == 1,
+          reason: 'wide embedded graph must expose direct graph commands.',
+        );
+
+        final explorerFinder = find.byType(WordExplorerScreen);
+        final graphFinder = find.byType(WordGraphScreen);
+        final detailFinder = find.byType(WordInfoPanel);
+        final focusAction = find.text('상세 영역 넓게 보기');
+        await tester.ensureVisible(focusAction);
+        await tester.pump();
+        expect(
+          tester.takeException(),
+          isNull,
+          reason:
+              'focus action precondition must not contain an earlier error.',
+        );
+
+        final initialExplorerElement = tester.element(explorerFinder);
+        final initialExplorerWidget = tester.widget<WordExplorerScreen>(
+          explorerFinder,
+        );
+        final initialGraphElement = tester.element(graphFinder);
+        final initialGraphWidget = tester.widget<WordGraphScreen>(graphFinder);
+        final initialGraphWidth = tester.getSize(graphFinder).width;
+        final initialDetailWidth = tester.getSize(detailFinder).width;
+        final initialAppBarCount = find.byType(AppBar).evaluate().length;
+        final initialHistoryAvailability = initialGraphWidget.appBarActionPrefix
+            .whereType<IconButton>()
+            .map((action) => action.onPressed != null)
+            .toList();
+
+        expect(initialGraphWidget.onChangeCenterWordId, isNotNull);
+        expect(initialGraphWidget.onDeletedSelectedWord, isNotNull);
+        expect(find.byKey(_graphCommandOverflowKey), findsNothing);
+        for (final label in _graphCommandLabels) {
+          expect(find.byTooltip(label), findsOneWidget);
+        }
+
+        await tester.tap(focusAction);
+        await tester.pump();
+        expect(
+          tester.takeException(),
+          isNull,
+          reason: 'pane-local focus must not produce a layout or route error.',
+        );
+
+        final focusedGraphWidget = tester.widget<WordGraphScreen>(graphFinder);
+        final focusedGraphWidth = tester.getSize(graphFinder).width;
+        final focusedDetailWidth = tester.getSize(detailFinder).width;
+        final focusedHistoryAvailability = focusedGraphWidget.appBarActionPrefix
+            .whereType<IconButton>()
+            .map((action) => action.onPressed != null)
+            .toList();
+
+        expect(find.byType(WordDetailScreen), findsNothing);
+        expect(find.byType(AppBar), findsNWidgets(initialAppBarCount));
+        expect(find.byKey(_graphCommandOverflowKey), findsOneWidget);
+        for (final label in _graphCommandLabels) {
+          expect(find.byTooltip(label), findsNothing);
+        }
+        expect(focusedGraphWidth, lessThan(initialGraphWidth));
+        expect(focusedGraphWidth, moreOrLessEquals(360.0, epsilon: 0.1));
+        expect(focusedDetailWidth, greaterThan(initialDetailWidth));
+        expect(tester.element(explorerFinder), same(initialExplorerElement));
+        expect(tester.element(graphFinder), same(initialGraphElement));
+        expect(
+          tester.widget<WordExplorerScreen>(explorerFinder).key,
+          initialExplorerWidget.key,
+        );
+        expect(
+          tester.widget<WordExplorerScreen>(explorerFinder).initialWordId,
+          initialExplorerWidget.initialWordId,
+        );
+        expect(
+          focusedGraphWidget.centerWordId,
+          initialGraphWidget.centerWordId,
+        );
+        expect(
+          focusedGraphWidget.selectedWordId,
+          initialGraphWidget.selectedWordId,
+        );
+        expect(focusedHistoryAvailability, initialHistoryAvailability);
+        expect(
+          preferences.getDouble('explorer_graph_detail_split_fraction'),
+          0.60,
+        );
+
+        await tester.tap(find.byKey(_graphCommandOverflowKey));
+        await tester.pumpAndSettle();
+        for (final label in _graphCommandLabels) {
+          expect(find.text(label), findsOneWidget);
+        }
+        await tester.tap(find.text('보기 초기화'));
+        await tester.pump();
+
+        await tester.tap(focusAction);
+        await tester.pump();
+
+        final repeatedGraphWidget = tester.widget<WordGraphScreen>(graphFinder);
+        expect(tester.getSize(graphFinder).width, focusedGraphWidth);
+        expect(tester.getSize(detailFinder).width, focusedDetailWidth);
+        expect(tester.element(explorerFinder), same(initialExplorerElement));
+        expect(tester.element(graphFinder), same(initialGraphElement));
+        expect(
+          repeatedGraphWidget.centerWordId,
+          initialGraphWidget.centerWordId,
+        );
+        expect(
+          repeatedGraphWidget.selectedWordId,
+          initialGraphWidget.selectedWordId,
+        );
+        expect(
+          preferences.getDouble('explorer_graph_detail_split_fraction'),
+          0.60,
+        );
+        expect(
+          tester.takeException(),
+          isNull,
+          reason: 'repeated pane-local focus must remain error-free.',
+        );
+
+        final dividerFinder = find.byWidgetPredicate(
+          (widget) =>
+              widget is MouseRegion &&
+              widget.cursor == SystemMouseCursors.resizeColumn,
+          description: 'Explorer graph/detail resize divider',
+        );
+        expect(dividerFinder, findsOneWidget);
+
+        await tester.drag(dividerFinder, const Offset(300, 0));
+        await tester.pump();
+        expect(tester.getSize(graphFinder).width, greaterThan(360.0));
+        expect(find.byKey(_graphCommandOverflowKey), findsNothing);
+        expect(tester.takeException(), isNull);
+
+        await tester.drag(dividerFinder, const Offset(-1000, 0));
+        await tester.pump();
+        expect(
+          tester.getSize(graphFinder).width,
+          moreOrLessEquals(360.0, epsilon: 0.1),
+        );
+        expect(find.byKey(_graphCommandOverflowKey), findsOneWidget);
+        expect(tester.takeException(), isNull);
+        await _pumpUntil(
+          tester,
+          () =>
+              preferences.getDouble('explorer_graph_detail_split_fraction') !=
+              0.60,
+          reason: 'manual divider drag must persist its own minimum fraction.',
+        );
+        final manuallyStoredFraction = preferences.getDouble(
+          'explorer_graph_detail_split_fraction',
+        );
+        expect(manuallyStoredFraction, isNotNull);
+
+        await _disposeRuntimeApp(tester);
+        await tester.pumpWidget(const MaterialApp(home: HomeScreen()));
+        await _pumpUntil(
+          tester,
+          () => find.byType(WordExplorerScreen).evaluate().length == 1,
+          reason: 'remounted Explorer must restore the manual split fraction.',
+        );
+        await _waitForExplorerBootstrap(tester);
+        await _pumpUntil(
+          tester,
+          () => find.byKey(_graphCommandOverflowKey).evaluate().length == 1,
+          reason: 'restored minimum graph pane must keep compact commands.',
+        );
+
+        expect(
+          tester.getSize(find.byType(WordGraphScreen)).width,
+          moreOrLessEquals(360.0, epsilon: 0.1),
+        );
+        expect(
+          preferences.getDouble('explorer_graph_detail_split_fraction'),
+          manuallyStoredFraction,
+        );
+        expect(tester.takeException(), isNull);
+
+        await _disposeRuntimeApp(tester);
+      },
+    );
   });
 }
 
