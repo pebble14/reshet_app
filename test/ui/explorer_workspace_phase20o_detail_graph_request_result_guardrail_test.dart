@@ -4,28 +4,17 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('Phase 20-O detail graph request result guardrail', () {
-    late String routeResultSource;
-    late String detailSource;
-    late String detailWidgetSource;
     late String openGraphSource;
     late String explorerSource;
     late String splitBodySource;
     late String focusSelectedWordDetailPaneSource;
     late String embeddedDetailPanelSource;
     late String homeDetailRouteSource;
-    late String wordGraphSource;
 
     setUpAll(() {
-      routeResultSource = File(
-        'lib/ui/word_detail_route_result.dart',
+      final detailSource = File(
+        'lib/ui/word_detail_screen.dart',
       ).readAsStringSync();
-
-      detailSource = File('lib/ui/word_detail_screen.dart').readAsStringSync();
-      detailWidgetSource = _sourceBetween(
-        detailSource,
-        'class WordDetailScreen extends StatefulWidget {',
-        'class _WordDetailScreenState extends State<WordDetailScreen> {',
-      );
       openGraphSource = _sourceBetween(
         detailSource,
         'Future<void> _openGraph() async {',
@@ -57,45 +46,9 @@ void main() {
         'Future<void> _openDefaultStrongWordDetail(String wordId) async {',
         'Future<void> _openDefaultStrongWordGraph(String wordId) async {',
       );
-
-      wordGraphSource = File(
-        'lib/ui/word_graph_screen.dart',
-      ).readAsStringSync();
     });
 
-    test('defines a typed graph request result with word id', () {
-      expect(
-        routeResultSource,
-        contains(
-          'final class WordDetailGraphRequestedResult '
-          'extends WordDetailRouteResult',
-        ),
-      );
-      expect(
-        routeResultSource,
-        contains(
-          'const WordDetailGraphRequestedResult({required this.wordId})',
-        ),
-      );
-    });
-
-    test('keeps standalone graph route as the detail screen default', () {
-      expect(
-        detailSource,
-        contains(
-          'enum WordDetailGraphActionMode { standaloneRoute, returnToCaller }',
-        ),
-      );
-      expect(
-        detailWidgetSource,
-        contains('final WordDetailGraphActionMode graphActionMode;'),
-      );
-      expect(
-        detailWidgetSource,
-        contains(
-          'this.graphActionMode = WordDetailGraphActionMode.standaloneRoute',
-        ),
-      );
+    test('keeps standalone graph route as the detail screen action', () {
       expect(
         openGraphSource,
         contains('builder: (context) => WordGraphScreen('),
@@ -103,18 +56,12 @@ void main() {
       expect(openGraphSource, contains('centerWordId: _wordId'));
     });
 
-    test('returns graph request only after existing availability guard', () {
+    test('opens standalone graph only after existing availability guard', () {
       final availabilityIndex = openGraphSource.indexOf(
         '_repository.wordExistsForGraphNavigation',
       );
       final unavailableIndex = openGraphSource.indexOf(
         '_showWordNavigationUnavailableSnackBar()',
-      );
-      final returnModeIndex = openGraphSource.indexOf(
-        'WordDetailGraphActionMode.returnToCaller',
-      );
-      final resultIndex = openGraphSource.indexOf(
-        'WordDetailGraphRequestedResult(wordId: _wordId)',
       );
       final standalonePushIndex = openGraphSource.indexOf(
         'Navigator.push<WordDetailRouteResult>(',
@@ -122,21 +69,11 @@ void main() {
 
       expect(availabilityIndex, greaterThanOrEqualTo(0));
       expect(unavailableIndex, greaterThan(availabilityIndex));
-      expect(returnModeIndex, greaterThan(unavailableIndex));
-      expect(resultIndex, greaterThan(returnModeIndex));
-      expect(standalonePushIndex, greaterThan(resultIndex));
+      expect(standalonePushIndex, greaterThan(unavailableIndex));
     });
 
-    test('keeps return-to-caller contract dormant outside explorer', () {
-      expect(explorerSource, isNot(contains('WordDetailGraphRequestedResult')));
-      expect(
-        explorerSource,
-        isNot(
-          contains('graphActionMode: WordDetailGraphActionMode.returnToCaller'),
-        ),
-      );
+    test('keeps pane focus local and home detail route active', () {
       expect(focusSelectedWordDetailPaneSource, isNot(contains('Navigator.')));
-      expect(homeDetailRouteSource, isNot(contains('graphActionMode:')));
       expect(homeDetailRouteSource, contains('WordDetailScreen('));
       expect(homeDetailRouteSource, contains('_refreshWords();'));
     });
@@ -184,14 +121,6 @@ void main() {
       );
       expect(embeddedDetailPanelSource, isNot(contains('onDelete:')));
       expect(embeddedDetailPanelSource, isNot(contains('onShowGraph:')));
-    });
-
-    test('does not couple WordGraphScreen to detail graph request result', () {
-      expect(
-        wordGraphSource,
-        isNot(contains('WordDetailGraphRequestedResult')),
-      );
-      expect(wordGraphSource, isNot(contains('WordDetailGraphActionMode')));
     });
   });
 }

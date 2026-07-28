@@ -1,5 +1,8 @@
 # CHANGELOG
 
+- `2026-07-29` Explorer full-detail route caller 제거 후 미사용 상태였던 `WordDetailScreen` edit/graph caller-return 생성자 계약과 requested result type을 production에서 제거했다.
+- 상세 편집은 기존 local edit route를, 그래프 action은 기존 standalone graph route를 계속 사용하며 `WordDetailDeletedResult`, `WordDetailRouteResult`, `mutationImpactSince`, `showEditAction`, Home·small-screen 기본 상세 route를 유지했다.
+- 실제 UI 동작, DB·repository·persistence, dependency는 변경하지 않았으며 기존 Phase 기록은 당시 상태를 설명하는 역사적 기록으로 유지했다.
 - `2026-07-28` large-screen embedded Explorer의 `상세 영역 넓게 보기`를 별도 `WordDetailScreen` route 대신 pane-local focus로 전환했다. 기존 graph 최소 폭 360px clamp를 재사용하고 `_graphPaneFraction`만 임시 변경해 저장된 divider 비율과 selection·center·history·graph revision owner를 유지한다.
 - 좁은 embedded graph의 AppBar는 전체 화면 폭이 아닌 실제 local constraints를 기준으로 기존 overflow menu를 재사용한다. Explorer 이전·다음 action은 직접 표시하고 graph command 6개는 menu로 전환하며, 충분히 넓은 embedded/standalone graph의 direct action과 모든 기존 handler·활성 조건은 유지한다.
 - 직접 관련 guard/widget/delete 테스트 75개, Home runtime 7개, graph responsive/mobile 테스트 7개가 통과했다. 변경 Dart 파일 focused analyze는 종료 코드 0이며 기존 info 8건 외 error·warning은 없다.

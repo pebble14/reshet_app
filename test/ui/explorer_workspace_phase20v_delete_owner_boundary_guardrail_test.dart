@@ -89,14 +89,6 @@ void main() {
         expect(explorerSource, isNot(contains('WordDetailScreen(')));
         expect(
           explorerSource,
-          isNot(contains('WordDetailEditActionMode.returnToCaller')),
-        );
-        expect(
-          explorerSource,
-          isNot(contains('WordDetailGraphActionMode.returnToCaller')),
-        );
-        expect(
-          explorerSource,
           contains('onDeletedSelectedWord: _handleGraphDeletedSelectedWord'),
         );
       },

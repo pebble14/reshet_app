@@ -16,15 +16,9 @@ import 'word_graph_screen.dart';
 import 'word_info_panel.dart';
 import 'word_search_query.dart';
 
-enum WordDetailEditActionMode { localRoute, returnToCaller }
-
-enum WordDetailGraphActionMode { standaloneRoute, returnToCaller }
-
 class WordDetailScreen extends StatefulWidget {
   final String wordId;
   final WordDetailLikeDisplayItem initialDisplayItem;
-  final WordDetailEditActionMode editActionMode;
-  final WordDetailGraphActionMode graphActionMode;
   final bool showEditAction;
   final WordMutationImpactCollector? mutationImpactCollector;
 
@@ -32,8 +26,6 @@ class WordDetailScreen extends StatefulWidget {
     super.key,
     required this.wordId,
     required this.initialDisplayItem,
-    this.editActionMode = WordDetailEditActionMode.localRoute,
-    this.graphActionMode = WordDetailGraphActionMode.standaloneRoute,
     this.showEditAction = true,
     this.mutationImpactCollector,
   });
@@ -84,11 +76,6 @@ class _WordDetailScreenState extends State<WordDetailScreen> {
   }
 
   Future<void> _openEdit() async {
-    if (widget.editActionMode == WordDetailEditActionMode.returnToCaller) {
-      Navigator.pop(context, WordDetailEditRequestedResult(wordId: _wordId));
-      return;
-    }
-
     final editSeed = await _repository.getWordEditSeedForDetailEdit(_wordId);
     if (!mounted) return;
     if (editSeed == null) {
@@ -120,11 +107,6 @@ class _WordDetailScreenState extends State<WordDetailScreen> {
     if (!mounted) return;
     if (!centerWordExists) {
       _showWordNavigationUnavailableSnackBar();
-      return;
-    }
-
-    if (widget.graphActionMode == WordDetailGraphActionMode.returnToCaller) {
-      Navigator.pop(context, WordDetailGraphRequestedResult(wordId: _wordId));
       return;
     }
 

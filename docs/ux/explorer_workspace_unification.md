@@ -9468,3 +9468,11 @@ Phase 38-E는 최종 `GraphViewData`에 포함된 일반 단어 노드 사이의
 내부 관계는 최종 가시 node set 기준으로 보완 병합한다. 중심 변경, depth 2 확장, `+N more` reveal, 선택 source의 `확장 접기` 뒤에는 같은 기준으로 다시 계산한다. 이전 graph 상태에서 시작한 비동기 보완 조회 결과는 graph revision과 가시 node signature가 현재 상태와 모두 일치할 때만 적용한다.
 
 이번 단계는 source 기반 기존 엣지를 유지하고 `relationId` 기준으로 중복을 제거한다. Relation direction, relation type/category, edge chip, relation detail, 선택·인접 highlight 경로는 기존 관계 엣지 계약을 따른다. Route, DB schema, migration, seed 데이터, dependency, node cap, depth 확장 정책, `+N more` 노출 정책, layout 알고리즘은 변경하지 않는다.
+
+### 17.153 미사용 full-detail caller-return 계약 정리 경계
+
+Explorer의 별도 full-detail route caller가 pane-local focus로 제거된 뒤 runtime caller 없이 남아 있던 `WordDetailScreen`의 edit/graph caller-return 계약을 production에서 제거한다. `WordDetailEditActionMode`, `WordDetailGraphActionMode`, `WordDetailEditRequestedResult`, `WordDetailGraphRequestedResult`와 연결된 생성자 parameter 및 조기 반환 branch가 대상이다.
+
+`WordDetailScreen`의 편집 action은 기존 local `WordEditScreen` route를, 그래프 action은 기존 standalone `WordGraphScreen` route를 직접 실행한다. `showEditAction`, `WordDetailRouteResult`, `WordDetailDeletedResult`, `mutationImpactSince`, delete 반환·해석·전파와 Home 및 small-screen 기본 상세 route는 유지한다.
+
+이번 정리는 미사용 public constructor/result contract만 제거하며 실제 UI 동작, DB·repository·persistence, dependency는 변경하지 않는다. 이전 Phase 문단은 당시 구현과 판단을 설명하는 역사적 기록이므로 수정하지 않는다.

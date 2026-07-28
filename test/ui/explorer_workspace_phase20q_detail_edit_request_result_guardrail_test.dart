@@ -4,7 +4,6 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('Phase 20-Q detail edit request result guardrail', () {
-    late String routeResultSource;
     late String detailSource;
     late String detailWidgetSource;
     late String openEditSource;
@@ -16,10 +15,6 @@ void main() {
     late String homeDetailRouteSource;
 
     setUpAll(() {
-      routeResultSource = File(
-        'lib/ui/word_detail_route_result.dart',
-      ).readAsStringSync();
-
       detailSource = File('lib/ui/word_detail_screen.dart').readAsStringSync();
       detailWidgetSource = _sourceBetween(
         detailSource,
@@ -64,71 +59,30 @@ void main() {
       );
     });
 
-    test('defines a typed edit request result with word id', () {
-      expect(
-        routeResultSource,
-        contains(
-          'final class WordDetailEditRequestedResult '
-          'extends WordDetailRouteResult',
-        ),
-      );
-      expect(
-        routeResultSource,
-        contains('const WordDetailEditRequestedResult({required this.wordId})'),
-      );
-    });
-
-    test('keeps local detail edit route as the default', () {
-      expect(
-        detailWidgetSource,
-        contains('final WordDetailEditActionMode editActionMode;'),
-      );
-      expect(
-        detailWidgetSource,
-        contains('this.editActionMode = WordDetailEditActionMode.localRoute'),
-      );
+    test('keeps local detail edit route as the active action', () {
       expect(detailWidgetSource, contains('this.showEditAction = true'));
-      expect(homeDetailRouteSource, isNot(contains('editActionMode:')));
-      expect(homeDetailRouteSource, isNot(contains('showEditAction:')));
-      expect(homeDetailRouteSource, contains('WordDetailScreen('));
-    });
-
-    test('returns edit request before reading the detail edit seed', () {
-      final returnModeIndex = openEditSource.indexOf(
-        'WordDetailEditActionMode.returnToCaller',
-      );
-      final resultIndex = openEditSource.indexOf(
-        'WordDetailEditRequestedResult(wordId: _wordId)',
-      );
-      final detailSeedIndex = openEditSource.indexOf(
-        '_repository.getWordEditSeedForDetailEdit(_wordId)',
-      );
-
-      expect(returnModeIndex, greaterThanOrEqualTo(0));
-      expect(resultIndex, greaterThan(returnModeIndex));
-      expect(detailSeedIndex, greaterThan(resultIndex));
-      expect(
-        openEditSource,
-        contains('WordEditScreen.fromSeed(seed: editSeed)'),
-      );
-      expect(openEditSource, contains('_refreshDetailScreenDisplayItem()'));
-    });
-
-    test('keeps caller edit mode contract but removes it from explorer', () {
-      expect(detailSource, contains('WordDetailEditActionMode.returnToCaller'));
-      expect(explorerSource, isNot(contains('WordDetailEditRequestedResult')));
-      expect(
-        explorerSource,
-        isNot(
-          contains('editActionMode: WordDetailEditActionMode.returnToCaller'),
-        ),
-      );
-      expect(explorerSource, isNot(contains('WordDetailScreen(')));
       expect(
         detailSource,
         contains('onEdit: widget.showEditAction ? _openEdit : null'),
       );
-      expect(homeDetailRouteSource, isNot(contains('editActionMode:')));
+      expect(homeDetailRouteSource, isNot(contains('showEditAction:')));
+      expect(homeDetailRouteSource, contains('WordDetailScreen('));
+    });
+
+    test('opens local edit route and refreshes saved detail', () {
+      final detailSeedIndex = openEditSource.indexOf(
+        '_repository.getWordEditSeedForDetailEdit(_wordId)',
+      );
+      final editRouteIndex = openEditSource.indexOf(
+        'WordEditScreen.fromSeed(seed: editSeed)',
+      );
+      final refreshIndex = openEditSource.indexOf(
+        '_refreshDetailScreenDisplayItem()',
+      );
+
+      expect(detailSeedIndex, greaterThanOrEqualTo(0));
+      expect(editRouteIndex, greaterThan(detailSeedIndex));
+      expect(refreshIndex, greaterThan(editRouteIndex));
     });
 
     test('keeps explorer direct edit and graph refresh ownership', () {
@@ -167,16 +121,12 @@ void main() {
       );
     });
 
-    test('keeps delete and graph action contracts unchanged', () {
+    test('keeps delete result and standalone graph route unchanged', () {
       expect(
         confirmDeleteSource,
         contains(
           'Navigator.pop(context, WordDetailDeletedResult(wordId: _wordId))',
         ),
-      );
-      expect(
-        openGraphSource,
-        contains('WordDetailGraphRequestedResult(wordId: _wordId)'),
       );
       expect(
         openGraphSource,

@@ -139,8 +139,6 @@ void main() {
         );
         expect(homeDetailRouteSource, contains('WordDetailScreen('));
         expect(homeDetailRouteSource, contains('_refreshWords();'));
-        expect(homeDetailRouteSource, isNot(contains('editActionMode:')));
-        expect(homeDetailRouteSource, isNot(contains('graphActionMode:')));
         expect(
           centerDeleteFallbackSource,
           isNot(contains('Navigator.pop(context, true)')),
