@@ -117,6 +117,7 @@ H0001_0000
 
 - 실제 DB에 `graph_expand_mode` 컬럼이 존재한다.
 - 현재 `reshet_work.db` 레코드에서 `default`, `full`, `outgoing_limited` 값이 확인된다.
+- `표기1~6`·`음역1~6`·`발음1~6`은 현재 work·seed DB의 물리 schema에 남아 있다. active normalized read와 normal runtime create/update·신규 history는 이 컬럼을 조회하거나 갱신하지 않으며, 물리 제거와 startup·backup·restore 계약 전환은 후속 단계다.
 - `의미1~7`은 2026-07-29 migration에서 work·seed DB 양쪽의 `WORD_TABLE`에서 물리 제거됐다. meaning runtime authority는 `word_meaning_set`이다.
 - `관련1~7`은 2026-07-29 migration에서 work·seed DB 양쪽의 `WORD_TABLE`에서 물리 제거됐다. 관계 runtime authority는 계속 `WORD_RELATION`이다.
 
@@ -180,16 +181,18 @@ CREATE TABLE WORD_LEGACY_RELATED_VALUE (
   보장하고, 테이블이 비어 있을 때만 legacy expression slot에서 최소 backfill한다.
 - runtime ensure는 기존 테이블에 nullable `pronunciation_notation`, `pronunciation_notation_name` 열이 없으면 안전한 `ALTER TABLE ... ADD COLUMN`으로 추가한다. 기존 pronunciation 본문은 변경하지 않고, 본문이 있는 미분류 행만 `unknown`으로 멱등 보강한다.
 - 현재 앱 read source는 아직 전면 normalized-only가 아니며, legacy `WORD_TABLE` 표현 컬럼을 사용하는 기본 context와 owner-specific `NORMALIZED_ONLY` context가 공존한다. production `NORMALIZED_WITH_FALLBACK` context는 남아 있지 않지만 공용 fallback resolver와 debug policy override는 유지한다.
-- 현재 앱 expression write path는 `word_expression_set`를 우선 갱신하고 `WORD_TABLE` expression slot을 compatibility projection으로 함께 유지하는 dual-write 구조를 사용한다.
+- active owner-specific `NORMALIZED_ONLY` read는 `WORD_TABLE` SQL projection에서 18개 expression 컬럼을 제외하고 legacy adapter를 실행하지 않는다. legacy-shaped raw map이 필요한 경계는 canonical row를 메모리에서 materialize한다.
+- 현재 앱 expression create/update와 신규 word history의 저장 권위는 `word_expression_set`이며, `WORD_TABLE` expression slot로 dual-write하지 않는다. create는 물리 slot을 채우지 않고 update는 기존 물리 값을 변경하거나 비우지 않는다.
 - `word_expression_set.id`는 surrogate key이다.
 - 의미 비교와 정합성 검증은 `(word_id, seq)`를 natural identity로 본다.
 
 운영 원칙:
 
 - expression write authority는 repository 내부 canonical expression set과 `word_expression_set` write path를 우선한다.
-- create/update 시 repository transaction 안에서 canonical expression set을 normalized row로 저장한 뒤, 같은 expression set을 기준으로 `WORD_TABLE` expression slot compatibility projection을 생성 또는 갱신한다.
-- legacy `WORD_TABLE` expression slot은 read compatibility와 기존 surface 호환을 위해 유지되지만, expression write 기준 authoritative source로 보지 않는다.
-- expression dual-write / compatibility projection 구현 검증은 create/update/delete/undo 수동 시나리오를 모두 수행한 뒤 마지막에 `sql/word_expression_set/004_verify_word_expression_set.sql`을 다시 실행해 semantic diff 0건인지 확인한다.
+- create/update는 repository transaction 안에서 canonical expression set을 normalized row로만 저장한다. 신규 word history도 normalized expression rows를 저장하며 18개 legacy key를 포함하지 않는다.
+- normalized payload가 없는 구형 history의 18개 key decoder는 canonical expression 복원 입력으로 유지한다. 해당 key는 undo의 `WORD_TABLE` insert/update column list에서 제외한다.
+- legacy `WORD_TABLE` expression slot은 generic legacy read와 startup·backup·restore 호환을 위해 물리적으로 유지되지만 active normalized read나 normal runtime expression write의 권위가 아니다.
+- 검증은 현행 schema의 create/update 물리 slot 불변, 신규 history key 부재, 구형 history canonical 복원, 18개 컬럼 없는 temp schema의 active read/write/undo 성공을 함께 확인한다.
 
 ## 실제 컬럼 구조
 

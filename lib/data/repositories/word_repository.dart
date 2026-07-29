@@ -171,26 +171,19 @@ class WordRepository {
   static final List<String> _homeSearchLikeColumns = List.unmodifiable([
     '스트롱넘버',
   ]);
-  static final List<String> _wordPronunciationColumns = List.unmodifiable(
-    List.generate(6, (index) => '발음${index + 1}'),
-  );
-  static final List<String> _homeSearchDisplayResolutionColumns =
-      List.unmodifiable([
-        'id',
-        '스트롱넘버',
-        ..._homeSearchSpellingColumns,
-        ..._homeSearchTransliterationColumns,
-        ..._wordPronunciationColumns,
-      ]);
-  static final Set<String> _wordHistoryAllowedColumns = Set.unmodifiable({
+  static const List<String> _activeNormalizedWordTableColumns = [
     'id',
     '언어',
     '스트롱넘버',
-    ..._homeSearchSpellingColumns,
-    ..._homeSearchTransliterationColumns,
-    ..._wordPronunciationColumns,
     '비고',
-  });
+    'graph_expand_mode',
+  ];
+  static const List<String> _wordCoreSnapshotColumns = [
+    'id',
+    '언어',
+    '스트롱넘버',
+    '비고',
+  ];
   static const String _historyNormalizedExpressionRowsKey =
       '_normalized_expression_rows';
   static const String _historyNormalizedMeaningRowsKey =
@@ -283,6 +276,22 @@ class WordRepository {
     return _defaultReadSourcePolicy;
   }
 
+  List<String>? _wordTableColumnsForExpressionReadContext(String context) {
+    if (_resolveReadSourcePolicyForContext(context) ==
+        ReadSourcePolicy.normalizedOnly) {
+      return _activeNormalizedWordTableColumns;
+    }
+    return null;
+  }
+
+  String _wordTableProjectionForExpressionReadContext(String context) {
+    final columns = _wordTableColumnsForExpressionReadContext(context);
+    if (columns == null) {
+      return 'wt.*';
+    }
+    return _wordTableProjectionSql(columns);
+  }
+
   void _recordWordExpressionReadSnapshots(
     Iterable<WordExpressionReadSnapshot> snapshots,
   ) {
@@ -318,14 +327,26 @@ class WordRepository {
     return snapshots[normalizedId];
   }
 
-  Map<String, dynamic> _sanitizeWordHistorySnapshot(Map<String, dynamic> row) {
+  Map<String, dynamic> _copyWordCoreSnapshot(Map<String, dynamic> row) {
     final sanitized = <String, dynamic>{};
     for (final entry in row.entries) {
-      if (_wordHistoryAllowedColumns.contains(entry.key)) {
+      if (_wordCoreSnapshotColumns.contains(entry.key)) {
         sanitized[entry.key] = entry.value;
       }
     }
     return sanitized;
+  }
+
+  Map<String, dynamic> _sanitizeNewWordHistoryCoreSnapshot(
+    Map<String, dynamic> row,
+  ) {
+    return _copyWordCoreSnapshot(row);
+  }
+
+  Map<String, dynamic> _sanitizeWordTableCoreDmlSnapshot(
+    Map<String, dynamic> historySnapshot,
+  ) {
+    return _copyWordCoreSnapshot(historySnapshot);
   }
 
   Map<String, dynamic> _buildWordHistorySnapshot({
@@ -333,7 +354,7 @@ class WordRepository {
     required List<Map<String, dynamic>> normalizedExpressionRows,
     required List<Map<String, dynamic>> normalizedMeaningRows,
   }) {
-    final snapshot = _sanitizeWordHistorySnapshot(
+    final snapshot = _sanitizeNewWordHistoryCoreSnapshot(
       Map<String, dynamic>.from(compatibilityWordSnapshot),
     );
     snapshot[_historyNormalizedExpressionRowsKey] =
@@ -341,14 +362,6 @@ class WordRepository {
     snapshot[_historyNormalizedMeaningRowsKey] =
         _cloneWordMeaningRowsForHistory(normalizedMeaningRows);
     return snapshot;
-  }
-
-  Map<String, dynamic> _extractCompatibilityWordSnapshotFromHistory(
-    Map<String, dynamic> historySnapshot,
-  ) {
-    return _sanitizeWordHistorySnapshot(
-      Map<String, dynamic>.from(historySnapshot),
-    );
   }
 
   List<Map<String, dynamic>> _cloneWordExpressionRowsForHistory(
@@ -613,7 +626,6 @@ class WordRepository {
     required String context,
   }) async {
     final rowsByWordId = <String, Map<String, dynamic>>{};
-    final legacyResultsByWordId = <String, CanonicalExpressionReadResult>{};
 
     for (final rawRow in rows) {
       final row = Map<String, dynamic>.from(rawRow);
@@ -622,7 +634,6 @@ class WordRepository {
         continue;
       }
       rowsByWordId[wordId] = row;
-      legacyResultsByWordId[wordId] = readLegacyWordExpressionRow(row);
     }
 
     if (rowsByWordId.isEmpty) {
@@ -630,6 +641,15 @@ class WordRepository {
     }
 
     final policy = _resolveReadSourcePolicyForContext(context);
+    final legacyResultsByWordId = <String, CanonicalExpressionReadResult>{};
+    if (policy != ReadSourcePolicy.normalizedOnly) {
+      for (final entry in rowsByWordId.entries) {
+        legacyResultsByWordId[entry.key] = readLegacyWordExpressionRow(
+          entry.value,
+        );
+      }
+    }
+
     if (policy == ReadSourcePolicy.legacy) {
       return {
         for (final entry in rowsByWordId.entries)
@@ -658,7 +678,7 @@ class WordRepository {
             wordId: entry.key,
             context: context,
             policy: policy,
-            legacyResult: legacyResultsByWordId[entry.key]!,
+            legacyResult: legacyResultsByWordId[entry.key],
             error: error,
           ),
       };
@@ -670,7 +690,7 @@ class WordRepository {
           wordId: entry.key,
           context: context,
           policy: policy,
-          legacyResult: legacyResultsByWordId[entry.key]!,
+          legacyResult: legacyResultsByWordId[entry.key],
           normalizedRows: normalizedRowsByWordId[entry.key] ?? const [],
         ),
     };
@@ -767,7 +787,7 @@ class WordRepository {
     required String wordId,
     required String context,
     required ReadSourcePolicy policy,
-    required CanonicalExpressionReadResult legacyResult,
+    required CanonicalExpressionReadResult? legacyResult,
     required Object error,
   }) {
     final fallbackObservation = _buildFallbackObservation(
@@ -779,14 +799,15 @@ class WordRepository {
     );
 
     if (policy == ReadSourcePolicy.normalizedWithFallback) {
+      final fallbackResult = legacyResult!;
       return WordExpressionReadSnapshot(
         wordId: wordId,
         context: context,
         requestedPolicy: policy,
         resolvedSource: ResolvedReadSource.legacy,
         finalResultSource: FinalReadResultSource.legacyFallback,
-        readResult: legacyResult,
-        legacyReadResult: legacyResult,
+        readResult: fallbackResult,
+        legacyReadResult: fallbackResult,
         fallbackObservation: fallbackObservation,
       );
     }
@@ -807,7 +828,7 @@ class WordRepository {
     required String wordId,
     required String context,
     required ReadSourcePolicy policy,
-    required CanonicalExpressionReadResult legacyResult,
+    required CanonicalExpressionReadResult? legacyResult,
     required List<Map<String, dynamic>> normalizedRows,
   }) {
     final normalizedOutcome = readNormalizedWordExpressionRows(normalizedRows);
@@ -849,14 +870,15 @@ class WordRepository {
     );
 
     if (policy == ReadSourcePolicy.normalizedWithFallback) {
+      final fallbackResult = legacyResult!;
       return WordExpressionReadSnapshot(
         wordId: wordId,
         context: context,
         requestedPolicy: policy,
         resolvedSource: ResolvedReadSource.legacy,
         finalResultSource: FinalReadResultSource.legacyFallback,
-        readResult: legacyResult,
-        legacyReadResult: legacyResult,
+        readResult: fallbackResult,
+        legacyReadResult: fallbackResult,
         fallbackObservation: fallbackObservation,
       );
     }
@@ -2001,6 +2023,7 @@ class WordRepository {
     final db = await DatabaseService.openDatabaseFile();
     final rows = await db.query(
       'WORD_TABLE',
+      columns: _wordTableColumnsForExpressionReadContext(context),
       where: 'id = ?',
       whereArgs: [normalizedId],
       limit: 1,
@@ -2235,10 +2258,13 @@ class WordRepository {
 
     final db = await DatabaseService.openDatabaseFile();
     final placeholders = List.filled(orderedIds.length, '?').join(', ');
-    final rawRows = await db.rawQuery(
-      'SELECT * FROM WORD_TABLE WHERE id IN ($placeholders)',
-      orderedIds,
-    );
+    final projectionSql = _wordTableProjectionForExpressionReadContext(context);
+    final rawRows = await db.rawQuery('''
+      SELECT
+      $projectionSql
+      FROM WORD_TABLE wt
+      WHERE wt.id IN ($placeholders)
+      ''', orderedIds);
     final legacyRows = rawRows
         .map((row) => Map<String, dynamic>.from(row))
         .toList(growable: false);
@@ -2717,20 +2743,24 @@ class WordRepository {
     int? limit,
   }) async {
     final db = await DatabaseService.openDatabaseFile();
+    final projectionSql = _wordTableProjectionForExpressionReadContext(
+      'getStrongWordsMap',
+    );
     final sql = StringBuffer('''
-      SELECT *
-      FROM WORD_TABLE
-      WHERE 스트롱넘버 IS NOT NULL
-        AND TRIM(스트롱넘버) <> ''
-        AND UPPER(SUBSTR(TRIM(스트롱넘버), 1, 1)) IN ('H', 'G')
+      SELECT
+      $projectionSql
+      FROM WORD_TABLE wt
+      WHERE wt.스트롱넘버 IS NOT NULL
+        AND TRIM(wt.스트롱넘버) <> ''
+        AND UPPER(SUBSTR(TRIM(wt.스트롱넘버), 1, 1)) IN ('H', 'G')
       ORDER BY
-        CASE UPPER(SUBSTR(TRIM(스트롱넘버), 1, 1))
+        CASE UPPER(SUBSTR(TRIM(wt.스트롱넘버), 1, 1))
           WHEN 'H' THEN 0
           WHEN 'G' THEN 1
           ELSE 2
         END,
-        CAST(SUBSTR(TRIM(스트롱넘버), 2) AS INTEGER),
-        id
+        CAST(SUBSTR(TRIM(wt.스트롱넘버), 2) AS INTEGER),
+        wt.id
       ''');
     final args = <Object?>[];
 
@@ -3067,6 +3097,7 @@ class WordRepository {
 
     return await db.query(
       'WORD_TABLE',
+      columns: _wordTableColumnsForExpressionReadContext('searchWordsMap'),
       where: whereParts.join(' OR '),
       whereArgs: whereArgs,
       orderBy: 'id',
@@ -3088,8 +3119,12 @@ class WordRepository {
       whereArgs.add('%$term%');
     }
 
+    final projectionSql = _wordTableProjectionForExpressionReadContext(
+      'searchWordsMap',
+    );
     final rows = await db.rawQuery('''
-      SELECT DISTINCT wt.*
+      SELECT DISTINCT
+      $projectionSql
       FROM WORD_TABLE wt
       INNER JOIN word_meaning_set wms
         ON wms.word_id = wt.id
@@ -3120,8 +3155,12 @@ class WordRepository {
       whereArgs.add(like);
     }
 
+    final projectionSql = _wordTableProjectionForExpressionReadContext(
+      'searchWordsMap',
+    );
     final rows = await db.rawQuery('''
-      SELECT DISTINCT wt.*
+      SELECT DISTINCT
+      $projectionSql
       FROM WORD_TABLE wt
       INNER JOIN word_expression_set wes
         ON wes.word_id = wt.id
@@ -3159,6 +3198,7 @@ class WordRepository {
 
     return await db.query(
       'WORD_TABLE',
+      columns: _wordTableColumnsForExpressionReadContext('searchWordsMap'),
       where: whereParts.join(' OR '),
       whereArgs: whereArgs,
       orderBy: 'id',
@@ -3195,7 +3235,13 @@ class WordRepository {
 
     if (candidatesById.isEmpty &&
         (_containsHebrewScript(keyword) || _containsGreekScript(keyword))) {
-      addRows(await db.query('WORD_TABLE', orderBy: 'id'));
+      addRows(
+        await db.query(
+          'WORD_TABLE',
+          columns: _wordTableColumnsForExpressionReadContext('searchWordsMap'),
+          orderBy: 'id',
+        ),
+      );
     }
 
     final expressionMaterializedRows =
@@ -3242,8 +3288,8 @@ class WordRepository {
     }
 
     final placeholders = List.filled(candidateWordIds.length, '?').join(', ');
-    final projectionSql = _wordTableProjectionSql(
-      _homeSearchDisplayResolutionColumns,
+    final projectionSql = _wordTableProjectionForExpressionReadContext(
+      'searchStrongExactMap',
     );
     final rows = await db.rawQuery('''
       SELECT
@@ -4120,11 +4166,6 @@ class WordRepository {
       await _replaceWordExpressionSetRows(txn, id, normalizedExpressionRows);
       await _replaceWordMeaningSetRows(txn, id, normalizedMeaningRows);
 
-      // Phase 8-B: canonical expression sets write through normalized rows
-      // first, then project the compatibility slots back into WORD_TABLE.
-      final compatibilityExpressionColumns = toLegacyWordExpressionColumns(
-        canonicalExpressionSets,
-      );
       final row = {
         'id': id,
         '언어': payload.language,
@@ -4132,7 +4173,6 @@ class WordRepository {
             ? null
             : payload.strongNumber!.trim(),
         '비고': (payload.note ?? '').trim().isEmpty ? null : payload.note!.trim(),
-        ...compatibilityExpressionColumns,
       };
       final historyAfter = _buildWordHistorySnapshot(
         compatibilityWordSnapshot: row,
@@ -4330,6 +4370,7 @@ class WordRepository {
     await db.transaction((txn) async {
       final wordRows = await txn.query(
         'WORD_TABLE',
+        columns: _wordCoreSnapshotColumns,
         where: 'id = ?',
         whereArgs: [wordId],
         limit: 1,
@@ -4338,7 +4379,7 @@ class WordRepository {
         throw Exception('삭제할 단어를 찾을 수 없습니다: $wordId');
       }
 
-      final wordBefore = _sanitizeWordHistorySnapshot(
+      final wordBefore = _sanitizeNewWordHistoryCoreSnapshot(
         Map<String, dynamic>.from(wordRows.first),
       );
       final normalizedExpressionRowsBefore =
@@ -4425,7 +4466,7 @@ class WordRepository {
           await _loadWordExpressionSetRowsForHistory(txn, id);
       final beforeNormalizedMeaningRows =
           await _loadWordMeaningSetRowsForHistory(txn, id);
-      final beforeWordSnapshot = _sanitizeWordHistorySnapshot(beforeRaw);
+      final beforeWordSnapshot = _sanitizeNewWordHistoryCoreSnapshot(beforeRaw);
       final before = _buildWordHistorySnapshot(
         compatibilityWordSnapshot: beforeWordSnapshot,
         normalizedExpressionRows: beforeNormalizedExpressionRows,
@@ -4436,10 +4477,6 @@ class WordRepository {
       await _replaceWordExpressionSetRows(txn, id, normalizedExpressionRows);
       await _replaceWordMeaningSetRows(txn, id, normalizedMeaningRows);
 
-      final compatibilityExpressionColumns = toLegacyWordExpressionColumns(
-        canonicalExpressionSets,
-      );
-
       after['언어'] = payload.language;
       after['스트롱넘버'] = (payload.strongNumber ?? '').trim().isEmpty
           ? null
@@ -4447,21 +4484,10 @@ class WordRepository {
       after['비고'] = (payload.note ?? '').trim().isEmpty
           ? null
           : payload.note!.trim();
-      after.addAll(compatibilityExpressionColumns);
 
       await txn.update(
         'WORD_TABLE',
-        {
-          '언어': after['언어'],
-          '스트롱넘버': after['스트롱넘버'],
-          for (var index = 1; index <= 6; index++)
-            '표기$index': after['표기$index'],
-          for (var index = 1; index <= 6; index++)
-            '음역$index': after['음역$index'],
-          for (var index = 1; index <= 6; index++)
-            '발음$index': after['발음$index'],
-          '비고': after['비고'],
-        },
+        {'언어': after['언어'], '스트롱넘버': after['스트롱넘버'], '비고': after['비고']},
         where: 'id = ?',
         whereArgs: [id],
       );
@@ -4535,9 +4561,7 @@ class WordRepository {
     DatabaseExecutor txn,
     Map<String, dynamic> historySnapshot,
   ) async {
-    final compatibilityWordSnapshot =
-        _extractCompatibilityWordSnapshotFromHistory(historySnapshot);
-    final wordId = (compatibilityWordSnapshot['id'] ?? '').toString().trim();
+    final wordId = (historySnapshot['id'] ?? '').toString().trim();
     if (wordId.isEmpty) {
       throw Exception('word_expression_set 복원 실패: word id가 비어 있습니다.');
     }
@@ -4564,10 +4588,7 @@ class WordRepository {
       return;
     }
 
-    await _syncWordExpressionSetFromLegacySnapshot(
-      txn,
-      compatibilityWordSnapshot,
-    );
+    await _syncWordExpressionSetFromLegacySnapshot(txn, historySnapshot);
   }
 
   List<Map<String, Object?>> _buildWordMeaningRowsFromLegacySnapshot(
@@ -4628,9 +4649,7 @@ class WordRepository {
     DatabaseExecutor txn,
     Map<String, dynamic> historySnapshot,
   ) async {
-    final compatibilityWordSnapshot =
-        _extractCompatibilityWordSnapshotFromHistory(historySnapshot);
-    final wordId = (compatibilityWordSnapshot['id'] ?? '').toString().trim();
+    final wordId = (historySnapshot['id'] ?? '').toString().trim();
     if (wordId.isEmpty) {
       throw Exception('word_meaning_set 복원 실패: word id가 비어 있습니다.');
     }
@@ -4708,6 +4727,7 @@ class WordRepository {
   ) async {
     final rows = await db.query(
       'WORD_TABLE',
+      columns: _wordCoreSnapshotColumns,
       where: 'id = ?',
       whereArgs: [id],
       limit: 1,
@@ -4869,8 +4889,9 @@ class WordRepository {
         } else if (actionType == 'update') {
           // 수정 취소 => before 복원
           if (entityType == 'word') {
-            final beforeWordSnapshot =
-                _extractCompatibilityWordSnapshotFromHistory(before!);
+            final beforeWordSnapshot = _sanitizeWordTableCoreDmlSnapshot(
+              before!,
+            );
             await txn.update(
               'WORD_TABLE',
               beforeWordSnapshot,
@@ -4890,8 +4911,9 @@ class WordRepository {
         } else if (actionType == 'delete') {
           // 삭제 취소 => before 복원
           if (entityType == 'word') {
-            final beforeWordSnapshot =
-                _extractCompatibilityWordSnapshotFromHistory(before!);
+            final beforeWordSnapshot = _sanitizeWordTableCoreDmlSnapshot(
+              before!,
+            );
             await txn.insert('WORD_TABLE', beforeWordSnapshot);
             await _restoreWordExpressionSetRowsFromHistorySnapshot(txn, before);
             await _restoreWordMeaningSetRowsFromHistorySnapshot(txn, before);

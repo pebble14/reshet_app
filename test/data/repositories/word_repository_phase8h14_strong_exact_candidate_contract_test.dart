@@ -79,6 +79,7 @@ void main() {
       () async {
         final repository = WordRepository();
         final db = await DatabaseService.openDatabaseFile();
+        await _dropLegacyExpressionColumns(db);
         final wordColumns = (await db.rawQuery(
           "PRAGMA table_info('WORD_TABLE')",
         )).map((row) => row['name']).whereType<String>().toSet();
@@ -91,6 +92,13 @@ void main() {
             '의미5',
             '의미6',
             '의미7',
+          }),
+          isEmpty,
+        );
+        expect(
+          wordColumns.intersection({
+            for (final prefix in const ['표기', '음역', '발음'])
+              for (var index = 1; index <= 6; index++) '$prefix$index',
           }),
           isEmpty,
         );
@@ -108,7 +116,6 @@ void main() {
           db,
           id: secondWordId,
           strongNumber: 'h0814140',
-          spelling1: 'legacy-second-title',
           canonicalMeaning: 'canonical second meaning',
           expressionRows: const [
             {
@@ -122,7 +129,6 @@ void main() {
           db,
           id: firstWordId,
           strongNumber: 'H814140',
-          spelling1: 'legacy-first-title',
           canonicalMeaning: 'canonical first meaning',
           expressionRows: const [
             {
@@ -136,7 +142,6 @@ void main() {
           db,
           id: falsePositiveWordId,
           strongNumber: 'H8141400',
-          spelling1: 'false-positive-title',
           canonicalMeaning: 'canonical false positive meaning',
           expressionRows: const [
             {
@@ -212,16 +217,10 @@ Future<void> _insertWord(
   dynamic db, {
   required String id,
   required String strongNumber,
-  required String spelling1,
   required String canonicalMeaning,
   required List<Map<String, Object?>> expressionRows,
 }) async {
-  await db.insert('WORD_TABLE', {
-    'id': id,
-    '언어': '테스트',
-    '스트롱넘버': strongNumber,
-    '표기1': spelling1,
-  });
+  await db.insert('WORD_TABLE', {'id': id, '언어': '테스트', '스트롱넘버': strongNumber});
 
   for (final row in expressionRows) {
     await db.insert('word_expression_set', {'word_id': id, ...row});
@@ -231,4 +230,12 @@ Future<void> _insertWord(
     'seq': 1,
     'meaning': canonicalMeaning,
   });
+}
+
+Future<void> _dropLegacyExpressionColumns(dynamic db) async {
+  for (final prefix in const ['표기', '음역', '발음']) {
+    for (var index = 1; index <= 6; index++) {
+      await db.execute('ALTER TABLE WORD_TABLE DROP COLUMN "$prefix$index"');
+    }
+  }
 }

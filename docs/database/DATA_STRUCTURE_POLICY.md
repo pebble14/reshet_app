@@ -51,11 +51,11 @@
 ### 5.1 WORD_TABLE
 
 - `WORD_TABLE`은 현재 word core 1:1 row 저장소다.
-- expression slot(`표기1~6`, `음역1~6`, `발음1~6`)은 compatibility projection으로 보유한다.
+- expression slot(`표기1~6`, `음역1~6`, `발음1~6`)은 legacy 호환 컬럼으로 물리 schema에 남아 있다.
 - meaning slot(`의미1~7`)은 2026-07-29 production migration에서 `WORD_TABLE`의 live 물리 schema에서 제거됐다.
 - relation slot(`관련1~7`)은 2026-07-29 production migration에서 물리 제거됐다.
-- 현재 앱의 일부 read 경로는 아직 legacy expression slot에 의존한다.
-- expression write 경로에서는 `WORD_TABLE` expression slot을 canonical authority가 아니라 compatibility projection으로 갱신한다.
+- generic/default legacy read 경계는 아직 legacy expression slot에 의존하지만, active owner-specific `NORMALIZED_ONLY` read는 SQL로 해당 컬럼을 조회하지 않는다.
+- expression create/update는 `word_expression_set`만 갱신한다. create는 물리 expression slot을 채우지 않고 update는 기존 값을 변경하거나 비우지 않는다.
 - live `WORD_TABLE`에는 meaning slot이 없으며 meaning read/write와 새 history의 유일한 authority는 `word_meaning_set`이다.
 
 #### 5.1.1 legacy meaning / word_meaning_set migration boundary
@@ -79,12 +79,13 @@
 - `word_expression_set`는 expression을 정규화된 row 구조로 저장하는 테이블이다.
 - 현재 상태에서 `word_expression_set`는 이미 존재하는 persisted normalized table이다.
 - 현재 normal runtime의 expression read/history authority는 `word_expression_set`이다.
-- 현재 write는 canonical expression set을 normalized row로 저장한 뒤 `WORD_TABLE` expression slot을 compatibility projection으로 갱신하는 dual-write 구조다.
-- legacy `표기1~6`·`음역1~6`·`발음1~6`은 compatibility projection이며 canonical authority가 아니다.
+- 현재 write는 canonical expression set을 normalized row로만 저장하며 `WORD_TABLE` expression slot로 dual-write하지 않는다.
+- 신규 word history는 normalized expression rows를 저장하고 18개 legacy expression key를 포함하지 않는다.
+- legacy `표기1~6`·`음역1~6`·`발음1~6`은 물리 schema와 generic/startup·backup·restore 호환 경계에 남아 있지만 canonical authority가 아니다.
 - `seq>6` canonical expression set은 `word_expression_set`에 저장·조회되며 legacy slot에 맞추어 잘리지 않는다.
 - primary expression은 `is_representative=1` row를 우선하고, representative row가 없으면 가장 낮은 `seq` row를 fallback으로 사용한다.
-- normalized expression payload가 없는 구형 legacy-only history snapshot fallback은 호환 목적으로 유지한다.
-- legacy expression column 삭제, projection 중단, `표기7` 등 legacy slot 확장은 이번 범위 밖이며 별도 phase에서 판단한다.
+- normalized expression payload가 없는 구형 legacy-only history snapshot의 18개 key decoder는 canonical 복원 입력으로 유지한다. 해당 key는 undo의 `WORD_TABLE` core DML에는 전달하지 않는다.
+- normal runtime projection 중단은 완료됐지만 legacy expression 컬럼의 물리 삭제와 startup·backup·restore 전환, `표기7` 등 legacy slot 확장은 이번 범위 밖이다.
 
 ### 5.3 WORD_RELATION / lookup
 
@@ -105,7 +106,7 @@
 
 | 영역 | 현재 canonical read/write authority | compatibility projection 및 fallback 경계 |
 | --- | --- | --- |
-| expression | `word_expression_set` 중심의 normalized-with-fallback 경계 | `WORD_TABLE` expression slot은 compatibility projection이며, legacy fallback 축소는 이번 범위 밖이다. |
+| expression | active owner-specific read/write/history의 `word_expression_set` | generic/default legacy read와 debug fallback, 구형 history decoder는 호환 경계로 유지하며 18개 물리 컬럼 제거는 후속이다. |
 | meaning | `word_meaning_set` | live `WORD_TABLE.의미1~7`은 제거됐다. full legacy startup·restore 입력과 구형 history payload decode만 호환 경계로 유지한다. |
 | relation | `WORD_RELATION` | `RELATION_STATUS.inferred` lookup은 seed baseline과 runtime 보정 안전망에 포함되며, relation 데이터 재작성과 FK 추가는 별도 판단 대상이다. |
 
@@ -123,7 +124,7 @@
 - 2026-07-29 기준 seed DB와 work DB 모두 meaning 물리 컬럼 없이 `word_meaning_set` canonical baseline을 포함한다.
 - 앱은 work DB가 있으면 work DB를 열고, 없을 때만 seed를 복사한다.
 - runtime ensure 경로는 기존 work DB나 과거 seed 상태가 full legacy이면 canonical을 생성·검증한 뒤 meaning 컬럼을 제거하고, 현행 schema이면 no-op하는 안전망으로 유지한다.
-- 2026-07-29 전환은 meaning 물리 컬럼 제거와 startup·restore 호환 전환을 포함한다. expression normalized-only 완료, 구형 history decoder 제거, seed Git 추적 전환을 뜻하지 않는다.
+- 2026-07-29 meaning 전환은 meaning 물리 컬럼 제거와 startup·restore 호환 전환을 포함한다. expression의 active runtime 분리 이후에도 generic legacy read, 구형 history decoder, expression 물리 컬럼과 startup·backup·restore 호환은 남아 있다.
 
 #### 5.4.4 history와 relation status 경계
 
@@ -134,7 +135,7 @@
 
 #### 5.4.5 이번 기록이 확정하지 않는 사항
 
-- 현재 상태는 expression normalized-only 완료나 남은 expression legacy column의 물리적 제거 가능 확정을 의미하지 않는다.
+- 현재 상태는 active owner-specific expression runtime의 물리 컬럼 분리를 의미하지만 repository 전체 normalized-only 완료나 남은 expression legacy column의 물리적 제거 가능 확정을 의미하지 않는다.
 - meaning 물리 컬럼은 제거됐지만 full legacy startup·restore staging migration과 구형 history decode 호환 경계는 유지한다.
 - expression fallback 축소, relation 데이터 재작성, graph dynamics, node level, dark mode는 이번 범위에 포함하지 않는다.
 
@@ -142,11 +143,12 @@
 
 - 사용자 기능용 detail, home/search, graph single/center/batch, explorer/split view, edit seed, save 후 재조회, undo 후 재조회는 expression `word_expression_set`, meaning `word_meaning_set` 기준의 canonical read contract를 사용한다.
 - generic/raw helper의 legacy 기본 정책은 raw compatibility 경계로 유지할 수 있다. 이 경계는 사용자 기능용 canonical display/read의 근거가 아니다.
-- 신규 expression write는 normalized table을 먼저 갱신하고 `WORD_TABLE` expression slot을 compatibility projection으로 동기화한다.
+- 신규 expression write는 `word_expression_set`만 갱신하며 `WORD_TABLE` expression slot을 생성·갱신·비움 처리하지 않는다.
 - 신규 meaning write는 `word_meaning_set`만 갱신한다. live `WORD_TABLE`에는 `의미1~7`이 없으며 해당 key는 create/update payload와 새 history snapshot 및 undo의 `WORD_TABLE` DML payload에서 제외한다.
-- 새 `CHANGE_HISTORY` word snapshot은 normalized expression/meaning row를 포함하며, restore는 해당 normalized payload를 우선한다.
+- 새 `CHANGE_HISTORY` word snapshot은 normalized expression/meaning row를 포함하고 legacy expression/meaning key를 포함하지 않으며, restore는 해당 normalized payload를 우선한다.
+- normalized expression payload가 없는 과거 history snapshot은 legacy expression key를 canonical 복원 입력으로만 사용하고 `WORD_TABLE` core DML에서는 제외한다.
 - normalized meaning payload가 없는 과거 history snapshot은 legacy meaning slot을 canonical meaning 복원 입력으로만 사용한다.
-- Phase 41-B closure guard의 당시 완료 기준은 legacy slot 물리 삭제가 아니었다. meaning slot은 2026-07-29 후속 production/data 전환에서 제거됐고, expression projection 중단과 과거 history 재작성은 별도 판단 대상으로 남는다.
+- Phase 41-B closure guard의 당시 완료 기준은 legacy slot 물리 삭제가 아니었다. meaning slot은 2026-07-29 후속 production/data 전환에서 제거됐고, expression normal runtime projection은 중단됐지만 물리 삭제와 startup·backup·restore 전환 및 과거 history 재작성은 별도 판단 대상으로 남는다.
 
 ## 6. 목표 상태
 
@@ -173,9 +175,9 @@
 - 표기, 음역, 발음은 서로 대응하는 한 묶음이므로 `word_expression_set` 한 행으로 함께 다룬다.
 - 의미는 서로 독립된 목록이므로 `word_meaning_set`의 개별 행으로 다룬다.
 - 관련은 단어와 단어 사이의 관계이므로 `WORD_RELATION`이 최종 authority다.
-- 남아 있는 expression legacy 번호 slot은 장기 canonical authority가 아니라 전환 기간의 compatibility projection이다.
+- 남아 있는 expression legacy 번호 slot은 장기 canonical authority나 active runtime projection이 아니라 전환 기간의 호환 컬럼이다.
 - meaning legacy 번호 slot은 live schema에서 제거됐으며 full legacy startup·restore 입력과 legacy history decode에서만 해석한다.
-- 남은 expression legacy column 제거와 projection 중단 또는 meaning legacy 입력 지원 종료 여부는 별도 production phase에서 결정한다.
+- 남은 expression legacy column 제거와 startup·backup·restore 호환 전환 또는 meaning legacy 입력 지원 종료 여부는 별도 production phase에서 결정한다.
 - 새 기능은 legacy 번호 slot의 개수를 늘려 문제를 해결하지 않는다.
 
 ## 7. canonical / non-canonical 분류
@@ -210,9 +212,9 @@
 
 ### 8.2 expression slot
 
-- 현재 expression slot은 canonical write authority가 아니라 compatibility projection이다.
-- expression slot은 legacy read 경로와 호환을 위해 유지되지만, 장기 canonical authority로 유지하지 않는다.
-- 이후 expression slot은 compatibility projection으로만 남기거나 제거 대상으로 검토한다.
+- 현재 expression slot은 canonical write authority나 active runtime projection이 아닌 legacy 호환 컬럼이다.
+- expression slot은 generic legacy read와 startup·backup·restore 호환을 위해 물리적으로 유지되지만, 장기 canonical authority로 유지하지 않는다.
+- 이후 expression slot의 물리 제거와 호환 계약 전환은 별도 production 단계에서 검토한다.
 
 ### 8.3 relation slot
 
@@ -237,15 +239,15 @@
 
 - 현재 `word_expression_set`는 persisted normalized expression table이다.
 - 현재 normal runtime의 expression read/history authority는 `word_expression_set`이다.
-- 현재 `WORD_TABLE` expression slot은 legacy compatibility projection으로 유지된다.
-- legacy-only 구형 history snapshot처럼 normalized expression payload가 없는 경우에는 `표기1~6`·`음역1~6`·`발음1~6` fallback을 유지한다.
+- 현재 `WORD_TABLE` expression slot은 active runtime에서 조회·갱신하지 않는 legacy 호환 컬럼으로 물리 유지된다.
+- legacy-only 구형 history snapshot처럼 normalized expression payload가 없는 경우에는 `표기1~6`·`음역1~6`·`발음1~6`을 canonical 복원 입력으로만 해석한다.
 
 ### 9.2 목표 상태
 
 - `word_expression_set`는 normal runtime의 expression canonical write/read/history target이다.
 - expression set의 순서는 `seq ASC`이며, 표기·음역·발음은 동일 `seq`의 대응 묶음으로 보존한다.
-- `seq>6` canonical row는 보존하며 legacy slot projection을 위해 절단하지 않는다.
-- legacy slot은 authority에서 내려온 compatibility projection이며, 삭제 또는 projection 중단은 별도 phase에서 판단한다.
+- `seq>6` canonical row는 보존하며 legacy slot 수에 맞추기 위해 절단하지 않는다.
+- normal runtime projection은 중단됐고 legacy slot의 물리 삭제 및 startup·backup·restore 호환 전환은 별도 phase에서 판단한다.
 
 ## 10. relation 정합성 정책
 

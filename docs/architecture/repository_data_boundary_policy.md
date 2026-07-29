@@ -18,7 +18,7 @@ write authority = canonicalized
 read authority = hybrid transition
 ```
 
-즉 expression write 기준은 repository 내부 canonical expression set과 `word_expression_set` write path를 우선한다. 그러나 read 기준은 아직 normalized-only 완료 상태가 아니다. production에서는 `LEGACY`와 `NORMALIZED_ONLY` context가 공존하며, 공용 fallback resolver·debug policy override와 compatibility projection이 유지된다.
+즉 active expression read/write/history 기준은 `word_expression_set`이며 owner-specific `NORMALIZED_ONLY` read는 `WORD_TABLE`의 18개 표현 컬럼을 SQL로 조회하지 않는다. 다만 repository 전체 read 기준은 아직 normalized-only 완료 상태가 아니고, generic `LEGACY` context와 공용 fallback resolver·debug policy override 및 물리 legacy 호환 컬럼은 유지된다.
 
 이 문서의 목적은 다음 경계를 active authority로 고정하는 것이다.
 
@@ -27,7 +27,7 @@ read authority = hybrid transition
 - normalized read/write boundary
 - read context governance
 - controlled zone governance
-- legacy compatibility projection
+- legacy compatibility column
 - fallback / collector governance
 - search read boundary
 - graph read boundary
@@ -48,7 +48,7 @@ read authority = hybrid transition
 - search read boundary
 - graph read boundary
 - semantic read boundary
-- legacy compatibility projection의 역할
+- legacy compatibility column의 역할
 - fallback reason과 collector 관측 원칙
 - snapshot / history persistence boundary
 - repository 결과 비교와 verification 기준
@@ -190,10 +190,9 @@ Expression write 흐름은 다음 기준을 따른다.
 input / draft
 -> canonical expression set
 -> normalized rows in word_expression_set
--> WORD_TABLE expression slot compatibility projection
 ```
 
-`WORD_TABLE` expression slot은 expression write 기준 authoritative source가 아니다. 이 slot은 current read compatibility와 기존 surface 호환을 위한 projection이다.
+`WORD_TABLE` expression slot은 expression write 기준 authoritative source나 normal runtime projection이 아니다. create는 해당 slot을 채우지 않고 update는 기존 값을 변경하거나 비우지 않는다.
 
 단, 이 문장은 다음을 의미하지 않는다.
 
@@ -205,9 +204,9 @@ input / draft
 `WORD_TABLE`은 여전히 다음 역할을 가진다.
 
 - word core 1:1 row storage
-- Strong number, language, meaning, note 등 core/compatibility field storage
+- Strong number, language, note, graph expand mode 등 core field storage
 - legacy read compatibility
-- expression compatibility projection
+- startup·backup·restore 호환을 위한 물리 legacy expression column
 
 Data mutation은 repository transaction boundary 안에서 처리한다. UI는 mutation 이후 repository가 확정한 result 또는 reread boundary를 통해 상태를 갱신한다.
 
@@ -268,24 +267,24 @@ generic
 
 Owner-specific이라는 사실만으로 controlled zone이 되지 않는다. Probe context는 display read가 아니므로 별도 기준이 마련되기 전까지 controlled zone 밖에 둔다.
 
-## 10. Legacy Compatibility Projection
+## 10. Legacy Compatibility Column
 
-Compatibility projection은 canonical storage 또는 active write authority가 아닌 legacy compatibility layer다.
+Legacy compatibility column은 canonical storage 또는 active read/write authority가 아닌 호환 layer다.
 
-현재 `WORD_TABLE` expression slot은 compatibility projection이다. 이 projection은 다음 목적을 가진다.
+현재 `WORD_TABLE` expression slot은 normal runtime projection이 중단된 물리 호환 컬럼이다. 다음 경계 때문에 schema에 남아 있다.
 
-- legacy read path 유지
-- 기존 surface와 tool/script 호환
-- transition 중 rollback 가능성 유지
-- user-visible display mismatch 비교 기준 유지
+- generic/default legacy read 유지
+- startup·backup·restore 호환
+- 구형 history payload decode와 tool/script 호환
+- 후속 물리 제거 전 schema transition 안전성 유지
 
-Compatibility projection은 다음을 의미하지 않는다.
+물리 호환 컬럼 유지는 다음을 의미하지 않는다.
 
 - `WORD_TABLE` expression slot이 expression write authority다.
 - normalized write가 완료되지 않았다.
 - normalized read가 항상 무시된다.
 
-Compatibility projection은 transition architecture의 일부이며, projection 제거 여부는 별도 phase와 verification 이후 판단한다.
+Active `NORMALIZED_ONLY` read가 legacy-shaped raw map을 반환해야 할 때는 canonical row에서 메모리 호환 형상을 materialize한다. 물리 컬럼 제거와 startup·backup·restore 계약 전환은 별도 phase와 verification 이후 판단한다.
 
 ## 11. Fallback / Collector Governance
 
@@ -353,9 +352,10 @@ History persistence는 repository mutation boundary 안에서 관리한다.
 
 Current expression history 원칙은 다음과 같다.
 
-- word history snapshot은 compatibility word snapshot과 normalized expression rows를 함께 보존할 수 있다.
-- new history row는 normalized snapshot restore를 우선한다.
-- older history row는 legacy compatibility fallback restore를 유지할 수 있다.
+- 신규 word history snapshot은 word core와 normalized expression rows를 보존하며 18개 legacy expression key를 포함하지 않는다.
+- 신규 history row는 normalized snapshot으로 복원한다.
+- normalized expression payload가 없는 older history row는 legacy key를 canonical expression 복원 입력으로 해석한다.
+- 신규·구형 history의 legacy expression key는 `WORD_TABLE` core insert/update DML에서 제외한다.
 - history snapshot은 UI state persistence가 아니라 data mutation rollback/persistence boundary다.
 
 Word/relation history 경계는 다음과 같다.
@@ -373,7 +373,7 @@ History는 다음을 직접 정의하지 않는다.
 - tooltip display behavior
 - screen flow
 
-Snapshot / history persistence는 write authority, compatibility projection, rollback 가능성을 함께 보존해야 한다.
+Snapshot / history persistence는 canonical write authority, 구형 payload decode 호환, rollback 가능성을 함께 보존해야 한다.
 
 ## 15. Verification / Comparison 기준
 
@@ -385,7 +385,9 @@ Verification 원칙은 다음과 같다.
 - repository final result의 user-visible equivalence를 확인한다.
 - fallback 발생 여부와 fallback reason을 기록한다.
 - context별 collector observation을 확인한다.
-- create/update/delete/undo 이후 expression dual-write와 compatibility projection이 정합한지 확인한다.
+- create/update 이후 canonical expression만 갱신되고 기존 물리 slot이 불변인지 확인한다.
+- 신규 history에 normalized expression rows가 있고 legacy key가 없는지, 구형 history는 canonical 복원되면서 legacy key가 core DML에 전달되지 않는지 확인한다.
+- 18개 표현 컬럼 없는 temp schema에서 active read와 create/update/delete/undo가 동작하는지 확인한다.
 - `word_expression_set` verification은 semantic diff 기준으로 수행한다.
 
 Repository result comparison은 다음을 구분해야 한다.
@@ -447,7 +449,7 @@ Migration/history 문서에서 active authority로 승격할 수 있는 내용�
 1. UI는 data source selection을 직접 해석하지 않는다.
 2. Repository는 read source 선택, fallback 판정, materialization을 담당한다.
 3. Expression write authority는 canonical expression set / `word_expression_set` write path를 우선한다.
-4. `WORD_TABLE` expression slot은 compatibility projection이다.
+4. `WORD_TABLE` expression slot은 active runtime projection이 아닌 물리 legacy 호환 컬럼이다.
 5. Read authority는 아직 hybrid transition 상태다.
 6. Normalized-only read 완료를 선언하지 않는다.
 7. Legacy fallback 제거를 선언하지 않는다.
@@ -483,10 +485,10 @@ Migration/history 문서에서 active authority로 승격할 수 있는 내용�
 
 Repository Data Boundary Policy는 Reshet의 active repository/data authority다.
 
-현재 expression write authority는 repository 내부 canonical expression set과 `word_expression_set` write path를 우선한다. `WORD_TABLE` expression slot은 compatibility projection이다.
+현재 expression read/write/history authority는 active owner-specific runtime에서 `word_expression_set`이다. `WORD_TABLE` expression slot은 normal runtime에서 조회·갱신하지 않는 물리 legacy 호환 컬럼이다.
 
-현재 active production owner-specific read context는 모두 `NORMALIZED_ONLY`이며, `_defaultReadSourcePolicy`의 `LEGACY`는 미등록 context를 위한 generic 호환 기본 정책으로 남아 있다. `NORMALIZED_WITH_FALLBACK` 처리 분기와 `legacyReadResult` 구성은 debug·transition 비교·검증 능력을 위해 유지되지만, 활성 production `NORMALIZED_WITH_FALLBACK` context는 없다. 이는 repository 전체 normalized-only 완료나 legacy/fallback 코드 제거 완료를 의미하지 않는다.
+현재 active production owner-specific read context는 모두 `NORMALIZED_ONLY`이며, legacy expression SQL projection과 eager legacy adapter 실행을 하지 않는다. `_defaultReadSourcePolicy`의 `LEGACY`는 미등록 context를 위한 generic 호환 기본 정책으로 남아 있다. `NORMALIZED_WITH_FALLBACK` 처리 분기와 `legacyReadResult` 구성은 debug·transition 비교·검증 능력을 위해 유지되지만, 활성 production `NORMALIZED_WITH_FALLBACK` context는 없다. 이는 repository 전체 normalized-only 완료나 legacy/fallback 코드 제거 완료를 의미하지 않는다.
 
 Controlled zone은 normalized read 확대를 owner-specific display contract, fallback observation, collector 해석 가능성 안에서 제한하기 위한 governance다.
 
-Future repository/data change는 source selection, public contract, compatibility projection, fallback observation, history persistence, verification 기준이 이 문서의 boundary를 강화하는지 약화하는지 기준으로 판단해야 한다.
+Future repository/data change는 source selection, public contract, legacy compatibility column, fallback observation, history persistence, verification 기준이 이 문서의 boundary를 강화하는지 약화하는지 기준으로 판단해야 한다.

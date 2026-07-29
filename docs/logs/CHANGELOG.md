@@ -1,5 +1,10 @@
 # CHANGELOG
 
+- `2026-07-29` active expression runtime read/write와 신규 word history·undo core DML을 `WORD_TABLE.표기1~6`·`음역1~6`·`발음1~6` 물리 컬럼에서 분리했다. owner-specific `NORMALIZED_ONLY` read는 해당 18개 컬럼을 SQL projection에 포함하거나 legacy adapter를 eager 실행하지 않으며, 필요한 legacy-shaped map은 `word_expression_set` canonical row에서 메모리로 materialize한다.
+- expression create/update는 `word_expression_set`만 갱신한다. create는 18개 물리 slot을 채우지 않고 update는 기존 물리 값을 변경하거나 비우지 않으며, `seq>6` expression과 대표값·순서·발음 notation metadata 계약을 유지한다.
+- 신규 word history에는 normalized expression rows를 기록하고 18개 legacy key를 포함하지 않는다. normalized payload가 없는 구형 update/delete history decoder는 해당 key를 canonical 복원 입력으로 유지하지만, 별도 core DML sanitizer가 신규·구형 payload의 legacy expression key를 `WORD_TABLE` insert/update column list에서 제외한다.
+- 18개 컬럼 없는 system temp schema에서 detail·edit seed·home default/search/strong exact·graph center/batch·post-save read와 create/update/delete 및 update/delete undo를 검증했다. 지정 focused 테스트 37개가 통과했고 변경 Dart 파일 focused analyze는 종료 코드 0, error·warning 0건이며 기존 `sqflite_common` 직접 의존성 info 1건만 유지된다.
+- 18개 expression 컬럼은 work·seed DB 물리 schema에 그대로 남아 있다. actual DB, migration·repair·backfill, startup·backup·restore, generic/default legacy read, UI·public API·model·dependency는 변경하지 않았으며 물리 제거와 해당 호환 계약 전환은 후속 단계다.
 - `2026-07-29` `WORD_TABLE.의미1~7`을 work·seed DB에서 물리 제거하고 `word_meaning_set`을 유일한 live meaning authority로 확정했다. live fallback·dual-write는 다시 도입하지 않았고 `seq>7`을 포함한 canonical row는 그대로 보존했다.
 - runtime ensure는 full legacy 7개 컬럼을 canonical table 부재/empty이면 raw slot의 exact `seq`로 materialize하고, canonical row가 있으면 모든 non-empty legacy 셀의 정확한 보존을 요구한 뒤 한 transaction에서 컬럼을 제거한다. partial schema와 legacy/canonical 충돌은 fail-closed하며 현행 schema는 no-op한다.
 - restore 원본은 read-only로 사전검증하고 full legacy migration은 앱 소유 staging copy에서만 수행한다. 컬럼 없이 유효한 canonical table이 있는 현행 backup을 허용하며, 일부 legacy 컬럼만 있거나 legacy/canonical이 충돌하거나 양쪽이 모두 없으면 교체 전에 거부한다.

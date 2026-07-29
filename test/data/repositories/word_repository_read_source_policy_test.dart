@@ -93,7 +93,7 @@ void main() {
         expect(snapshot.resolvedSource, ResolvedReadSource.normalized);
         expect(snapshot.finalResultSource, FinalReadResultSource.normalized);
         expect(snapshot.didFallback, isFalse);
-        expect(snapshot.legacyResultAvailable, isTrue);
+        expect(snapshot.legacyResultAvailable, isFalse);
         expect(snapshot.normalizedResultAvailable, isTrue);
         expect(snapshot.readResult.sets, hasLength(2));
 
@@ -192,7 +192,7 @@ void main() {
         expect(detailSnapshot.didFallback, isFalse);
         expect(detailSnapshot.fallbackObservation, isNull);
         expect(detailSnapshot.readResult.sets, isEmpty);
-        expect(detailSnapshot.legacyResultAvailable, isTrue);
+        expect(detailSnapshot.legacyResultAvailable, isFalse);
         expect(detailSnapshot.normalizedResultAvailable, isTrue);
 
         expect(explorerSeed, isNotNull);
@@ -209,7 +209,7 @@ void main() {
         expect(explorerSnapshot.didFallback, isFalse);
         expect(explorerSnapshot.fallbackObservation, isNull);
         expect(explorerSnapshot.readResult.sets, isEmpty);
-        expect(explorerSnapshot.legacyResultAvailable, isTrue);
+        expect(explorerSnapshot.legacyResultAvailable, isFalse);
         expect(explorerSnapshot.normalizedResultAvailable, isTrue);
 
         expect(graphCreateSeed, isNotNull);
@@ -229,7 +229,7 @@ void main() {
         expect(graphCreateSnapshot.didFallback, isFalse);
         expect(graphCreateSnapshot.fallbackObservation, isNull);
         expect(graphCreateSnapshot.readResult.sets, isEmpty);
-        expect(graphCreateSnapshot.legacyResultAvailable, isTrue);
+        expect(graphCreateSnapshot.legacyResultAvailable, isFalse);
         expect(graphCreateSnapshot.normalizedResultAvailable, isTrue);
       },
     );
@@ -309,7 +309,7 @@ void main() {
           ReadFallbackReason.queryFailed,
         );
         expect(explorerSnapshot.readResult.sets, isEmpty);
-        expect(explorerSnapshot.legacyReadResult!.sets, isNotEmpty);
+        expect(explorerSnapshot.legacyReadResult, isNull);
         expect(explorerSnapshot.fallbackObservation!.detail, isNotEmpty);
 
         expect(graphCreateSeed, isNull);
@@ -335,7 +335,7 @@ void main() {
           ReadFallbackReason.queryFailed,
         );
         expect(graphCreateSnapshot.readResult.sets, isEmpty);
-        expect(graphCreateSnapshot.legacyReadResult!.sets, isNotEmpty);
+        expect(graphCreateSnapshot.legacyReadResult, isNull);
         expect(graphCreateSnapshot.fallbackObservation!.detail, isNotEmpty);
 
         final detailObservationLog = logs.singleWhere(
@@ -573,7 +573,7 @@ void main() {
           contains('duplicate seq'),
         );
         expect(explorerSnapshot.readResult.sets, isEmpty);
-        expect(explorerSnapshot.legacyReadResult!.sets, isNotEmpty);
+        expect(explorerSnapshot.legacyReadResult, isNull);
 
         expect(graphCreateSeed, isNull);
         expect(
@@ -602,7 +602,7 @@ void main() {
           contains('duplicate seq'),
         );
         expect(graphCreateSnapshot.readResult.sets, isEmpty);
-        expect(graphCreateSnapshot.legacyReadResult!.sets, isNotEmpty);
+        expect(graphCreateSnapshot.legacyReadResult, isNull);
       },
     );
 
@@ -640,7 +640,7 @@ void main() {
 
   group('Canonical read/write closure guard', () {
     test(
-      'user-facing feature contexts use canonical read policy and normalized rows',
+      'user-facing feature contexts work without legacy expression columns',
       () async {
         final repository = WordRepository();
         final db = await DatabaseService.openDatabaseFile();
@@ -672,6 +672,7 @@ void main() {
           'direction_code': 'unknown',
           'updated_at': DateTime.now().toIso8601String(),
         });
+        await _dropLegacyExpressionColumns(db);
 
         final detailDisplay = await repository
             .getWordDetailLikeDisplayItemByIdForDetailScreen(targetWordId);
@@ -898,7 +899,7 @@ void main() {
           FinalReadResultSource.normalized,
         );
         expect(splitViewSnapshot.didFallback, isFalse);
-        expect(splitViewSnapshot.legacyResultAvailable, isTrue);
+        expect(splitViewSnapshot.legacyResultAvailable, isFalse);
         expect(splitViewSnapshot.normalizedResultAvailable, isTrue);
         _expectSameDetailDisplay(detailRow!, splitViewRow!);
       },
@@ -954,7 +955,7 @@ void main() {
         expect(snapshot.requestedPolicy, ReadSourcePolicy.normalizedOnly);
         expect(snapshot.finalResultSource, FinalReadResultSource.normalized);
         expect(snapshot.didFallback, isFalse);
-        expect(snapshot.legacyResultAvailable, isTrue);
+        expect(snapshot.legacyResultAvailable, isFalse);
         expect(snapshot.normalizedResultAvailable, isTrue);
         expect(snapshot.fallbackObservation, isNull);
         expect(splitViewRow!.representativeSpelling, 'aleph');
@@ -1034,7 +1035,7 @@ void main() {
           FinalReadResultSource.normalized,
         );
         expect(graphSnapshot.didFallback, isFalse);
-        expect(graphSnapshot.legacyResultAvailable, isTrue);
+        expect(graphSnapshot.legacyResultAvailable, isFalse);
         expect(graphSnapshot.normalizedResultAvailable, isTrue);
 
         expect(genericSnapshot.requestedPolicy, ReadSourcePolicy.legacy);
@@ -1112,7 +1113,7 @@ void main() {
         expect(snapshot.requestedPolicy, ReadSourcePolicy.normalizedOnly);
         expect(snapshot.finalResultSource, FinalReadResultSource.normalized);
         expect(snapshot.didFallback, isFalse);
-        expect(snapshot.legacyResultAvailable, isTrue);
+        expect(snapshot.legacyResultAvailable, isFalse);
         expect(snapshot.normalizedResultAvailable, isTrue);
         expect(snapshot.fallbackObservation, isNull);
       },
@@ -1193,7 +1194,7 @@ void main() {
           FinalReadResultSource.normalized,
         );
         expect(detailSnapshot.didFallback, isFalse);
-        expect(detailSnapshot.legacyResultAvailable, isTrue);
+        expect(detailSnapshot.legacyResultAvailable, isFalse);
         expect(detailSnapshot.normalizedResultAvailable, isTrue);
       },
     );
@@ -1230,7 +1231,7 @@ void main() {
         expect(snapshot.requestedPolicy, ReadSourcePolicy.normalizedOnly);
         expect(snapshot.finalResultSource, FinalReadResultSource.normalized);
         expect(snapshot.didFallback, isFalse);
-        expect(snapshot.legacyResultAvailable, isTrue);
+        expect(snapshot.legacyResultAvailable, isFalse);
         expect(snapshot.normalizedResultAvailable, isTrue);
         expect(snapshot.fallbackObservation, isNull);
         expect(detailRow!.representativeSpelling, isNull);
@@ -1289,7 +1290,7 @@ void main() {
         expect(snapshot.requestedPolicy, ReadSourcePolicy.normalizedOnly);
         expect(snapshot.finalResultSource, FinalReadResultSource.normalized);
         expect(snapshot.didFallback, isFalse);
-        expect(snapshot.legacyResultAvailable, isTrue);
+        expect(snapshot.legacyResultAvailable, isFalse);
         expect(snapshot.normalizedResultAvailable, isTrue);
         expect(snapshot.fallbackObservation, isNull);
         expect(detailRow!.representativeSpelling, 'aleph');
@@ -1376,9 +1377,25 @@ void _expectNormalizedSnapshot(
   expect(snapshot.requestedPolicy, expectedPolicy);
   expect(snapshot.finalResultSource, FinalReadResultSource.normalized);
   expect(snapshot.didFallback, isFalse);
-  expect(snapshot.legacyResultAvailable, isTrue);
+  expect(snapshot.legacyResultAvailable, isFalse);
   expect(snapshot.normalizedResultAvailable, isTrue);
   expect(snapshot.fallbackObservation, isNull);
+}
+
+Future<void> _dropLegacyExpressionColumns(dynamic db) async {
+  final legacyColumns = <String>[
+    for (final prefix in const ['표기', '음역', '발음'])
+      for (var index = 1; index <= 6; index++) '$prefix$index',
+  ];
+
+  for (final column in legacyColumns) {
+    await db.execute('ALTER TABLE WORD_TABLE DROP COLUMN "$column"');
+  }
+
+  final remainingColumns = (await db.rawQuery(
+    "PRAGMA table_info('WORD_TABLE')",
+  )).map((row) => row['name']).whereType<String>().toSet();
+  expect(remainingColumns.intersection(legacyColumns.toSet()), isEmpty);
 }
 
 Future<void> _insertCanonicalClosureWord(
