@@ -13,6 +13,7 @@ typedef _LegacyCell = ({
 });
 
 const _legacyColumns = ['관련1', '관련2', '관련3', '관련4', '관련5', '관련6', '관련7'];
+const _legacyMeaningColumns = ['의미1', '의미2', '의미3', '의미4', '의미5', '의미6', '의미7'];
 
 const _archiveTableDdl = '''
   CREATE TABLE WORD_LEGACY_RELATED_VALUE (
@@ -735,7 +736,8 @@ Future<List<Map<String, Object?>>> _wordTableColumnContract(
   return [
     for (final row in rows)
       if (!excludeLegacyColumns ||
-          !_legacyColumns.contains((row['name'] ?? '').toString()))
+          (!_legacyColumns.contains((row['name'] ?? '').toString()) &&
+              !_legacyMeaningColumns.contains((row['name'] ?? '').toString())))
         {
           'name': row['name'],
           'type': row['type'],
@@ -752,7 +754,11 @@ Future<List<Map<String, Object?>>> _wordTableRemainingRows(
   final columns = (await db.rawQuery("PRAGMA table_info('WORD_TABLE')"))
       .map((row) => row['name'])
       .whereType<String>()
-      .where((name) => !_legacyColumns.contains(name))
+      .where(
+        (name) =>
+            !_legacyColumns.contains(name) &&
+            !_legacyMeaningColumns.contains(name),
+      )
       .toList(growable: false);
   return db.query('WORD_TABLE', columns: columns, orderBy: 'id ASC');
 }

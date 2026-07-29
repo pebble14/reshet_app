@@ -5,6 +5,8 @@ import 'package:path/path.dart' as p;
 import 'package:reshet_app/database/database_service.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
+import '../../support/database_test_isolation_guard.dart';
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -303,28 +305,46 @@ void main() {
     expect(row['actual_minus_expected_count'], 0);
   });
 
-  test('backfills word_meaning_set preserving raw slot seq', () async {
-    final db = await DatabaseService.openDatabaseFile();
+  test(
+    'backfills word_meaning_set preserving raw slot seq and removes slots',
+    () async {
+      final db = await DatabaseService.openDatabaseFile();
 
-    final rows = await db.query(
-      'word_meaning_set',
-      columns: const ['word_id', 'seq', 'meaning'],
-      orderBy: 'word_id ASC, seq ASC',
-    );
+      final rows = await db.query(
+        'word_meaning_set',
+        columns: const ['word_id', 'seq', 'meaning'],
+        orderBy: 'word_id ASC, seq ASC',
+      );
 
-    expect(rows, [
-      {'word_id': 'W1', 'seq': 1, 'meaning': ' first '},
-      {'word_id': 'W1', 'seq': 7, 'meaning': ' seventh '},
-      {'word_id': 'W2', 'seq': 3, 'meaning': '  '},
-    ]);
+      expect(rows, [
+        {'word_id': 'W1', 'seq': 1, 'meaning': ' first '},
+        {'word_id': 'W1', 'seq': 7, 'meaning': ' seventh '},
+        {'word_id': 'W2', 'seq': 3, 'meaning': '  '},
+      ]);
+      final wordColumns = (await db.rawQuery(
+        "PRAGMA table_info('WORD_TABLE')",
+      )).map((row) => row['name']).whereType<String>().toSet();
+      expect(
+        wordColumns.intersection(const {
+          '의미1',
+          '의미2',
+          '의미3',
+          '의미4',
+          '의미5',
+          '의미6',
+          '의미7',
+        }),
+        isEmpty,
+      );
 
-    await DatabaseService.closeDatabase();
-    final reopenedDb = await DatabaseService.openDatabaseFile();
-    final reopenedCounts = await reopenedDb.rawQuery(
-      'SELECT COUNT(*) AS row_count FROM word_meaning_set',
-    );
-    expect(reopenedCounts.single['row_count'], 3);
-  });
+      await DatabaseService.closeDatabase();
+      final reopenedDb = await DatabaseService.openDatabaseFile();
+      final reopenedCounts = await reopenedDb.rawQuery(
+        'SELECT COUNT(*) AS row_count FROM word_meaning_set',
+      );
+      expect(reopenedCounts.single['row_count'], 3);
+    },
+  );
 
   test(
     'rebuilds legacy word_meaning_set seq upper-bound schema preserving rows',
@@ -351,8 +371,9 @@ void main() {
         orderBy: 'word_id ASC, seq ASC',
       );
       expect(preservedRows, [
-        {'word_id': 'W1', 'seq': 1, 'meaning': 'legacy first'},
-        {'word_id': 'W1', 'seq': 7, 'meaning': 'legacy seventh'},
+        {'word_id': 'W1', 'seq': 1, 'meaning': ' first '},
+        {'word_id': 'W1', 'seq': 7, 'meaning': ' seventh '},
+        {'word_id': 'W2', 'seq': 3, 'meaning': '  '},
       ]);
 
       await db.insert('word_meaning_set', {
@@ -374,19 +395,15 @@ void main() {
 }
 
 Future<Directory> _createIsolatedWorkspace(String repoRootPath) async {
-  final tmpRoot = Directory(
-    p.join(repoRootPath, '.tmp_android_db_baseline_tests'),
+  final isolatedRoot = await Directory.systemTemp.createTemp(
+    'reshet_android_db_baseline_tests_',
   );
-  if (!tmpRoot.existsSync()) {
-    await tmpRoot.create(recursive: true);
-  }
-
-  final isolatedRoot = Directory(
-    p.join(tmpRoot.path, 'case_${DateTime.now().microsecondsSinceEpoch}'),
-  );
-  await isolatedRoot.create(recursive: true);
-
   final dataDir = Directory(p.join(isolatedRoot.path, 'data'));
+  ensureSystemTempDatabaseTargets(
+    dataRootPath: dataDir.path,
+    actualWorkDbPath: p.join(repoRootPath, 'data', 'reshet_work.db'),
+    actualSeedDbPath: p.join(repoRootPath, 'data', 'reshet_seed.db'),
+  );
   await dataDir.create(recursive: true);
 
   await _createSyntheticSeedDb(p.join(dataDir.path, 'reshet_seed.db'));
@@ -583,12 +600,17 @@ Future<void> _installLegacyWordMeaningSetWithSeqLimit(
     await db.insert('word_meaning_set', {
       'word_id': 'W1',
       'seq': 1,
-      'meaning': 'legacy first',
+      'meaning': ' first ',
     });
     await db.insert('word_meaning_set', {
       'word_id': 'W1',
       'seq': 7,
-      'meaning': 'legacy seventh',
+      'meaning': ' seventh ',
+    });
+    await db.insert('word_meaning_set', {
+      'word_id': 'W2',
+      'seq': 3,
+      'meaning': '  ',
     });
   } finally {
     await db.close();

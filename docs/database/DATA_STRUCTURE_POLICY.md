@@ -52,25 +52,24 @@
 
 - `WORD_TABLE`은 현재 word core 1:1 row 저장소다.
 - expression slot(`표기1~6`, `음역1~6`, `발음1~6`)은 compatibility projection으로 보유한다.
-- meaning slot(`의미1~7`)은 startup backfill, restore validation, 구형 history decode를 위한 물리 compatibility schema로만 보유한다.
+- meaning slot(`의미1~7`)은 2026-07-29 production migration에서 `WORD_TABLE`의 live 물리 schema에서 제거됐다.
 - relation slot(`관련1~7`)은 2026-07-29 production migration에서 물리 제거됐다.
 - 현재 앱의 일부 read 경로는 아직 legacy expression slot에 의존한다.
 - expression write 경로에서는 `WORD_TABLE` expression slot을 canonical authority가 아니라 compatibility projection으로 갱신한다.
-- meaning slot(`의미1~7`)은 canonical authority나 live projection이 아니다. 신규 word에는 쓰지 않고, 기존 word 수정에서도 값을 갱신하거나 지우지 않는다.
+- live `WORD_TABLE`에는 meaning slot이 없으며 meaning read/write와 새 history의 유일한 authority는 `word_meaning_set`이다.
 
-#### 5.1.1 meaning slot / word_meaning_set migration boundary
+#### 5.1.1 legacy meaning / word_meaning_set migration boundary
 
 - 현재 normal runtime의 meaning read/write 및 새 history authority는 `word_meaning_set`이다.
-- Phase 43-A 기준 private seed baseline은 `word_meaning_set` table과 `ux_word_meaning_set_word_seq` index를 물리적으로 포함한다.
-- `word_meaning_set`은 정상 runtime에서 `DatabaseService.openDatabaseFile()`의 DB open 직후 ensure/backfill되며, canonical meaning row 저장소로 사용한다.
-- 따라서 과거 work DB나 legacy source DB 파일에 `word_meaning_set` table이 없는 상태 자체는 migration 누락으로 단정하지 않고 runtime 안전망으로 보강한다.
-- ensure/backfill에서는 raw 값이 존재하는 `의미N`을 문자열 수정 없이 `word_meaning_set.seq=N`으로 보존한다. `ROW_NUMBER()` 재번호 부여, hole 재압축, 순서 변경, trim, 중복 제거, 문자열 수정, 의미 병합/분할, 중요도 재판단은 하지 않는다. 예를 들어 `G2367_0000`의 `의미1`과 `의미7`은 `seq=1`, `seq=7`로 보존하며 `seq=2`로 당기지 않는다.
+- 2026-07-29 기준 work·seed DB는 `word_meaning_set` table과 `ux_word_meaning_set_word_seq` index를 포함하며 `WORD_TABLE.의미1~7`은 물리적으로 제거된 상태다.
+- runtime ensure는 canonical table/index를 먼저 보장한 뒤 legacy meaning 컬럼 7개가 모두 있으면 한 transaction에서 canonical 보존을 검증하고 컬럼을 제거한다. 컬럼이 모두 없는 현행 schema는 no-op한다.
+- full legacy DB에서 canonical table이 없거나 비어 있으면 raw 값이 존재하는 `의미N`을 문자열 수정 없이 `word_meaning_set.seq=N`으로 materialize한다. `ROW_NUMBER()` 재번호 부여, hole 재압축, 순서 변경, trim, 중복 제거, 문자열 수정, 의미 병합/분할, 중요도 재판단은 하지 않는다. 예를 들어 `G2367_0000`의 `의미1`과 `의미7`은 `seq=1`, `seq=7`로 보존하며 `seq=2`로 당기지 않는다.
 - expression set의 `seq`는 표기/음역/발음 묶음의 안정적 대응 순서이고 대표성은 `is_representative`로 판단한다. meaning set의 `seq`는 기존 `의미1~7`의 우선순위와 표시 순서를 보존하므로 expression migration의 compact/reindex 전략을 재사용하지 않는다.
 - `word_meaning_set.seq`는 `seq >= 1`을 유지하며 `seq <= 7` 상한을 두지 않는다. `seq>7` canonical meaning은 허용되며 legacy slot에 맞추기 위해 절단하지 않는다.
-- legacy `의미1~7`은 nullable `TEXT` 물리 컬럼으로 유지하지만 live read/write projection에는 사용하지 않는다. 신규 word에서는 null로 남고, 기존 word 수정에서는 기존 값이 불변이다.
+- full legacy DB에 canonical row가 이미 있으면 모든 non-empty legacy 셀이 같은 `(word_id, seq, meaning)` canonical row로 보존돼야 한다. canonical 전용 row와 `seq>7` row는 그대로 보존하며, 일부 legacy 컬럼만 있는 schema나 legacy/canonical 충돌은 fail-closed한다.
 - detail, edit 재진입, home search, graph primary label, graph relation-add search, 새 history/undo는 `word_meaning_set`을 meaning authority로 사용한다.
 - normalized meaning payload가 없는 legacy-only 구형 history snapshot은 `의미1~7`을 canonical `word_meaning_set` 복원 입력으로만 해석한다. 해당 key는 `WORD_TABLE` undo insert/update payload에서 항상 제외한다.
-- legacy column 물리 삭제, startup backfill·restore validation 호환 경계 변경, `의미8` 등 legacy slot 확장, 전체 검색 ranking 재설계는 이번 전환 범위 밖이며 별도 phase에서 판단한다.
+- live meaning fallback, dual-write, legacy slot 확장은 다시 도입하지 않는다. 전체 검색 ranking 재설계는 이번 전환 범위 밖이다.
 - 초기 migration은 기존 DB raw slot을 보존한다. 현재 UI edit/write는 의미 입력을 list로 다루며 trim/빈 값 제거 후 저장할 수 있으므로, 사용자가 edit 후 저장하면 기존 hole이 compact될 수 있다. slot-aware 편집 UX나 hole 보존 편집 의미론은 현재 전환 경계의 목표가 아니며 별도 UX/쓰기 정책 phase에서 다룬다.
 - Phase 31-B 시점 실제 DB에는 공백 전용 meaning이 0건이었지만, 향후 발견되는 공백 전용 raw value를 initial migration에서 임의 trim/삭제하지 않는다. 일반 UI write는 기존 입력 의미론에 따라 trim/빈 값 제거를 유지할 수 있다. schema 제약 검토에서는 trim 기반 CHECK(`TRIM(meaning) <> ''`)가 raw 보존 원칙과 충돌할 수 있으므로 피하고, 최소 제약은 `TEXT NOT NULL`과 필요 시 `meaning <> ''` 수준으로 검토한다.
 - 새 history snapshot은 canonical normalized meaning rows를 포함한다. 구형 legacy-only snapshot fallback은 호환 목적으로만 유지한다.
@@ -107,7 +106,7 @@
 | 영역 | 현재 canonical read/write authority | compatibility projection 및 fallback 경계 |
 | --- | --- | --- |
 | expression | `word_expression_set` 중심의 normalized-with-fallback 경계 | `WORD_TABLE` expression slot은 compatibility projection이며, legacy fallback 축소는 이번 범위 밖이다. |
-| meaning | `word_meaning_set` | `WORD_TABLE.의미1~7`은 startup backfill·restore validation·legacy history decode용 물리 compatibility schema로만 유지한다. |
+| meaning | `word_meaning_set` | live `WORD_TABLE.의미1~7`은 제거됐다. full legacy startup·restore 입력과 구형 history payload decode만 호환 경계로 유지한다. |
 | relation | `WORD_RELATION` | `RELATION_STATUS.inferred` lookup은 seed baseline과 runtime 보정 안전망에 포함되며, relation 데이터 재작성과 FK 추가는 별도 판단 대상이다. |
 
 #### 5.4.2 meaning materialization 경계
@@ -115,16 +114,16 @@
 - meaning 표시 목록은 `word_meaning_set` row를 `seq ASC, id ASC` 순서로 materialize한다.
 - 표시 materialization에서는 trim 후 빈 값이 되는 meaning을 제외한다.
 - 대표 meaning은 materialized 표시 목록의 첫 번째 값이다.
-- legacy `WORD_TABLE.의미1~7`은 canonical authority나 live fallback이 아니며, startup backfill·restore validation·legacy history decode 경계로만 유지한다.
-- 2026-07-29 실제 검증 기준으로 work DB의 legacy non-empty meaning과 `word_meaning_set`은 각각 18,193건, seed DB는 각각 18,188건이며 양쪽 모두 missing/extra 0으로 일치한다.
+- live `WORD_TABLE.의미1~7`은 물리 제거됐고 canonical authority나 live fallback으로 사용하지 않는다. full legacy startup·restore 입력과 legacy history decode만 compatibility 경계로 해석한다.
+- 2026-07-29 제거 전 검증에서 work DB의 legacy non-empty meaning과 `word_meaning_set`은 각각 18,193건, seed DB는 각각 18,188건이며 양쪽 모두 missing/extra 0으로 일치했다. 제거 후 canonical row 수와 내용은 불변이다.
 - work DB에 유입됐던 확인된 테스트 fixture 단어 4행과 직접 종속 `word_expression_set` 5행은 제거됐고 seed DB는 변경하지 않았다.
 
 #### 5.4.3 seed/work DB와 runtime ensure 경계
 
-- Phase 43-A 기준에서 seed DB와 work DB 모두 `word_meaning_set` canonical baseline을 포함한다.
+- 2026-07-29 기준 seed DB와 work DB 모두 meaning 물리 컬럼 없이 `word_meaning_set` canonical baseline을 포함한다.
 - 앱은 work DB가 있으면 work DB를 열고, 없을 때만 seed를 복사한다.
-- 이후 runtime ensure 경로는 기존 work DB나 과거 seed 상태를 열 때 meaning table을 생성하거나 보강하는 안전망으로 유지한다.
-- 이 기록은 meaning 물리 컬럼 제거, startup/restore 호환 경계 제거, expression normalized-only 완료 선언, seed Git 추적 전환을 의미하지 않는다.
+- runtime ensure 경로는 기존 work DB나 과거 seed 상태가 full legacy이면 canonical을 생성·검증한 뒤 meaning 컬럼을 제거하고, 현행 schema이면 no-op하는 안전망으로 유지한다.
+- 2026-07-29 전환은 meaning 물리 컬럼 제거와 startup·restore 호환 전환을 포함한다. expression normalized-only 완료, 구형 history decoder 제거, seed Git 추적 전환을 뜻하지 않는다.
 
 #### 5.4.4 history와 relation status 경계
 
@@ -135,8 +134,8 @@
 
 #### 5.4.5 이번 기록이 확정하지 않는 사항
 
-- 현재 상태는 expression normalized-only 완료나 남은 expression/meaning legacy column의 물리적 제거 가능 확정을 의미하지 않는다.
-- legacy meaning column 삭제와 startup/restore 호환 경계 제거는 이번 범위 밖이다.
+- 현재 상태는 expression normalized-only 완료나 남은 expression legacy column의 물리적 제거 가능 확정을 의미하지 않는다.
+- meaning 물리 컬럼은 제거됐지만 full legacy startup·restore staging migration과 구형 history decode 호환 경계는 유지한다.
 - expression fallback 축소, relation 데이터 재작성, graph dynamics, node level, dark mode는 이번 범위에 포함하지 않는다.
 
 #### 5.4.6 canonical read/write closure guard 경계
@@ -144,10 +143,10 @@
 - 사용자 기능용 detail, home/search, graph single/center/batch, explorer/split view, edit seed, save 후 재조회, undo 후 재조회는 expression `word_expression_set`, meaning `word_meaning_set` 기준의 canonical read contract를 사용한다.
 - generic/raw helper의 legacy 기본 정책은 raw compatibility 경계로 유지할 수 있다. 이 경계는 사용자 기능용 canonical display/read의 근거가 아니다.
 - 신규 expression write는 normalized table을 먼저 갱신하고 `WORD_TABLE` expression slot을 compatibility projection으로 동기화한다.
-- 신규 meaning write는 `word_meaning_set`만 갱신한다. `WORD_TABLE.의미1~7`은 create/update payload와 새 history snapshot 및 undo의 `WORD_TABLE` DML payload에서 제외한다.
+- 신규 meaning write는 `word_meaning_set`만 갱신한다. live `WORD_TABLE`에는 `의미1~7`이 없으며 해당 key는 create/update payload와 새 history snapshot 및 undo의 `WORD_TABLE` DML payload에서 제외한다.
 - 새 `CHANGE_HISTORY` word snapshot은 normalized expression/meaning row를 포함하며, restore는 해당 normalized payload를 우선한다.
 - normalized meaning payload가 없는 과거 history snapshot은 legacy meaning slot을 canonical meaning 복원 입력으로만 사용한다.
-- 이 closure guard의 완료 기준은 남은 expression/meaning legacy slot 물리 삭제, expression projection 중단, 과거 history 재작성, startup/restore 호환 경계 제거가 아니다. 해당 작업은 별도 production/data phase에서 판단한다.
+- Phase 41-B closure guard의 당시 완료 기준은 legacy slot 물리 삭제가 아니었다. meaning slot은 2026-07-29 후속 production/data 전환에서 제거됐고, expression projection 중단과 과거 history 재작성은 별도 판단 대상으로 남는다.
 
 ## 6. 목표 상태
 
@@ -162,7 +161,7 @@
 ### 6.2 authority target
 
 - expression authority는 `WORD_TABLE` expression slot에서 `word_expression_set`로 이동한다.
-- meaning authority는 legacy `WORD_TABLE.의미1~7`에서 `word_meaning_set`로 이동한다.
+- meaning authority는 legacy `WORD_TABLE.의미1~7`에서 `word_meaning_set`로 전환 완료됐다.
 - relation 해석은 `WORD_RELATION + aligned lookup` 조합으로 일관되게 가능해야 한다.
 - UI는 저장 구조가 아니라 repository materialization 결과를 소비한다.
 
@@ -175,8 +174,8 @@
 - 의미는 서로 독립된 목록이므로 `word_meaning_set`의 개별 행으로 다룬다.
 - 관련은 단어와 단어 사이의 관계이므로 `WORD_RELATION`이 최종 authority다.
 - 남아 있는 expression legacy 번호 slot은 장기 canonical authority가 아니라 전환 기간의 compatibility projection이다.
-- meaning legacy 번호 slot은 live projection에서 분리됐으며 startup backfill·restore validation·legacy history decode용 물리 schema로만 남는다.
-- 남은 legacy column 제거와 expression projection 또는 meaning startup/restore 호환 경계 변경은 별도 production phase에서 결정한다.
+- meaning legacy 번호 slot은 live schema에서 제거됐으며 full legacy startup·restore 입력과 legacy history decode에서만 해석한다.
+- 남은 expression legacy column 제거와 projection 중단 또는 meaning legacy 입력 지원 종료 여부는 별도 production phase에서 결정한다.
 - 새 기능은 legacy 번호 slot의 개수를 늘려 문제를 해결하지 않는다.
 
 ## 7. canonical / non-canonical 분류
@@ -197,7 +196,7 @@
 ### 7.3 보조 / 파생 / 호환 구조
 
 - `WORD_TABLE` expression slot
-- `WORD_TABLE` meaning slot
+- 구형 startup·restore 입력과 history payload의 meaning key decoder
 - `WORD_LEGACY_RELATED_VALUE`
 - `CHANGE_HISTORY`
 - `RMAC_TABLE`
@@ -226,9 +225,11 @@
 ### 8.4 meaning slot
 
 - `word_meaning_set`은 normal runtime의 meaning read/write 및 새 history authority다.
-- `의미1~7`은 canonical authority나 live projection이 아니며 startup backfill·restore validation·legacy history decode용 물리 compatibility schema다.
+- live `WORD_TABLE.의미1~7`은 2026-07-29 work·seed DB에서 물리 제거됐다.
+- runtime ensure는 full legacy 7개 컬럼을 canonical로 materialize 또는 대조한 뒤 제거하고, 현행 schema에서는 no-op한다. partial schema와 canonical 충돌은 fail-closed한다.
+- restore 원본은 read-only로 사전검증하고, full legacy migration은 앱 소유 staging copy에서만 수행한다.
+- normalized meaning payload가 없는 구형 history는 legacy meaning key를 `word_meaning_set` 복원 입력으로만 해석한다.
 - `seq>7` canonical meaning은 `word_meaning_set`에 저장·조회되며 legacy slot에 맞추어 잘리지 않는다.
-- meaning slot 물리 제거와 startup/restore 호환 경계 변경은 별도 production phase에서 검토한다.
 
 ## 9. word_expression_set 정책
 
@@ -285,6 +286,8 @@
 - 현재 backup은 열린 work DB에서 `VACUUM INTO`로 생성한 전체 SQLite snapshot이며, restore는 현재 Reshet 복원 호환성 계약을 충족하는 전체 SQLite DB로 work DB를 교체한다.
 - 복원 원본은 read-only로만 검증한다. runtime ensure와 schema 보정은 앱 data directory에 stream copy한 staging 파일에만 적용하며 외부 원본을 수정하지 않는다.
 - full legacy `관련1~7` backup은 staging migration 후 허용하고, legacy 컬럼 없이 유효한 archive가 있는 backup은 현행 상태로 허용한다. partial, neither, archive 손상·원본 충돌은 fail-closed한다.
+- meaning은 `의미1~7`이 모두 있는 full legacy backup과 컬럼 없이 유효한 `word_meaning_set`이 있는 현행 backup을 허용한다. full legacy에서 canonical table이 없거나 비어 있으면 staging에서 raw slot을 정확한 `seq`로 materialize하고, canonical row가 이미 있으면 모든 non-empty legacy 셀의 정확한 보존을 요구한다.
+- meaning legacy 컬럼이 일부만 있거나 legacy/canonical이 충돌하거나 legacy 컬럼과 canonical table이 모두 없으면 교체 전에 fail-closed한다.
 - 복원 호환성은 SQLite integrity와 현재 필수 table·column·PK·unique index 및 대표 read로 판단한다. 실제 백업 메뉴 생성 여부나 사용자의 수동 변경 여부를 증명하는 계약은 아니다.
 - `RMAC_TABLE`, `RMAC_TABLE_KR`은 runtime canonical authority는 아니지만 전체 백업 보존 대상이므로 복원 후보에 존재해야 하며 그대로 교체·보존한다.
 - live DB 교체 전 `VACUUM INTO` rollback snapshot을 만들고, 교체 후 검증 실패 시 previous work 또는 rollback snapshot으로 기존 DB를 복구한다.
@@ -331,7 +334,7 @@
 
 - `WORD_TABLE` 역할 확정
 - expression authority transition
-- meaning 물리 compatibility schema 제거 또는 startup/restore 경계 변경 정책 확정
+- meaning full-legacy startup/restore 입력 지원 종료 여부
 - legacy slot 축소 또는 제거 정책 확정
 
 ### 13.3 병렬 가능성

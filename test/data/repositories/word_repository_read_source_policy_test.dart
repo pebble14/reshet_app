@@ -918,7 +918,6 @@ void main() {
           '\uD45C\uAE302': 'aleph',
           '\uC74C\uC5ED2': '\uC54C\uB808\uD504',
           '\uBC1C\uC74C2': 'aleph',
-          '\uC758\uBBF81': 'split mismatch',
         };
 
         await db.insert('WORD_TABLE', legacyWordRow);
@@ -979,7 +978,6 @@ void main() {
           '\uD45C\uAE301': 'graph-center',
           '\uC74C\uC5ED1': 'graph-center',
           '\uBC1C\uC74C1': 'graph-center',
-          '\uC758\uBBF81': 'graph center',
         });
         await db.insert('WORD_TABLE', {
           'id': childWordId,
@@ -987,7 +985,6 @@ void main() {
           '\uD45C\uAE301': 'graph-child',
           '\uC74C\uC5ED1': 'graph-child',
           '\uBC1C\uC74C1': 'graph-child',
-          '\uC758\uBBF81': 'graph child',
         });
         await db.insert('word_expression_set', {
           'word_id': childWordId,
@@ -1063,7 +1060,6 @@ void main() {
           '\uD45C\uAE301': 'graph-center',
           '\uC74C\uC5ED1': 'graph-center',
           '\uBC1C\uC74C1': 'graph-center',
-          '\uC758\uBBF81': 'graph center',
         });
         await db.insert('WORD_TABLE', {
           'id': childWordId,
@@ -1074,7 +1070,6 @@ void main() {
           '\uD45C\uAE302': 'aleph',
           '\uC74C\uC5ED2': '\uC54C\uB808\uD504',
           '\uBC1C\uC74C2': 'aleph',
-          '\uC758\uBBF81': 'graph mismatch',
         });
         await db.insert('word_expression_set', {
           'word_id': childWordId,
@@ -1140,7 +1135,6 @@ void main() {
           '\uD45C\uAE301': 'status-center',
           '\uC74C\uC5ED1': 'status-center',
           '\uBC1C\uC74C1': 'status-center',
-          '\uC758\uBBF81': 'status center',
         });
         for (final childWordId in childWordIds) {
           await db.insert('WORD_TABLE', {
@@ -1149,7 +1143,6 @@ void main() {
             '\uD45C\uAE301': childWordId.toLowerCase(),
             '\uC74C\uC5ED1': childWordId.toLowerCase(),
             '\uBC1C\uC74C1': childWordId.toLowerCase(),
-            '\uC758\uBBF81': 'status child',
           });
         }
 
@@ -1216,7 +1209,6 @@ void main() {
           '표기1': 'detail-empty',
           '음역1': '디테일 엠프티',
           '발음1': 'detail-empty',
-          '의미1': 'detail fallback',
         };
 
         await db.insert('WORD_TABLE', legacyWordRow);
@@ -1260,7 +1252,6 @@ void main() {
           '표기2': 'aleph',
           '음역2': '알레프',
           '발음2': 'aleph',
-          '의미1': 'display mismatch',
         };
 
         await db.insert('WORD_TABLE', legacyWordRow);
@@ -1405,7 +1396,6 @@ Future<void> _insertCanonicalClosureWord(
     '\uD45C\uAE301': legacySpelling,
     '\uC74C\uC5ED1': 'legacy-translit-$id',
     '\uBC1C\uC74C1': 'legacy-pron-$id',
-    '\uC758\uBBF81': 'legacy meaning $id',
   });
   await db.insert('word_expression_set', {
     'word_id': id,

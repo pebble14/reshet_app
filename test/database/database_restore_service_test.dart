@@ -195,7 +195,132 @@ void main() {
         {'row_count': 0},
       ],
     );
+    final columns = (await restored.rawQuery(
+      "PRAGMA table_info('WORD_TABLE')",
+    )).map((row) => row['name']).whereType<String>().toSet();
+    expect(columns.intersection(_legacyMeaningColumns.toSet()), isEmpty);
+    expect(
+      await restored.query(
+        'word_meaning_set',
+        columns: const ['word_id', 'seq', 'meaning'],
+        orderBy: 'word_id ASC, seq ASC',
+      ),
+      [
+        {'word_id': 'fixture_word', 'seq': 1, 'meaning': 'canonical meaning'},
+        {'word_id': 'fixture_word', 'seq': 8, 'meaning': 'canonical eighth'},
+      ],
+    );
   });
+
+  test('구형 backup은 legacy meaning을 staging에서 materialize하고 컬럼을 제거한다', () async {
+    await _configureLegacyMeaningState(
+      candidate.path,
+      columnCount: 7,
+      dropCanonicalTable: true,
+      meaningValues: const {'의미1': ' legacy first ', '의미7': 'legacy seventh'},
+    );
+    final beforeHash = await _bytes(candidate);
+
+    final result = await restore(
+      createService(runtimeEnsurer: DatabaseService.ensureRuntimeSchema),
+    );
+
+    expect(result, isA<RestoreSucceeded>());
+    expect(await _bytes(candidate), beforeHash);
+    final restored = await harness.open();
+    final columns = (await restored.rawQuery(
+      "PRAGMA table_info('WORD_TABLE')",
+    )).map((row) => row['name']).whereType<String>().toSet();
+    expect(columns.intersection(_legacyMeaningColumns.toSet()), isEmpty);
+    expect(
+      await restored.query(
+        'word_meaning_set',
+        columns: const ['word_id', 'seq', 'meaning'],
+        orderBy: 'word_id ASC, seq ASC',
+      ),
+      [
+        {'word_id': 'fixture_word', 'seq': 1, 'meaning': ' legacy first '},
+        {'word_id': 'fixture_word', 'seq': 7, 'meaning': 'legacy seventh'},
+      ],
+    );
+    expect(await restored.rawQuery('PRAGMA integrity_check'), [
+      {'integrity_check': 'ok'},
+    ]);
+    expect(await restored.rawQuery('PRAGMA foreign_key_check'), isEmpty);
+  });
+
+  test('canonical이 있는 구형 backup은 seq 8 이상을 포함해 그대로 복원한다', () async {
+    await _configureLegacyMeaningState(
+      candidate.path,
+      columnCount: 7,
+      meaningValues: const {'의미1': 'canonical meaning'},
+    );
+
+    final result = await restore(
+      createService(runtimeEnsurer: DatabaseService.ensureRuntimeSchema),
+    );
+
+    expect(result, isA<RestoreSucceeded>());
+    final restored = await harness.open();
+    expect(
+      await restored.query(
+        'word_meaning_set',
+        columns: const ['word_id', 'seq', 'meaning'],
+        orderBy: 'word_id ASC, seq ASC',
+      ),
+      [
+        {'word_id': 'fixture_word', 'seq': 1, 'meaning': 'canonical meaning'},
+        {'word_id': 'fixture_word', 'seq': 8, 'meaning': 'canonical eighth'},
+      ],
+    );
+  });
+
+  test('일부 legacy meaning 컬럼만 있는 backup은 schemaIncompatible로 거절한다', () async {
+    await _configureLegacyMeaningState(
+      candidate.path,
+      columnCount: 3,
+      meaningValues: const {'의미1': 'partial'},
+    );
+
+    final result = await restore(
+      createService(runtimeEnsurer: DatabaseService.ensureRuntimeSchema),
+    );
+
+    expect(
+      result,
+      isA<RestoreRejected>().having(
+        (value) => value.reason,
+        'reason',
+        RestoreRejectionReason.schemaIncompatible,
+      ),
+    );
+    expect(await harness.marker(), '복원 전 데이터');
+  });
+
+  test(
+    'canonical과 충돌하는 legacy meaning backup은 schemaIncompatible로 거절한다',
+    () async {
+      await _configureLegacyMeaningState(
+        candidate.path,
+        columnCount: 7,
+        meaningValues: const {'의미1': 'legacy conflict'},
+      );
+
+      final result = await restore(
+        createService(runtimeEnsurer: DatabaseService.ensureRuntimeSchema),
+      );
+
+      expect(
+        result,
+        isA<RestoreRejected>().having(
+          (value) => value.reason,
+          'reason',
+          RestoreRejectionReason.schemaIncompatible,
+        ),
+      );
+      expect(await harness.marker(), '복원 전 데이터');
+    },
+  );
 
   test('일부 legacy 관련 컬럼만 있는 backup은 schemaIncompatible로 거절한다', () async {
     await _configureLegacyRelatedState(
@@ -872,7 +997,48 @@ Future<void> _createCompatibleDatabase(
     '표기1': 'fixture',
     '비고': marker,
   });
+  await db.insert('word_meaning_set', {
+    'word_id': 'fixture_word',
+    'seq': 1,
+    'meaning': 'canonical meaning',
+  });
+  await db.insert('word_meaning_set', {
+    'word_id': 'fixture_word',
+    'seq': 8,
+    'meaning': 'canonical eighth',
+  });
   await db.close();
+}
+
+Future<void> _configureLegacyMeaningState(
+  String path, {
+  required int columnCount,
+  required Map<String, Object?> meaningValues,
+  bool dropCanonicalTable = false,
+}) async {
+  assert(columnCount >= 0 && columnCount <= _legacyMeaningColumns.length);
+  final db = await databaseFactory.openDatabase(
+    path,
+    options: OpenDatabaseOptions(singleInstance: false),
+  );
+  try {
+    for (final column in _legacyMeaningColumns.take(columnCount)) {
+      await db.execute('ALTER TABLE WORD_TABLE ADD COLUMN "$column" TEXT');
+    }
+    if (meaningValues.isNotEmpty) {
+      await db.update(
+        'WORD_TABLE',
+        meaningValues,
+        where: 'id = ?',
+        whereArgs: ['fixture_word'],
+      );
+    }
+    if (dropCanonicalTable) {
+      await db.execute('DROP TABLE word_meaning_set');
+    }
+  } finally {
+    await db.close();
+  }
 }
 
 Future<void> _configureLegacyRelatedState(
@@ -929,9 +1095,10 @@ Future<void> _dropAndRecreateWordTable(String path, String columns) async {
 Future<List<int>> _bytes(File file) => file.readAsBytes();
 
 const _legacyRelatedColumns = ['관련1', '관련2', '관련3', '관련4', '관련5', '관련6', '관련7'];
+const _legacyMeaningColumns = ['의미1', '의미2', '의미3', '의미4', '의미5', '의미6', '의미7'];
 
 const _compatibleSchemaStatements = [
-  'CREATE TABLE WORD_TABLE (id TEXT PRIMARY KEY, 언어 TEXT, 스트롱넘버 TEXT, 표기1 TEXT, 표기2 TEXT, 표기3 TEXT, 표기4 TEXT, 표기5 TEXT, 표기6 TEXT, 음역1 TEXT, 음역2 TEXT, 음역3 TEXT, 음역4 TEXT, 음역5 TEXT, 음역6 TEXT, 발음1 TEXT, 발음2 TEXT, 발음3 TEXT, 발음4 TEXT, 발음5 TEXT, 발음6 TEXT, 의미1 TEXT, 의미2 TEXT, 의미3 TEXT, 의미4 TEXT, 의미5 TEXT, 의미6 TEXT, 의미7 TEXT, 비고 TEXT)',
+  'CREATE TABLE WORD_TABLE (id TEXT PRIMARY KEY, 언어 TEXT, 스트롱넘버 TEXT, 표기1 TEXT, 표기2 TEXT, 표기3 TEXT, 표기4 TEXT, 표기5 TEXT, 표기6 TEXT, 음역1 TEXT, 음역2 TEXT, 음역3 TEXT, 음역4 TEXT, 음역5 TEXT, 음역6 TEXT, 발음1 TEXT, 발음2 TEXT, 발음3 TEXT, 발음4 TEXT, 발음5 TEXT, 발음6 TEXT, 비고 TEXT)',
   _legacyRelatedArchiveDdl,
   'CREATE TABLE WORD_RELATION (id INTEGER PRIMARY KEY, word_id_1 TEXT, word_id_2 TEXT, category_code TEXT, relation_type TEXT, status_code TEXT, direction_code TEXT, description TEXT, relation_group_id TEXT)',
   'CREATE TABLE word_expression_set (id INTEGER PRIMARY KEY, word_id TEXT, seq INTEGER, is_representative INTEGER, spelling TEXT, transliteration TEXT, pronunciation TEXT, pronunciation_notation TEXT, pronunciation_notation_name TEXT)',

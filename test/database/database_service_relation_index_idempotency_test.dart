@@ -5,6 +5,8 @@ import 'package:path/path.dart' as p;
 import 'package:reshet_app/database/database_service.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
+import '../support/database_test_isolation_guard.dart';
+
 const _expectedIndexSql = <String, String>{
   'idx_word_relation_signature_lookup': '''
     CREATE INDEX idx_word_relation_signature_lookup
@@ -47,9 +49,21 @@ void main() {
     tempRoot = await Directory.systemTemp.createTemp(
       'reshet_relation_index_idempotency_',
     );
+    ensureSystemTempDatabaseTargets(
+      dataRootPath: tempRoot!.path,
+      actualWorkDbPath: sourceWorkDatabase.path,
+      actualSeedDbPath: p.join(
+        Directory.current.path,
+        'data',
+        'reshet_seed.db',
+      ),
+    );
     testDatabase = await sourceWorkDatabase.copy(
       p.join(tempRoot!.path, 'reshet_work.db'),
     );
+    final database = await _openTestDatabase(testDatabase!);
+    await DatabaseService.ensureRuntimeSchema(database);
+    await database.close();
   });
 
   tearDown(() async {

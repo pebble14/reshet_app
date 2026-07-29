@@ -57,6 +57,15 @@ class DatabaseService {
     '관련6',
     '관련7',
   ];
+  static const List<String> _legacyMeaningColumns = [
+    '의미1',
+    '의미2',
+    '의미3',
+    '의미4',
+    '의미5',
+    '의미6',
+    '의미7',
+  ];
   static const Set<_LegacyRelatedCell> _approvedLegacyRelatedDiscards = {
     (
       sourceWordId: 'G1589_0000',
@@ -752,6 +761,20 @@ class DatabaseService {
     Database database,
   ) async {
     await _validateLegacyRelatedSchemaState(database, allowFullLegacy: false);
+  }
+
+  /// restore 원본은 meaning 물리 컬럼이 모두 있거나 모두 제거된 상태만 허용한다.
+  static Future<void> validateLegacyMeaningRestoreCandidate(
+    Database database,
+  ) async {
+    await _validateLegacyMeaningSchemaState(database, allowFullLegacy: true);
+  }
+
+  /// runtime ensure 이후에는 meaning 물리 컬럼이 없어야 한다.
+  static Future<void> validateLegacyMeaningRuntimeSchema(
+    Database database,
+  ) async {
+    await _validateLegacyMeaningSchemaState(database, allowFullLegacy: false);
   }
 
   static Future<void> _ensureLegacyRelatedColumnsMigration(Database db) async {
@@ -1625,8 +1648,8 @@ class DatabaseService {
     });
   }
 
-  /// legacy seed/work DB에서도 meaning slot의 normalized write target을
-  /// 사용할 수 있게 보장한다.
+  /// legacy seed/work DB의 meaning slot을 필요할 때 한 번만 materialize한 뒤
+  /// live schema에서 물리 컬럼을 제거한다.
   static Future<void> _ensureWordMeaningSetSchema(Database db) async {
     await db.transaction((txn) async {
       await txn.execute('''
@@ -1648,44 +1671,182 @@ class DatabaseService {
         ON word_meaning_set(word_id, seq)
       ''');
 
+      final presentLegacyColumns = await _presentLegacyMeaningColumns(txn);
+      if (presentLegacyColumns.isNotEmpty &&
+          presentLegacyColumns.length != _legacyMeaningColumns.length) {
+        throw StateError(
+          'legacy 의미 컬럼이 일부만 존재합니다: '
+          '${presentLegacyColumns.join(', ')}',
+        );
+      }
+      if (presentLegacyColumns.isEmpty) {
+        return;
+      }
+
       final existingRows = await txn.rawQuery(
         'SELECT COUNT(*) AS row_count FROM word_meaning_set',
       );
       final existingRowCount = existingRows.first['row_count'] as int;
-      if (existingRowCount > 0) {
-        return;
+      if (existingRowCount == 0) {
+        await txn.execute(_legacyMeaningMaterializationSql);
       }
 
-      await txn.execute('''
-        WITH legacy_slots AS (
-          SELECT id AS word_id, 1 AS seq, [의미1] AS meaning
-          FROM WORD_TABLE
-          UNION ALL
-          SELECT id, 2, [의미2]
-          FROM WORD_TABLE
-          UNION ALL
-          SELECT id, 3, [의미3]
-          FROM WORD_TABLE
-          UNION ALL
-          SELECT id, 4, [의미4]
-          FROM WORD_TABLE
-          UNION ALL
-          SELECT id, 5, [의미5]
-          FROM WORD_TABLE
-          UNION ALL
-          SELECT id, 6, [의미6]
-          FROM WORD_TABLE
-          UNION ALL
-          SELECT id, 7, [의미7]
-          FROM WORD_TABLE
-        )
-        INSERT INTO word_meaning_set (word_id, seq, meaning)
-        SELECT word_id, seq, meaning
-        FROM legacy_slots
-        WHERE meaning IS NOT NULL
-          AND meaning <> ''
-      ''');
+      await _validateLegacyMeaningCoverage(txn);
+      final canonicalSnapshotBefore = await _wordMeaningSnapshot(txn);
+
+      for (final column in _legacyMeaningColumns) {
+        await txn.execute(
+          'ALTER TABLE WORD_TABLE DROP COLUMN ${_quoteIdentifier(column)}',
+        );
+      }
+
+      final remainingLegacyColumns = await _presentLegacyMeaningColumns(txn);
+      if (remainingLegacyColumns.isNotEmpty) {
+        throw StateError(
+          'legacy 의미 컬럼 제거가 완료되지 않았습니다: '
+          '${remainingLegacyColumns.join(', ')}',
+        );
+      }
+
+      final canonicalSnapshotAfter = await _wordMeaningSnapshot(txn);
+      if (canonicalSnapshotAfter != canonicalSnapshotBefore) {
+        throw StateError('canonical meaning이 물리 컬럼 제거 중 변경됐습니다.');
+      }
     });
+  }
+
+  static const String _legacyMeaningMaterializationSql = '''
+    WITH legacy_slots AS (
+      SELECT id AS word_id, 1 AS seq, [의미1] AS meaning
+      FROM WORD_TABLE
+      UNION ALL
+      SELECT id, 2, [의미2]
+      FROM WORD_TABLE
+      UNION ALL
+      SELECT id, 3, [의미3]
+      FROM WORD_TABLE
+      UNION ALL
+      SELECT id, 4, [의미4]
+      FROM WORD_TABLE
+      UNION ALL
+      SELECT id, 5, [의미5]
+      FROM WORD_TABLE
+      UNION ALL
+      SELECT id, 6, [의미6]
+      FROM WORD_TABLE
+      UNION ALL
+      SELECT id, 7, [의미7]
+      FROM WORD_TABLE
+    )
+    INSERT INTO word_meaning_set (word_id, seq, meaning)
+    SELECT word_id, seq, meaning
+    FROM legacy_slots
+    WHERE meaning IS NOT NULL
+      AND meaning <> ''
+  ''';
+
+  static Future<void> _validateLegacyMeaningSchemaState(
+    DatabaseExecutor db, {
+    required bool allowFullLegacy,
+  }) async {
+    final presentLegacyColumns = await _presentLegacyMeaningColumns(db);
+    if (presentLegacyColumns.isNotEmpty &&
+        presentLegacyColumns.length != _legacyMeaningColumns.length) {
+      throw StateError(
+        'legacy 의미 컬럼이 일부만 존재합니다: '
+        '${presentLegacyColumns.join(', ')}',
+      );
+    }
+
+    final canonicalTableExists = await _tableExists(db, 'word_meaning_set');
+    if (presentLegacyColumns.isEmpty) {
+      if (!canonicalTableExists) {
+        throw StateError('legacy 의미 컬럼과 word_meaning_set이 모두 없습니다.');
+      }
+      return;
+    }
+
+    if (!allowFullLegacy) {
+      throw StateError('legacy 의미 컬럼 7개가 migration 이후에도 남아 있습니다.');
+    }
+    if (!canonicalTableExists) {
+      return;
+    }
+
+    final existingRows = await db.rawQuery(
+      'SELECT COUNT(*) AS row_count FROM word_meaning_set',
+    );
+    if (existingRows.single['row_count'] == 0) {
+      return;
+    }
+    await _validateLegacyMeaningCoverage(db);
+  }
+
+  static Future<Set<String>> _presentLegacyMeaningColumns(
+    DatabaseExecutor db,
+  ) async {
+    final tableColumns = await db.rawQuery("PRAGMA table_info('WORD_TABLE')");
+    final names = tableColumns
+        .map((row) => row['name'])
+        .whereType<String>()
+        .toSet();
+    return _legacyMeaningColumns.where(names.contains).toSet();
+  }
+
+  static Future<void> _validateLegacyMeaningCoverage(
+    DatabaseExecutor db,
+  ) async {
+    final rows = await db.rawQuery('''
+      WITH legacy_slots AS (
+        SELECT id AS word_id, 1 AS seq, [의미1] AS meaning
+        FROM WORD_TABLE
+        UNION ALL
+        SELECT id, 2, [의미2]
+        FROM WORD_TABLE
+        UNION ALL
+        SELECT id, 3, [의미3]
+        FROM WORD_TABLE
+        UNION ALL
+        SELECT id, 4, [의미4]
+        FROM WORD_TABLE
+        UNION ALL
+        SELECT id, 5, [의미5]
+        FROM WORD_TABLE
+        UNION ALL
+        SELECT id, 6, [의미6]
+        FROM WORD_TABLE
+        UNION ALL
+        SELECT id, 7, [의미7]
+        FROM WORD_TABLE
+      )
+      SELECT COUNT(*) AS conflict_count
+      FROM legacy_slots legacy
+      LEFT JOIN word_meaning_set canonical
+        ON canonical.word_id = legacy.word_id
+       AND canonical.seq = legacy.seq
+      WHERE legacy.meaning IS NOT NULL
+        AND legacy.meaning <> ''
+        AND (
+          canonical.word_id IS NULL OR
+          canonical.meaning IS NOT legacy.meaning
+        )
+    ''');
+    final conflictCount = rows.single['conflict_count'] as int;
+    if (conflictCount != 0) {
+      throw StateError(
+        'canonical meaning으로 보존되지 않은 legacy 의미가 '
+        '$conflictCount건 있습니다.',
+      );
+    }
+  }
+
+  static Future<String> _wordMeaningSnapshot(DatabaseExecutor db) async {
+    final rows = await db.query(
+      'word_meaning_set',
+      columns: const ['id', 'word_id', 'seq', 'meaning'],
+      orderBy: 'word_id ASC, seq ASC, id ASC',
+    );
+    return jsonEncode(rows);
   }
 
   static Future<void> _rebuildWordMeaningSetIfSeqUpperBoundExists(

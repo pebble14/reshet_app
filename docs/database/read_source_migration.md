@@ -1,29 +1,32 @@
 # Read Source Migration
 
-## 2026-07-29 meaning runtime·write·history 물리 slot 분리
+## 2026-07-29 meaning 물리 slot 제거 및 startup·restore 호환 전환
 
 ### 현재 상태
 
 - normal runtime의 meaning read/write authority는 `word_meaning_set`이다.
 - strong-exact 검색의 표시용 word projection은 `WORD_TABLE.의미1`을 조회하지 않고, 기존 canonical meaning materialization을 사용한다.
 - live row에 canonical materialization marker가 없으면 `WORD_TABLE.의미1~7`로 fallback하지 않는다.
-- `createWord()`와 `updateWord()`는 canonical meaning을 `word_meaning_set`에만 저장한다. 신규 word의 물리 meaning slot은 null로 남고, 기존 word의 물리 meaning slot은 수정 시 불변이다.
+- `createWord()`와 `updateWord()`는 canonical meaning을 `word_meaning_set`에만 저장하며 live `WORD_TABLE`에는 meaning slot이 없다.
 - 새 word history snapshot은 normalized meaning payload만 저장하며, undo의 `WORD_TABLE` insert/update payload에는 신규·구형 snapshot 모두 `의미1~7` key를 전달하지 않는다.
 - normalized meaning payload가 없는 구형 history snapshot decoder는 `의미1~7`을 `word_meaning_set` 복원 입력으로만 사용한다.
 
-### 유지 경계
+### 호환 경계
 
-- `WORD_TABLE.의미1~7` nullable `TEXT` 컬럼의 물리 schema는 유지한다.
-- startup의 legacy meaning backfill과 restore required-column validation은 변경하지 않았다.
+- `WORD_TABLE.의미1~7`은 work·seed DB와 현행 live schema에서 물리 제거됐다.
+- startup runtime ensure는 legacy 컬럼 7개가 모두 있으면 canonical table/index를 보장하고, canonical이 없거나 비어 있을 때 raw slot을 exact `seq`로 materialize한다. canonical row가 있으면 모든 non-empty legacy 셀의 정확한 보존을 검증한 뒤 한 transaction에서 컬럼을 제거한다.
+- restore 원본은 read-only로 사전검증하며 full legacy migration은 앱 소유 staging copy에만 적용한다. 컬럼 없이 유효한 canonical table이 있는 현행 backup도 허용한다.
+- 일부 legacy 컬럼만 있는 schema, legacy/canonical 충돌, legacy 컬럼과 canonical table이 모두 없는 상태는 fail-closed한다. 현행 schema의 startup ensure는 no-op한다.
+- normalized meaning payload가 없는 구형 history snapshot decoder는 계속 `의미1~7`을 canonical 복원 입력으로만 해석한다.
 - expression slot dual-write와 expression legacy history decoder는 변경하지 않았다.
 - 아래 과거 section의 meaning dual-write·live fallback 설명은 당시 상태를 기록한 history로 유지하며, meaning의 최신 active boundary는 이 section을 우선한다.
 
 ### 격리와 검증
 
 - 직접 관련 repository 테스트는 고유한 system temp data root만 사용하며, 정규화된 test work·seed 경로가 actual work·seed 경로와 같거나 system temp 밖이면 DB open 전에 실패한다.
-- focused repository 테스트 40개가 통과했다. 물리 meaning column을 제거하는 strong-exact fixture 검증도 temp work DB 사본에서만 수행했다.
-- 변경 Dart 파일 focused analyze는 종료 코드 0이며 error·warning은 없다. 기존 `sqflite_common` 직접 의존성 info 1건은 유지된다.
-- actual work·seed DB의 테스트 실행 전후 SHA-256은 각각 `9E1C0892DAE548448F44D605AD5CB3D10AFABDEEB120CC7171076A6EF2397828`, `699E1CA25DEF8DE2B570524D5C50134C731E31824B1D9A24EF17C5E5C4A3CAF4`로 동일했고 WAL·SHM·journal은 생성되지 않았다.
+- migration 5개, restore 35개, DB focused 31개, repository focused 40개 등 고유 targeted 테스트 111개가 최종 통과했고 actual 교체 뒤 migration·relation idempotency와 seed/startup/reset current-schema 검증 19개를 다시 통과했다.
+- 변경 Dart 파일 15개의 focused analyze는 종료 코드 0이며 issue가 없다.
+- actual work DB SHA-256은 `9E1C0892DAE548448F44D605AD5CB3D10AFABDEEB120CC7171076A6EF2397828`에서 `066B8870AF3C388360598ABA27B9B0B0D23BD17446A358A4C2BAEA9130633BEC`로, seed DB는 `699E1CA25DEF8DE2B570524D5C50134C731E31824B1D9A24EF17C5E5C4A3CAF4`에서 `13FDAA726A7DAA88C221D1E2A1AC5F031798DC0EAB9395ED50781A0FA9507BAD`로 변경됐다. 양쪽 모두 canonical meaning과 나머지 table data·비대상 schema 불변, integrity `ok`, FK 위반 0, sidecar 부재를 확인했다.
 
 ## 2026-07-26 Graph-create edit-seed 표현 read-source `NORMALIZED_ONLY` 전환 및 cleanup 실패 차단
 

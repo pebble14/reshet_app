@@ -335,7 +335,6 @@ Future<void> _insertWord(
     '스트롱넘버': strongNumber,
     '표기1': spelling1,
     '표기2': spelling2,
-    '의미1': meaning1,
   });
 
   for (final row in expressionRows) {

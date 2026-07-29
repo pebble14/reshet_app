@@ -5,11 +5,14 @@ import 'package:path/path.dart' as p;
 import 'package:reshet_app/database/database_service.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
+import '../../support/database_test_isolation_guard.dart';
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   late String repoRootPath;
   late File sourceSeedFile;
+  late List<Map<String, Object?>> expectedMeaningRows;
   Directory? tempRoot;
 
   setUpAll(() async {
@@ -18,6 +21,7 @@ void main() {
 
     expect(sourceSeedFile.existsSync(), isTrue);
     await DatabaseService.initialize();
+    expectedMeaningRows = await _readMeaningRowsFromPath(sourceSeedFile.path);
   });
 
   setUp(() async {
@@ -41,10 +45,13 @@ void main() {
   });
 
   test(
-    'source seed contains the physical meaning canonical baseline',
+    'source seed contains canonical meanings without physical meaning columns',
     () async {
       await _withReadOnlyDb(sourceSeedFile.path, (db) async {
-        await _expectMeaningCanonicalState(db);
+        await _expectMeaningCanonicalState(
+          db,
+          expectedRows: expectedMeaningRows,
+        );
         await _expectInferredRelationStatus(db);
       });
     },
@@ -57,6 +64,11 @@ void main() {
       await dataDir.create(recursive: true);
       final seedPath = p.join(dataDir.path, 'reshet_seed.db');
       final workPath = p.join(dataDir.path, 'reshet_work.db');
+      ensureSystemTempDatabaseTargets(
+        dataRootPath: dataDir.path,
+        actualWorkDbPath: p.join(repoRootPath, 'data', 'reshet_work.db'),
+        actualSeedDbPath: sourceSeedFile.path,
+      );
       await sourceSeedFile.copy(seedPath);
 
       final expectedDistribution =
@@ -64,7 +76,10 @@ void main() {
       DatabaseService.setDataRootOverrideForTest(dataDir.path);
 
       final startupDb = await DatabaseService.openDatabaseFile();
-      await _expectMeaningCanonicalState(startupDb);
+      await _expectMeaningCanonicalState(
+        startupDb,
+        expectedRows: expectedMeaningRows,
+      );
       await _expectInferredRelationStatus(startupDb);
       await _expectRelationStatusDistribution(startupDb, expectedDistribution);
       expect(File(workPath).existsSync(), isTrue);
@@ -84,7 +99,10 @@ void main() {
           AND name = '__phase43a_reset_marker'
       ''');
       expect(markerRows, isEmpty);
-      await _expectMeaningCanonicalState(resetDb);
+      await _expectMeaningCanonicalState(
+        resetDb,
+        expectedRows: expectedMeaningRows,
+      );
       await _expectInferredRelationStatus(resetDb);
       await _expectRelationStatusDistribution(resetDb, expectedDistribution);
       expect(File(p.join(dataDir.path, 'backups')).existsSync(), isFalse);
@@ -111,6 +129,20 @@ Future<Map<String, int>> _readRelationStatusDistributionFromPath(
   String dbPath,
 ) async {
   return _withReadOnlyDb(dbPath, _readRelationStatusDistribution);
+}
+
+Future<List<Map<String, Object?>>> _readMeaningRowsFromPath(
+  String dbPath,
+) async {
+  return _withReadOnlyDb(dbPath, _readMeaningRows);
+}
+
+Future<List<Map<String, Object?>>> _readMeaningRows(DatabaseExecutor db) async {
+  return db.query(
+    'word_meaning_set',
+    columns: const ['id', 'word_id', 'seq', 'meaning'],
+    orderBy: 'word_id ASC, seq ASC, id ASC',
+  );
 }
 
 Future<Map<String, Object?>> _readRelationStatusRow(
@@ -166,7 +198,18 @@ Future<void> _expectRelationStatusDistribution(
   expect(actual, expected);
 }
 
-Future<void> _expectMeaningCanonicalState(DatabaseExecutor db) async {
+Future<void> _expectMeaningCanonicalState(
+  DatabaseExecutor db, {
+  required List<Map<String, Object?>> expectedRows,
+}) async {
+  final wordColumns = await db.rawQuery("PRAGMA table_info('WORD_TABLE')");
+  final legacyMeaningColumns = wordColumns
+      .map((row) => row['name'])
+      .whereType<String>()
+      .where(const {'의미1', '의미2', '의미3', '의미4', '의미5', '의미6', '의미7'}.contains)
+      .toList(growable: false);
+  expect(legacyMeaningColumns, isEmpty);
+
   final tableRows = await db.rawQuery('''
     SELECT COUNT(*) AS table_count
     FROM sqlite_master
@@ -195,67 +238,6 @@ Future<void> _expectMeaningCanonicalState(DatabaseExecutor db) async {
   expect(tableSql, contains("CHECK (meaning <> '')"));
   expect(tableSql, isNot(contains('seq <= 7')));
 
-  final compareRows = await db.rawQuery('''
-    WITH legacy_slots AS (
-      SELECT id AS word_id, 1 AS seq, [의미1] AS meaning
-      FROM WORD_TABLE
-      UNION ALL
-      SELECT id, 2, [의미2]
-      FROM WORD_TABLE
-      UNION ALL
-      SELECT id, 3, [의미3]
-      FROM WORD_TABLE
-      UNION ALL
-      SELECT id, 4, [의미4]
-      FROM WORD_TABLE
-      UNION ALL
-      SELECT id, 5, [의미5]
-      FROM WORD_TABLE
-      UNION ALL
-      SELECT id, 6, [의미6]
-      FROM WORD_TABLE
-      UNION ALL
-      SELECT id, 7, [의미7]
-      FROM WORD_TABLE
-    ),
-    expected_meaning_set AS (
-      SELECT word_id, seq, meaning
-      FROM legacy_slots
-      WHERE meaning IS NOT NULL
-        AND meaning <> ''
-    ),
-    expected_minus_actual AS (
-      SELECT word_id, seq, meaning
-      FROM expected_meaning_set
-      EXCEPT
-      SELECT word_id, seq, meaning
-      FROM word_meaning_set
-    ),
-    actual_minus_expected AS (
-      SELECT word_id, seq, meaning
-      FROM word_meaning_set
-      EXCEPT
-      SELECT word_id, seq, meaning
-      FROM expected_meaning_set
-    )
-    SELECT
-      (SELECT COUNT(*) FROM expected_meaning_set) AS expected_row_count,
-      (SELECT COUNT(*) FROM word_meaning_set) AS actual_row_count,
-      (SELECT COUNT(*) FROM expected_minus_actual) AS missing_count,
-      (SELECT COUNT(*) FROM actual_minus_expected) AS extra_count,
-      (SELECT COUNT(*) FROM expected_meaning_set WHERE TRIM(meaning) = '')
-        AS legacy_trim_empty_count,
-      (SELECT COUNT(*) FROM word_meaning_set WHERE TRIM(meaning) = '')
-        AS actual_trim_empty_count,
-      (SELECT COUNT(*) FROM word_meaning_set WHERE seq > 7)
-        AS actual_seq_gt_7_count
-  ''');
-
-  final row = compareRows.single;
-  expect(row['actual_row_count'], row['expected_row_count']);
-  expect(row['missing_count'], 0);
-  expect(row['extra_count'], 0);
-  expect(row['legacy_trim_empty_count'], 0);
-  expect(row['actual_trim_empty_count'], 0);
-  expect(row['actual_seq_gt_7_count'], 0);
+  final actualRows = await _readMeaningRows(db);
+  expect(actualRows, expectedRows);
 }

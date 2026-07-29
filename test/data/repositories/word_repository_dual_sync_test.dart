@@ -379,19 +379,10 @@ void main() {
           ),
         );
 
-        final db = await DatabaseService.openDatabaseFile();
-        await db.update(
-          'WORD_TABLE',
-          {
-            '의미1': 'legacy meaning stays unchanged 1',
-            '의미2': 'legacy meaning stays unchanged 2',
-          },
-          where: 'id = ?',
-          whereArgs: [wordId],
-        );
         final legacyMeaningSlotsBefore = _readMeaningSlots(
           await _loadWordTableRow(wordId),
         );
+        expect(legacyMeaningSlotsBefore.values, everyElement(isNull));
 
         await repository.updateWord(
           id: wordId,
@@ -1168,12 +1159,6 @@ void main() {
         );
 
         final db = await DatabaseService.openDatabaseFile();
-        await db.update(
-          'WORD_TABLE',
-          {'의미1': 'legacy value must remain unchanged'},
-          where: 'id = ?',
-          whereArgs: [wordId],
-        );
         final beforeWordRow = await _loadWordTableRow(wordId);
         final beforeExpressionRows = await _loadActualSemanticRows(wordId);
         final beforeMeaningRows = await _loadActualMeaningRows(wordId);

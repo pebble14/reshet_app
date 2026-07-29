@@ -1,5 +1,12 @@
 # CHANGELOG
 
+- `2026-07-29` `WORD_TABLE.의미1~7`을 work·seed DB에서 물리 제거하고 `word_meaning_set`을 유일한 live meaning authority로 확정했다. live fallback·dual-write는 다시 도입하지 않았고 `seq>7`을 포함한 canonical row는 그대로 보존했다.
+- runtime ensure는 full legacy 7개 컬럼을 canonical table 부재/empty이면 raw slot의 exact `seq`로 materialize하고, canonical row가 있으면 모든 non-empty legacy 셀의 정확한 보존을 요구한 뒤 한 transaction에서 컬럼을 제거한다. partial schema와 legacy/canonical 충돌은 fail-closed하며 현행 schema는 no-op한다.
+- restore 원본은 read-only로 사전검증하고 full legacy migration은 앱 소유 staging copy에서만 수행한다. 컬럼 없이 유효한 canonical table이 있는 현행 backup을 허용하며, 일부 legacy 컬럼만 있거나 legacy/canonical이 충돌하거나 양쪽이 모두 없으면 교체 전에 거부한다.
+- normalized meaning payload가 없는 구형 history decoder는 `의미1~7`을 canonical 복원 입력으로 계속 해석하지만 live `WORD_TABLE` DML에는 해당 key를 전달하지 않는다. expression projection과 history 호환 경계는 변경하지 않았다.
+- work DB SHA-256은 `9E1C0892DAE548448F44D605AD5CB3D10AFABDEEB120CC7171076A6EF2397828`에서 `066B8870AF3C388360598ABA27B9B0B0D23BD17446A358A4C2BAEA9130633BEC`로, seed DB는 `699E1CA25DEF8DE2B570524D5C50134C731E31824B1D9A24EF17C5E5C4A3CAF4`에서 `13FDAA726A7DAA88C221D1E2A1AC5F031798DC0EAB9395ED50781A0FA9507BAD`로 변경됐다. timestamp별 pre-backup과 durable candidate를 보존했고 actual DB는 candidate와 byte-identical하다.
+- 제거 전 work·seed legacy/canonical meaning은 각각 18,193건·18,188건으로 missing/mismatch 0이었다. 제거 후 모든 table data와 비대상 schema 불변, integrity `ok`, FK 위반 0, sidecar 부재를 확인했다.
+- migration·restore·DB focused·repository focused 고유 targeted 테스트 111개가 최종 통과했고 actual 교체 후 핵심 migration·relation·seed/startup/reset 19개를 재실행해 통과했다. 변경 Dart 파일 15개의 focused analyze는 issue가 없으며 UI/UX 변화, 새 dependency, 사용자 UI 수동 테스트는 N/A다.
 - `2026-07-29` normal runtime의 meaning read/write와 새 history/undo 경계를 `WORD_TABLE.의미1~7` 물리 컬럼에서 분리했다. strong-exact 표시는 canonical `word_meaning_set` materialization을 사용하고, live legacy meaning fallback과 create/update dual-write 및 새 history의 legacy meaning projection을 제거했다.
 - normalized payload가 없는 구형 history는 `의미1~7`을 canonical meaning 복원 입력으로 계속 해석하지만, 신규·구형 snapshot 모두 undo의 `WORD_TABLE` insert/update payload에는 legacy meaning key를 전달하지 않는다. startup backfill, restore required-column validation, nullable `TEXT` 물리 schema는 유지했다.
 - 직접 관련 repository 테스트는 고유한 system temp DB 사본과 actual work·seed 경로 충돌 시 DB open 전에 실패하는 공용 guard를 사용하도록 보강했다. 물리 meaning 컬럼 drop fixture를 포함한 focused 테스트 40개가 통과했고, actual work·seed SHA-256과 sidecar 부재는 실행 전후 동일했다.

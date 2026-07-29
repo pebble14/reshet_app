@@ -18,7 +18,7 @@ Reshet 프로젝트는 SQLite 데이터베이스를 사용한다.
 
 Windows 개발/테스트 경로는 repository root의 `data/` 디렉터리를 기준으로 유지한다.
 Android 앱은 `pubspec.yaml`에 선언된 `data/reshet_seed.db` asset을 앱 내부 `files/data/` 디렉터리로 복사하고, 같은 디렉터리의 `reshet_work.db`를 작업 DB로 사용한다.
-`data/reshet_seed.db`는 앱 설치/reset baseline 역할의 snapshot이며, Phase 43-A 기준으로 `word_meaning_set` canonical baseline과 `RELATION_STATUS.inferred` lookup을 물리적으로 포함한다. 앱 공개 전까지 seed DB는 Git 미추적 로컬 private build asset으로 유지한다. 단, 완성 배포 DB를 뜻하지 않고 Hebrew Strong coverage 같은 콘텐츠 완성도는 별도 DB 완성도 phase에서 다룬다.
+`data/reshet_seed.db`는 앱 설치/reset baseline 역할의 snapshot이며, 2026-07-29 기준으로 meaning 물리 컬럼 없이 `word_meaning_set` canonical baseline과 `RELATION_STATUS.inferred` lookup을 포함한다. 앱 공개 전까지 seed DB는 Git 미추적 로컬 private build asset으로 유지한다. 단, 완성 배포 DB를 뜻하지 않고 Hebrew Strong coverage 같은 콘텐츠 완성도는 별도 DB 완성도 phase에서 다룬다.
 `data/reshet_work.db`는 mutable local work DB이므로 Git 미추적 상태로 유지한다.
 clean clone에는 DB 파일이 포함되지 않으므로, Android full build와 fresh install smoke는 별도 private DB 준비 후 수행한다.
 
@@ -34,6 +34,8 @@ clean clone에는 DB 파일이 포함되지 않으므로, Android full build와 
 - 검증된 외부 원본은 work DB와 같은 filesystem의 앱 소유 staging 파일로 stream copy하고, runtime ensure는 staging copy에만 적용한다.
 - `WORD_TABLE.관련1~7`이 모두 있는 구형 backup과 legacy 컬럼 없이 유효한 `WORD_LEGACY_RELATED_VALUE`가 있는 현행 backup을 허용한다. 일부 legacy 컬럼만 있거나 양쪽 상태가 모두 없거나 archive가 손상·충돌한 backup은 교체 전에 거부한다.
 - 구형 full-legacy backup은 staging의 runtime ensure에서 미대응 raw 값을 archive한 뒤 `관련1~7`을 제거하며, 외부 원본 파일은 변경하지 않는다.
+- meaning은 `WORD_TABLE.의미1~7`이 모두 있는 구형 backup과 컬럼 없이 유효한 `word_meaning_set`이 있는 현행 backup을 허용한다. full legacy에서 canonical table이 없거나 비어 있으면 staging에서 raw slot을 exact `seq`로 materialize하고, canonical row가 있으면 모든 non-empty legacy 셀의 정확한 보존을 요구한 뒤 물리 컬럼을 제거한다.
+- meaning legacy 컬럼이 일부만 있거나 legacy/canonical이 충돌하거나 legacy 컬럼과 canonical table이 모두 없으면 교체 전에 거부한다.
 - live DB 교체 전 현재 열린 work DB에서 `VACUUM INTO` rollback snapshot을 생성·검증한다. 교체 또는 새 DB 검증 실패 시 previous work를 우선 복구하고, 불가능하면 rollback snapshot을 사용한다.
 - 새 work DB open, runtime ensure, integrity/schema, 대표 read가 성공한 뒤 DB 복원 성공으로 확정한다. 이후 화면 상태 갱신이나 임시 파일 cleanup 실패는 검증된 DB를 rollback하는 조건이 아니다.
 - SharedPreferences, 검색·탐색 session, graph session은 복원하지 않으며 복원 후 관련 화면 상태와 cache를 다시 초기화한다.
@@ -108,13 +110,6 @@ H0001_0000
 | `발음4` | `TEXT` | N | N | - | 발음 4 |
 | `발음5` | `TEXT` | N | N | - | 발음 5 |
 | `발음6` | `TEXT` | N | N | - | 발음 6 |
-| `의미1` | `TEXT` | N | N | - | 기본 의미 |
-| `의미2` | `TEXT` | N | N | - | 추가 의미 2 |
-| `의미3` | `TEXT` | N | N | - | 추가 의미 3 |
-| `의미4` | `TEXT` | N | N | - | 추가 의미 4 |
-| `의미5` | `TEXT` | N | N | - | 추가 의미 5 |
-| `의미6` | `TEXT` | N | N | - | 추가 의미 6 |
-| `의미7` | `TEXT` | N | N | - | 추가 의미 7 |
 | `비고` | `TEXT` | N | N | - | 기타 정보 |
 | `graph_expand_mode` | `TEXT` | N | Y | `'default'` | 그래프 확장 표시 정책 |
 
@@ -122,6 +117,7 @@ H0001_0000
 
 - 실제 DB에 `graph_expand_mode` 컬럼이 존재한다.
 - 현재 `reshet_work.db` 레코드에서 `default`, `full`, `outgoing_limited` 값이 확인된다.
+- `의미1~7`은 2026-07-29 migration에서 work·seed DB 양쪽의 `WORD_TABLE`에서 물리 제거됐다. meaning runtime authority는 `word_meaning_set`이다.
 - `관련1~7`은 2026-07-29 migration에서 work·seed DB 양쪽의 `WORD_TABLE`에서 물리 제거됐다. 관계 runtime authority는 계속 `WORD_RELATION`이다.
 
 ---
@@ -250,15 +246,14 @@ CREATE TABLE WORD_LEGACY_RELATED_VALUE (
 
 현재 상태:
 
-- Phase 43-A 기준에서 `data/reshet_seed.db`와 `data/reshet_work.db`는 모두 `word_meaning_set` 테이블과 `ux_word_meaning_set_word_seq` 인덱스를 포함한다.
+- 2026-07-29 기준 `data/reshet_seed.db`와 `data/reshet_work.db`는 모두 `word_meaning_set` 테이블과 `ux_word_meaning_set_word_seq` 인덱스를 포함하며 `WORD_TABLE.의미1~7`은 없다.
 - 앱은 work DB가 있으면 work DB를 열고, 없을 때만 seed를 복사한다.
-- `DatabaseService.openDatabaseFile()`과 `resetToSeed()`의 runtime ensure 경로는 기존 work DB, 과거 seed-only 최초 시작, reset 후 재오픈처럼 baseline이 오래된 경우를 위한 안전망으로 유지한다.
-- seed-only 최초 시작, 기존 work DB 시작, `resetToSeed()` 이후 재오픈은 모두 같은 runtime ensure/backfill 계약으로 `word_meaning_set` canonical 상태를 준비한다.
-- 테이블이 비어 있을 때만 legacy `WORD_TABLE.의미1~7`에서 one-time backfill한다.
-- backfill은 raw 의미 문자열을 수정하지 않고 기존 slot 번호를 `seq`로 보존한다.
+- `DatabaseService.openDatabaseFile()`과 `resetToSeed()`의 runtime ensure 경로는 full legacy DB를 열 수 있는 compatibility 안전망으로 유지한다.
+- full legacy 7개 컬럼과 canonical table 부재 또는 empty 상태는 raw 의미 문자열을 수정하지 않고 기존 slot 번호를 `seq`로 one-time materialize한 뒤 컬럼을 제거한다.
+- canonical row가 이미 있으면 모든 non-empty legacy 셀이 같은 `(word_id, seq, meaning)` row로 보존되는지 검증한 뒤 컬럼을 제거한다. canonical 전용 row와 `seq>7` row는 그대로 보존한다.
+- legacy 컬럼이 일부만 있거나 canonical 값이 충돌하면 transaction 전체를 fail-closed한다. meaning 컬럼이 모두 없는 현행 schema는 no-op한다.
 - 현재 meaning read/write authority는 `word_meaning_set`이다.
-- 현재 앱 meaning create/update path는 `word_meaning_set`만 갱신한다. 신규 word의 `WORD_TABLE.의미1~7`은 null로 남고, 기존 word 수정에서는 기존 물리 값을 갱신하거나 지우지 않는다.
-- legacy `WORD_TABLE.의미1~7`은 startup backfill, restore required-column validation, normalized meaning payload가 없는 구형 history decode를 위한 물리 compatibility schema로만 유지한다.
+- 현재 앱 meaning create/update path는 `word_meaning_set`만 갱신하며 live fallback이나 dual-write는 없다.
 - 구형 history의 legacy meaning key는 `word_meaning_set` 복원 입력으로만 사용하며 `WORD_TABLE` undo insert/update payload에서는 제외한다.
 - meaning 표시 목록은 `seq ASC, id ASC` 순서로 materialize하며, trim 후 빈 값은 제외한다.
 - 대표 meaning은 materialized 표시 목록의 첫 번째 값이다.

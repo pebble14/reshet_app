@@ -92,13 +92,6 @@ Future<void> _createEnsureCompatibleDatabase(String path) async {
       발음4 TEXT,
       발음5 TEXT,
       발음6 TEXT,
-      의미1 TEXT,
-      의미2 TEXT,
-      의미3 TEXT,
-      의미4 TEXT,
-      의미5 TEXT,
-      의미6 TEXT,
-      의미7 TEXT,
       비고 TEXT,
       graph_expand_mode TEXT NOT NULL DEFAULT 'default'
     )
@@ -167,7 +160,6 @@ Future<void> _createEnsureCompatibleDatabase(String path) async {
     'id': 'fixture_word',
     '스트롱넘버': 'H1',
     '표기1': 'fixture',
-    '의미1': 'fixture meaning',
   });
   await db.insert('word_expression_set', {
     'word_id': 'fixture_word',

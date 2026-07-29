@@ -90,7 +90,7 @@ class DatabaseRestoreSchemaValidator {
   };
 
   static const Map<String, Set<String>> requiredColumns = {
-    'WORD_TABLE': {'id', '언어', '스트롱넘버', '표기1', '의미1', '비고'},
+    'WORD_TABLE': {'id', '언어', '스트롱넘버', '표기1', '비고'},
     'WORD_RELATION': {
       'id',
       'word_id_1',
@@ -260,7 +260,11 @@ class DatabaseRestoreSchemaValidator {
         'Reshet core tables are missing.',
       );
     }
-    if (!tableNames.containsAll(requiredTables)) {
+    final missingRequiredTables = requiredTables.difference(tableNames);
+    final onlyLegacyMeaningTableMissing =
+        missingRequiredTables.length == 1 &&
+        missingRequiredTables.contains('word_meaning_set');
+    if (missingRequiredTables.isNotEmpty && !onlyLegacyMeaningTableMissing) {
       throw const DatabaseValidationException(
         DatabaseValidationFailure.schemaIncompatible,
         'Required backup tables are missing.',
@@ -268,6 +272,9 @@ class DatabaseRestoreSchemaValidator {
     }
 
     for (final entry in requiredColumns.entries) {
+      if (!tableNames.contains(entry.key)) {
+        continue;
+      }
       final columns = await database.rawQuery(
         'PRAGMA table_info(${_quoteIdentifier(entry.key)})',
       );
@@ -297,6 +304,9 @@ class DatabaseRestoreSchemaValidator {
     }
 
     for (final entry in requiredUniqueIndexes.entries) {
+      if (!tableNames.contains(entry.key)) {
+        continue;
+      }
       final indexRows = await database.rawQuery(
         'PRAGMA index_list(${_quoteIdentifier(entry.key)})',
       );
@@ -319,6 +329,15 @@ class DatabaseRestoreSchemaValidator {
       throw DatabaseValidationException(
         DatabaseValidationFailure.schemaIncompatible,
         '관련 legacy migration 사전검증 실패: $error',
+      );
+    }
+
+    try {
+      await DatabaseService.validateLegacyMeaningRestoreCandidate(database);
+    } catch (error) {
+      throw DatabaseValidationException(
+        DatabaseValidationFailure.schemaIncompatible,
+        '의미 legacy migration 사전검증 실패: $error',
       );
     }
 
@@ -370,6 +389,14 @@ class DatabaseRestoreSchemaValidator {
       throw DatabaseValidationException(
         DatabaseValidationFailure.schemaIncompatible,
         '관련 legacy migration 사후검증 실패: $error',
+      );
+    }
+    try {
+      await DatabaseService.validateLegacyMeaningRuntimeSchema(database);
+    } catch (error) {
+      throw DatabaseValidationException(
+        DatabaseValidationFailure.schemaIncompatible,
+        '의미 legacy migration 사후검증 실패: $error',
       );
     }
   }

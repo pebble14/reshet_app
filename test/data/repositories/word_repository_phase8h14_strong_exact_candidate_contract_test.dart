@@ -79,9 +79,21 @@ void main() {
       () async {
         final repository = WordRepository();
         final db = await DatabaseService.openDatabaseFile();
-        for (var index = 1; index <= 7; index++) {
-          await db.execute('ALTER TABLE "WORD_TABLE" DROP COLUMN "의미$index"');
-        }
+        final wordColumns = (await db.rawQuery(
+          "PRAGMA table_info('WORD_TABLE')",
+        )).map((row) => row['name']).whereType<String>().toSet();
+        expect(
+          wordColumns.intersection(const {
+            '의미1',
+            '의미2',
+            '의미3',
+            '의미4',
+            '의미5',
+            '의미6',
+            '의미7',
+          }),
+          isEmpty,
+        );
         const keyword = 'H814140';
         const firstWordId = 'T9000_H14_STRONG_EXACT_A';
         const secondWordId = 'T9000_H14_STRONG_EXACT_B';
