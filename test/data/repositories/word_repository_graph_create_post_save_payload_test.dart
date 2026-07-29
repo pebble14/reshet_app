@@ -6,47 +6,74 @@ import 'package:reshet_app/data/repositories/word_repository.dart';
 import 'package:reshet_app/database/database_service.dart';
 import 'package:reshet_app/domain/expression/read_source_policy.dart';
 import 'package:reshet_app/domain/graph/graph_create_post_save_payload.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+
+const List<String> _fixtureWordIds = [
+  'T9000_GRAPH_POST_SAVE_PAYLOAD_OK',
+  'T9000_GRAPH_POST_SAVE_PAYLOAD_FALLBACK',
+];
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   late String repoRootPath;
-  late String sourceWorkDbPath;
+  late String sourceSeedDbPath;
   Directory? isolatedRoot;
 
   setUpAll(() async {
     repoRootPath = Directory.current.path;
-    sourceWorkDbPath = p.join(repoRootPath, 'data', 'reshet_work.db');
+    sourceSeedDbPath = p.join(repoRootPath, 'data', 'reshet_seed.db');
 
     expect(
-      File(sourceWorkDbPath).existsSync(),
+      File(sourceSeedDbPath).existsSync(),
       isTrue,
-      reason: 'graph post-save payload test needs the seed work DB.',
+      reason: 'graph post-save payload test needs the source seed DB.',
     );
 
     await DatabaseService.closeDatabase();
+    DatabaseService.setDataRootOverrideForTest(null);
     await DatabaseService.initialize();
   });
 
   setUp(() async {
     await DatabaseService.closeDatabase();
+    DatabaseService.setDataRootOverrideForTest(null);
     WordRepository.debugSetReadSourcePolicyOverride(null);
     WordRepository.debugReadSourceCollector.debugReset();
-    isolatedRoot = await _createIsolatedWorkspace(
-      repoRootPath,
-      sourceWorkDbPath,
-    );
+    isolatedRoot = await _createIsolatedWorkspace(sourceSeedDbPath);
+    final isolatedDataRoot = p.join(isolatedRoot!.path, 'data');
+    final isolatedSeedDbPath = p.join(isolatedDataRoot, 'reshet_seed.db');
+    final isolatedWorkDbPath = p.join(isolatedDataRoot, 'reshet_work.db');
+
+    DatabaseService.setDataRootOverrideForTest(isolatedDataRoot);
     Directory.current = isolatedRoot!.path;
+
+    await _expectFixtureIdsAbsentFromPath(
+      isolatedSeedDbPath,
+      databaseLabel: 'isolated seed DB',
+    );
+    final workDatabase = await DatabaseService.openDatabaseFile();
+    expect(File(isolatedWorkDbPath).existsSync(), isTrue);
+    await _expectFixtureIdsAbsent(
+      workDatabase,
+      databaseLabel: 'isolated work DB',
+    );
   });
 
   tearDown(() async {
-    await DatabaseService.closeDatabase();
-    WordRepository.debugSetReadSourcePolicyOverride(null);
-    WordRepository.debugReadSourceCollector.debugReset();
-    Directory.current = repoRootPath;
+    try {
+      await DatabaseService.closeDatabase();
+    } finally {
+      DatabaseService.setDataRootOverrideForTest(null);
+      WordRepository.debugSetReadSourcePolicyOverride(null);
+      WordRepository.debugReadSourceCollector.debugReset();
+      Directory.current = repoRootPath;
 
-    if (isolatedRoot != null && isolatedRoot!.existsSync()) {
-      await isolatedRoot!.delete(recursive: true);
+      final root = isolatedRoot;
+      isolatedRoot = null;
+      if (root != null && root.existsSync()) {
+        await root.delete(recursive: true);
+      }
     }
   });
 
@@ -176,27 +203,53 @@ Future<void> _insertWord(
   }
 }
 
-Future<Directory> _createIsolatedWorkspace(
-  String repoRootPath,
-  String sourceWorkDbPath,
-) async {
-  final tmpRoot = Directory(
-    p.join(repoRootPath, '.tmp_graph_create_post_save_payload_tests'),
+Future<void> _expectFixtureIdsAbsentFromPath(
+  String databasePath, {
+  required String databaseLabel,
+}) async {
+  final database = await databaseFactory.openDatabase(
+    databasePath,
+    options: OpenDatabaseOptions(readOnly: true, singleInstance: false),
   );
-  if (!tmpRoot.existsSync()) {
-    await tmpRoot.create(recursive: true);
+  try {
+    await _expectFixtureIdsAbsent(database, databaseLabel: databaseLabel);
+  } finally {
+    await database.close();
   }
+}
 
-  final isolatedRoot = Directory(
-    p.join(tmpRoot.path, 'case_${DateTime.now().microsecondsSinceEpoch}'),
+Future<void> _expectFixtureIdsAbsent(
+  DatabaseExecutor database, {
+  required String databaseLabel,
+}) async {
+  final rows = await database.query(
+    'WORD_TABLE',
+    columns: const ['id'],
+    where: 'id IN (?, ?)',
+    whereArgs: _fixtureWordIds,
+    orderBy: 'id ASC',
   );
-  await isolatedRoot.create(recursive: true);
+  expect(
+    rows,
+    isEmpty,
+    reason: '$databaseLabel must start without graph post-save fixtures.',
+  );
+}
 
-  final dataDir = Directory(p.join(isolatedRoot.path, 'data'));
-  await dataDir.create(recursive: true);
+Future<Directory> _createIsolatedWorkspace(String sourceSeedDbPath) async {
+  final isolatedRoot = await Directory.systemTemp.createTemp(
+    'reshet_graph_create_post_save_payload_',
+  );
+  try {
+    final dataDir = Directory(p.join(isolatedRoot.path, 'data'));
+    await dataDir.create(recursive: true);
 
-  await File(sourceWorkDbPath).copy(p.join(dataDir.path, 'reshet_seed.db'));
-  await File(sourceWorkDbPath).copy(p.join(dataDir.path, 'reshet_work.db'));
-
-  return isolatedRoot;
+    await File(sourceSeedDbPath).copy(p.join(dataDir.path, 'reshet_seed.db'));
+    return isolatedRoot;
+  } catch (_) {
+    if (isolatedRoot.existsSync()) {
+      await isolatedRoot.delete(recursive: true);
+    }
+    rethrow;
+  }
 }

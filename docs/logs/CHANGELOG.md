@@ -1,5 +1,7 @@
 # CHANGELOG
 
+- `2026-07-29` graph post-save repository 테스트가 실제 work DB를 원본 또는 runtime DB로 사용하지 않도록, 실제 seed DB만 고유한 임시 data root에 복사하고 `DatabaseService`의 seed→work 초기화 계약을 사용하도록 격리했다. 각 테스트는 임시 seed·work의 fixture ID 부재를 먼저 확인하며 실패 여부와 무관하게 연결·override·현재 디렉터리·임시 root를 정리한다.
+- work DB에서 확인된 테스트 fixture 단어 4행과 직접 종속 `word_expression_set` 5행만 제거했다. seed DB는 불변이고, 정리 후 work·seed 모두 meaning missing/extra 0, integrity `ok`, FK 위반 0과 schema 불변을 확인했다.
 - `2026-07-29` `WORD_TABLE.관련1~7`을 work·seed DB에서 물리 제거하고, `WORD_RELATION`으로 정규화되지 않은 미대응 raw 값만 `WORD_LEGACY_RELATED_VALUE`에 비권위적으로 격리했다. relation runtime authority는 계속 `WORD_RELATION`이며 archive는 repository·검색·그래프·상세·관계 편집·history/undo에서 소비하지 않는다.
 - 각 non-null 셀은 정확한 승인 폐기 5건, metadata를 보지 않는 양방향 `WORD_RELATION` endpoint pair 대응값, 미대응 raw 값 순으로 분류한다. work·seed 각각 `7,548 / 5 / 7,539 / 4`였고 archive에는 `G1606_0000/관련3/H5301_0000`, `H5397_0000/관련1/H5315_0000`, `H4320_0000/관련1/H0410_0000`, `H4976_0000/관련1/H5414_0000`만 보존했다.
 - runtime ensure는 full legacy를 한 transaction에서 archive·검증·직접 `DROP COLUMN`하고 current는 no-op한다. partial, neither, archive schema/state·원본 충돌은 fail-closed하며 restore 원본은 read-only 사전검증 후 staging copy에서만 migration한다.

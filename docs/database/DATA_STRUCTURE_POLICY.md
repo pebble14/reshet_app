@@ -115,7 +115,8 @@
 - 표시 materialization에서는 trim 후 빈 값이 되는 meaning을 제외한다.
 - 대표 meaning은 materialized 표시 목록의 첫 번째 값이다.
 - legacy `WORD_TABLE.의미1~7`은 canonical authority가 아니며, compatibility projection과 제한적 fallback 경계로만 유지한다.
-- work DB의 `word_meaning_set` 18,149건은 legacy meaning의 non-empty 값과 missing/extra 0으로 일치한다.
+- 2026-07-29 실제 검증 기준으로 work DB의 legacy non-empty meaning과 `word_meaning_set`은 각각 18,193건, seed DB는 각각 18,188건이며 양쪽 모두 missing/extra 0으로 일치한다.
+- work DB에 유입됐던 확인된 테스트 fixture 단어 4행과 직접 종속 `word_expression_set` 5행은 제거됐고 seed DB는 변경하지 않았다.
 
 #### 5.4.3 seed/work DB와 runtime ensure 경계
 
