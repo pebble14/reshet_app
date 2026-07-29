@@ -1,5 +1,30 @@
 # Read Source Migration
 
+## 2026-07-29 meaning runtime·write·history 물리 slot 분리
+
+### 현재 상태
+
+- normal runtime의 meaning read/write authority는 `word_meaning_set`이다.
+- strong-exact 검색의 표시용 word projection은 `WORD_TABLE.의미1`을 조회하지 않고, 기존 canonical meaning materialization을 사용한다.
+- live row에 canonical materialization marker가 없으면 `WORD_TABLE.의미1~7`로 fallback하지 않는다.
+- `createWord()`와 `updateWord()`는 canonical meaning을 `word_meaning_set`에만 저장한다. 신규 word의 물리 meaning slot은 null로 남고, 기존 word의 물리 meaning slot은 수정 시 불변이다.
+- 새 word history snapshot은 normalized meaning payload만 저장하며, undo의 `WORD_TABLE` insert/update payload에는 신규·구형 snapshot 모두 `의미1~7` key를 전달하지 않는다.
+- normalized meaning payload가 없는 구형 history snapshot decoder는 `의미1~7`을 `word_meaning_set` 복원 입력으로만 사용한다.
+
+### 유지 경계
+
+- `WORD_TABLE.의미1~7` nullable `TEXT` 컬럼의 물리 schema는 유지한다.
+- startup의 legacy meaning backfill과 restore required-column validation은 변경하지 않았다.
+- expression slot dual-write와 expression legacy history decoder는 변경하지 않았다.
+- 아래 과거 section의 meaning dual-write·live fallback 설명은 당시 상태를 기록한 history로 유지하며, meaning의 최신 active boundary는 이 section을 우선한다.
+
+### 격리와 검증
+
+- 직접 관련 repository 테스트는 고유한 system temp data root만 사용하며, 정규화된 test work·seed 경로가 actual work·seed 경로와 같거나 system temp 밖이면 DB open 전에 실패한다.
+- focused repository 테스트 40개가 통과했다. 물리 meaning column을 제거하는 strong-exact fixture 검증도 temp work DB 사본에서만 수행했다.
+- 변경 Dart 파일 focused analyze는 종료 코드 0이며 error·warning은 없다. 기존 `sqflite_common` 직접 의존성 info 1건은 유지된다.
+- actual work·seed DB의 테스트 실행 전후 SHA-256은 각각 `9E1C0892DAE548448F44D605AD5CB3D10AFABDEEB120CC7171076A6EF2397828`, `699E1CA25DEF8DE2B570524D5C50134C731E31824B1D9A24EF17C5E5C4A3CAF4`로 동일했고 WAL·SHM·journal은 생성되지 않았다.
+
 ## 2026-07-26 Graph-create edit-seed 표현 read-source `NORMALIZED_ONLY` 전환 및 cleanup 실패 차단
 
 ### 현재 상태

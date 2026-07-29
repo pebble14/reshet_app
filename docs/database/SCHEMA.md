@@ -257,8 +257,9 @@ CREATE TABLE WORD_LEGACY_RELATED_VALUE (
 - 테이블이 비어 있을 때만 legacy `WORD_TABLE.의미1~7`에서 one-time backfill한다.
 - backfill은 raw 의미 문자열을 수정하지 않고 기존 slot 번호를 `seq`로 보존한다.
 - 현재 meaning read/write authority는 `word_meaning_set`이다.
-- 현재 앱 meaning write path는 `word_meaning_set`를 우선 갱신하고 `WORD_TABLE.의미1~7` projection을 같은 transaction에서 함께 유지한다.
-- legacy `WORD_TABLE.의미1~7`은 compatibility projection과 제한적 fallback 역할을 유지한다.
+- 현재 앱 meaning create/update path는 `word_meaning_set`만 갱신한다. 신규 word의 `WORD_TABLE.의미1~7`은 null로 남고, 기존 word 수정에서는 기존 물리 값을 갱신하거나 지우지 않는다.
+- legacy `WORD_TABLE.의미1~7`은 startup backfill, restore required-column validation, normalized meaning payload가 없는 구형 history decode를 위한 물리 compatibility schema로만 유지한다.
+- 구형 history의 legacy meaning key는 `word_meaning_set` 복원 입력으로만 사용하며 `WORD_TABLE` undo insert/update payload에서는 제외한다.
 - meaning 표시 목록은 `seq ASC, id ASC` 순서로 materialize하며, trim 후 빈 값은 제외한다.
 - 대표 meaning은 materialized 표시 목록의 첫 번째 값이다.
 - `word_meaning_set.id`는 surrogate key이다.

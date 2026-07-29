@@ -168,9 +168,6 @@ class WordRepository {
   );
   static final List<String> _homeSearchTransliterationColumns =
       List.unmodifiable(List.generate(6, (index) => '음역${index + 1}'));
-  static final List<String> _homeSearchMeaningColumns = List.unmodifiable(
-    List.generate(7, (index) => '의미${index + 1}'),
-  );
   static final List<String> _homeSearchLikeColumns = List.unmodifiable([
     '스트롱넘버',
   ]);
@@ -184,7 +181,6 @@ class WordRepository {
         ..._homeSearchSpellingColumns,
         ..._homeSearchTransliterationColumns,
         ..._wordPronunciationColumns,
-        '의미1',
       ]);
   static final Set<String> _wordHistoryAllowedColumns = Set.unmodifiable({
     'id',
@@ -193,7 +189,6 @@ class WordRepository {
     ..._homeSearchSpellingColumns,
     ..._homeSearchTransliterationColumns,
     ..._wordPronunciationColumns,
-    ..._homeSearchMeaningColumns,
     '비고',
   });
   static const String _historyNormalizedExpressionRowsKey =
@@ -1149,21 +1144,7 @@ class WordRepository {
       return const [];
     }
 
-    return _collectLegacyMeaningSlotsForFallback(wordRow);
-  }
-
-  List<String> _collectLegacyMeaningSlotsForFallback(
-    Map<String, dynamic> wordRow,
-  ) {
-    final values = <String>[];
-    for (var index = 1; index <= 7; index++) {
-      final value = (wordRow['의미$index'] ?? '').toString().trim();
-      if (value.isEmpty) {
-        continue;
-      }
-      values.add(value);
-    }
-    return List<String>.unmodifiable(values);
+    return const [];
   }
 
   List<HomeSearchRankingValue> _readHomeSearchMeaningRankingValues(
@@ -4150,10 +4131,6 @@ class WordRepository {
         '스트롱넘버': (payload.strongNumber ?? '').trim().isEmpty
             ? null
             : payload.strongNumber!.trim(),
-        for (var index = 1; index <= 7; index++)
-          '의미$index': index <= normalizedMeanings.length
-              ? normalizedMeanings[index - 1]
-              : null,
         '비고': (payload.note ?? '').trim().isEmpty ? null : payload.note!.trim(),
         ...compatibilityExpressionColumns,
       };
@@ -4471,11 +4448,6 @@ class WordRepository {
           ? null
           : payload.note!.trim();
       after.addAll(compatibilityExpressionColumns);
-      for (var index = 1; index <= 7; index++) {
-        after['의미$index'] = index <= normalizedMeanings.length
-            ? normalizedMeanings[index - 1]
-            : null;
-      }
 
       await txn.update(
         'WORD_TABLE',
@@ -4488,8 +4460,6 @@ class WordRepository {
             '음역$index': after['음역$index'],
           for (var index = 1; index <= 6; index++)
             '발음$index': after['발음$index'],
-          for (var index = 1; index <= 7; index++)
-            '의미$index': after['의미$index'],
           '비고': after['비고'],
         },
         where: 'id = ?',
@@ -4682,7 +4652,7 @@ class WordRepository {
       return;
     }
 
-    await _syncWordMeaningSetFromLegacySnapshot(txn, compatibilityWordSnapshot);
+    await _syncWordMeaningSetFromLegacySnapshot(txn, historySnapshot);
   }
 
   Future<void> _deleteWordExpressionSetRows(

@@ -6,16 +6,20 @@ import 'package:reshet_app/data/repositories/word_repository.dart';
 import 'package:reshet_app/database/database_service.dart';
 import 'package:reshet_app/domain/home/home_search_result_display_item.dart';
 
+import '../../support/database_test_isolation_guard.dart';
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   late String repoRootPath;
   late String sourceWorkDbPath;
+  late String sourceSeedDbPath;
   Directory? isolatedRoot;
 
   setUpAll(() async {
     repoRootPath = Directory.current.path;
     sourceWorkDbPath = p.join(repoRootPath, 'data', 'reshet_work.db');
+    sourceSeedDbPath = p.join(repoRootPath, 'data', 'reshet_seed.db');
 
     expect(
       File(sourceWorkDbPath).existsSync(),
@@ -23,8 +27,10 @@ void main() {
       reason:
           'Phase 8-H-12 home search ranking contract test needs the seed work DB.',
     );
+    expect(File(sourceSeedDbPath).existsSync(), isTrue);
 
     await DatabaseService.closeDatabase();
+    DatabaseService.setDataRootOverrideForTest(null);
     await DatabaseService.initialize();
   });
 
@@ -33,17 +39,23 @@ void main() {
     WordRepository.debugSetReadSourcePolicyOverride(null);
     WordRepository.debugReadSourceCollector.debugReset();
     isolatedRoot = await _createIsolatedWorkspace(
-      repoRootPath,
       sourceWorkDbPath,
+      sourceSeedDbPath,
     );
-    Directory.current = isolatedRoot!.path;
+    final isolatedDataRootPath = p.join(isolatedRoot!.path, 'data');
+    ensureSystemTempDatabaseTargets(
+      dataRootPath: isolatedDataRootPath,
+      actualWorkDbPath: sourceWorkDbPath,
+      actualSeedDbPath: sourceSeedDbPath,
+    );
+    DatabaseService.setDataRootOverrideForTest(isolatedDataRootPath);
   });
 
   tearDown(() async {
     await DatabaseService.closeDatabase();
+    DatabaseService.setDataRootOverrideForTest(null);
     WordRepository.debugSetReadSourcePolicyOverride(null);
     WordRepository.debugReadSourceCollector.debugReset();
-    Directory.current = repoRootPath;
 
     if (isolatedRoot != null && isolatedRoot!.existsSync()) {
       await isolatedRoot!.delete(recursive: true);
@@ -292,25 +304,17 @@ void main() {
 }
 
 Future<Directory> _createIsolatedWorkspace(
-  String repoRootPath,
   String sourceWorkDbPath,
+  String sourceSeedDbPath,
 ) async {
-  final tmpRoot = Directory(
-    p.join(repoRootPath, '.tmp_phase8h12_home_search_ranking_contract_tests'),
+  final isolatedRoot = await Directory.systemTemp.createTemp(
+    'reshet_phase8h12_home_search_ranking_contract_tests_',
   );
-  if (!tmpRoot.existsSync()) {
-    await tmpRoot.create(recursive: true);
-  }
-
-  final isolatedRoot = Directory(
-    p.join(tmpRoot.path, 'case_${DateTime.now().microsecondsSinceEpoch}'),
-  );
-  await isolatedRoot.create(recursive: true);
 
   final dataDir = Directory(p.join(isolatedRoot.path, 'data'));
   await dataDir.create(recursive: true);
 
-  await File(sourceWorkDbPath).copy(p.join(dataDir.path, 'reshet_seed.db'));
+  await File(sourceSeedDbPath).copy(p.join(dataDir.path, 'reshet_seed.db'));
   await File(sourceWorkDbPath).copy(p.join(dataDir.path, 'reshet_work.db'));
 
   return isolatedRoot;

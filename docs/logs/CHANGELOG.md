@@ -1,5 +1,9 @@
 # CHANGELOG
 
+- `2026-07-29` normal runtime의 meaning read/write와 새 history/undo 경계를 `WORD_TABLE.의미1~7` 물리 컬럼에서 분리했다. strong-exact 표시는 canonical `word_meaning_set` materialization을 사용하고, live legacy meaning fallback과 create/update dual-write 및 새 history의 legacy meaning projection을 제거했다.
+- normalized payload가 없는 구형 history는 `의미1~7`을 canonical meaning 복원 입력으로 계속 해석하지만, 신규·구형 snapshot 모두 undo의 `WORD_TABLE` insert/update payload에는 legacy meaning key를 전달하지 않는다. startup backfill, restore required-column validation, nullable `TEXT` 물리 schema는 유지했다.
+- 직접 관련 repository 테스트는 고유한 system temp DB 사본과 actual work·seed 경로 충돌 시 DB open 전에 실패하는 공용 guard를 사용하도록 보강했다. 물리 meaning 컬럼 drop fixture를 포함한 focused 테스트 40개가 통과했고, actual work·seed SHA-256과 sidecar 부재는 실행 전후 동일했다.
+- 변경 Dart 파일 focused analyze는 종료 코드 0이며 error·warning은 없다. 기존 `sqflite_common` 직접 의존성 info 1건은 유지되고, UI 동작과 actual DB migration은 이번 변경 범위에서 N/A다.
 - `2026-07-29` graph post-save repository 테스트가 실제 work DB를 원본 또는 runtime DB로 사용하지 않도록, 실제 seed DB만 고유한 임시 data root에 복사하고 `DatabaseService`의 seed→work 초기화 계약을 사용하도록 격리했다. 각 테스트는 임시 seed·work의 fixture ID 부재를 먼저 확인하며 실패 여부와 무관하게 연결·override·현재 디렉터리·임시 root를 정리한다.
 - work DB에서 확인된 테스트 fixture 단어 4행과 직접 종속 `word_expression_set` 5행만 제거했다. seed DB는 불변이고, 정리 후 work·seed 모두 meaning missing/extra 0, integrity `ok`, FK 위반 0과 schema 불변을 확인했다.
 - `2026-07-29` `WORD_TABLE.관련1~7`을 work·seed DB에서 물리 제거하고, `WORD_RELATION`으로 정규화되지 않은 미대응 raw 값만 `WORD_LEGACY_RELATED_VALUE`에 비권위적으로 격리했다. relation runtime authority는 계속 `WORD_RELATION`이며 archive는 repository·검색·그래프·상세·관계 편집·history/undo에서 소비하지 않는다.

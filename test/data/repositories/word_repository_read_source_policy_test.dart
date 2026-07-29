@@ -9,16 +9,20 @@ import 'package:reshet_app/domain/expression/read_source_policy.dart';
 import 'package:reshet_app/domain/graph/graph_visible_word.dart';
 import 'package:reshet_app/domain/word/word_detail_like_display_item.dart';
 
+import '../../support/database_test_isolation_guard.dart';
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   late String repoRootPath;
   late String sourceSeedDbPath;
+  late String sourceWorkDbPath;
   Directory? isolatedRoot;
 
   setUpAll(() async {
     repoRootPath = Directory.current.path;
     sourceSeedDbPath = p.join(repoRootPath, 'data', 'reshet_seed.db');
+    sourceWorkDbPath = p.join(repoRootPath, 'data', 'reshet_work.db');
 
     expect(
       File(sourceSeedDbPath).existsSync(),
@@ -36,9 +40,13 @@ void main() {
     WordRepository.debugSetReadSourcePolicyOverride(null);
     WordRepository.debugReadSourceCollector.debugReset();
     isolatedRoot = await _createIsolatedWorkspace(sourceSeedDbPath);
-    DatabaseService.setDataRootOverrideForTest(
-      p.join(isolatedRoot!.path, 'data'),
+    final isolatedDataRootPath = p.join(isolatedRoot!.path, 'data');
+    ensureSystemTempDatabaseTargets(
+      dataRootPath: isolatedDataRootPath,
+      actualWorkDbPath: sourceWorkDbPath,
+      actualSeedDbPath: sourceSeedDbPath,
     );
+    DatabaseService.setDataRootOverrideForTest(isolatedDataRootPath);
   });
 
   tearDown(() async {
