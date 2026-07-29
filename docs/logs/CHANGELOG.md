@@ -1,5 +1,6 @@
 # CHANGELOG
 
+- `2026-07-29` word history snapshot과 undo 복원 계약에서 `WORD_TABLE.관련1~7`을 제외하고, 과거 snapshot의 해당 key를 무시하도록 했다. relation authority와 relation history/undo는 `WORD_RELATION`으로 유지했으며 물리 컬럼과 기존 값은 변경하지 않았다.
 - `2026-07-29` Explorer full-detail route caller 제거 후 미사용 상태였던 `WordDetailScreen` edit/graph caller-return 생성자 계약과 requested result type을 production에서 제거했다.
 - 상세 편집은 기존 local edit route를, 그래프 action은 기존 standalone graph route를 계속 사용하며 `WordDetailDeletedResult`, `WordDetailRouteResult`, `mutationImpactSince`, `showEditAction`, Home·small-screen 기본 상세 route를 유지했다.
 - 실제 UI 동작, DB·repository·persistence, dependency는 변경하지 않았으며 기존 Phase 기록은 당시 상태를 설명하는 역사적 기록으로 유지했다.

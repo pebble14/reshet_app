@@ -186,9 +186,6 @@ class WordRepository {
         ..._wordPronunciationColumns,
         '의미1',
       ]);
-  static final List<String> _wordRelatedColumns = List.unmodifiable(
-    List.generate(7, (index) => '관련${index + 1}'),
-  );
   static final Set<String> _wordHistoryAllowedColumns = Set.unmodifiable({
     'id',
     '언어',
@@ -196,7 +193,6 @@ class WordRepository {
     ..._homeSearchSpellingColumns,
     ..._homeSearchTransliterationColumns,
     ..._wordPronunciationColumns,
-    ..._wordRelatedColumns,
     ..._homeSearchMeaningColumns,
     '비고',
   });

@@ -779,6 +779,160 @@ void main() {
     );
 
     test(
+      'word history excludes legacy relation slots and ignores legacy keys on undo',
+      () async {
+        final repository = WordRepository();
+        const wordId = 'T9000_1013';
+        const relatedWordId = 'T9000_1014';
+        const originalNote = 'word history before';
+        const updatedNote = 'word history after';
+        final relatedColumns = List<String>.generate(
+          7,
+          (index) => '관련${index + 1}',
+          growable: false,
+        );
+
+        await repository.createWord(
+          id: wordId,
+          payload: _payload(
+            expressionSets: const [
+              CanonicalExpressionWriteSet(
+                spelling: 'history-before',
+                transliteration: '히스토리 이전',
+                pronunciation: null,
+                seq: 1,
+                isRepresentative: true,
+              ),
+            ],
+            meanings: const ['history before meaning'],
+            note: originalNote,
+          ),
+        );
+        await repository.createWord(
+          id: relatedWordId,
+          payload: _payload(
+            expressionSets: const [
+              CanonicalExpressionWriteSet(
+                spelling: 'history-related',
+                transliteration: '히스토리 관계',
+                pronunciation: null,
+                seq: 1,
+                isRepresentative: true,
+              ),
+            ],
+          ),
+        );
+
+        final db = await DatabaseService.openDatabaseFile();
+        await db.update(
+          'WORD_TABLE',
+          {for (final column in relatedColumns) column: relatedWordId},
+          where: 'id = ?',
+          whereArgs: [wordId],
+        );
+        final relationId = await db.insert('WORD_RELATION', {
+          'word_id_1': wordId,
+          'word_id_2': relatedWordId,
+          'direction_code': 'unknown',
+          'description': 'word history relation invariant',
+          'updated_at': DateTime.now().toIso8601String(),
+        });
+
+        await repository.updateWord(
+          id: wordId,
+          payload: _payload(
+            expressionSets: const [
+              CanonicalExpressionWriteSet(
+                spelling: 'history-after',
+                transliteration: '히스토리 이후',
+                pronunciation: null,
+                seq: 1,
+                isRepresentative: true,
+              ),
+            ],
+            meanings: const ['history after meaning'],
+            note: updatedNote,
+          ),
+        );
+
+        final historyId = await _loadLatestWordHistoryId(
+          wordId: wordId,
+          actionType: 'update',
+        );
+        final beforeSnapshot = await _loadHistorySnapshot(
+          historyId,
+          'before_json',
+        );
+        final afterSnapshot = await _loadHistorySnapshot(
+          historyId,
+          'after_json',
+        );
+
+        for (final column in relatedColumns) {
+          expect(beforeSnapshot.containsKey(column), isFalse);
+          expect(afterSnapshot.containsKey(column), isFalse);
+        }
+        expect(beforeSnapshot, containsPair('id', wordId));
+        expect(beforeSnapshot, containsPair('언어', '테스트언어'));
+        expect(beforeSnapshot, containsPair('표기1', 'history-before'));
+        expect(beforeSnapshot, containsPair('비고', originalNote));
+        expect(
+          beforeSnapshot.containsKey(_historyNormalizedExpressionRowsKey),
+          isTrue,
+        );
+        expect(
+          beforeSnapshot.containsKey(_historyNormalizedMeaningRowsKey),
+          isTrue,
+        );
+        expect(afterSnapshot, containsPair('id', wordId));
+        expect(afterSnapshot, containsPair('언어', '테스트언어'));
+        expect(afterSnapshot, containsPair('표기1', 'history-after'));
+        expect(afterSnapshot, containsPair('비고', updatedNote));
+        expect(
+          afterSnapshot.containsKey(_historyNormalizedExpressionRowsKey),
+          isTrue,
+        );
+        expect(
+          afterSnapshot.containsKey(_historyNormalizedMeaningRowsKey),
+          isTrue,
+        );
+
+        for (var index = 1; index <= 7; index++) {
+          beforeSnapshot['관련$index'] = 'legacy-related-$index';
+        }
+        await _writeHistorySnapshot(historyId, 'before_json', beforeSnapshot);
+
+        final relationRowsBeforeUndo = (await db.query(
+          'WORD_RELATION',
+          where: 'word_id_1 = ? OR word_id_2 = ?',
+          whereArgs: [wordId, wordId],
+          orderBy: 'id ASC',
+        )).map(Map<String, dynamic>.from).toList(growable: false);
+        expect(relationRowsBeforeUndo, hasLength(1));
+        expect(relationRowsBeforeUndo.single['id'], relationId);
+
+        final undone = await repository.undoLastChange();
+        expect(undone.didUndo, isTrue);
+
+        final restoredWordRow = await _loadWordTableRow(wordId);
+        expect(restoredWordRow['표기1'], 'history-before');
+        expect(restoredWordRow['비고'], originalNote);
+        for (var index = 1; index <= 7; index++) {
+          expect(restoredWordRow['관련$index'], relatedWordId);
+          expect(restoredWordRow['관련$index'], isNot('legacy-related-$index'));
+        }
+
+        final relationRowsAfterUndo = (await db.query(
+          'WORD_RELATION',
+          where: 'word_id_1 = ? OR word_id_2 = ?',
+          whereArgs: [wordId, wordId],
+          orderBy: 'id ASC',
+        )).map(Map<String, dynamic>.from).toList(growable: false);
+        expect(relationRowsAfterUndo, relationRowsBeforeUndo);
+      },
+    );
+
+    test(
       'undoLastChange falls back to legacy meaning slots for legacy-only snapshot',
       () async {
         final repository = WordRepository();

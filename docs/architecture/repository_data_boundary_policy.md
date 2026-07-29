@@ -358,6 +358,13 @@ Current expression history 원칙은 다음과 같다.
 - older history row는 legacy compatibility fallback restore를 유지할 수 있다.
 - history snapshot은 UI state persistence가 아니라 data mutation rollback/persistence boundary다.
 
+Word/relation history 경계는 다음과 같다.
+
+- word history snapshot은 `WORD_TABLE.관련1~7`을 저장하지 않는다.
+- 과거 word snapshot에 `관련1~7` key가 있어도 `WORD_TABLE` update/insert undo payload에서는 무시한다.
+- 현재 relation 저장·조회와 relation history/undo authority는 `WORD_RELATION`이다.
+- 이 경계는 `관련1~7` 물리 컬럼 삭제나 legacy-only 관계 9건의 처리가 완료됐다는 의미가 아니다.
+
 History는 다음을 직접 정의하지 않는다.
 
 - navigation history UX
