@@ -824,12 +824,10 @@ void main() {
         );
 
         final db = await DatabaseService.openDatabaseFile();
-        await db.update(
-          'WORD_TABLE',
-          {for (final column in relatedColumns) column: relatedWordId},
-          where: 'id = ?',
-          whereArgs: [wordId],
-        );
+        final wordTableColumns = (await db.rawQuery(
+          "PRAGMA table_info('WORD_TABLE')",
+        )).map((row) => row['name']).whereType<String>().toSet();
+        expect(wordTableColumns.intersection(relatedColumns.toSet()), isEmpty);
         final relationId = await db.insert('WORD_RELATION', {
           'word_id_1': wordId,
           'word_id_2': relatedWordId,
@@ -917,9 +915,8 @@ void main() {
         final restoredWordRow = await _loadWordTableRow(wordId);
         expect(restoredWordRow['표기1'], 'history-before');
         expect(restoredWordRow['비고'], originalNote);
-        for (var index = 1; index <= 7; index++) {
-          expect(restoredWordRow['관련$index'], relatedWordId);
-          expect(restoredWordRow['관련$index'], isNot('legacy-related-$index'));
+        for (final column in relatedColumns) {
+          expect(restoredWordRow.containsKey(column), isFalse);
         }
 
         final relationRowsAfterUndo = (await db.query(

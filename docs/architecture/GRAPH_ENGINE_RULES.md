@@ -147,7 +147,7 @@ WORD_TABLE 조회
 
 주의:
 
-WORD_TABLE의 다음 컬럼은 **그래프 관계 계산에 사용하지 않는다.**
+과거 `WORD_TABLE`에는 다음 legacy 컬럼이 있었으나 현재 schema에서는 물리 제거됐다.
 
 ```text
 관련1
@@ -159,8 +159,8 @@ WORD_TABLE의 다음 컬럼은 **그래프 관계 계산에 사용하지 않는�
 관련7
 ```
 
-
-v1 reference에서 그래프 관계는 **WORD_RELATION** 기반으로 기록되어 있다.
+미대응 raw 값을 보존하는 `WORD_LEGACY_RELATED_VALUE`도 그래프 입력이 아니다.
+v1 reference와 현재 runtime graph의 관계 authority는 모두 **WORD_RELATION**이다.
 
 ---
 

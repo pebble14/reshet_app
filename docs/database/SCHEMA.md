@@ -32,6 +32,8 @@ clean clone에는 DB 파일이 포함되지 않으므로, Android full build와 
 - 복원 원본은 read-only connection에서 integrity, 필수 table·column·PK·unique index, 대표 read를 검증하며 원본에는 runtime ensure나 migration을 실행하지 않는다.
 - 현재 전체 백업 보존 계약에는 `RMAC_TABLE`, `RMAC_TABLE_KR`이 포함되며 복원 후보에도 두 table의 존재를 요구한다.
 - 검증된 외부 원본은 work DB와 같은 filesystem의 앱 소유 staging 파일로 stream copy하고, runtime ensure는 staging copy에만 적용한다.
+- `WORD_TABLE.관련1~7`이 모두 있는 구형 backup과 legacy 컬럼 없이 유효한 `WORD_LEGACY_RELATED_VALUE`가 있는 현행 backup을 허용한다. 일부 legacy 컬럼만 있거나 양쪽 상태가 모두 없거나 archive가 손상·충돌한 backup은 교체 전에 거부한다.
+- 구형 full-legacy backup은 staging의 runtime ensure에서 미대응 raw 값을 archive한 뒤 `관련1~7`을 제거하며, 외부 원본 파일은 변경하지 않는다.
 - live DB 교체 전 현재 열린 work DB에서 `VACUUM INTO` rollback snapshot을 생성·검증한다. 교체 또는 새 DB 검증 실패 시 previous work를 우선 복구하고, 불가능하면 rollback snapshot을 사용한다.
 - 새 work DB open, runtime ensure, integrity/schema, 대표 read가 성공한 뒤 DB 복원 성공으로 확정한다. 이후 화면 상태 갱신이나 임시 파일 cleanup 실패는 검증된 DB를 rollback하는 조건이 아니다.
 - SharedPreferences, 검색·탐색 session, graph session은 복원하지 않으며 복원 후 관련 화면 상태와 cache를 다시 초기화한다.
@@ -59,6 +61,7 @@ clean clone에는 DB 파일이 포함되지 않으므로, Android full build와 
 - `RELATION_CATEGORY`
 - `RELATION_TYPE`
 - `RELATION_STATUS`
+- `WORD_LEGACY_RELATED_VALUE`
 - `RMAC_TABLE`
 - `RMAC_TABLE_KR`
 
@@ -105,13 +108,6 @@ H0001_0000
 | `발음4` | `TEXT` | N | N | - | 발음 4 |
 | `발음5` | `TEXT` | N | N | - | 발음 5 |
 | `발음6` | `TEXT` | N | N | - | 발음 6 |
-| `관련1` | `TEXT` | N | N | - | 관련 정보 1 |
-| `관련2` | `TEXT` | N | N | - | 관련 정보 2 |
-| `관련3` | `TEXT` | N | N | - | 관련 정보 3 |
-| `관련4` | `TEXT` | N | N | - | 관련 정보 4 |
-| `관련5` | `TEXT` | N | N | - | 관련 정보 5 |
-| `관련6` | `TEXT` | N | N | - | 관련 정보 6 |
-| `관련7` | `TEXT` | N | N | - | 관련 정보 7 |
 | `의미1` | `TEXT` | N | N | - | 기본 의미 |
 | `의미2` | `TEXT` | N | N | - | 추가 의미 2 |
 | `의미3` | `TEXT` | N | N | - | 추가 의미 3 |
@@ -126,6 +122,52 @@ H0001_0000
 
 - 실제 DB에 `graph_expand_mode` 컬럼이 존재한다.
 - 현재 `reshet_work.db` 레코드에서 `default`, `full`, `outgoing_limited` 값이 확인된다.
+- `관련1~7`은 2026-07-29 migration에서 work·seed DB 양쪽의 `WORD_TABLE`에서 물리 제거됐다. 관계 runtime authority는 계속 `WORD_RELATION`이다.
+
+---
+
+# WORD_LEGACY_RELATED_VALUE
+
+`WORD_RELATION`으로 정규화되지 않은 legacy `WORD_TABLE.관련1~7` raw 값의 비권위적 격리 테이블.
+
+이 테이블은 repository, 검색, 그래프, 상세, 관계 편집, history/undo에서 소비하지 않으며 relation metadata나 semantic direction을 표현하지 않는다.
+
+## 실제 DDL
+
+```sql
+CREATE TABLE WORD_LEGACY_RELATED_VALUE (
+  source_word_id TEXT NOT NULL,
+  source_column TEXT NOT NULL CHECK (
+    source_column IN (
+      '관련1',
+      '관련2',
+      '관련3',
+      '관련4',
+      '관련5',
+      '관련6',
+      '관련7'
+    )
+  ),
+  target_raw_value TEXT NOT NULL,
+  preservation_state TEXT NOT NULL CHECK (
+    preservation_state = 'unresolved_legacy'
+  ),
+  source_table TEXT NOT NULL CHECK (
+    source_table = 'WORD_TABLE'
+  ),
+  PRIMARY KEY (source_word_id, source_column)
+)
+```
+
+운영 계약:
+
+- 각 non-null legacy 셀은 정확한 승인 폐기 5건, 기존 `WORD_RELATION`의 양방향 endpoint pair 대응값, 미대응 raw 값 순으로 분류한다.
+- 승인 폐기 5건과 기존 relation 대응값은 archive하지 않는다. 미대응 값만 source ID, 원본 slot, target raw value를 그대로 보존한다.
+- relation 대응 여부는 metadata를 보지 않고 `(word_id_1 = source AND word_id_2 = target) OR (word_id_2 = source AND word_id_1 = target)`로 판정한다.
+- 빈 문자열도 non-null이면 같은 규칙으로 분류하며, 새 `WORD_RELATION`이나 관계 metadata를 만들지 않는다.
+- 현재 work·seed DB에는 `G1606_0000/관련3/H5301_0000`, `H5397_0000/관련1/H5315_0000`, `H4320_0000/관련1/H0410_0000`, `H4976_0000/관련1/H5414_0000`의 4행만 저장돼 있다.
+- FK, trigger, view, timestamp, PK 이외 index는 없다.
+- 유효한 archive schema는 legacy 컬럼 제거 완료 상태의 증거다. full legacy는 하나의 transaction에서 archive·검증·직접 `DROP COLUMN`하며 partial/neither/충돌 상태는 fail-closed한다.
 
 ---
 

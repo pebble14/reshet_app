@@ -5,12 +5,28 @@
   관리한다.
 */
 
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/foundation.dart' show kDebugMode, visibleForTesting;
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:path/path.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+
+typedef _LegacyRelatedCell = ({
+  String sourceWordId,
+  String sourceColumn,
+  String targetRawValue,
+});
+
+typedef _ClassifiedLegacyRelatedCell = ({
+  String sourceWordId,
+  String sourceColumn,
+  String targetRawValue,
+  String classification,
+});
+
+typedef _LegacyRelatedCellKey = ({String sourceWordId, String sourceColumn});
 
 class DatabaseService {
   static Database? _database;
@@ -27,6 +43,125 @@ class DatabaseService {
 
   /// 과거 파일명 호환(기존 사용 중인 DB)
   static const String _legacySeedFileName = 'bbwdb_20260106.db';
+
+  static const String _legacyRelatedArchiveTableName =
+      'WORD_LEGACY_RELATED_VALUE';
+  static const String _legacyRelatedPreservationState = 'unresolved_legacy';
+  static const String _legacyRelatedSourceTable = 'WORD_TABLE';
+  static const List<String> _legacyRelatedColumns = [
+    '관련1',
+    '관련2',
+    '관련3',
+    '관련4',
+    '관련5',
+    '관련6',
+    '관련7',
+  ];
+  static const Set<_LegacyRelatedCell> _approvedLegacyRelatedDiscards = {
+    (
+      sourceWordId: 'G1589_0000',
+      sourceColumn: '관련1',
+      targetRawValue: 'G1589_0000',
+    ),
+    (
+      sourceWordId: 'G1696_0000',
+      sourceColumn: '관련1',
+      targetRawValue: 'G1696_0000',
+    ),
+    (
+      sourceWordId: 'G2538_0000',
+      sourceColumn: '관련1',
+      targetRawValue: 'G2538_0000',
+    ),
+    (
+      sourceWordId: 'G4173_0000',
+      sourceColumn: '관련2',
+      targetRawValue: 'G4173_0000',
+    ),
+    (
+      sourceWordId: 'G4449_0000',
+      sourceColumn: '관련1',
+      targetRawValue: 'G4449_0000',
+    ),
+  };
+  static const String _legacyRelatedArchiveTableDdl = '''
+    CREATE TABLE WORD_LEGACY_RELATED_VALUE (
+      source_word_id TEXT NOT NULL,
+      source_column TEXT NOT NULL CHECK (
+        source_column IN (
+          '관련1',
+          '관련2',
+          '관련3',
+          '관련4',
+          '관련5',
+          '관련6',
+          '관련7'
+        )
+      ),
+      target_raw_value TEXT NOT NULL,
+      preservation_state TEXT NOT NULL CHECK (
+        preservation_state = 'unresolved_legacy'
+      ),
+      source_table TEXT NOT NULL CHECK (
+        source_table = 'WORD_TABLE'
+      ),
+      PRIMARY KEY (source_word_id, source_column)
+    )
+  ''';
+  static const String _legacyRelatedCellsCte = '''
+    legacy_cells(source_word_id, source_column, target_raw_value) AS (
+      SELECT id, '관련1', [관련1]
+      FROM WORD_TABLE
+      WHERE [관련1] IS NOT NULL
+      UNION ALL
+      SELECT id, '관련2', [관련2]
+      FROM WORD_TABLE
+      WHERE [관련2] IS NOT NULL
+      UNION ALL
+      SELECT id, '관련3', [관련3]
+      FROM WORD_TABLE
+      WHERE [관련3] IS NOT NULL
+      UNION ALL
+      SELECT id, '관련4', [관련4]
+      FROM WORD_TABLE
+      WHERE [관련4] IS NOT NULL
+      UNION ALL
+      SELECT id, '관련5', [관련5]
+      FROM WORD_TABLE
+      WHERE [관련5] IS NOT NULL
+      UNION ALL
+      SELECT id, '관련6', [관련6]
+      FROM WORD_TABLE
+      WHERE [관련6] IS NOT NULL
+      UNION ALL
+      SELECT id, '관련7', [관련7]
+      FROM WORD_TABLE
+      WHERE [관련7] IS NOT NULL
+    )
+  ''';
+  static const String _approvedLegacyRelatedDiscardPredicate = '''
+    (
+      source_word_id = 'G1589_0000' AND
+      source_column = '관련1' AND
+      target_raw_value = 'G1589_0000'
+    ) OR (
+      source_word_id = 'G1696_0000' AND
+      source_column = '관련1' AND
+      target_raw_value = 'G1696_0000'
+    ) OR (
+      source_word_id = 'G2538_0000' AND
+      source_column = '관련1' AND
+      target_raw_value = 'G2538_0000'
+    ) OR (
+      source_word_id = 'G4173_0000' AND
+      source_column = '관련2' AND
+      target_raw_value = 'G4173_0000'
+    ) OR (
+      source_word_id = 'G4449_0000' AND
+      source_column = '관련1' AND
+      target_raw_value = 'G4449_0000'
+    )
+  ''';
 
   static const Map<String, String> _wordRelationIndexDefinitions = {
     'idx_word_relation_signature_lookup': '''
@@ -596,12 +731,497 @@ class DatabaseService {
   /// 이미 열린 임의의 DB connection에 현재 runtime schema 보정을 적용한다.
   /// 외부 복원 원본에는 사용하지 않고 앱 소유 staging/work DB에만 사용한다.
   static Future<void> ensureRuntimeSchema(Database database) async {
+    await _ensureLegacyRelatedColumnsMigration(database);
     await _ensureWordRelationV2Columns(database);
     await _ensureWordRelationIndexes(database);
     await _ensureHistoryTable(database);
     await _ensureRelationLookupMetadata(database);
     await _ensureWordExpressionSetSchema(database);
     await _ensureWordMeaningSetSchema(database);
+  }
+
+  /// restore 원본 사전검증에서 full-legacy 또는 migration 완료 상태만 허용한다.
+  static Future<void> validateLegacyRelatedRestoreCandidate(
+    Database database,
+  ) async {
+    await _validateLegacyRelatedSchemaState(database, allowFullLegacy: true);
+  }
+
+  /// runtime ensure 이후에는 legacy 컬럼이 없고 유효한 격리 테이블이 있어야 한다.
+  static Future<void> validateLegacyRelatedRuntimeSchema(
+    Database database,
+  ) async {
+    await _validateLegacyRelatedSchemaState(database, allowFullLegacy: false);
+  }
+
+  static Future<void> _ensureLegacyRelatedColumnsMigration(Database db) async {
+    try {
+      await db.transaction((txn) async {
+        final presentLegacyColumns = await _presentLegacyRelatedColumns(txn);
+        final archiveExists = await _tableExists(
+          txn,
+          _legacyRelatedArchiveTableName,
+        );
+
+        if (presentLegacyColumns.isEmpty) {
+          if (!archiveExists) {
+            throw StateError(
+              'legacy 컬럼과 $_legacyRelatedArchiveTableName이 모두 없습니다.',
+            );
+          }
+          await _validateLegacyRelatedArchiveTable(txn);
+          return;
+        }
+
+        if (presentLegacyColumns.length != _legacyRelatedColumns.length) {
+          throw StateError(
+            'legacy 관련 컬럼이 일부만 존재합니다: '
+            '${presentLegacyColumns.join(', ')}',
+          );
+        }
+
+        final relationSnapshotBefore = await _wordRelationSnapshot(txn);
+        if (!archiveExists) {
+          await txn.execute(_legacyRelatedArchiveTableDdl);
+        }
+        await _validateLegacyRelatedArchiveTable(txn);
+
+        final classifiedCells = await _readClassifiedLegacyRelatedCells(txn);
+        final unresolvedCells = classifiedCells
+            .where((cell) => cell.classification == 'unresolved_legacy')
+            .map(
+              (cell) => (
+                sourceWordId: cell.sourceWordId,
+                sourceColumn: cell.sourceColumn,
+                targetRawValue: cell.targetRawValue,
+              ),
+            )
+            .toList(growable: false);
+        await _validateExistingArchiveRowsAgainstExpected(
+          txn,
+          unresolvedCells,
+          requireComplete: false,
+        );
+
+        final existingArchiveKeys = (await _readLegacyRelatedArchiveRows(txn))
+            .map(
+              (row) => (
+                sourceWordId: row.sourceWordId,
+                sourceColumn: row.sourceColumn,
+              ),
+            )
+            .toSet();
+        for (final cell in unresolvedCells) {
+          final key = (
+            sourceWordId: cell.sourceWordId,
+            sourceColumn: cell.sourceColumn,
+          );
+          if (existingArchiveKeys.contains(key)) {
+            continue;
+          }
+          await txn.insert(_legacyRelatedArchiveTableName, {
+            'source_word_id': cell.sourceWordId,
+            'source_column': cell.sourceColumn,
+            'target_raw_value': cell.targetRawValue,
+            'preservation_state': _legacyRelatedPreservationState,
+            'source_table': _legacyRelatedSourceTable,
+          });
+        }
+
+        await _validateExistingArchiveRowsAgainstExpected(
+          txn,
+          unresolvedCells,
+          requireComplete: true,
+        );
+        _validateLegacyRelatedClassifications(classifiedCells);
+
+        for (final column in _legacyRelatedColumns) {
+          await txn.execute(
+            'ALTER TABLE WORD_TABLE DROP COLUMN ${_quoteIdentifier(column)}',
+          );
+        }
+
+        final remainingLegacyColumns = await _presentLegacyRelatedColumns(txn);
+        if (remainingLegacyColumns.isNotEmpty) {
+          throw StateError(
+            'legacy 관련 컬럼 제거가 완료되지 않았습니다: '
+            '${remainingLegacyColumns.join(', ')}',
+          );
+        }
+        await _validateLegacyRelatedArchiveTable(txn);
+        await _validateExistingArchiveRowsAgainstExpected(
+          txn,
+          unresolvedCells,
+          requireComplete: true,
+        );
+
+        final relationSnapshotAfter = await _wordRelationSnapshot(txn);
+        if (relationSnapshotAfter != relationSnapshotBefore) {
+          throw StateError('WORD_RELATION이 legacy 컬럼 migration 중 변경됐습니다.');
+        }
+      });
+    } catch (error) {
+      throw StateError('관련 legacy migration 실패: $error');
+    }
+  }
+
+  static Future<void> _validateLegacyRelatedSchemaState(
+    DatabaseExecutor db, {
+    required bool allowFullLegacy,
+  }) async {
+    final presentLegacyColumns = await _presentLegacyRelatedColumns(db);
+    final archiveExists = await _tableExists(
+      db,
+      _legacyRelatedArchiveTableName,
+    );
+
+    if (presentLegacyColumns.isNotEmpty &&
+        presentLegacyColumns.length != _legacyRelatedColumns.length) {
+      throw StateError(
+        '관련 legacy 컬럼이 일부만 존재합니다: '
+        '${presentLegacyColumns.join(', ')}',
+      );
+    }
+
+    if (presentLegacyColumns.length == _legacyRelatedColumns.length) {
+      if (!allowFullLegacy) {
+        throw StateError('관련 legacy 컬럼 7개가 migration 이후에도 남아 있습니다.');
+      }
+      if (archiveExists) {
+        await _validateLegacyRelatedArchiveTable(db);
+        final classifiedCells = await _readClassifiedLegacyRelatedCells(db);
+        final unresolvedCells = classifiedCells
+            .where((cell) => cell.classification == 'unresolved_legacy')
+            .map(
+              (cell) => (
+                sourceWordId: cell.sourceWordId,
+                sourceColumn: cell.sourceColumn,
+                targetRawValue: cell.targetRawValue,
+              ),
+            )
+            .toList(growable: false);
+        await _validateExistingArchiveRowsAgainstExpected(
+          db,
+          unresolvedCells,
+          requireComplete: false,
+        );
+      }
+      return;
+    }
+
+    if (!archiveExists) {
+      throw StateError(
+        '관련 legacy 컬럼이 없지만 $_legacyRelatedArchiveTableName도 없습니다.',
+      );
+    }
+    await _validateLegacyRelatedArchiveTable(db);
+  }
+
+  static Future<Set<String>> _presentLegacyRelatedColumns(
+    DatabaseExecutor db,
+  ) async {
+    final tableColumns = await db.rawQuery("PRAGMA table_info('WORD_TABLE')");
+    final names = tableColumns
+        .map((row) => row['name'])
+        .whereType<String>()
+        .toSet();
+    return _legacyRelatedColumns.where(names.contains).toSet();
+  }
+
+  static Future<bool> _tableExists(
+    DatabaseExecutor db,
+    String tableName,
+  ) async {
+    final rows = await db.rawQuery(
+      '''
+      SELECT name
+      FROM sqlite_master
+      WHERE type = 'table'
+        AND name = ?
+      ''',
+      [tableName],
+    );
+    return rows.isNotEmpty;
+  }
+
+  static Future<void> _validateLegacyRelatedArchiveTable(
+    DatabaseExecutor db,
+  ) async {
+    final schemaRows = await db.rawQuery(
+      '''
+      SELECT sql
+      FROM sqlite_master
+      WHERE type = 'table'
+        AND name = ?
+      ''',
+      [_legacyRelatedArchiveTableName],
+    );
+    if (schemaRows.length != 1) {
+      throw StateError('$_legacyRelatedArchiveTableName table 정의를 찾을 수 없습니다.');
+    }
+
+    final actualSql = schemaRows.single['sql'] as String?;
+    if (actualSql == null ||
+        _normalizeIndexSql(actualSql) !=
+            _normalizeIndexSql(_legacyRelatedArchiveTableDdl)) {
+      throw StateError('$_legacyRelatedArchiveTableName DDL 계약이 일치하지 않습니다.');
+    }
+
+    final columns = await db.rawQuery(
+      "PRAGMA table_info('$_legacyRelatedArchiveTableName')",
+    );
+    const expectedColumns = [
+      (name: 'source_word_id', pk: 1),
+      (name: 'source_column', pk: 2),
+      (name: 'target_raw_value', pk: 0),
+      (name: 'preservation_state', pk: 0),
+      (name: 'source_table', pk: 0),
+    ];
+    if (columns.length != expectedColumns.length) {
+      throw StateError('$_legacyRelatedArchiveTableName 컬럼 수가 일치하지 않습니다.');
+    }
+    for (var index = 0; index < expectedColumns.length; index++) {
+      final actual = columns[index];
+      final expected = expectedColumns[index];
+      if (actual['name'] != expected.name ||
+          (actual['type'] ?? '').toString().toUpperCase() != 'TEXT' ||
+          actual['notnull'] != 1 ||
+          actual['dflt_value'] != null ||
+          actual['pk'] != expected.pk) {
+        throw StateError(
+          '$_legacyRelatedArchiveTableName 컬럼 계약이 일치하지 않습니다: '
+          '${expected.name}',
+        );
+      }
+    }
+
+    final foreignKeys = await db.rawQuery(
+      "PRAGMA foreign_key_list('$_legacyRelatedArchiveTableName')",
+    );
+    if (foreignKeys.isNotEmpty) {
+      throw StateError('$_legacyRelatedArchiveTableName에는 FK를 둘 수 없습니다.');
+    }
+
+    final indexes = await db.rawQuery(
+      "PRAGMA index_list('$_legacyRelatedArchiveTableName')",
+    );
+    if (indexes.any((row) => row['origin'] != 'pk')) {
+      throw StateError(
+        '$_legacyRelatedArchiveTableName에는 PK 외 index를 둘 수 없습니다.',
+      );
+    }
+
+    final triggers = await db.rawQuery(
+      '''
+      SELECT name
+      FROM sqlite_master
+      WHERE type = 'trigger'
+        AND tbl_name = ?
+      ''',
+      [_legacyRelatedArchiveTableName],
+    );
+    if (triggers.isNotEmpty) {
+      throw StateError('$_legacyRelatedArchiveTableName에는 trigger를 둘 수 없습니다.');
+    }
+
+    final views = await db.rawQuery('''
+      SELECT name, sql
+      FROM sqlite_master
+      WHERE type = 'view'
+    ''');
+    final archiveName = _legacyRelatedArchiveTableName.toLowerCase();
+    if (views.any(
+      (row) =>
+          (row['sql'] ?? '').toString().toLowerCase().contains(archiveName),
+    )) {
+      throw StateError('$_legacyRelatedArchiveTableName을 사용하는 view를 둘 수 없습니다.');
+    }
+
+    await _readLegacyRelatedArchiveRows(db);
+  }
+
+  static Future<List<_ClassifiedLegacyRelatedCell>>
+  _readClassifiedLegacyRelatedCells(DatabaseExecutor db) async {
+    final rows = await db.rawQuery('''
+      WITH $_legacyRelatedCellsCte
+      SELECT
+        source_word_id,
+        source_column,
+        target_raw_value,
+        CASE
+          WHEN ($_approvedLegacyRelatedDiscardPredicate)
+            THEN 'approved_discard'
+          WHEN EXISTS (
+            SELECT 1
+            FROM WORD_RELATION AS relation
+            WHERE (
+              relation.word_id_1 = legacy_cells.source_word_id AND
+              relation.word_id_2 = legacy_cells.target_raw_value
+            ) OR (
+              relation.word_id_2 = legacy_cells.source_word_id AND
+              relation.word_id_1 = legacy_cells.target_raw_value
+            )
+          )
+            THEN 'normalized_relation'
+          ELSE 'unresolved_legacy'
+        END AS migration_classification
+      FROM legacy_cells
+      ORDER BY source_word_id, source_column
+    ''');
+
+    return rows
+        .map(
+          (row) => (
+            sourceWordId: _requireLegacyRelatedText(row, 'source_word_id'),
+            sourceColumn: _requireLegacyRelatedText(row, 'source_column'),
+            targetRawValue: _requireLegacyRelatedText(row, 'target_raw_value'),
+            classification: _requireLegacyRelatedText(
+              row,
+              'migration_classification',
+            ),
+          ),
+        )
+        .toList(growable: false);
+  }
+
+  static Future<List<_LegacyRelatedCell>> _readLegacyRelatedArchiveRows(
+    DatabaseExecutor db,
+  ) async {
+    final rows = await db.query(
+      _legacyRelatedArchiveTableName,
+      columns: const [
+        'source_word_id',
+        'source_column',
+        'target_raw_value',
+        'preservation_state',
+        'source_table',
+      ],
+      orderBy: 'source_word_id ASC, source_column ASC',
+    );
+
+    final result = <_LegacyRelatedCell>[];
+    for (final row in rows) {
+      final sourceWordId = _requireLegacyRelatedText(row, 'source_word_id');
+      final sourceColumn = _requireLegacyRelatedText(row, 'source_column');
+      final targetRawValue = _requireLegacyRelatedText(row, 'target_raw_value');
+      final preservationState = _requireLegacyRelatedText(
+        row,
+        'preservation_state',
+      );
+      final sourceTable = _requireLegacyRelatedText(row, 'source_table');
+
+      if (!_legacyRelatedColumns.contains(sourceColumn)) {
+        throw StateError('허용되지 않은 legacy source column입니다: $sourceColumn');
+      }
+      if (preservationState != _legacyRelatedPreservationState) {
+        throw StateError(
+          '허용되지 않은 legacy preservation state입니다: '
+          '$preservationState',
+        );
+      }
+      if (sourceTable != _legacyRelatedSourceTable) {
+        throw StateError('허용되지 않은 legacy source table입니다: $sourceTable');
+      }
+
+      final cell = (
+        sourceWordId: sourceWordId,
+        sourceColumn: sourceColumn,
+        targetRawValue: targetRawValue,
+      );
+      if (_approvedLegacyRelatedDiscards.contains(cell)) {
+        throw StateError(
+          '승인된 폐기 셀이 archive에 존재합니다: '
+          '$sourceWordId / $sourceColumn / $targetRawValue',
+        );
+      }
+      result.add(cell);
+    }
+    return result;
+  }
+
+  static Future<void> _validateExistingArchiveRowsAgainstExpected(
+    DatabaseExecutor db,
+    List<_LegacyRelatedCell> expectedRows, {
+    required bool requireComplete,
+  }) async {
+    final expectedByKey = <_LegacyRelatedCellKey, _LegacyRelatedCell>{
+      for (final row in expectedRows)
+        (sourceWordId: row.sourceWordId, sourceColumn: row.sourceColumn): row,
+    };
+    if (expectedByKey.length != expectedRows.length) {
+      throw StateError('미해결 legacy 분류에 중복 source/slot이 있습니다.');
+    }
+
+    final actualRows = await _readLegacyRelatedArchiveRows(db);
+    final actualByKey = <_LegacyRelatedCellKey, _LegacyRelatedCell>{};
+    for (final actual in actualRows) {
+      final key = (
+        sourceWordId: actual.sourceWordId,
+        sourceColumn: actual.sourceColumn,
+      );
+      final expected = expectedByKey[key];
+      if (expected == null) {
+        throw StateError(
+          'archive에 원본 미해결 분류와 대응되지 않는 행이 있습니다: '
+          '${actual.sourceWordId} / ${actual.sourceColumn}',
+        );
+      }
+      if (actual != expected) {
+        throw StateError(
+          'archive 값이 원본과 충돌합니다: '
+          '${actual.sourceWordId} / ${actual.sourceColumn}',
+        );
+      }
+      actualByKey[key] = actual;
+    }
+
+    if (requireComplete && actualByKey.length != expectedByKey.length) {
+      final missing = expectedByKey.keys
+          .where((key) => !actualByKey.containsKey(key))
+          .map((key) => '${key.sourceWordId}/${key.sourceColumn}')
+          .join(', ');
+      throw StateError('archive에 미해결 legacy 값이 누락됐습니다: $missing');
+    }
+  }
+
+  static void _validateLegacyRelatedClassifications(
+    List<_ClassifiedLegacyRelatedCell> cells,
+  ) {
+    const allowedClassifications = {
+      'approved_discard',
+      'normalized_relation',
+      'unresolved_legacy',
+    };
+    for (final cell in cells) {
+      if (!allowedClassifications.contains(cell.classification)) {
+        throw StateError(
+          '분류되지 않은 legacy 셀이 있습니다: '
+          '${cell.sourceWordId} / ${cell.sourceColumn}',
+        );
+      }
+    }
+  }
+
+  static String _requireLegacyRelatedText(
+    Map<String, Object?> row,
+    String key,
+  ) {
+    final value = row[key];
+    if (value is! String) {
+      throw StateError('legacy 값이 TEXT가 아닙니다: $key=$value');
+    }
+    return value;
+  }
+
+  static Future<String> _wordRelationSnapshot(DatabaseExecutor db) async {
+    final rows = await db.rawQuery(
+      'SELECT * FROM WORD_RELATION ORDER BY id ASC',
+    );
+    return jsonEncode(rows);
+  }
+
+  static String _quoteIdentifier(String value) {
+    return '"${value.replaceAll('"', '""')}"';
   }
 
   /// WORD_RELATION v2 컬럼 보장

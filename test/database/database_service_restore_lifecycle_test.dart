@@ -103,6 +103,7 @@ Future<void> _createEnsureCompatibleDatabase(String path) async {
       graph_expand_mode TEXT NOT NULL DEFAULT 'default'
     )
   ''');
+  await db.execute(_legacyRelatedArchiveDdl);
   await db.execute('''
     CREATE TABLE WORD_RELATION (
       id INTEGER PRIMARY KEY,
@@ -181,3 +182,26 @@ Future<void> _createEnsureCompatibleDatabase(String path) async {
   });
   await db.close();
 }
+
+const _legacyRelatedArchiveDdl = '''
+  CREATE TABLE WORD_LEGACY_RELATED_VALUE (
+    source_word_id TEXT NOT NULL,
+    source_column TEXT NOT NULL CHECK (
+      source_column IN (
+        '관련1',
+        '관련2',
+        '관련3',
+        '관련4',
+        '관련5',
+        '관련6',
+        '관련7'
+      )
+    ),
+    target_raw_value TEXT NOT NULL,
+    preservation_state TEXT NOT NULL CHECK (
+      preservation_state = 'unresolved_legacy'
+    ),
+    source_table TEXT NOT NULL CHECK (source_table = 'WORD_TABLE'),
+    PRIMARY KEY (source_word_id, source_column)
+  )
+''';

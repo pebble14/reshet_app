@@ -4,6 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
+import 'database_service.dart';
+
 enum DatabaseValidationFailure {
   notSqlite,
   integrityInvalid,
@@ -185,6 +187,17 @@ class DatabaseRestoreSchemaValidator {
   final SnapshotDatabaseOpener? _databaseOpener;
 
   Future<void> validateFile(String path) async {
+    await _validateFile(path, validateConnection);
+  }
+
+  Future<void> validateRuntimeFile(String path) async {
+    await _validateFile(path, validateRuntimeConnection);
+  }
+
+  Future<void> _validateFile(
+    String path,
+    Future<void> Function(Database database) connectionValidator,
+  ) async {
     Database? database;
     try {
       database =
@@ -196,7 +209,7 @@ class DatabaseRestoreSchemaValidator {
                   singleInstance: false,
                 ),
               ));
-      await validateConnection(database);
+      await connectionValidator(database);
     } on DatabaseValidationException {
       rethrow;
     } on DatabaseException catch (error) {
@@ -300,6 +313,15 @@ class DatabaseRestoreSchemaValidator {
       }
     }
 
+    try {
+      await DatabaseService.validateLegacyRelatedRestoreCandidate(database);
+    } catch (error) {
+      throw DatabaseValidationException(
+        DatabaseValidationFailure.schemaIncompatible,
+        '관련 legacy migration 사전검증 실패: $error',
+      );
+    }
+
     final invalidPronunciationRows = await database.rawQuery('''
       SELECT COUNT(*) AS invalid_count
       FROM word_expression_set
@@ -338,6 +360,18 @@ class DatabaseRestoreSchemaValidator {
     }
 
     await database.rawQuery('SELECT COUNT(*) AS row_count FROM WORD_TABLE');
+  }
+
+  Future<void> validateRuntimeConnection(Database database) async {
+    await validateConnection(database);
+    try {
+      await DatabaseService.validateLegacyRelatedRuntimeSchema(database);
+    } catch (error) {
+      throw DatabaseValidationException(
+        DatabaseValidationFailure.schemaIncompatible,
+        '관련 legacy migration 사후검증 실패: $error',
+      );
+    }
   }
 
   static String _quoteIdentifier(String value) {
@@ -390,7 +424,7 @@ class DatabaseSnapshotService {
             : DatabaseRestoreSchemaValidator(
                 databaseOpener: _snapshotDatabaseOpener,
               );
-        await validationService.validateFile(snapshotFile.path);
+        await validationService.validateRuntimeFile(snapshotFile.path);
       } catch (error, stackTrace) {
         throw SnapshotException(
           stage: SnapshotFailureStage.validation,

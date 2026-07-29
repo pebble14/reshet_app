@@ -51,7 +51,8 @@
 ### 5.1 WORD_TABLE
 
 - `WORD_TABLE`은 현재 word core 1:1 row 저장소다.
-- 동시에 expression slot(`표기1~6`, `음역1~6`, `발음1~6`)과 relation slot(`관련1~7`)도 함께 보유하고 있다.
+- expression slot(`표기1~6`, `음역1~6`, `발음1~6`)과 meaning slot(`의미1~7`)은 compatibility projection으로 함께 보유한다.
+- relation slot(`관련1~7`)은 2026-07-29 production migration에서 물리 제거됐다.
 - 현재 앱의 일부 read 경로는 아직 legacy expression slot에 의존한다.
 - expression write 경로에서는 `WORD_TABLE` expression slot을 canonical authority가 아니라 compatibility projection으로 갱신한다.
 - meaning slot(`의미1~7`)은 현재 canonical authority가 아니라 compatibility projection이다.
@@ -94,6 +95,7 @@
 - `inferred`의 사용자 표시 label은 `기존 데이터 기반`이다.
 - `inferred`는 기존 데이터와 기존 처리 경로에서 보존된 관계 상태이며, 관계 유형·방향·근거가 현재 기준에서 독립적으로 확정·검증되었음을 뜻하지 않는다.
 - 이 보정은 relation 데이터 재작성이나 `WORD_RELATION.status_code` FK 추가를 포함하지 않는다.
+- `WORD_LEGACY_RELATED_VALUE`는 기존 `WORD_RELATION`에 대응되지 않은 legacy raw 값만 보관하는 비권위적 격리소다. runtime repository/model/API와 history/undo는 이 테이블을 소비하지 않는다.
 
 ### 5.4 Phase 41-B canonical boundary 기록
 
@@ -131,7 +133,7 @@
 
 #### 5.4.5 이번 기록이 확정하지 않는 사항
 
-- 현재 상태는 normalized-only 완료나 legacy column 물리적 제거 가능 확정을 의미하지 않는다.
+- 현재 상태는 expression/meaning normalized-only 완료나 남은 expression/meaning legacy column의 물리적 제거 가능 확정을 의미하지 않는다.
 - legacy meaning column 삭제, projection 중단, fallback 제거는 이번 범위 밖이다.
 - expression fallback 축소, relation 데이터 재작성, graph dynamics, node level, dark mode는 이번 범위에 포함하지 않는다.
 
@@ -142,7 +144,7 @@
 - 신규 expression/meaning write는 normalized table을 먼저 갱신하고, `WORD_TABLE` expression/meaning slot은 compatibility projection으로 동기화한다.
 - 새 `CHANGE_HISTORY` word snapshot은 normalized expression/meaning row를 포함하며, restore는 해당 normalized payload를 우선한다.
 - normalized payload가 없는 과거 history snapshot은 legacy slot fallback을 compatibility 목적으로만 사용한다.
-- 이 closure guard의 완료 기준은 legacy slot 물리 삭제, projection 중단, 과거 history 재작성, fallback 전면 제거가 아니다. 해당 작업은 별도 production/data phase에서 판단한다.
+- 이 closure guard의 완료 기준은 남은 expression/meaning legacy slot 물리 삭제, projection 중단, 과거 history 재작성, fallback 전면 제거가 아니다. 해당 작업은 별도 production/data phase에서 판단한다.
 
 ## 6. 목표 상태
 
@@ -169,9 +171,9 @@
 - 표기, 음역, 발음은 서로 대응하는 한 묶음이므로 `word_expression_set` 한 행으로 함께 다룬다.
 - 의미는 서로 독립된 목록이므로 `word_meaning_set`의 개별 행으로 다룬다.
 - 관련은 단어와 단어 사이의 관계이므로 `WORD_RELATION`이 최종 authority다.
-- legacy 번호 slot은 장기 canonical authority가 아니라 전환 기간의 compatibility projection이다.
-- 이 원칙은 legacy column 즉시 삭제나 projection 중단을 뜻하지 않는다.
-- legacy column 제거 또는 projection 중단은 호환 필요성과 data migration 상태를 확인한 뒤 별도 production phase에서 결정한다.
+- 남아 있는 expression/meaning legacy 번호 slot은 장기 canonical authority가 아니라 전환 기간의 compatibility projection이다.
+- 이 원칙은 남은 expression/meaning legacy column의 즉시 삭제나 projection 중단을 뜻하지 않는다.
+- 남은 legacy column 제거 또는 projection 중단은 호환 필요성과 data migration 상태를 확인한 뒤 별도 production phase에서 결정한다.
 - 새 기능은 legacy 번호 slot의 개수를 늘려 문제를 해결하지 않는다.
 
 ## 7. canonical / non-canonical 분류
@@ -193,7 +195,7 @@
 
 - `WORD_TABLE` expression slot
 - `WORD_TABLE` meaning slot
-- `WORD_TABLE` relation slot
+- `WORD_LEGACY_RELATED_VALUE`
 - `CHANGE_HISTORY`
 - `RMAC_TABLE`
 - `RMAC_TABLE_KR`
@@ -212,10 +214,11 @@
 
 ### 8.3 relation slot
 
-- `관련1~7`은 현재 runtime relation authority로 사용하지 않는다.
+- `관련1~7`은 `WORD_TABLE`에서 물리 제거됐다.
 - 현재 relation runtime authority는 `WORD_RELATION`이다.
-- 따라서 relation slot은 장기적으로 canonical relation storage로 유지하지 않는다.
-- 필요 시 legacy / compatibility projection으로만 남기거나 제거 대상으로 검토한다.
+- 승인된 정확한 5개 셀과 기존 `WORD_RELATION`에 양방향 endpoint pair로 대응되는 값은 archive하지 않는다.
+- 나머지 미대응 non-null raw 값만 `WORD_LEGACY_RELATED_VALUE`에 source ID·원본 slot·target 원문 그대로 보존한다.
+- archive는 relation metadata나 semantic direction을 추론하지 않는 비권위적 격리소이며 runtime에서 소비하지 않는다.
 
 ### 8.4 meaning slot
 
@@ -248,21 +251,21 @@
 - `RELATION_CATEGORY`, `RELATION_TYPE`, `RELATION_STATUS` lookup code set과 실제 relation data code set은 정합하다.
 - `WORD_RELATION.word_id_1`, `word_id_2`의 dangling endpoint는 0건이다.
 - repository의 relation read/write/delete/undo/restore 경계는 `WORD_RELATION`과 동일한 relation contract를 사용한다.
-- `WORD_TABLE.관련1~7`은 정상 runtime relation authority가 아니다.
+- `WORD_TABLE.관련1~7`은 물리 제거됐고 `WORD_LEGACY_RELATED_VALUE`도 runtime relation authority가 아니다.
 - `RELATION_STATUS.inferred`는 seed baseline에 포함되며, runtime lookup 보정 경로에서도 기존/과거 DB 안전망으로 보장된다.
 - 실제 relation data의 `status_code` 값은 보존되며, 이 문서는 relation data 재작성 완료나 FK 추가 완료를 선언하지 않는다.
 
 ### 10.2 구조적 의미
 
 - 현재 runtime relation authority와 lookup/data code, endpoint, repository/history 경계의 정합성은 확인됐다.
-- 이 확인은 legacy `관련1~7` column의 물리 삭제, relation provenance 재설계, FK 추가, `unknown` direction 데이터 전수 판정, 과거 history 재작성을 완료했다는 뜻이 아니다.
-- 위 장기 물리 정리 후보는 실제 호환 필요성과 데이터 보존 영향을 확인한 뒤 별도 production/data phase에서 판단한다.
+- legacy `관련1~7`의 물리 제거와 미대응 raw 값 격리는 완료됐다.
+- 이는 relation provenance 재설계, FK 추가, `unknown` direction 데이터 전수 판정, 과거 history 재작성 완료를 뜻하지 않는다.
 
 ### 10.3 현재 작업 경계
 
 - `WORD_RELATION`은 현재 relation의 runtime authority다.
-- 이 문서는 relation schema 변경, relation data 재작성, `관련1~7` 물리 삭제, provenance/FK 정책 결정을 수행하지 않는다.
-- 현재 runtime 정합성과 장기적 물리 정리 가능성을 구분하며, 미검증 미래 선택을 완료 상태로 선언하지 않는다.
+- `WORD_LEGACY_RELATED_VALUE`는 미대응 legacy 원문만 보관하며 relation schema·data와 연결하지 않는다.
+- relation data 재작성과 provenance/FK 정책 결정은 완료된 legacy slot 제거와 별개다.
 
 ## 11. import/export 원칙
 
@@ -278,6 +281,7 @@
 - 두 기능은 데이터 단위, 검증 기준, 사용자 위험이 다르므로 같은 책임으로 합치지 않는다.
 - 현재 backup은 열린 work DB에서 `VACUUM INTO`로 생성한 전체 SQLite snapshot이며, restore는 현재 Reshet 복원 호환성 계약을 충족하는 전체 SQLite DB로 work DB를 교체한다.
 - 복원 원본은 read-only로만 검증한다. runtime ensure와 schema 보정은 앱 data directory에 stream copy한 staging 파일에만 적용하며 외부 원본을 수정하지 않는다.
+- full legacy `관련1~7` backup은 staging migration 후 허용하고, legacy 컬럼 없이 유효한 archive가 있는 backup은 현행 상태로 허용한다. partial, neither, archive 손상·원본 충돌은 fail-closed한다.
 - 복원 호환성은 SQLite integrity와 현재 필수 table·column·PK·unique index 및 대표 read로 판단한다. 실제 백업 메뉴 생성 여부나 사용자의 수동 변경 여부를 증명하는 계약은 아니다.
 - `RMAC_TABLE`, `RMAC_TABLE_KR`은 runtime canonical authority는 아니지만 전체 백업 보존 대상이므로 복원 후보에 존재해야 하며 그대로 교체·보존한다.
 - live DB 교체 전 `VACUUM INTO` rollback snapshot을 만들고, 교체 후 검증 실패 시 previous work 또는 rollback snapshot으로 기존 DB를 복구한다.
@@ -325,7 +329,6 @@
 - `WORD_TABLE` 역할 확정
 - expression authority transition
 - meaning legacy projection 축소 또는 제거 정책 확정
-- relation legacy slot·provenance·FK 물리 정리 필요성 판단
 - legacy slot 축소 또는 제거 정책 확정
 
 ### 13.3 병렬 가능성

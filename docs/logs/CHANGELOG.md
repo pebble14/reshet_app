@@ -1,5 +1,10 @@
 # CHANGELOG
 
+- `2026-07-29` `WORD_TABLE.관련1~7`을 work·seed DB에서 물리 제거하고, `WORD_RELATION`으로 정규화되지 않은 미대응 raw 값만 `WORD_LEGACY_RELATED_VALUE`에 비권위적으로 격리했다. relation runtime authority는 계속 `WORD_RELATION`이며 archive는 repository·검색·그래프·상세·관계 편집·history/undo에서 소비하지 않는다.
+- 각 non-null 셀은 정확한 승인 폐기 5건, metadata를 보지 않는 양방향 `WORD_RELATION` endpoint pair 대응값, 미대응 raw 값 순으로 분류한다. work·seed 각각 `7,548 / 5 / 7,539 / 4`였고 archive에는 `G1606_0000/관련3/H5301_0000`, `H5397_0000/관련1/H5315_0000`, `H4320_0000/관련1/H0410_0000`, `H4976_0000/관련1/H5414_0000`만 보존했다.
+- runtime ensure는 full legacy를 한 transaction에서 archive·검증·직접 `DROP COLUMN`하고 current는 no-op한다. partial, neither, archive schema/state·원본 충돌은 fail-closed하며 restore 원본은 read-only 사전검증 후 staging copy에서만 migration한다.
+- work SHA-256은 `4275723C2ECD2D4C6FC2F2C1AC0AFB76ED2BDC0CB25568052098A5B488CA6740`에서 `227313FF83B53F9EC9FE02D7DBD6EF96A8A0F131AE8026E95DC2B143FC96CB2D`로, seed는 `1D431B7E379DFE7CB1AB40AC01DC2A7A7174146371B5248A21D0A41A63C584D8`에서 `699E1CA25DEF8DE2B570524D5C50134C731E31824B1D9A24EF17C5E5C4A3CAF4`로 변경됐다. 양쪽 모두 나머지 `WORD_TABLE` projection과 `WORD_RELATION` digest·행 수 불변, integrity `ok`, FK 위반 0, 관련 schema parity, sidecar 부재를 확인했다.
+- migration·restore·backup·DB lifecycle·fresh seed·history·relation index targeted 테스트 75건과 변경 Dart 9개 파일 정적 분석이 통과했다. UI/UX 동작 변경이 없어 사용자 UI 수동 테스트는 N/A다.
 - `2026-07-29` word history snapshot과 undo 복원 계약에서 `WORD_TABLE.관련1~7`을 제외하고, 과거 snapshot의 해당 key를 무시하도록 했다. relation authority와 relation history/undo는 `WORD_RELATION`으로 유지했으며 물리 컬럼과 기존 값은 변경하지 않았다.
 - `2026-07-29` Explorer full-detail route caller 제거 후 미사용 상태였던 `WordDetailScreen` edit/graph caller-return 생성자 계약과 requested result type을 production에서 제거했다.
 - 상세 편집은 기존 local edit route를, 그래프 action은 기존 standalone graph route를 계속 사용하며 `WordDetailDeletedResult`, `WordDetailRouteResult`, `mutationImpactSince`, `showEditAction`, Home·small-screen 기본 상세 route를 유지했다.

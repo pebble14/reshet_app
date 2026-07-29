@@ -385,7 +385,7 @@ class DatabaseRestoreService implements DatabaseRestoreRunner {
       }
       await _runStage(
         RestoreFailureStage.candidateValidation,
-        () => validator.validateFile(stagedPath!),
+        () => validator.validateRuntimeFile(stagedPath!),
       );
 
       await _runStage(
@@ -409,7 +409,7 @@ class DatabaseRestoreService implements DatabaseRestoreRunner {
         () => _databaseOpener?.call() ?? DatabaseService.openDatabaseFile(),
       );
       await _runStage(RestoreFailureStage.postRestoreValidation, () async {
-        await validator.validateConnection(restoredDatabase);
+        await validator.validateRuntimeConnection(restoredDatabase);
         await restoredDatabase.rawQuery(
           'SELECT COUNT(*) AS row_count FROM WORD_TABLE',
         );
@@ -518,7 +518,7 @@ class DatabaseRestoreService implements DatabaseRestoreRunner {
 
       final reopenedDatabase =
           await (_databaseOpener?.call() ?? DatabaseService.openDatabaseFile());
-      await validator.validateConnection(reopenedDatabase);
+      await validator.validateRuntimeConnection(reopenedDatabase);
       await reopenedDatabase.rawQuery(
         'SELECT COUNT(*) AS row_count FROM WORD_TABLE',
       );

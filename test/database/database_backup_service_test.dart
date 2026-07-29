@@ -270,6 +270,7 @@ void main() {
 Future<void> _createRuntimeFixture(Database database) async {
   for (final statement in const [
     'CREATE TABLE WORD_TABLE (id TEXT PRIMARY KEY, 언어 TEXT, 스트롱넘버 TEXT, 표기1 TEXT, 의미1 TEXT, 비고 TEXT)',
+    _legacyRelatedArchiveDdl,
     'CREATE TABLE WORD_RELATION (id INTEGER PRIMARY KEY, word_id_1 TEXT, word_id_2 TEXT, category_code TEXT, relation_type TEXT, status_code TEXT, direction_code TEXT, description TEXT, relation_group_id TEXT)',
     'CREATE TABLE word_expression_set (id INTEGER PRIMARY KEY, word_id TEXT, seq INTEGER, is_representative INTEGER, spelling TEXT, transliteration TEXT, pronunciation TEXT, pronunciation_notation TEXT, pronunciation_notation_name TEXT)',
     'CREATE TABLE word_meaning_set (id INTEGER PRIMARY KEY, word_id TEXT, seq INTEGER, meaning TEXT)',
@@ -295,6 +296,29 @@ Future<void> _createRuntimeFixture(Database database) async {
     '비고': 'Phase 48-B1 대표 행',
   });
 }
+
+const _legacyRelatedArchiveDdl = '''
+  CREATE TABLE WORD_LEGACY_RELATED_VALUE (
+    source_word_id TEXT NOT NULL,
+    source_column TEXT NOT NULL CHECK (
+      source_column IN (
+        '관련1',
+        '관련2',
+        '관련3',
+        '관련4',
+        '관련5',
+        '관련6',
+        '관련7'
+      )
+    ),
+    target_raw_value TEXT NOT NULL,
+    preservation_state TEXT NOT NULL CHECK (
+      preservation_state = 'unresolved_legacy'
+    ),
+    source_table TEXT NOT NULL CHECK (source_table = 'WORD_TABLE'),
+    PRIMARY KEY (source_word_id, source_column)
+  )
+''';
 
 class _FakeDestinationWriter implements BackupDestinationWriter {
   _FakeDestinationWriter({this.result});

@@ -363,7 +363,8 @@ Word/relation history 경계는 다음과 같다.
 - word history snapshot은 `WORD_TABLE.관련1~7`을 저장하지 않는다.
 - 과거 word snapshot에 `관련1~7` key가 있어도 `WORD_TABLE` update/insert undo payload에서는 무시한다.
 - 현재 relation 저장·조회와 relation history/undo authority는 `WORD_RELATION`이다.
-- 이 경계는 `관련1~7` 물리 컬럼 삭제나 legacy-only 관계 9건의 처리가 완료됐다는 의미가 아니다.
+- `관련1~7` 물리 컬럼은 제거됐으며, 미대응 raw 값만 `WORD_LEGACY_RELATED_VALUE`에 비권위적으로 격리한다.
+- repository와 history/undo는 `WORD_LEGACY_RELATED_VALUE`를 읽거나 관계 authority로 사용하지 않는다.
 
 History는 다음을 직접 정의하지 않는다.
 

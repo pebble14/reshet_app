@@ -427,6 +427,7 @@ Future<void> _createSyntheticSeedDb(String path) async {
         [의미7] TEXT
       )
     ''');
+    await db.execute(_legacyRelatedArchiveDdl);
 
     await db.execute('''
       CREATE TABLE WORD_RELATION (
@@ -523,6 +524,29 @@ Future<void> _createSyntheticSeedDb(String path) async {
     await db.close();
   }
 }
+
+const _legacyRelatedArchiveDdl = '''
+  CREATE TABLE WORD_LEGACY_RELATED_VALUE (
+    source_word_id TEXT NOT NULL,
+    source_column TEXT NOT NULL CHECK (
+      source_column IN (
+        '관련1',
+        '관련2',
+        '관련3',
+        '관련4',
+        '관련5',
+        '관련6',
+        '관련7'
+      )
+    ),
+    target_raw_value TEXT NOT NULL,
+    preservation_state TEXT NOT NULL CHECK (
+      preservation_state = 'unresolved_legacy'
+    ),
+    source_table TEXT NOT NULL CHECK (source_table = 'WORD_TABLE'),
+    PRIMARY KEY (source_word_id, source_column)
+  )
+''';
 
 Future<void> _stripWordExpressionSetFromSeedCopy(
   String isolatedRootPath,
