@@ -2425,30 +2425,6 @@ class WordRepository {
         .toList(growable: false);
   }
 
-  /// 특정 단어와 연결된 모든 단어 목록 조회 (WORD_RELATION 기반)
-  Future<List<Word>> getConnectedWords(String wordId) async {
-    final db = await DatabaseService.openDatabaseFile();
-
-    final result = await db.rawQuery(
-      '''
-      SELECT * FROM WORD_TABLE
-      WHERE id IN (
-        SELECT CASE
-          WHEN word_id_1 = ?
-            THEN word_id_2
-          ELSE word_id_1
-        END
-        FROM WORD_RELATION
-        WHERE word_id_1 = ?
-           OR word_id_2 = ?
-      )
-    ''',
-      [wordId, wordId, wordId],
-    );
-
-    return result.map((map) => Word.fromMap(map)).toList();
-  }
-
   /// 특정 단어(wordId)와 연결된 관계(엣지) 메타 정보 조회
   /// - WORD_RELATION + RELATION_TYPE + RELATION_CATEGORY를 조인한다.
   /// - WORD_RELATION에 존재하지만 코드 테이블에 없는 값(예: unspecified, related)은
