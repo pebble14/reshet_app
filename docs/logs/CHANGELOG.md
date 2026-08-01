@@ -1,5 +1,8 @@
 # CHANGELOG
 
+- `2026-08-01` expression edit-seed와 graph-create-cancel repository 테스트를 `Directory.systemTemp`의 고유 data root와 명시적 `DatabaseService` override로 격리했다. graph-create-cancel 테스트는 actual work DB의 과거 fixture/history를 상속하지 않도록 seed 복사본에서 isolated work DB를 구성하며, 공용 guard가 actual work·seed 경로 충돌과 system temp 밖 경로를 DB open 전에 거부한다.
+- work DB에서 확인된 expression 테스트 fixture parent 2행과 직접 종속 `word_expression_set` 1행·`word_meaning_set` 1행만 단일 transaction으로 제거했다. archive·canonical 추가와 seed DB 변경은 없으며 work SHA-256은 `066B8870AF3C388360598ABA27B9B0B0D23BD17446A358A4C2BAEA9130633BEC`에서 `CBBD36BCA4B64E8A57C59B9A8305ADA9668E21E62977BE6170DF8A6CDF1587BA`로 변경됐다.
+- 두 focused 테스트는 각각 2개·4개가 통과했고 변경 Dart 파일 제한 analyze는 issue가 없었다. 테스트 전후 actual work·seed SHA와 sidecar 부재는 동일하고 두 fixture ID는 재생성되지 않았으며, expression 18컬럼 제거·archive 생성·발음 끝 공백 처리는 계속 후속으로 남긴다.
 - `2026-07-29` active expression runtime read/write와 신규 word history·undo core DML을 `WORD_TABLE.표기1~6`·`음역1~6`·`발음1~6` 물리 컬럼에서 분리했다. owner-specific `NORMALIZED_ONLY` read는 해당 18개 컬럼을 SQL projection에 포함하거나 legacy adapter를 eager 실행하지 않으며, 필요한 legacy-shaped map은 `word_expression_set` canonical row에서 메모리로 materialize한다.
 - expression create/update는 `word_expression_set`만 갱신한다. create는 18개 물리 slot을 채우지 않고 update는 기존 물리 값을 변경하거나 비우지 않으며, `seq>6` expression과 대표값·순서·발음 notation metadata 계약을 유지한다.
 - 신규 word history에는 normalized expression rows를 기록하고 18개 legacy key를 포함하지 않는다. normalized payload가 없는 구형 update/delete history decoder는 해당 key를 canonical 복원 입력으로 유지하지만, 별도 core DML sanitizer가 신규·구형 payload의 legacy expression key를 `WORD_TABLE` insert/update column list에서 제외한다.

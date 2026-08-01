@@ -117,7 +117,7 @@
 - 대표 meaning은 materialized 표시 목록의 첫 번째 값이다.
 - live `WORD_TABLE.의미1~7`은 물리 제거됐고 canonical authority나 live fallback으로 사용하지 않는다. full legacy startup·restore 입력과 legacy history decode만 compatibility 경계로 해석한다.
 - 2026-07-29 제거 전 검증에서 work DB의 legacy non-empty meaning과 `word_meaning_set`은 각각 18,193건, seed DB는 각각 18,188건이며 양쪽 모두 missing/extra 0으로 일치했다. 제거 후 canonical row 수와 내용은 불변이다.
-- work DB에 유입됐던 확인된 테스트 fixture 단어 4행과 직접 종속 `word_expression_set` 5행은 제거됐고 seed DB는 변경하지 않았다.
+- work DB에 유입됐던 앞선 확인 fixture 단어 4행과 직접 종속 `word_expression_set` 5행은 제거됐다. 2026-08-01 추가로 확정한 expression 테스트 fixture parent 2행과 직접 종속 `word_expression_set` 1행·`word_meaning_set` 1행도 제거했으며 seed DB는 변경하지 않았다.
 
 #### 5.4.3 seed/work DB와 runtime ensure 경계
 

@@ -7,22 +7,27 @@ import 'package:reshet_app/database/database_service.dart';
 import 'package:reshet_app/domain/expression/read_source_policy.dart';
 import 'package:reshet_app/domain/word/word_edit_seed.dart';
 
+import '../../support/database_test_isolation_guard.dart';
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   late String repoRootPath;
   late String sourceWorkDbPath;
+  late String sourceSeedDbPath;
   Directory? isolatedRoot;
 
   setUpAll(() async {
     repoRootPath = Directory.current.path;
     sourceWorkDbPath = p.join(repoRootPath, 'data', 'reshet_work.db');
+    sourceSeedDbPath = p.join(repoRootPath, 'data', 'reshet_seed.db');
 
     expect(
       File(sourceWorkDbPath).existsSync(),
       isTrue,
       reason: 'edit seed read context test needs the seed work DB.',
     );
+    expect(File(sourceSeedDbPath).existsSync(), isTrue);
 
     await DatabaseService.closeDatabase();
     DatabaseService.setDataRootOverrideForTest(null);
@@ -34,12 +39,16 @@ void main() {
     WordRepository.debugSetReadSourcePolicyOverride(null);
     WordRepository.debugReadSourceCollector.debugReset();
     isolatedRoot = await _createIsolatedWorkspace(
-      repoRootPath,
       sourceWorkDbPath,
+      sourceSeedDbPath,
     );
-    DatabaseService.setDataRootOverrideForTest(
-      p.join(isolatedRoot!.path, 'data'),
+    final isolatedDataRootPath = p.join(isolatedRoot!.path, 'data');
+    ensureSystemTempDatabaseTargets(
+      dataRootPath: isolatedDataRootPath,
+      actualWorkDbPath: sourceWorkDbPath,
+      actualSeedDbPath: sourceSeedDbPath,
     );
+    DatabaseService.setDataRootOverrideForTest(isolatedDataRootPath);
   });
 
   tearDown(() async {
@@ -109,7 +118,7 @@ void main() {
         expect(detailSeed.language, rawSeed.language);
         expect(detailSeed.strongNumber, rawSeed.strongNumber);
         expect(detailSeed.note, rawSeed.note);
-        expect(detailSeed.meanings, rawSeed.meanings);
+        expect(detailSeed.meanings, const ['edit seed meaning']);
         expect(detailSeed.expressionReadResult.sets, hasLength(1));
         final rawExpressionSet = rawSeed.expressionReadResult.sets.single;
         final detailExpressionSet = detailSeed.expressionReadResult.sets.single;
@@ -145,7 +154,7 @@ void main() {
         expect(explorerSeed.language, rawSeed.language);
         expect(explorerSeed.strongNumber, rawSeed.strongNumber);
         expect(explorerSeed.note, rawSeed.note);
-        expect(explorerSeed.meanings, rawSeed.meanings);
+        expect(explorerSeed.meanings, const ['edit seed meaning']);
         expect(explorerSeed.expressionReadResult.sets, hasLength(1));
         final explorerExpressionSet =
             explorerSeed.expressionReadResult.sets.single;
@@ -180,7 +189,7 @@ void main() {
         expect(graphCreateSeed.language, rawSeed.language);
         expect(graphCreateSeed.strongNumber, rawSeed.strongNumber);
         expect(graphCreateSeed.note, rawSeed.note);
-        expect(graphCreateSeed.meanings, rawSeed.meanings);
+        expect(graphCreateSeed.meanings, const ['edit seed meaning']);
         expect(graphCreateSeed.expressionReadResult.sets, hasLength(1));
         final graphCreateExpressionSet =
             graphCreateSeed.expressionReadResult.sets.single;
@@ -344,7 +353,6 @@ Future<Map<String, dynamic>> _insertWord(
     '\uC74C\uC5ED1': legacyTransliteration,
     '\uBC1C\uC74C1': legacyPronunciation,
     '\uC74C\uC5ED2': hiddenTransliteration2,
-    '\uC758\uBBF81': meaning1,
     '\uBE44\uACE0': note,
   };
 
@@ -362,25 +370,17 @@ Future<Map<String, dynamic>> _insertWord(
 }
 
 Future<Directory> _createIsolatedWorkspace(
-  String repoRootPath,
   String sourceWorkDbPath,
+  String sourceSeedDbPath,
 ) async {
-  final tmpRoot = Directory(
-    p.join(repoRootPath, '.tmp_edit_seed_read_context_tests'),
+  final isolatedRoot = await Directory.systemTemp.createTemp(
+    'reshet_edit_seed_read_context_tests_',
   );
-  if (!tmpRoot.existsSync()) {
-    await tmpRoot.create(recursive: true);
-  }
-
-  final isolatedRoot = Directory(
-    p.join(tmpRoot.path, 'case_${DateTime.now().microsecondsSinceEpoch}'),
-  );
-  await isolatedRoot.create(recursive: true);
 
   final dataDir = Directory(p.join(isolatedRoot.path, 'data'));
   await dataDir.create(recursive: true);
 
-  await File(sourceWorkDbPath).copy(p.join(dataDir.path, 'reshet_seed.db'));
+  await File(sourceSeedDbPath).copy(p.join(dataDir.path, 'reshet_seed.db'));
   await File(sourceWorkDbPath).copy(p.join(dataDir.path, 'reshet_work.db'));
 
   return isolatedRoot;
