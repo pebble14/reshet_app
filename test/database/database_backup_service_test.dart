@@ -269,8 +269,9 @@ void main() {
 
 Future<void> _createRuntimeFixture(Database database) async {
   for (final statement in const [
-    'CREATE TABLE WORD_TABLE (id TEXT PRIMARY KEY, 언어 TEXT, 스트롱넘버 TEXT, 표기1 TEXT, 비고 TEXT)',
+    'CREATE TABLE WORD_TABLE (id TEXT PRIMARY KEY, 언어 TEXT, 스트롱넘버 TEXT, 비고 TEXT)',
     _legacyRelatedArchiveDdl,
+    _legacyExpressionArchiveDdl,
     'CREATE TABLE WORD_RELATION (id INTEGER PRIMARY KEY, word_id_1 TEXT, word_id_2 TEXT, category_code TEXT, relation_type TEXT, status_code TEXT, direction_code TEXT, description TEXT, relation_group_id TEXT)',
     'CREATE TABLE word_expression_set (id INTEGER PRIMARY KEY, word_id TEXT, seq INTEGER, is_representative INTEGER, spelling TEXT, transliteration TEXT, pronunciation TEXT, pronunciation_notation TEXT, pronunciation_notation_name TEXT)',
     'CREATE TABLE word_meaning_set (id INTEGER PRIMARY KEY, word_id TEXT, seq INTEGER, meaning TEXT)',
@@ -317,6 +318,22 @@ const _legacyRelatedArchiveDdl = '''
     ),
     source_table TEXT NOT NULL CHECK (source_table = 'WORD_TABLE'),
     PRIMARY KEY (source_word_id, source_column)
+  )
+''';
+
+const _legacyExpressionArchiveDdl = '''
+  CREATE TABLE WORD_LEGACY_EXPRESSION_VALUE (
+    source_word_id TEXT NOT NULL,
+    expression_type TEXT NOT NULL CHECK (
+      expression_type IN ('spelling', 'transliteration', 'pronunciation')
+    ),
+    source_slot INTEGER NOT NULL CHECK (source_slot BETWEEN 1 AND 6),
+    raw_value TEXT NOT NULL,
+    preservation_reason TEXT NOT NULL CHECK (
+      preservation_reason = 'trailing_space_only'
+    ),
+    source_table TEXT NOT NULL CHECK (source_table = 'WORD_TABLE'),
+    PRIMARY KEY (source_word_id, expression_type, source_slot)
   )
 ''';
 

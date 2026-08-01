@@ -141,10 +141,7 @@ void main() {
       expect(await _loadActualMeaningRows(wordId), [
         (wordId: wordId, seq: 1, meaning: '첫째 의미'),
       ]);
-      expect(
-        _readExpressionSlots(await _loadWordTableRow(wordId)).values,
-        everyElement(isNull),
-      );
+      _expectNoLegacyExpressionKeys(await _loadWordTableRow(wordId));
       expect(
         _readMeaningSlots(await _loadWordTableRow(wordId)).values,
         everyElement(isNull),
@@ -246,7 +243,7 @@ void main() {
     });
 
     test(
-      'create update and undo preserve 7+ canonical expressions without changing physical slots',
+      'create update and undo preserve 7+ canonical expressions without legacy columns',
       () async {
         final repository = WordRepository();
         const wordId = 'T9000_1012';
@@ -277,10 +274,7 @@ void main() {
         ]);
 
         final createdWordRow = await _loadWordTableRow(wordId);
-        expect(
-          _readExpressionSlots(createdWordRow).values,
-          everyElement(isNull),
-        );
+        _expectNoLegacyExpressionKeys(createdWordRow);
         expect(createdWordRow.containsKey('표기7'), isFalse);
         expect(createdWordRow.containsKey('음역7'), isFalse);
         expect(createdWordRow.containsKey('발음7'), isFalse);
@@ -317,22 +311,6 @@ void main() {
         expect(_readHistoryNormalizedRows(createHistoryAfter), hasLength(7));
         _expectNoLegacyExpressionKeys(createHistoryAfter);
 
-        final db = await DatabaseService.openDatabaseFile();
-        final physicalExpressionSentinels = <String, Object?>{
-          for (var index = 1; index <= 6; index++)
-            '표기$index': 'physical_spelling_$index',
-          for (var index = 1; index <= 6; index++)
-            '음역$index': 'physical_transliteration_$index',
-          for (var index = 1; index <= 6; index++)
-            '발음$index': 'physical_pronunciation_$index',
-        };
-        await db.update(
-          'WORD_TABLE',
-          physicalExpressionSentinels,
-          where: 'id = ?',
-          whereArgs: [wordId],
-        );
-
         await repository.updateWord(
           id: wordId,
           payload: _payload(expressionSets: updatedExpressions),
@@ -363,10 +341,7 @@ void main() {
         expect(_readHistoryNormalizedRows(updateHistoryAfter), hasLength(7));
         _expectNoLegacyExpressionKeys(updateHistoryBefore);
         _expectNoLegacyExpressionKeys(updateHistoryAfter);
-        expect(
-          _readExpressionSlots(await _loadWordTableRow(wordId)),
-          physicalExpressionSentinels,
-        );
+        _expectNoLegacyExpressionKeys(await _loadWordTableRow(wordId));
 
         final undone = await repository.undoLastChange();
         expect(undone.didUndo, isTrue);
@@ -381,10 +356,7 @@ void main() {
               pronunciation: 'phase33_original_pron_$index',
             ),
         ]);
-        expect(
-          _readExpressionSlots(await _loadWordTableRow(wordId)),
-          physicalExpressionSentinels,
-        );
+        _expectNoLegacyExpressionKeys(await _loadWordTableRow(wordId));
       },
     );
 
@@ -427,10 +399,7 @@ void main() {
           await _loadWordTableRow(wordId),
         );
         expect(legacyMeaningSlotsBefore.values, everyElement(isNull));
-        final physicalExpressionSlotsBefore = _readExpressionSlots(
-          await _loadWordTableRow(wordId),
-        );
-        expect(physicalExpressionSlotsBefore.values, everyElement(isNull));
+        _expectNoLegacyExpressionKeys(await _loadWordTableRow(wordId));
 
         await repository.updateWord(
           id: wordId,
@@ -462,10 +431,7 @@ void main() {
           _readMeaningSlots(await _loadWordTableRow(wordId)),
           legacyMeaningSlotsBefore,
         );
-        expect(
-          _readExpressionSlots(await _loadWordTableRow(wordId)),
-          physicalExpressionSlotsBefore,
-        );
+        _expectNoLegacyExpressionKeys(await _loadWordTableRow(wordId));
 
         final actualRows = await _loadActualSemanticRows(wordId);
         expect(actualRows, hasLength(2));
@@ -510,7 +476,16 @@ void main() {
           prefix: 'columnless_updated',
         );
 
-        await _dropLegacyExpressionColumns(db);
+        final wordTableColumns = (await db.rawQuery(
+          "PRAGMA table_info('WORD_TABLE')",
+        )).map((row) => row['name']).whereType<String>().toSet();
+        expect(
+          wordTableColumns.intersection({
+            for (final prefix in const ['표기', '음역', '발음'])
+              for (var index = 1; index <= 6; index++) '$prefix$index',
+          }),
+          isEmpty,
+        );
 
         await repository.createWord(
           id: wordId,
@@ -935,18 +910,6 @@ void main() {
             ],
           ),
         );
-        final db = await DatabaseService.openDatabaseFile();
-        await db.update(
-          'WORD_TABLE',
-          const {
-            '표기1': 'physical-zeta',
-            '음역1': 'physical-zeta-transliteration',
-            '발음1': 'physical-zeta-pronunciation',
-          },
-          where: 'id = ?',
-          whereArgs: [wordId],
-        );
-
         await repository.updateWord(
           id: wordId,
           payload: _payload(
@@ -988,9 +951,7 @@ void main() {
 
         final restoredWordRow = await _loadWordTableRow(wordId);
         final restoredNormalizedRows = await _loadActualSemanticRows(wordId);
-        expect(restoredWordRow['표기1'], 'physical-zeta');
-        expect(restoredWordRow['음역1'], 'physical-zeta-transliteration');
-        expect(restoredWordRow['발음1'], 'physical-zeta-pronunciation');
+        _expectNoLegacyExpressionKeys(restoredWordRow);
         expect(_readMeaningSlots(restoredWordRow).values, everyElement(isNull));
         expect(restoredNormalizedRows, [
           (
@@ -1173,10 +1134,7 @@ void main() {
         expect(undone.didUndo, isTrue);
 
         final restoredWordRow = await _loadWordTableRow(wordId);
-        expect(
-          _readExpressionSlots(restoredWordRow).values,
-          everyElement(isNull),
-        );
+        _expectNoLegacyExpressionKeys(restoredWordRow);
         expect(restoredWordRow['비고'], originalNote);
         for (final column in relatedColumns) {
           expect(restoredWordRow.containsKey(column), isFalse);
@@ -1280,10 +1238,7 @@ void main() {
           _readMeaningSlots(await _loadWordTableRow(wordId)).values,
           everyElement(isNull),
         );
-        expect(
-          _readExpressionSlots(await _loadWordTableRow(wordId)).values,
-          everyElement(isNull),
-        );
+        _expectNoLegacyExpressionKeys(await _loadWordTableRow(wordId));
       },
     );
 
@@ -1348,10 +1303,7 @@ void main() {
           _readMeaningSlots(await _loadWordTableRow(wordId)).values,
           everyElement(isNull),
         );
-        expect(
-          _readExpressionSlots(await _loadWordTableRow(wordId)).values,
-          everyElement(isNull),
-        );
+        _expectNoLegacyExpressionKeys(await _loadWordTableRow(wordId));
       },
     );
 
@@ -1641,14 +1593,6 @@ void _expectNoLegacyExpressionKeys(Map<String, dynamic> snapshot) {
   }
 }
 
-Future<void> _dropLegacyExpressionColumns(dynamic db) async {
-  for (final prefix in const ['표기', '음역', '발음']) {
-    for (var index = 1; index <= 6; index++) {
-      await db.execute('ALTER TABLE WORD_TABLE DROP COLUMN "$prefix$index"');
-    }
-  }
-}
-
 Future<Map<String, dynamic>> _loadWordTableRow(String wordId) async {
   final db = await DatabaseService.openDatabaseFile();
   final rows = await db.query(
@@ -1665,14 +1609,6 @@ Future<Map<String, dynamic>> _loadWordTableRow(String wordId) async {
 Map<String, Object?> _readMeaningSlots(Map<String, dynamic> wordRow) {
   return {
     for (var index = 1; index <= 7; index++) '의미$index': wordRow['의미$index'],
-  };
-}
-
-Map<String, Object?> _readExpressionSlots(Map<String, dynamic> wordRow) {
-  return {
-    for (final prefix in const ['표기', '음역', '발음'])
-      for (var index = 1; index <= 6; index++)
-        '$prefix$index': wordRow['$prefix$index'],
   };
 }
 

@@ -1,5 +1,29 @@
 # Read Source Migration
 
+## 2026-08-01 표현 물리 slot 제거 및 exact raw archive 전환
+
+### 현재 상태
+
+- normal runtime의 expression read/write와 새 history authority는 `word_expression_set`이다.
+- work·seed DB의 `WORD_TABLE.표기1~6`·`음역1~6`·`발음1~6`은 물리 제거됐다. canonical expression의 전체 필드와 `word_id ASC, seq ASC, id ASC` 순서는 제거 전후 동일하다.
+- legacy-shaped map이 필요한 내부 호환 경계는 canonical row를 메모리에서 materialize한다. `WORD_LEGACY_EXPRESSION_VALUE`는 runtime read source, fallback, canonical materialization 입력이 아니다.
+- 신규 history는 normalized expression payload만 기록한다. normalized payload가 없는 구형 history의 18개 key는 canonical 복원 입력으로만 해석하고 `WORD_TABLE` core DML에서는 제외한다.
+
+### startup·restore 호환 경계
+
+- runtime ensure와 restore 사전검증은 legacy 18컬럼의 전체 존재 또는 전체 부재만 허용한다. 일부 컬럼만 있는 schema는 다른 쓰기 전에 fail-closed한다.
+- full legacy schema는 canonical과 단어 ID·종류·compact 순서·값을 exact 비교한다. exact 대응값은 archive하지 않고, canonical 발음 뒤에 ASCII 공백만 추가된 raw 값만 `WORD_LEGACY_EXPRESSION_VALUE`에 그대로 보존한다.
+- legacy-only, canonical-only, 순서 불일치, 표기·음역 raw 불일치, 발음의 비공백 불일치, archive schema·행 충돌은 transaction 전체를 fail-closed한다.
+- full legacy migration은 canonical과 `WORD_TABLE` 잔여 값·schema를 snapshot한 한 transaction 안에서 archive·검증·18컬럼 제거·사후검증을 수행한다. current schema는 유효한 canonical·archive를 검증한 뒤 no-op한다.
+- restore 원본에는 migration을 실행하지 않는다. read-only 사전검증 뒤 앱 소유 staging copy에서만 runtime ensure를 수행한다.
+
+### actual DB 적용 결과
+
+- work·seed 각각 발음 slot 1의 `E0000_0032`, `E0000_0118` 두 raw 값만 `trailing_space_only`로 archive했다. 두 raw의 UTF-8 hex는 각각 `CB8865C9AA6E64CA926C20`, `CB88706CC3A67374C9AA6B20`이다.
+- work canonical 15,261행과 seed canonical 15,257행의 deterministic digest는 전후 동일했다. `WORD_TABLE` 잔여 projection과 모든 비대상 table 내용도 전후 동일했다.
+- 양 DB 모두 `PRAGMA integrity_check = ok`, `PRAGMA foreign_key_check` 0건이며 migration 2차 실행 전후 파일 SHA-256도 동일했다.
+- 아래의 이전 expression section은 각 작업 시점의 migration history다. expression의 최신 active boundary는 이 section을 우선한다.
+
 ## 2026-07-29 meaning 물리 slot 제거 및 startup·restore 호환 전환
 
 ### 현재 상태

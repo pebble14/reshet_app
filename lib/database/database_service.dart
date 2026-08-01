@@ -28,6 +28,12 @@ typedef _ClassifiedLegacyRelatedCell = ({
 
 typedef _LegacyRelatedCellKey = ({String sourceWordId, String sourceColumn});
 
+typedef _LegacyExpressionArchiveCandidate = ({
+  String sourceWordId,
+  int sourceSlot,
+  String rawValue,
+});
+
 class DatabaseService {
   static Database? _database;
   static String? _dataRootOverrideForTest;
@@ -66,6 +72,82 @@ class DatabaseService {
     '의미6',
     '의미7',
   ];
+  static const String _legacyExpressionArchiveTableName =
+      'WORD_LEGACY_EXPRESSION_VALUE';
+  static const String _legacyExpressionSourceTable = 'WORD_TABLE';
+  static const String _legacyExpressionTypePronunciation = 'pronunciation';
+  static const String _legacyExpressionPreservationReason =
+      'trailing_space_only';
+  static const List<String> _legacyExpressionColumns = [
+    '표기1',
+    '표기2',
+    '표기3',
+    '표기4',
+    '표기5',
+    '표기6',
+    '음역1',
+    '음역2',
+    '음역3',
+    '음역4',
+    '음역5',
+    '음역6',
+    '발음1',
+    '발음2',
+    '발음3',
+    '발음4',
+    '발음5',
+    '발음6',
+  ];
+  static const String _legacyExpressionArchiveTableDdl = '''
+    CREATE TABLE WORD_LEGACY_EXPRESSION_VALUE (
+      source_word_id TEXT NOT NULL,
+      expression_type TEXT NOT NULL CHECK (
+        expression_type IN ('spelling', 'transliteration', 'pronunciation')
+      ),
+      source_slot INTEGER NOT NULL CHECK (source_slot BETWEEN 1 AND 6),
+      raw_value TEXT NOT NULL,
+      preservation_reason TEXT NOT NULL CHECK (
+        preservation_reason = 'trailing_space_only'
+      ),
+      source_table TEXT NOT NULL CHECK (source_table = 'WORD_TABLE'),
+      PRIMARY KEY (source_word_id, expression_type, source_slot)
+    )
+  ''';
+  static const String _legacyExpressionRowsCte = '''
+    legacy_expression_slots(
+      word_id,
+      source_slot,
+      spelling_raw,
+      transliteration_raw,
+      pronunciation_raw
+    ) AS (
+      SELECT id, 1, [표기1], [음역1], [발음1] FROM WORD_TABLE
+      UNION ALL
+      SELECT id, 2, [표기2], [음역2], [발음2] FROM WORD_TABLE
+      UNION ALL
+      SELECT id, 3, [표기3], [음역3], [발음3] FROM WORD_TABLE
+      UNION ALL
+      SELECT id, 4, [표기4], [음역4], [발음4] FROM WORD_TABLE
+      UNION ALL
+      SELECT id, 5, [표기5], [음역5], [발음5] FROM WORD_TABLE
+      UNION ALL
+      SELECT id, 6, [표기6], [음역6], [발음6] FROM WORD_TABLE
+    ),
+    legacy_expression_rows AS (
+      SELECT
+        word_id,
+        source_slot,
+        ROW_NUMBER() OVER (
+          PARTITION BY word_id
+          ORDER BY source_slot
+        ) AS canonical_seq,
+        spelling_raw,
+        transliteration_raw,
+        pronunciation_raw
+      FROM legacy_expression_slots
+      WHERE NULLIF(TRIM(COALESCE(spelling_raw, '')), '') IS NOT NULL
+    )
+  ''';
   static const Set<_LegacyRelatedCell> _approvedLegacyRelatedDiscards = {
     (
       sourceWordId: 'G1589_0000',
@@ -740,12 +822,14 @@ class DatabaseService {
   /// 이미 열린 임의의 DB connection에 현재 runtime schema 보정을 적용한다.
   /// 외부 복원 원본에는 사용하지 않고 앱 소유 staging/work DB에만 사용한다.
   static Future<void> ensureRuntimeSchema(Database database) async {
+    await _validateLegacyExpressionPreMigrationShape(database);
     await _ensureLegacyRelatedColumnsMigration(database);
     await _ensureWordRelationV2Columns(database);
     await _ensureWordRelationIndexes(database);
     await _ensureHistoryTable(database);
     await _ensureRelationLookupMetadata(database);
     await _ensureWordExpressionSetSchema(database);
+    await _ensureLegacyExpressionColumnsMigration(database);
     await _ensureWordMeaningSetSchema(database);
   }
 
@@ -775,6 +859,23 @@ class DatabaseService {
     Database database,
   ) async {
     await _validateLegacyMeaningSchemaState(database, allowFullLegacy: false);
+  }
+
+  /// restore 원본은 표현 18컬럼이 모두 있거나 모두 제거된 상태만 허용한다.
+  static Future<void> validateLegacyExpressionRestoreCandidate(
+    Database database,
+  ) async {
+    await _validateLegacyExpressionSchemaState(database, allowFullLegacy: true);
+  }
+
+  /// runtime ensure 이후에는 표현 18컬럼이 없고 archive가 유효해야 한다.
+  static Future<void> validateLegacyExpressionRuntimeSchema(
+    Database database,
+  ) async {
+    await _validateLegacyExpressionSchemaState(
+      database,
+      allowFullLegacy: false,
+    );
   }
 
   static Future<void> _ensureLegacyRelatedColumnsMigration(Database db) async {
@@ -1243,6 +1344,606 @@ class DatabaseService {
     return jsonEncode(rows);
   }
 
+  static Future<void> _validateLegacyExpressionPreMigrationShape(
+    DatabaseExecutor db,
+  ) async {
+    final presentLegacyColumns = await _presentLegacyExpressionColumns(db);
+    if (presentLegacyColumns.isNotEmpty &&
+        presentLegacyColumns.length != _legacyExpressionColumns.length) {
+      throw StateError(
+        'legacy 표현 컬럼이 일부만 존재합니다: '
+        '${presentLegacyColumns.join(', ')}',
+      );
+    }
+
+    final archiveExists = await _tableExists(
+      db,
+      _legacyExpressionArchiveTableName,
+    );
+    if (archiveExists) {
+      await _validateLegacyExpressionArchiveTable(db);
+    }
+    if (presentLegacyColumns.isEmpty && !archiveExists) {
+      throw StateError(
+        'legacy 표현 컬럼이 없지만 '
+        '$_legacyExpressionArchiveTableName도 없습니다.',
+      );
+    }
+  }
+
+  static Future<void> _ensureLegacyExpressionColumnsMigration(
+    Database db,
+  ) async {
+    try {
+      await db.transaction((txn) async {
+        final presentLegacyColumns = await _presentLegacyExpressionColumns(txn);
+        final archiveExists = await _tableExists(
+          txn,
+          _legacyExpressionArchiveTableName,
+        );
+
+        if (presentLegacyColumns.isEmpty) {
+          if (!archiveExists) {
+            throw StateError(
+              'legacy 표현 컬럼과 '
+              '$_legacyExpressionArchiveTableName이 모두 없습니다.',
+            );
+          }
+          await _validateLegacyExpressionArchiveTable(txn);
+          return;
+        }
+        if (presentLegacyColumns.length != _legacyExpressionColumns.length) {
+          throw StateError(
+            'legacy 표현 컬럼이 일부만 존재합니다: '
+            '${presentLegacyColumns.join(', ')}',
+          );
+        }
+
+        if (archiveExists) {
+          await _validateLegacyExpressionArchiveTable(txn);
+        }
+        final archiveCandidates = await _readLegacyExpressionArchiveCandidates(
+          txn,
+        );
+        if (archiveExists) {
+          await _validateExistingLegacyExpressionArchiveRows(
+            txn,
+            archiveCandidates,
+            requireComplete: false,
+          );
+        }
+
+        final canonicalSnapshotBefore = await _wordExpressionSnapshot(txn);
+        final remainingColumnContractBefore =
+            await _wordTableRemainingColumnContractSnapshot(txn);
+        final remainingRowsBefore = await _wordTableRemainingRowsSnapshot(txn);
+        final ownedSchemaBefore = await _wordTableOwnedSchemaSnapshot(txn);
+        final foreignKeysBefore = await _wordTableForeignKeySnapshot(txn);
+
+        if (!archiveExists) {
+          await txn.execute(_legacyExpressionArchiveTableDdl);
+        }
+        await _validateLegacyExpressionArchiveTable(txn);
+
+        final existingArchiveKeys =
+            (await txn.query(
+                  _legacyExpressionArchiveTableName,
+                  columns: const [
+                    'source_word_id',
+                    'expression_type',
+                    'source_slot',
+                  ],
+                ))
+                .map(
+                  (row) => (
+                    sourceWordId: row['source_word_id'],
+                    expressionType: row['expression_type'],
+                    sourceSlot: row['source_slot'],
+                  ),
+                )
+                .toSet();
+        for (final candidate in archiveCandidates) {
+          final key = (
+            sourceWordId: candidate.sourceWordId,
+            expressionType: _legacyExpressionTypePronunciation,
+            sourceSlot: candidate.sourceSlot,
+          );
+          if (existingArchiveKeys.contains(key)) {
+            continue;
+          }
+          await txn.insert(_legacyExpressionArchiveTableName, {
+            'source_word_id': candidate.sourceWordId,
+            'expression_type': _legacyExpressionTypePronunciation,
+            'source_slot': candidate.sourceSlot,
+            'raw_value': candidate.rawValue,
+            'preservation_reason': _legacyExpressionPreservationReason,
+            'source_table': _legacyExpressionSourceTable,
+          });
+        }
+        await _validateExistingLegacyExpressionArchiveRows(
+          txn,
+          archiveCandidates,
+          requireComplete: true,
+        );
+
+        for (final column in _legacyExpressionColumns) {
+          await txn.execute(
+            'ALTER TABLE WORD_TABLE DROP COLUMN ${_quoteIdentifier(column)}',
+          );
+        }
+
+        final remainingLegacyColumns = await _presentLegacyExpressionColumns(
+          txn,
+        );
+        if (remainingLegacyColumns.isNotEmpty) {
+          throw StateError(
+            'legacy 표현 컬럼 제거가 완료되지 않았습니다: '
+            '${remainingLegacyColumns.join(', ')}',
+          );
+        }
+        await _validateLegacyExpressionArchiveTable(txn);
+        await _validateExistingLegacyExpressionArchiveRows(
+          txn,
+          archiveCandidates,
+          requireComplete: true,
+        );
+
+        if (await _wordExpressionSnapshot(txn) != canonicalSnapshotBefore) {
+          throw StateError('canonical 표현이 물리 컬럼 제거 중 변경됐습니다.');
+        }
+        if (await _wordTableRemainingColumnContractSnapshot(txn) !=
+            remainingColumnContractBefore) {
+          throw StateError('WORD_TABLE의 나머지 컬럼 계약이 변경됐습니다.');
+        }
+        if (await _wordTableRemainingRowsSnapshot(txn) != remainingRowsBefore) {
+          throw StateError('WORD_TABLE의 나머지 값이 변경됐습니다.');
+        }
+        if (await _wordTableOwnedSchemaSnapshot(txn) != ownedSchemaBefore) {
+          throw StateError('WORD_TABLE의 index 또는 trigger가 변경됐습니다.');
+        }
+        if (await _wordTableForeignKeySnapshot(txn) != foreignKeysBefore) {
+          throw StateError('WORD_TABLE의 foreign key 계약이 변경됐습니다.');
+        }
+      });
+    } catch (error) {
+      throw StateError('표현 legacy migration 실패: $error');
+    }
+  }
+
+  static Future<void> _validateLegacyExpressionSchemaState(
+    DatabaseExecutor db, {
+    required bool allowFullLegacy,
+  }) async {
+    final presentLegacyColumns = await _presentLegacyExpressionColumns(db);
+    if (presentLegacyColumns.isNotEmpty &&
+        presentLegacyColumns.length != _legacyExpressionColumns.length) {
+      throw StateError(
+        'legacy 표현 컬럼이 일부만 존재합니다: '
+        '${presentLegacyColumns.join(', ')}',
+      );
+    }
+
+    final archiveExists = await _tableExists(
+      db,
+      _legacyExpressionArchiveTableName,
+    );
+    if (archiveExists) {
+      await _validateLegacyExpressionArchiveTable(db);
+    }
+
+    if (presentLegacyColumns.length == _legacyExpressionColumns.length) {
+      if (!allowFullLegacy) {
+        throw StateError('legacy 표현 컬럼 18개가 migration 이후에도 남아 있습니다.');
+      }
+
+      final canonicalExists = await _tableExists(db, 'word_expression_set');
+      if (!canonicalExists) {
+        return;
+      }
+      final canonicalCountRows = await db.rawQuery(
+        'SELECT COUNT(*) AS row_count FROM word_expression_set',
+      );
+      final canonicalCount = canonicalCountRows.single['row_count'] as int;
+      if (canonicalCount == 0) {
+        if (archiveExists) {
+          final archiveCountRows = await db.rawQuery(
+            'SELECT COUNT(*) AS row_count '
+            'FROM $_legacyExpressionArchiveTableName',
+          );
+          if (archiveCountRows.single['row_count'] != 0) {
+            throw StateError('canonical 표현이 비어 있는데 표현 archive 행이 존재합니다.');
+          }
+        }
+        return;
+      }
+
+      final archiveCandidates = await _readLegacyExpressionArchiveCandidates(
+        db,
+      );
+      if (archiveExists) {
+        await _validateExistingLegacyExpressionArchiveRows(
+          db,
+          archiveCandidates,
+          requireComplete: false,
+        );
+      }
+      return;
+    }
+
+    if (!archiveExists) {
+      throw StateError(
+        'legacy 표현 컬럼이 없지만 '
+        '$_legacyExpressionArchiveTableName도 없습니다.',
+      );
+    }
+    if (!await _tableExists(db, 'word_expression_set')) {
+      throw StateError('legacy 표현 컬럼이 없지만 word_expression_set도 없습니다.');
+    }
+  }
+
+  static Future<Set<String>> _presentLegacyExpressionColumns(
+    DatabaseExecutor db,
+  ) async {
+    final tableColumns = await db.rawQuery("PRAGMA table_info('WORD_TABLE')");
+    final names = tableColumns
+        .map((row) => row['name'])
+        .whereType<String>()
+        .toSet();
+    return _legacyExpressionColumns.where(names.contains).toSet();
+  }
+
+  static Future<List<_LegacyExpressionArchiveCandidate>>
+  _readLegacyExpressionArchiveCandidates(DatabaseExecutor db) async {
+    final supplementalRows = await db.rawQuery('''
+      WITH $_legacyExpressionRowsCte
+      SELECT COUNT(*) AS issue_count
+      FROM legacy_expression_slots
+      WHERE NULLIF(TRIM(COALESCE(spelling_raw, '')), '') IS NULL
+        AND (
+          NULLIF(TRIM(COALESCE(transliteration_raw, '')), '') IS NOT NULL OR
+          NULLIF(TRIM(COALESCE(pronunciation_raw, '')), '') IS NOT NULL
+        )
+    ''');
+    final supplementalCount = supplementalRows.single['issue_count'] as int;
+    if (supplementalCount != 0) {
+      throw StateError(
+        '표기 없이 legacy 음역 또는 발음만 있는 slot이 '
+        '$supplementalCount건 있습니다.',
+      );
+    }
+
+    final coverageRows = await db.rawQuery('''
+      WITH $_legacyExpressionRowsCte
+      SELECT
+        (
+          SELECT COUNT(*)
+          FROM legacy_expression_rows legacy
+          LEFT JOIN word_expression_set canonical
+            ON canonical.word_id = legacy.word_id
+           AND canonical.seq = legacy.canonical_seq
+          WHERE canonical.word_id IS NULL
+        ) AS legacy_only_count,
+        (
+          SELECT COUNT(*)
+          FROM word_expression_set canonical
+          LEFT JOIN legacy_expression_rows legacy
+            ON legacy.word_id = canonical.word_id
+           AND legacy.canonical_seq = canonical.seq
+          WHERE legacy.word_id IS NULL
+        ) AS canonical_only_count
+    ''');
+    final coverage = coverageRows.single;
+    final legacyOnlyCount = coverage['legacy_only_count'] as int;
+    final canonicalOnlyCount = coverage['canonical_only_count'] as int;
+    if (legacyOnlyCount != 0 || canonicalOnlyCount != 0) {
+      throw StateError(
+        'legacy/canonical 표현 대응 수가 일치하지 않습니다: '
+        'legacy-only=$legacyOnlyCount, canonical-only=$canonicalOnlyCount',
+      );
+    }
+
+    final normalizedMismatchRows = await db.rawQuery('''
+      WITH $_legacyExpressionRowsCte
+      SELECT COUNT(*) AS mismatch_count
+      FROM legacy_expression_rows legacy
+      INNER JOIN word_expression_set canonical
+        ON canonical.word_id = legacy.word_id
+       AND canonical.seq = legacy.canonical_seq
+      WHERE canonical.spelling IS NOT TRIM(legacy.spelling_raw)
+         OR canonical.transliteration IS NOT NULLIF(
+              TRIM(COALESCE(legacy.transliteration_raw, '')),
+              ''
+            )
+         OR canonical.pronunciation IS NOT NULLIF(
+              TRIM(COALESCE(legacy.pronunciation_raw, '')),
+              ''
+            )
+    ''');
+    final normalizedMismatchCount =
+        normalizedMismatchRows.single['mismatch_count'] as int;
+    if (normalizedMismatchCount != 0) {
+      throw StateError(
+        'trim 계약으로도 canonical과 일치하지 않는 legacy 표현이 '
+        '$normalizedMismatchCount건 있습니다.',
+      );
+    }
+
+    final invalidTypeRows = await db.rawQuery('''
+      WITH $_legacyExpressionRowsCte
+      SELECT COUNT(*) AS invalid_count
+      FROM legacy_expression_rows legacy
+      INNER JOIN word_expression_set canonical
+        ON canonical.word_id = legacy.word_id
+       AND canonical.seq = legacy.canonical_seq
+      WHERE typeof(legacy.spelling_raw) <> 'text'
+         OR (
+              legacy.transliteration_raw IS NOT NULL AND
+              typeof(legacy.transliteration_raw) <> 'text'
+            )
+         OR (
+              legacy.pronunciation_raw IS NOT NULL AND
+              typeof(legacy.pronunciation_raw) <> 'text'
+            )
+         OR typeof(canonical.spelling) <> 'text'
+         OR (
+              canonical.transliteration IS NOT NULL AND
+              typeof(canonical.transliteration) <> 'text'
+            )
+         OR (
+              canonical.pronunciation IS NOT NULL AND
+              typeof(canonical.pronunciation) <> 'text'
+            )
+    ''');
+    final invalidTypeCount = invalidTypeRows.single['invalid_count'] as int;
+    if (invalidTypeCount != 0) {
+      throw StateError(
+        'TEXT/NULL 계약을 벗어난 legacy 또는 canonical 표현이 '
+        '$invalidTypeCount건 있습니다.',
+      );
+    }
+
+    final rawMismatchRows = await db.rawQuery('''
+      WITH $_legacyExpressionRowsCte
+      SELECT
+        legacy.word_id,
+        legacy.source_slot,
+        legacy.spelling_raw,
+        legacy.transliteration_raw,
+        legacy.pronunciation_raw,
+        canonical.spelling AS canonical_spelling,
+        canonical.transliteration AS canonical_transliteration,
+        canonical.pronunciation AS canonical_pronunciation
+      FROM legacy_expression_rows legacy
+      INNER JOIN word_expression_set canonical
+        ON canonical.word_id = legacy.word_id
+       AND canonical.seq = legacy.canonical_seq
+      WHERE canonical.spelling IS NOT legacy.spelling_raw
+         OR canonical.transliteration IS NOT legacy.transliteration_raw
+         OR canonical.pronunciation IS NOT legacy.pronunciation_raw
+      ORDER BY legacy.word_id ASC, legacy.source_slot ASC
+    ''');
+
+    final candidates = <_LegacyExpressionArchiveCandidate>[];
+    for (final row in rawMismatchRows) {
+      final wordId = row['word_id'];
+      final sourceSlot = row['source_slot'];
+      final rawSpelling = row['spelling_raw'];
+      final canonicalSpelling = row['canonical_spelling'];
+      final rawTransliteration = row['transliteration_raw'];
+      final canonicalTransliteration = row['canonical_transliteration'];
+      final rawPronunciation = row['pronunciation_raw'];
+      final canonicalPronunciation = row['canonical_pronunciation'];
+
+      final isApprovedTrailingSpaceOnly =
+          wordId is String &&
+          sourceSlot is int &&
+          rawSpelling is String &&
+          canonicalSpelling is String &&
+          rawSpelling == canonicalSpelling &&
+          rawTransliteration == canonicalTransliteration &&
+          rawPronunciation is String &&
+          canonicalPronunciation is String &&
+          _hasOnlyTrailingAsciiSpaces(rawPronunciation, canonicalPronunciation);
+      if (!isApprovedTrailingSpaceOnly) {
+        throw StateError(
+          '승인되지 않은 legacy 표현 raw 불일치가 있습니다: '
+          '$wordId / slot=$sourceSlot',
+        );
+      }
+
+      candidates.add((
+        sourceWordId: wordId,
+        sourceSlot: sourceSlot,
+        rawValue: rawPronunciation,
+      ));
+    }
+
+    return List<_LegacyExpressionArchiveCandidate>.unmodifiable(candidates);
+  }
+
+  static bool _hasOnlyTrailingAsciiSpaces(String raw, String canonical) {
+    if (!raw.startsWith(canonical) || raw.length <= canonical.length) {
+      return false;
+    }
+    for (var index = canonical.length; index < raw.length; index++) {
+      if (raw.codeUnitAt(index) != 0x20) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  static Future<void> _validateLegacyExpressionArchiveTable(
+    DatabaseExecutor db,
+  ) async {
+    final schemaRows = await db.rawQuery(
+      '''
+      SELECT sql
+      FROM sqlite_master
+      WHERE type = 'table'
+        AND name = ?
+      ''',
+      [_legacyExpressionArchiveTableName],
+    );
+    if (schemaRows.length != 1) {
+      throw StateError(
+        '$_legacyExpressionArchiveTableName table 정의를 찾을 수 없습니다.',
+      );
+    }
+    final actualSql = schemaRows.single['sql'] as String?;
+    if (actualSql == null ||
+        _normalizeIndexSql(actualSql) !=
+            _normalizeIndexSql(_legacyExpressionArchiveTableDdl)) {
+      throw StateError('$_legacyExpressionArchiveTableName DDL 계약이 일치하지 않습니다.');
+    }
+
+    final columns = await db.rawQuery(
+      "PRAGMA table_info('$_legacyExpressionArchiveTableName')",
+    );
+    const expectedColumns = [
+      (name: 'source_word_id', type: 'TEXT', pk: 1),
+      (name: 'expression_type', type: 'TEXT', pk: 2),
+      (name: 'source_slot', type: 'INTEGER', pk: 3),
+      (name: 'raw_value', type: 'TEXT', pk: 0),
+      (name: 'preservation_reason', type: 'TEXT', pk: 0),
+      (name: 'source_table', type: 'TEXT', pk: 0),
+    ];
+    if (columns.length != expectedColumns.length) {
+      throw StateError('$_legacyExpressionArchiveTableName 컬럼 수가 일치하지 않습니다.');
+    }
+    for (var index = 0; index < expectedColumns.length; index++) {
+      final actual = columns[index];
+      final expected = expectedColumns[index];
+      if (actual['name'] != expected.name ||
+          (actual['type'] ?? '').toString().toUpperCase() != expected.type ||
+          actual['notnull'] != 1 ||
+          actual['dflt_value'] != null ||
+          actual['pk'] != expected.pk) {
+        throw StateError(
+          '$_legacyExpressionArchiveTableName 컬럼 계약이 일치하지 않습니다: '
+          '${expected.name}',
+        );
+      }
+    }
+  }
+
+  static Future<void> _validateExistingLegacyExpressionArchiveRows(
+    DatabaseExecutor db,
+    List<_LegacyExpressionArchiveCandidate> expectedCandidates, {
+    required bool requireComplete,
+  }) async {
+    final expectedByKey = {
+      for (final candidate in expectedCandidates)
+        (candidate.sourceWordId, candidate.sourceSlot): candidate,
+    };
+    final rows = await db.query(
+      _legacyExpressionArchiveTableName,
+      orderBy: 'source_word_id ASC, expression_type ASC, source_slot ASC',
+    );
+    for (final row in rows) {
+      final sourceWordId = row['source_word_id'];
+      final expressionType = row['expression_type'];
+      final sourceSlot = row['source_slot'];
+      if (sourceWordId is! String ||
+          expressionType != _legacyExpressionTypePronunciation ||
+          sourceSlot is! int) {
+        throw StateError('표현 archive identity 계약이 일치하지 않습니다.');
+      }
+      final expected = expectedByKey[(sourceWordId, sourceSlot)];
+      if (expected == null ||
+          row['raw_value'] != expected.rawValue ||
+          row['preservation_reason'] != _legacyExpressionPreservationReason ||
+          row['source_table'] != _legacyExpressionSourceTable) {
+        throw StateError(
+          '예상하지 않은 표현 archive 행이 있습니다: '
+          '$sourceWordId / slot=$sourceSlot',
+        );
+      }
+    }
+    if (requireComplete && rows.length != expectedCandidates.length) {
+      throw StateError(
+        '표현 archive 행 수가 일치하지 않습니다: '
+        'actual=${rows.length}, expected=${expectedCandidates.length}',
+      );
+    }
+  }
+
+  static Future<String> _wordExpressionSnapshot(DatabaseExecutor db) async {
+    final rows = await db.query(
+      'word_expression_set',
+      columns: const [
+        'id',
+        'word_id',
+        'seq',
+        'is_representative',
+        'spelling',
+        'transliteration',
+        'pronunciation',
+        'pronunciation_notation',
+        'pronunciation_notation_name',
+      ],
+      orderBy: 'word_id ASC, seq ASC, id ASC',
+    );
+    return jsonEncode(rows);
+  }
+
+  static Future<String> _wordTableRemainingColumnContractSnapshot(
+    DatabaseExecutor db,
+  ) async {
+    final rows = await db.rawQuery("PRAGMA table_info('WORD_TABLE')");
+    final contract = rows
+        .where((row) => !_legacyExpressionColumns.contains(row['name']))
+        .map(
+          (row) => {
+            'name': row['name'],
+            'type': row['type'],
+            'notnull': row['notnull'],
+            'dflt_value': row['dflt_value'],
+            'pk': row['pk'],
+          },
+        )
+        .toList(growable: false);
+    return jsonEncode(contract);
+  }
+
+  static Future<String> _wordTableRemainingRowsSnapshot(
+    DatabaseExecutor db,
+  ) async {
+    final columnRows = await db.rawQuery("PRAGMA table_info('WORD_TABLE')");
+    final columns = columnRows
+        .map((row) => row['name'])
+        .whereType<String>()
+        .where((column) => !_legacyExpressionColumns.contains(column))
+        .toList(growable: false);
+    final rows = await db.query(
+      'WORD_TABLE',
+      columns: columns,
+      orderBy: columns.contains('id') ? 'id ASC' : null,
+    );
+    return jsonEncode(rows);
+  }
+
+  static Future<String> _wordTableOwnedSchemaSnapshot(
+    DatabaseExecutor db,
+  ) async {
+    final rows = await db.rawQuery('''
+      SELECT type, name, sql
+      FROM sqlite_master
+      WHERE tbl_name = 'WORD_TABLE'
+        AND type IN ('index', 'trigger')
+      ORDER BY type ASC, name ASC
+    ''');
+    return jsonEncode(rows);
+  }
+
+  static Future<String> _wordTableForeignKeySnapshot(
+    DatabaseExecutor db,
+  ) async {
+    return jsonEncode(
+      await db.rawQuery("PRAGMA foreign_key_list('WORD_TABLE')"),
+    );
+  }
+
   static String _quoteIdentifier(String value) {
     return '"${value.replaceAll('"', '""')}"';
   }
@@ -1524,7 +2225,19 @@ class DatabaseService {
         'SELECT COUNT(*) AS row_count FROM word_expression_set',
       );
       final existingRowCount = existingRows.first['row_count'] as int;
-      if (existingRowCount == 0) {
+      final presentLegacyExpressionColumns =
+          await _presentLegacyExpressionColumns(txn);
+      if (presentLegacyExpressionColumns.isNotEmpty &&
+          presentLegacyExpressionColumns.length !=
+              _legacyExpressionColumns.length) {
+        throw StateError(
+          'legacy 표현 컬럼이 일부만 존재합니다: '
+          '${presentLegacyExpressionColumns.join(', ')}',
+        );
+      }
+      if (existingRowCount == 0 &&
+          presentLegacyExpressionColumns.length ==
+              _legacyExpressionColumns.length) {
         await txn.execute('''
           WITH legacy_slots AS (
             SELECT

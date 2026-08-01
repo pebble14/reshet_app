@@ -270,7 +270,7 @@ Phase 50-O에서 형식만으로 분류한 IPA 후보 576건을 모두 잘못된
 
 ### 12.4 migration DB와 backup 경계
 
-pronunciation migration의 active 대상은 `data/reshet_work.db`, `data/reshet_seed.db`와 legacy projection인 `WORD_TABLE.발음1`~`발음6`이다. 실제 pronunciation 본문 migration에서는 work·seed·legacy projection parity를 함께 유지한다.
+pronunciation migration의 active 대상은 `data/reshet_work.db`와 `data/reshet_seed.db`의 canonical `word_expression_set`이다. `WORD_TABLE.발음1~6`은 2026-08-01 물리 제거됐으므로 이후 본문 migration은 legacy projection에 dual-write하지 않는다. 아래 Phase별 legacy projection 설명은 각 적용 시점의 historical 기록으로 유지한다.
 
 Phase 50-O는 두 active DB의 normalized table에 notation 열을 추가하고 기존 non-NULL pronunciation 15,036건을 `unknown`으로 보강했다. pronunciation 본문과 legacy projection은 변경하지 않았고 legacy slot도 추가하지 않았다. 기존 값을 `strong_dictionary`로 자동 전환하지 않았으며 notation은 형식 metadata이므로 원천을 뜻하는 source column도 추가하지 않았다.
 

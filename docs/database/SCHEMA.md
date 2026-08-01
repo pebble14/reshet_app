@@ -18,7 +18,7 @@ Reshet 프로젝트는 SQLite 데이터베이스를 사용한다.
 
 Windows 개발/테스트 경로는 repository root의 `data/` 디렉터리를 기준으로 유지한다.
 Android 앱은 `pubspec.yaml`에 선언된 `data/reshet_seed.db` asset을 앱 내부 `files/data/` 디렉터리로 복사하고, 같은 디렉터리의 `reshet_work.db`를 작업 DB로 사용한다.
-`data/reshet_seed.db`는 앱 설치/reset baseline 역할의 snapshot이며, 2026-07-29 기준으로 meaning 물리 컬럼 없이 `word_meaning_set` canonical baseline과 `RELATION_STATUS.inferred` lookup을 포함한다. 앱 공개 전까지 seed DB는 Git 미추적 로컬 private build asset으로 유지한다. 단, 완성 배포 DB를 뜻하지 않고 Hebrew Strong coverage 같은 콘텐츠 완성도는 별도 DB 완성도 phase에서 다룬다.
+`data/reshet_seed.db`는 앱 설치/reset baseline 역할의 snapshot이며, 2026-08-01 기준으로 expression·meaning 물리 slot 없이 `word_expression_set`·`word_meaning_set` canonical baseline과 `RELATION_STATUS.inferred` lookup을 포함한다. 앱 공개 전까지 seed DB는 Git 미추적 로컬 private build asset으로 유지한다. 단, 완성 배포 DB를 뜻하지 않고 Hebrew Strong coverage 같은 콘텐츠 완성도는 별도 DB 완성도 phase에서 다룬다.
 `data/reshet_work.db`는 mutable local work DB이므로 Git 미추적 상태로 유지한다.
 clean clone에는 DB 파일이 포함되지 않으므로, Android full build와 fresh install smoke는 별도 private DB 준비 후 수행한다.
 
@@ -34,6 +34,8 @@ clean clone에는 DB 파일이 포함되지 않으므로, Android full build와 
 - 검증된 외부 원본은 work DB와 같은 filesystem의 앱 소유 staging 파일로 stream copy하고, runtime ensure는 staging copy에만 적용한다.
 - `WORD_TABLE.관련1~7`이 모두 있는 구형 backup과 legacy 컬럼 없이 유효한 `WORD_LEGACY_RELATED_VALUE`가 있는 현행 backup을 허용한다. 일부 legacy 컬럼만 있거나 양쪽 상태가 모두 없거나 archive가 손상·충돌한 backup은 교체 전에 거부한다.
 - 구형 full-legacy backup은 staging의 runtime ensure에서 미대응 raw 값을 archive한 뒤 `관련1~7`을 제거하며, 외부 원본 파일은 변경하지 않는다.
+- expression은 `WORD_TABLE.표기1~6`·`음역1~6`·`발음1~6`이 모두 있는 구형 backup과, 해당 컬럼 없이 유효한 `word_expression_set`·`WORD_LEGACY_EXPRESSION_VALUE`가 있는 현행 backup을 허용한다. 일부 legacy 컬럼만 있거나 canonical 대응·archive가 충돌하면 교체 전에 거부한다.
+- 구형 full-legacy expression backup은 staging에서 canonical 대응을 검증하고, 발음의 ASCII 끝 공백만 exact raw archive한 뒤 한 transaction에서 18컬럼을 제거한다. archive는 runtime read source나 fallback으로 사용하지 않는다.
 - meaning은 `WORD_TABLE.의미1~7`이 모두 있는 구형 backup과 컬럼 없이 유효한 `word_meaning_set`이 있는 현행 backup을 허용한다. full legacy에서 canonical table이 없거나 비어 있으면 staging에서 raw slot을 exact `seq`로 materialize하고, canonical row가 있으면 모든 non-empty legacy 셀의 정확한 보존을 요구한 뒤 물리 컬럼을 제거한다.
 - meaning legacy 컬럼이 일부만 있거나 legacy/canonical이 충돌하거나 legacy 컬럼과 canonical table이 모두 없으면 교체 전에 거부한다.
 - live DB 교체 전 현재 열린 work DB에서 `VACUUM INTO` rollback snapshot을 생성·검증한다. 교체 또는 새 DB 검증 실패 시 previous work를 우선 복구하고, 불가능하면 rollback snapshot을 사용한다.
@@ -64,6 +66,7 @@ clean clone에는 DB 파일이 포함되지 않으므로, Android full build와 
 - `RELATION_TYPE`
 - `RELATION_STATUS`
 - `WORD_LEGACY_RELATED_VALUE`
+- `WORD_LEGACY_EXPRESSION_VALUE`
 - `RMAC_TABLE`
 - `RMAC_TABLE_KR`
 
@@ -92,24 +95,6 @@ H0001_0000
 | `id` | `TEXT` | Y | N | - | 단어 ID |
 | `언어` | `TEXT` | N | N | - | 언어 |
 | `스트롱넘버` | `TEXT` | N | N | - | Strong Number |
-| `표기1` | `TEXT` | N | N | - | 원어 표기 1 |
-| `표기2` | `TEXT` | N | N | - | 원어 표기 2 |
-| `표기3` | `TEXT` | N | N | - | 원어 표기 3 |
-| `표기4` | `TEXT` | N | N | - | 원어 표기 4 |
-| `표기5` | `TEXT` | N | N | - | 원어 표기 5 |
-| `표기6` | `TEXT` | N | N | - | 원어 표기 6 |
-| `음역1` | `TEXT` | N | N | - | 음역 1 |
-| `음역2` | `TEXT` | N | N | - | 음역 2 |
-| `음역3` | `TEXT` | N | N | - | 음역 3 |
-| `음역4` | `TEXT` | N | N | - | 음역 4 |
-| `음역5` | `TEXT` | N | N | - | 음역 5 |
-| `음역6` | `TEXT` | N | N | - | 음역 6 |
-| `발음1` | `TEXT` | N | N | - | 발음 1 |
-| `발음2` | `TEXT` | N | N | - | 발음 2 |
-| `발음3` | `TEXT` | N | N | - | 발음 3 |
-| `발음4` | `TEXT` | N | N | - | 발음 4 |
-| `발음5` | `TEXT` | N | N | - | 발음 5 |
-| `발음6` | `TEXT` | N | N | - | 발음 6 |
 | `비고` | `TEXT` | N | N | - | 기타 정보 |
 | `graph_expand_mode` | `TEXT` | N | Y | `'default'` | 그래프 확장 표시 정책 |
 
@@ -117,7 +102,7 @@ H0001_0000
 
 - 실제 DB에 `graph_expand_mode` 컬럼이 존재한다.
 - 현재 `reshet_work.db` 레코드에서 `default`, `full`, `outgoing_limited` 값이 확인된다.
-- `표기1~6`·`음역1~6`·`발음1~6`은 현재 work·seed DB의 물리 schema에 남아 있다. active normalized read와 normal runtime create/update·신규 history는 이 컬럼을 조회하거나 갱신하지 않으며, 물리 제거와 startup·backup·restore 계약 전환은 후속 단계다.
+- `표기1~6`·`음역1~6`·`발음1~6`은 2026-08-01 migration에서 work·seed DB 양쪽의 `WORD_TABLE`에서 물리 제거됐다. expression runtime authority는 `word_expression_set`이다.
 - `의미1~7`은 2026-07-29 migration에서 work·seed DB 양쪽의 `WORD_TABLE`에서 물리 제거됐다. meaning runtime authority는 `word_meaning_set`이다.
 - `관련1~7`은 2026-07-29 migration에서 work·seed DB 양쪽의 `WORD_TABLE`에서 물리 제거됐다. 관계 runtime authority는 계속 `WORD_RELATION`이다.
 
@@ -168,6 +153,41 @@ CREATE TABLE WORD_LEGACY_RELATED_VALUE (
 
 ---
 
+# WORD_LEGACY_EXPRESSION_VALUE
+
+legacy expression raw와 canonical의 차이가 발음 값 뒤 ASCII 공백뿐인 경우 원문을 변형 없이 보존하는 비권위적 archive다.
+
+이 테이블은 repository, 검색, 그래프, 상세, 표현 편집, history/undo에서 소비하지 않으며 runtime read source나 fallback이 아니다.
+
+## 실제 DDL
+
+```sql
+CREATE TABLE WORD_LEGACY_EXPRESSION_VALUE (
+  source_word_id TEXT NOT NULL,
+  expression_type TEXT NOT NULL CHECK (
+    expression_type IN ('spelling', 'transliteration', 'pronunciation')
+  ),
+  source_slot INTEGER NOT NULL CHECK (source_slot BETWEEN 1 AND 6),
+  raw_value TEXT NOT NULL,
+  preservation_reason TEXT NOT NULL CHECK (
+    preservation_reason = 'trailing_space_only'
+  ),
+  source_table TEXT NOT NULL CHECK (source_table = 'WORD_TABLE'),
+  PRIMARY KEY (source_word_id, expression_type, source_slot)
+)
+```
+
+운영 계약:
+
+- full legacy schema는 단어 ID와 compact canonical `seq`를 기준으로 모든 expression의 종류·순서·값 대응을 먼저 검증한다.
+- exact canonical 대응값은 archive하지 않는다. canonical 발음 뒤에 ASCII 공백만 하나 이상 추가된 raw 값만 `raw_value`에 그대로 보존한다.
+- legacy-only, canonical-only, 표기·음역 raw 불일치, 발음의 비공백 불일치, 일부 legacy 컬럼, 호환되지 않는 archive는 쓰기 전에 fail-closed한다.
+- 현재 work·seed DB에는 `E0000_0032/pronunciation/slot 1`과 `E0000_0118/pronunciation/slot 1`의 2행만 저장돼 있다.
+- current schema의 재실행은 archive·canonical·schema를 변경하지 않는 no-op이다.
+- FK, trigger, view, timestamp, PK 이외 index는 없다.
+
+---
+
 # word_expression_set
 
 표현 세트 정규화 테이블.
@@ -180,9 +200,9 @@ CREATE TABLE WORD_LEGACY_RELATED_VALUE (
   `DatabaseService.openDatabaseFile()`이 `word_expression_set` 테이블과 인덱스를
   보장하고, 테이블이 비어 있을 때만 legacy expression slot에서 최소 backfill한다.
 - runtime ensure는 기존 테이블에 nullable `pronunciation_notation`, `pronunciation_notation_name` 열이 없으면 안전한 `ALTER TABLE ... ADD COLUMN`으로 추가한다. 기존 pronunciation 본문은 변경하지 않고, 본문이 있는 미분류 행만 `unknown`으로 멱등 보강한다.
-- 현재 앱 read source는 아직 전면 normalized-only가 아니며, legacy `WORD_TABLE` 표현 컬럼을 사용하는 기본 context와 owner-specific `NORMALIZED_ONLY` context가 공존한다. production `NORMALIZED_WITH_FALLBACK` context는 남아 있지 않지만 공용 fallback resolver와 debug policy override는 유지한다.
-- active owner-specific `NORMALIZED_ONLY` read는 `WORD_TABLE` SQL projection에서 18개 expression 컬럼을 제외하고 legacy adapter를 실행하지 않는다. legacy-shaped raw map이 필요한 경계는 canonical row를 메모리에서 materialize한다.
-- 현재 앱 expression create/update와 신규 word history의 저장 권위는 `word_expression_set`이며, `WORD_TABLE` expression slot로 dual-write하지 않는다. create는 물리 slot을 채우지 않고 update는 기존 물리 값을 변경하거나 비우지 않는다.
+- 현재 앱 expression read/write와 신규 word history의 authority는 `word_expression_set`이다. production `NORMALIZED_WITH_FALLBACK` context와 live `WORD_TABLE` expression slot은 없다.
+- legacy-shaped raw map이 필요한 내부 호환 경계는 canonical row를 메모리에서 materialize하며 `WORD_LEGACY_EXPRESSION_VALUE`를 조회하지 않는다.
+- expression create/update는 repository transaction 안에서 canonical normalized row만 저장한다.
 - `word_expression_set.id`는 surrogate key이다.
 - 의미 비교와 정합성 검증은 `(word_id, seq)`를 natural identity로 본다.
 
@@ -191,8 +211,8 @@ CREATE TABLE WORD_LEGACY_RELATED_VALUE (
 - expression write authority는 repository 내부 canonical expression set과 `word_expression_set` write path를 우선한다.
 - create/update는 repository transaction 안에서 canonical expression set을 normalized row로만 저장한다. 신규 word history도 normalized expression rows를 저장하며 18개 legacy key를 포함하지 않는다.
 - normalized payload가 없는 구형 history의 18개 key decoder는 canonical expression 복원 입력으로 유지한다. 해당 key는 undo의 `WORD_TABLE` insert/update column list에서 제외한다.
-- legacy `WORD_TABLE` expression slot은 generic legacy read와 startup·backup·restore 호환을 위해 물리적으로 유지되지만 active normalized read나 normal runtime expression write의 권위가 아니다.
-- 검증은 현행 schema의 create/update 물리 slot 불변, 신규 history key 부재, 구형 history canonical 복원, 18개 컬럼 없는 temp schema의 active read/write/undo 성공을 함께 확인한다.
+- legacy `WORD_TABLE` expression slot은 현행 schema에 없으며, full-legacy startup·restore 입력과 normalized payload가 없는 구형 history decoder에서만 호환 입력으로 해석한다.
+- 검증은 신규 history key 부재, 구형 history canonical 복원, canonical-only schema의 active read/write/undo, full/none/partial restore 계약을 함께 확인한다.
 
 ## 실제 컬럼 구조
 
@@ -234,7 +254,7 @@ CREATE TABLE WORD_LEGACY_RELATED_VALUE (
 - `pronunciation`이 `NULL`이면 두 notation 열도 `NULL`이다. 본문이 있으면 `pronunciation_notation`은 허용 코드 중 하나이며, `other`가 아닐 때 체계명은 `NULL`이다.
 - `other`의 체계명은 선택 사항이지만 값이 있으면 trim 후 비어 있지 않아야 한다.
 - `ipa_phonemic`과 `ipa_phonetic`은 DB에 바깥 delimiter를 제외한 본문만 저장한다. 화면·검색 결과·복사는 공통 formatter가 각각 `/본문/`, `[본문]`으로 표시한다.
-- legacy `WORD_TABLE.발음1~6`에는 notation slot을 추가하지 않는다. legacy 본문을 읽을 때 값이 있으면 `unknown`, 없으면 notation도 `NULL`로 해석한다.
+- full-legacy migration 입력에는 별도 notation slot이 없으므로 발음 본문이 있으면 `unknown`, 없으면 notation도 `NULL`로 materialize한다.
 - `spelling`이 있는 slot만 row로 승격한다.
 - `spelling` 없이 `transliteration` 또는 `pronunciation`만 있는 slot은 row로 저장하지 않고 migration exception으로 분리한다.
 - semantic compare에서는 `id`를 제외하고

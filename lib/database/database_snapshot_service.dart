@@ -90,7 +90,7 @@ class DatabaseRestoreSchemaValidator {
   };
 
   static const Map<String, Set<String>> requiredColumns = {
-    'WORD_TABLE': {'id', '언어', '스트롱넘버', '표기1', '비고'},
+    'WORD_TABLE': {'id', '언어', '스트롱넘버', '비고'},
     'WORD_RELATION': {
       'id',
       'word_id_1',
@@ -341,6 +341,15 @@ class DatabaseRestoreSchemaValidator {
       );
     }
 
+    try {
+      await DatabaseService.validateLegacyExpressionRestoreCandidate(database);
+    } catch (error) {
+      throw DatabaseValidationException(
+        DatabaseValidationFailure.schemaIncompatible,
+        '표현 legacy migration 사전검증 실패: $error',
+      );
+    }
+
     final invalidPronunciationRows = await database.rawQuery('''
       SELECT COUNT(*) AS invalid_count
       FROM word_expression_set
@@ -397,6 +406,14 @@ class DatabaseRestoreSchemaValidator {
       throw DatabaseValidationException(
         DatabaseValidationFailure.schemaIncompatible,
         '의미 legacy migration 사후검증 실패: $error',
+      );
+    }
+    try {
+      await DatabaseService.validateLegacyExpressionRuntimeSchema(database);
+    } catch (error) {
+      throw DatabaseValidationException(
+        DatabaseValidationFailure.schemaIncompatible,
+        '표현 legacy migration 사후검증 실패: $error',
       );
     }
   }

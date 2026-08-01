@@ -8,6 +8,26 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import '../support/database_test_isolation_guard.dart';
 
 const _legacyMeaningColumns = ['의미1', '의미2', '의미3', '의미4', '의미5', '의미6', '의미7'];
+const _legacyExpressionColumns = [
+  '표기1',
+  '표기2',
+  '표기3',
+  '표기4',
+  '표기5',
+  '표기6',
+  '음역1',
+  '음역2',
+  '음역3',
+  '음역4',
+  '음역5',
+  '음역6',
+  '발음1',
+  '발음2',
+  '발음3',
+  '발음4',
+  '발음5',
+  '발음6',
+];
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -397,8 +417,9 @@ Future<List<Map<String, Object?>>> _wordTableColumnContract(
   final rows = await db.rawQuery("PRAGMA table_info('WORD_TABLE')");
   return [
     for (final row in rows)
-      if (!excludeMeaningColumns ||
-          !_legacyMeaningColumns.contains((row['name'] ?? '').toString()))
+      if (!_legacyExpressionColumns.contains((row['name'] ?? '').toString()) &&
+          (!excludeMeaningColumns ||
+              !_legacyMeaningColumns.contains((row['name'] ?? '').toString())))
         {
           'name': row['name'],
           'type': row['type'],
@@ -415,7 +436,11 @@ Future<List<Map<String, Object?>>> _wordRowsWithoutMeaningColumns(
   final columns = (await db.rawQuery("PRAGMA table_info('WORD_TABLE')"))
       .map((row) => row['name'])
       .whereType<String>()
-      .where((column) => !_legacyMeaningColumns.contains(column))
+      .where(
+        (column) =>
+            !_legacyMeaningColumns.contains(column) &&
+            !_legacyExpressionColumns.contains(column),
+      )
       .toList(growable: false);
   return db.query('WORD_TABLE', columns: columns, orderBy: 'id ASC');
 }

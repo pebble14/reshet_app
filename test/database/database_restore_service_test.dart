@@ -212,6 +212,83 @@ void main() {
     );
   });
 
+  test(
+    'full legacy 표현 backup은 exact raw archive 후 canonical-only로 복원한다',
+    () async {
+      await _configureLegacyExpressionState(
+        candidate.path,
+        columnCount: 18,
+        keepArchive: false,
+      );
+      final beforeHash = await _bytes(candidate);
+
+      final result = await restore(
+        createService(runtimeEnsurer: DatabaseService.ensureRuntimeSchema),
+      );
+
+      expect(result, isA<RestoreSucceeded>());
+      expect(await _bytes(candidate), beforeHash);
+      final restored = await harness.open();
+      final columns = (await restored.rawQuery(
+        "PRAGMA table_info('WORD_TABLE')",
+      )).map((row) => row['name']).whereType<String>().toSet();
+      expect(columns.intersection(_legacyExpressionColumns.toSet()), isEmpty);
+      expect(
+        await restored.query(
+          'WORD_LEGACY_EXPRESSION_VALUE',
+          orderBy: 'source_word_id, expression_type, source_slot',
+        ),
+        [
+          {
+            'source_word_id': 'fixture_word',
+            'expression_type': 'pronunciation',
+            'source_slot': 1,
+            'raw_value': 'fixture-pron ',
+            'preservation_reason': 'trailing_space_only',
+            'source_table': 'WORD_TABLE',
+          },
+        ],
+      );
+      expect(
+        await restored.query(
+          'word_expression_set',
+          columns: const ['word_id', 'seq', 'spelling', 'pronunciation'],
+          orderBy: 'word_id, seq',
+        ),
+        [
+          {
+            'word_id': 'fixture_word',
+            'seq': 1,
+            'spelling': 'fixture',
+            'pronunciation': 'fixture-pron',
+          },
+        ],
+      );
+    },
+  );
+
+  test('일부 legacy 표현 컬럼만 있는 backup은 schemaIncompatible로 거절한다', () async {
+    await _configureLegacyExpressionState(
+      candidate.path,
+      columnCount: 3,
+      keepArchive: true,
+    );
+
+    final result = await restore(
+      createService(runtimeEnsurer: DatabaseService.ensureRuntimeSchema),
+    );
+
+    expect(
+      result,
+      isA<RestoreRejected>().having(
+        (value) => value.reason,
+        'reason',
+        RestoreRejectionReason.schemaIncompatible,
+      ),
+    );
+    expect(await harness.marker(), '복원 전 데이터');
+  });
+
   test('구형 backup은 legacy meaning을 staging에서 materialize하고 컬럼을 제거한다', () async {
     await _configureLegacyMeaningState(
       candidate.path,
@@ -994,8 +1071,15 @@ Future<void> _createCompatibleDatabase(
   await db.insert('WORD_TABLE', {
     'id': 'fixture_word',
     '스트롱넘버': 'H1',
-    '표기1': 'fixture',
     '비고': marker,
+  });
+  await db.insert('word_expression_set', {
+    'word_id': 'fixture_word',
+    'seq': 1,
+    'is_representative': 1,
+    'spelling': 'fixture',
+    'pronunciation': 'fixture-pron',
+    'pronunciation_notation': 'unknown',
   });
   await db.insert('word_meaning_set', {
     'word_id': 'fixture_word',
@@ -1035,6 +1119,36 @@ Future<void> _configureLegacyMeaningState(
     }
     if (dropCanonicalTable) {
       await db.execute('DROP TABLE word_meaning_set');
+    }
+  } finally {
+    await db.close();
+  }
+}
+
+Future<void> _configureLegacyExpressionState(
+  String path, {
+  required int columnCount,
+  required bool keepArchive,
+}) async {
+  assert(columnCount >= 0 && columnCount <= _legacyExpressionColumns.length);
+  final db = await databaseFactory.openDatabase(
+    path,
+    options: OpenDatabaseOptions(singleInstance: false),
+  );
+  try {
+    if (!keepArchive) {
+      await db.execute('DROP TABLE WORD_LEGACY_EXPRESSION_VALUE');
+    }
+    for (final column in _legacyExpressionColumns.take(columnCount)) {
+      await db.execute('ALTER TABLE WORD_TABLE ADD COLUMN "$column" TEXT');
+    }
+    if (columnCount == _legacyExpressionColumns.length) {
+      await db.update(
+        'WORD_TABLE',
+        const {'표기1': 'fixture', '발음1': 'fixture-pron '},
+        where: 'id = ?',
+        whereArgs: ['fixture_word'],
+      );
     }
   } finally {
     await db.close();
@@ -1096,10 +1210,31 @@ Future<List<int>> _bytes(File file) => file.readAsBytes();
 
 const _legacyRelatedColumns = ['관련1', '관련2', '관련3', '관련4', '관련5', '관련6', '관련7'];
 const _legacyMeaningColumns = ['의미1', '의미2', '의미3', '의미4', '의미5', '의미6', '의미7'];
+const _legacyExpressionColumns = [
+  '표기1',
+  '표기2',
+  '표기3',
+  '표기4',
+  '표기5',
+  '표기6',
+  '음역1',
+  '음역2',
+  '음역3',
+  '음역4',
+  '음역5',
+  '음역6',
+  '발음1',
+  '발음2',
+  '발음3',
+  '발음4',
+  '발음5',
+  '발음6',
+];
 
 const _compatibleSchemaStatements = [
-  'CREATE TABLE WORD_TABLE (id TEXT PRIMARY KEY, 언어 TEXT, 스트롱넘버 TEXT, 표기1 TEXT, 표기2 TEXT, 표기3 TEXT, 표기4 TEXT, 표기5 TEXT, 표기6 TEXT, 음역1 TEXT, 음역2 TEXT, 음역3 TEXT, 음역4 TEXT, 음역5 TEXT, 음역6 TEXT, 발음1 TEXT, 발음2 TEXT, 발음3 TEXT, 발음4 TEXT, 발음5 TEXT, 발음6 TEXT, 비고 TEXT)',
+  'CREATE TABLE WORD_TABLE (id TEXT PRIMARY KEY, 언어 TEXT, 스트롱넘버 TEXT, 비고 TEXT)',
   _legacyRelatedArchiveDdl,
+  _legacyExpressionArchiveDdl,
   'CREATE TABLE WORD_RELATION (id INTEGER PRIMARY KEY, word_id_1 TEXT, word_id_2 TEXT, category_code TEXT, relation_type TEXT, status_code TEXT, direction_code TEXT, description TEXT, relation_group_id TEXT)',
   'CREATE TABLE word_expression_set (id INTEGER PRIMARY KEY, word_id TEXT, seq INTEGER, is_representative INTEGER, spelling TEXT, transliteration TEXT, pronunciation TEXT, pronunciation_notation TEXT, pronunciation_notation_name TEXT)',
   'CREATE TABLE word_meaning_set (id INTEGER PRIMARY KEY, word_id TEXT, seq INTEGER, meaning TEXT)',
@@ -1135,5 +1270,21 @@ const _legacyRelatedArchiveDdl = '''
     ),
     source_table TEXT NOT NULL CHECK (source_table = 'WORD_TABLE'),
     PRIMARY KEY (source_word_id, source_column)
+  )
+''';
+
+const _legacyExpressionArchiveDdl = '''
+  CREATE TABLE WORD_LEGACY_EXPRESSION_VALUE (
+    source_word_id TEXT NOT NULL,
+    expression_type TEXT NOT NULL CHECK (
+      expression_type IN ('spelling', 'transliteration', 'pronunciation')
+    ),
+    source_slot INTEGER NOT NULL CHECK (source_slot BETWEEN 1 AND 6),
+    raw_value TEXT NOT NULL,
+    preservation_reason TEXT NOT NULL CHECK (
+      preservation_reason = 'trailing_space_only'
+    ),
+    source_table TEXT NOT NULL CHECK (source_table = 'WORD_TABLE'),
+    PRIMARY KEY (source_word_id, expression_type, source_slot)
   )
 ''';

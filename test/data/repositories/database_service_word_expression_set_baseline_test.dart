@@ -179,130 +179,57 @@ void main() {
       ''');
     expect(tableRows, isNotEmpty);
 
-    final counts = await db.rawQuery('''
-      WITH legacy_slots AS (
-        SELECT
-          id AS word_id,
-          1 AS source_slot,
-          TRIM(COALESCE([표기1], '')) AS spelling,
-          TRIM(COALESCE([음역1], '')) AS transliteration,
-          TRIM(COALESCE([발음1], '')) AS pronunciation
-        FROM WORD_TABLE
-        UNION ALL
-        SELECT
-          id,
-          2,
-          TRIM(COALESCE([표기2], '')),
-          TRIM(COALESCE([음역2], '')),
-          TRIM(COALESCE([발음2], ''))
-        FROM WORD_TABLE
-        UNION ALL
-        SELECT
-          id,
-          3,
-          TRIM(COALESCE([표기3], '')),
-          TRIM(COALESCE([음역3], '')),
-          TRIM(COALESCE([발음3], ''))
-        FROM WORD_TABLE
-        UNION ALL
-        SELECT
-          id,
-          4,
-          TRIM(COALESCE([표기4], '')),
-          TRIM(COALESCE([음역4], '')),
-          TRIM(COALESCE([발음4], ''))
-        FROM WORD_TABLE
-        UNION ALL
-        SELECT
-          id,
-          5,
-          TRIM(COALESCE([표기5], '')),
-          TRIM(COALESCE([음역5], '')),
-          TRIM(COALESCE([발음5], ''))
-        FROM WORD_TABLE
-        UNION ALL
-        SELECT
-          id,
-          6,
-          TRIM(COALESCE([표기6], '')),
-          TRIM(COALESCE([음역6], '')),
-          TRIM(COALESCE([발음6], ''))
-        FROM WORD_TABLE
+    final wordColumns = (await db.rawQuery(
+      "PRAGMA table_info('WORD_TABLE')",
+    )).map((row) => row['name']).whereType<String>().toSet();
+    expect(
+      wordColumns.intersection({
+        for (final prefix in const ['표기', '음역', '발음'])
+          for (var index = 1; index <= 6; index++) '$prefix$index',
+      }),
+      isEmpty,
+    );
+    expect(
+      await db.query(
+        'word_expression_set',
+        columns: const [
+          'word_id',
+          'seq',
+          'is_representative',
+          'spelling',
+          'transliteration',
+          'pronunciation',
+        ],
+        orderBy: 'word_id ASC, seq ASC',
       ),
-      expected_expression_set AS (
-        SELECT
-          word_id,
-          ROW_NUMBER() OVER (PARTITION BY word_id ORDER BY source_slot)
-            AS seq,
-          spelling,
-          NULLIF(transliteration, '') AS transliteration,
-          NULLIF(pronunciation, '') AS pronunciation
-        FROM legacy_slots
-        WHERE spelling <> ''
-      ),
-      expected_expression_set_with_representative AS (
-        SELECT
-          word_id,
-          seq,
-          CASE WHEN seq = 1 THEN 1 ELSE 0 END AS is_representative,
-          spelling,
-          transliteration,
-          pronunciation
-        FROM expected_expression_set
-      ),
-      expected_minus_actual AS (
-        SELECT
-          word_id,
-          seq,
-          is_representative,
-          spelling,
-          transliteration,
-          pronunciation
-        FROM expected_expression_set_with_representative
-        EXCEPT
-        SELECT
-          word_id,
-          seq,
-          is_representative,
-          spelling,
-          transliteration,
-          pronunciation
-        FROM word_expression_set
-      ),
-      actual_minus_expected AS (
-        SELECT
-          word_id,
-          seq,
-          is_representative,
-          spelling,
-          transliteration,
-          pronunciation
-        FROM word_expression_set
-        EXCEPT
-        SELECT
-          word_id,
-          seq,
-          is_representative,
-          spelling,
-          transliteration,
-          pronunciation
-        FROM expected_expression_set_with_representative
-      )
-      SELECT
-        (SELECT COUNT(*) FROM expected_expression_set_with_representative)
-          AS expected_row_count,
-        (SELECT COUNT(*) FROM word_expression_set) AS actual_row_count,
-        (SELECT COUNT(*) FROM expected_minus_actual)
-          AS expected_minus_actual_count,
-        (SELECT COUNT(*) FROM actual_minus_expected)
-          AS actual_minus_expected_count
-      ''');
-
-    final row = counts.single;
-    expect(row['actual_row_count'], row['expected_row_count']);
-    expect(row['expected_row_count'], 3);
-    expect(row['expected_minus_actual_count'], 0);
-    expect(row['actual_minus_expected_count'], 0);
+      [
+        {
+          'word_id': 'W1',
+          'seq': 1,
+          'is_representative': 1,
+          'spelling': 'alpha',
+          'transliteration': 'a',
+          'pronunciation': 'ah',
+        },
+        {
+          'word_id': 'W1',
+          'seq': 2,
+          'is_representative': 0,
+          'spelling': 'beta',
+          'transliteration': null,
+          'pronunciation': null,
+        },
+        {
+          'word_id': 'W2',
+          'seq': 1,
+          'is_representative': 1,
+          'spelling': 'gamma',
+          'transliteration': 'g',
+          'pronunciation': 'ga',
+        },
+      ],
+    );
+    expect(await db.query('WORD_LEGACY_EXPRESSION_VALUE'), isEmpty);
   });
 
   test(
@@ -417,24 +344,6 @@ Future<void> _createSyntheticSeedDb(String path) async {
     await db.execute('''
       CREATE TABLE WORD_TABLE (
         id TEXT PRIMARY KEY,
-        [표기1] TEXT,
-        [표기2] TEXT,
-        [표기3] TEXT,
-        [표기4] TEXT,
-        [표기5] TEXT,
-        [표기6] TEXT,
-        [음역1] TEXT,
-        [음역2] TEXT,
-        [음역3] TEXT,
-        [음역4] TEXT,
-        [음역5] TEXT,
-        [음역6] TEXT,
-        [발음1] TEXT,
-        [발음2] TEXT,
-        [발음3] TEXT,
-        [발음4] TEXT,
-        [발음5] TEXT,
-        [발음6] TEXT,
         [의미1] TEXT,
         [의미2] TEXT,
         [의미3] TEXT,
@@ -445,6 +354,7 @@ Future<void> _createSyntheticSeedDb(String path) async {
       )
     ''');
     await db.execute(_legacyRelatedArchiveDdl);
+    await db.execute(_legacyExpressionArchiveDdl);
 
     await db.execute('''
       CREATE TABLE WORD_RELATION (
@@ -497,21 +407,10 @@ Future<void> _createSyntheticSeedDb(String path) async {
 
     await db.insert('WORD_TABLE', {
       'id': 'W1',
-      '표기1': ' alpha ',
-      '표기2': 'beta',
-      '음역1': ' a ',
-      '발음1': ' ah ',
       '의미1': ' first ',
       '의미7': ' seventh ',
     });
-    await db.insert('WORD_TABLE', {
-      'id': 'W2',
-      '표기1': 'gamma',
-      '음역1': 'g',
-      '발음1': 'ga',
-      '의미1': '',
-      '의미3': '  ',
-    });
+    await db.insert('WORD_TABLE', {'id': 'W2', '의미1': '', '의미3': '  '});
 
     await db.insert('word_expression_set', {
       'word_id': 'W1',
@@ -565,6 +464,22 @@ const _legacyRelatedArchiveDdl = '''
   )
 ''';
 
+const _legacyExpressionArchiveDdl = '''
+  CREATE TABLE WORD_LEGACY_EXPRESSION_VALUE (
+    source_word_id TEXT NOT NULL,
+    expression_type TEXT NOT NULL CHECK (
+      expression_type IN ('spelling', 'transliteration', 'pronunciation')
+    ),
+    source_slot INTEGER NOT NULL CHECK (source_slot BETWEEN 1 AND 6),
+    raw_value TEXT NOT NULL,
+    preservation_reason TEXT NOT NULL CHECK (
+      preservation_reason = 'trailing_space_only'
+    ),
+    source_table TEXT NOT NULL CHECK (source_table = 'WORD_TABLE'),
+    PRIMARY KEY (source_word_id, expression_type, source_slot)
+  )
+''';
+
 Future<void> _stripWordExpressionSetFromSeedCopy(
   String isolatedRootPath,
 ) async {
@@ -572,6 +487,26 @@ Future<void> _stripWordExpressionSetFromSeedCopy(
   final db = await databaseFactory.openDatabase(seedCopyPath);
   try {
     await db.execute('DROP TABLE IF EXISTS word_expression_set');
+    await db.execute('DROP TABLE WORD_LEGACY_EXPRESSION_VALUE');
+    for (final prefix in const ['표기', '음역', '발음']) {
+      for (var index = 1; index <= 6; index++) {
+        await db.execute(
+          'ALTER TABLE WORD_TABLE ADD COLUMN "$prefix$index" TEXT',
+        );
+      }
+    }
+    await db.update(
+      'WORD_TABLE',
+      const {'표기1': 'alpha', '음역1': 'a', '발음1': 'ah', '표기2': 'beta'},
+      where: 'id = ?',
+      whereArgs: ['W1'],
+    );
+    await db.update(
+      'WORD_TABLE',
+      const {'표기1': 'gamma', '음역1': 'g', '발음1': 'ga'},
+      where: 'id = ?',
+      whereArgs: ['W2'],
+    );
   } finally {
     await db.close();
   }
