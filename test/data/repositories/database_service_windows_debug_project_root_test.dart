@@ -170,13 +170,45 @@ void main() {
     },
   );
 
+  test('legacy seed 파일만 있으면 신규 work DB를 만들지 않는다', () async {
+    final dataDir = await _createDataRoot(tempRoot!);
+    final seedPath = p.join(dataDir.path, 'reshet_seed.db');
+    final legacySeedPath = p.join(dataDir.path, 'bbwdb_20260106.db');
+    final workPath = p.join(dataDir.path, 'reshet_work.db');
+    _ensureIsolatedDataRoot(dataDir, repoRootPath, sourceSeedFile.path);
+    await sourceSeedFile.copy(legacySeedPath);
+    DatabaseService.setDataRootOverrideForTest(dataDir.path);
+
+    await expectLater(
+      DatabaseService.openDatabaseFile(),
+      throwsA(
+        isA<Exception>().having(
+          (error) => error.toString(),
+          'message',
+          contains(seedPath),
+        ),
+      ),
+    );
+
+    expect(File(workPath).existsSync(), isFalse);
+    expect(File(legacySeedPath).existsSync(), isTrue);
+  });
+
   test(
     'seed DB creates canonical work DB in the project data root only',
     () async {
       final dataDir = await _createDataRoot(tempRoot!);
       final seedPath = p.join(dataDir.path, 'reshet_seed.db');
+      final legacySeedPath = p.join(dataDir.path, 'bbwdb_20260106.db');
       _ensureIsolatedDataRoot(dataDir, repoRootPath, sourceSeedFile.path);
       await sourceSeedFile.copy(seedPath);
+      await sourceSeedFile.copy(legacySeedPath);
+      final legacyDb = await databaseFactory.openDatabase(
+        legacySeedPath,
+        options: OpenDatabaseOptions(singleInstance: false),
+      );
+      await legacyDb.execute('CREATE TABLE __legacy_seed_marker(value TEXT)');
+      await legacyDb.close();
       final expectedDistribution =
           await _readRelationStatusDistributionFromPath(seedPath);
       final expectedAsserted = await _readRelationStatusRowFromPath(
@@ -202,6 +234,15 @@ void main() {
         expectedAsserted,
       );
       await _expectRelationStatusDistribution(db, expectedDistribution);
+      expect(
+        await db.rawQuery('''
+          SELECT name
+          FROM sqlite_master
+          WHERE type = 'table'
+            AND name = '__legacy_seed_marker'
+          '''),
+        isEmpty,
+      );
       expect(File(workPath).existsSync(), isTrue);
       expect(_isInside(tempRoot!.path, workPath), isTrue);
     },
@@ -250,6 +291,40 @@ void main() {
     await _expectRelationStatusDistribution(afterResetDb, expectedDistribution);
     expect(File(p.join(dataDir.path, 'backups')).existsSync(), isFalse);
     expect(_isInside(tempRoot!.path, workPath), isTrue);
+  });
+
+  test('legacy seed 파일만 있는 reset 실패는 기존 work marker를 보존한다', () async {
+    final dataDir = await _createDataRoot(tempRoot!);
+    final seedPath = p.join(dataDir.path, 'reshet_seed.db');
+    final legacySeedPath = p.join(dataDir.path, 'bbwdb_20260106.db');
+    final workPath = p.join(dataDir.path, 'reshet_work.db');
+    _ensureIsolatedDataRoot(dataDir, repoRootPath, sourceSeedFile.path);
+    await sourceSeedFile.copy(workPath);
+    await sourceSeedFile.copy(legacySeedPath);
+    DatabaseService.setDataRootOverrideForTest(dataDir.path);
+
+    final workDb = await DatabaseService.openDatabaseFile();
+    await workDb.execute('CREATE TABLE __reset_failure_marker(value TEXT)');
+    await workDb.insert('__reset_failure_marker', {'value': '기존 작업 데이터'});
+    await DatabaseService.closeDatabase();
+
+    await expectLater(
+      DatabaseService.resetToSeed(backup: false),
+      throwsA(
+        isA<Exception>().having(
+          (error) => error.toString(),
+          'message',
+          contains(seedPath),
+        ),
+      ),
+    );
+
+    final reopenedDb = await DatabaseService.openDatabaseFile();
+    expect(await reopenedDb.query('__reset_failure_marker'), [
+      {'value': '기존 작업 데이터'},
+    ]);
+    expect(File(legacySeedPath).existsSync(), isTrue);
+    expect(File(p.join(dataDir.path, 'backups')).existsSync(), isFalse);
   });
 
   test(

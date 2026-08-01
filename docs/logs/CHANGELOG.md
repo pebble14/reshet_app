@@ -1,5 +1,6 @@
 # CHANGELOG
 
+- `2026-08-02` 설치·work DB 최초 생성·reset의 유일한 runtime seed를 `reshet_seed.db`로 확정하고 `bbwdb_20260106.db` filename fallback을 제거했다. 기존 work DB open과 full-legacy work·restore schema 호환은 유지했으며 실제 DB 파일은 변경하지 않았다.
 - `2026-08-01` `WORD_TABLE.표기1~6`·`음역1~6`·`발음1~6`을 work·seed DB에서 물리 제거하고 expression read/write·신규 history authority를 `word_expression_set`으로 유지했다. canonical expression의 행·모든 필드·명시적 순서는 전후 불변이며 runtime fallback을 새로 도입하지 않았다.
 - canonical과 차이가 발음 뒤 ASCII 공백뿐인 `E0000_0032/slot 1`, `E0000_0118/slot 1`의 exact raw 2행씩만 `WORD_LEGACY_EXPRESSION_VALUE`에 `trailing_space_only`로 보존했다. archive는 repository·검색·그래프·상세·편집·history/undo·canonical materialization에서 소비하지 않는 비권위 보존소다.
 - runtime ensure와 restore validator는 full legacy 18컬럼을 canonical과 대조한 뒤 한 transaction에서 archive·검증·컬럼 제거하며, current schema는 no-op한다. partial schema, legacy/canonical 값·순서 불일치, 비공백 raw 차이, archive 구조·행 충돌은 쓰기 전에 fail-closed한다. 구형 restore 원본은 read-only로 검증하고 staging copy에서만 migration한다.

@@ -12,12 +12,13 @@ Reshet 프로젝트는 SQLite 데이터베이스를 사용한다.
 
 | 경로 | 역할 |
 | --- | --- |
-| `data/reshet_seed.db` | 앱 최초 설치 상태와 reset 기준으로 사용하는 개발 기준 snapshot DB |
+| `data/reshet_seed.db` | 앱 최초 설치·work DB 최초 생성·reset에 사용하는 유일한 runtime seed snapshot DB |
 | `data/reshet_work.db` | 개발자가 데이터를 입력/수정하며 관리하는 권위 있는 작업 DB |
-| `data/bbwdb_20260106.db` | `reshet_seed.db`가 없을 때 사용하는 legacy fallback |
+| `data/bbwdb_20260106.db` | 변형하지 않고 유지하는 보존 원본이며 runtime seed로 사용하지 않음 |
 
 Windows 개발/테스트 경로는 repository root의 `data/` 디렉터리를 기준으로 유지한다.
 Android 앱은 `pubspec.yaml`에 선언된 `data/reshet_seed.db` asset을 앱 내부 `files/data/` 디렉터리로 복사하고, 같은 디렉터리의 `reshet_work.db`를 작업 DB로 사용한다.
+Windows의 work DB 최초 생성과 reset도 `data/reshet_seed.db`만 사용하며 legacy filename fallback은 지원하지 않는다.
 `data/reshet_seed.db`는 앱 설치/reset baseline 역할의 snapshot이며, 2026-08-01 기준으로 expression·meaning 물리 slot 없이 `word_expression_set`·`word_meaning_set` canonical baseline과 `RELATION_STATUS.inferred` lookup을 포함한다. 앱 공개 전까지 seed DB는 Git 미추적 로컬 private build asset으로 유지한다. 단, 완성 배포 DB를 뜻하지 않고 Hebrew Strong coverage 같은 콘텐츠 완성도는 별도 DB 완성도 phase에서 다룬다.
 `data/reshet_work.db`는 mutable local work DB이므로 Git 미추적 상태로 유지한다.
 clean clone에는 DB 파일이 포함되지 않으므로, Android full build와 fresh install smoke는 별도 private DB 준비 후 수행한다.

@@ -47,9 +47,6 @@ class DatabaseService {
   /// 앱이 실제로 수정하는 작업용 DB 파일명
   static const String _workDbFileName = 'reshet_work.db';
 
-  /// 과거 파일명 호환(기존 사용 중인 DB)
-  static const String _legacySeedFileName = 'bbwdb_20260106.db';
-
   static const String _legacyRelatedArchiveTableName =
       'WORD_LEGACY_RELATED_VALUE';
   static const String _legacyRelatedPreservationState = 'unresolved_legacy';
@@ -648,15 +645,7 @@ class DatabaseService {
   }
 
   static Future<String> _seedDbPath() async {
-    final dataDir = await _dataDirPath();
-    final seed = join(dataDir, _seedDbFileName);
-    final legacy = join(dataDir, _legacySeedFileName);
-
-    // seed가 없고 legacy가 있으면 legacy를 seed로 취급(rename 없이도 동작)
-    if (!File(seed).existsSync() && File(legacy).existsSync()) {
-      return legacy;
-    }
-    return seed;
+    return join(await _dataDirPath(), _seedDbFileName);
   }
 
   static Future<String> _workDbPath() async {

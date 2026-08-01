@@ -23,7 +23,7 @@
 | --- | --- |
 | `data/reshet_seed.db` | 기준 seed DB |
 | `data/reshet_work.db` | 앱이 실제로 읽고 쓰는 작업 DB |
-| `data/bbwdb_20260106.db` | `reshet_seed.db`가 없을 때 사용하는 legacy seed fallback |
+| `data/bbwdb_20260106.db` | 변형하지 않고 유지하는 보존 원본이며 runtime seed로 사용하지 않음 |
 
 정리:
 
