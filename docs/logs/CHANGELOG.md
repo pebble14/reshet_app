@@ -1,5 +1,10 @@
 # CHANGELOG
 
+- `2026-08-02` 기존 관계 상세·편집과 관계 목록에 `RELATION_STATUS` 기반 상태 label·description 표시를 추가했다. 기존 `inferred` 상태는 자동 승격하지 않으며, lookup 불일치에서는 원시 code를 식별 가능한 fallback으로 유지한다.
+- 관계 create/update는 상태를 required 인자로 받고 같은 transaction에서 유효 lookup code를 검증해 `status_code`와 relation history before/after에 명시적으로 보존한다. status-only update와 undo를 지원하며 pair/type/direction duplicate signature는 변경하지 않았다.
+- 새 관계 다이얼로그는 `asserted`를 기본 상태로 명확히 표시하고 `inferred`를 생성 선택지에서 제외한다. system-temp seed 사본만 사용한 repository focused 테스트 3건, Phase 36-D 위젯 테스트 4건, graph-create-cancel 회귀 테스트 4건이 통과했다.
+- 사용자가 수행한 UI 수동 테스트에서 기존 `inferred` 관계의 `기존 데이터 기반` label과 설명 표시, 편집 진입 시 기존 선택 유지와 7개 상태 선택지, `확정` 임시 선택 후 저장하지 않고 취소할 때 기존 상태 유지를 확인했다. 새 관계 다이얼로그에서는 기본 `확정`과 설명 표시 및 선택지에서 `기존 데이터 기반` 미노출을 확인했으며, 실제 관계 수정이나 새 관계 저장 없이 팝업 overflow·잘림·예외가 없고 관계 상태가 기존 방향 배지 `미정/무향/혼합`과 혼동되지 않음을 확인했다.
+- 변경 Dart 파일 6개의 제한 analyze는 종료 코드 0, error·warning 0건이며 기존 info 8건만 유지됐다. `git diff --check`도 통과했고 actual work·seed SHA-256과 7,416행의 상태 분포, sidecar 부재는 작업 전후 동일하다.
 - `2026-08-02` 설치·work DB 최초 생성·reset의 유일한 runtime seed를 `reshet_seed.db`로 확정하고 `bbwdb_20260106.db` filename fallback을 제거했다. 기존 work DB open과 full-legacy work·restore schema 호환은 유지했으며 실제 DB 파일은 변경하지 않았다.
 - `2026-08-01` `WORD_TABLE.표기1~6`·`음역1~6`·`발음1~6`을 work·seed DB에서 물리 제거하고 expression read/write·신규 history authority를 `word_expression_set`으로 유지했다. canonical expression의 행·모든 필드·명시적 순서는 전후 불변이며 runtime fallback을 새로 도입하지 않았다.
 - canonical과 차이가 발음 뒤 ASCII 공백뿐인 `E0000_0032/slot 1`, `E0000_0118/slot 1`의 exact raw 2행씩만 `WORD_LEGACY_EXPRESSION_VALUE`에 `trailing_space_only`로 보존했다. archive는 repository·검색·그래프·상세·편집·history/undo·canonical materialization에서 소비하지 않는 비권위 보존소다.

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 
 import '../data/models/relation_category_lookup.dart';
+import '../data/models/relation_status_lookup.dart';
 import '../data/models/relation_type_lookup.dart';
 import '../data/models/word.dart';
 import '../data/repositories/word_repository.dart';
@@ -226,6 +227,33 @@ String? edgeStateBadgeLabelForTesting(String directionSummaryName) {
     default:
       return null;
   }
+}
+
+@visibleForTesting
+String relationStatusDisplayLabelForTesting(WordRelationEdgeInfo info) {
+  final label = (info.statusLabel ?? '').trim();
+  if (label.isNotEmpty) {
+    return label;
+  }
+
+  final rawCode = (info.statusCode ?? '').trim();
+  if (rawCode.isNotEmpty) {
+    return '미정의 상태 ($rawCode)';
+  }
+
+  return '상태 미지정';
+}
+
+@visibleForTesting
+Widget relationListStatusTextForTesting(
+  WordRelationEdgeInfo info, {
+  TextStyle? style,
+}) {
+  return Text(
+    '상태: ${relationStatusDisplayLabelForTesting(info)}',
+    key: ValueKey<String>('relation-list-status:${info.relationId}'),
+    style: style,
+  );
 }
 
 @visibleForTesting
@@ -1249,6 +1277,7 @@ class _CreateWordDialogState extends State<_CreateWordDialog> {
 class CreateRelationPayload {
   final String? categoryCode;
   final String? relationType;
+  final String statusCode;
   final String directionCode;
   final String? description;
   final String? relationGroupId;
@@ -1258,6 +1287,7 @@ class CreateRelationPayload {
   CreateRelationPayload({
     required this.categoryCode,
     required this.relationType,
+    required this.statusCode,
     required this.directionCode,
     required this.description,
     required this.relationGroupId,
@@ -5709,6 +5739,35 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     return List<T>.unmodifiable(sanitized);
   }
 
+  String _relationStatusDisplayLabel(WordRelationEdgeInfo info) {
+    return relationStatusDisplayLabelForTesting(info);
+  }
+
+  String _relationStatusDescription(WordRelationEdgeInfo info) {
+    final description = (info.statusDescription ?? '').trim();
+    if (description.isNotEmpty) {
+      return description;
+    }
+
+    final rawCode = (info.statusCode ?? '').trim();
+    if (rawCode.isNotEmpty) {
+      return 'RELATION_STATUS lookup에서 설명을 찾을 수 없습니다.';
+    }
+
+    return '관계 상태가 지정되지 않았습니다.';
+  }
+
+  RelationStatusLookup? _relationStatusLookupByCode({
+    required String? rawValue,
+    required Iterable<RelationStatusLookup> statusItems,
+  }) {
+    final code = (rawValue ?? '').trim();
+    if (code.isEmpty) return null;
+
+    final matches = statusItems.where((item) => item.code.trim() == code);
+    return matches.length == 1 ? matches.first : null;
+  }
+
   int _countMatchingLookupItemsByCode<T>({
     required String? rawValue,
     required Iterable<T> items,
@@ -5752,6 +5811,17 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     return _normalizeDropdownCodeForEditor(
       rawValue: rawValue,
       items: categoryItems,
+      codeOf: (item) => item.code,
+    );
+  }
+
+  String? normalizeRelationStatusCodeForEditor({
+    required String? rawValue,
+    required Iterable<RelationStatusLookup> statusItems,
+  }) {
+    return _normalizeDropdownCodeForEditor(
+      rawValue: rawValue,
+      items: statusItems,
       codeOf: (item) => item.code,
     );
   }
@@ -5877,6 +5947,14 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                                     color: colorScheme.onSurfaceVariant,
                                   ),
                                 ),
+                                const SizedBox(height: 4),
+                                relationListStatusTextForTesting(
+                                  info,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: colorScheme.onSurfaceVariant,
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -5911,6 +5989,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         // 초기값(읽기용)
         final originalCategoryCode = info.categoryCode;
         final originalRelationType = info.relationType;
+        final originalStatusCode = info.statusCode;
         final directionItems = _directionDropdownItems(
           centerWordId: _directionReferenceWordId(info),
           wordId1: info.wordId1,
@@ -5919,6 +5998,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
         String? selectedCategoryCode;
         String? selectedRelationType;
+        String? selectedStatusCode;
         String selectedDirectionCode = _normalizeDirectionCodeForEditor(
           rawValue: info.directionCode,
           items: directionItems,
@@ -5936,7 +6016,9 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         // 드롭다운 옵션(편집 눌렀을 때 로딩)
         List<RelationCategoryLookup> categories = [];
         List<RelationTypeLookup> types = [];
+        List<RelationStatusLookup> statuses = [];
         bool isOptionsLoading = false;
+        bool hasLoadedOptions = false;
 
         String? normalizedOriginalCategoryCode() {
           return normalizeCategoryCodeForEditor(
@@ -5955,6 +6037,21 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
           );
         }
 
+        String? normalizedOriginalStatusCode() {
+          return normalizeRelationStatusCodeForEditor(
+            rawValue: originalStatusCode,
+            statusItems: statuses,
+          );
+        }
+
+        bool hasValidSelectedStatus() {
+          return _relationStatusLookupByCode(
+                rawValue: selectedStatusCode,
+                statusItems: statuses,
+              ) !=
+              null;
+        }
+
         void normalizeCurrentEditorDropdownState() {
           selectedCategoryCode = normalizeCategoryCodeForEditor(
             rawValue: selectedCategoryCode,
@@ -5964,6 +6061,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
             rawValue: selectedRelationType,
             categoryCode: selectedCategoryCode,
             allRelationTypeItems: types,
+          );
+          selectedStatusCode = normalizeRelationStatusCodeForEditor(
+            rawValue: selectedStatusCode,
+            statusItems: statuses,
           );
           selectedDirectionCode = _normalizeDirectionCodeForEditor(
             rawValue: selectedDirectionCode,
@@ -5980,6 +6081,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
             rawValue: originalRelationType,
             categoryCode: selectedCategoryCode,
             allRelationTypeItems: types,
+          );
+          selectedStatusCode = normalizeRelationStatusCodeForEditor(
+            rawValue: originalStatusCode,
+            statusItems: statuses,
           );
           selectedDirectionCode = _normalizeDirectionCodeForEditor(
             rawValue: info.directionCode,
@@ -6000,6 +6105,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
 
           return selectedCategoryCode != normalizedOriginalCategoryCode() ||
               selectedRelationType != normalizedOriginalRelationType() ||
+              selectedStatusCode != normalizedOriginalStatusCode() ||
               selectedDirectionCode !=
                   _normalizeDirectionCodeForEditor(
                     rawValue: info.directionCode,
@@ -6012,12 +6118,13 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         }
 
         Future<void> loadOptionsIfNeeded(StateSetter setState) async {
-          if (categories.isNotEmpty && types.isNotEmpty) return;
+          if (hasLoadedOptions) return;
 
           setState(() => isOptionsLoading = true);
           try {
             final c = await _repository.getRelationCategories();
             final t = await _repository.getRelationTypes();
+            final s = await _repository.getRelationStatuses();
             if (!dialogContext.mounted) return;
             setState(() {
               categories = _sanitizeLookupItemsByCode(
@@ -6028,7 +6135,12 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                 t,
                 codeOf: (item) => item.code,
               );
+              statuses = _sanitizeLookupItemsByCode(
+                s,
+                codeOf: (item) => item.code,
+              );
               isOptionsLoading = false;
+              hasLoadedOptions = true;
 
               // 현재 선택값이 실제 items에 없으면 null로 보정(드롭다운 assert 방지)
               restoreEditorDropdownStateFromOriginal();
@@ -6044,7 +6156,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         }
 
         Future<void> save(StateSetter setState) async {
-          if (!hasChanges()) return;
+          if (!hasChanges() || !hasValidSelectedStatus()) return;
 
           setState(() => isSaving = true);
           try {
@@ -6052,6 +6164,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
               relationId: info.relationId,
               categoryCode: selectedCategoryCode,
               relationType: selectedRelationType,
+              statusCode: selectedStatusCode!,
               directionCode: selectedDirectionCode,
               description: _nullIfBlank(descriptionController.text),
               relationGroupId: _nullIfBlank(relationGroupIdController.text),
@@ -6136,6 +6249,8 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                 : (info.relationType?.trim().isNotEmpty ?? false)
                 ? info.relationType!.trim()
                 : '(없음)';
+            final statusText = _relationStatusDisplayLabel(info);
+            final statusDescriptionText = _relationStatusDescription(info);
             final relationCenterWordId = _directionReferenceWordId(info);
             final relationTargetWordId = _targetWordIdForRelationInfo(
               info,
@@ -6164,8 +6279,18 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
               categoryCode: selectedCategoryCode,
               allTypes: types,
             );
+            final selectedStatusLookup = _relationStatusLookupByCode(
+              rawValue: selectedStatusCode,
+              statusItems: statuses,
+            );
+            final selectedStatusDescription =
+                (selectedStatusLookup?.description ?? '').trim();
 
-            final canSave = isEditing && !isSaving && hasChanges();
+            final canSave =
+                isEditing &&
+                !isSaving &&
+                hasValidSelectedStatus() &&
+                hasChanges();
 
             return AlertDialog(
               title: Text('관계: ${_edgeDisplayTitle(info)}'),
@@ -6315,6 +6440,74 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                             });
                           },
                         ),
+
+                      const SizedBox(height: 14),
+
+                      if (!isEditing)
+                        Text(
+                          '관계 상태: $statusText',
+                          key: ValueKey<String>(
+                            'relation-status-label:${info.relationId}',
+                          ),
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        )
+                      else ...[
+                        const Text(
+                          '관계 상태',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 6),
+                        if (isOptionsLoading)
+                          const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 8),
+                            child: LinearProgressIndicator(),
+                          )
+                        else
+                          DropdownButtonFormField<String>(
+                            key: ValueKey<String>(
+                              'relation-edit-status:${selectedStatusCode ?? ''}',
+                            ),
+                            initialValue: selectedStatusCode,
+                            isExpanded: true,
+                            decoration: InputDecoration(
+                              border: const OutlineInputBorder(),
+                              hintText: '상태 선택',
+                              errorText: hasValidSelectedStatus()
+                                  ? null
+                                  : '유효한 관계 상태를 선택하세요.',
+                            ),
+                            items: statuses
+                                .map(
+                                  (status) => DropdownMenuItem<String>(
+                                    value: status.code,
+                                    child: Text(status.displayLabel),
+                                  ),
+                                )
+                                .toList(growable: false),
+                            onChanged: (value) => setState(() {
+                              selectedStatusCode =
+                                  normalizeRelationStatusCodeForEditor(
+                                    rawValue: value,
+                                    statusItems: statuses,
+                                  );
+                            }),
+                          ),
+                      ],
+                      const SizedBox(height: 6),
+                      Text(
+                        isEditing
+                            ? selectedStatusDescription.isNotEmpty
+                                  ? selectedStatusDescription
+                                  : '상태 설명을 확인하려면 유효한 상태를 선택하세요.'
+                            : statusDescriptionText,
+                        key: ValueKey<String>(
+                          'relation-status-description:${info.relationId}',
+                        ),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          height: 1.35,
+                        ),
+                      ),
 
                       const SizedBox(height: 14),
 
@@ -6780,6 +6973,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
               wordId2: createdWordPayload.wordId,
               categoryCode: relationPayload.categoryCode,
               relationType: relationPayload.relationType,
+              statusCode: relationPayload.statusCode,
               directionCode: relationPayload.directionCode,
               description: relationPayload.description,
               relationGroupId: relationPayload.relationGroupId,
@@ -6946,10 +7140,19 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       await _repository.getRelationTypes(),
       codeOf: (item) => item.code,
     );
+    final statuses = _sanitizeLookupItemsByCode(
+      await _repository.getRelationStatuses(),
+      codeOf: (item) => item.code,
+    ).where((item) => item.code != 'inferred').toList(growable: false);
     if (!mounted) return null;
 
     String? selectedCategoryCode;
     String? selectedRelationType;
+    final assertedStatusLookup = _relationStatusLookupByCode(
+      rawValue: 'asserted',
+      statusItems: statuses,
+    );
+    String? selectedStatusCode = assertedStatusLookup?.code;
     final directionItems = _directionDropdownItems(
       centerWordId: sourceWordId,
       wordId1: sourceWordId,
@@ -6973,6 +7176,12 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
               categoryCode: selectedCategoryCode,
               allTypes: types,
             );
+            final selectedStatusLookup = _relationStatusLookupByCode(
+              rawValue: selectedStatusCode,
+              statusItems: statuses,
+            );
+            final selectedStatusDescription =
+                (selectedStatusLookup?.description ?? '').trim();
             return AlertDialog(
               title: Text('관계 추가: $otherWordDisplayLabel'),
               content: SizedBox(
@@ -7061,6 +7270,53 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                         },
                       ),
                       const SizedBox(height: 12),
+                      DropdownButtonFormField<String>(
+                        key: ValueKey<String>(
+                          'relation-add-status:${selectedStatusCode ?? ''}',
+                        ),
+                        initialValue: selectedStatusCode,
+                        isExpanded: true,
+                        decoration: InputDecoration(
+                          labelText: '관계 상태',
+                          errorText: assertedStatusLookup == null
+                              ? '확정 상태 lookup이 없어 저장할 수 없습니다.'
+                              : selectedStatusLookup == null
+                              ? '유효한 관계 상태를 선택하세요.'
+                              : null,
+                        ),
+                        items: statuses
+                            .map(
+                              (status) => DropdownMenuItem<String>(
+                                value: status.code,
+                                child: Text(status.displayLabel),
+                              ),
+                            )
+                            .toList(growable: false),
+                        onChanged: (value) => setState(() {
+                          selectedStatusCode =
+                              normalizeRelationStatusCodeForEditor(
+                                rawValue: value,
+                                statusItems: statuses,
+                              );
+                        }),
+                      ),
+                      const SizedBox(height: 6),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          selectedStatusDescription.isNotEmpty
+                              ? selectedStatusDescription
+                              : '유효한 관계 상태를 선택하세요.',
+                          key: const Key('relation-add-status-description'),
+                          style: TextStyle(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
+                            height: 1.35,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
                       TextField(
                         controller: noteController,
                         decoration: const InputDecoration(labelText: '노트'),
@@ -7096,22 +7352,29 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                 ),
                 ElevatedButton(
                   key: const Key('relation-add-save-button'),
-                  onPressed: () {
-                    Navigator.pop(
-                      context,
-                      CreateRelationPayload(
-                        categoryCode: selectedCategoryCode,
-                        relationType: selectedRelationType,
-                        directionCode: selectedDirectionCode,
-                        description: _nullIfBlank(descriptionController.text),
-                        relationGroupId: _nullIfBlank(
-                          relationGroupIdController.text,
-                        ),
-                        note: _nullIfBlank(noteController.text),
-                        source: _nullIfBlank(sourceController.text),
-                      ),
-                    );
-                  },
+                  onPressed:
+                      assertedStatusLookup == null ||
+                          selectedStatusLookup == null
+                      ? null
+                      : () {
+                          Navigator.pop(
+                            context,
+                            CreateRelationPayload(
+                              categoryCode: selectedCategoryCode,
+                              relationType: selectedRelationType,
+                              statusCode: selectedStatusLookup.code,
+                              directionCode: selectedDirectionCode,
+                              description: _nullIfBlank(
+                                descriptionController.text,
+                              ),
+                              relationGroupId: _nullIfBlank(
+                                relationGroupIdController.text,
+                              ),
+                              note: _nullIfBlank(noteController.text),
+                              source: _nullIfBlank(sourceController.text),
+                            ),
+                          );
+                        },
                   child: const Text('저장'),
                 ),
               ],
@@ -7222,6 +7485,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       wordId2: other.wordId,
       categoryCode: payload.categoryCode,
       relationType: payload.relationType,
+      statusCode: payload.statusCode,
       directionCode: payload.directionCode,
       description: payload.description,
       relationGroupId: payload.relationGroupId,

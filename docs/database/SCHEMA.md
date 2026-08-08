@@ -342,6 +342,8 @@ CREATE TABLE WORD_LEGACY_EXPRESSION_VALUE (
 - 실제 스키마에는 `CHECK(word_id_1 < word_id_2)` 제약이 있어 두 단어 ID는 정렬 저장을 전제로 한다.
 - `relation_type`은 방향성을 포함하지 않으며, 방향 해석은 `direction_code`가 담당한다.
 - `status_code`의 스키마 기본값은 `asserted`다.
+- relation create/update는 스키마 기본값에 암묵적으로 의존하지 않고, trim 후 비어 있지 않으며 `RELATION_STATUS.code`에 존재하는 상태를 같은 transaction에서 검증해 `status_code`에 명시적으로 저장한다.
+- 기존 relation의 다른 필드를 편집해도 기존 `status_code`를 `asserted`로 자동 승격하지 않는다.
 - runtime schema 보정은 `idx_word_relation_signature_lookup`과 `idx_word_relation_pair_type_direction_unique`의 `sqlite_master.sql`을 기대 정의와 비교한다. 인덱스가 없거나 정의가 다를 때만 생성·교체하며, 공백·대소문자 차이만 있는 동일 정의에는 DDL을 실행하지 않는다.
 - signature 충돌 조회는 계속 수행하며, `idx_word_relation_pair_type_direction_unique`는 충돌이 없을 때만 보장한다.
 
@@ -454,6 +456,8 @@ CREATE TABLE WORD_LEGACY_EXPRESSION_VALUE (
 메모:
 
 - `WORD_RELATION.status_code`의 스키마 기본값은 `asserted`다.
+- relation UI는 repository가 `RELATION_STATUS`에서 materialize한 `label`과 `description`을 표시하며, lookup 불일치 시에도 원시 `status_code`를 식별 가능한 fallback으로 보존한다.
+- 기존 relation 편집에서는 현재 lookup 상태 7개를 선택할 수 있고 기존 상태를 그대로 유지한다. 새 relation은 `asserted`를 기본 선택으로 사용하며 기존 데이터 보존 상태인 `inferred`는 생성 선택지에서 제외한다.
 - `inferred`는 seed baseline에 물리적으로 포함되며, runtime lookup 보정 경로도 기존/과거 DB 안전망으로 유지된다.
 - `inferred`는 기존 데이터와 기존 처리 경로에서 보존된 관계 상태를 뜻하며, 관계 유형·방향·근거가 현재 기준에서 독립적으로 확정·검증되었음을 뜻하지 않는다.
 - 이 보정은 relation 데이터 재작성이나 `WORD_RELATION.status_code` FK 추가를 포함하지 않는다.

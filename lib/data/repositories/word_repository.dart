@@ -6,6 +6,7 @@ import '../adapters/normalized_word_expression_read_adapter.dart';
 import '../adapters/legacy_word_expression_write_adapter.dart';
 import '../adapters/normalized_word_expression_write_adapter.dart';
 import '../models/relation_category_lookup.dart';
+import '../models/relation_status_lookup.dart';
 import '../models/relation_type_lookup.dart';
 import '../models/word.dart';
 import '../../domain/expression/expression_read_models.dart';
@@ -42,6 +43,8 @@ class WordRelationEdgeInfo {
   final String? relationType;
   final String? relationTypeLabel;
   final String? statusCode;
+  final String? statusLabel;
+  final String? statusDescription;
   final String? description;
   final String? note;
   final String? source;
@@ -59,6 +62,8 @@ class WordRelationEdgeInfo {
     this.relationType,
     this.relationTypeLabel,
     this.statusCode,
+    this.statusLabel,
+    this.statusDescription,
     this.description,
     this.note,
     this.source,
@@ -84,6 +89,8 @@ class WordRelationEdgeInfo {
       relationType: map['relation_type'] as String?,
       relationTypeLabel: map['relation_type_label'] as String?,
       statusCode: map['status_code'] as String?,
+      statusLabel: map['status_label'] as String?,
+      statusDescription: map['status_description'] as String?,
       description: map['description'] as String?,
       note: map['note'] as String?,
       source: map['source'] as String?,
@@ -2446,6 +2453,8 @@ class WordRepository {
         wr.relation_type AS relation_type,
         rt.label AS relation_type_label,
         wr.status_code AS status_code,
+        rs.label AS status_label,
+        rs.description AS status_description,
         wr.note AS note,
         wr.source AS source
       FROM WORD_RELATION wr
@@ -2453,6 +2462,8 @@ class WordRepository {
         ON rt.code = wr.relation_type
       LEFT JOIN RELATION_CATEGORY rc
         ON rc.code = COALESCE(rt.category_code, wr.category_code)
+      LEFT JOIN RELATION_STATUS rs
+        ON rs.code = wr.status_code
       WHERE wr.word_id_1 = ?
          OR wr.word_id_2 = ?
       ORDER BY wr.id ASC
@@ -2516,6 +2527,8 @@ class WordRepository {
         wr.relation_type AS relation_type,
         rt.label AS relation_type_label,
         wr.status_code AS status_code,
+        rs.label AS status_label,
+        rs.description AS status_description,
         wr.note AS note,
         wr.source AS source
       FROM WORD_RELATION wr
@@ -2523,6 +2536,8 @@ class WordRepository {
         ON rt.code = wr.relation_type
       LEFT JOIN RELATION_CATEGORY rc
         ON rc.code = COALESCE(rt.category_code, wr.category_code)
+      LEFT JOIN RELATION_STATUS rs
+        ON rs.code = wr.status_code
       WHERE wr.word_id_1 IN ($placeholders)
         AND wr.word_id_2 IN ($placeholders)
       ORDER BY wr.id ASC
@@ -3477,6 +3492,45 @@ class WordRepository {
         .toList(growable: false);
   }
 
+  /// RELATION_STATUS lookup 목록
+  Future<List<RelationStatusLookup>> getRelationStatuses() async {
+    final db = await DatabaseService.openDatabaseFile();
+    final rows = await db.query(
+      'RELATION_STATUS',
+      columns: ['code', 'label', 'description', 'sort_order'],
+      orderBy: 'sort_order ASC, label ASC, code ASC',
+    );
+
+    return rows
+        .map(
+          (row) => RelationStatusLookup.fromMap(Map<String, dynamic>.from(row)),
+        )
+        .toList(growable: false);
+  }
+
+  Future<String> _requireValidRelationStatusCodeOnExecutor(
+    DatabaseExecutor db,
+    String statusCode,
+  ) async {
+    final normalizedStatusCode = statusCode.trim();
+    if (normalizedStatusCode.isEmpty) {
+      throw ArgumentError.value(statusCode, 'statusCode', '관계 상태가 비어 있습니다.');
+    }
+
+    final rows = await db.query(
+      'RELATION_STATUS',
+      columns: ['code'],
+      where: 'code = ?',
+      whereArgs: [normalizedStatusCode],
+      limit: 1,
+    );
+    if (rows.isEmpty) {
+      throw ArgumentError.value(statusCode, 'statusCode', '정의되지 않은 관계 상태입니다.');
+    }
+
+    return normalizedStatusCode;
+  }
+
   Future<RelationTypeLookup?> _getRelationTypeLookupByCodeOnExecutor(
     DatabaseExecutor db,
     String? relationTypeCode,
@@ -3522,6 +3576,7 @@ class WordRepository {
     required int relationId,
     required String? categoryCode,
     required String? relationType,
+    required String statusCode,
     String? directionCode,
     String? description,
     String? relationGroupId,
@@ -3546,6 +3601,9 @@ class WordRepository {
         throw Exception('수정할 관계를 찾을 수 없습니다: $relationId');
       }
 
+      final normalizedStatusCode =
+          await _requireValidRelationStatusCodeOnExecutor(txn, statusCode);
+
       final normalizedRelationType = _normalizeNullableCode(relationType);
       final effectiveCategoryCode = await _resolveStoredCategoryCode(
         db: txn,
@@ -3568,6 +3626,7 @@ class WordRepository {
       final after = Map<String, dynamic>.from(before);
       after['category_code'] = effectiveCategoryCode;
       after['relation_type'] = normalizedRelationType;
+      after['status_code'] = normalizedStatusCode;
       after['direction_code'] = normalizedDirectionCode;
       after['description'] = descriptionValue;
       after['relation_group_id'] = relationGroupIdValue;
@@ -3580,6 +3639,7 @@ class WordRepository {
         {
           'category_code': effectiveCategoryCode,
           'relation_type': normalizedRelationType,
+          'status_code': normalizedStatusCode,
           'direction_code': normalizedDirectionCode,
           'description': descriptionValue,
           'relation_group_id': relationGroupIdValue,
@@ -3741,13 +3801,14 @@ class WordRepository {
   }
 
   /// WORD_RELATION에 관계 1건을 추가한다(트랜잭션)
-  /// - status_code/created_at/updated_at은 DB default를 활용하되,
-  ///   updated_at은 명시적으로 ISO 문자열로 넣어준다.
+  /// - status_code는 유효한 lookup code를 검증해 명시적으로 저장한다.
+  /// - created_at은 DB default를 활용하고 updated_at은 ISO 문자열로 넣어준다.
   Future<int> createRelation({
     required String wordId1,
     required String wordId2,
     required String? categoryCode,
     required String? relationType,
+    required String statusCode,
     String? directionCode,
     String? description,
     String? relationGroupId,
@@ -3771,6 +3832,8 @@ class WordRepository {
         : trimmedRelationGroupId;
 
     return await db.transaction((txn) async {
+      final normalizedStatusCode =
+          await _requireValidRelationStatusCodeOnExecutor(txn, statusCode);
       final normalizedRelationType = _normalizeNullableCode(relationType);
       final effectiveCategoryCode = await _resolveStoredCategoryCode(
         db: txn,
@@ -3794,6 +3857,7 @@ class WordRepository {
         'word_id_2': normalized.wordId2,
         'category_code': effectiveCategoryCode,
         'relation_type': normalizedRelationType,
+        'status_code': normalizedStatusCode,
         'direction_code': normalized.directionCode,
         'description': descriptionValue,
         'relation_group_id': relationGroupIdValue,

@@ -145,6 +145,7 @@ void main() {
           wordId2: createdWordId,
           categoryCode: null,
           relationType: null,
+          statusCode: 'asserted',
           directionCode: 'unknown',
           note: null,
           source: null,
@@ -175,7 +176,7 @@ void main() {
       await db.insert('WORD_TABLE', {
         'id': wordId,
         '\uC5B8\uC5B4': 'test',
-        '\uD45C\uAE301': 'manual-word',
+        '\uC2A4\uD2B8\uB871\uB118\uBC84': '',
       });
 
       final didDiscard = await repository.discardCreatedWordForGraphCreateFlow(

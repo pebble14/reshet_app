@@ -335,6 +335,7 @@ Graph read boundary의 원칙은 다음과 같다.
 - graph는 repository가 확정한 relation edge와 word display contract를 소비한다.
 - graph surface는 `WORD_RELATION` storage를 직접 해석하지 않는다.
 - relation lookup materialization은 repository responsibility다.
+- relation status read는 원시 `status_code`를 보존하면서 `RELATION_STATUS`의 label과 description을 repository에서 materialize한다.
 - graph label, center display, visible word data는 가능한 한 owner-specific contract로 공급한다.
 - graph batch와 graph center read는 generic read와 분리된 context로 검토해야 한다.
 
@@ -363,6 +364,8 @@ Word/relation history 경계는 다음과 같다.
 - word history snapshot은 `WORD_TABLE.관련1~7`을 저장하지 않는다.
 - 과거 word snapshot에 `관련1~7` key가 있어도 `WORD_TABLE` update/insert undo payload에서는 무시한다.
 - 현재 relation 저장·조회와 relation history/undo authority는 `WORD_RELATION`이다.
+- relation create/update는 같은 transaction에서 비어 있지 않은 `RELATION_STATUS.code`를 검증하고 `status_code`를 명시적으로 저장한다.
+- relation history의 before/after snapshot은 `status_code`를 정확히 보존하며, status-only update도 일반 relation update와 같은 undo 대상으로 복원한다.
 - `관련1~7` 물리 컬럼은 제거됐으며, 미대응 raw 값만 `WORD_LEGACY_RELATED_VALUE`에 비권위적으로 격리한다.
 - repository와 history/undo는 `WORD_LEGACY_RELATED_VALUE`를 읽거나 관계 authority로 사용하지 않는다.
 
