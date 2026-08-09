@@ -811,6 +811,49 @@ class WordRepository {
     );
   }
 
+  Future<List<Map<String, dynamic>>>
+  _materializeCanonicalExpressionsForLegacyShapedCompatibility(
+    Database db,
+    Iterable<Map<String, dynamic>> rows,
+  ) async {
+    final rowList = rows
+        .map((row) => Map<String, dynamic>.from(row))
+        .toList(growable: false);
+    if (rowList.isEmpty) {
+      return const [];
+    }
+
+    final normalizedRowsByWordId = await _loadNormalizedExpressionRowsByWordIds(
+      db,
+      rowList.map((row) => (row['id'] ?? '').toString()),
+    );
+
+    return List<Map<String, dynamic>>.unmodifiable(
+      rowList.map((row) {
+        final wordId = (row['id'] ?? '').toString().trim();
+        final normalizedRows = normalizedRowsByWordId[wordId] ?? const [];
+        if (normalizedRows.isEmpty) {
+          return _materializeWordRowForDisplay(
+            row,
+            const CanonicalExpressionReadResult(),
+          );
+        }
+
+        final normalizedOutcome = readNormalizedWordExpressionRows(
+          normalizedRows,
+        );
+        if (!normalizedOutcome.isSuccess) {
+          return row;
+        }
+
+        return _materializeWordRowForDisplay(
+          row,
+          normalizedOutcome.readResult!,
+        );
+      }),
+    );
+  }
+
   WordExpressionReadSnapshot _snapshotForNormalizedQueryFailure({
     required String wordId,
     required String context,
@@ -2407,9 +2450,14 @@ class WordRepository {
         .map((row) => Map<String, dynamic>.from(row))
         .toList(growable: false);
     await _captureWordExpressionReadSnapshots(db, rows, context: context);
+    final compatibilityRows =
+        await _materializeCanonicalExpressionsForLegacyShapedCompatibility(
+          db,
+          rows,
+        );
 
     final rowsById = <String, Map<String, dynamic>>{
-      for (final row in rows)
+      for (final row in compatibilityRows)
         (row['id'] as String): Map<String, dynamic>.from(row),
     };
 

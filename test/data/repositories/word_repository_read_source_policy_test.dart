@@ -152,13 +152,7 @@ void main() {
         final repository = WordRepository();
         final db = await DatabaseService.openDatabaseFile();
 
-        await db.insert('WORD_TABLE', {
-          'id': 'T9000_RS_EMPTY',
-          '언어': '테스트',
-          '표기1': 'fallback-empty',
-          '음역1': '폴백',
-          '발음1': 'fallback',
-        });
+        await db.insert('WORD_TABLE', {'id': 'T9000_RS_EMPTY', '언어': '테스트'});
 
         final detailSeed = await repository.getWordEditSeedForDetailEdit(
           'T9000_RS_EMPTY',
@@ -416,13 +410,7 @@ void main() {
         final db = await DatabaseService.openDatabaseFile();
 
         await db.execute('PRAGMA ignore_check_constraints = ON');
-        await db.insert('WORD_TABLE', {
-          'id': 'T9000_RS_MIN_EXPR',
-          '언어': '테스트',
-          '표기1': 'legacy-valid',
-          '음역1': '레거시',
-          '발음1': 'legacy-valid',
-        });
+        await db.insert('WORD_TABLE', {'id': 'T9000_RS_MIN_EXPR', '언어': '테스트'});
         await db.insert('word_expression_set', {
           'word_id': 'T9000_RS_MIN_EXPR',
           'seq': 1,
@@ -490,13 +478,7 @@ void main() {
           )
           ''');
 
-        await db.insert('WORD_TABLE', {
-          'id': 'T9000_RS_MAPPING',
-          '언어': '테스트',
-          '표기1': 'legacy-alpha',
-          '음역1': '레거시 알파',
-          '발음1': 'legacy-alpha',
-        });
+        await db.insert('WORD_TABLE', {'id': 'T9000_RS_MAPPING', '언어': '테스트'});
         await db.insert('word_expression_set', {
           'word_id': 'T9000_RS_MAPPING',
           'seq': 1,
@@ -615,11 +597,7 @@ void main() {
         final repository = WordRepository();
         final db = await DatabaseService.openDatabaseFile();
 
-        await db.insert('WORD_TABLE', {
-          'id': 'T9000_RS_STRICT',
-          '언어': '테스트',
-          '표기1': 'strict-only',
-        });
+        await db.insert('WORD_TABLE', {'id': 'T9000_RS_STRICT', '언어': '테스트'});
 
         final seed = await repository.getWordEditSeedForDetailEdit(
           'T9000_RS_STRICT',
@@ -654,7 +632,6 @@ void main() {
           db,
           id: centerWordId,
           strongNumber: 'G999998',
-          legacySpelling: 'legacy-closure-center',
           canonicalSpelling: 'canonical-closure-center',
           canonicalMeaning: 'canonical closure center meaning',
         );
@@ -662,7 +639,6 @@ void main() {
           db,
           id: targetWordId,
           strongNumber: strongNumber,
-          legacySpelling: 'legacy-closure-title',
           canonicalSpelling: canonicalTitle,
           canonicalMeaning: canonicalMeaning,
         );
@@ -672,7 +648,7 @@ void main() {
           'direction_code': 'unknown',
           'updated_at': DateTime.now().toIso8601String(),
         });
-        await _dropLegacyExpressionColumns(db);
+        await _expectLegacyExpressionColumnsAbsent(db);
 
         final detailDisplay = await repository
             .getWordDetailLikeDisplayItemByIdForDetailScreen(targetWordId);
@@ -822,7 +798,6 @@ void main() {
           'id': wordId,
           '언어': '테스트',
           '스트롱넘버': 'H0',
-          '표기1': 'home-strict-failure',
         });
         await db.execute('DROP TABLE word_expression_set');
 
@@ -854,8 +829,7 @@ void main() {
         db,
         id: wordId,
         strongNumber: 'H943002',
-        legacySpelling: 'legacy-generic-title',
-        canonicalSpelling: 'normalized-generic-title',
+        canonicalSpelling: 'legacy-generic-title',
         canonicalMeaning: 'normalized generic meaning',
       );
 
@@ -913,12 +887,6 @@ void main() {
         final legacyWordRow = {
           'id': 'T9000_RS_SPLIT_MISMATCH',
           '\uC5B8\uC5B4': '\uD14C\uC2A4\uD2B8',
-          '\uD45C\uAE301': 'alpha',
-          '\uC74C\uC5ED1': '\uC54C\uD30C',
-          '\uBC1C\uC74C1': 'alpha',
-          '\uD45C\uAE302': 'aleph',
-          '\uC74C\uC5ED2': '\uC54C\uB808\uD504',
-          '\uBC1C\uC74C2': 'aleph',
         };
 
         await db.insert('WORD_TABLE', legacyWordRow);
@@ -976,16 +944,10 @@ void main() {
         await db.insert('WORD_TABLE', {
           'id': centerWordId,
           '\uC5B8\uC5B4': '\uD14C\uC2A4\uD2B8',
-          '\uD45C\uAE301': 'graph-center',
-          '\uC74C\uC5ED1': 'graph-center',
-          '\uBC1C\uC74C1': 'graph-center',
         });
         await db.insert('WORD_TABLE', {
           'id': childWordId,
           '\uC5B8\uC5B4': '\uD14C\uC2A4\uD2B8',
-          '\uD45C\uAE301': 'graph-child',
-          '\uC74C\uC5ED1': 'graph-child',
-          '\uBC1C\uC74C1': 'graph-child',
         });
         await db.insert('word_expression_set', {
           'word_id': childWordId,
@@ -1058,19 +1020,10 @@ void main() {
         await db.insert('WORD_TABLE', {
           'id': centerWordId,
           '\uC5B8\uC5B4': '\uD14C\uC2A4\uD2B8',
-          '\uD45C\uAE301': 'graph-center',
-          '\uC74C\uC5ED1': 'graph-center',
-          '\uBC1C\uC74C1': 'graph-center',
         });
         await db.insert('WORD_TABLE', {
           'id': childWordId,
           '\uC5B8\uC5B4': '\uD14C\uC2A4\uD2B8',
-          '\uD45C\uAE301': 'alpha',
-          '\uC74C\uC5ED1': '\uC54C\uD30C',
-          '\uBC1C\uC74C1': 'alpha',
-          '\uD45C\uAE302': 'aleph',
-          '\uC74C\uC5ED2': '\uC54C\uB808\uD504',
-          '\uBC1C\uC74C2': 'aleph',
         });
         await db.insert('word_expression_set', {
           'word_id': childWordId,
@@ -1133,17 +1086,11 @@ void main() {
         await db.insert('WORD_TABLE', {
           'id': centerWordId,
           '\uC5B8\uC5B4': '\uD14C\uC2A4\uD2B8',
-          '\uD45C\uAE301': 'status-center',
-          '\uC74C\uC5ED1': 'status-center',
-          '\uBC1C\uC74C1': 'status-center',
         });
         for (final childWordId in childWordIds) {
           await db.insert('WORD_TABLE', {
             'id': childWordId,
             '\uC5B8\uC5B4': '\uD14C\uC2A4\uD2B8',
-            '\uD45C\uAE301': childWordId.toLowerCase(),
-            '\uC74C\uC5ED1': childWordId.toLowerCase(),
-            '\uBC1C\uC74C1': childWordId.toLowerCase(),
           });
         }
 
@@ -1204,13 +1151,7 @@ void main() {
       () async {
         final repository = WordRepository();
         final db = await DatabaseService.openDatabaseFile();
-        final legacyWordRow = {
-          'id': 'T9000_RS_DETAIL_EMPTY',
-          '언어': '테스트',
-          '표기1': 'detail-empty',
-          '음역1': '디테일 엠프티',
-          '발음1': 'detail-empty',
-        };
+        final legacyWordRow = {'id': 'T9000_RS_DETAIL_EMPTY', '언어': '테스트'};
 
         await db.insert('WORD_TABLE', legacyWordRow);
 
@@ -1244,16 +1185,7 @@ void main() {
       () async {
         final repository = WordRepository();
         final db = await DatabaseService.openDatabaseFile();
-        final legacyWordRow = {
-          'id': 'T9000_RS_DETAIL_MISMATCH',
-          '언어': '테스트',
-          '표기1': 'alpha',
-          '음역1': '알파',
-          '발음1': 'alpha',
-          '표기2': 'aleph',
-          '음역2': '알레프',
-          '발음2': 'aleph',
-        };
+        final legacyWordRow = {'id': 'T9000_RS_DETAIL_MISMATCH', '언어': '테스트'};
 
         await db.insert('WORD_TABLE', legacyWordRow);
         await db.insert('word_expression_set', {
@@ -1306,13 +1238,7 @@ void main() {
         final repository = WordRepository();
         final db = await DatabaseService.openDatabaseFile();
 
-        await db.insert('WORD_TABLE', {
-          'id': 'T9000_RS_SUMMARY',
-          '언어': '테스트',
-          '표기1': 'summary-word',
-          '음역1': '서머리',
-          '발음1': 'summary',
-        });
+        await db.insert('WORD_TABLE', {'id': 'T9000_RS_SUMMARY', '언어': '테스트'});
 
         await repository.getWordDetailLikeDisplayItemByIdForDetailScreen(
           'T9000_RS_SUMMARY',
@@ -1382,15 +1308,11 @@ void _expectNormalizedSnapshot(
   expect(snapshot.fallbackObservation, isNull);
 }
 
-Future<void> _dropLegacyExpressionColumns(dynamic db) async {
+Future<void> _expectLegacyExpressionColumnsAbsent(dynamic db) async {
   final legacyColumns = <String>[
     for (final prefix in const ['표기', '음역', '발음'])
       for (var index = 1; index <= 6; index++) '$prefix$index',
   ];
-
-  for (final column in legacyColumns) {
-    await db.execute('ALTER TABLE WORD_TABLE DROP COLUMN "$column"');
-  }
 
   final remainingColumns = (await db.rawQuery(
     "PRAGMA table_info('WORD_TABLE')",
@@ -1402,7 +1324,6 @@ Future<void> _insertCanonicalClosureWord(
   dynamic db, {
   required String id,
   required String strongNumber,
-  required String legacySpelling,
   required String canonicalSpelling,
   required String canonicalMeaning,
 }) async {
@@ -1410,9 +1331,6 @@ Future<void> _insertCanonicalClosureWord(
     'id': id,
     '\uC5B8\uC5B4': '\uD14C\uC2A4\uD2B8',
     '\uC2A4\uD2B8\uB871\uB118\uBC84': strongNumber,
-    '\uD45C\uAE301': legacySpelling,
-    '\uC74C\uC5ED1': 'legacy-translit-$id',
-    '\uBC1C\uC74C1': 'legacy-pron-$id',
   });
   await db.insert('word_expression_set', {
     'word_id': id,
