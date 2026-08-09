@@ -1,7 +1,6 @@
 import 'dart:collection';
 
-import 'package:flutter/foundation.dart' show debugPrint, kDebugMode;
-
+import '../../support/runtime_debug_sink.dart';
 import 'read_source_policy.dart';
 
 class ReadSourceRawEvent {
@@ -227,8 +226,8 @@ class ReadSourceDebugCollector {
           .record(event);
     }
 
-    if (kDebugMode) {
-      debugPrint(_formatRuntimeObservationLine(event));
+    if (runtimeDebugMode) {
+      runtimeDebugPrint(_formatRuntimeObservationLine(event));
     }
   }
 

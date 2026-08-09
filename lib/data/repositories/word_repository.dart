@@ -5,6 +5,7 @@ import '../adapters/legacy_word_expression_read_adapter.dart';
 import '../adapters/normalized_word_expression_read_adapter.dart';
 import '../adapters/legacy_word_expression_write_adapter.dart';
 import '../adapters/normalized_word_expression_write_adapter.dart';
+import '../models/approved_content_batch_models.dart';
 import '../models/relation_category_lookup.dart';
 import '../models/relation_status_lookup.dart';
 import '../models/relation_type_lookup.dart';
@@ -108,6 +109,26 @@ class UndoLastChangeResult {
   final bool didUndo;
 
   const UndoLastChangeResult({required this.didUndo});
+}
+
+final class _ApprovedMeaningPreparedChange {
+  const _ApprovedMeaningPreparedChange({
+    required this.replacement,
+    required this.beforeHistory,
+    required this.afterHistory,
+    required this.afterRows,
+  });
+
+  final ApprovedContentMeaningReplacement replacement;
+  final Map<String, dynamic> beforeHistory;
+  final Map<String, dynamic> afterHistory;
+  final List<Map<String, Object?>> afterRows;
+}
+
+final class _ApprovedContentBatchPreparedState {
+  const _ApprovedContentBatchPreparedState({required this.meaningChanges});
+
+  final List<_ApprovedMeaningPreparedChange> meaningChanges;
 }
 
 class _HomeStrongExactCandidate {
@@ -4549,6 +4570,361 @@ class WordRepository {
         afterJson: afterHistory,
       );
     });
+  }
+
+  /// 승인된 content manifest가 요청한 meaning 전체 projection 교체와
+  /// relation 생성을 기존 history/undo 형식으로 한 transaction에 기록한다.
+  Future<ApprovedContentBatchWriteResult> applyApprovedContentBatch(
+    ApprovedContentBatchWriteRequest request, {
+    Database? database,
+  }) async {
+    _validateApprovedContentBatchRequestShape(request);
+    final db = database ?? await DatabaseService.openDatabaseFile();
+    final groupId = _newHistoryGroupId();
+
+    return db.transaction((txn) async {
+      final existingGroup = await txn.query(
+        'CHANGE_HISTORY',
+        columns: ['id'],
+        where: 'group_id = ?',
+        whereArgs: [groupId],
+        limit: 1,
+      );
+      if (existingGroup.isNotEmpty) {
+        throw StateError('새 history group_id가 기존 값과 충돌했습니다: $groupId');
+      }
+
+      final prepared = await _prepareApprovedContentBatch(txn, request);
+      final createdRelations = <ApprovedContentCreatedRelation>[];
+
+      for (final change in prepared.meaningChanges) {
+        await _replaceWordMeaningSetRows(
+          txn,
+          change.replacement.wordId,
+          change.afterRows,
+        );
+        await _insertHistory(
+          txn,
+          groupId: groupId,
+          actionType: 'update',
+          entityType: 'word',
+          entityId: change.replacement.wordId,
+          beforeJson: change.beforeHistory,
+          afterJson: change.afterHistory,
+        );
+      }
+
+      for (final relation in request.relationCreates) {
+        final updatedAt = DateTime.now().toIso8601String();
+        final historyAfter = Map<String, dynamic>.from(
+          relation.toDatabaseRow(updatedAt: updatedAt),
+        );
+        final id = await txn.insert('WORD_RELATION', historyAfter);
+        historyAfter['id'] = id;
+
+        await _insertHistory(
+          txn,
+          groupId: groupId,
+          actionType: 'create',
+          entityType: 'relation',
+          entityId: id.toString(),
+          afterJson: historyAfter,
+        );
+
+        final actualRow = await _getRelationRowById(txn, id);
+        if (actualRow == null) {
+          throw StateError('생성한 관계를 transaction 내부에서 다시 읽을 수 없습니다: $id');
+        }
+        createdRelations.add(
+          ApprovedContentCreatedRelation(
+            id: id,
+            row: Map<String, Object?>.unmodifiable(actualRow),
+          ),
+        );
+      }
+
+      final historyRows = await txn.query(
+        'CHANGE_HISTORY',
+        columns: ['id'],
+        where: 'group_id = ? AND undone_at IS NULL',
+        whereArgs: [groupId],
+      );
+      if (historyRows.length != request.operationCount) {
+        throw StateError(
+          'batch history 행 수가 operation 수와 다릅니다: '
+          '${historyRows.length}/${request.operationCount}',
+        );
+      }
+
+      return ApprovedContentBatchWriteResult(
+        groupId: groupId,
+        createdRelations: List<ApprovedContentCreatedRelation>.unmodifiable(
+          createdRelations,
+        ),
+        historyRowCount: historyRows.length,
+      );
+    }, exclusive: true);
+  }
+
+  /// 원본 DB read-only preflight와 transaction 직전 검증이 같은 계약을
+  /// 사용하도록 batch DB precondition을 공유한다.
+  Future<void> validateApprovedContentBatchPreconditions({
+    required ApprovedContentBatchWriteRequest request,
+    required DatabaseExecutor database,
+  }) async {
+    _validateApprovedContentBatchRequestShape(request);
+    await _prepareApprovedContentBatch(database, request);
+  }
+
+  void _validateApprovedContentBatchRequestShape(
+    ApprovedContentBatchWriteRequest request,
+  ) {
+    if (request.batchId.isEmpty) {
+      throw ArgumentError.value(
+        request.batchId,
+        'batchId',
+        'batch_id가 비어 있습니다.',
+      );
+    }
+    if (request.operationCount == 0) {
+      throw ArgumentError('batch operation이 최소 1개 필요합니다.');
+    }
+
+    final meaningWordIds = <String>{};
+    for (final replacement in request.meaningReplacements) {
+      if (replacement.wordId.isEmpty) {
+        throw ArgumentError('meaning replacement word_id가 비어 있습니다.');
+      }
+      if (!meaningWordIds.add(replacement.wordId)) {
+        throw ArgumentError(
+          '동일 word의 meaning replacement가 중복됐습니다: ${replacement.wordId}',
+        );
+      }
+      _validateApprovedMeaningRows(
+        replacement.wordId,
+        'before',
+        replacement.before,
+      );
+      _validateApprovedMeaningRows(
+        replacement.wordId,
+        'after',
+        replacement.after,
+      );
+      if (_sameApprovedMeaningRows(replacement.before, replacement.after)) {
+        throw ArgumentError(
+          'meaning before와 after가 동일합니다: ${replacement.wordId}',
+        );
+      }
+    }
+
+    final relationPairs = <String>{};
+    const directionCodes = {'w1_to_w2', 'w2_to_w1', 'undirected', 'unknown'};
+    for (final relation in request.relationCreates) {
+      if (relation.wordId1.isEmpty || relation.wordId2.isEmpty) {
+        throw ArgumentError('relation word_id가 비어 있습니다.');
+      }
+      if (relation.wordId1.compareTo(relation.wordId2) >= 0) {
+        throw ArgumentError(
+          'relation pair는 word_id_1 < word_id_2 canonical 순서여야 합니다: '
+          '${relation.wordId1}, ${relation.wordId2}',
+        );
+      }
+      if (!directionCodes.contains(relation.directionCode)) {
+        throw ArgumentError(
+          '정의되지 않은 direction_code입니다: ${relation.directionCode}',
+        );
+      }
+      if (relation.categoryCode.isEmpty ||
+          relation.relationType.isEmpty ||
+          relation.statusCode.isEmpty ||
+          relation.source.isEmpty) {
+        throw ArgumentError('relation lookup code와 source는 비어 있을 수 없습니다.');
+      }
+      final pairKey = '${relation.wordId1}\u0000${relation.wordId2}';
+      if (!relationPairs.add(pairKey)) {
+        throw ArgumentError(
+          '동일 unordered relation pair가 중복됐습니다: '
+          '${relation.wordId1}, ${relation.wordId2}',
+        );
+      }
+    }
+  }
+
+  void _validateApprovedMeaningRows(
+    String wordId,
+    String projectionName,
+    List<ApprovedContentMeaningRow> rows,
+  ) {
+    var previousSeq = 0;
+    for (final row in rows) {
+      if (row.seq < 1 || row.seq <= previousSeq) {
+        throw ArgumentError(
+          '$wordId meaning $projectionName seq는 양수이며 엄격한 오름차순이어야 합니다: '
+          '${row.seq}',
+        );
+      }
+      if (row.meaning.isEmpty) {
+        throw ArgumentError('$wordId meaning $projectionName 문자열이 비어 있습니다.');
+      }
+      previousSeq = row.seq;
+    }
+  }
+
+  bool _sameApprovedMeaningRows(
+    List<ApprovedContentMeaningRow> left,
+    List<ApprovedContentMeaningRow> right,
+  ) {
+    if (left.length != right.length) return false;
+    for (var index = 0; index < left.length; index++) {
+      if (left[index].seq != right[index].seq ||
+          left[index].meaning != right[index].meaning) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  bool _matchesApprovedMeaningProjection(
+    List<Map<String, dynamic>> actual,
+    List<ApprovedContentMeaningRow> expected,
+  ) {
+    if (actual.length != expected.length) return false;
+    for (var index = 0; index < actual.length; index++) {
+      if (actual[index]['seq'] != expected[index].seq ||
+          actual[index]['meaning'] != expected[index].meaning) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  Future<_ApprovedContentBatchPreparedState> _prepareApprovedContentBatch(
+    DatabaseExecutor db,
+    ApprovedContentBatchWriteRequest request,
+  ) async {
+    final meaningChanges = <_ApprovedMeaningPreparedChange>[];
+
+    for (final replacement in request.meaningReplacements) {
+      final wordCore = await _getWordRowById(db, replacement.wordId);
+      if (wordCore == null) {
+        throw StateError('meaning 대상 word가 존재하지 않습니다: ${replacement.wordId}');
+      }
+      final expressionRows = await _loadWordExpressionSetRowsForHistory(
+        db,
+        replacement.wordId,
+      );
+      final meaningRows = await _loadWordMeaningSetRowsForHistory(
+        db,
+        replacement.wordId,
+      );
+      if (!_matchesApprovedMeaningProjection(meaningRows, replacement.before)) {
+        throw StateError(
+          'meaning before projection이 DB와 exact 일치하지 않습니다: ${replacement.wordId}',
+        );
+      }
+
+      final afterRows = List<Map<String, Object?>>.unmodifiable(
+        replacement.after.map((row) => row.toDatabaseRow(replacement.wordId)),
+      );
+      final beforeHistory = _buildWordHistorySnapshot(
+        compatibilityWordSnapshot: wordCore,
+        normalizedExpressionRows: expressionRows,
+        normalizedMeaningRows: meaningRows,
+      );
+      final afterHistory = _buildWordHistorySnapshot(
+        compatibilityWordSnapshot: wordCore,
+        normalizedExpressionRows: expressionRows,
+        normalizedMeaningRows: afterRows
+            .map((row) => Map<String, dynamic>.from(row))
+            .toList(growable: false),
+      );
+      meaningChanges.add(
+        _ApprovedMeaningPreparedChange(
+          replacement: replacement,
+          beforeHistory: beforeHistory,
+          afterHistory: afterHistory,
+          afterRows: afterRows,
+        ),
+      );
+    }
+
+    for (final relation in request.relationCreates) {
+      for (final wordId in [relation.wordId1, relation.wordId2]) {
+        if (await _getWordRowById(db, wordId) == null) {
+          throw StateError('relation 대상 word가 존재하지 않습니다: $wordId');
+        }
+      }
+
+      final categoryRows = await db.query(
+        'RELATION_CATEGORY',
+        columns: ['code'],
+        where: 'code = ?',
+        whereArgs: [relation.categoryCode],
+        limit: 1,
+      );
+      if (categoryRows.isEmpty) {
+        throw StateError(
+          'relation category lookup이 존재하지 않습니다: ${relation.categoryCode}',
+        );
+      }
+      final typeRows = await db.query(
+        'RELATION_TYPE',
+        columns: ['code', 'category_code'],
+        where: 'code = ?',
+        whereArgs: [relation.relationType],
+        limit: 1,
+      );
+      if (typeRows.isEmpty) {
+        throw StateError(
+          'relation type lookup이 존재하지 않습니다: ${relation.relationType}',
+        );
+      }
+      if (typeRows.single['category_code'] != relation.categoryCode) {
+        throw StateError(
+          'relation type의 category가 manifest와 다릅니다: '
+          '${relation.relationType}/${relation.categoryCode}',
+        );
+      }
+      final statusRows = await db.query(
+        'RELATION_STATUS',
+        columns: ['code'],
+        where: 'code = ?',
+        whereArgs: [relation.statusCode],
+        limit: 1,
+      );
+      if (statusRows.isEmpty) {
+        throw StateError(
+          'relation status lookup이 존재하지 않습니다: ${relation.statusCode}',
+        );
+      }
+
+      final existingPair = await db.query(
+        'WORD_RELATION',
+        columns: ['id'],
+        where:
+            '(word_id_1 = ? AND word_id_2 = ?) OR '
+            '(word_id_1 = ? AND word_id_2 = ?)',
+        whereArgs: [
+          relation.wordId1,
+          relation.wordId2,
+          relation.wordId2,
+          relation.wordId1,
+        ],
+        limit: 1,
+      );
+      if (existingPair.isNotEmpty) {
+        throw StateError(
+          '동일 unordered relation pair가 DB에 이미 존재합니다: '
+          '${relation.wordId1}, ${relation.wordId2} / id=${existingPair.single['id']}',
+        );
+      }
+    }
+
+    return _ApprovedContentBatchPreparedState(
+      meaningChanges: List<_ApprovedMeaningPreparedChange>.unmodifiable(
+        meaningChanges,
+      ),
+    );
   }
 
   /// Legacy compatibility fallback for older history rows.

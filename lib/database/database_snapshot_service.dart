@@ -1,9 +1,9 @@
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
+import '../support/runtime_debug_sink.dart';
 import 'database_service.dart';
 
 enum DatabaseValidationFailure {
@@ -501,8 +501,8 @@ class DatabaseSnapshotService {
             directoryPrefix: directoryPrefix,
           ).cleanup();
         } catch (error, stackTrace) {
-          debugPrint('snapshot 실패 후 임시 파일 정리 실패: $error');
-          debugPrintStack(stackTrace: stackTrace);
+          runtimeDebugPrint('snapshot 실패 후 임시 파일 정리 실패: $error');
+          runtimeDebugPrintStack(stackTrace);
         }
       }
       rethrow;

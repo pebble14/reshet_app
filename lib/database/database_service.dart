@@ -7,11 +7,10 @@
 
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
-import 'package:flutter/foundation.dart' show kDebugMode, visibleForTesting;
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:path/path.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+
+import 'database_seed_asset_loader.dart';
 
 typedef _LegacyRelatedCell = ({
   String sourceWordId,
@@ -526,12 +525,32 @@ class DatabaseService {
     ),
   ];
 
-  @visibleForTesting
   static void setDataRootOverrideForTest(String? dataRootPath) {
     _dataRootOverrideForTest = dataRootPath;
   }
 
-  @visibleForTesting
+  /// 영구 운영 도구가 원본 DB 대신 임시 data root에서 실제 repository 경계를
+  /// 검증할 때만 사용하는 격리 실행 경계다.
+  static Future<T> withIsolatedDataRoot<T>({
+    required String dataRootPath,
+    required Future<T> Function() action,
+  }) async {
+    if (_database != null) {
+      throw StateError('격리 data root를 설정하기 전에 열린 DB를 닫아야 합니다.');
+    }
+    final previousOverride = _dataRootOverrideForTest;
+    _dataRootOverrideForTest = dataRootPath;
+    try {
+      return await action();
+    } finally {
+      try {
+        await closeDatabase();
+      } finally {
+        _dataRootOverrideForTest = previousOverride;
+      }
+    }
+  }
+
   static String resolveDataDirPathForTest({
     required bool isAndroid,
     required bool isWindows,
@@ -559,7 +578,9 @@ class DatabaseService {
     return _resolveDataDirPath(
       isAndroid: Platform.isAndroid,
       isWindows: Platform.isWindows,
-      isDebug: kDebugMode,
+      isDebug:
+          !const bool.fromEnvironment('dart.vm.product') &&
+          !const bool.fromEnvironment('dart.vm.profile'),
       currentDirectoryPath: Directory.current.path,
       resolvedExecutablePath: Platform.resolvedExecutable,
       systemTempParentPath: Directory.systemTemp.parent.path,
@@ -658,7 +679,6 @@ class DatabaseService {
   /// 현재 application work DB의 실제 경로를 반환한다.
   static Future<String> workDatabasePath() => _workDbPath();
 
-  @visibleForTesting
   static bool get hasOpenDatabaseForTest => _database != null;
 
   static Future<File> _ensureSeedDbFile(String seedPath) async {
@@ -679,15 +699,8 @@ class DatabaseService {
     final seedFile = File(seedPath);
     await Directory(dirname(seedPath)).create(recursive: true);
 
-    final seedBytes = await rootBundle.load(_seedDbAssetPath);
-    await seedFile.writeAsBytes(
-      Uint8List.view(
-        seedBytes.buffer,
-        seedBytes.offsetInBytes,
-        seedBytes.lengthInBytes,
-      ),
-      flush: true,
-    );
+    final seedBytes = await loadBundledDatabaseAsset(_seedDbAssetPath);
+    await seedFile.writeAsBytes(seedBytes, flush: true);
   }
 
   /*

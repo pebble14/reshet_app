@@ -1,0 +1,83 @@
+{
+  "format_version": 1,
+  "batch_id": "RESHET-EC-P1-REHEARSAL-FIXTURE",
+  "provenance": {
+    "document_id": "Reshet 승인 콘텐츠 batch applicator v1 구현 지시",
+    "document_sha256": "df11ed5a39acef22b61f46b92928443df4d27a8eaefe8503a554119171231943"
+  },
+  "target": {
+    "expected_work_sha256": "cbc4d60b13b4489f3677122bda486aecafaecc47166a71d1a2cb4c901392599d",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H1653_0000",
+      "before": [
+        {"seq": 1, "meaning": "a shower"},
+        {"seq": 2, "meaning": "rain, shower."}
+      ],
+      "after": [
+        {"seq": 1, "meaning": "비"},
+        {"seq": 2, "meaning": "소나기"}
+      ]
+    },
+    {
+      "word_id": "H1655_0000",
+      "before": [
+        {"seq": 1, "meaning": "used in a peculiar sense, the body (probably for the (figuratively) idea of a hard rain)"},
+        {"seq": 2, "meaning": "body."}
+      ],
+      "after": [
+        {"seq": 1, "meaning": "몸"},
+        {"seq": 2, "meaning": "신체"}
+      ]
+    },
+    {
+      "word_id": "H1656_0000",
+      "before": [
+        {"seq": 1, "meaning": "rained upon."}
+      ],
+      "after": [
+        {"seq": 1, "meaning": "비"}
+      ]
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H1652_0000",
+      "word_id_2": "H1653_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-P1-H1653-H1652"
+    },
+    {
+      "word_id_1": "H1652_0000",
+      "word_id_2": "H1656_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-P1-H1656-H1652"
+    },
+    {
+      "word_id_1": "H1653_0000",
+      "word_id_2": "H1656_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-P1-H1656-H1653"
+    }
+  ]
+}
