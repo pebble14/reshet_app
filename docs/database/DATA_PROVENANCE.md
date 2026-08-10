@@ -216,6 +216,16 @@ work SHA-256은 `28c9a0ccdc5c951120eb95ed17465d9e161f869ea71eb951838042b48913016
 
 이번 slice는 앱 코드, read-source/repository, schema와 Android runtime migration을 변경하지 않았다. 기존 Android 설치의 app-private work DB 전파는 최종 DB 확정 뒤 통합 migration·release 검증 대상으로 계속 보류한다. data-only이며 전체 cohort를 SQL·targeted test·backup/current projection으로 검증했으므로 클라이언트 UI 수동 테스트는 N/A다.
 
+### 11.5 P2 승인 한국어 meaning·직접 파생 관계 work DB slice
+
+`tool/data_provenance/manifests/p2_approved_content_slice.json`은 승인 문서 SHA-256 `72f5c08c614348fc686f0446c1ed5657c94d5f04bdb482c6db3c47c2e2eaff3d`를 provenance로 고정하고, work DB SHA-256 `0f69929202c88b8560f6dd0b7b07b1ad29617ea9dd5226738a3466f731748fb9`의 source-only 영어 meaning projection을 exact precondition으로 사용한다. manifest SHA-256은 `21f0128d761e1bc5e0b9917b0a875ab55133d9763e283552799f1b3f98fd14cd`다. `H2020_0000 → 구원`, `H5005_0000 → 간음`, `H6306_0000 → 속량`, `H6772_0000 → 갈증`으로 active `word_meaning_set` 전체 projection을 각각 1행으로 교체했으며, Phase 50-W 원천 영어 meaning은 source manifest와 provenance에 계속 보존한다.
+
+같은 transaction에서 `H5337 → H2020`, `H5003 → H5005`, `H6299 → H6306`, `H6770 → H6772`의 직접 파생 관계 4건을 생성했다. 네 관계는 모두 `category_code=morphological`, `relation_type=derived`, `status_code=asserted`이고, canonical pair 정렬 뒤 기반 Strong에서 파생어로 향하도록 각각 `w2_to_w1`, `w1_to_w2`, `w1_to_w2`, `w1_to_w2`를 저장했다. source는 P1 승인 관계 convention을 이어 `RESHET-EC-P2-H2020-H5337`, `RESHET-EC-P2-H5005-H5003`, `RESHET-EC-P2-H6306-H6299`, `RESHET-EC-P2-H6772-H6770`으로 기록했으며 선택 metadata는 `NULL`이다.
+
+적용은 기존 승인 콘텐츠 batch applicator로 `data/reshet_work.db`에만 수행했다. work SHA-256은 `0f69929202c88b8560f6dd0b7b07b1ad29617ea9dd5226738a3466f731748fb9`에서 `8e269644a233ada5c4fb4a93cd6b018ae743d8a28a4972c8398edd928f085e2b`로 변경됐고, seed SHA-256 `e2e356c0f9a5d0d86c059da77c59815521e2abc410b3c4aa69b1ab6e55ff9a67`은 불변이다. history group `1786333230068470`에 word update 4행과 relation create 4행을 기록했다. 적용 전 snapshot은 `data/backups/approved_content_batch/20260810T034029356000Z/snapshot.db`에 보존하며 크기 8,241,152바이트, SHA-256 `4d9aca0edb66e753a64cd897033e485b39b0495127256754c717055a077cadf0`, quick check `ok`, foreign key 위반 0이다.
+
+dry-run의 임시 적용·실제 undo와 live apply의 exact projection·대상 밖 semantic digest·integrity/FK 검증이 통과했고 SQLite sidecar는 없다. 동일 manifest 재실행은 적용 전 work SHA 불일치로 write 전에 거부된다. `H6306_0000`의 대표 expression `פִּדְיוֹם`과 전체 expression table은 변경하지 않았으며 추가 형태는 별도 후속 후보로 유지한다. production Dart·테스트 코드와 UI/UX 동작은 변경하지 않았고, 콘텐츠 SQL 검증으로 범위를 닫았으므로 사용자 UI 수동 테스트는 N/A다.
+
 ## 12. pronunciation profile·migration 현행 경계
 
 ### 12.1 active pronunciation 계약
