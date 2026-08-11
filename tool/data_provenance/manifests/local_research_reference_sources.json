@@ -1,0 +1,35 @@
+{
+  "reference_only_boundary": "로컬 연구 참고자료는 canonical occurrence를 생성하거나 변경하지 않고 canonical verse key에만 연결한다. 파일과 절대경로는 저장소에 기록하지 않는다.",
+  "sources": [
+    {
+      "filename": "HebGrkKo.dct",
+      "expected_sha256": "8c613d730a8606e7ed915dcc94046ac7319ff518181e56bf403d703f30893c8c",
+      "role": "Strong lexical reference"
+    },
+    {
+      "filename": "KJV_S.sdb",
+      "expected_sha256": "afe37aa64d4c5d28e8a6b9180a672404082de2b5da05382a433480818760fb4b",
+      "role": "KJV Strong-tagged verse reference"
+    },
+    {
+      "filename": "개역개정S.sdb",
+      "expected_sha256": "5096a59711bdd7a70fd13edb9a5983da8479c0b9a1680bc1331792378815def0",
+      "role": "개역개정 Strong-tagged verse reference"
+    },
+    {
+      "filename": "개역한글S.sdb",
+      "expected_sha256": "9bd3e93df5db0e188b3785647625156f9608a07e9592aa52119553f18927fcd4",
+      "role": "개역한글 Strong-tagged verse reference"
+    },
+    {
+      "filename": "새번역.bdb",
+      "expected_sha256": "13dba07461f7aa4eacca63b0e52b9c62d4faf97f1da4870d0a26f1f3b9c56109",
+      "role": "새번역 verse-only reference"
+    },
+    {
+      "filename": "원전분해.sdb",
+      "expected_sha256": "ef055b61c947176800842dfcddc97238088227148d2b3035e1dbf74bc0b0ce92",
+      "role": "원전분해 Strong-tagged morphology reference"
+    }
+  ]
+}

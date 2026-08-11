@@ -226,6 +226,25 @@ work SHA-256은 `28c9a0ccdc5c951120eb95ed17465d9e161f869ea71eb951838042b48913016
 
 dry-run의 임시 적용·실제 undo와 live apply의 exact projection·대상 밖 semantic digest·integrity/FK 검증이 통과했고 SQLite sidecar는 없다. 동일 manifest 재실행은 적용 전 work SHA 불일치로 write 전에 거부된다. `H6306_0000`의 대표 expression `פִּדְיוֹם`과 전체 expression table은 변경하지 않았으며 추가 형태는 별도 후속 후보로 유지한다. production Dart·테스트 코드와 UI/UX 동작은 변경하지 않았고, 콘텐츠 SQL 검증으로 범위를 닫았으므로 사용자 UI 수동 테스트는 N/A다.
 
+### 11.6 성경 어휘 Evidence Packet MVP 1
+
+`tool/data_provenance/biblical_research_evidence_packet.py`는 Strong 번호 하나를 입력받아 기본 어휘 정보, ±10 번호창, Strong XML의 직접 참조, canonical 성경 occurrence와 로컬 번역·원전분해 참고자료를 결정적인 UTF-8 JSON으로 stdout에 출력하는 개발·연구 CLI다. 기존 Strong parser와 mapping 계약을 재사용하며 work DB와 모든 로컬 SQLite 자료는 read-only·query-only로 열고 실행 전후 SHA-256 불변을 확인한다.
+
+canonical Hebrew·Aramaic occurrence는 `openscriptures/morphhb` commit `3d15126fb1ef74867fc1434be1942e837932691f`의 `wlc/` OSHB corpus를 사용한다. WLC 본문은 Public Domain, lemma·morphology는 CC BY 4.0이며 `Open Scriptures Hebrew Bible Project` attribution을 유지한다. augmented lemma 원문은 보존하고 숫자 slash component처럼 문법적으로 결정적인 경우에만 standard Strong으로 연결하며, 모호한 확장은 warning으로 남긴다.
+
+canonical Greek NT occurrence는 `STEPBible/STEPBible-Data` commit `b86d26cdb1f51729e73b5b4eb7f7ccadc5dfba39`의 TAGNT Mat–Jhn·Act–Rev 파일을 사용한다. `editions` 필드에 NA27 또는 NA28 membership이 명시된 token만 기본 canonical profile에 포함하고 다른 판본에만 존재하는 variant token은 occurrence count에서 제외한다. 자료는 CC BY 4.0이며 `STEP Bible` attribution을 유지한다. 개별 corpus 파일의 실제 SHA-256, repository·commit·path, parser 계약과 canonical profile은 `tool/data_provenance/manifests/biblical_occurrence_sources.json`에 고정한다. raw corpus cache는 ignored `tool/data_provenance/.source_cache/biblical_occurrences/`에 두고 추적하지 않는다.
+
+`HebGrkKo.dct`, `KJV_S.sdb`, `개역개정S.sdb`, `개역한글S.sdb`, `새번역.bdb`, `원전분해.sdb`는 reference-only 자료다. 파일명·승인된 SHA-256·역할·경계는 `tool/data_provenance/manifests/local_research_reference_sources.json`에 기록하며 절대경로와 원본 파일은 기록하지 않는다. CLI는 fingerprint와 schema 불일치를 fail-closed하고 canonical verse key로만 join한다. 로컬 row ID와 marker count는 cross-source key나 canonical occurrence count로 사용하지 않으며, 비표준 marker를 standard Strong으로 병합하지 않는다.
+
+실행 예시는 다음과 같다.
+
+```powershell
+python tool/data_provenance/biblical_research_evidence_packet.py G32 `
+  --local-sources ..\reshet_research_sources
+```
+
+completion gate는 새 저장소를 만들지 않고 현행 tracked 승인 manifest, 기존 괄호 한자 marker, source-only import projection을 기준으로 `explicit_approved`, `legacy_hanja_candidate`, `source_only`, `unclassified`를 실행 시 계산한다. `legacy_hanja_candidate`는 최종 승인 상태가 아니며 한자가 없다는 이유만으로 미완료로 분류하지 않는다. MVP 1에서 LXX alignment, Hebrew↔Greek 분석, 의미 후보·semantic relation 자동 판정, Approval Ledger, Dashboard/UI, DB write와 runtime schema 변경은 N/A다.
+
 ## 12. pronunciation profile·migration 현행 경계
 
 ### 12.1 active pronunciation 계약

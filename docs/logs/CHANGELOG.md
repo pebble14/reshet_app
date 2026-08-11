@@ -1,5 +1,7 @@
 # CHANGELOG
 
+- `2026-08-12` Strong 번호 하나에서 Strong 기본 정보·±10·직접 참조, OSHB 또는 NA27/28 TAGNT canonical occurrence, 로컬 번역·원전분해 참고자료를 모아 결정적인 UTF-8 JSON을 출력하는 개발·연구 CLI를 추가했다. 공개 occurrence source는 고정 commit과 파일 SHA-256으로 검증하며 raw corpus는 ignored cache에만 둔다.
+- 로컬 6개 자료는 reference-only manifest의 fingerprint·schema를 fail-closed로 검증하고 read-only·canonical verse key로만 join한다. focused 테스트 12건과 G1225·G32·G1228·H32 smoke가 통과했으며 동일 G1225 호출 2회 출력은 byte-identical이다. DB·로컬 원본·runtime UI·dependency는 변경하지 않았다.
 - `2026-08-02` 기존 관계 상세·편집과 관계 목록에 `RELATION_STATUS` 기반 상태 label·description 표시를 추가했다. 기존 `inferred` 상태는 자동 승격하지 않으며, lookup 불일치에서는 원시 code를 식별 가능한 fallback으로 유지한다.
 - 관계 create/update는 상태를 required 인자로 받고 같은 transaction에서 유효 lookup code를 검증해 `status_code`와 relation history before/after에 명시적으로 보존한다. status-only update와 undo를 지원하며 pair/type/direction duplicate signature는 변경하지 않았다.
 - 새 관계 다이얼로그는 `asserted`를 기본 상태로 명확히 표시하고 `inferred`를 생성 선택지에서 제외한다. system-temp seed 사본만 사용한 repository focused 테스트 3건, Phase 36-D 위젯 테스트 4건, graph-create-cancel 회귀 테스트 4건이 통과했다.
