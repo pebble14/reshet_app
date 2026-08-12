@@ -16,9 +16,12 @@ def _reference(
     full_verse: str = "표본 절",
     tokens: list[str] | None = None,
     entries: list[dict[str, str | None]] | None = None,
+    reference_profile: str = "unverified",
 ) -> dict[str, object]:
     records: list[dict[str, object]] = []
-    if status != "unmatched":
+    manual_review_required = status == "manual_review_required"
+    lookup_key = None if manual_review_required else "Matthew.1.20"
+    if status not in {"unmatched", "manual_review_required"}:
         record: dict[str, object] = {
             "source_row_id": 1,
             "source_verse_key": "Matthew.1.20",
@@ -30,7 +33,20 @@ def _reference(
         records.append(record)
     return {
         "status": status,
-        "requested_canonical_verse_key": "Matthew.1.20",
+        "target_source": "fixture",
+        "target_reference_profile": reference_profile,
+        "source_base_verse_key": "Matthew.1.20",
+        "source_reference_conflict": manual_review_required,
+        "source_reference_ambiguous": False,
+        "target_lookup_verse_key": lookup_key,
+        "reference_selection_reason": (
+            "explicit_conflict_unverified_target"
+            if manual_review_required
+            else "same_key_no_source_conflict"
+        ),
+        "manual_review_required": manual_review_required,
+        "requested_canonical_verse_key": lookup_key,
+        "lookup_performed": not manual_review_required,
         "records": records,
     }
 
@@ -50,13 +66,21 @@ def _occurrence(
         "normalized_standard_strong": "G0032",
         "morphology": morphology,
         "source_reference_raw": verse.replace("Matthew", "Mat"),
+        "source_base_verse_key": verse,
+        "source_reference_alternates": [],
+        "source_reference_conflict": False,
+        "source_reference_ambiguous": False,
         "warnings": [],
         "local_references": {
             "korean_revised": _reference(tokens=["사자가", "사자에게"]),
             "korean_revised_legacy": _reference(
                 status=legacy_status, tokens=["사자가"]
             ),
-            "kjv": _reference(full_verse="KJV sample verse", tokens=["messenger"]),
+            "kjv": _reference(
+                full_verse="KJV sample verse",
+                tokens=["messenger"],
+                reference_profile="kjv",
+            ),
             "original_language_analysis": _reference(
                 full_verse="원전분해 표본 절",
                 tokens=["사자가"],
@@ -259,13 +283,74 @@ class BiblicalResearchEvidenceReviewTest(unittest.TestCase):
         self.assertIn("<details>", output)
         self.assertIn("<summary>Matthew.1.20 — ἄγγελος / N-NSM</summary>", output)
         self.assertIn(
-            "<li>canonical verse: <code>Matthew.1.20</code></li>", output
+            "<li>source-native/base reference: "
+            "<code>Matthew.1.20</code></li>",
+            output,
+        )
+        self.assertIn(
+            "<li>선택한 lookup reference: "
+            "<code>Matthew.1.20</code></li>",
+            output,
+        )
+        self.assertIn(
+            "<li>reference 선택 근거: "
+            "<code>same_key_no_source_conflict</code></li>",
+            output,
         )
         for label in ("개역개정", "개역한글", "KJV", "원전분해", "새번역"):
             self.assertIn(f"<h4>{label}</h4>", output)
         self.assertIn("새번역 표본 절", output)
         self.assertIn("matched source entry 1", output)
         self.assertIn("번역=사자가", output)
+
+    def test_manual_review_is_distinct_from_unmatched_and_shows_candidates(self) -> None:
+        packet = _packet()
+        occurrence = packet["canonical_occurrences"][0]
+        occurrence["source_reference_alternates"] = [
+            {
+                "kind": "kjv",
+                "raw_reference": "KJV:Mat.1.19",
+                "verse_key": "Matthew.1.19",
+                "parse_status": "parsed",
+            }
+        ]
+        occurrence["source_reference_conflict"] = True
+        reference = occurrence["local_references"]["korean_revised"]
+        reference.update(
+            {
+                "status": "manual_review_required",
+                "source_reference_conflict": True,
+                "target_lookup_verse_key": None,
+                "requested_canonical_verse_key": None,
+                "reference_selection_reason": (
+                    "explicit_conflict_unverified_target"
+                ),
+                "manual_review_required": True,
+                "lookup_performed": False,
+                "records": [],
+            }
+        )
+
+        output = review.render_review(packet)
+
+        first_row = next(
+            line for line in output.splitlines() if line.startswith("| Matthew.1.20 |")
+        )
+        self.assertIn("manual_review_required", first_row)
+        self.assertIn(
+            "source-provided alternates: kjv: Matthew.1.19 "
+            "(raw KJV:Mat.1.19)",
+            output,
+        )
+        self.assertIn(
+            "<li>선택한 lookup reference: "
+            "<code>N/A — 자동 lookup 생략</code></li>",
+            output,
+        )
+        self.assertIn(
+            "자료: 자동 lookup 생략 — manual review required",
+            output,
+        )
 
     def test_details_escape_html_without_damaging_multilingual_text(self) -> None:
         packet = _packet()

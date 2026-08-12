@@ -56,7 +56,8 @@
       "canonical_profile": {
         "id": "oshb_wlc_all_word_tokens_v1",
         "selection": "wlc의 39개 성경 OSIS 파일에서 verse 아래 w token을 source order로 사용",
-        "lemma_policy": "raw augmented lemma를 보존하고 slash component의 숫자 Strong이 문법적으로 명확할 때만 H####로 정규화"
+        "lemma_policy": "raw augmented lemma를 보존하고 slash component의 숫자 Strong이 문법적으로 명확할 때만 H####로 정규화",
+        "versification": "source-native OSIS verse identity를 보존하고 verse direct child의 KJV: note를 typed alternate로 함께 보존한다. 복수 또는 지원하지 않는 suffix는 자동 선택하지 않는다."
       }
     },
     {
@@ -84,7 +85,7 @@
         "id": "tagnt_na27_28_editions_membership_v1",
         "selection": "editions field에 NA27 또는 NA28이 명시된 token만 canonical occurrence로 사용",
         "variant_policy": "다른 판본에만 속한 token은 기본 occurrence에서 제외하고 별도 variant apparatus는 생성하지 않음",
-        "versification": "기본 NRSV reference에서 명시적 (NA) 대체만 canonical key에 적용하고 [] KJV와 {} 기타 표기는 provenance로 보존"
+        "versification": "기본 NRSV reference를 source occurrence identity로 보존하고 [] KJV, () NA, {} 기타 표기는 typed alternate로 분리 보존한다. target lookup reference는 local source profile resolver가 별도로 선택한다."
       }
     }
   ]

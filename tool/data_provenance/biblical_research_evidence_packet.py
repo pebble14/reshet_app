@@ -21,7 +21,7 @@ import strong_source_diff as legacy
 import strong_source_mapping as strong_mapping
 
 
-TOOL_VERSION = "1.0.0"
+TOOL_VERSION = "1.1.0"
 TOOL_DIR = Path(__file__).resolve().parent
 REPOSITORY_ROOT = TOOL_DIR.parent.parent
 DEFAULT_STRONG_MANIFEST = TOOL_DIR / "manifests" / "strong_sources.json"
@@ -45,12 +45,32 @@ SUPPORTED_OCCURRENCE_CONTRACTS = {
     "tagnt_tsv_na27_28_v1",
 }
 LOCAL_SOURCE_PROFILES = {
-    "HebGrkKo.dct": ("hebgrkko_lexicon", "lexicon_scode_dtext_v1"),
-    "KJV_S.sdb": ("kjv", "strong_tagged_bible_v1"),
-    "개역개정S.sdb": ("korean_revised", "strong_tagged_bible_v1"),
-    "개역한글S.sdb": ("korean_revised_legacy", "strong_tagged_bible_v1"),
-    "새번역.bdb": ("korean_new_translation", "verse_only_bible_v1"),
-    "원전분해.sdb": ("original_language_analysis", "original_analysis_v1"),
+    "HebGrkKo.dct": (
+        "hebgrkko_lexicon",
+        "lexicon_scode_dtext_v1",
+        "not_applicable",
+    ),
+    "KJV_S.sdb": ("kjv", "strong_tagged_bible_v1", "kjv"),
+    "개역개정S.sdb": (
+        "korean_revised",
+        "strong_tagged_bible_v1",
+        "unverified",
+    ),
+    "개역한글S.sdb": (
+        "korean_revised_legacy",
+        "strong_tagged_bible_v1",
+        "unverified",
+    ),
+    "새번역.bdb": (
+        "korean_new_translation",
+        "verse_only_bible_v1",
+        "unverified",
+    ),
+    "원전분해.sdb": (
+        "original_language_analysis",
+        "original_analysis_v1",
+        "unverified",
+    ),
 }
 
 BOOK_SPECS = (
@@ -152,6 +172,12 @@ TAGNT_ALTERNATE_RE = re.compile(
 )
 TAGNT_ROUGH_ROW_RE = re.compile(r"^[1-3A-Za-z]{3}\.")
 STANDARD_TAGNT_STRONG_RE = re.compile(r"^(?P<strong>[GH]\d+)(?:_[A-Za-z])?$")
+OSHB_KJV_NOTE_RE = re.compile(
+    r"^KJV:(?P<book>[1-3A-Za-z]+)\."
+    r"(?P<chapter>\d+)\."
+    r"(?P<verse>\d+)"
+    r"(?P<suffix>.*)$"
+)
 LOCAL_STRONG_MARKER_RE = re.compile(
     r"<W(?P<prefix>[GH])(?P<number>\d+)(?P<suffix>[A-Za-z]?)>"
 )
@@ -199,6 +225,7 @@ class LocalSourceSpec:
     role: str
     reference_only: bool
     parser_contract: str
+    reference_profile: str
 
 
 def _read_json_object(path: Path, label: str) -> dict[str, object]:
@@ -355,13 +382,20 @@ def load_local_manifest(
         label = f"sources[{index}]"
         if not isinstance(raw, dict):
             raise ManifestError(f"{label}은 object여야 함")
-        if set(raw) != {"filename", "expected_sha256", "role"}:
+        if set(raw) != {
+            "filename",
+            "expected_sha256",
+            "role",
+            "reference_profile",
+        }:
             raise ManifestError(
-                f"{label}은 filename, expected_sha256, role만 허용함"
+                f"{label}은 filename, expected_sha256, role, "
+                "reference_profile만 허용함"
             )
         filename = _required_string(raw, "filename", label)
         expected = _required_string(raw, "expected_sha256", label).lower()
         role = _required_string(raw, "role", label)
+        reference_profile = _required_string(raw, "reference_profile", label)
         if filename in seen_filenames or Path(filename).name != filename:
             raise ManifestError(f"중복 또는 안전하지 않은 filename: {filename!r}")
         if not re.fullmatch(r"[0-9a-f]{64}", expected):
@@ -369,7 +403,13 @@ def load_local_manifest(
         profile = LOCAL_SOURCE_PROFILES.get(filename)
         if profile is None:
             raise ManifestError(f"지원하지 않는 local source filename: {filename}")
-        source_id, parser_contract = profile
+        source_id, parser_contract, expected_reference_profile = profile
+        if reference_profile != expected_reference_profile:
+            raise ManifestError(
+                f"{label}.reference_profile 불일치: "
+                f"expected={expected_reference_profile!r}; "
+                f"actual={reference_profile!r}"
+            )
         specs.append(
             LocalSourceSpec(
                 id=source_id,
@@ -378,6 +418,7 @@ def load_local_manifest(
                 role=role,
                 reference_only=True,
                 parser_contract=parser_contract,
+                reference_profile=reference_profile,
             )
         )
         seen_filenames.add(filename)
@@ -705,6 +746,30 @@ def build_strong_window(
     }
 
 
+def _source_reference_state(
+    source_base_verse_key: str,
+    alternates: list[dict[str, object]],
+) -> tuple[bool, bool]:
+    conflict = False
+    ambiguous = False
+    keys_by_kind: dict[str, set[str]] = defaultdict(set)
+    for alternate in alternates:
+        kind = str(alternate["kind"])
+        verse_key = alternate.get("verse_key")
+        if alternate.get("parse_status") != "parsed" or not isinstance(
+            verse_key, str
+        ):
+            conflict = True
+            ambiguous = True
+            continue
+        keys_by_kind[kind].add(verse_key)
+        if verse_key != source_base_verse_key:
+            conflict = True
+    if any(len(keys) > 1 for keys in keys_by_kind.values()):
+        ambiguous = True
+    return conflict, ambiguous
+
+
 def _parse_tagnt_reference(raw: str) -> dict[str, object]:
     match = TAGNT_REFERENCE_RE.fullmatch(raw)
     if match is None:
@@ -715,28 +780,47 @@ def _parse_tagnt_reference(raw: str) -> dict[str, object]:
         raise SourceSchemaError(f"지원하지 않는 TAGNT book code: {source_code}")
     base_chapter = int(match.group("chapter"))
     base_verse = int(match.group("verse"))
-    alternates: dict[str, str | None] = {"kjv": None, "na": None, "other": None}
+    alternate_values: dict[str, list[str]] = {
+        "kjv": [],
+        "na": [],
+        "other": [],
+    }
+    source_alternates: list[dict[str, object]] = []
     kind_by_open = {"[": "kjv", "(": "na", "{": "other"}
     for alternate in TAGNT_ALTERNATE_RE.finditer(match.group("alternates")):
         kind = kind_by_open[alternate.group("open")]
-        if alternates[kind] is not None:
-            raise SourceSchemaError(f"중복 TAGNT versification alternate: {raw!r}")
-        alternates[kind] = f"{alternate.group('chapter')}.{alternate.group('verse')}"
-    canonical_chapter = base_chapter
-    canonical_verse = base_verse
-    if alternates["na"] is not None:
-        canonical_chapter, canonical_verse = (
-            int(value) for value in str(alternates["na"]).split(".")
+        chapter_verse = (
+            f"{alternate.group('chapter')}.{alternate.group('verse')}"
         )
+        alternate_values[kind].append(chapter_verse)
+        source_alternates.append(
+            {
+                "kind": kind,
+                "raw_reference": alternate.group(0),
+                "verse_key": f"{book}.{chapter_verse}",
+                "parse_status": "parsed",
+            }
+        )
+    source_base_verse_key = f"{book}.{base_chapter}.{base_verse}"
+    conflict, ambiguous = _source_reference_state(
+        source_base_verse_key, source_alternates
+    )
+    legacy_alternates = {
+        kind: values[0] if len(values) == 1 else None
+        for kind, values in alternate_values.items()
+    }
     return {
         "book": book,
         "book_number": BOOK_NUMBER_BY_NAME[book],
-        "canonical_chapter": canonical_chapter,
-        "canonical_verse": canonical_verse,
-        "canonical_verse_key": f"{book}.{canonical_chapter}.{canonical_verse}",
+        "canonical_chapter": base_chapter,
+        "canonical_verse": base_verse,
+        "canonical_verse_key": source_base_verse_key,
         "source_reference_raw": raw.split("#", 1)[0],
-        "source_base_verse_key": f"{book}.{base_chapter}.{base_verse}",
-        "versification_alternates": alternates,
+        "source_base_verse_key": source_base_verse_key,
+        "versification_alternates": legacy_alternates,
+        "source_reference_alternates": source_alternates,
+        "source_reference_conflict": conflict,
+        "source_reference_ambiguous": ambiguous,
         "token_position": int(match.group("position")),
         "word_type": match.group("word_type"),
     }
@@ -832,6 +916,15 @@ def parse_tagnt_occurrences(
                     "source_reference_raw": reference["source_reference_raw"],
                     "source_base_verse_key": reference["source_base_verse_key"],
                     "versification_alternates": reference["versification_alternates"],
+                    "source_reference_alternates": reference[
+                        "source_reference_alternates"
+                    ],
+                    "source_reference_conflict": reference[
+                        "source_reference_conflict"
+                    ],
+                    "source_reference_ambiguous": reference[
+                        "source_reference_ambiguous"
+                    ],
                     "textual_membership": {
                         "word_type": reference["word_type"],
                         "editions_raw": fields[5],
@@ -902,6 +995,40 @@ def _parse_oshb_verse_key(raw: str) -> tuple[str, int, int, int]:
     return book, BOOK_NUMBER_BY_NAME[book], int(match.group(2)), int(match.group(3))
 
 
+def _parse_oshb_reference_alternates(
+    verse: ET.Element,
+) -> list[dict[str, object]]:
+    alternates: list[dict[str, object]] = []
+    for child in list(verse):
+        if legacy.local_name(child.tag) != "note":
+            continue
+        raw_reference = "".join(child.itertext()).strip()
+        if not raw_reference.startswith("KJV:"):
+            continue
+        alternate: dict[str, object] = {
+            "kind": "kjv",
+            "raw_reference": raw_reference,
+            "verse_key": None,
+            "parse_status": "unsupported_format",
+        }
+        match = OSHB_KJV_NOTE_RE.fullmatch(raw_reference)
+        if match is not None:
+            book = BOOK_BY_SOURCE_CODE.get(match.group("book"))
+            if book is None or BOOK_NUMBER_BY_NAME[book] > 39:
+                alternate["parse_status"] = "unsupported_book"
+            elif match.group("suffix"):
+                alternate["parse_status"] = "unsupported_suffix"
+                alternate["suffix"] = match.group("suffix")
+            else:
+                alternate["verse_key"] = (
+                    f"{book}.{int(match.group('chapter'))}."
+                    f"{int(match.group('verse'))}"
+                )
+                alternate["parse_status"] = "parsed"
+        alternates.append(alternate)
+    return alternates
+
+
 def parse_oshb_occurrences(
     paths: list[Path],
     target: str,
@@ -927,6 +1054,22 @@ def parse_oshb_occurrences(
         for verse in file_verses:
             verse_id = verse.get("osisID") or ""
             book, book_number, chapter, verse_number = _parse_oshb_verse_key(verse_id)
+            source_base_verse_key = f"{book}.{chapter}.{verse_number}"
+            source_alternates = _parse_oshb_reference_alternates(verse)
+            reference_conflict, reference_ambiguous = _source_reference_state(
+                source_base_verse_key, source_alternates
+            )
+            parsed_kjv_alternates = [
+                str(alternate["verse_key"])
+                for alternate in source_alternates
+                if alternate["parse_status"] == "parsed"
+            ]
+            legacy_kjv_alternate = None
+            if len(source_alternates) == 1 and len(parsed_kjv_alternates) == 1:
+                _, alternate_chapter, alternate_verse = parse_canonical_verse_key(
+                    parsed_kjv_alternates[0]
+                )
+                legacy_kjv_alternate = f"{alternate_chapter}.{alternate_verse}"
             verse_count += 1
             words = [
                 node for node in verse.iter() if legacy.local_name(node.tag) == "w"
@@ -946,7 +1089,7 @@ def parse_oshb_occurrences(
                 warning_count += len(lemma["warnings"])
                 occurrences.append(
                     {
-                        "canonical_verse_key": f"{book}.{chapter}.{verse_number}",
+                        "canonical_verse_key": source_base_verse_key,
                         "surface": surface,
                         "surface_transliteration": None,
                         "lemma": raw_lemma,
@@ -963,12 +1106,15 @@ def parse_oshb_occurrences(
                         },
                         "source_file": path.name,
                         "source_reference_raw": verse_id,
-                        "source_base_verse_key": f"{book}.{chapter}.{verse_number}",
+                        "source_base_verse_key": source_base_verse_key,
                         "versification_alternates": {
-                            "kjv": None,
+                            "kjv": legacy_kjv_alternate,
                             "na": None,
                             "other": None,
                         },
+                        "source_reference_alternates": source_alternates,
+                        "source_reference_conflict": reference_conflict,
+                        "source_reference_ambiguous": reference_ambiguous,
                         "textual_membership": {
                             "canonical_profile_match": True,
                             "profile": "WLC/OSHB w token",
@@ -1100,6 +1246,7 @@ def validate_local_sources(
                 "role": spec.role,
                 "reference_only": True,
                 "parser_contract": spec.parser_contract,
+                "reference_profile": spec.reference_profile,
                 "expected_sha256": spec.expected_sha256,
                 "actual_sha256": actual,
                 "hash_verified": True,
@@ -1234,6 +1381,70 @@ def _canonical_key_from_local(book: int, chapter: int, verse: int) -> str:
     return f"{book_name}.{chapter}.{verse}"
 
 
+def resolve_target_reference(
+    occurrence: dict[str, object],
+    spec: LocalSourceSpec,
+) -> dict[str, object]:
+    if spec.reference_profile == "not_applicable":
+        raise ValueError("verse reference resolver에 lexicon source를 사용할 수 없음")
+    source_base_verse_key = str(
+        occurrence.get("source_base_verse_key")
+        or occurrence["canonical_verse_key"]
+    )
+    raw_alternates = occurrence.get("source_reference_alternates", [])
+    if not isinstance(raw_alternates, list) or not all(
+        isinstance(alternate, dict) for alternate in raw_alternates
+    ):
+        raise EvidencePacketError("source reference alternate 구조가 올바르지 않음")
+    alternates = [dict(alternate) for alternate in raw_alternates]
+    conflict, ambiguous = _source_reference_state(
+        source_base_verse_key, alternates
+    )
+    profile_candidates = {
+        str(alternate["verse_key"])
+        for alternate in alternates
+        if alternate.get("kind") == spec.reference_profile
+        and alternate.get("parse_status") == "parsed"
+        and isinstance(alternate.get("verse_key"), str)
+    }
+
+    manual_review_required = False
+    target_lookup_verse_key: str | None
+    if ambiguous:
+        target_lookup_verse_key = None
+        manual_review_required = True
+        selection_reason = "ambiguous_source_reference"
+    elif conflict and spec.reference_profile == "unverified":
+        target_lookup_verse_key = None
+        manual_review_required = True
+        selection_reason = "explicit_conflict_unverified_target"
+    elif conflict:
+        if len(profile_candidates) == 1:
+            target_lookup_verse_key = next(iter(profile_candidates))
+            selection_reason = "explicit_profile_alternate"
+        else:
+            target_lookup_verse_key = None
+            manual_review_required = True
+            selection_reason = "explicit_conflict_no_compatible_profile_alternate"
+    elif spec.reference_profile != "unverified" and len(profile_candidates) == 1:
+        target_lookup_verse_key = next(iter(profile_candidates))
+        selection_reason = "explicit_profile_alternate"
+    else:
+        target_lookup_verse_key = source_base_verse_key
+        selection_reason = "same_key_no_source_conflict"
+
+    return {
+        "target_source": spec.id,
+        "target_reference_profile": spec.reference_profile,
+        "source_base_verse_key": source_base_verse_key,
+        "source_reference_conflict": conflict,
+        "source_reference_ambiguous": ambiguous,
+        "target_lookup_verse_key": target_lookup_verse_key,
+        "reference_selection_reason": selection_reason,
+        "manual_review_required": manual_review_required,
+    }
+
+
 def load_local_verse_index(
     spec: LocalSourceSpec,
     source_dir: Path,
@@ -1339,39 +1550,80 @@ def attach_local_references(
     dict[str, dict[str, object]],
     dict[str, Counter[str]],
 ]:
-    verse_keys = {str(item["canonical_verse_key"]) for item in occurrences}
     bible_specs = [
         spec for spec in specs if spec.parser_contract != "lexicon_scode_dtext_v1"
     ]
+    decisions = {
+        spec.id: [
+            resolve_target_reference(occurrence, spec)
+            for occurrence in occurrences
+        ]
+        for spec in bible_specs
+    }
     indexes: dict[str, dict[str, list[dict[str, object]]]] = {}
     join_stats: dict[str, dict[str, object]] = {}
     expressions: dict[str, Counter[str]] = {}
     for spec in bible_specs:
+        lookup_keys = {
+            str(decision["target_lookup_verse_key"])
+            for decision in decisions[spec.id]
+            if isinstance(decision["target_lookup_verse_key"], str)
+        }
         index, stats, source_expressions = load_local_verse_index(
-            spec, source_dir, verse_keys, target
+            spec, source_dir, lookup_keys, target
         )
         indexes[spec.id] = index
-        join_stats[spec.id] = stats
+        join_stats[spec.id] = {
+            **stats,
+            "reference_profile": spec.reference_profile,
+            "automatic_lookup_occurrence_count": sum(
+                not bool(decision["manual_review_required"])
+                for decision in decisions[spec.id]
+            ),
+            "manual_review_required_occurrence_count": sum(
+                bool(decision["manual_review_required"])
+                for decision in decisions[spec.id]
+            ),
+        }
         expressions[spec.id] = source_expressions
 
     attached: list[dict[str, object]] = []
-    for occurrence in occurrences:
-        key = str(occurrence["canonical_verse_key"])
+    status_counts: dict[str, Counter[str]] = {
+        spec.id: Counter() for spec in bible_specs
+    }
+    for occurrence_index, occurrence in enumerate(occurrences):
         references: dict[str, object] = {}
         for spec in bible_specs:
-            records = indexes[spec.id].get(key, [])
-            if not records:
-                status = "unmatched"
-            elif len(records) == 1:
-                status = "matched"
+            decision = decisions[spec.id][occurrence_index]
+            lookup_key = decision["target_lookup_verse_key"]
+            if decision["manual_review_required"]:
+                records: list[dict[str, object]] = []
+                status = "manual_review_required"
+                lookup_performed = False
             else:
-                status = "multiple_source_rows_preserved"
+                if not isinstance(lookup_key, str):
+                    raise AssertionError("automatic lookup key가 없음")
+                records = indexes[spec.id].get(lookup_key, [])
+                lookup_performed = True
+                if not records:
+                    status = "unmatched"
+                elif len(records) == 1:
+                    status = "matched"
+                else:
+                    status = "multiple_source_rows_preserved"
+            status_counts[spec.id][status] += 1
             references[spec.id] = {
+                **decision,
                 "status": status,
-                "requested_canonical_verse_key": key,
+                "requested_canonical_verse_key": lookup_key,
+                "lookup_performed": lookup_performed,
                 "records": records,
             }
         attached.append({**occurrence, "local_references": references})
+    for spec in bible_specs:
+        join_stats[spec.id]["join_status_counts"] = dict(
+            sorted(status_counts[spec.id].items())
+        )
     return attached, join_stats, expressions
 
 

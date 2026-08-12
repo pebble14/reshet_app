@@ -133,6 +133,10 @@ class BiblicalResearchEvidencePacketTest(unittest.TestCase):
         *,
         duplicate_lexicon: bool = False,
         wrong_schema_source: str | None = None,
+        bible_rows_by_source: dict[
+            str, list[tuple[int, int, int, str]]
+        ]
+        | None = None,
     ) -> tuple[Path, Path]:
         source_dir = self.root / "local"
         source_dir.mkdir()
@@ -174,9 +178,14 @@ class BiblicalResearchEvidencePacketTest(unittest.TestCase):
             ),
         ]
         for filename, source_id, _, text in bible_sources:
+            rows = (
+                bible_rows_by_source.get(source_id, [(42, 16, 1, text)])
+                if bible_rows_by_source is not None
+                else [(42, 16, 1, text)]
+            )
             self._create_bible(
                 source_dir / filename,
-                [(42, 16, 1, text)],
+                rows,
                 wrong_schema=source_id == wrong_schema_source,
             )
         rows = [
@@ -184,6 +193,7 @@ class BiblicalResearchEvidencePacketTest(unittest.TestCase):
                 "filename": "HebGrkKo.dct",
                 "expected_sha256": self._sha(source_dir / "HebGrkKo.dct"),
                 "role": "lexicon",
+                "reference_profile": "not_applicable",
             }
         ]
         for filename, source_id, _, _ in bible_sources:
@@ -192,6 +202,9 @@ class BiblicalResearchEvidencePacketTest(unittest.TestCase):
                     "filename": filename,
                     "expected_sha256": self._sha(source_dir / filename),
                     "role": source_id,
+                    "reference_profile": (
+                        "kjv" if source_id == "kjv" else "unverified"
+                    ),
                 }
             )
         manifest = self.root / "local.json"
@@ -215,11 +228,12 @@ class BiblicalResearchEvidencePacketTest(unittest.TestCase):
         editions: str,
         simple_strong: str,
     ) -> str:
+        lexical_strong = simple_strong.split("_", 1)[0]
         fields = [
             reference,
             "διεβλήθη (dieblēthē)",
             "was accused",
-            "G1225=V-API-3S",
+            f"{lexical_strong}=V-API-3S",
             "διαβάλλω=to accuse",
             editions,
             "",
@@ -359,6 +373,275 @@ from <strongsref language="GREEK" strongs="1223"/> and
         self.assertIn("augmented_strong_lemma_preserved", occurrences[0]["warnings"])
         self.assertEqual(stats["word_token_count"], 2)
 
+    def test_h1672_kjv_alternate_is_used_without_unverified_fallback(self) -> None:
+        source = self.root / "Ps.xml"
+        source.write_text(
+            """<?xml version="1.0" encoding="UTF-8"?>
+<osis xmlns="http://www.bibletechnologies.net/2003/OSIS/namespace">
+<osisText><div><chapter><verse osisID="Ps.38.19">
+<note>KJV:Ps.38.18</note>
+<w lemma="1672" morph="HVqi1cs">אֶדְאַג</w>
+</verse></chapter></div></osisText></osis>""",
+            encoding="utf-8",
+        )
+        occurrences, _ = evidence.parse_oshb_occurrences([source], "H1672")
+        occurrence = occurrences[0]
+        self.assertEqual(occurrence["canonical_verse_key"], "Psalms.38.19")
+        self.assertEqual(occurrence["source_base_verse_key"], "Psalms.38.19")
+        self.assertEqual(
+            occurrence["source_reference_alternates"],
+            [
+                {
+                    "kind": "kjv",
+                    "raw_reference": "KJV:Ps.38.18",
+                    "verse_key": "Psalms.38.18",
+                    "parse_status": "parsed",
+                }
+            ],
+        )
+
+        unverified_ids = (
+            "korean_revised",
+            "korean_revised_legacy",
+            "korean_new_translation",
+            "original_language_analysis",
+        )
+        bible_rows = {
+            source_id: [(19, 38, 19, "잘못된 같은 번호 절<WH1672>")]
+            for source_id in unverified_ids
+        }
+        bible_rows["kjv"] = [
+            (19, 38, 18, "I am troubled<WH1672>"),
+            (19, 38, 19, "wrong same-number verse<WH1672>"),
+        ]
+        manifest, source_dir = self._write_local_sources(
+            bible_rows_by_source=bible_rows
+        )
+        _, specs, _ = evidence.validate_local_sources(manifest, source_dir)
+        attached, _, _ = evidence.attach_local_references(
+            occurrences, specs, source_dir, "H1672"
+        )
+        references = attached[0]["local_references"]
+        kjv = references["kjv"]
+        self.assertEqual(kjv["status"], "matched")
+        self.assertEqual(kjv["target_lookup_verse_key"], "Psalms.38.18")
+        self.assertEqual(
+            kjv["reference_selection_reason"], "explicit_profile_alternate"
+        )
+        self.assertEqual(kjv["records"][0]["source_verse_key"], "19.38.18")
+        for source_id in unverified_ids:
+            reference = references[source_id]
+            self.assertEqual(reference["status"], "manual_review_required")
+            self.assertIsNone(reference["target_lookup_verse_key"])
+            self.assertFalse(reference["lookup_performed"])
+            self.assertEqual(reference["records"], [])
+
+    def test_g0403_base_and_kjv_alternate_are_resolved_per_target(self) -> None:
+        source = self.root / "TAGNT.txt"
+        header = "\t".join([*evidence.TAGNT_HEADER, "", "", "", ""])
+        source.write_text(
+            header
+            + "\n"
+            + self._tagnt_line(
+                "Act.3.20[3.19]#05=NKO",
+                editions="NA28+NA27+TR+Byz",
+                simple_strong="G0403",
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        occurrences, _ = evidence.parse_tagnt_occurrences([source], "G0403")
+        occurrence = occurrences[0]
+        self.assertEqual(occurrence["canonical_verse_key"], "Acts.3.20")
+        self.assertEqual(
+            occurrence["source_reference_alternates"][0]["verse_key"],
+            "Acts.3.19",
+        )
+
+        unverified_ids = (
+            "korean_revised",
+            "korean_revised_legacy",
+            "korean_new_translation",
+            "original_language_analysis",
+        )
+        bible_rows = {
+            source_id: [(44, 3, 20, "검증되지 않은 같은 번호 절<WG403>")]
+            for source_id in unverified_ids
+        }
+        bible_rows["kjv"] = [
+            (44, 3, 19, "times of refreshing<WG403>"),
+            (44, 3, 20, "wrong same-number verse<WG403>"),
+        ]
+        manifest, source_dir = self._write_local_sources(
+            bible_rows_by_source=bible_rows
+        )
+        _, specs, _ = evidence.validate_local_sources(manifest, source_dir)
+        attached, _, _ = evidence.attach_local_references(
+            occurrences, specs, source_dir, "G0403"
+        )
+        references = attached[0]["local_references"]
+        self.assertEqual(references["kjv"]["status"], "matched")
+        self.assertEqual(
+            references["kjv"]["target_lookup_verse_key"], "Acts.3.19"
+        )
+        self.assertTrue(
+            all(
+                references[source_id]["status"] == "manual_review_required"
+                for source_id in unverified_ids
+            )
+        )
+
+    def test_explicit_alternate_lookup_miss_does_not_fallback(self) -> None:
+        occurrence = {
+            "canonical_verse_key": "Psalms.38.19",
+            "source_base_verse_key": "Psalms.38.19",
+            "source_reference_alternates": [
+                {
+                    "kind": "kjv",
+                    "raw_reference": "KJV:Ps.38.18",
+                    "verse_key": "Psalms.38.18",
+                    "parse_status": "parsed",
+                }
+            ],
+        }
+        source_ids = (
+            "kjv",
+            "korean_revised",
+            "korean_revised_legacy",
+            "korean_new_translation",
+            "original_language_analysis",
+        )
+        bible_rows = {
+            source_id: [(19, 38, 19, "fallback하면 안 되는 절<WH1672>")]
+            for source_id in source_ids
+        }
+        manifest, source_dir = self._write_local_sources(
+            bible_rows_by_source=bible_rows
+        )
+        _, specs, _ = evidence.validate_local_sources(manifest, source_dir)
+
+        attached, _, _ = evidence.attach_local_references(
+            [occurrence], specs, source_dir, "H1672"
+        )
+
+        kjv = attached[0]["local_references"]["kjv"]
+        self.assertEqual(kjv["target_lookup_verse_key"], "Psalms.38.18")
+        self.assertTrue(kjv["lookup_performed"])
+        self.assertEqual(kjv["status"], "unmatched")
+        self.assertEqual(kjv["records"], [])
+
+    def test_g1344_na_alternate_does_not_replace_occurrence_identity(self) -> None:
+        source = self.root / "TAGNT.txt"
+        header = "\t".join([*evidence.TAGNT_HEADER, "", "", "", ""])
+        source.write_text(
+            header
+            + "\n"
+            + self._tagnt_line(
+                "Act.13.39(13.38)#11=NKO",
+                editions="NA28+NA27+TR+Byz",
+                simple_strong="G1344",
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        occurrences, _ = evidence.parse_tagnt_occurrences([source], "G1344")
+        occurrence = occurrences[0]
+        self.assertEqual(occurrence["canonical_verse_key"], "Acts.13.39")
+        self.assertEqual(occurrence["source_base_verse_key"], "Acts.13.39")
+        self.assertEqual(
+            occurrence["source_reference_alternates"][0],
+            {
+                "kind": "na",
+                "raw_reference": "(13.38)",
+                "verse_key": "Acts.13.38",
+                "parse_status": "parsed",
+            },
+        )
+
+        source_ids = (
+            "kjv",
+            "korean_revised",
+            "korean_revised_legacy",
+            "korean_new_translation",
+            "original_language_analysis",
+        )
+        bible_rows = {
+            source_id: [
+                (44, 13, 38, "잘못된 NA 번호 절<WG1344>"),
+                (44, 13, 39, "source base 번호 절<WG1344>"),
+            ]
+            for source_id in source_ids
+        }
+        manifest, source_dir = self._write_local_sources(
+            bible_rows_by_source=bible_rows
+        )
+        _, specs, _ = evidence.validate_local_sources(manifest, source_dir)
+        attached, _, _ = evidence.attach_local_references(
+            occurrences, specs, source_dir, "G1344"
+        )
+        references = attached[0]["local_references"]
+        for reference in references.values():
+            self.assertEqual(reference["status"], "manual_review_required")
+            self.assertIsNone(reference["target_lookup_verse_key"])
+            self.assertFalse(reference["lookup_performed"])
+            self.assertEqual(reference["records"], [])
+
+    def test_oshb_multiple_and_special_kjv_notes_require_manual_review(self) -> None:
+        kjv_spec = evidence.LocalSourceSpec(
+            id="kjv",
+            filename="KJV_S.sdb",
+            expected_sha256="0" * 64,
+            role="fixture",
+            reference_only=True,
+            parser_contract="strong_tagged_bible_v1",
+            reference_profile="kjv",
+        )
+        multiple_source = self.root / "Ps.xml"
+        multiple_source.write_text(
+            """<osis><osisText><verse osisID="Ps.13.6">
+<note>KJV:Ps.13.5</note><w lemma="982" morph="HVqp1cs">בָטַחְתִּי</w>
+<note>KJV:Ps.13.6</note></verse></osisText></osis>""",
+            encoding="utf-8",
+        )
+        multiple_occurrences, _ = evidence.parse_oshb_occurrences(
+            [multiple_source], "H0982"
+        )
+        multiple = multiple_occurrences[0]
+        self.assertEqual(
+            [row["raw_reference"] for row in multiple["source_reference_alternates"]],
+            ["KJV:Ps.13.5", "KJV:Ps.13.6"],
+        )
+        self.assertTrue(multiple["source_reference_ambiguous"])
+        multiple_decision = evidence.resolve_target_reference(multiple, kjv_spec)
+        self.assertTrue(multiple_decision["manual_review_required"])
+        self.assertEqual(
+            multiple_decision["reference_selection_reason"],
+            "ambiguous_source_reference",
+        )
+
+        suffix_source = self.root / "1Kgs.xml"
+        suffix_source.write_text(
+            """<osis><osisText><verse osisID="1Kgs.22.44">
+<note>KJV:1Kgs.22.43!b</note><w lemma="389" morph="HTa">אַךְ</w>
+</verse></osisText></osis>""",
+            encoding="utf-8",
+        )
+        suffix_occurrences, _ = evidence.parse_oshb_occurrences(
+            [suffix_source], "H0389"
+        )
+        suffix = suffix_occurrences[0]
+        self.assertEqual(
+            suffix["source_reference_alternates"][0]["parse_status"],
+            "unsupported_suffix",
+        )
+        self.assertEqual(
+            suffix["source_reference_alternates"][0]["raw_reference"],
+            "KJV:1Kgs.22.43!b",
+        )
+        suffix_decision = evidence.resolve_target_reference(suffix, kjv_spec)
+        self.assertTrue(suffix_decision["manual_review_required"])
+        self.assertIsNone(suffix_decision["target_lookup_verse_key"])
+
     def test_translation_join_and_nonstandard_marker_nonmerge(self) -> None:
         manifest, source_dir = self._write_local_sources()
         _, specs, _ = evidence.validate_local_sources(manifest, source_dir)
@@ -377,6 +660,13 @@ from <strongsref language="GREEK" strongs="1223"/> and
             "korean_new_translation"
         ]
         self.assertEqual(revised["status"], "matched")
+        self.assertEqual(
+            revised["reference_selection_reason"],
+            "same_key_no_source_conflict",
+        )
+        self.assertEqual(revised["target_lookup_verse_key"], "Luke.16.1")
+        self.assertFalse(revised["manual_review_required"])
+        self.assertTrue(revised["lookup_performed"])
         self.assertEqual(
             revised["records"][0]["matched_translation_tokens"], ["들린지라"]
         )

@@ -78,7 +78,29 @@ def _validate_local_reference(value: object, path: str) -> None:
     _string(
         _required(reference, "requested_canonical_verse_key", path),
         f"{path}.requested_canonical_verse_key",
+        nullable=True,
     )
+    for key in (
+        "target_reference_profile",
+        "source_base_verse_key",
+        "reference_selection_reason",
+    ):
+        if key in reference:
+            _string(reference[key], f"{path}.{key}")
+    if "target_lookup_verse_key" in reference:
+        _string(
+            reference["target_lookup_verse_key"],
+            f"{path}.target_lookup_verse_key",
+            nullable=True,
+        )
+    for key in (
+        "source_reference_conflict",
+        "source_reference_ambiguous",
+        "manual_review_required",
+        "lookup_performed",
+    ):
+        if key in reference:
+            _boolean(reference[key], f"{path}.{key}")
     records = _list(_required(reference, "records", path), f"{path}.records")
     for record_index, raw_record in enumerate(records):
         record_path = f"{path}.records[{record_index}]"
@@ -287,6 +309,42 @@ def validate_packet(value: object) -> dict[str, Any]:
         )
         if not isinstance(warnings, list):  # pragma: no cover - helper contract
             raise AssertionError("warnings validation failed")
+        if "source_base_verse_key" in occurrence:
+            _string(
+                occurrence["source_base_verse_key"],
+                f"{occurrence_path}.source_base_verse_key",
+            )
+        if "source_reference_raw" in occurrence:
+            _string(
+                occurrence["source_reference_raw"],
+                f"{occurrence_path}.source_reference_raw",
+            )
+        if "source_reference_alternates" in occurrence:
+            alternates = _list(
+                occurrence["source_reference_alternates"],
+                f"{occurrence_path}.source_reference_alternates",
+            )
+            for alternate_index, raw_alternate in enumerate(alternates):
+                alternate_path = (
+                    f"{occurrence_path}.source_reference_alternates"
+                    f"[{alternate_index}]"
+                )
+                alternate = _object(raw_alternate, alternate_path)
+                for key in ("kind", "raw_reference", "parse_status"):
+                    _string(
+                        _required(alternate, key, alternate_path),
+                        f"{alternate_path}.{key}",
+                    )
+                _string(
+                    _required(alternate, "verse_key", alternate_path),
+                    f"{alternate_path}.verse_key",
+                    nullable=True,
+                )
+                if "suffix" in alternate:
+                    _string(alternate["suffix"], f"{alternate_path}.suffix")
+        for key in ("source_reference_conflict", "source_reference_ambiguous"):
+            if key in occurrence:
+                _boolean(occurrence[key], f"{occurrence_path}.{key}")
         local_references = _object(
             _required(occurrence, "local_references", occurrence_path),
             f"{occurrence_path}.local_references",
@@ -413,6 +471,8 @@ def _first_source_gloss(item: dict[str, Any]) -> str:
 
 
 def _compact_reference(reference: dict[str, Any], source_id: str) -> str:
+    if reference["status"] == "manual_review_required":
+        return "manual_review_required"
     if reference["status"] == "unmatched":
         return "unmatched"
     values: list[str] = []
@@ -429,6 +489,16 @@ def _compact_reference(reference: dict[str, Any], source_id: str) -> str:
                 continue
         values.extend(record["matched_translation_tokens"])
     return _joined(values)
+
+
+def _source_reference_alternate_label(alternate: dict[str, Any]) -> str:
+    kind = str(alternate["kind"])
+    raw_reference = str(alternate["raw_reference"])
+    verse_key = alternate.get("verse_key")
+    parse_status = str(alternate["parse_status"])
+    if isinstance(verse_key, str):
+        return f"{kind}: {verse_key} (raw {raw_reference})"
+    return f"{kind}: {raw_reference} [{parse_status}]"
 
 
 def _verified_strong_sources(provenance: dict[str, Any]) -> bool:
@@ -529,7 +599,7 @@ def _render_occurrence_table(lines: list[str], packet: dict[str, Any]) -> None:
             "",
             "## Occurrence 비교표",
             "",
-            "| 구절 | 원어형 | 형태 | 개역개정 | 개역한글 | KJV | 원전분해 |",
+            "| source verse | 원어형 | 형태 | 개역개정 | 개역한글 | KJV | 원전분해 |",
             "|---|---|---|---|---|---|---|",
         ]
     )
@@ -552,6 +622,18 @@ def _render_occurrence_table(lines: list[str], packet: dict[str, Any]) -> None:
 def _render_source_detail(
     lines: list[str], source_id: str, label: str, reference: dict[str, Any]
 ) -> None:
+    lookup_key = reference.get(
+        "target_lookup_verse_key",
+        reference.get("requested_canonical_verse_key"),
+    )
+    selection_reason = reference.get(
+        "reference_selection_reason", "legacy_canonical_key"
+    )
+    reference_profile = reference.get("target_reference_profile", "unspecified")
+    manual_review = reference.get(
+        "manual_review_required",
+        reference["status"] == "manual_review_required",
+    )
     lines.extend(
         [
             "",
@@ -559,12 +641,24 @@ def _render_source_detail(
             "",
             "<ul>",
             f"<li>상태: <code>{_html_inline(reference['status'])}</code></li>",
+            "<li>target reference profile: "
+            f"<code>{_html_inline(reference_profile)}</code></li>",
+            "<li>선택한 lookup reference: "
+            f"<code>{_html_inline(lookup_key, empty='N/A — 자동 lookup 생략')}</code></li>",
+            "<li>reference 선택 근거: "
+            f"<code>{_html_inline(selection_reason)}</code></li>",
+            f"<li>manual review: {_yes_no(bool(manual_review))}</li>",
         ]
     )
     if source_id == "korean_new_translation":
         lines.append("<li>target 표현: N/A — verse-level reference only</li>")
     if not reference["records"]:
-        lines.extend(["<li>자료: unmatched</li>", "</ul>"])
+        if reference["status"] == "manual_review_required":
+            lines.extend(
+                ["<li>자료: 자동 lookup 생략 — manual review required</li>", "</ul>"]
+            )
+        else:
+            lines.extend(["<li>자료: unmatched</li>", "</ul>"])
         return
     for index, record in enumerate(reference["records"], start=1):
         prefix = f"자료 {index}" if len(reference["records"]) > 1 else "자료"
@@ -609,6 +703,13 @@ def _render_occurrence_details(lines: list[str], packet: dict[str, Any]) -> None
         ]
     )
     for occurrence in packet["canonical_occurrences"]:
+        source_base_verse_key = occurrence.get(
+            "source_base_verse_key", occurrence["canonical_verse_key"]
+        )
+        alternate_labels = [
+            _source_reference_alternate_label(alternate)
+            for alternate in occurrence.get("source_reference_alternates", [])
+        ]
         summary = (
             f"{_html_inline(occurrence['canonical_verse_key'])} — "
             f"{_html_inline(occurrence['surface'])} / "
@@ -621,8 +722,10 @@ def _render_occurrence_details(lines: list[str], packet: dict[str, Any]) -> None
                 f"<summary>{summary}</summary>",
                 "",
                 "<ul>",
-                "<li>canonical verse: "
-                f"<code>{_html_inline(occurrence['canonical_verse_key'])}</code></li>",
+                "<li>source-native/base reference: "
+                f"<code>{_html_inline(source_base_verse_key)}</code></li>",
+                "<li>source-provided alternates: "
+                f"{_html_joined(alternate_labels)}</li>",
                 f"<li>원어형: {_html_inline(occurrence['surface'])}</li>",
                 f"<li>lemma: {_html_inline(occurrence['lemma'])}</li>",
                 f"<li>morphology: {_html_inline(occurrence['morphology'])}</li>",
