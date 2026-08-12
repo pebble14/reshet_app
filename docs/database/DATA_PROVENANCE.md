@@ -243,6 +243,16 @@ python tool/data_provenance/biblical_research_evidence_packet.py G32 `
   --local-sources ..\reshet_research_sources
 ```
 
+Evidence Packet JSON은 전체 machine-readable evidence의 source of truth다. `tool/data_provenance/biblical_research_evidence_review.py`는 이 JSON만 읽어 target 요약, Strong ±10, raw 번역 표현 빈도, occurrence 비교표와 접힌 상세를 UTF-8 Markdown으로 재배열하는 local human-readable derivative이며 성경 source나 DB를 직접 읽거나 의미·relation을 판단하지 않는다.
+
+```powershell
+python tool/data_provenance/biblical_research_evidence_review.py `
+  ..\reshet_research_output\G32_evidence_packet.json `
+  --output ..\reshet_research_output\G32_review.md
+```
+
+`--output`은 PowerShell의 native stdout 재인코딩을 거치지 않고 renderer의 결정적 UTF-8 바이트를 직접 기록한다. 생략하면 기존 stdout 출력을 유지한다. 생성된 Review Markdown은 저장소 밖 연구 output에만 두고 Git tracked artifact로 관리하지 않는다. 전체 source hash와 상세 provenance는 Review에 복제하지 않고 원 Evidence Packet JSON을 참조한다.
+
 completion gate는 새 저장소를 만들지 않고 현행 tracked 승인 manifest, 기존 괄호 한자 marker, source-only import projection을 기준으로 `explicit_approved`, `legacy_hanja_candidate`, `source_only`, `unclassified`를 실행 시 계산한다. `legacy_hanja_candidate`는 최종 승인 상태가 아니며 한자가 없다는 이유만으로 미완료로 분류하지 않는다. MVP 1에서 LXX alignment, Hebrew↔Greek 분석, 의미 후보·semantic relation 자동 판정, Approval Ledger, Dashboard/UI, DB write와 runtime schema 변경은 N/A다.
 
 ## 12. pronunciation profile·migration 현행 경계
