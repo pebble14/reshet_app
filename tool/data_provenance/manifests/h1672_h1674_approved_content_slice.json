@@ -1,0 +1,47 @@
+{
+  "format_version": 1,
+  "batch_id": "RESHET-EC-P2-H1672-H1674-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "Reshet H1672·H1674 승인 데이터 small Production 반영 작업 지시",
+    "document_sha256": "1f0de468f4f23b194c24236b28bcd9561b53205d941308e6ae0d6bf57ac586fe"
+  },
+  "target": {
+    "expected_work_sha256": "8e269644a233ada5c4fb4a93cd6b018ae743d8a28a4972c8398edd928f085e2b",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H1672_0000",
+      "before": [
+        {"seq": 1, "meaning": "걱정하다, 근심하다, 두려워하다"}
+      ],
+      "after": [
+        {"seq": 1, "meaning": "걱정하다"}
+      ]
+    },
+    {
+      "word_id": "H1674_0000",
+      "before": [
+        {"seq": 1, "meaning": "anxiety"},
+        {"seq": 2, "meaning": "care(-fulness), fear, heaviness, sorrow."}
+      ],
+      "after": [
+        {"seq": 1, "meaning": "걱정"}
+      ]
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H1672_0000",
+      "word_id_2": "H1674_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-P2-H1674-H1672"
+    }
+  ]
+}

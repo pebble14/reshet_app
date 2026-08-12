@@ -270,6 +270,16 @@ python tool/data_provenance/lxx_human_reference_lookup.py "Joshua 22:24" `
 
 이 도구는 정식 LXX source가 없는 동안 사람이 선택한 절을 별도 output으로 대조하기 위한 임시 연구 경계다. 향후 provenance와 license가 검증된 LXX source를 확보하면 기존 canonical Evidence Packet 경계를 자동 확장하지 않고 별도 승인 작업에서 교체할 수 있다.
 
+### 11.8 H1672·H1674 승인 meaning·직접 파생 관계 work DB slice
+
+`tool/data_provenance/manifests/h1672_h1674_approved_content_slice.json`은 승인 작업 지시 SHA-256 `1f0de468f4f23b194c24236b28bcd9561b53205d941308e6ae0d6bf57ac586fe`를 provenance로 고정하고, work DB SHA-256 `8e269644a233ada5c4fb4a93cd6b018ae743d8a28a4972c8398edd928f085e2b`의 meaning projection과 관계 부재를 exact precondition으로 사용한다. manifest SHA-256은 `62bba3f11e0f9dd1bd2c2a0404e848f6553415d03fa649320abbd494507f55a0`다. active `word_meaning_set` 전체 projection은 `H1672_0000 → 걱정하다`, `H1674_0000 → 걱정`으로 각각 1행이 됐다.
+
+같은 transaction에서 `H1672 → H1674` 직접 파생 관계 id `7624`를 생성했다. 저장값은 `category_code=morphological`, `relation_type=derived`, `status_code=asserted`, `direction_code=w1_to_w2`, `source=RESHET-EC-P2-H1674-H1672`이고 선택 metadata는 `NULL`이다. history group `1786547348104946`에는 word update 2행과 relation create 1행을 기록했다.
+
+적용은 기존 승인 콘텐츠 batch applicator로 `data/reshet_work.db`에만 수행했다. work SHA-256은 `8e269644a233ada5c4fb4a93cd6b018ae743d8a28a4972c8398edd928f085e2b`에서 `06e3ca5dc408f1360eae0687a3a61b9a64515dd911319e40fa2da3783936597b`로 변경됐고, seed SHA-256 `e2e356c0f9a5d0d86c059da77c59815521e2abc410b3c4aa69b1ab6e55ff9a67`은 불변이다. 적용 전 snapshot은 `data/backups/approved_content_batch/20260812T150907367789Z/snapshot.db`에 보존하며 크기 8,245,248바이트, SHA-256 `eb9b0024839146ca9cd537daa4997d7a7b504641ae0a34dc5434f1b93cfd1d19`다.
+
+dry-run의 임시 적용·실제 undo와 live apply의 exact projection·대상 밖 semantic projection·integrity/FK 검증이 통과했고 SQLite sidecar는 없다. production Dart·테스트 코드, schema, seed와 UI/UX 동작은 변경하지 않았으며 SQL과 기존 applicator로 검증을 닫았으므로 사용자 UI 수동 테스트는 N/A다. H1672 연구에서 확인한 Psalms versification join 문제는 이 slice에 포함하지 않았고 별도 후속 후보로 유지한다.
+
 ## 12. pronunciation profile·migration 현행 경계
 
 ### 12.1 active pronunciation 계약
