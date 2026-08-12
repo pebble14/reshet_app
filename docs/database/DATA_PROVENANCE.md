@@ -255,6 +255,21 @@ python tool/data_provenance/biblical_research_evidence_review.py `
 
 completion gate는 새 저장소를 만들지 않고 현행 tracked 승인 manifest, 기존 괄호 한자 marker, source-only import projection을 기준으로 `explicit_approved`, `legacy_hanja_candidate`, `source_only`, `unclassified`를 실행 시 계산한다. `legacy_hanja_candidate`는 최종 승인 상태가 아니며 한자가 없다는 이유만으로 미완료로 분류하지 않는다. MVP 1에서 LXX alignment, Hebrew↔Greek 분석, 의미 후보·semantic relation 자동 판정, Approval Ledger, Dashboard/UI, DB write와 runtime schema 변경은 N/A다.
 
+### 11.7 LXXStp.bdb Human Reference 단건 verse 조회 경계
+
+`LXXStp.bdb`는 사용자가 Bethlehem Bible에서 확보했다고 확인한 로컬 Human Reference 자료다. `tool/data_provenance/manifests/lxx_human_reference_source.json`은 파일명, 크기와 SHA-256 `eb0cc4445d47dd85cdb9977210b39b3d459a4b075663dfecb039510fd3e671ad`로 exact file identity를 고정하지만, 이는 upstream provenance나 license가 검증됐음을 뜻하지 않는다. 이 자료는 canonical Research/Build Source나 canonical occurrence 근거가 아니며 원본 corpus와 절대경로를 Git에 추적하거나 배포하지 않는다.
+
+`tool/data_provenance/lxx_human_reference_lookup.py`는 사람이 명시한 book/chapter/verse만 SQLite read-only·immutable·query-only 연결과 parameterized SELECT로 조회한다. unmatched 절을 다른 절로 자동 mapping하거나 offset·본문 검색 fallback으로 추정하지 않으며 lemma, morphology, Strong, Hebrew↔Greek alignment와 의미·관계 후보를 생성하지 않는다. 출력은 `human_reference`, `provenance_unverified`, `not_canonical_evidence`, `manual_review_required` 경계를 명시하며 기존 Evidence Packet JSON, canonical occurrence count, OSHB·TAGNT source 계약, Review renderer와 LXX alignment N/A 계약을 변경하지 않는다.
+
+실행 예시는 다음과 같다.
+
+```powershell
+python tool/data_provenance/lxx_human_reference_lookup.py "Joshua 22:24" `
+  --local-sources ..\reshet_research_sources
+```
+
+이 도구는 정식 LXX source가 없는 동안 사람이 선택한 절을 별도 output으로 대조하기 위한 임시 연구 경계다. 향후 provenance와 license가 검증된 LXX source를 확보하면 기존 canonical Evidence Packet 경계를 자동 확장하지 않고 별도 승인 작업에서 교체할 수 있다.
+
 ## 12. pronunciation profile·migration 현행 경계
 
 ### 12.1 active pronunciation 계약

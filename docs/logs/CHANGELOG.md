@@ -1,5 +1,7 @@
 # CHANGELOG
 
+- `2026-08-12` 사용자가 명시한 단일 verse를 검증된 exact `LXXStp.bdb` identity에서 read-only로 조회하고 결정적인 UTF-8 JSON을 출력하는 LXX Human Reference 개발·연구 CLI와 focused 테스트를 추가했다. unmatched 절의 자동 mapping·offset·본문 검색 fallback은 수행하지 않는다.
+- 별도 manifest와 출력에서 upstream provenance·license 미검증, canonical evidence 아님, 수동 검토 필요 경계를 고정했다. 원본 corpus, Reshet DB·schema, Flutter runtime, 기존 Evidence Packet·Review 계약과 dependency는 변경하지 않았다.
 - `2026-08-12` Strong 번호 하나에서 Strong 기본 정보·±10·직접 참조, OSHB 또는 NA27/28 TAGNT canonical occurrence, 로컬 번역·원전분해 참고자료를 모아 결정적인 UTF-8 JSON을 출력하는 개발·연구 CLI를 추가했다. 공개 occurrence source는 고정 commit과 파일 SHA-256으로 검증하며 raw corpus는 ignored cache에만 둔다.
 - 로컬 6개 자료는 reference-only manifest의 fingerprint·schema를 fail-closed로 검증하고 read-only·canonical verse key로만 join한다. focused 테스트 12건과 G1225·G32·G1228·H32 smoke가 통과했으며 동일 G1225 호출 2회 출력은 byte-identical이다. DB·로컬 원본·runtime UI·dependency는 변경하지 않았다.
 - Evidence Packet JSON만 입력받아 target 요약, Strong ±10, raw 번역 표현 빈도, occurrence 비교표와 기본 접힘 상세를 결정적인 UTF-8 Markdown으로 출력하는 Review renderer를 추가했다. JSON은 machine-readable source of truth로 유지하며 생성된 Review는 저장소 밖 local human-readable derivative로만 사용한다. 선택형 `--output`은 PowerShell stdout 재인코딩을 우회해 같은 UTF-8 바이트를 파일에 직접 기록한다.

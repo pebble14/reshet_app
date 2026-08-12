@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "source": {
+    "id": "bethlehem_bible_lxxstp_human_reference",
+    "filename": "LXXStp.bdb",
+    "expected_sha256": "eb0cc4445d47dd85cdb9977210b39b3d459a4b075663dfecb039510fd3e671ad",
+    "expected_size_bytes": 7733248,
+    "origin": {
+      "label": "Bethlehem Bible",
+      "confirmation": "user_confirmed"
+    },
+    "provenance": {
+      "status": "unverified",
+      "upstream_provenance_verified": false
+    },
+    "license": {
+      "status": "unverified",
+      "upstream_license_verified": false
+    },
+    "role": "human_reference",
+    "canonical_evidence": false,
+    "automatic_alignment_source": false,
+    "manual_review_required": true,
+    "parser_contract": "bible_table_explicit_verse_text_v1",
+    "sqlite_contract": {
+      "table": "Bible",
+      "columns": [
+        {
+          "name": "id",
+          "declared_type": "INTEGER",
+          "primary_key_position": 1
+        },
+        {
+          "name": "book",
+          "declared_type": "INTEGER",
+          "primary_key_position": 0
+        },
+        {
+          "name": "chapter",
+          "declared_type": "INTEGER",
+          "primary_key_position": 0
+        },
+        {
+          "name": "verse",
+          "declared_type": "INTEGER",
+          "primary_key_position": 0
+        },
+        {
+          "name": "btext",
+          "declared_type": "VARCHAR",
+          "primary_key_position": 0
+        }
+      ]
+    },
+    "permitted_application_boundary": [
+      "explicit_verse_lookup_only",
+      "local_read_only_access",
+      "manual_review_required"
+    ],
+    "prohibited_uses": [
+      "canonical_occurrence_counting",
+      "automatic_verse_mapping",
+      "automatic_lemma_or_morphology_inference",
+      "automatic_hebrew_greek_alignment",
+      "bulk_import",
+      "reshet_db_corpus_replication"
+    ]
+  }
+}
