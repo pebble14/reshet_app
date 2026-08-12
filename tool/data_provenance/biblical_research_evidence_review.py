@@ -325,12 +325,17 @@ def load_packet(path: Path) -> dict[str, Any]:
     return validate_packet(value)
 
 
-def _inline(value: object, *, empty: str = "—") -> str:
+def _single_line_text(value: object, *, empty: str = "—") -> str:
     if value is None:
         return empty
     text = " ".join(str(value).split())
     if not text:
         return empty
+    return text
+
+
+def _inline(value: object, *, empty: str = "—") -> str:
+    text = _single_line_text(value, empty=empty)
     return (
         text.replace("\\", "\\\\")
         .replace("&", "&amp;")
@@ -338,6 +343,15 @@ def _inline(value: object, *, empty: str = "—") -> str:
         .replace(">", "&gt;")
         .replace("|", "\\|")
         .replace("`", "\\`")
+    )
+
+
+def _html_inline(value: object, *, empty: str = "—") -> str:
+    return (
+        _single_line_text(value, empty=empty)
+        .replace("&", "&amp;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
     )
 
 
@@ -350,6 +364,13 @@ def _short_gloss(value: object, limit: int = 80) -> str:
 
 def _joined(values: list[object]) -> str:
     rendered = [_inline(value) for value in values if value is not None and str(value)]
+    return " / ".join(rendered) if rendered else "—"
+
+
+def _html_joined(values: list[object]) -> str:
+    rendered = [
+        _html_inline(value) for value in values if value is not None and str(value)
+    ]
     return " / ".join(rendered) if rendered else "—"
 
 
@@ -531,38 +552,51 @@ def _render_occurrence_table(lines: list[str], packet: dict[str, Any]) -> None:
 def _render_source_detail(
     lines: list[str], source_id: str, label: str, reference: dict[str, Any]
 ) -> None:
-    lines.extend(["", f"#### {label}", "", f"- 상태: `{_inline(reference['status'])}`"])
+    lines.extend(
+        [
+            "",
+            f"<h4>{_html_inline(label)}</h4>",
+            "",
+            "<ul>",
+            f"<li>상태: <code>{_html_inline(reference['status'])}</code></li>",
+        ]
+    )
     if source_id == "korean_new_translation":
-        lines.append("- target 표현: N/A — verse-level reference only")
+        lines.append("<li>target 표현: N/A — verse-level reference only</li>")
     if not reference["records"]:
-        lines.append("- 자료: unmatched")
+        lines.extend(["<li>자료: unmatched</li>", "</ul>"])
         return
     for index, record in enumerate(reference["records"], start=1):
         prefix = f"자료 {index}" if len(reference["records"]) > 1 else "자료"
         lines.append(
-            f"- {prefix} 구절: `{_inline(record['source_verse_key'])}`"
+            f"<li>{prefix} 구절: "
+            f"<code>{_html_inline(record['source_verse_key'])}</code></li>"
         )
-        lines.append(f"- {prefix} 본문: {_inline(record['full_verse'])}")
+        lines.append(
+            f"<li>{prefix} 본문: {_html_inline(record['full_verse'])}</li>"
+        )
         if source_id != "korean_new_translation":
             lines.append(
-                f"- {prefix} matched 표현: "
-                f"{_joined(record['matched_translation_tokens'])}"
+                f"<li>{prefix} matched 표현: "
+                f"{_html_joined(record['matched_translation_tokens'])}</li>"
             )
         if source_id == "original_language_analysis":
             for entry_index, entry in enumerate(
                 record.get("matched_source_entries", []), start=1
             ):
                 parts = [
-                    f"표면형={_inline(entry.get('surface'))}",
-                    f"lemma={_inline(entry.get('lemma'))}",
-                    f"음역={_inline(entry.get('transliteration'))}",
-                    f"형태={_inline(entry.get('morphology'))}",
-                    f"번역={_inline(entry.get('translation'))}",
+                    f"표면형={_html_inline(entry.get('surface'))}",
+                    f"lemma={_html_inline(entry.get('lemma'))}",
+                    f"음역={_html_inline(entry.get('transliteration'))}",
+                    f"형태={_html_inline(entry.get('morphology'))}",
+                    f"번역={_html_inline(entry.get('translation'))}",
                 ]
                 lines.append(
-                    f"- {prefix} matched source entry {entry_index}: "
+                    f"<li>{prefix} matched source entry {entry_index}: "
                     + "; ".join(parts)
+                    + "</li>"
                 )
+    lines.append("</ul>")
 
 
 def _render_occurrence_details(lines: list[str], packet: dict[str, Any]) -> None:
@@ -576,8 +610,9 @@ def _render_occurrence_details(lines: list[str], packet: dict[str, Any]) -> None
     )
     for occurrence in packet["canonical_occurrences"]:
         summary = (
-            f"{_inline(occurrence['canonical_verse_key'])} — "
-            f"{_inline(occurrence['surface'])} / {_inline(occurrence['morphology'])}"
+            f"{_html_inline(occurrence['canonical_verse_key'])} — "
+            f"{_html_inline(occurrence['surface'])} / "
+            f"{_html_inline(occurrence['morphology'])}"
         )
         lines.extend(
             [
@@ -585,22 +620,28 @@ def _render_occurrence_details(lines: list[str], packet: dict[str, Any]) -> None
                 "<details>",
                 f"<summary>{summary}</summary>",
                 "",
-                f"- canonical verse: `{_inline(occurrence['canonical_verse_key'])}`",
-                f"- 원어형: {_inline(occurrence['surface'])}",
-                f"- lemma: {_inline(occurrence['lemma'])}",
-                f"- morphology: {_inline(occurrence['morphology'])}",
-                "- normalized Strong: "
-                f"`{_inline(occurrence['normalized_standard_strong'])}`",
+                "<ul>",
+                "<li>canonical verse: "
+                f"<code>{_html_inline(occurrence['canonical_verse_key'])}</code></li>",
+                f"<li>원어형: {_html_inline(occurrence['surface'])}</li>",
+                f"<li>lemma: {_html_inline(occurrence['lemma'])}</li>",
+                f"<li>morphology: {_html_inline(occurrence['morphology'])}</li>",
+                "<li>normalized Strong: "
+                f"<code>{_html_inline(occurrence['normalized_standard_strong'])}</code></li>",
             ]
         )
         if occurrence.get("source_reference_raw"):
             lines.append(
-                f"- source reference: `{_inline(occurrence['source_reference_raw'])}`"
+                "<li>source reference: "
+                f"<code>{_html_inline(occurrence['source_reference_raw'])}</code></li>"
             )
         if occurrence["warnings"]:
-            lines.append(f"- warning: {_joined(occurrence['warnings'])}")
+            lines.append(
+                f"<li>warning: {_html_joined(occurrence['warnings'])}</li>"
+            )
         else:
-            lines.append("- warning: —")
+            lines.append("<li>warning: —</li>")
+        lines.append("</ul>")
         for source_id, label in LOCAL_SOURCE_ORDER:
             _render_source_detail(
                 lines,

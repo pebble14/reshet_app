@@ -258,9 +258,32 @@ class BiblicalResearchEvidenceReviewTest(unittest.TestCase):
         output = review.render_review(_packet())
         self.assertIn("<details>", output)
         self.assertIn("<summary>Matthew.1.20 — ἄγγελος / N-NSM</summary>", output)
+        self.assertIn(
+            "<li>canonical verse: <code>Matthew.1.20</code></li>", output
+        )
+        for label in ("개역개정", "개역한글", "KJV", "원전분해", "새번역"):
+            self.assertIn(f"<h4>{label}</h4>", output)
         self.assertIn("새번역 표본 절", output)
         self.assertIn("matched source entry 1", output)
         self.assertIn("번역=사자가", output)
+
+    def test_details_escape_html_without_damaging_multilingual_text(self) -> None:
+        packet = _packet()
+        occurrence = packet["canonical_occurrences"][0]
+        original_reference = occurrence["local_references"][
+            "original_language_analysis"
+        ]
+        original_reference["records"][0]["full_verse"] = (
+            "דְּאָגָה <WH1674> & 원전분해 표본 절"
+        )
+
+        output = review.render_review(packet)
+
+        self.assertIn("ἄγγελος", output)
+        self.assertIn(
+            "דְּאָגָה &lt;WH1674&gt; &amp; 원전분해 표본 절", output
+        )
+        self.assertNotIn("<WH1674>", output)
 
     def test_provenance_is_compact_verification_summary(self) -> None:
         output = review.render_review(_packet())
