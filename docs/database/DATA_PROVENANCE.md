@@ -280,6 +280,16 @@ python tool/data_provenance/lxx_human_reference_lookup.py "Joshua 22:24" `
 
 dry-run의 임시 적용·실제 undo와 live apply의 exact projection·대상 밖 semantic projection·integrity/FK 검증이 통과했고 SQLite sidecar는 없다. production Dart·테스트 코드, schema, seed와 UI/UX 동작은 변경하지 않았으며 SQL과 기존 applicator로 검증을 닫았으므로 사용자 UI 수동 테스트는 N/A다. H1672 연구에서 확인한 Psalms versification join 문제는 이 approved-content slice에는 포함하지 않았으며, 현재 Evidence Packet에서는 위 11.6의 reference-join 계약에 따라 처리한다.
 
+### 11.9 첫 5-Strong 승인 meaning·직접 파생 관계 work DB slice
+
+`tool/data_provenance/manifests/first_semantic_batch_approved_content_slice.json`은 승인 작업 지시 SHA-256 `85d96f81e00288196b441a840128472ba0bff9764f5efc97035b20b6ba01abbb`를 provenance로 고정하고, work DB SHA-256 `06e3ca5dc408f1360eae0687a3a61b9a64515dd911319e40fa2da3783936597b`의 meaning projection과 관계 부재를 exact precondition으로 사용한다. manifest SHA-256은 `9c0e5a72b09d3d8d901372c7ab2f4178cb095020d3490f50b1ca6196538e761d`다. active `word_meaning_set` 전체 projection은 `H1618_0000 → 딱지가 생기는 피부병`, `H4200_0000 → 곳간(저장고)`, `H4461_0000 → 치수`, `H5807_0000 → 힘`, `H6378_0000 → 병`으로 각각 1행이 됐다.
+
+같은 transaction에서 직접 파생 관계 3건을 생성했다. semantic 방향 `H4058 → H4461`은 canonical pair `H4058_0000 / H4461_0000`, `direction_code=w1_to_w2`, relation id `7625`로 저장했고, `H5810 → H5807`은 canonical pair `H5807_0000 / H5810_0000`, `direction_code=w2_to_w1`, relation id `7626`으로 저장했다. `H6379 → H6378`은 canonical pair `H6378_0000 / H6379_0000`, `direction_code=w2_to_w1`, relation id `7627`로 저장했다. 세 관계는 모두 `category_code=morphological`, `relation_type=derived`, `status_code=asserted`이며 source는 각각 `RESHET-EC-FIRST-5-STRONG-H4461-H4058`, `RESHET-EC-FIRST-5-STRONG-H5807-H5810`, `RESHET-EC-FIRST-5-STRONG-H6378-H6379`이고 선택 metadata는 `NULL`이다.
+
+적용은 기존 승인 콘텐츠 batch applicator로 `data/reshet_work.db`에만 수행했다. work SHA-256은 `06e3ca5dc408f1360eae0687a3a61b9a64515dd911319e40fa2da3783936597b`에서 `1f8fde72bdedc4a10885023846c4a7b5efaee09cac5b220935311cc1af74635d`로 변경됐고, seed SHA-256 `e2e356c0f9a5d0d86c059da77c59815521e2abc410b3c4aa69b1ab6e55ff9a67`은 불변이다. history group `1786596587315763`에는 active word update 5행과 relation create 3행을 기록했다. 적용 전 snapshot은 `data/backups/approved_content_batch/20260813T044946592388Z/snapshot.db`에 보존하며 크기 8,249,344바이트, SHA-256 `9d4eb017bc89ad7ca98a23911ad22316e84f85bafd7e1bb114ec10c1a7b67a42`, integrity check `ok`, foreign key 위반 0이다. `VACUUM INTO`로 생성한 snapshot의 schema version은 `1369`이며 source와 적용 후 work DB의 schema version `1368`과 다른 것은 기존 applicator 계약상 예상된 schema cookie 차이다.
+
+dry-run의 임시 적용·실제 undo와 live apply의 exact projection·대상 밖 semantic projection·integrity/FK 검증이 통과했다. 적용 후 work DB는 `user_version=0`, `schema_version=1368`, integrity check `ok`, foreign key 위반 0이고 SQLite sidecar는 없다. production Dart·테스트 코드, schema, seed와 UI/UX 동작은 변경하지 않았으며 SQL과 기존 applicator로 검증을 닫았으므로 사용자 UI 수동 테스트와 새 guard/test는 N/A다.
+
 ## 12. pronunciation profile·migration 현행 경계
 
 ### 12.1 active pronunciation 계약

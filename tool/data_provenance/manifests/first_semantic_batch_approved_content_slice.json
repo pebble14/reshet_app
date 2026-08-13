@@ -1,0 +1,102 @@
+{
+  "format_version": 1,
+  "batch_id": "RESHET-EC-FIRST-5-STRONG-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "Reshet 첫 5-Strong semantic batch 승인 콘텐츠 dry-run 준비 작업 지시",
+    "document_sha256": "85d96f81e00288196b441a840128472ba0bff9764f5efc97035b20b6ba01abbb"
+  },
+  "target": {
+    "expected_work_sha256": "06e3ca5dc408f1360eae0687a3a61b9a64515dd911319e40fa2da3783936597b",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H1618_0000",
+      "before": [
+        {"seq": 1, "meaning": "scurf (from itching)"},
+        {"seq": 2, "meaning": "scab, scurvy."}
+      ],
+      "after": [
+        {"seq": 1, "meaning": "딱지가 생기는 피부병"}
+      ]
+    },
+    {
+      "word_id": "H4200_0000",
+      "before": [
+        {"seq": 1, "meaning": "a granary"},
+        {"seq": 2, "meaning": "garner."}
+      ],
+      "after": [
+        {"seq": 1, "meaning": "곳간(저장고)"}
+      ]
+    },
+    {
+      "word_id": "H4461_0000",
+      "before": [
+        {"seq": 1, "meaning": "a measure"},
+        {"seq": 2, "meaning": "measure."}
+      ],
+      "after": [
+        {"seq": 1, "meaning": "치수"}
+      ]
+    },
+    {
+      "word_id": "H5807_0000",
+      "before": [
+        {"seq": 1, "meaning": "forcibleness"},
+        {"seq": 2, "meaning": "might, strength."}
+      ],
+      "after": [
+        {"seq": 1, "meaning": "힘"}
+      ]
+    },
+    {
+      "word_id": "H6378_0000",
+      "before": [
+        {"seq": 1, "meaning": "a flask (from which a liquid may flow)"},
+        {"seq": 2, "meaning": "box, vial."}
+      ],
+      "after": [
+        {"seq": 1, "meaning": "병"}
+      ]
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H4058_0000",
+      "word_id_2": "H4461_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-FIRST-5-STRONG-H4461-H4058"
+    },
+    {
+      "word_id_1": "H5807_0000",
+      "word_id_2": "H5810_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-FIRST-5-STRONG-H5807-H5810"
+    },
+    {
+      "word_id_1": "H6378_0000",
+      "word_id_2": "H6379_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-FIRST-5-STRONG-H6378-H6379"
+    }
+  ]
+}
