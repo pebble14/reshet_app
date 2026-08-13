@@ -1,0 +1,39 @@
+{
+  "format_version": 1,
+  "batch_id": "RESHET-EC-SECOND-SEMANTIC-BATCH-RELATIONS-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "Reshet 두 번째 semantic batch 파생·굴절 관계 2건 승인 manifest 준비 및 dry-run 작업 지시",
+    "document_sha256": "7a46c3c66ee40ec39167729007ec4c59601d615c10284c2c44a63f1c12947632"
+  },
+  "target": {
+    "expected_work_sha256": "e204715a3c7d8f32a92094df94f05532e39ff974cbcf4c6488ce6cc5dd9b66d6",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [],
+  "relation_creates": [
+    {
+      "word_id_1": "H1563_0000",
+      "word_id_2": "H1564_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-SECOND-SEMANTIC-BATCH-H1564-H1563"
+    },
+    {
+      "word_id_1": "H5228_0000",
+      "word_id_2": "H5229_0000",
+      "category_code": "morphological",
+      "relation_type": "inflected",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-SECOND-SEMANTIC-BATCH-H5229-H5228"
+    }
+  ]
+}

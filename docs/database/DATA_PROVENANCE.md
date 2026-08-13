@@ -300,6 +300,14 @@ dry-run의 임시 적용·실제 undo와 live apply의 exact projection·대상 
 
 독립 read-only SQL로 네 meaning·두 note의 승인 after, history payload, H1833 meaning·note·relation 불변, 두 보류 relation pair 0행과 대상 밖 meaning·word projection·전체 relation 불변을 확인했다. 적용 후 work DB는 integrity check `ok`, foreign key 위반 0이고 SQLite sidecar는 없으며 seed 크기·수정시각도 불변이다. tracked manifest 기준 completion gate에서 네 대상은 `explicit_approved`, H1833은 `source_only`다. production Dart·테스트 코드, schema, seed와 UI/UX 동작은 변경하지 않았으므로 사용자 UI 수동 테스트와 새 guard/test는 N/A다.
 
+### 11.11 두 번째 semantic batch 승인 파생·굴절 관계 work DB slice
+
+`tool/data_provenance/manifests/second_semantic_batch_relations_approved_content_slice.json`은 batch ID `RESHET-EC-SECOND-SEMANTIC-BATCH-RELATIONS-APPROVED-CONTENT-SLICE`, 승인 작업 지시 SHA-256 `7a46c3c66ee40ec39167729007ec4c59601d615c10284c2c44a63f1c12947632`, manifest SHA-256 `f3c3a15f587c609de83874b652b940ad72e1d61e60a904d1a6b96c21e26e4054`를 provenance로 고정한다. work DB SHA-256 `e204715a3c7d8f32a92094df94f05532e39ff974cbcf4c6488ce6cc5dd9b66d6`와 두 unordered pair의 부재를 exact precondition으로 사용했으며 meaning·word note operation은 0건이다.
+
+같은 exclusive transaction에서 semantic 방향 `H1563 → H1564`를 canonical pair `H1563_0000 / H1564_0000`, `category_code=morphological`, `relation_type=derived`, `status_code=asserted`, `direction_code=w1_to_w2`, relation id `7628`로 저장했다. `H5228 → H5229`는 canonical pair `H5228_0000 / H5229_0000`, `category_code=morphological`, `relation_type=inflected`, `status_code=asserted`, `direction_code=w1_to_w2`, relation id `7629`로 저장했다. source는 각각 `RESHET-EC-SECOND-SEMANTIC-BATCH-H1564-H1563`, `RESHET-EC-SECOND-SEMANTIC-BATCH-H5229-H5228`이고 description·relation group·note는 `NULL`이다.
+
+적용 후 work DB SHA-256은 `9ed988d697e27ff0ce947a8b4164abff988bc6e34340f950cf1327e6ebcae040`이며 seed SHA-256 `e2e356c0f9a5d0d86c059da77c59815521e2abc410b3c4aa69b1ab6e55ff9a67`은 불변이다. history group `1786638420819517`에는 active relation create 2행만 기록했고 word update는 0행이다. 적용 전 snapshot은 `data/backups/approved_content_batch/20260813T162700109576Z/snapshot.db`에 보존하며 크기 8,257,536바이트, SHA-256 `6b26c79f9f9bbd72df4ea4f6c66f64e062a997b32bd83157da223a1110d3cd5c`, integrity check `ok`, foreign key 위반 0이다. snapshot schema version `1369`와 source·적용 후 work DB `1368`의 차이는 기존 `VACUUM INTO` 계약상 예상된 schema cookie 차이며 자동 restore는 실행되지 않았다. 독립 read-only SQL에서 두 관계의 exact row·중복 0, 대상 밖 `WORD_RELATION` 불변, 기존 meaning·word note와 H1833 불변, work DB integrity/FK와 SQLite sidecar 0을 확인했다. completion gate는 H1564·H2251·H3958·H5229 `explicit_approved`, H1833 `source_only`를 유지한다.
+
 ## 12. pronunciation profile·migration 현행 경계
 
 ### 12.1 active pronunciation 계약
