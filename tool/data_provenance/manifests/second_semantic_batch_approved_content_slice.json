@@ -1,0 +1,67 @@
+{
+  "format_version": 2,
+  "batch_id": "RESHET-EC-SECOND-SEMANTIC-BATCH-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "Reshet 두 번째 semantic batch 실제 승인 manifest 준비 및 dry-run 작업 지시",
+    "document_sha256": "be89bda743322dd96065cf60a84c8afe7b6dce469c17e18fdc794295b8c89d7f"
+  },
+  "target": {
+    "expected_work_sha256": "1f8fde72bdedc4a10885023846c4a7b5efaee09cac5b220935311cc1af74635d",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H1564_0000",
+      "before": [
+        {"seq": 1, "meaning": "a wrapped (and unformed mass, i.e. as the embryo)"},
+        {"seq": 2, "meaning": "substance yet being unperfect."}
+      ],
+      "after": [
+        {"seq": 1, "meaning": "형체가 갖추어지지 않은 것"}
+      ]
+    },
+    {
+      "word_id": "H2251_0000",
+      "before": [
+        {"seq": 1, "meaning": "to knock out or off"},
+        {"seq": 2, "meaning": "beat (off, out), thresh."}
+      ],
+      "after": [
+        {"seq": 1, "meaning": "떨다·털다"}
+      ]
+    },
+    {
+      "word_id": "H3958_0000",
+      "before": [
+        {"seq": 1, "meaning": "a gem, perhaps the jacinth"},
+        {"seq": 2, "meaning": "ligure."}
+      ],
+      "after": [
+        {"seq": 1, "meaning": "보석의 한 종류"}
+      ]
+    },
+    {
+      "word_id": "H5229_0000",
+      "before": [
+        {"seq": 1, "meaning": "properly, straightforwardness, i.e. (figuratively) integrity, or (concretely) a truth"},
+        {"seq": 2, "meaning": "equity, right (thing), uprightness."}
+      ],
+      "after": [
+        {"seq": 1, "meaning": "올곧음"}
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H2251_0000",
+      "before": null,
+      "after": "달려 있거나 붙어 있는 것을 치거나 흔들어 떼어 내다. 곡류 문맥에서는 ‘타작하다’로 번역될 수 있다."
+    },
+    {
+      "word_id": "H3958_0000",
+      "before": null,
+      "after": "제사장 흉패에 사용된 보석의 한 종류. 정확한 종류와 색은 불확실하나, 금빛·황색 계열 또는 불꽃빛·호박빛 계열로 보는 전통적 견해들이 있다."
+    }
+  ],
+  "relation_creates": []
+}

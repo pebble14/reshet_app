@@ -292,6 +292,14 @@ dry-run의 임시 적용·실제 undo와 live apply의 exact projection·대상 
 
 dry-run의 임시 적용·실제 undo와 live apply의 exact projection·대상 밖 semantic projection·integrity/FK 검증이 통과했다. 적용 후 work DB는 `user_version=0`, `schema_version=1368`, integrity check `ok`, foreign key 위반 0이고 SQLite sidecar는 없다. production Dart·테스트 코드, schema, seed와 UI/UX 동작은 변경하지 않았으며 SQL과 기존 applicator로 검증을 닫았으므로 사용자 UI 수동 테스트와 새 guard/test는 N/A다.
 
+### 11.10 두 번째 semantic batch 승인 meaning·word note work DB slice
+
+`tool/data_provenance/manifests/second_semantic_batch_approved_content_slice.json`은 batch ID `RESHET-EC-SECOND-SEMANTIC-BATCH-APPROVED-CONTENT-SLICE`와 승인 작업 지시 SHA-256 `be89bda743322dd96065cf60a84c8afe7b6dce469c17e18fdc794295b8c89d7f`를 provenance로 고정하고, work DB SHA-256 `1f8fde72bdedc4a10885023846c4a7b5efaee09cac5b220935311cc1af74635d`의 meaning·word note projection을 exact precondition으로 사용한다. manifest SHA-256은 `8b6742b6cdc1e666710e367b67cdb78a5b50a019e529822ec45d18fe8eb86a5d`다. active `word_meaning_set` 전체 projection은 `H1564_0000 → 형체가 갖추어지지 않은 것`, `H2251_0000 → 떨다·털다`, `H3958_0000 → 보석의 한 종류`, `H5229_0000 → 올곧음`으로 각각 1행이 됐다. `H2251_0000`과 `H3958_0000`에는 승인 word note를 함께 적용했으며, `H1833`은 manifest와 write 대상에서 제외해 `source_only` hold를 유지하고 relation은 생성하지 않았다.
+
+적용은 기존 승인 콘텐츠 batch applicator v2로 `data/reshet_work.db`에만 수행했다. work SHA-256은 `1f8fde72bdedc4a10885023846c4a7b5efaee09cac5b220935311cc1af74635d`에서 `e204715a3c7d8f32a92094df94f05532e39ff974cbcf4c6488ce6cc5dd9b66d6`로 변경됐고, seed SHA-256 `e2e356c0f9a5d0d86c059da77c59815521e2abc410b3c4aa69b1ab6e55ff9a67`은 불변이다. history group `1786634753173702`에는 active word update 6행(meaning 4행, note 2행)을 기록했고 relation history는 0행이다. 적용 전 snapshot은 `data/backups/approved_content_batch/20260813T152552451541Z/snapshot.db`에 보존하며 크기 8,253,440바이트, SHA-256 `b871b3287edb8c689f33914d5f00917424d740cd4d80bcfd96c31262b7247439`다. snapshot integrity check는 `ok`, foreign key 위반은 0이며 schema version `1369`와 source·적용 후 work DB `1368`의 차이는 기존 `VACUUM INTO` 계약상 예상된 schema cookie 차이다. 자동 restore는 실행되지 않았다.
+
+독립 read-only SQL로 네 meaning·두 note의 승인 after, history payload, H1833 meaning·note·relation 불변, 두 보류 relation pair 0행과 대상 밖 meaning·word projection·전체 relation 불변을 확인했다. 적용 후 work DB는 integrity check `ok`, foreign key 위반 0이고 SQLite sidecar는 없으며 seed 크기·수정시각도 불변이다. tracked manifest 기준 completion gate에서 네 대상은 `explicit_approved`, H1833은 `source_only`다. production Dart·테스트 코드, schema, seed와 UI/UX 동작은 변경하지 않았으므로 사용자 UI 수동 테스트와 새 guard/test는 N/A다.
+
 ## 12. pronunciation profile·migration 현행 경계
 
 ### 12.1 active pronunciation 계약
