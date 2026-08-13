@@ -6,6 +6,7 @@ import hashlib
 import json
 from pathlib import Path
 import sqlite3
+import subprocess
 import tempfile
 import unittest
 
@@ -32,6 +33,35 @@ class BiblicalResearchEvidencePacketTest(unittest.TestCase):
         digest.update(f"blob {len(data)}\0".encode("ascii"))
         digest.update(data)
         return digest.hexdigest()
+
+    @staticmethod
+    def _write_approved_manifest(
+        directory: Path,
+        filename: str,
+        word_id: str,
+        meaning: str,
+    ) -> Path:
+        directory.mkdir(parents=True, exist_ok=True)
+        path = directory / filename
+        payload = {
+            "format_version": 1,
+            "batch_id": "RESHET-TEST-APPROVED-CONTENT-SLICE",
+            "provenance": {"document_id": "test", "document_sha256": "0" * 64},
+            "target": {"expected_work_sha256": "0" * 64, "expected_user_version": 0},
+            "meaning_replacements": [
+                {
+                    "word_id": word_id,
+                    "before": [{"seq": 1, "meaning": "before"}],
+                    "after": [{"seq": 1, "meaning": meaning}],
+                }
+            ],
+            "relation_creates": [],
+        }
+        path.write_text(
+            json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+        )
+        return path
 
     def _write_occurrence_manifest(self) -> tuple[Path, Path]:
         cache = self.root / "cache"
@@ -700,9 +730,13 @@ from <strongsref language="GREEK" strongs="1223"/> and
         )
 
     def test_completion_gate_hanja_marker_is_candidate_not_approval(self) -> None:
-        approved = self.root / "approved.json"
+        approved = self._write_approved_manifest(
+            self.root,
+            "p2_approved_content_slice.json",
+            "H2020_0000",
+            "구원",
+        )
         source_only = self.root / "source_only.json"
-        approved.write_text('{"meaning_replacements": []}', encoding="utf-8")
         source_only.write_text('{"entries": []}', encoding="utf-8")
         projection = [
             {
@@ -715,6 +749,157 @@ from <strongsref language="GREEK" strongs="1223"/> and
         )
         self.assertEqual(state["state"], "legacy_hanja_candidate")
         self.assertIn("자동 최종 승인 확정이 아님", state["interpretation"])
+
+    def test_completion_gate_aggregates_applied_approved_manifests(self) -> None:
+        approved = evidence.discover_approved_content_manifests()
+        manifest_names = [path.name for path in approved]
+        self.assertEqual(manifest_names, sorted(manifest_names))
+        self.assertTrue(
+            {
+                "first_semantic_batch_approved_content_slice.json",
+                "h1672_h1674_approved_content_slice.json",
+                "p2_approved_content_slice.json",
+            }.issubset(manifest_names)
+        )
+        for strong, expected_state, expected_evidence in (
+            ("H2020", "explicit_approved", "p2_approved_content_slice.json"),
+            (
+                "H1674",
+                "explicit_approved",
+                "h1672_h1674_approved_content_slice.json",
+            ),
+            (
+                "H1618",
+                "explicit_approved",
+                "first_semantic_batch_approved_content_slice.json",
+            ),
+            ("H1564", "source_only", "phase50w_hebrew20_source_import.json"),
+            ("H1653", "unclassified", None),
+            ("H5337", "unclassified", None),
+        ):
+            with self.subTest(strong=strong):
+                projection, _ = evidence.load_reshet_projection(
+                    evidence.DEFAULT_WORK_DB, strong
+                )
+                state = evidence.completion_gate_state(
+                    strong,
+                    projection,
+                    approved,
+                    evidence.DEFAULT_SOURCE_ONLY_MANIFEST,
+                )
+                self.assertEqual(state["state"], expected_state)
+                if expected_evidence is not None:
+                    self.assertIn(expected_evidence, state["evidence"])
+
+    def test_completion_gate_does_not_approve_projection_mismatch(self) -> None:
+        approved = self._write_approved_manifest(
+            self.root,
+            "h1674_approved_content_slice.json",
+            "H1674_0000",
+            "걱정",
+        )
+        source_only = self.root / "source_only.json"
+        source_only.write_text('{"entries": []}', encoding="utf-8")
+        state = evidence.completion_gate_state(
+            "H1674",
+            [
+                {
+                    "word_id": "H1674_0000",
+                    "meanings": [{"seq": 1, "meaning": "아직 미적용"}],
+                }
+            ],
+            approved,
+            source_only,
+        )
+        self.assertEqual(state["state"], "unclassified")
+        self.assertEqual(
+            state["evidence"],
+            [
+                "approved_manifest_current_projection_mismatch:"
+                "h1674_approved_content_slice.json"
+            ],
+        )
+
+    def test_duplicate_approved_projection_is_deterministic_or_fails_closed(
+        self,
+    ) -> None:
+        first = self._write_approved_manifest(
+            self.root,
+            "z_approved_content_slice.json",
+            "H1674_0000",
+            "걱정",
+        )
+        second = self._write_approved_manifest(
+            self.root,
+            "a_approved_content_slice.json",
+            "H1674_0000",
+            "걱정",
+        )
+        conflicting = self._write_approved_manifest(
+            self.root,
+            "m_approved_content_slice.json",
+            "H1674_0000",
+            "근심",
+        )
+        source_only = self.root / "source_only.json"
+        source_only.write_text('{"entries": []}', encoding="utf-8")
+        projection = [
+            {
+                "word_id": "H1674_0000",
+                "meanings": [{"seq": 1, "meaning": "걱정"}],
+            }
+        ]
+
+        state = evidence.completion_gate_state(
+            "H1674", projection, [first, second], source_only
+        )
+        self.assertEqual(state["state"], "explicit_approved")
+        self.assertEqual(state["evidence"], [second.name, first.name])
+        with self.assertRaisesRegex(
+            evidence.ManifestError, "approved projection이 manifest 간 상충"
+        ):
+            evidence.completion_gate_state(
+                "H1674", projection, [second, conflicting], source_only
+            )
+
+    def test_approved_manifest_discovery_uses_tracked_files_only(self) -> None:
+        repository = self.root / "repository"
+        manifest_dir = repository / "tool" / "data_provenance" / "manifests"
+        first = self._write_approved_manifest(
+            manifest_dir,
+            "z_approved_content_slice.json",
+            "H2020_0000",
+            "구원",
+        )
+        second = self._write_approved_manifest(
+            manifest_dir,
+            "a_approved_content_slice.json",
+            "H1674_0000",
+            "걱정",
+        )
+        (manifest_dir / "strong_sources.json").write_text("{}\n", encoding="utf-8")
+
+        def run_git(*arguments: str) -> None:
+            subprocess.run(
+                ["git", *arguments],
+                cwd=repository,
+                check=True,
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+            )
+
+        run_git("init")
+        run_git("add", "tool/data_provenance/manifests")
+        self._write_approved_manifest(
+            manifest_dir,
+            "pending_approved_content_slice.json",
+            "H1618_0000",
+            "미적용 후보",
+        )
+
+        discovered = evidence.discover_approved_content_manifests(repository)
+        self.assertEqual([path.name for path in discovered], [second.name, first.name])
 
     def test_deterministic_json_bytes(self) -> None:
         first = evidence.serialize_packet({"b": 2, "a": ["한글", 1]})

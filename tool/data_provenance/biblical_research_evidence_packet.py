@@ -12,6 +12,7 @@ import os
 from pathlib import Path, PurePosixPath
 import re
 import sqlite3
+import subprocess
 import sys
 import xml.etree.ElementTree as ET
 from urllib.parse import quote, urlparse
@@ -21,7 +22,7 @@ import strong_source_diff as legacy
 import strong_source_mapping as strong_mapping
 
 
-TOOL_VERSION = "1.1.0"
+TOOL_VERSION = "1.2.0"
 TOOL_DIR = Path(__file__).resolve().parent
 REPOSITORY_ROOT = TOOL_DIR.parent.parent
 DEFAULT_STRONG_MANIFEST = TOOL_DIR / "manifests" / "strong_sources.json"
@@ -34,6 +35,10 @@ DEFAULT_LOCAL_MANIFEST = (
 DEFAULT_APPROVED_MANIFEST = (
     TOOL_DIR / "manifests" / "p2_approved_content_slice.json"
 )
+APPROVED_MANIFEST_FILENAME_RE = re.compile(
+    r"^[a-z0-9][a-z0-9_]*_approved_content_slice\.json$"
+)
+APPROVED_BATCH_ID_SUFFIX = "-APPROVED-CONTENT-SLICE"
 DEFAULT_SOURCE_ONLY_MANIFEST = (
     TOOL_DIR / "manifests" / "phase50w_hebrew20_source_import.json"
 )
@@ -1715,17 +1720,165 @@ def _strong_from_word_id(value: object) -> str | None:
     return legacy.normalize_strong_number(match.group(1)) if match else None
 
 
-def _approved_strongs(path: Path) -> set[str]:
+def _approved_projections_by_strong(
+    path: Path,
+) -> dict[str, list[dict[str, object]]]:
     payload = _read_json_object(path, "approved content manifest")
+    expected_keys = {
+        "format_version",
+        "batch_id",
+        "provenance",
+        "target",
+        "meaning_replacements",
+        "relation_creates",
+    }
+    batch_id = payload.get("batch_id")
+    if (
+        set(payload) != expected_keys
+        or payload.get("format_version") != 1
+        or not isinstance(batch_id, str)
+        or not batch_id.endswith(APPROVED_BATCH_ID_SUFFIX)
+        or not isinstance(payload.get("provenance"), dict)
+        or not isinstance(payload.get("target"), dict)
+        or not isinstance(payload.get("relation_creates"), list)
+    ):
+        raise ManifestError(f"approved content manifest format 계약 불일치: {path.name}")
     rows = payload.get("meaning_replacements")
     if not isinstance(rows, list):
         raise ManifestError("approved content manifest meaning_replacements가 배열이 아님")
+    projections: dict[str, list[dict[str, object]]] = defaultdict(list)
+    word_ids: set[str] = set()
+    for index, row in enumerate(rows):
+        row_label = f"{path.name} meaning_replacements[{index}]"
+        if not isinstance(row, dict) or set(row) != {"word_id", "before", "after"}:
+            raise ManifestError(f"{row_label}의 필드가 approved content 계약과 다름")
+        word_id = row.get("word_id")
+        strong = _strong_from_word_id(word_id)
+        if not isinstance(word_id, str) or strong is None:
+            raise ManifestError(f"{row_label}.word_id가 Strong word ID가 아님")
+        before = row.get("before")
+        after = row.get("after")
+        if not isinstance(before, list) or not isinstance(after, list) or any(
+            not isinstance(value, dict)
+            or set(value) != {"seq", "meaning"}
+            or type(value.get("seq")) is not int
+            or not isinstance(value.get("meaning"), str)
+            for value in [*before, *after]
+        ):
+            raise ManifestError(f"{row_label}의 meaning projection 형식 불일치")
+        if word_id in word_ids:
+            raise ManifestError(f"approved content manifest word_id 중복: {word_id}")
+        word_ids.add(word_id)
+        projections[strong].append(
+            {
+                "word_id": word_id,
+                "meanings": [
+                    {"seq": value["seq"], "meaning": value["meaning"]}
+                    for value in after
+                ],
+            }
+        )
     return {
-        strong
-        for row in rows
-        if isinstance(row, dict)
-        and (strong := _strong_from_word_id(row.get("word_id"))) is not None
+        strong: sorted(values, key=lambda value: str(value["word_id"]))
+        for strong, values in projections.items()
     }
+
+
+def _approved_strongs(path: Path) -> set[str]:
+    return set(_approved_projections_by_strong(path))
+
+
+def discover_approved_content_manifests(
+    repository_root: Path = REPOSITORY_ROOT,
+) -> tuple[Path, ...]:
+    root = repository_root.resolve()
+    manifest_dir = root / "tool" / "data_provenance" / "manifests"
+    relative_manifest_dir = manifest_dir.relative_to(root).as_posix()
+    try:
+        tracked = subprocess.run(
+            [
+                "git",
+                "-c",
+                "core.quotepath=false",
+                "ls-files",
+                "-z",
+                "--",
+                relative_manifest_dir,
+            ],
+            cwd=root,
+            check=True,
+            capture_output=True,
+        )
+    except (OSError, subprocess.CalledProcessError) as error:
+        raise ManifestError(
+            f"tracked approved content manifest Git 확인 실패: {error}"
+        ) from error
+    relative_paths = sorted(
+        PurePosixPath(value.decode("utf-8")).as_posix()
+        for value in tracked.stdout.split(b"\0")
+        if value
+    )
+    approved_relative_paths = tuple(
+        relative
+        for relative in relative_paths
+        if PurePosixPath(relative).parent.as_posix() == relative_manifest_dir
+        and APPROVED_MANIFEST_FILENAME_RE.fullmatch(PurePosixPath(relative).name)
+    )
+    if not approved_relative_paths:
+        raise ManifestError("tracked approved content manifest가 없음")
+
+    paths = tuple(
+        root.joinpath(*PurePosixPath(relative).parts)
+        for relative in approved_relative_paths
+    )
+    for path in paths:
+        _approved_projections_by_strong(path)
+    return paths
+
+
+def _ordered_approved_manifests(
+    approved_manifests: Path | list[Path] | tuple[Path, ...],
+) -> tuple[Path, ...]:
+    values = (
+        (approved_manifests,)
+        if isinstance(approved_manifests, Path)
+        else tuple(approved_manifests)
+    )
+    if not values:
+        raise ManifestError("approved content manifest override가 비어 있음")
+    unique: dict[Path, Path] = {}
+    for value in values:
+        path = Path(value)
+        unique[path.resolve()] = path
+    return tuple(
+        sorted(unique.values(), key=lambda path: (path.name, path.as_posix()))
+    )
+
+
+def _projection_matches_approved(
+    projection: list[dict[str, object]],
+    approved_projection: list[dict[str, object]],
+) -> bool:
+    current_projection: list[dict[str, object]] = []
+    for word in projection:
+        word_id = word.get("word_id")
+        meanings = word.get("meanings")
+        if not isinstance(word_id, str) or not isinstance(meanings, list):
+            return False
+        current_meanings = [
+            {"seq": row.get("seq"), "meaning": row.get("meaning")}
+            for row in meanings
+            if isinstance(row, dict)
+        ]
+        if len(current_meanings) != len(meanings):
+            return False
+        current_projection.append(
+            {"word_id": word_id, "meanings": current_meanings}
+        )
+    return (
+        sorted(current_projection, key=lambda value: str(value["word_id"]))
+        == approved_projection
+    )
 
 
 def _source_only_entry(path: Path, target: str) -> dict[str, object] | None:
@@ -1783,16 +1936,46 @@ def _projection_matches_source_only(
 def completion_gate_state(
     target: str,
     projection: list[dict[str, object]],
-    approved_manifest: Path,
+    approved_manifest: Path | list[Path] | tuple[Path, ...],
     source_only_manifest: Path,
 ) -> dict[str, object]:
-    if target in _approved_strongs(approved_manifest):
-        return {
-            "state": "explicit_approved",
-            "evidence": [approved_manifest.name],
-            "interpretation": "tracked 승인 manifest의 명시적 meaning 대상",
-            "application_approval_ledger": "not_applicable_mvp1",
-        }
+    approved_manifests = _ordered_approved_manifests(approved_manifest)
+    target_approvals: list[tuple[Path, list[dict[str, object]]]] = []
+    for path in approved_manifests:
+        approved_projection = _approved_projections_by_strong(path).get(target)
+        if approved_projection is not None:
+            target_approvals.append((path, approved_projection))
+
+    approved_mismatch_evidence: list[str] = []
+    if target_approvals:
+        expected_projection = target_approvals[0][1]
+        conflicting = [
+            path.name
+            for path, candidate in target_approvals[1:]
+            if candidate != expected_projection
+        ]
+        if conflicting:
+            names = ", ".join(
+                sorted({target_approvals[0][0].name, *conflicting})
+            )
+            raise ManifestError(
+                f"동일 Strong의 approved projection이 manifest 간 상충함: {target}: {names}"
+            )
+        evidence = sorted(path.name for path, _ in target_approvals)
+        if _projection_matches_approved(projection, expected_projection):
+            return {
+                "state": "explicit_approved",
+                "evidence": evidence,
+                "interpretation": (
+                    "tracked 승인 content manifest의 명시적 meaning 대상이며 "
+                    "현재 DB projection이 승인 after와 exact 일치"
+                ),
+                "application_approval_ledger": "not_applicable_mvp1",
+            }
+        approved_mismatch_evidence = [
+            f"approved_manifest_current_projection_mismatch:{name}"
+            for name in evidence
+        ]
     meanings = [
         str(row["meaning"])
         for word in projection
@@ -1802,7 +1985,10 @@ def completion_gate_state(
     if any(HANJA_IN_PARENTHESES_RE.search(value) for value in meanings):
         return {
             "state": "legacy_hanja_candidate",
-            "evidence": ["existing_meaning_parenthesized_hanja_marker"],
+            "evidence": [
+                *approved_mismatch_evidence,
+                "existing_meaning_parenthesized_hanja_marker",
+            ],
             "interpretation": (
                 "강한 과거 작업 marker이며 자동 최종 승인 확정이 아님. "
                 "한자 부재를 미작업으로 해석하지 않음"
@@ -1813,11 +1999,15 @@ def completion_gate_state(
     if source_only is not None and _projection_matches_source_only(projection, source_only):
         return {
             "state": "source_only",
-            "evidence": [source_only_manifest.name, "current_projection_exact_match"],
+            "evidence": [
+                *approved_mismatch_evidence,
+                source_only_manifest.name,
+                "current_projection_exact_match",
+            ],
             "interpretation": "승인된 source-only import projection이 현재 DB와 exact 일치",
             "application_approval_ledger": "not_applicable_mvp1",
         }
-    evidence = []
+    evidence = list(approved_mismatch_evidence)
     if source_only is not None:
         evidence.append("source_only_manifest_current_projection_mismatch")
     return {
@@ -1884,7 +2074,7 @@ def build_evidence_packet(
     strong_manifest: Path = DEFAULT_STRONG_MANIFEST,
     occurrence_manifest: Path = DEFAULT_OCCURRENCE_MANIFEST,
     local_manifest: Path = DEFAULT_LOCAL_MANIFEST,
-    approved_manifest: Path = DEFAULT_APPROVED_MANIFEST,
+    approved_manifest: Path | list[Path] | tuple[Path, ...] | None = None,
     source_only_manifest: Path = DEFAULT_SOURCE_ONLY_MANIFEST,
     cache_dir: Path = DEFAULT_CACHE,
     allow_fetch: bool = True,
@@ -1894,6 +2084,12 @@ def build_evidence_packet(
         raise EvidencePacketError(
             f"유효한 standard Strong 번호가 아님: {requested_strong!r}"
         )
+
+    approved_manifests = (
+        discover_approved_content_manifests()
+        if approved_manifest is None
+        else _ordered_approved_manifests(approved_manifest)
+    )
 
     entries, strong_paths, strong_provenance = load_strong_sources(
         strong_manifest, cache_dir, allow_fetch=allow_fetch
@@ -1906,7 +2102,7 @@ def build_evidence_packet(
     completion_gate = completion_gate_state(
         normalized,
         reshet_projection,
-        approved_manifest,
+        approved_manifests,
         source_only_manifest,
     )
 
@@ -2039,7 +2235,10 @@ def build_evidence_packet(
                 _manifest_provenance(strong_manifest),
                 _manifest_provenance(occurrence_manifest),
                 _manifest_provenance(local_manifest),
-                _manifest_provenance(approved_manifest),
+                *[
+                    _manifest_provenance(path)
+                    for path in approved_manifests
+                ],
                 _manifest_provenance(source_only_manifest),
             ],
             "local_sources_argument": str(local_sources),
