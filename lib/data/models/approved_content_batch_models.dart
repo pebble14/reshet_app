@@ -25,6 +25,18 @@ final class ApprovedContentMeaningReplacement {
   final List<ApprovedContentMeaningRow> after;
 }
 
+final class ApprovedContentWordNoteReplacement {
+  const ApprovedContentWordNoteReplacement({
+    required this.wordId,
+    required this.before,
+    required this.after,
+  });
+
+  final String wordId;
+  final String? before;
+  final String? after;
+}
+
 final class ApprovedContentRelationCreate {
   const ApprovedContentRelationCreate({
     required this.wordId1,
@@ -69,14 +81,19 @@ final class ApprovedContentBatchWriteRequest {
   const ApprovedContentBatchWriteRequest({
     required this.batchId,
     required this.meaningReplacements,
+    required this.wordNoteReplacements,
     required this.relationCreates,
   });
 
   final String batchId;
   final List<ApprovedContentMeaningReplacement> meaningReplacements;
+  final List<ApprovedContentWordNoteReplacement> wordNoteReplacements;
   final List<ApprovedContentRelationCreate> relationCreates;
 
-  int get operationCount => meaningReplacements.length + relationCreates.length;
+  int get operationCount =>
+      meaningReplacements.length +
+      wordNoteReplacements.length +
+      relationCreates.length;
 }
 
 final class ApprovedContentCreatedRelation {

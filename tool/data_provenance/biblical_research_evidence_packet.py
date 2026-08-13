@@ -1720,11 +1720,43 @@ def _strong_from_word_id(value: object) -> str | None:
     return legacy.normalize_strong_number(match.group(1)) if match else None
 
 
+def _validate_approved_word_note_replacements(
+    payload: dict[str, object], path: Path
+) -> None:
+    rows = payload.get("word_note_replacements")
+    if not isinstance(rows, list):
+        raise ManifestError(
+            "approved content manifest word_note_replacements가 배열이 아님"
+        )
+    word_ids: set[str] = set()
+    for index, row in enumerate(rows):
+        row_label = f"{path.name} word_note_replacements[{index}]"
+        if not isinstance(row, dict) or set(row) != {"word_id", "before", "after"}:
+            raise ManifestError(f"{row_label}의 필드가 approved content 계약과 다름")
+        word_id = row.get("word_id")
+        if not isinstance(word_id, str) or not word_id:
+            raise ManifestError(f"{row_label}.word_id가 비어 있거나 문자열이 아님")
+        if word_id in word_ids:
+            raise ManifestError(f"approved content note word_id 중복: {word_id}")
+        word_ids.add(word_id)
+        for field in ("before", "after"):
+            value = row.get(field)
+            if value is not None and (
+                not isinstance(value, str) or not value or not value.strip()
+            ):
+                raise ManifestError(
+                    f"{row_label}.{field}는 null 또는 non-empty 문자열이어야 함"
+                )
+        if row.get("before") == row.get("after"):
+            raise ManifestError(f"{row_label}의 before와 after가 같은 no-op임")
+
+
 def _approved_projections_by_strong(
     path: Path,
 ) -> dict[str, list[dict[str, object]]]:
     payload = _read_json_object(path, "approved content manifest")
-    expected_keys = {
+    format_version = payload.get("format_version")
+    base_keys = {
         "format_version",
         "batch_id",
         "provenance",
@@ -1732,10 +1764,14 @@ def _approved_projections_by_strong(
         "meaning_replacements",
         "relation_creates",
     }
+    expected_keys = base_keys | (
+        {"word_note_replacements"} if format_version == 2 else set()
+    )
     batch_id = payload.get("batch_id")
     if (
         set(payload) != expected_keys
-        or payload.get("format_version") != 1
+        or type(format_version) is not int
+        or format_version not in (1, 2)
         or not isinstance(batch_id, str)
         or not batch_id.endswith(APPROVED_BATCH_ID_SUFFIX)
         or not isinstance(payload.get("provenance"), dict)
@@ -1743,6 +1779,8 @@ def _approved_projections_by_strong(
         or not isinstance(payload.get("relation_creates"), list)
     ):
         raise ManifestError(f"approved content manifest format 계약 불일치: {path.name}")
+    if format_version == 2:
+        _validate_approved_word_note_replacements(payload, path)
     rows = payload.get("meaning_replacements")
     if not isinstance(rows, list):
         raise ManifestError("approved content manifest meaning_replacements가 배열이 아님")

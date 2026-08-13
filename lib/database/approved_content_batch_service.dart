@@ -42,6 +42,7 @@ final class ApprovedContentBatchManifest {
   const ApprovedContentBatchManifest._({
     required this.rawBytes,
     required this.sha256,
+    required this.formatVersion,
     required this.batchId,
     required this.documentId,
     required this.documentSha256,
@@ -52,6 +53,7 @@ final class ApprovedContentBatchManifest {
 
   final Uint8List rawBytes;
   final String sha256;
+  final int formatVersion;
   final String batchId;
   final String documentId;
   final String documentSha256;
@@ -70,28 +72,25 @@ final class ApprovedContentBatchManifest {
     }
 
     final root = _requireObject(decoded, r'$');
-    _requireExactKeys(
-      root,
-      r'$',
-      required: const {
-        'format_version',
-        'batch_id',
-        'provenance',
-        'target',
-        'meaning_replacements',
-        'relation_creates',
-      },
-    );
-
     final formatVersion = _requireInt(
       root['format_version'],
       r'$.format_version',
     );
-    if (formatVersion != 1) {
+    if (formatVersion != 1 && formatVersion != 2) {
       throw ApprovedContentValidationException(
-        'manifest format_version은 정확히 1이어야 합니다: $formatVersion',
+        'manifest format_version은 1 또는 2여야 합니다: $formatVersion',
       );
     }
+    final requiredRootKeys = <String>{
+      'format_version',
+      'batch_id',
+      'provenance',
+      'target',
+      'meaning_replacements',
+      'relation_creates',
+      if (formatVersion == 2) 'word_note_replacements',
+    };
+    _requireExactKeys(root, r'$', required: requiredRootKeys);
 
     final batchId = _requireNonEmptyString(root['batch_id'], r'$.batch_id');
     final provenance = _requireObject(root['provenance'], r'$.provenance');
@@ -150,6 +149,32 @@ final class ApprovedContentBatchManifest {
           wordId: wordId,
           before: _parseMeaningRows(value['before'], '$path.before'),
           after: _parseMeaningRows(value['after'], '$path.after'),
+        ),
+      );
+    }
+
+    final wordNoteValues = formatVersion == 2
+        ? _requireList(
+            root['word_note_replacements'],
+            r'$.word_note_replacements',
+          )
+        : const <Object?>[];
+    final wordNoteReplacements = <ApprovedContentWordNoteReplacement>[];
+    for (var index = 0; index < wordNoteValues.length; index++) {
+      final path =
+          r'$.word_note_replacements['
+          '${index.toString()}]';
+      final value = _requireObject(wordNoteValues[index], path);
+      _requireExactKeys(
+        value,
+        path,
+        required: const {'word_id', 'before', 'after'},
+      );
+      wordNoteReplacements.add(
+        ApprovedContentWordNoteReplacement(
+          wordId: _requireNonEmptyString(value['word_id'], '$path.word_id'),
+          before: _requireCanonicalWordNote(value['before'], '$path.before'),
+          after: _requireCanonicalWordNote(value['after'], '$path.after'),
         ),
       );
     }
@@ -225,6 +250,10 @@ final class ApprovedContentBatchManifest {
       meaningReplacements: List<ApprovedContentMeaningReplacement>.unmodifiable(
         meaningReplacements,
       ),
+      wordNoteReplacements:
+          List<ApprovedContentWordNoteReplacement>.unmodifiable(
+            wordNoteReplacements,
+          ),
       relationCreates: List<ApprovedContentRelationCreate>.unmodifiable(
         relationCreates,
       ),
@@ -234,6 +263,7 @@ final class ApprovedContentBatchManifest {
     return ApprovedContentBatchManifest._(
       rawBytes: Uint8List.fromList(rawBytes),
       sha256: ApprovedContentSha256.bytes(rawBytes),
+      formatVersion: formatVersion,
       batchId: batchId,
       documentId: documentId,
       documentSha256: documentSha256,
@@ -244,7 +274,7 @@ final class ApprovedContentBatchManifest {
   }
 
   Map<String, Object?> toReportJson() => {
-    'format_version': 1,
+    'format_version': formatVersion,
     'batch_id': batchId,
     'manifest_sha256': sha256,
     'provenance': {
@@ -257,6 +287,7 @@ final class ApprovedContentBatchManifest {
     },
     'operation_counts': {
       'meaning_replacements': writeRequest.meaningReplacements.length,
+      'word_note_replacements': writeRequest.wordNoteReplacements.length,
       'relation_creates': writeRequest.relationCreates.length,
       'total': writeRequest.operationCount,
     },
@@ -275,6 +306,7 @@ final class ApprovedContentDryRunResult {
     required this.historyGroupId,
     required this.historyRowCount,
     required this.meaningReplacementCount,
+    required this.wordNoteReplacementCount,
     required this.relationCreateCount,
     required this.didUndo,
   });
@@ -289,6 +321,7 @@ final class ApprovedContentDryRunResult {
   final String historyGroupId;
   final int historyRowCount;
   final int meaningReplacementCount;
+  final int wordNoteReplacementCount;
   final int relationCreateCount;
   final bool didUndo;
 
@@ -305,6 +338,7 @@ final class ApprovedContentDryRunResult {
     'history_group_id': historyGroupId,
     'history_row_count': historyRowCount,
     'meaning_replacement_count': meaningReplacementCount,
+    'word_note_replacement_count': wordNoteReplacementCount,
     'relation_create_count': relationCreateCount,
     'did_undo': didUndo,
     'original_database_unchanged': databaseSha256Before == databaseSha256After,
@@ -641,6 +675,7 @@ final class ApprovedContentBatchRunner {
       'history group: ${writeResult.groupId}\n'
       'history rows: ${writeResult.historyRowCount}\n'
       'meaning replacements: ${manifest.writeRequest.meaningReplacements.length}\n'
+      'word note replacements: ${manifest.writeRequest.wordNoteReplacements.length}\n'
       'relation creates: ${manifest.writeRequest.relationCreates.length}\n'
       'snapshot: ${snapshotFile.path}\n'
       'work SHA before: ${checked.sha256}\n'
@@ -864,6 +899,8 @@ final class ApprovedContentBatchRunner {
       historyGroupId: completedWriteResult.groupId,
       historyRowCount: completedWriteResult.historyRowCount,
       meaningReplacementCount: manifest.writeRequest.meaningReplacements.length,
+      wordNoteReplacementCount:
+          manifest.writeRequest.wordNoteReplacements.length,
       relationCreateCount: manifest.writeRequest.relationCreates.length,
       didUndo: didUndo,
     );
@@ -936,16 +973,18 @@ final class _CheckedDatabase {
 
 final class _DatabaseBaseline {
   const _DatabaseBaseline({
-    required this.targetWordDigest,
+    required this.targetWordRows,
     required this.targetExpressionDigest,
+    required this.noteOnlyTargetMeaningDigest,
     required this.nonTargetMeaningDigest,
     required this.relationDigest,
     required this.historyDigest,
     required this.schemaDigest,
   });
 
-  final String targetWordDigest;
+  final List<Map<String, Object?>> targetWordRows;
   final String targetExpressionDigest;
+  final String noteOnlyTargetMeaningDigest;
   final String nonTargetMeaningDigest;
   final String relationDigest;
   final String historyDigest;
@@ -956,9 +995,17 @@ final class _DatabaseBaseline {
     ApprovedContentBatchWriteRequest request,
   ) async {
     return _DatabaseBaseline(
-      targetWordDigest: _digestRows(await _targetWordRows(database, request)),
+      targetWordRows: List<Map<String, Object?>>.unmodifiable(
+        (await _targetWordRows(
+          database,
+          request,
+        )).map((row) => Map<String, Object?>.unmodifiable(row)),
+      ),
       targetExpressionDigest: _digestRows(
         await _targetExpressionRows(database, request),
+      ),
+      noteOnlyTargetMeaningDigest: _digestRows(
+        await _noteOnlyTargetMeaningRows(database, request),
       ),
       nonTargetMeaningDigest: _digestRows(
         await _nonTargetMeaningRows(database, request),
@@ -1013,6 +1060,20 @@ void _validateManifestOperationShape(ApprovedContentBatchWriteRequest request) {
     if (_meaningRowsEqual(replacement.before, replacement.after)) {
       throw ApprovedContentValidationException(
         'meaning before와 after가 동일한 no-op입니다: ${replacement.wordId}',
+      );
+    }
+  }
+
+  final wordNoteTargets = <String>{};
+  for (final replacement in request.wordNoteReplacements) {
+    if (!wordNoteTargets.add(replacement.wordId)) {
+      throw ApprovedContentValidationException(
+        '동일 word의 note replacement가 중복됐습니다: ${replacement.wordId}',
+      );
+    }
+    if (replacement.before == replacement.after) {
+      throw ApprovedContentValidationException(
+        'note before와 after가 동일한 no-op입니다: ${replacement.wordId}',
       );
     }
   }
@@ -1114,6 +1175,17 @@ String? _requireNullableString(Object? value, String path) {
   return _requireString(value, path);
 }
 
+String? _requireCanonicalWordNote(Object? value, String path) {
+  if (value == null) return null;
+  final result = _requireString(value, path);
+  if (result.isEmpty || result.trim().isEmpty) {
+    throw ApprovedContentValidationException(
+      '$path 값은 빈 문자열 또는 공백 문자열일 수 없습니다. 비고 없음은 null이어야 합니다.',
+    );
+  }
+  return result;
+}
+
 int _requireInt(Object? value, String path) {
   if (value is! int) {
     throw ApprovedContentValidationException('$path 값은 정수여야 합니다.');
@@ -1163,6 +1235,14 @@ Future<void> _verifyAppliedBatch({
       replacement.after,
       label: '${replacement.wordId} apply after',
     );
+  }
+  for (final replacement in request.wordNoteReplacements) {
+    final actual = await _wordNoteForWord(database, replacement.wordId);
+    if (actual != replacement.after) {
+      throw StateError(
+        '${replacement.wordId} apply after note projection이 exact 일치하지 않습니다.',
+      );
+    }
   }
 
   if (result.createdRelations.length != request.relationCreates.length) {
@@ -1228,6 +1308,7 @@ Future<void> _verifyAppliedBatch({
     baseline: baseline,
     excludedRelationIds: createdIds,
     excludedHistoryGroupId: result.groupId,
+    wordNotesApplied: true,
   );
 }
 
@@ -1244,6 +1325,14 @@ Future<void> _verifyUndoneBatch({
       replacement.before,
       label: '${replacement.wordId} undo before',
     );
+  }
+  for (final replacement in request.wordNoteReplacements) {
+    final actual = await _wordNoteForWord(database, replacement.wordId);
+    if (actual != replacement.before) {
+      throw StateError(
+        '${replacement.wordId} undo before note projection이 exact 일치하지 않습니다.',
+      );
+    }
   }
   for (final relation in result.createdRelations) {
     final rows = await database.query(
@@ -1274,6 +1363,7 @@ Future<void> _verifyUndoneBatch({
     request: request,
     baseline: baseline,
     excludedHistoryGroupId: result.groupId,
+    wordNotesApplied: false,
   );
   final relationDigest = _digestRows(await _relationRows(database));
   if (relationDigest != baseline.relationDigest) {
@@ -1286,14 +1376,38 @@ Future<void> _verifyHistoryPayloads({
   required ApprovedContentBatchWriteResult result,
   required List<Map<String, Object?>> historyRows,
 }) async {
-  final byEntity = <String, Map<String, Object?>>{
-    for (final row in historyRows)
-      '${row['entity_type']}:${row['entity_id']}': row,
-  };
+  final wordRowsById = <String, List<Map<String, Object?>>>{};
+  final relationRowsByEntity = <String, Map<String, Object?>>{};
+  for (final row in historyRows) {
+    final entityType = row['entity_type'];
+    final entityId = row['entity_id']?.toString();
+    if (entityType == 'word' && entityId != null) {
+      wordRowsById.putIfAbsent(entityId, () => []).add(row);
+    } else if (entityType == 'relation' && entityId != null) {
+      relationRowsByEntity['relation:$entityId'] = row;
+    }
+  }
+  final wordRowIndexes = <String, int>{};
+  final consumedHistoryIds = <Object?>{};
+
+  Map<String, Object?> takeWordRow(String wordId) {
+    final rows = wordRowsById[wordId] ?? const <Map<String, Object?>>[];
+    final index = wordRowIndexes[wordId] ?? 0;
+    if (index >= rows.length) {
+      throw StateError('word update history가 없습니다: $wordId');
+    }
+    final row = rows[index];
+    wordRowIndexes[wordId] = index + 1;
+    if (!consumedHistoryIds.add(row['id'])) {
+      throw StateError('같은 history row가 중복 소비됐습니다: ${row['id']}');
+    }
+    return row;
+  }
+
   for (final replacement in request.meaningReplacements) {
-    final row = byEntity['word:${replacement.wordId}'];
-    if (row == null || row['action_type'] != 'update') {
-      throw StateError('word update history가 없습니다: ${replacement.wordId}');
+    final row = takeWordRow(replacement.wordId);
+    if (row['action_type'] != 'update') {
+      throw StateError('meaning word history action이 update가 아닙니다.');
     }
     final before = _decodeHistoryJson(row['before_json'], 'before_json');
     final after = _decodeHistoryJson(row['after_json'], 'after_json');
@@ -1319,14 +1433,38 @@ Future<void> _verifyHistoryPayloads({
     }
   }
 
+  for (final replacement in request.wordNoteReplacements) {
+    final row = takeWordRow(replacement.wordId);
+    if (row['action_type'] != 'update') {
+      throw StateError('note word history action이 update가 아닙니다.');
+    }
+    final before = _decodeHistoryJson(row['before_json'], 'before_json');
+    final after = _decodeHistoryJson(row['after_json'], 'after_json');
+    if (before['비고'] != replacement.before ||
+        after['비고'] != replacement.after) {
+      throw StateError(
+        'note history before/after가 승인 projection과 exact 일치하지 않습니다: '
+        '${replacement.wordId}',
+      );
+    }
+    final beforeWithoutNote = Map<String, dynamic>.from(before)..remove('비고');
+    final afterWithoutNote = Map<String, dynamic>.from(after)..remove('비고');
+    if (_canonicalJson(beforeWithoutNote) != _canonicalJson(afterWithoutNote)) {
+      throw StateError('note history에서 승인되지 않은 word projection이 변경됐습니다.');
+    }
+  }
+
   for (var index = 0; index < request.relationCreates.length; index++) {
     final relation = request.relationCreates[index];
     final created = result.createdRelations[index];
-    final row = byEntity['relation:${created.id}'];
+    final row = relationRowsByEntity['relation:${created.id}'];
     if (row == null ||
         row['action_type'] != 'create' ||
         row['before_json'] != null) {
       throw StateError('relation create history가 유효하지 않습니다: ${created.id}');
+    }
+    if (!consumedHistoryIds.add(row['id'])) {
+      throw StateError('같은 history row가 중복 소비됐습니다: ${row['id']}');
     }
     final after = _decodeHistoryJson(row['after_json'], 'after_json');
     final expected = Map<String, Object?>.from(
@@ -1337,6 +1475,9 @@ Future<void> _verifyHistoryPayloads({
         'relation create history payload가 기존 canonical 형식과 다릅니다.',
       );
     }
+  }
+  if (consumedHistoryIds.length != historyRows.length) {
+    throw StateError('batch history에 승인 operation과 대응하지 않는 행이 있습니다.');
   }
 }
 
@@ -1381,17 +1522,40 @@ Future<void> _verifyOutsideState({
   required DatabaseExecutor database,
   required ApprovedContentBatchWriteRequest request,
   required _DatabaseBaseline baseline,
+  required bool wordNotesApplied,
   List<int> excludedRelationIds = const [],
   String? excludedHistoryGroupId,
 }) async {
+  final expectedTargetWordRows = baseline.targetWordRows
+      .map((row) => Map<String, Object?>.from(row))
+      .toList(growable: false);
+  if (wordNotesApplied) {
+    final rowsById = <String, Map<String, Object?>>{
+      for (final row in expectedTargetWordRows) row['id']!.toString(): row,
+    };
+    for (final replacement in request.wordNoteReplacements) {
+      final row = rowsById[replacement.wordId];
+      if (row == null) {
+        throw StateError(
+          'baseline target WORD_TABLE에 note 대상이 없습니다: '
+          '${replacement.wordId}',
+        );
+      }
+      row['비고'] = replacement.after;
+    }
+  }
   final checks = <String, ({String actual, String expected})>{
     'target WORD_TABLE': (
       actual: _digestRows(await _targetWordRows(database, request)),
-      expected: baseline.targetWordDigest,
+      expected: _digestRows(expectedTargetWordRows),
     ),
     'target word_expression_set': (
       actual: _digestRows(await _targetExpressionRows(database, request)),
       expected: baseline.targetExpressionDigest,
+    ),
+    'note-only target word_meaning_set': (
+      actual: _digestRows(await _noteOnlyTargetMeaningRows(database, request)),
+      expected: baseline.noteOnlyTargetMeaningDigest,
     ),
     'non-target word_meaning_set': (
       actual: _digestRows(await _nonTargetMeaningRows(database, request)),
@@ -1454,8 +1618,10 @@ Future<List<Map<String, Object?>>> _nonTargetMeaningRows(
   DatabaseExecutor database,
   ApprovedContentBatchWriteRequest request,
 ) async {
-  final wordIds =
-      request.meaningReplacements.map((item) => item.wordId).toList()..sort();
+  final wordIds = <String>{
+    ...request.meaningReplacements.map((item) => item.wordId),
+    ...request.wordNoteReplacements.map((item) => item.wordId),
+  }.toList()..sort();
   if (wordIds.isEmpty) {
     return database.rawQuery(
       'SELECT * FROM word_meaning_set ORDER BY word_id ASC, seq ASC, id ASC',
@@ -1464,6 +1630,29 @@ Future<List<Map<String, Object?>>> _nonTargetMeaningRows(
   return database.rawQuery(
     'SELECT * FROM word_meaning_set '
     'WHERE word_id NOT IN (${_placeholders(wordIds.length)}) '
+    'ORDER BY word_id ASC, seq ASC, id ASC',
+    wordIds,
+  );
+}
+
+Future<List<Map<String, Object?>>> _noteOnlyTargetMeaningRows(
+  DatabaseExecutor database,
+  ApprovedContentBatchWriteRequest request,
+) async {
+  final meaningWordIds = request.meaningReplacements
+      .map((item) => item.wordId)
+      .toSet();
+  final wordIds =
+      request.wordNoteReplacements
+          .map((item) => item.wordId)
+          .where((wordId) => !meaningWordIds.contains(wordId))
+          .toSet()
+          .toList()
+        ..sort();
+  if (wordIds.isEmpty) return const [];
+  return database.rawQuery(
+    'SELECT word_id, seq, meaning FROM word_meaning_set '
+    'WHERE word_id IN (${_placeholders(wordIds.length)}) '
     'ORDER BY word_id ASC, seq ASC, id ASC',
     wordIds,
   );
@@ -1480,6 +1669,25 @@ Future<List<Map<String, Object?>>> _meaningRowsForWord(
     whereArgs: [wordId],
     orderBy: 'seq ASC, id ASC',
   );
+}
+
+Future<String?> _wordNoteForWord(
+  DatabaseExecutor database,
+  String wordId,
+) async {
+  final rows = await database.query(
+    'WORD_TABLE',
+    columns: ['비고'],
+    where: 'id = ?',
+    whereArgs: [wordId],
+    limit: 2,
+  );
+  if (rows.length != 1) {
+    throw StateError('note 대상 word를 exact 1건 읽을 수 없습니다: $wordId');
+  }
+  final value = rows.single['비고'];
+  if (value == null || value is String) return value as String?;
+  throw StateError('note 대상 WORD_TABLE.비고가 null/string이 아닙니다: $wordId');
 }
 
 Future<List<Map<String, Object?>>> _relationRows(
@@ -1523,6 +1731,7 @@ Future<List<Map<String, Object?>>> _schemaRows(DatabaseExecutor database) {
 List<Object> _allTargetWordIds(ApprovedContentBatchWriteRequest request) {
   final ids = <String>{
     ...request.meaningReplacements.map((item) => item.wordId),
+    ...request.wordNoteReplacements.map((item) => item.wordId),
     ...request.relationCreates.expand((item) => [item.wordId1, item.wordId2]),
   }.toList()..sort();
   return List<Object>.from(ids);

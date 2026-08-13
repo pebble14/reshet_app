@@ -125,10 +125,26 @@ final class _ApprovedMeaningPreparedChange {
   final List<Map<String, Object?>> afterRows;
 }
 
+final class _ApprovedWordNotePreparedChange {
+  const _ApprovedWordNotePreparedChange({
+    required this.replacement,
+    required this.beforeHistory,
+    required this.afterHistory,
+  });
+
+  final ApprovedContentWordNoteReplacement replacement;
+  final Map<String, dynamic> beforeHistory;
+  final Map<String, dynamic> afterHistory;
+}
+
 final class _ApprovedContentBatchPreparedState {
-  const _ApprovedContentBatchPreparedState({required this.meaningChanges});
+  const _ApprovedContentBatchPreparedState({
+    required this.meaningChanges,
+    required this.wordNoteChanges,
+  });
 
   final List<_ApprovedMeaningPreparedChange> meaningChanges;
+  final List<_ApprovedWordNotePreparedChange> wordNoteChanges;
 }
 
 class _HomeStrongExactCandidate {
@@ -4620,8 +4636,8 @@ class WordRepository {
     });
   }
 
-  /// 승인된 content manifest가 요청한 meaning 전체 projection 교체와
-  /// relation 생성을 기존 history/undo 형식으로 한 transaction에 기록한다.
+  /// 승인된 content manifest가 요청한 meaning·word note 교체와 relation
+  /// 생성을 기존 history/undo 형식으로 한 transaction에 기록한다.
   Future<ApprovedContentBatchWriteResult> applyApprovedContentBatch(
     ApprovedContentBatchWriteRequest request, {
     Database? database,
@@ -4651,6 +4667,30 @@ class WordRepository {
           change.replacement.wordId,
           change.afterRows,
         );
+        await _insertHistory(
+          txn,
+          groupId: groupId,
+          actionType: 'update',
+          entityType: 'word',
+          entityId: change.replacement.wordId,
+          beforeJson: change.beforeHistory,
+          afterJson: change.afterHistory,
+        );
+      }
+
+      for (final change in prepared.wordNoteChanges) {
+        final updatedRows = await txn.update(
+          'WORD_TABLE',
+          {'비고': change.replacement.after},
+          where: 'id = ?',
+          whereArgs: [change.replacement.wordId],
+        );
+        if (updatedRows != 1) {
+          throw StateError(
+            'note 대상 word를 exact 1건 수정하지 못했습니다: '
+            '${change.replacement.wordId}/$updatedRows',
+          );
+        }
         await _insertHistory(
           txn,
           groupId: groupId,
@@ -4765,6 +4805,27 @@ class WordRepository {
       }
     }
 
+    final noteWordIds = <String>{};
+    for (final replacement in request.wordNoteReplacements) {
+      if (replacement.wordId.isEmpty) {
+        throw ArgumentError('note replacement word_id가 비어 있습니다.');
+      }
+      if (!noteWordIds.add(replacement.wordId)) {
+        throw ArgumentError(
+          '동일 word의 note replacement가 중복됐습니다: ${replacement.wordId}',
+        );
+      }
+      _validateApprovedWordNote(
+        replacement.wordId,
+        'before',
+        replacement.before,
+      );
+      _validateApprovedWordNote(replacement.wordId, 'after', replacement.after);
+      if (replacement.before == replacement.after) {
+        throw ArgumentError('note before와 after가 동일합니다: ${replacement.wordId}');
+      }
+    }
+
     final relationPairs = <String>{};
     const directionCodes = {'w1_to_w2', 'w2_to_w1', 'undirected', 'unknown'};
     for (final relation in request.relationCreates) {
@@ -4815,6 +4876,18 @@ class WordRepository {
         throw ArgumentError('$wordId meaning $projectionName 문자열이 비어 있습니다.');
       }
       previousSeq = row.seq;
+    }
+  }
+
+  void _validateApprovedWordNote(
+    String wordId,
+    String projectionName,
+    String? value,
+  ) {
+    if (value != null && (value.isEmpty || value.trim().isEmpty)) {
+      throw ArgumentError(
+        '$wordId note $projectionName 값은 빈 문자열 또는 공백 문자열일 수 없습니다.',
+      );
     }
   }
 
@@ -4896,6 +4969,50 @@ class WordRepository {
       );
     }
 
+    final meaningAfterByWordId = <String, List<Map<String, dynamic>>>{
+      for (final change in meaningChanges)
+        change.replacement.wordId: change.afterRows
+            .map((row) => Map<String, dynamic>.from(row))
+            .toList(growable: false),
+    };
+    final wordNoteChanges = <_ApprovedWordNotePreparedChange>[];
+    for (final replacement in request.wordNoteReplacements) {
+      final wordCore = await _getWordRowById(db, replacement.wordId);
+      if (wordCore == null) {
+        throw StateError('note 대상 word가 존재하지 않습니다: ${replacement.wordId}');
+      }
+      if (wordCore['비고'] != replacement.before) {
+        throw StateError(
+          'note before projection이 DB와 exact 일치하지 않습니다: '
+          '${replacement.wordId}',
+        );
+      }
+      final expressionRows = await _loadWordExpressionSetRowsForHistory(
+        db,
+        replacement.wordId,
+      );
+      final meaningRows =
+          meaningAfterByWordId[replacement.wordId] ??
+          await _loadWordMeaningSetRowsForHistory(db, replacement.wordId);
+      final afterWordCore = Map<String, dynamic>.from(wordCore)
+        ..['비고'] = replacement.after;
+      wordNoteChanges.add(
+        _ApprovedWordNotePreparedChange(
+          replacement: replacement,
+          beforeHistory: _buildWordHistorySnapshot(
+            compatibilityWordSnapshot: wordCore,
+            normalizedExpressionRows: expressionRows,
+            normalizedMeaningRows: meaningRows,
+          ),
+          afterHistory: _buildWordHistorySnapshot(
+            compatibilityWordSnapshot: afterWordCore,
+            normalizedExpressionRows: expressionRows,
+            normalizedMeaningRows: meaningRows,
+          ),
+        ),
+      );
+    }
+
     for (final relation in request.relationCreates) {
       for (final wordId in [relation.wordId1, relation.wordId2]) {
         if (await _getWordRowById(db, wordId) == null) {
@@ -4971,6 +5088,9 @@ class WordRepository {
     return _ApprovedContentBatchPreparedState(
       meaningChanges: List<_ApprovedMeaningPreparedChange>.unmodifiable(
         meaningChanges,
+      ),
+      wordNoteChanges: List<_ApprovedWordNotePreparedChange>.unmodifiable(
+        wordNoteChanges,
       ),
     );
   }

@@ -171,14 +171,14 @@ final class _ApprovedContentCliOptions {
 }
 
 const String _helpText = '''
-Reshet 승인 콘텐츠 batch applicator v1
+Reshet 승인 콘텐츠 batch applicator v1/v2
 
 사용법:
   dart run tool/approved_content_batch.dart --manifest <manifest.json>
   dart run tool/approved_content_batch.dart --manifest <manifest.json> --apply
 
 옵션:
-  --manifest <path>  manifest v1 JSON 파일
+  --manifest <path>  manifest v1 또는 v2 JSON 파일
   --database <path>  dry-run 전용 read-only 검증 대상 DB
   --apply            전체 dry-run 성공 뒤 canonical data/reshet_work.db에 적용
   --help, -h         도움말 표시

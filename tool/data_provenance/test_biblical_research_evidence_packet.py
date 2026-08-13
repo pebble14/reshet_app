@@ -39,24 +39,33 @@ class BiblicalResearchEvidencePacketTest(unittest.TestCase):
         directory: Path,
         filename: str,
         word_id: str,
-        meaning: str,
+        meaning: str | None,
+        *,
+        format_version: int = 1,
+        word_note_replacements: list[dict[str, object]] | None = None,
     ) -> Path:
         directory.mkdir(parents=True, exist_ok=True)
         path = directory / filename
         payload = {
-            "format_version": 1,
+            "format_version": format_version,
             "batch_id": "RESHET-TEST-APPROVED-CONTENT-SLICE",
             "provenance": {"document_id": "test", "document_sha256": "0" * 64},
             "target": {"expected_work_sha256": "0" * 64, "expected_user_version": 0},
-            "meaning_replacements": [
-                {
-                    "word_id": word_id,
-                    "before": [{"seq": 1, "meaning": "before"}],
-                    "after": [{"seq": 1, "meaning": meaning}],
-                }
-            ],
+            "meaning_replacements": (
+                [
+                    {
+                        "word_id": word_id,
+                        "before": [{"seq": 1, "meaning": "before"}],
+                        "after": [{"seq": 1, "meaning": meaning}],
+                    }
+                ]
+                if meaning is not None
+                else []
+            ),
             "relation_creates": [],
         }
+        if format_version == 2:
+            payload["word_note_replacements"] = word_note_replacements or []
         path.write_text(
             json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
             encoding="utf-8",
@@ -791,6 +800,104 @@ from <strongsref language="GREEK" strongs="1223"/> and
                 if expected_evidence is not None:
                     self.assertIn(expected_evidence, state["evidence"])
 
+    def test_completion_gate_v2_uses_meaning_and_ignores_note_projection(self) -> None:
+        approved = self._write_approved_manifest(
+            self.root,
+            "h1674_v2_approved_content_slice.json",
+            "H1674_0000",
+            "걱정",
+            format_version=2,
+            word_note_replacements=[
+                {
+                    "word_id": "H1674_0000",
+                    "before": None,
+                    "after": "승인 비고",
+                }
+            ],
+        )
+        source_only = self.root / "source_only.json"
+        source_only.write_text('{"entries": []}', encoding="utf-8")
+        projection = [
+            {
+                "word_id": "H1674_0000",
+                "meanings": [{"seq": 1, "meaning": "걱정"}],
+                "note": "현재 DB note가 승인값과 달라도 completion에는 미사용",
+            }
+        ]
+
+        state = evidence.completion_gate_state(
+            "H1674", projection, approved, source_only
+        )
+        self.assertEqual(state["state"], "explicit_approved")
+        self.assertEqual(state["evidence"], [approved.name])
+
+    def test_completion_gate_v2_note_only_does_not_approve(self) -> None:
+        approved = self._write_approved_manifest(
+            self.root,
+            "h1674_note_only_approved_content_slice.json",
+            "H1674_0000",
+            None,
+            format_version=2,
+            word_note_replacements=[
+                {
+                    "word_id": "H1674_0000",
+                    "before": None,
+                    "after": "승인 비고",
+                }
+            ],
+        )
+        source_only = self.root / "source_only.json"
+        source_only.write_text('{"entries": []}', encoding="utf-8")
+        projection = [
+            {
+                "word_id": "H1674_0000",
+                "meanings": [{"seq": 1, "meaning": "걱정"}],
+            }
+        ]
+
+        state = evidence.completion_gate_state(
+            "H1674", projection, approved, source_only
+        )
+        self.assertEqual(state["state"], "unclassified")
+        self.assertEqual(state["evidence"], [])
+
+    def test_completion_gate_v2_note_contract_fails_closed(self) -> None:
+        approved = self._write_approved_manifest(
+            self.root,
+            "h1674_invalid_note_approved_content_slice.json",
+            "H1674_0000",
+            "걱정",
+            format_version=2,
+            word_note_replacements=[
+                {
+                    "word_id": "H1674_0000",
+                    "before": None,
+                    "after": "   ",
+                }
+            ],
+        )
+        with self.assertRaisesRegex(evidence.ManifestError, "non-empty"):
+            evidence._approved_projections_by_strong(approved)
+
+        payload = json.loads(approved.read_text(encoding="utf-8"))
+        payload["word_note_replacements"] = [
+            {"word_id": "H1674_0000", "before": None, "after": "첫 값"},
+            {"word_id": "H1674_0000", "before": None, "after": "둘째 값"},
+        ]
+        approved.write_text(
+            json.dumps(payload, ensure_ascii=False), encoding="utf-8"
+        )
+        with self.assertRaisesRegex(evidence.ManifestError, "note word_id 중복"):
+            evidence._approved_projections_by_strong(approved)
+
+        payload["word_note_replacements"] = []
+        payload["unknown_operation"] = []
+        approved.write_text(
+            json.dumps(payload, ensure_ascii=False), encoding="utf-8"
+        )
+        with self.assertRaisesRegex(evidence.ManifestError, "format 계약 불일치"):
+            evidence._approved_projections_by_strong(approved)
+
     def test_completion_gate_does_not_approve_projection_mismatch(self) -> None:
         approved = self._write_approved_manifest(
             self.root,
@@ -877,6 +984,20 @@ from <strongsref language="GREEK" strongs="1223"/> and
             "H1674_0000",
             "걱정",
         )
+        third = self._write_approved_manifest(
+            manifest_dir,
+            "m_note_only_approved_content_slice.json",
+            "H1618_0000",
+            None,
+            format_version=2,
+            word_note_replacements=[
+                {
+                    "word_id": "H1618_0000",
+                    "before": None,
+                    "after": "승인 비고",
+                }
+            ],
+        )
         (manifest_dir / "strong_sources.json").write_text("{}\n", encoding="utf-8")
 
         def run_git(*arguments: str) -> None:
@@ -899,7 +1020,10 @@ from <strongsref language="GREEK" strongs="1223"/> and
         )
 
         discovered = evidence.discover_approved_content_manifests(repository)
-        self.assertEqual([path.name for path in discovered], [second.name, first.name])
+        self.assertEqual(
+            [path.name for path in discovered],
+            [second.name, third.name, first.name],
+        )
 
     def test_deterministic_json_bytes(self) -> None:
         first = evidence.serialize_packet({"b": 2, "a": ["한글", 1]})
