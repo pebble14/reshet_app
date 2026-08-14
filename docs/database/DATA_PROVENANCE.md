@@ -312,7 +312,17 @@ dry-run의 임시 적용·실제 undo와 live apply의 exact projection·대상 
 
 Semantic 승인 완료와 사람이 검토 후 의도적으로 보류한 상태는 별도 authority로 관리한다. `explicit_approved`의 authority는 기존 Git tracked `*_approved_content_slice.json`과 현재 work DB meaning projection의 exact 일치이며, human hold의 authority는 `tool/data_provenance/manifests/semantic_research_dispositions.json`이다. 이 ledger는 승인 상태를 중복 기록하지 않고 현재 `hold` status만 지원하며, 각 hold에는 사유·안정적인 evidence 참조·새 전문 근거 확보를 전제로 한 재검토 조건을 기록한다.
 
-현재 첫 entry는 H1833이다. lexical source의 damask 직물 의미와 Damascus 지명 의미 및 Amos 3:12 관련 현재 evidence만으로 일반 semantic meaning 하나를 확정하기 어려워 hold하며, completion state는 `source_only` 그대로다. hold 집합을 production batch 자동 제외 selector에는 아직 연결하지 않으며, H2646 conflict/manual-review pilot 후 연결 여부를 판단한다.
+현재 첫 entry는 H1833이다. lexical source의 damask 직물 의미와 Damascus 지명 의미 및 Amos 3:12 관련 현재 evidence만으로 일반 semantic meaning 하나를 확정하기 어려워 hold하며, completion state는 `source_only` 그대로다. hold 집합을 production batch 자동 제외 selector에는 아직 연결하지 않으며, H2646 pilot에서도 hold authority와 approved-content authority를 분리해 유지했다.
+
+### 11.13 H2646 승인 meaning·word note work DB slice
+
+`tool/data_provenance/manifests/h2646_approved_content_slice.json`은 batch ID `RESHET-EC-H2646-APPROVED-CONTENT-SLICE`와 승인 작업 지시 SHA-256 `cfc46d51c3b84398f7f3ef1c4369770194958e733a1b5eac3bf6b95c64c98326`를 provenance로 고정하고, work DB SHA-256 `9ed988d697e27ff0ce947a8b4164abff988bc6e34340f950cf1327e6ebcae040`의 meaning·word note projection을 exact precondition으로 사용한다. manifest SHA-256은 `6001aa8241101459283fd5923764fcdd6bc75e5a961022cea265a6d93a0c923c`다. 기존 연구 artifact `H2646_evidence_packet.json`과 `H2646_review.md`의 SHA-256은 각각 `ec44ffc87ae67c3eecda61a573bf94b14d02bb5dabbe45fcd8000946f5781309`, `76abe3e589803b9dec5754dd19868ceb017a05a46c508c7bf5761d944a40df81`로 재확인했다. 과거 conflict/manual-review 표시는 semantic conflict가 아니라 OSHB/WLC `Psalms.19.6`과 typed KJV alternate `Psalms.19.5`의 versification 차이였다.
+
+active `word_meaning_set` 전체 projection은 서로 다른 두 sense인 `H2646_0000 → 덮개`, `H2646_0000 → 방`을 seq 1·2의 별도 행으로 저장했다. H2645 `덮다`에서 파생된 명사라는 점과 덮는 구조물·둘러싸인 공간 및 혼례 문맥의 `신방`·`골방` 번역 용례는 `WORD_TABLE.비고`에 기록했으며, `신방`은 별도 canonical meaning으로 저장하지 않았다. 서로 다른 semantic sense는 별도 meaning으로 저장하고, `·` 병기는 동일하거나 사실상 같은 의미의 한국어 표현을 함께 표시할 때 사용하며, sense 사이의 어근적·개념적 연결이나 문맥별 구체 번역은 필요한 경우 word note에서 설명한다.
+
+기존 승인 콘텐츠 batch applicator v2로 `data/reshet_work.db`에만 적용했으며 work SHA-256은 `9ed988d697e27ff0ce947a8b4164abff988bc6e34340f950cf1327e6ebcae040`에서 `7fe497b8fc568a588eeb950efc72776dc67b510f2ebf33f657ca56cb138d7b1a`로 변경됐다. seed SHA-256 `e2e356c0f9a5d0d86c059da77c59815521e2abc410b3c4aa69b1ab6e55ff9a67`은 불변이다. history group `1786694528148594`에는 meaning과 word note의 active word update 2행을 기록했고 relation은 생성하지 않았다. 적용 전 snapshot은 `data/backups/approved_content_batch/20260814T080207454890Z/snapshot.db`에 보존하며 크기 8,257,536바이트, SHA-256 `446c4f843066f745cf7356cf800dc6b414d66b73e7bbe8dcb3a078e59c28b2ca`다. snapshot integrity check는 `ok`, foreign key 위반은 0이며 schema version `1369`와 source·적용 후 work DB `1368`의 차이는 기존 `VACUUM INTO` 계약상 예상된 schema cookie 차이다. 자동 restore는 실행되지 않았다.
+
+독립 read-only SQL에서 H2646의 meaning 2행·word note·relation 0건, H1833과 다른 승인 Strong의 meaning projection 불변, work DB integrity check `ok`, foreign key 위반 0과 SQLite sidecar 0을 확인했다. tracked manifest 기준 completion gate에서 H2646은 `explicit_approved`이고 semantic hold에는 포함되지 않는다. H1833은 `source_only`와 hold를 유지하며 approved와 hold의 교집합은 비어 있다. production Dart·테스트 코드, schema, seed와 UI/UX 동작은 변경하지 않았으므로 사용자 UI 수동 테스트와 새 guard/test는 N/A다.
 
 ## 12. pronunciation profile·migration 현행 경계
 

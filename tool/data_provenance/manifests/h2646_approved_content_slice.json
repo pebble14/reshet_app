@@ -1,0 +1,33 @@
+{
+  "format_version": 2,
+  "batch_id": "RESHET-EC-H2646-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "Reshet H2646 승인 의미·비고 반영 작업 지시",
+    "document_sha256": "cfc46d51c3b84398f7f3ef1c4369770194958e733a1b5eac3bf6b95c64c98326"
+  },
+  "target": {
+    "expected_work_sha256": "9ed988d697e27ff0ce947a8b4164abff988bc6e34340f950cf1327e6ebcae040",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H2646_0000",
+      "before": [
+        {"seq": 1, "meaning": "a canopy"},
+        {"seq": 2, "meaning": "chamber, closet, defence."}
+      ],
+      "after": [
+        {"seq": 1, "meaning": "덮개"},
+        {"seq": 2, "meaning": "방"}
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H2646_0000",
+      "before": null,
+      "after": "H2645 '덮다'에서 파생된 명사로, 덮는 구조물과 덮이거나 둘러싸인 공간을 가리킨다. 시편 19:6과 요엘 2:16에서는 혼례 문맥에 사용되어 '신방', '골방' 등으로 번역되기도 한다."
+    }
+  ],
+  "relation_creates": []
+}
