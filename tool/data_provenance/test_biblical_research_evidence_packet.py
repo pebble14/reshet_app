@@ -363,6 +363,17 @@ from <strongsref language="GREEK" strongs="1223"/> and
             [row["normalized_strong"] for row in references],
             ["G1223", "G0906"],
         )
+        self.assertEqual(
+            set(references[0]),
+            {
+                "source_order",
+                "source_container",
+                "raw_language",
+                "raw_reference",
+                "normalized_strong",
+                "warning",
+            },
+        )
 
     def test_tagnt_canonical_profile_excludes_other_only_variant(self) -> None:
         source = self.root / "TAGNT.txt"

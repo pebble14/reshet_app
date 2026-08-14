@@ -641,23 +641,67 @@ def _entry_key(element: ET.Element, prefix: str) -> str | None:
     return legacy.normalize_strong_number(raw, prefix)
 
 
-def extract_direct_references(source_path: Path, target: str) -> list[dict[str, object]]:
-    prefix = target[0]
-    try:
-        root = ET.parse(source_path).getroot()
-    except ET.ParseError as error:
-        raise SourceSchemaError(f"Strong reference XML parsing 실패: {source_path}: {error}") from error
-    entry = next(
-        (
-            node
-            for node in root.iter()
-            if legacy.local_name(node.tag) == "entry" and _entry_key(node, prefix) == target
-        ),
-        None,
+_RELATION_WORDING_PATTERNS = tuple(
+    re.compile(pattern, re.IGNORECASE)
+    for pattern in (
+        r"\b(?:an\s+)?orthographical variation of\b",
+        r"\bthe same as\b",
+        r"\bplural of\b",
+        r"\bcompare\b",
+        r"\bfrom\b",
     )
-    if entry is None:
-        return []
+)
 
+
+def _normalized_source_text(value: str) -> str:
+    return re.sub(r"\s+", " ", value).strip()
+
+
+def _descendants_with_preceding_text(
+    container: ET.Element,
+) -> list[tuple[ET.Element, str]]:
+    text_parts: list[str] = []
+    descendants: list[tuple[ET.Element, str]] = []
+
+    def visit(element: ET.Element) -> None:
+        if element.text:
+            text_parts.append(element.text)
+        for child in list(element):
+            descendants.append((child, "".join(text_parts)))
+            visit(child)
+            if child.tail:
+                text_parts.append(child.tail)
+
+    visit(container)
+    return descendants
+
+
+def _relation_wording(preceding_text: str) -> str | None:
+    normalized = _normalized_source_text(preceding_text)
+    matches = [
+        match
+        for pattern in _RELATION_WORDING_PATTERNS
+        for match in pattern.finditer(normalized)
+    ]
+    if matches:
+        return max(matches, key=lambda match: (match.start(), match.end())).group(0)
+
+    fragment = re.split(r"[;()]", normalized)[-1]
+    fragment = re.sub(
+        r"(?:[GH]?\d+\s*(?:,|and)?\s*)+$",
+        "",
+        fragment,
+        flags=re.IGNORECASE,
+    ).strip(" ,")
+    return fragment or None
+
+
+def extract_entry_reference_relations(
+    entry: ET.Element,
+    source_strong: str,
+) -> list[dict[str, object]]:
+    """한 parsed Strong entry의 명시적 source reference와 원문 관계 문구를 보존한다."""
+    prefix = source_strong[0]
     references: list[dict[str, object]] = []
     for child in list(entry):
         container = legacy.local_name(child.tag)
@@ -665,7 +709,8 @@ def extract_direct_references(source_path: Path, target: str) -> list[dict[str, 
             continue
         if prefix == "H" and container != "source":
             continue
-        for node in child.iter():
+        source_text = _normalized_source_text("".join(child.itertext()))
+        for node, preceding_text in _descendants_with_preceding_text(child):
             name = legacy.local_name(node.tag)
             if prefix == "G" and name == "strongsref":
                 raw_language = node.get("language") or ""
@@ -692,9 +737,42 @@ def extract_direct_references(source_path: Path, target: str) -> list[dict[str, 
                     "raw_reference": raw_reference,
                     "normalized_strong": normalized,
                     "warning": None if normalized is not None else "nonstandard_reference",
+                    "relation_wording": _relation_wording(preceding_text),
+                    "source_text": source_text,
                 }
             )
     return references
+
+
+def extract_direct_references(source_path: Path, target: str) -> list[dict[str, object]]:
+    prefix = target[0]
+    try:
+        root = ET.parse(source_path).getroot()
+    except ET.ParseError as error:
+        raise SourceSchemaError(f"Strong reference XML parsing 실패: {source_path}: {error}") from error
+    entry = next(
+        (
+            node
+            for node in root.iter()
+            if legacy.local_name(node.tag) == "entry" and _entry_key(node, prefix) == target
+        ),
+        None,
+    )
+    if entry is None:
+        return []
+
+    legacy_fields = (
+        "source_order",
+        "source_container",
+        "raw_language",
+        "raw_reference",
+        "normalized_strong",
+        "warning",
+    )
+    return [
+        {field: row[field] for field in legacy_fields}
+        for row in extract_entry_reference_relations(entry, target)
+    ]
 
 
 def _source_entry_payload(entry: legacy.SourceEntryV2 | None) -> dict[str, object]:
