@@ -78,9 +78,9 @@ final class ApprovedContentBatchManifest {
       root['format_version'],
       r'$.format_version',
     );
-    if (formatVersion != 1 && formatVersion != 2 && formatVersion != 3) {
+    if (formatVersion < 1 || formatVersion > 4) {
       throw ApprovedContentValidationException(
-        'manifest format_version은 1, 2 또는 3이어야 합니다: $formatVersion',
+        'manifest format_version은 1, 2, 3 또는 4여야 합니다: $formatVersion',
       );
     }
     final requiredRootKeys = <String>{
@@ -91,14 +91,15 @@ final class ApprovedContentBatchManifest {
       'meaning_replacements',
       'relation_creates',
       if (formatVersion >= 2) 'word_note_replacements',
-      if (formatVersion == 3) 'supersedes',
+      if (formatVersion >= 3) 'supersedes',
+      if (formatVersion == 4) 'relation_replacements',
     };
     _requireExactKeys(root, r'$', required: requiredRootKeys);
 
     final batchId = _requireNonEmptyString(root['batch_id'], r'$.batch_id');
-    if (formatVersion == 3 && !batchId.endsWith('-APPROVED-CONTENT-SLICE')) {
+    if (formatVersion >= 3 && !batchId.endsWith('-APPROVED-CONTENT-SLICE')) {
       throw ApprovedContentValidationException(
-        r'v3 $.batch_id가 approved batch identity가 아닙니다: '
+        r'v3/v4 $.batch_id가 approved batch identity가 아닙니다: '
         '$batchId',
       );
     }
@@ -162,7 +163,7 @@ final class ApprovedContentBatchManifest {
       );
     }
 
-    final supersessionValues = formatVersion == 3
+    final supersessionValues = formatVersion >= 3
         ? _requireList(root['supersedes'], r'$.supersedes')
         : const <Object?>[];
     final supersedes = <ApprovedContentSupersession>[];
@@ -315,6 +316,46 @@ final class ApprovedContentBatchManifest {
       );
     }
 
+    final relationReplacementValues = formatVersion == 4
+        ? _requireList(
+            root['relation_replacements'],
+            r'$.relation_replacements',
+          )
+        : const <Object?>[];
+    final relationReplacements = <ApprovedContentRelationReplacement>[];
+    for (var index = 0; index < relationReplacementValues.length; index++) {
+      final path =
+          r'$.relation_replacements['
+          '${index.toString()}]';
+      final value = _requireObject(relationReplacementValues[index], path);
+      _requireExactKeys(
+        value,
+        path,
+        required: const {
+          'relation_id',
+          'word_id_1',
+          'word_id_2',
+          'before',
+          'after',
+        },
+      );
+      relationReplacements.add(
+        ApprovedContentRelationReplacement(
+          relationId: _requireInt(value['relation_id'], '$path.relation_id'),
+          wordId1: _requireNonEmptyString(
+            value['word_id_1'],
+            '$path.word_id_1',
+          ),
+          wordId2: _requireNonEmptyString(
+            value['word_id_2'],
+            '$path.word_id_2',
+          ),
+          before: _parseRelationProjection(value['before'], '$path.before'),
+          after: _parseRelationProjection(value['after'], '$path.after'),
+        ),
+      );
+    }
+
     final request = ApprovedContentBatchWriteRequest(
       batchId: batchId,
       meaningReplacements: List<ApprovedContentMeaningReplacement>.unmodifiable(
@@ -327,6 +368,10 @@ final class ApprovedContentBatchManifest {
       relationCreates: List<ApprovedContentRelationCreate>.unmodifiable(
         relationCreates,
       ),
+      relationReplacements:
+          List<ApprovedContentRelationReplacement>.unmodifiable(
+            relationReplacements,
+          ),
     );
     _validateManifestOperationShape(request);
 
@@ -356,7 +401,7 @@ final class ApprovedContentBatchManifest {
       'expected_work_sha256': expectedWorkSha256,
       'expected_user_version': expectedUserVersion,
     },
-    if (formatVersion == 3)
+    if (formatVersion >= 3)
       'supersedes': supersedes
           .map((item) => item.toJson())
           .toList(growable: false),
@@ -364,6 +409,7 @@ final class ApprovedContentBatchManifest {
       'meaning_replacements': writeRequest.meaningReplacements.length,
       'word_note_replacements': writeRequest.wordNoteReplacements.length,
       'relation_creates': writeRequest.relationCreates.length,
+      'relation_replacements': writeRequest.relationReplacements.length,
       'total': writeRequest.operationCount,
     },
   };
@@ -398,6 +444,7 @@ final class ApprovedContentDryRunResult {
     required this.meaningReplacementCount,
     required this.wordNoteReplacementCount,
     required this.relationCreateCount,
+    required this.relationReplacementCount,
     required this.didUndo,
   });
 
@@ -413,6 +460,7 @@ final class ApprovedContentDryRunResult {
   final int meaningReplacementCount;
   final int wordNoteReplacementCount;
   final int relationCreateCount;
+  final int relationReplacementCount;
   final bool didUndo;
 
   Map<String, Object?> toJson() => {
@@ -430,6 +478,7 @@ final class ApprovedContentDryRunResult {
     'meaning_replacement_count': meaningReplacementCount,
     'word_note_replacement_count': wordNoteReplacementCount,
     'relation_create_count': relationCreateCount,
+    'relation_replacement_count': relationReplacementCount,
     'did_undo': didUndo,
     'original_database_unchanged': databaseSha256Before == databaseSha256After,
   };
@@ -442,6 +491,7 @@ final class ApprovedContentApplyResult {
     required this.historyGroupId,
     required this.historyRowCount,
     required this.createdRelations,
+    required this.replacedRelations,
     required this.workSha256Before,
     required this.workSha256After,
     required this.seedSha256,
@@ -460,6 +510,7 @@ final class ApprovedContentApplyResult {
   final String historyGroupId;
   final int historyRowCount;
   final List<ApprovedContentCreatedRelation> createdRelations;
+  final List<ApprovedContentReplacedRelation> replacedRelations;
   final String workSha256Before;
   final String workSha256After;
   final String seedSha256;
@@ -756,6 +807,15 @@ final class ApprovedContentBatchRunner {
       'created_relations': writeResult.createdRelations
           .map((relation) => relation.row)
           .toList(growable: false),
+      'replaced_relations': writeResult.replacedRelations
+          .map(
+            (relation) => {
+              'id': relation.id,
+              'before': relation.before,
+              'after': relation.after,
+            },
+          )
+          .toList(growable: false),
       'automatic_restore_performed': false,
     };
     await _writeJsonReport(reportFile, successReport);
@@ -767,6 +827,7 @@ final class ApprovedContentBatchRunner {
       'meaning replacements: ${manifest.writeRequest.meaningReplacements.length}\n'
       'word note replacements: ${manifest.writeRequest.wordNoteReplacements.length}\n'
       'relation creates: ${manifest.writeRequest.relationCreates.length}\n'
+      'relation replacements: ${manifest.writeRequest.relationReplacements.length}\n'
       'snapshot: ${snapshotFile.path}\n'
       'work SHA before: ${checked.sha256}\n'
       'work SHA after: $workShaAfter\n'
@@ -780,6 +841,7 @@ final class ApprovedContentBatchRunner {
       historyGroupId: writeResult.groupId,
       historyRowCount: writeResult.historyRowCount,
       createdRelations: writeResult.createdRelations,
+      replacedRelations: writeResult.replacedRelations,
       workSha256Before: checked.sha256,
       workSha256After: workShaAfter,
       seedSha256: seedShaAfter,
@@ -992,6 +1054,8 @@ final class ApprovedContentBatchRunner {
       wordNoteReplacementCount:
           manifest.writeRequest.wordNoteReplacements.length,
       relationCreateCount: manifest.writeRequest.relationCreates.length,
+      relationReplacementCount:
+          manifest.writeRequest.relationReplacements.length,
       didUndo: didUndo,
     );
   }
@@ -1068,6 +1132,7 @@ final class _DatabaseBaseline {
     required this.noteOnlyTargetMeaningDigest,
     required this.nonTargetMeaningDigest,
     required this.relationDigest,
+    required this.outsideRelationDigest,
     required this.historyDigest,
     required this.schemaDigest,
   });
@@ -1077,6 +1142,7 @@ final class _DatabaseBaseline {
   final String noteOnlyTargetMeaningDigest;
   final String nonTargetMeaningDigest;
   final String relationDigest;
+  final String outsideRelationDigest;
   final String historyDigest;
   final String schemaDigest;
 
@@ -1101,6 +1167,14 @@ final class _DatabaseBaseline {
         await _nonTargetMeaningRows(database, request),
       ),
       relationDigest: _digestRows(await _relationRows(database)),
+      outsideRelationDigest: _digestRows(
+        await _relationRows(
+          database,
+          excludedIds: request.relationReplacements
+              .map((replacement) => replacement.relationId)
+              .toList(growable: false),
+        ),
+      ),
       historyDigest: _digestRows(await _historyRows(database)),
       schemaDigest: _digestRows(await _schemaRows(database)),
     );
@@ -1122,6 +1196,55 @@ List<ApprovedContentMeaningRow> _parseMeaningRows(Object? raw, String path) {
     );
   }
   return List<ApprovedContentMeaningRow>.unmodifiable(rows);
+}
+
+ApprovedContentRelationProjection _parseRelationProjection(
+  Object? raw,
+  String path,
+) {
+  final value = _requireObject(raw, path);
+  _requireExactKeys(
+    value,
+    path,
+    required: const {
+      'category_code',
+      'relation_type',
+      'status_code',
+      'direction_code',
+      'description',
+      'relation_group_id',
+      'note',
+      'source',
+    },
+  );
+  return ApprovedContentRelationProjection(
+    categoryCode: _requireNonEmptyString(
+      value['category_code'],
+      '$path.category_code',
+    ),
+    relationType: _requireNonEmptyString(
+      value['relation_type'],
+      '$path.relation_type',
+    ),
+    statusCode: _requireNonEmptyString(
+      value['status_code'],
+      '$path.status_code',
+    ),
+    directionCode: _requireNonEmptyString(
+      value['direction_code'],
+      '$path.direction_code',
+    ),
+    description: _requireNullableString(
+      value['description'],
+      '$path.description',
+    ),
+    relationGroupId: _requireNullableString(
+      value['relation_group_id'],
+      '$path.relation_group_id',
+    ),
+    note: _requireNullableString(value['note'], '$path.note'),
+    source: _requireNonEmptyString(value['source'], '$path.source'),
+  );
 }
 
 void _validateManifestOperationShape(ApprovedContentBatchWriteRequest request) {
@@ -1168,7 +1291,7 @@ void _validateManifestOperationShape(ApprovedContentBatchWriteRequest request) {
     }
   }
 
-  final pairs = <String>{};
+  final createPairs = <String>{};
   const supportedDirections = {'w1_to_w2', 'w2_to_w1', 'undirected', 'unknown'};
   for (final relation in request.relationCreates) {
     if (relation.wordId1.compareTo(relation.wordId2) >= 0) {
@@ -1183,12 +1306,92 @@ void _validateManifestOperationShape(ApprovedContentBatchWriteRequest request) {
       );
     }
     final key = '${relation.wordId1}\u0000${relation.wordId2}';
-    if (!pairs.add(key)) {
+    if (!createPairs.add(key)) {
       throw ApprovedContentValidationException(
         '동일 unordered relation pair가 중복됐습니다: '
         '${relation.wordId1}, ${relation.wordId2}',
       );
     }
+  }
+
+  final replacementIds = <int>{};
+  final replacementPairs = <String>{};
+  for (final replacement in request.relationReplacements) {
+    if (replacement.relationId <= 0) {
+      throw ApprovedContentValidationException(
+        'relation_id는 양수여야 합니다: ${replacement.relationId}',
+      );
+    }
+    if (!replacementIds.add(replacement.relationId)) {
+      throw ApprovedContentValidationException(
+        '동일 relation_id replacement가 중복됐습니다: '
+        '${replacement.relationId}',
+      );
+    }
+    if (replacement.wordId1.compareTo(replacement.wordId2) >= 0) {
+      throw ApprovedContentValidationException(
+        'relation replacement pair는 word_id_1 < word_id_2 canonical '
+        '순서여야 합니다: ${replacement.wordId1}, ${replacement.wordId2}',
+      );
+    }
+    final key = '${replacement.wordId1}\u0000${replacement.wordId2}';
+    if (!replacementPairs.add(key)) {
+      throw ApprovedContentValidationException(
+        '동일 unordered relation replacement pair가 중복됐습니다: '
+        '${replacement.wordId1}, ${replacement.wordId2}',
+      );
+    }
+    if (createPairs.contains(key)) {
+      throw ApprovedContentValidationException(
+        '같은 unordered pair를 create와 replacement에 동시에 지정했습니다: '
+        '${replacement.wordId1}, ${replacement.wordId2}',
+      );
+    }
+    _validateManifestRelationProjection(
+      replacement.relationId,
+      'before',
+      replacement.before,
+      supportedDirections,
+    );
+    _validateManifestRelationProjection(
+      replacement.relationId,
+      'after',
+      replacement.after,
+      supportedDirections,
+    );
+    if (replacement.before.hasSameValues(replacement.after)) {
+      throw ApprovedContentValidationException(
+        'relation before와 after가 동일한 no-op입니다: '
+        '${replacement.relationId}',
+      );
+    }
+  }
+}
+
+void _validateManifestRelationProjection(
+  int relationId,
+  String projectionName,
+  ApprovedContentRelationProjection projection,
+  Set<String> supportedDirections,
+) {
+  final codes = <String, String>{
+    'category_code': projection.categoryCode,
+    'relation_type': projection.relationType,
+    'status_code': projection.statusCode,
+  };
+  for (final entry in codes.entries) {
+    if (entry.value.trim() != entry.value) {
+      throw ApprovedContentValidationException(
+        'relation $relationId $projectionName ${entry.key}는 '
+        'trim 없는 canonical 값이어야 합니다.',
+      );
+    }
+  }
+  if (!supportedDirections.contains(projection.directionCode)) {
+    throw ApprovedContentValidationException(
+      'relation $relationId $projectionName direction_code가 '
+      '정의되지 않았습니다: ${projection.directionCode}',
+    );
   }
 }
 
@@ -1372,6 +1575,64 @@ Future<void> _verifyAppliedBatch({
     }
   }
 
+  if (result.replacedRelations.length != request.relationReplacements.length) {
+    throw StateError('교체 relation 결과 수가 manifest와 다릅니다.');
+  }
+  final replacementIds = <int>[];
+  for (var index = 0; index < request.relationReplacements.length; index++) {
+    final requested = request.relationReplacements[index];
+    final replaced = result.replacedRelations[index];
+    replacementIds.add(requested.relationId);
+    if (replaced.id != requested.relationId) {
+      throw StateError('교체 relation 결과 id가 manifest와 다릅니다.');
+    }
+    if (!requested.before.matchesDatabaseRow(replaced.before) ||
+        !requested.after.matchesDatabaseRow(replaced.after)) {
+      throw StateError(
+        '교체 relation 결과 before/after가 manifest와 exact 일치하지 않습니다: '
+        '${requested.relationId}',
+      );
+    }
+    for (final key in ['id', 'word_id_1', 'word_id_2', 'created_at']) {
+      if (replaced.before[key] != replaced.after[key]) {
+        throw StateError(
+          '교체 relation immutable 필드가 변경됐습니다: '
+          '${requested.relationId}/$key',
+        );
+      }
+    }
+    if (replaced.after['id'] != requested.relationId ||
+        replaced.after['word_id_1'] != requested.wordId1 ||
+        replaced.after['word_id_2'] != requested.wordId2) {
+      throw StateError(
+        '교체 relation identity가 manifest와 exact 일치하지 않습니다: '
+        '${requested.relationId}',
+      );
+    }
+    final updatedAt = replaced.after['updated_at'];
+    if (updatedAt is! String ||
+        updatedAt.isEmpty ||
+        updatedAt == replaced.before['updated_at']) {
+      throw StateError(
+        '교체 relation updated_at이 갱신되지 않았습니다: '
+        '${requested.relationId}',
+      );
+    }
+    final rows = await database.query(
+      'WORD_RELATION',
+      where: 'id = ?',
+      whereArgs: [requested.relationId],
+      limit: 2,
+    );
+    if (rows.length != 1 ||
+        _digestRows(rows) != _digestRows([replaced.after])) {
+      throw StateError(
+        '교체 relation 결과가 DB exact row와 다릅니다: '
+        '${requested.relationId}',
+      );
+    }
+  }
+
   final historyRows = await database.query(
     'CHANGE_HISTORY',
     where: 'group_id = ?',
@@ -1396,7 +1657,7 @@ Future<void> _verifyAppliedBatch({
     database: database,
     request: request,
     baseline: baseline,
-    excludedRelationIds: createdIds,
+    excludedRelationIds: [...createdIds, ...replacementIds],
     excludedHistoryGroupId: result.groupId,
     wordNotesApplied: true,
   );
@@ -1433,6 +1694,21 @@ Future<void> _verifyUndoneBatch({
     );
     if (rows.isNotEmpty) {
       throw StateError('undo 뒤 생성 relation이 남아 있습니다: ${relation.id}');
+    }
+  }
+  for (final replaced in result.replacedRelations) {
+    final rows = await database.query(
+      'WORD_RELATION',
+      where: 'id = ?',
+      whereArgs: [replaced.id],
+      limit: 2,
+    );
+    if (rows.length != 1 ||
+        _digestRows(rows) != _digestRows([replaced.before])) {
+      throw StateError(
+        'undo 뒤 교체 relation이 original full row로 exact 복원되지 않았습니다: '
+        '${replaced.id}',
+      );
     }
   }
   final historyRows = await database.query(
@@ -1566,6 +1842,34 @@ Future<void> _verifyHistoryPayloads({
       );
     }
   }
+  for (var index = 0; index < request.relationReplacements.length; index++) {
+    final requested = request.relationReplacements[index];
+    final replaced = result.replacedRelations[index];
+    final row = relationRowsByEntity['relation:${requested.relationId}'];
+    if (row == null ||
+        row['action_type'] != 'update' ||
+        row['before_json'] == null ||
+        row['after_json'] == null) {
+      throw StateError(
+        'relation update history가 유효하지 않습니다: '
+        '${requested.relationId}',
+      );
+    }
+    if (!consumedHistoryIds.add(row['id'])) {
+      throw StateError('같은 history row가 중복 소비됐습니다: ${row['id']}');
+    }
+    final before = _decodeHistoryJson(row['before_json'], 'before_json');
+    final after = _decodeHistoryJson(row['after_json'], 'after_json');
+    if (_digestRows([before]) != _digestRows([replaced.before]) ||
+        _digestRows([after]) != _digestRows([replaced.after]) ||
+        !requested.before.matchesDatabaseRow(before) ||
+        !requested.after.matchesDatabaseRow(after)) {
+      throw StateError(
+        'relation update history full before/after가 exact 일치하지 않습니다: '
+        '${requested.relationId}',
+      );
+    }
+  }
   if (consumedHistoryIds.length != historyRows.length) {
     throw StateError('batch history에 승인 operation과 대응하지 않는 행이 있습니다.');
   }
@@ -1634,6 +1938,12 @@ Future<void> _verifyOutsideState({
       row['비고'] = replacement.after;
     }
   }
+  final outsideRelationIds = <int>{
+    ...excludedRelationIds,
+    ...request.relationReplacements.map(
+      (replacement) => replacement.relationId,
+    ),
+  }.toList(growable: false);
   final checks = <String, ({String actual, String expected})>{
     'target WORD_TABLE': (
       actual: _digestRows(await _targetWordRows(database, request)),
@@ -1653,9 +1963,9 @@ Future<void> _verifyOutsideState({
     ),
     'outside WORD_RELATION': (
       actual: _digestRows(
-        await _relationRows(database, excludedIds: excludedRelationIds),
+        await _relationRows(database, excludedIds: outsideRelationIds),
       ),
-      expected: baseline.relationDigest,
+      expected: baseline.outsideRelationDigest,
     ),
     'pre-existing CHANGE_HISTORY': (
       actual: _digestRows(
@@ -1823,6 +2133,9 @@ List<Object> _allTargetWordIds(ApprovedContentBatchWriteRequest request) {
     ...request.meaningReplacements.map((item) => item.wordId),
     ...request.wordNoteReplacements.map((item) => item.wordId),
     ...request.relationCreates.expand((item) => [item.wordId1, item.wordId2]),
+    ...request.relationReplacements.expand(
+      (item) => [item.wordId1, item.wordId2],
+    ),
   }.toList()..sort();
   return List<Object>.from(ids);
 }

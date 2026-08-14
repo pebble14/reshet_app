@@ -137,14 +137,29 @@ final class _ApprovedWordNotePreparedChange {
   final Map<String, dynamic> afterHistory;
 }
 
+final class _ApprovedRelationPreparedChange {
+  const _ApprovedRelationPreparedChange({required this.replacement});
+
+  final ApprovedContentRelationReplacement replacement;
+}
+
+final class _RelationUpdateOutcome {
+  const _RelationUpdateOutcome({required this.before, required this.after});
+
+  final Map<String, dynamic> before;
+  final Map<String, dynamic> after;
+}
+
 final class _ApprovedContentBatchPreparedState {
   const _ApprovedContentBatchPreparedState({
     required this.meaningChanges,
     required this.wordNoteChanges,
+    required this.relationChanges,
   });
 
   final List<_ApprovedMeaningPreparedChange> meaningChanges;
   final List<_ApprovedWordNotePreparedChange> wordNoteChanges;
+  final List<_ApprovedRelationPreparedChange> relationChanges;
 }
 
 class _HomeStrongExactCandidate {
@@ -3681,71 +3696,104 @@ class WordRepository {
         : trimmedRelationGroupId;
 
     await db.transaction((txn) async {
-      final before = await _getRelationRowById(txn, relationId);
-      if (before == null) {
-        throw Exception('수정할 관계를 찾을 수 없습니다: $relationId');
-      }
-
-      final normalizedStatusCode =
-          await _requireValidRelationStatusCodeOnExecutor(txn, statusCode);
-
-      final normalizedRelationType = _normalizeNullableCode(relationType);
-      final effectiveCategoryCode = await _resolveStoredCategoryCode(
+      await _updateRelationOnExecutor(
         db: txn,
-        requestedCategoryCode: categoryCode,
-        relationTypeCode: normalizedRelationType,
-      );
-
-      final existingId = await _findExistingRelationIdBySignatureOnExecutor(
-        txn,
-        wordIdA: before['word_id_1'] as String,
-        wordIdB: before['word_id_2'] as String,
-        relationType: normalizedRelationType,
-        directionCode: normalizedDirectionCode,
-        excludeRelationId: relationId,
-      );
-      if (existingId != null) {
-        throw Exception('동일한 pair/type/direction 관계가 이미 존재합니다: $existingId');
-      }
-
-      final after = Map<String, dynamic>.from(before);
-      after['category_code'] = effectiveCategoryCode;
-      after['relation_type'] = normalizedRelationType;
-      after['status_code'] = normalizedStatusCode;
-      after['direction_code'] = normalizedDirectionCode;
-      after['description'] = descriptionValue;
-      after['relation_group_id'] = relationGroupIdValue;
-      after['note'] = note;
-      after['source'] = source;
-      after['updated_at'] = DateTime.now().toIso8601String();
-
-      await txn.update(
-        'WORD_RELATION',
-        {
-          'category_code': effectiveCategoryCode,
-          'relation_type': normalizedRelationType,
-          'status_code': normalizedStatusCode,
-          'direction_code': normalizedDirectionCode,
-          'description': descriptionValue,
-          'relation_group_id': relationGroupIdValue,
-          'note': note,
-          'source': source,
-          'updated_at': after['updated_at'],
-        },
-        where: 'id = ?',
-        whereArgs: [relationId],
-      );
-
-      await _insertHistory(
-        txn,
         groupId: groupId,
-        actionType: 'update',
-        entityType: 'relation',
-        entityId: relationId.toString(),
-        beforeJson: before,
-        afterJson: after,
+        relationId: relationId,
+        categoryCode: categoryCode,
+        relationType: relationType,
+        statusCode: statusCode,
+        directionCode: normalizedDirectionCode,
+        description: descriptionValue,
+        relationGroupId: relationGroupIdValue,
+        note: note,
+        source: source,
       );
     });
+  }
+
+  Future<_RelationUpdateOutcome> _updateRelationOnExecutor({
+    required DatabaseExecutor db,
+    required String groupId,
+    required int relationId,
+    required String? categoryCode,
+    required String? relationType,
+    required String statusCode,
+    required String directionCode,
+    required String? description,
+    required String? relationGroupId,
+    required String? note,
+    required String? source,
+  }) async {
+    final before = await _getRelationRowById(db, relationId);
+    if (before == null) {
+      throw Exception('수정할 관계를 찾을 수 없습니다: $relationId');
+    }
+
+    final normalizedStatusCode =
+        await _requireValidRelationStatusCodeOnExecutor(db, statusCode);
+    final normalizedRelationType = _normalizeNullableCode(relationType);
+    final effectiveCategoryCode = await _resolveStoredCategoryCode(
+      db: db,
+      requestedCategoryCode: categoryCode,
+      relationTypeCode: normalizedRelationType,
+    );
+
+    final existingId = await _findExistingRelationIdBySignatureOnExecutor(
+      db,
+      wordIdA: before['word_id_1'] as String,
+      wordIdB: before['word_id_2'] as String,
+      relationType: normalizedRelationType,
+      directionCode: directionCode,
+      excludeRelationId: relationId,
+    );
+    if (existingId != null) {
+      throw Exception('동일한 pair/type/direction 관계가 이미 존재합니다: $existingId');
+    }
+
+    final after = Map<String, dynamic>.from(before)
+      ..['category_code'] = effectiveCategoryCode
+      ..['relation_type'] = normalizedRelationType
+      ..['status_code'] = normalizedStatusCode
+      ..['direction_code'] = directionCode
+      ..['description'] = description
+      ..['relation_group_id'] = relationGroupId
+      ..['note'] = note
+      ..['source'] = source
+      ..['updated_at'] = DateTime.now().toIso8601String();
+
+    final updatedRows = await db.update(
+      'WORD_RELATION',
+      {
+        'category_code': effectiveCategoryCode,
+        'relation_type': normalizedRelationType,
+        'status_code': normalizedStatusCode,
+        'direction_code': directionCode,
+        'description': description,
+        'relation_group_id': relationGroupId,
+        'note': note,
+        'source': source,
+        'updated_at': after['updated_at'],
+      },
+      where: 'id = ?',
+      whereArgs: [relationId],
+    );
+    if (updatedRows != 1) {
+      throw StateError(
+        'relation을 exact 1건 수정하지 못했습니다: $relationId/$updatedRows',
+      );
+    }
+
+    await _insertHistory(
+      db,
+      groupId: groupId,
+      actionType: 'update',
+      entityType: 'relation',
+      entityId: relationId.toString(),
+      beforeJson: before,
+      afterJson: after,
+    );
+    return _RelationUpdateOutcome(before: before, after: after);
   }
 
   /// 키워드로 단어 검색 (그래프에서 "관계 추가" 대상 단어 선택용)
@@ -4636,8 +4684,8 @@ class WordRepository {
     });
   }
 
-  /// 승인된 content manifest가 요청한 meaning·word note 교체와 relation
-  /// 생성을 기존 history/undo 형식으로 한 transaction에 기록한다.
+  /// 승인된 content manifest가 요청한 meaning·word note·relation 교체와
+  /// relation 생성을 기존 history/undo 형식으로 한 transaction에 기록한다.
   Future<ApprovedContentBatchWriteResult> applyApprovedContentBatch(
     ApprovedContentBatchWriteRequest request, {
     Database? database,
@@ -4660,6 +4708,7 @@ class WordRepository {
 
       final prepared = await _prepareApprovedContentBatch(txn, request);
       final createdRelations = <ApprovedContentCreatedRelation>[];
+      final replacedRelations = <ApprovedContentReplacedRelation>[];
 
       for (final change in prepared.meaningChanges) {
         await _replaceWordMeaningSetRows(
@@ -4731,6 +4780,58 @@ class WordRepository {
         );
       }
 
+      for (final change in prepared.relationChanges) {
+        final replacement = change.replacement;
+        final outcome = await _updateRelationOnExecutor(
+          db: txn,
+          groupId: groupId,
+          relationId: replacement.relationId,
+          categoryCode: replacement.after.categoryCode,
+          relationType: replacement.after.relationType,
+          statusCode: replacement.after.statusCode,
+          directionCode: replacement.after.directionCode,
+          description: replacement.after.description,
+          relationGroupId: replacement.after.relationGroupId,
+          note: replacement.after.note,
+          source: replacement.after.source,
+        );
+        if (!replacement.before.matchesDatabaseRow(outcome.before)) {
+          throw StateError(
+            'relation before projection이 update 직전 DB와 exact 일치하지 않습니다: '
+            '${replacement.relationId}',
+          );
+        }
+        if (!replacement.after.matchesDatabaseRow(outcome.after)) {
+          throw StateError(
+            'relation after projection이 update 결과와 exact 일치하지 않습니다: '
+            '${replacement.relationId}',
+          );
+        }
+        final actualAfter = await _getRelationRowById(
+          txn,
+          replacement.relationId,
+        );
+        if (actualAfter == null ||
+            !replacement.after.matchesDatabaseRow(actualAfter) ||
+            actualAfter['id'] != outcome.before['id'] ||
+            actualAfter['word_id_1'] != outcome.before['word_id_1'] ||
+            actualAfter['word_id_2'] != outcome.before['word_id_2'] ||
+            actualAfter['created_at'] != outcome.before['created_at'] ||
+            actualAfter['updated_at'] != outcome.after['updated_at']) {
+          throw StateError(
+            'relation replacement 실제 row가 승인 after/identity와 exact '
+            '일치하지 않습니다: ${replacement.relationId}',
+          );
+        }
+        replacedRelations.add(
+          ApprovedContentReplacedRelation(
+            id: replacement.relationId,
+            before: Map<String, Object?>.unmodifiable(outcome.before),
+            after: Map<String, Object?>.unmodifiable(actualAfter),
+          ),
+        );
+      }
+
       final historyRows = await txn.query(
         'CHANGE_HISTORY',
         columns: ['id'],
@@ -4748,6 +4849,9 @@ class WordRepository {
         groupId: groupId,
         createdRelations: List<ApprovedContentCreatedRelation>.unmodifiable(
           createdRelations,
+        ),
+        replacedRelations: List<ApprovedContentReplacedRelation>.unmodifiable(
+          replacedRelations,
         ),
         historyRowCount: historyRows.length,
       );
@@ -4826,7 +4930,7 @@ class WordRepository {
       }
     }
 
-    final relationPairs = <String>{};
+    final relationCreatePairs = <String>{};
     const directionCodes = {'w1_to_w2', 'w2_to_w1', 'undirected', 'unknown'};
     for (final relation in request.relationCreates) {
       if (relation.wordId1.isEmpty || relation.wordId2.isEmpty) {
@@ -4850,12 +4954,96 @@ class WordRepository {
         throw ArgumentError('relation lookup code와 source는 비어 있을 수 없습니다.');
       }
       final pairKey = '${relation.wordId1}\u0000${relation.wordId2}';
-      if (!relationPairs.add(pairKey)) {
+      if (!relationCreatePairs.add(pairKey)) {
         throw ArgumentError(
           '동일 unordered relation pair가 중복됐습니다: '
           '${relation.wordId1}, ${relation.wordId2}',
         );
       }
+    }
+
+    final replacementIds = <int>{};
+    final replacementPairs = <String>{};
+    for (final replacement in request.relationReplacements) {
+      if (replacement.relationId <= 0) {
+        throw ArgumentError.value(
+          replacement.relationId,
+          'relationId',
+          'relation_id는 양수여야 합니다.',
+        );
+      }
+      if (!replacementIds.add(replacement.relationId)) {
+        throw ArgumentError(
+          '동일 relation_id replacement가 중복됐습니다: '
+          '${replacement.relationId}',
+        );
+      }
+      if (replacement.wordId1.isEmpty || replacement.wordId2.isEmpty) {
+        throw ArgumentError('relation replacement word_id가 비어 있습니다.');
+      }
+      if (replacement.wordId1.compareTo(replacement.wordId2) >= 0) {
+        throw ArgumentError(
+          'relation replacement pair는 word_id_1 < word_id_2 canonical '
+          '순서여야 합니다: ${replacement.wordId1}, ${replacement.wordId2}',
+        );
+      }
+      final pairKey = '${replacement.wordId1}\u0000${replacement.wordId2}';
+      if (!replacementPairs.add(pairKey)) {
+        throw ArgumentError(
+          '동일 unordered relation replacement pair가 중복됐습니다: '
+          '${replacement.wordId1}, ${replacement.wordId2}',
+        );
+      }
+      if (relationCreatePairs.contains(pairKey)) {
+        throw ArgumentError(
+          '같은 unordered pair를 create와 replacement에 동시에 지정했습니다: '
+          '${replacement.wordId1}, ${replacement.wordId2}',
+        );
+      }
+      _validateApprovedRelationProjection(
+        replacement.relationId,
+        'before',
+        replacement.before,
+        directionCodes,
+      );
+      _validateApprovedRelationProjection(
+        replacement.relationId,
+        'after',
+        replacement.after,
+        directionCodes,
+      );
+      if (replacement.before.hasSameValues(replacement.after)) {
+        throw ArgumentError(
+          'relation before와 after가 동일합니다: ${replacement.relationId}',
+        );
+      }
+    }
+  }
+
+  void _validateApprovedRelationProjection(
+    int relationId,
+    String projectionName,
+    ApprovedContentRelationProjection projection,
+    Set<String> directionCodes,
+  ) {
+    final codes = <String, String>{
+      'category_code': projection.categoryCode,
+      'relation_type': projection.relationType,
+      'status_code': projection.statusCode,
+    };
+    for (final entry in codes.entries) {
+      if (entry.value.isEmpty || entry.value.trim() != entry.value) {
+        throw ArgumentError(
+          'relation $relationId $projectionName ${entry.key}는 '
+          'trim 없는 non-empty canonical 값이어야 합니다.',
+        );
+      }
+    }
+    if (!directionCodes.contains(projection.directionCode)) {
+      throw ArgumentError(
+        'relation $relationId $projectionName direction_code가 '
+        '정의되지 않았습니다: ${projection.directionCode}',
+      );
     }
   }
 
@@ -5085,12 +5273,104 @@ class WordRepository {
       }
     }
 
+    final relationChanges = <_ApprovedRelationPreparedChange>[];
+    for (final replacement in request.relationReplacements) {
+      final before = await _getRelationRowById(db, replacement.relationId);
+      if (before == null) {
+        throw StateError(
+          'relation replacement 대상 id가 존재하지 않습니다: '
+          '${replacement.relationId}',
+        );
+      }
+      if (before['word_id_1'] != replacement.wordId1 ||
+          before['word_id_2'] != replacement.wordId2) {
+        throw StateError(
+          'relation replacement id의 word pair가 manifest와 exact '
+          '일치하지 않습니다: ${replacement.relationId}',
+        );
+      }
+      if (!replacement.before.matchesDatabaseRow(before)) {
+        throw StateError(
+          'relation before projection이 DB와 exact 일치하지 않습니다: '
+          '${replacement.relationId}',
+        );
+      }
+
+      final categoryRows = await db.query(
+        'RELATION_CATEGORY',
+        columns: ['code'],
+        where: 'code = ?',
+        whereArgs: [replacement.after.categoryCode],
+        limit: 1,
+      );
+      if (categoryRows.isEmpty) {
+        throw StateError(
+          'relation replacement category lookup이 존재하지 않습니다: '
+          '${replacement.after.categoryCode}',
+        );
+      }
+      final typeRows = await db.query(
+        'RELATION_TYPE',
+        columns: ['code', 'category_code'],
+        where: 'code = ?',
+        whereArgs: [replacement.after.relationType],
+        limit: 1,
+      );
+      if (typeRows.isEmpty) {
+        throw StateError(
+          'relation replacement type lookup이 존재하지 않습니다: '
+          '${replacement.after.relationType}',
+        );
+      }
+      if (typeRows.single['category_code'] != replacement.after.categoryCode) {
+        throw StateError(
+          'relation replacement type의 category가 manifest와 다릅니다: '
+          '${replacement.after.relationType}/'
+          '${replacement.after.categoryCode}',
+        );
+      }
+      final statusRows = await db.query(
+        'RELATION_STATUS',
+        columns: ['code'],
+        where: 'code = ?',
+        whereArgs: [replacement.after.statusCode],
+        limit: 1,
+      );
+      if (statusRows.isEmpty) {
+        throw StateError(
+          'relation replacement status lookup이 존재하지 않습니다: '
+          '${replacement.after.statusCode}',
+        );
+      }
+
+      final existingId = await _findExistingRelationIdBySignatureOnExecutor(
+        db,
+        wordIdA: replacement.wordId1,
+        wordIdB: replacement.wordId2,
+        relationType: replacement.after.relationType,
+        directionCode: replacement.after.directionCode,
+        excludeRelationId: replacement.relationId,
+      );
+      if (existingId != null) {
+        throw StateError(
+          'relation replacement target signature가 기존 relation과 '
+          '충돌합니다: ${replacement.relationId}/$existingId',
+        );
+      }
+      relationChanges.add(
+        _ApprovedRelationPreparedChange(replacement: replacement),
+      );
+    }
+
     return _ApprovedContentBatchPreparedState(
       meaningChanges: List<_ApprovedMeaningPreparedChange>.unmodifiable(
         meaningChanges,
       ),
       wordNoteChanges: List<_ApprovedWordNotePreparedChange>.unmodifiable(
         wordNoteChanges,
+      ),
+      relationChanges: List<_ApprovedRelationPreparedChange>.unmodifiable(
+        relationChanges,
       ),
     );
   }

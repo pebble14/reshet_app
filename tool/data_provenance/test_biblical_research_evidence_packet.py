@@ -45,6 +45,7 @@ class BiblicalResearchEvidencePacketTest(unittest.TestCase):
         batch_id: str | None = None,
         word_note_replacements: list[dict[str, object]] | None = None,
         supersedes: list[dict[str, str]] | None = None,
+        relation_replacements: list[dict[str, object]] | None = None,
     ) -> Path:
         directory.mkdir(parents=True, exist_ok=True)
         path = directory / filename
@@ -74,10 +75,12 @@ class BiblicalResearchEvidencePacketTest(unittest.TestCase):
             ),
             "relation_creates": [],
         }
-        if format_version in (2, 3):
+        if format_version in (2, 3, 4):
             payload["word_note_replacements"] = word_note_replacements or []
-        if format_version == 3:
+        if format_version in (3, 4):
             payload["supersedes"] = supersedes or []
+        if format_version == 4:
+            payload["relation_replacements"] = relation_replacements or []
         path.write_text(
             json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
             encoding="utf-8",
@@ -903,6 +906,101 @@ from <strongsref language="GREEK" strongs="1223"/> and
         )
         self.assertEqual(state["state"], "unclassified")
         self.assertEqual(state["evidence"], [])
+
+    def test_completion_gate_v4_relation_only_does_not_approve(self) -> None:
+        approved = self._write_approved_manifest(
+            self.root,
+            "h1652_relation_only_approved_content_slice.json",
+            "H1652_0000",
+            None,
+            format_version=4,
+            relation_replacements=[
+                {
+                    "relation_id": 7617,
+                    "word_id_1": "H1652_0000",
+                    "word_id_2": "H1653_0000",
+                    "before": {
+                        "category_code": "etymological",
+                        "relation_type": "root_shared",
+                        "status_code": "asserted",
+                        "direction_code": "undirected",
+                        "description": None,
+                        "relation_group_id": None,
+                        "note": None,
+                        "source": "RESHET-TEST-BEFORE",
+                    },
+                    "after": {
+                        "category_code": "morphological",
+                        "relation_type": "derived",
+                        "status_code": "asserted",
+                        "direction_code": "w1_to_w2",
+                        "description": None,
+                        "relation_group_id": None,
+                        "note": None,
+                        "source": "RESHET-TEST-AFTER",
+                    },
+                }
+            ],
+        )
+        source_only = self.root / "source_only.json"
+        source_only.write_text('{"entries": []}', encoding="utf-8")
+        state = evidence.completion_gate_state(
+            "H1652",
+            [
+                {
+                    "word_id": "H1652_0000",
+                    "meanings": [{"seq": 1, "meaning": "비를 내리다"}],
+                }
+            ],
+            approved,
+            source_only,
+        )
+        self.assertEqual(state["state"], "unclassified")
+        self.assertEqual(state["evidence"], [])
+
+        payload = json.loads(approved.read_text(encoding="utf-8"))
+        payload["format_version"] = 3
+        approved.write_text(
+            json.dumps(payload, ensure_ascii=False), encoding="utf-8"
+        )
+        with self.assertRaisesRegex(evidence.ManifestError, "format 계약 불일치"):
+            evidence._approved_projections_by_strong(approved)
+
+    def test_completion_gate_v4_keeps_v3_supersession_semantics(self) -> None:
+        old_batch_id = "RESHET-TEST-H5229-OLD-APPROVED-CONTENT-SLICE"
+        old = self._write_approved_manifest(
+            self.root,
+            "h5229_old_approved_content_slice.json",
+            "H5229_0000",
+            "올곧음",
+            batch_id=old_batch_id,
+        )
+        active = self._write_approved_manifest(
+            self.root,
+            "h5229_v4_active_approved_content_slice.json",
+            "H5229_0000",
+            "올바름",
+            format_version=4,
+            supersedes=[
+                {"strong_number": "H5229", "batch_id": old_batch_id}
+            ],
+        )
+        source_only = self.root / "source_only.json"
+        source_only.write_text('{"entries": []}', encoding="utf-8")
+        state = evidence.completion_gate_state(
+            "H5229",
+            [
+                {
+                    "word_id": "H5229_0000",
+                    "meanings": [{"seq": 1, "meaning": "올바름"}],
+                }
+            ],
+            [old, active],
+            source_only,
+        )
+        self.assertEqual(state["state"], "explicit_approved")
+        self.assertEqual(state["active_approval_evidence"], [active.name])
+        self.assertEqual(state["superseded_approval_evidence"], [old.name])
 
     def test_completion_gate_v2_note_contract_fails_closed(self) -> None:
         approved = self._write_approved_manifest(

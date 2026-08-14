@@ -77,23 +77,86 @@ final class ApprovedContentRelationCreate {
   };
 }
 
+final class ApprovedContentRelationProjection {
+  const ApprovedContentRelationProjection({
+    required this.categoryCode,
+    required this.relationType,
+    required this.statusCode,
+    required this.directionCode,
+    required this.description,
+    required this.relationGroupId,
+    required this.note,
+    required this.source,
+  });
+
+  final String categoryCode;
+  final String relationType;
+  final String statusCode;
+  final String directionCode;
+  final String? description;
+  final String? relationGroupId;
+  final String? note;
+  final String source;
+
+  Map<String, Object?> toDatabaseFields() => {
+    'category_code': categoryCode,
+    'relation_type': relationType,
+    'status_code': statusCode,
+    'direction_code': directionCode,
+    'description': description,
+    'relation_group_id': relationGroupId,
+    'note': note,
+    'source': source,
+  };
+
+  bool matchesDatabaseRow(Map<String, Object?> row) {
+    for (final entry in toDatabaseFields().entries) {
+      if (row[entry.key] != entry.value) return false;
+    }
+    return true;
+  }
+
+  bool hasSameValues(ApprovedContentRelationProjection other) {
+    return matchesDatabaseRow(other.toDatabaseFields());
+  }
+}
+
+final class ApprovedContentRelationReplacement {
+  const ApprovedContentRelationReplacement({
+    required this.relationId,
+    required this.wordId1,
+    required this.wordId2,
+    required this.before,
+    required this.after,
+  });
+
+  final int relationId;
+  final String wordId1;
+  final String wordId2;
+  final ApprovedContentRelationProjection before;
+  final ApprovedContentRelationProjection after;
+}
+
 final class ApprovedContentBatchWriteRequest {
   const ApprovedContentBatchWriteRequest({
     required this.batchId,
     required this.meaningReplacements,
     required this.wordNoteReplacements,
     required this.relationCreates,
+    required this.relationReplacements,
   });
 
   final String batchId;
   final List<ApprovedContentMeaningReplacement> meaningReplacements;
   final List<ApprovedContentWordNoteReplacement> wordNoteReplacements;
   final List<ApprovedContentRelationCreate> relationCreates;
+  final List<ApprovedContentRelationReplacement> relationReplacements;
 
   int get operationCount =>
       meaningReplacements.length +
       wordNoteReplacements.length +
-      relationCreates.length;
+      relationCreates.length +
+      relationReplacements.length;
 }
 
 final class ApprovedContentCreatedRelation {
@@ -103,14 +166,28 @@ final class ApprovedContentCreatedRelation {
   final Map<String, Object?> row;
 }
 
+final class ApprovedContentReplacedRelation {
+  const ApprovedContentReplacedRelation({
+    required this.id,
+    required this.before,
+    required this.after,
+  });
+
+  final int id;
+  final Map<String, Object?> before;
+  final Map<String, Object?> after;
+}
+
 final class ApprovedContentBatchWriteResult {
   const ApprovedContentBatchWriteResult({
     required this.groupId,
     required this.createdRelations,
+    required this.replacedRelations,
     required this.historyRowCount,
   });
 
   final String groupId;
   final List<ApprovedContentCreatedRelation> createdRelations;
+  final List<ApprovedContentReplacedRelation> replacedRelations;
   final int historyRowCount;
 }

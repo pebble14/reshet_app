@@ -101,6 +101,7 @@ void main() {
       expect(manifest.writeRequest.meaningReplacements, hasLength(3));
       expect(manifest.writeRequest.wordNoteReplacements, isEmpty);
       expect(manifest.writeRequest.relationCreates, hasLength(3));
+      expect(manifest.writeRequest.relationReplacements, isEmpty);
       expect(manifest.writeRequest.operationCount, 6);
     });
 
@@ -116,6 +117,7 @@ void main() {
       expect(manifest.formatVersion, 2);
       expect(manifest.writeRequest.meaningReplacements, isEmpty);
       expect(manifest.writeRequest.wordNoteReplacements, hasLength(1));
+      expect(manifest.writeRequest.relationReplacements, isEmpty);
       expect(manifest.writeRequest.wordNoteReplacements.single.before, isNull);
       expect(manifest.writeRequest.wordNoteReplacements.single.after, '승인 비고');
       expect(manifest.writeRequest.operationCount, 1);
@@ -155,6 +157,7 @@ void main() {
       );
       expect(manifest.writeRequest.meaningReplacements, hasLength(1));
       expect(manifest.writeRequest.wordNoteReplacements, isEmpty);
+      expect(manifest.writeRequest.relationReplacements, isEmpty);
       expect(manifest.writeRequest.operationCount, 1);
       expect(manifest.toReportJson()['supersedes'], const [
         {
@@ -162,6 +165,160 @@ void main() {
           'batch_id': 'RESHET-EC-SECOND-SEMANTIC-BATCH-APPROVED-CONTENT-SLICE',
         },
       ]);
+    });
+
+    test('valid v4 relation-only replacement manifest를 파싱한다', () {
+      final manifest = _parseMap(
+        _v4Manifest(
+          relationReplacements: [
+            _relationReplacementRow(
+              relationId: 7617,
+              wordId1: _relationWordIdA,
+              wordId2: _relationWordIdB,
+            ),
+          ],
+        ),
+      );
+
+      expect(manifest.formatVersion, 4);
+      expect(manifest.supersedes, isEmpty);
+      expect(manifest.writeRequest.meaningReplacements, isEmpty);
+      expect(manifest.writeRequest.wordNoteReplacements, isEmpty);
+      expect(manifest.writeRequest.relationCreates, isEmpty);
+      expect(manifest.writeRequest.relationReplacements, hasLength(1));
+      expect(
+        manifest.writeRequest.relationReplacements.single.relationId,
+        7617,
+      );
+      expect(manifest.writeRequest.operationCount, 1);
+      expect(
+        (manifest.toReportJson()['operation_counts']
+            as Map)['relation_replacements'],
+        1,
+      );
+    });
+
+    test('v1~v3 relation_replacements와 v4 malformed replacement를 거부한다', () {
+      final replacement = _relationReplacementRow(
+        relationId: 7617,
+        wordId1: _relationWordIdA,
+        wordId2: _relationWordIdB,
+      );
+      final legacyManifests = <Map<String, dynamic>>[
+        _relationOnlyManifest(
+          wordId1: 'H1652_0000',
+          wordId2: 'H1653_0000',
+          statusCode: 'asserted',
+        ),
+        _v2Manifest(
+          wordNoteReplacements: const [
+            {'word_id': _noteSetWordId, 'before': null, 'after': '승인 비고'},
+          ],
+        ),
+        _v3Manifest(
+          batchId: 'RESHET-TEST-V3-APPROVED-CONTENT-SLICE',
+          meaningReplacements: const [
+            {
+              'word_id': 'H5229_0000',
+              'before': [
+                {'seq': 1, 'meaning': '이전'},
+              ],
+              'after': [
+                {'seq': 1, 'meaning': '이후'},
+              ],
+            },
+          ],
+          supersedes: const [],
+        ),
+      ];
+      for (final legacy in legacyManifests) {
+        legacy['relation_replacements'] = [replacement];
+        expect(
+          () => _parseMap(legacy),
+          throwsA(
+            isA<ApprovedContentValidationException>().having(
+              (error) => error.message,
+              'message',
+              contains('relation_replacements'),
+            ),
+          ),
+        );
+      }
+
+      final missingField = _v4Manifest(
+        relationReplacements: [
+          Map<String, Object?>.from(replacement)..remove('after'),
+        ],
+      );
+      expect(
+        () => _parseMap(missingField),
+        throwsA(isA<ApprovedContentValidationException>()),
+      );
+
+      final extraField = _v4Manifest(
+        relationReplacements: [_deepClone(replacement) as Map<String, Object?>],
+      );
+      final extraBefore =
+          ((extraField['relation_replacements']! as List).single
+                  as Map<String, dynamic>)['before']!
+              as Map<String, dynamic>;
+      extraBefore['unexpected'] = true;
+      expect(
+        () => _parseMap(extraField),
+        throwsA(isA<ApprovedContentValidationException>()),
+      );
+    });
+
+    test('v4 replacement id·pair·create 충돌과 no-op을 거부한다', () {
+      final replacement = _relationReplacementRow(
+        relationId: 7617,
+        wordId1: _relationWordIdA,
+        wordId2: _relationWordIdB,
+      );
+      final duplicateId = _v4Manifest(
+        relationReplacements: [
+          replacement,
+          _relationReplacementRow(
+            relationId: 7617,
+            wordId1: _relationWordIdC,
+            wordId2: _relationWordIdD,
+          ),
+        ],
+      );
+      final duplicatePair = _v4Manifest(
+        relationReplacements: [
+          replacement,
+          _relationReplacementRow(
+            relationId: 7618,
+            wordId1: _relationWordIdA,
+            wordId2: _relationWordIdB,
+          ),
+        ],
+      );
+      final createConflict = _v4Manifest(
+        relationCreates: [
+          _relationCreateRow(
+            wordId1: _relationWordIdA,
+            wordId2: _relationWordIdB,
+          ),
+        ],
+        relationReplacements: [replacement],
+      );
+      final noOpReplacement = _deepClone(replacement) as Map<String, Object?>;
+      noOpReplacement['after'] = _deepClone(noOpReplacement['before']);
+      final noOp = _v4Manifest(relationReplacements: [noOpReplacement]);
+
+      for (final invalid in [
+        duplicateId,
+        duplicatePair,
+        createConflict,
+        noOp,
+      ]) {
+        expect(
+          () => _parseMap(invalid),
+          throwsA(isA<ApprovedContentValidationException>()),
+        );
+      }
     });
 
     test('v3 self-supersession과 source Strong 부재를 거부한다', () {
@@ -207,7 +364,7 @@ void main() {
 
     test('invalid version, type, required field, unknown operation을 거부한다', () {
       final invalidVersion = _fixtureMap(p1ManifestFile)
-        ..['format_version'] = 4;
+        ..['format_version'] = 5;
       expect(
         () => _parseMap(invalidVersion),
         throwsA(isA<ApprovedContentValidationException>()),
@@ -532,6 +689,105 @@ void main() {
       );
     });
 
+    test('v4 relation replacement exact DB precondition 위반을 거부한다', () async {
+      final fixture = await _createRelationFixture(caseDirectory!, p1Snapshot);
+      final runner = ApprovedContentBatchRunner(projectRoot: repoRoot);
+      final base = _relationReplacementRow(
+        relationId: fixture.relationId,
+        wordId1: _relationWordIdA,
+        wordId2: _relationWordIdB,
+      );
+
+      Future<void> expectFailure(
+        String fileName,
+        Map<String, Object?> replacement,
+        String message,
+      ) async {
+        final manifestFile = await _writeManifest(
+          caseDirectory!,
+          fileName,
+          _v4Manifest(
+            expectedWorkSha256: fixture.sha256,
+            expectedUserVersion: fixture.userVersion,
+            relationReplacements: [replacement],
+          ),
+        );
+        await expectLater(
+          runner.dryRun(
+            manifestFile: manifestFile,
+            databaseFile: fixture.database,
+          ),
+          throwsA(
+            isA<ApprovedContentValidationException>().having(
+              (error) => error.message,
+              'message',
+              contains(message),
+            ),
+          ),
+        );
+      }
+
+      final missingId = _deepClone(base) as Map<String, Object?>
+        ..['relation_id'] = 999999999;
+      await expectFailure(
+        'replacement_missing_id.json',
+        missingId,
+        '존재하지 않습니다',
+      );
+
+      final pairMismatch = _deepClone(base) as Map<String, Object?>
+        ..['word_id_2'] = _relationWordIdC;
+      await expectFailure(
+        'replacement_pair_mismatch.json',
+        pairMismatch,
+        'word pair',
+      );
+
+      final beforeMismatch = _deepClone(base) as Map<String, Object?>;
+      (beforeMismatch['before']! as Map<String, dynamic>)['source'] =
+          'DB와 다른 source';
+      await expectFailure(
+        'replacement_before_mismatch.json',
+        beforeMismatch,
+        'before projection',
+      );
+
+      final missingLookup = _deepClone(base) as Map<String, Object?>;
+      (missingLookup['after']! as Map<String, dynamic>)['status_code'] =
+          'missing_status';
+      await expectFailure(
+        'replacement_missing_lookup.json',
+        missingLookup,
+        'status lookup',
+      );
+
+      final categoryMismatch = _deepClone(base) as Map<String, Object?>;
+      (categoryMismatch['after']! as Map<String, dynamic>)['category_code'] =
+          'etymological';
+      await expectFailure(
+        'replacement_category_mismatch.json',
+        categoryMismatch,
+        'category',
+      );
+
+      final duplicateSignature = _deepClone(base) as Map<String, Object?>;
+      final duplicateAfter =
+          duplicateSignature['after']! as Map<String, dynamic>;
+      duplicateAfter['category_code'] = 'unspecified';
+      duplicateAfter['relation_type'] = 'related';
+      duplicateAfter['direction_code'] = 'unknown';
+      await expectFailure(
+        'replacement_duplicate_signature.json',
+        duplicateSignature,
+        'target signature',
+      );
+
+      expect(
+        await ApprovedContentSha256.file(fixture.database),
+        fixture.sha256,
+      );
+    });
+
     test('seed와 비canonical DB live apply를 쓰기 전에 거부한다', () async {
       final runner = ApprovedContentBatchRunner(projectRoot: repoRoot);
       await expectLater(
@@ -627,11 +883,158 @@ void main() {
       expect(result.meaningReplacementCount, 3);
       expect(result.wordNoteReplacementCount, 0);
       expect(result.relationCreateCount, 3);
+      expect(result.relationReplacementCount, 0);
       expect(result.databaseSha256Before, p1ShaBefore);
       expect(result.databaseSha256After, p1ShaBefore);
       expect(await ApprovedContentSha256.file(p1Snapshot), p1ShaBefore);
       expect(await ApprovedContentSha256.file(liveWorkDatabase), liveWorkSha);
       expect(await ApprovedContentSha256.file(liveSeedDatabase), liveSeedSha);
+    });
+
+    test('v4 create+replacement를 한 group으로 적용하고 undo 1회로 복원한다', () async {
+      final dataDirectory = Directory(p.join(caseDirectory!.path, 'data'));
+      final fixture = await _createRelationFixture(
+        dataDirectory,
+        p1Snapshot,
+        fileName: 'reshet_work.db',
+      );
+      final manifestFile = await _writeManifest(
+        caseDirectory!,
+        'mixed_relation_create_and_replacement.json',
+        _v4Manifest(
+          expectedWorkSha256: fixture.sha256,
+          expectedUserVersion: fixture.userVersion,
+          relationCreates: [
+            _relationCreateRow(
+              wordId1: _relationWordIdC,
+              wordId2: _relationWordIdD,
+            ),
+          ],
+          relationReplacements: [
+            _relationReplacementRow(
+              relationId: fixture.relationId,
+              wordId1: _relationWordIdA,
+              wordId2: _relationWordIdB,
+            ),
+          ],
+        ),
+      );
+
+      final dryRun = await ApprovedContentBatchRunner(
+        projectRoot: repoRoot,
+      ).dryRun(manifestFile: manifestFile, databaseFile: fixture.database);
+      expect(dryRun.didUndo, isTrue);
+      expect(dryRun.historyRowCount, 2);
+      expect(dryRun.relationCreateCount, 1);
+      expect(dryRun.relationReplacementCount, 1);
+      expect(dryRun.databaseSha256Before, fixture.sha256);
+      expect(dryRun.databaseSha256After, fixture.sha256);
+      expect(
+        await ApprovedContentSha256.file(fixture.database),
+        fixture.sha256,
+      );
+
+      final manifest = ApprovedContentBatchManifest.parse(
+        await manifestFile.readAsBytes(),
+      );
+      await DatabaseService.withIsolatedDataRoot(
+        dataRootPath: dataDirectory.path,
+        action: () async {
+          final database = await DatabaseService.openDatabaseFile();
+          final before = await _relationRowById(database, fixture.relationId);
+          final collisionBefore = await _relationRowById(
+            database,
+            fixture.collisionRelationId,
+          );
+
+          final result = await WordRepository().applyApprovedContentBatch(
+            manifest.writeRequest,
+          );
+          expect(result.historyRowCount, 2);
+          expect(result.createdRelations, hasLength(1));
+          expect(result.replacedRelations, hasLength(1));
+          expect(result.replacedRelations.single.id, fixture.relationId);
+
+          final after = await _relationRowById(database, fixture.relationId);
+          expect(after['id'], before['id']);
+          expect(after['word_id_1'], before['word_id_1']);
+          expect(after['word_id_2'], before['word_id_2']);
+          expect(after['created_at'], before['created_at']);
+          expect(after['updated_at'], isNot(before['updated_at']));
+          for (final entry in _relationAfterProjection().entries) {
+            expect(after[entry.key], entry.value, reason: entry.key);
+          }
+          expect(result.replacedRelations.single.before, before);
+          expect(result.replacedRelations.single.after, after);
+
+          final createdId = result.createdRelations.single.id;
+          final created = await _relationRowById(database, createdId);
+          expect(created['word_id_1'], _relationWordIdC);
+          expect(created['word_id_2'], _relationWordIdD);
+
+          final historyRows = await database.query(
+            'CHANGE_HISTORY',
+            where: 'group_id = ?',
+            whereArgs: [result.groupId],
+            orderBy: 'id ASC',
+          );
+          expect(historyRows, hasLength(2));
+          expect(historyRows.map((row) => row['action_type']).toList(), [
+            'create',
+            'update',
+          ]);
+          expect(
+            historyRows.every(
+              (row) =>
+                  row['group_id'] == result.groupId &&
+                  row['entity_type'] == 'relation' &&
+                  row['undone_at'] == null,
+            ),
+            isTrue,
+          );
+          final updateHistory = historyRows.last;
+          expect(updateHistory['entity_id'], fixture.relationId.toString());
+          expect(_historyJson(updateHistory, 'before_json'), before);
+          expect(_historyJson(updateHistory, 'after_json'), after);
+
+          final undo = await WordRepository().undoLastChange();
+          expect(undo.didUndo, isTrue);
+          expect(await _relationRowById(database, fixture.relationId), before);
+          expect(
+            await database.query(
+              'WORD_RELATION',
+              columns: ['id'],
+              where: 'id = ?',
+              whereArgs: [createdId],
+            ),
+            isEmpty,
+          );
+          expect(
+            await _relationRowById(database, fixture.collisionRelationId),
+            collisionBefore,
+          );
+          final undoneHistory = await database.query(
+            'CHANGE_HISTORY',
+            where: 'group_id = ?',
+            whereArgs: [result.groupId],
+          );
+          expect(
+            undoneHistory.every(
+              (row) =>
+                  row['undone_at'] is String &&
+                  (row['undone_at']! as String).isNotEmpty,
+            ),
+            isTrue,
+          );
+          expect(
+            (await database.rawQuery(
+              'PRAGMA integrity_check',
+            )).single.values.single,
+            'ok',
+          );
+          expect(await database.rawQuery('PRAGMA foreign_key_check'), isEmpty);
+        },
+      );
     });
 
     test('late relation failure가 앞선 meaning과 history를 rollback한다', () async {
@@ -1147,6 +1550,10 @@ void main() {
 
 const String _noteSetWordId = 'TEST_APPROVED_NOTE_SET';
 const String _noteClearWordId = 'TEST_APPROVED_NOTE_CLEAR';
+const String _relationWordIdA = 'TEST_APPROVED_RELATION_A';
+const String _relationWordIdB = 'TEST_APPROVED_RELATION_B';
+const String _relationWordIdC = 'TEST_APPROVED_RELATION_C';
+const String _relationWordIdD = 'TEST_APPROVED_RELATION_D';
 
 final class _NoteFixture {
   const _NoteFixture({
@@ -1158,6 +1565,22 @@ final class _NoteFixture {
   final File database;
   final String sha256;
   final int userVersion;
+}
+
+final class _RelationFixture {
+  const _RelationFixture({
+    required this.database,
+    required this.sha256,
+    required this.userVersion,
+    required this.relationId,
+    required this.collisionRelationId,
+  });
+
+  final File database;
+  final String sha256;
+  final int userVersion;
+  final int relationId;
+  final int collisionRelationId;
 }
 
 Future<_NoteFixture> _createNoteFixture(
@@ -1212,12 +1635,148 @@ Future<_NoteFixture> _createNoteFixture(
   );
 }
 
+Future<_RelationFixture> _createRelationFixture(
+  Directory directory,
+  File source, {
+  String fileName = 'approved_relation_fixture.db',
+}) async {
+  await directory.create(recursive: true);
+  final databaseFile = await source.copy(p.join(directory.path, fileName));
+  final database = await databaseFactory.openDatabase(
+    databaseFile.path,
+    options: OpenDatabaseOptions(singleInstance: false),
+  );
+  late int relationId;
+  late int collisionRelationId;
+  late int userVersion;
+  try {
+    await database.transaction((txn) async {
+      for (final wordId in const [
+        _relationWordIdA,
+        _relationWordIdB,
+        _relationWordIdC,
+        _relationWordIdD,
+      ]) {
+        await txn.insert('WORD_TABLE', {
+          'id': wordId,
+          '언어': '테스트 언어',
+          '스트롱넘버': null,
+          '비고': null,
+          'graph_expand_mode': 'default',
+        });
+      }
+      relationId = await txn.insert('WORD_RELATION', {
+        'word_id_1': _relationWordIdA,
+        'word_id_2': _relationWordIdB,
+        ..._relationBeforeProjection(),
+        'created_at': '2026-01-01T00:00:00.000000',
+        'updated_at': '2026-01-02T00:00:00.000000',
+      });
+      collisionRelationId = await txn.insert('WORD_RELATION', {
+        'word_id_1': _relationWordIdA,
+        'word_id_2': _relationWordIdB,
+        'category_code': 'unspecified',
+        'relation_type': 'related',
+        'status_code': 'asserted',
+        'direction_code': 'unknown',
+        'description': null,
+        'relation_group_id': null,
+        'note': null,
+        'source': 'RESHET-TEST-COLLISION',
+        'created_at': '2026-01-03T00:00:00.000000',
+        'updated_at': '2026-01-04T00:00:00.000000',
+      });
+    });
+    userVersion =
+        (await database.rawQuery('PRAGMA user_version')).single.values.single
+            as int;
+  } finally {
+    await database.close();
+  }
+  return _RelationFixture(
+    database: databaseFile,
+    sha256: await ApprovedContentSha256.file(databaseFile),
+    userVersion: userVersion,
+    relationId: relationId,
+    collisionRelationId: collisionRelationId,
+  );
+}
+
+Map<String, Object?> _relationBeforeProjection() => {
+  'category_code': 'etymological',
+  'relation_type': 'root_shared',
+  'status_code': 'asserted',
+  'direction_code': 'undirected',
+  'description': null,
+  'relation_group_id': null,
+  'note': null,
+  'source': 'RESHET-TEST-BEFORE',
+};
+
+Map<String, Object?> _relationAfterProjection() => {
+  'category_code': 'morphological',
+  'relation_type': 'derived',
+  'status_code': 'asserted',
+  'direction_code': 'w1_to_w2',
+  'description': '승인 relation replacement',
+  'relation_group_id': 'RESHET-TEST-GROUP',
+  'note': '승인 relation note',
+  'source': 'RESHET-TEST-AFTER',
+};
+
+Map<String, Object?> _relationReplacementRow({
+  required int relationId,
+  required String wordId1,
+  required String wordId2,
+}) {
+  return {
+    'relation_id': relationId,
+    'word_id_1': wordId1,
+    'word_id_2': wordId2,
+    'before': _relationBeforeProjection(),
+    'after': _relationAfterProjection(),
+  };
+}
+
+Map<String, Object?> _relationCreateRow({
+  required String wordId1,
+  required String wordId2,
+}) {
+  return {
+    'word_id_1': wordId1,
+    'word_id_2': wordId2,
+    'category_code': 'morphological',
+    'relation_type': 'derived',
+    'status_code': 'asserted',
+    'direction_code': 'w1_to_w2',
+    'description': null,
+    'relation_group_id': null,
+    'note': null,
+    'source': 'RESHET-TEST-CREATE',
+  };
+}
+
+Future<Map<String, Object?>> _relationRowById(
+  DatabaseExecutor database,
+  int relationId,
+) async {
+  final rows = await database.query(
+    'WORD_RELATION',
+    where: 'id = ?',
+    whereArgs: [relationId],
+    limit: 2,
+  );
+  expect(rows, hasLength(1));
+  return Map<String, Object?>.from(rows.single);
+}
+
 Map<String, dynamic> _v2Manifest({
   String expectedWorkSha256 =
       '0000000000000000000000000000000000000000000000000000000000000000',
   int expectedUserVersion = 0,
   List<Map<String, Object?>> meaningReplacements = const [],
   List<Map<String, Object?>> wordNoteReplacements = const [],
+  List<Map<String, Object?>> relationCreates = const [],
 }) {
   return {
     'format_version': 2,
@@ -1233,7 +1792,7 @@ Map<String, dynamic> _v2Manifest({
     },
     'meaning_replacements': meaningReplacements,
     'word_note_replacements': wordNoteReplacements,
-    'relation_creates': <Object?>[],
+    'relation_creates': relationCreates,
   };
 }
 
@@ -1241,15 +1800,46 @@ Map<String, dynamic> _v3Manifest({
   required String batchId,
   required List<Map<String, Object?>> meaningReplacements,
   required List<Map<String, Object?>> supersedes,
+  String expectedWorkSha256 =
+      '0000000000000000000000000000000000000000000000000000000000000000',
+  int expectedUserVersion = 0,
   List<Map<String, Object?>> wordNoteReplacements = const [],
+  List<Map<String, Object?>> relationCreates = const [],
 }) {
   return _v2Manifest(
+      expectedWorkSha256: expectedWorkSha256,
+      expectedUserVersion: expectedUserVersion,
       meaningReplacements: meaningReplacements,
       wordNoteReplacements: wordNoteReplacements,
+      relationCreates: relationCreates,
     )
     ..['format_version'] = 3
     ..['batch_id'] = batchId
     ..['supersedes'] = supersedes;
+}
+
+Map<String, dynamic> _v4Manifest({
+  String batchId = 'RESHET-TEST-RELATION-APPROVED-CONTENT-SLICE',
+  String expectedWorkSha256 =
+      '0000000000000000000000000000000000000000000000000000000000000000',
+  int expectedUserVersion = 0,
+  List<Map<String, Object?>> meaningReplacements = const [],
+  List<Map<String, Object?>> wordNoteReplacements = const [],
+  List<Map<String, Object?>> relationCreates = const [],
+  List<Map<String, Object?>> relationReplacements = const [],
+  List<Map<String, Object?>> supersedes = const [],
+}) {
+  return _v3Manifest(
+      batchId: batchId,
+      expectedWorkSha256: expectedWorkSha256,
+      expectedUserVersion: expectedUserVersion,
+      meaningReplacements: meaningReplacements,
+      wordNoteReplacements: wordNoteReplacements,
+      relationCreates: relationCreates,
+      supersedes: supersedes,
+    )
+    ..['format_version'] = 4
+    ..['relation_replacements'] = relationReplacements;
 }
 
 Map<String, dynamic> _historyJson(Map<String, Object?> historyRow, String key) {

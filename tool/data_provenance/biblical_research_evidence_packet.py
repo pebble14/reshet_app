@@ -1893,27 +1893,33 @@ def _load_approved_manifest(path: Path) -> _ApprovedManifest:
         "relation_creates",
     }
     expected_keys = base_keys
-    if format_version in (2, 3):
+    if format_version in (2, 3, 4):
         expected_keys |= {"word_note_replacements"}
-    if format_version == 3:
+    if format_version in (3, 4):
         expected_keys |= {"supersedes"}
+    if format_version == 4:
+        expected_keys |= {"relation_replacements"}
     batch_id = payload.get("batch_id")
     if (
         set(payload) != expected_keys
         or type(format_version) is not int
-        or format_version not in (1, 2, 3)
+        or format_version not in (1, 2, 3, 4)
         or not isinstance(batch_id, str)
         or not batch_id.endswith(APPROVED_BATCH_ID_SUFFIX)
         or not isinstance(payload.get("provenance"), dict)
         or not isinstance(payload.get("target"), dict)
         or not isinstance(payload.get("relation_creates"), list)
+        or (
+            format_version == 4
+            and not isinstance(payload.get("relation_replacements"), list)
+        )
     ):
         raise ManifestError(f"approved content manifest format 계약 불일치: {path.name}")
-    if format_version in (2, 3):
+    if format_version in (2, 3, 4):
         _validate_approved_word_note_replacements(payload, path)
     supersedes = (
         _validate_approved_supersessions(payload, path)
-        if format_version == 3
+        if format_version in (3, 4)
         else ()
     )
     rows = payload.get("meaning_replacements")
