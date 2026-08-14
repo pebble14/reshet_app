@@ -767,7 +767,9 @@ from <strongsref language="GREEK" strongs="1223"/> and
             {
                 "first_semantic_batch_approved_content_slice.json",
                 "h1672_h1674_approved_content_slice.json",
+                "p1_historical_approval_approved_content_slice.json",
                 "p2_approved_content_slice.json",
+                "second_semantic_batch_approved_content_slice.json",
             }.issubset(manifest_names)
         )
         for strong, expected_state, expected_evidence in (
@@ -782,8 +784,26 @@ from <strongsref language="GREEK" strongs="1223"/> and
                 "explicit_approved",
                 "first_semantic_batch_approved_content_slice.json",
             ),
-            ("H1564", "source_only", "phase50w_hebrew20_source_import.json"),
-            ("H1653", "unclassified", None),
+            (
+                "H1564",
+                "explicit_approved",
+                "second_semantic_batch_approved_content_slice.json",
+            ),
+            (
+                "H1653",
+                "explicit_approved",
+                "p1_historical_approval_approved_content_slice.json",
+            ),
+            (
+                "H1655",
+                "explicit_approved",
+                "p1_historical_approval_approved_content_slice.json",
+            ),
+            (
+                "H1656",
+                "explicit_approved",
+                "p1_historical_approval_approved_content_slice.json",
+            ),
             ("H5337", "unclassified", None),
         ):
             with self.subTest(strong=strong):
