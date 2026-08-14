@@ -42,6 +42,9 @@ APPROVED_BATCH_ID_SUFFIX = "-APPROVED-CONTENT-SLICE"
 DEFAULT_SOURCE_ONLY_MANIFEST = (
     TOOL_DIR / "manifests" / "phase50w_hebrew20_source_import.json"
 )
+DEFAULT_SEMANTIC_RESEARCH_DISPOSITIONS = (
+    TOOL_DIR / "manifests" / "semantic_research_dispositions.json"
+)
 DEFAULT_CACHE = TOOL_DIR / ".source_cache"
 DEFAULT_WORK_DB = REPOSITORY_ROOT / "data" / "reshet_work.db"
 
@@ -1872,6 +1875,91 @@ def discover_approved_content_manifests(
     for path in paths:
         _approved_projections_by_strong(path)
     return paths
+
+
+def load_semantic_research_dispositions(
+    path: Path = DEFAULT_SEMANTIC_RESEARCH_DISPOSITIONS,
+) -> list[dict[str, object]]:
+    payload = _read_json_object(path, "semantic research disposition ledger")
+    if set(payload) != {"schema_version", "entries"}:
+        raise ManifestError(
+            "semantic research disposition ledger root 필드 계약 불일치"
+        )
+    if type(payload.get("schema_version")) is not int or payload.get(
+        "schema_version"
+    ) != 1:
+        raise ManifestError(
+            "semantic research disposition ledger schema_version은 1이어야 함"
+        )
+    raw_entries = payload.get("entries")
+    if not isinstance(raw_entries, list):
+        raise ManifestError("semantic research disposition ledger entries가 배열이 아님")
+
+    expected_fields = {
+        "strong_number",
+        "status",
+        "reason",
+        "evidence_refs",
+        "reopen_condition",
+    }
+    entries: list[dict[str, object]] = []
+    seen_strongs: set[str] = set()
+    for index, raw in enumerate(raw_entries):
+        label = f"semantic research disposition entries[{index}]"
+        if not isinstance(raw, dict) or set(raw) != expected_fields:
+            raise ManifestError(f"{label} 필드 계약 불일치")
+
+        strong = raw.get("strong_number")
+        if (
+            not isinstance(strong, str)
+            or re.fullmatch(r"[GH][0-9]{4}", strong) is None
+        ):
+            raise ManifestError(f"{label}.strong_number가 canonical Strong 형식이 아님")
+        if strong in seen_strongs:
+            raise ManifestError(f"semantic research disposition Strong 중복: {strong}")
+        seen_strongs.add(strong)
+
+        if raw.get("status") != "hold":
+            raise ManifestError(f"{label}.status는 hold만 허용함")
+        for field in ("reason", "reopen_condition"):
+            value = raw.get(field)
+            if (
+                not isinstance(value, str)
+                or not value.strip()
+                or value != value.strip()
+            ):
+                raise ManifestError(
+                    f"{label}.{field}는 공백 경계 없는 non-empty 문자열이어야 함"
+                )
+
+        evidence_refs = raw.get("evidence_refs")
+        if not isinstance(evidence_refs, list) or not evidence_refs:
+            raise ManifestError(
+                f"{label}.evidence_refs는 비어 있지 않은 배열이어야 함"
+            )
+        seen_refs: set[str] = set()
+        for ref_index, ref in enumerate(evidence_refs):
+            if not isinstance(ref, str) or not ref.strip() or ref != ref.strip():
+                raise ManifestError(
+                    f"{label}.evidence_refs[{ref_index}]는 공백 경계 없는 "
+                    "non-empty 문자열이어야 함"
+                )
+            if ref in seen_refs:
+                raise ManifestError(f"{label}.evidence_refs 중복: {ref}")
+            seen_refs.add(ref)
+
+        entries.append(raw)
+    return entries
+
+
+def semantic_hold_strongs(
+    path: Path = DEFAULT_SEMANTIC_RESEARCH_DISPOSITIONS,
+) -> set[str]:
+    return {
+        str(entry["strong_number"])
+        for entry in load_semantic_research_dispositions(path)
+        if entry["status"] == "hold"
+    }
 
 
 def _ordered_approved_manifests(

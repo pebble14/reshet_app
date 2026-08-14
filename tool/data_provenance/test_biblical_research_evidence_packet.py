@@ -1045,6 +1045,151 @@ from <strongsref language="GREEK" strongs="1223"/> and
             [second.name, third.name, first.name],
         )
 
+    def test_semantic_hold_ledger_is_separate_from_completion(self) -> None:
+        entries = evidence.load_semantic_research_dispositions()
+        self.assertEqual(len(entries), 1)
+        self.assertEqual(
+            entries[0],
+            {
+                "strong_number": "H1833",
+                "status": "hold",
+                "reason": (
+                    "현재 확인된 lexical source에는 damask 직물 의미와 Damascus "
+                    "지명 의미가 함께 존재하며, Amos 3:12 관련 현재 evidence만으로 "
+                    "일반 semantic meaning을 하나로 확정하기 어려워 보류한다."
+                ),
+                "evidence_refs": [
+                    "docs/database/DATA_PROVENANCE.md",
+                    "reshet_research_output/H1833_review.md",
+                ],
+                "reopen_condition": (
+                    "provenance가 검증된 critical lexicon/apparatus 또는 동등한 전문 "
+                    "source를 확보해 lexical/textual ambiguity를 해소할 수 있을 때 "
+                    "재검토한다."
+                ),
+            },
+        )
+        hold_strongs = evidence.semantic_hold_strongs()
+        self.assertEqual(hold_strongs, {"H1833"})
+        self.assertIsNone(
+            evidence.APPROVED_MANIFEST_FILENAME_RE.fullmatch(
+                evidence.DEFAULT_SEMANTIC_RESEARCH_DISPOSITIONS.name
+            )
+        )
+
+        approved_manifests = evidence.discover_approved_content_manifests()
+        approved_candidates = set().union(
+            *(evidence._approved_strongs(path) for path in approved_manifests)
+        )
+        states: dict[str, str] = {}
+        for strong in approved_candidates | hold_strongs:
+            projection, _ = evidence.load_reshet_projection(
+                evidence.DEFAULT_WORK_DB, strong
+            )
+            states[strong] = str(
+                evidence.completion_gate_state(
+                    strong,
+                    projection,
+                    approved_manifests,
+                    evidence.DEFAULT_SOURCE_ONLY_MANIFEST,
+                )["state"]
+            )
+
+        explicit_approved = {
+            strong for strong, state in states.items() if state == "explicit_approved"
+        }
+        self.assertEqual(len(explicit_approved), 18)
+        self.assertEqual(hold_strongs & explicit_approved, set())
+        for strong in ("H1653", "H1655", "H1656", "H1564"):
+            with self.subTest(strong=strong):
+                self.assertEqual(states[strong], "explicit_approved")
+        self.assertEqual(states["H1833"], "source_only")
+
+    def test_semantic_hold_ledger_rejects_invalid_contract(self) -> None:
+        valid_entry: dict[str, object] = {
+            "strong_number": "H1833",
+            "status": "hold",
+            "reason": "검증 가능한 보류 사유",
+            "evidence_refs": ["docs/database/DATA_PROVENANCE.md"],
+            "reopen_condition": "새 전문 근거 확보 시 재검토",
+        }
+        invalid_payloads: dict[str, object] = {
+            "unknown_root": {
+                "schema_version": 1,
+                "entries": [valid_entry],
+                "unknown": True,
+            },
+            "wrong_schema_version": {"schema_version": 2, "entries": [valid_entry]},
+            "entries_not_array": {"schema_version": 1, "entries": {}},
+            "unknown_entry_field": {
+                "schema_version": 1,
+                "entries": [{**valid_entry, "unknown": True}],
+            },
+            "missing_reopen_condition": {
+                "schema_version": 1,
+                "entries": [
+                    {
+                        key: value
+                        for key, value in valid_entry.items()
+                        if key != "reopen_condition"
+                    }
+                ],
+            },
+            "invalid_strong": {
+                "schema_version": 1,
+                "entries": [{**valid_entry, "strong_number": "H1833 "}],
+            },
+            "unsupported_status": {
+                "schema_version": 1,
+                "entries": [{**valid_entry, "status": "approved"}],
+            },
+            "blank_reason": {
+                "schema_version": 1,
+                "entries": [{**valid_entry, "reason": " "}],
+            },
+            "padded_reason": {
+                "schema_version": 1,
+                "entries": [{**valid_entry, "reason": " 보류 "}],
+            },
+            "empty_evidence_refs": {
+                "schema_version": 1,
+                "entries": [{**valid_entry, "evidence_refs": []}],
+            },
+            "blank_evidence_ref": {
+                "schema_version": 1,
+                "entries": [{**valid_entry, "evidence_refs": [""]}],
+            },
+            "duplicate_evidence_ref": {
+                "schema_version": 1,
+                "entries": [
+                    {
+                        **valid_entry,
+                        "evidence_refs": [
+                            "docs/database/DATA_PROVENANCE.md",
+                            "docs/database/DATA_PROVENANCE.md",
+                        ],
+                    }
+                ],
+            },
+            "padded_reopen_condition": {
+                "schema_version": 1,
+                "entries": [{**valid_entry, "reopen_condition": " 재검토 "}],
+            },
+            "duplicate_strong": {
+                "schema_version": 1,
+                "entries": [valid_entry, dict(valid_entry)],
+            },
+        }
+
+        for name, payload in invalid_payloads.items():
+            with self.subTest(name=name):
+                path = self.root / f"{name}.json"
+                path.write_text(
+                    json.dumps(payload, ensure_ascii=False) + "\n", encoding="utf-8"
+                )
+                with self.assertRaises(evidence.ManifestError):
+                    evidence.load_semantic_research_dispositions(path)
+
     def test_deterministic_json_bytes(self) -> None:
         first = evidence.serialize_packet({"b": 2, "a": ["한글", 1]})
         second = evidence.serialize_packet({"a": ["한글", 1], "b": 2})

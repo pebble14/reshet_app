@@ -308,6 +308,12 @@ dry-run의 임시 적용·실제 undo와 live apply의 exact projection·대상 
 
 적용 후 work DB SHA-256은 `9ed988d697e27ff0ce947a8b4164abff988bc6e34340f950cf1327e6ebcae040`이며 seed SHA-256 `e2e356c0f9a5d0d86c059da77c59815521e2abc410b3c4aa69b1ab6e55ff9a67`은 불변이다. history group `1786638420819517`에는 active relation create 2행만 기록했고 word update는 0행이다. 적용 전 snapshot은 `data/backups/approved_content_batch/20260813T162700109576Z/snapshot.db`에 보존하며 크기 8,257,536바이트, SHA-256 `6b26c79f9f9bbd72df4ea4f6c66f64e062a997b32bd83157da223a1110d3cd5c`, integrity check `ok`, foreign key 위반 0이다. snapshot schema version `1369`와 source·적용 후 work DB `1368`의 차이는 기존 `VACUUM INTO` 계약상 예상된 schema cookie 차이며 자동 restore는 실행되지 않았다. 독립 read-only SQL에서 두 관계의 exact row·중복 0, 대상 밖 `WORD_RELATION` 불변, 기존 meaning·word note와 H1833 불변, work DB integrity/FK와 SQLite sidecar 0을 확인했다. completion gate는 H1564·H2251·H3958·H5229 `explicit_approved`, H1833 `source_only`를 유지한다.
 
+### 11.12 의미 연구의 인간 보류 기록
+
+Semantic 승인 완료와 사람이 검토 후 의도적으로 보류한 상태는 별도 authority로 관리한다. `explicit_approved`의 authority는 기존 Git tracked `*_approved_content_slice.json`과 현재 work DB meaning projection의 exact 일치이며, human hold의 authority는 `tool/data_provenance/manifests/semantic_research_dispositions.json`이다. 이 ledger는 승인 상태를 중복 기록하지 않고 현재 `hold` status만 지원하며, 각 hold에는 사유·안정적인 evidence 참조·새 전문 근거 확보를 전제로 한 재검토 조건을 기록한다.
+
+현재 첫 entry는 H1833이다. lexical source의 damask 직물 의미와 Damascus 지명 의미 및 Amos 3:12 관련 현재 evidence만으로 일반 semantic meaning 하나를 확정하기 어려워 hold하며, completion state는 `source_only` 그대로다. hold 집합을 production batch 자동 제외 selector에는 아직 연결하지 않으며, H2646 conflict/manual-review pilot 후 연결 여부를 판단한다.
+
 ## 12. pronunciation profile·migration 현행 경계
 
 ### 12.1 active pronunciation 계약
