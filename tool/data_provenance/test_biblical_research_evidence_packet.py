@@ -1098,12 +1098,13 @@ from <strongsref language="GREEK" strongs="1223"/> and
         explicit_approved = {
             strong for strong, state in states.items() if state == "explicit_approved"
         }
-        self.assertEqual(len(explicit_approved), 18)
+        self.assertEqual(explicit_approved, approved_candidates)
         self.assertEqual(hold_strongs & explicit_approved, set())
         for strong in ("H1653", "H1655", "H1656", "H1564"):
             with self.subTest(strong=strong):
                 self.assertEqual(states[strong], "explicit_approved")
         self.assertEqual(states["H1833"], "source_only")
+        self.assertEqual(states["H2646"], "explicit_approved")
 
     def test_semantic_hold_ledger_rejects_invalid_contract(self) -> None:
         valid_entry: dict[str, object] = {
