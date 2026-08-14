@@ -121,9 +121,93 @@ void main() {
       expect(manifest.writeRequest.operationCount, 1);
     });
 
+    test('valid v3 Strong supersession metadata를 파싱한다', () {
+      final manifest = _parseMap(
+        _v3Manifest(
+          batchId: 'RESHET-TEST-H5229-ACTIVE-APPROVED-CONTENT-SLICE',
+          meaningReplacements: [
+            {
+              'word_id': 'H5229_0000',
+              'before': [
+                {'seq': 1, 'meaning': '올곧음'},
+              ],
+              'after': [
+                {'seq': 1, 'meaning': '올바름'},
+              ],
+            },
+          ],
+          supersedes: const [
+            {
+              'strong_number': 'H5229',
+              'batch_id':
+                  'RESHET-EC-SECOND-SEMANTIC-BATCH-APPROVED-CONTENT-SLICE',
+            },
+          ],
+        ),
+      );
+
+      expect(manifest.formatVersion, 3);
+      expect(manifest.supersedes, hasLength(1));
+      expect(manifest.supersedes.single.strongNumber, 'H5229');
+      expect(
+        manifest.supersedes.single.batchId,
+        'RESHET-EC-SECOND-SEMANTIC-BATCH-APPROVED-CONTENT-SLICE',
+      );
+      expect(manifest.writeRequest.meaningReplacements, hasLength(1));
+      expect(manifest.writeRequest.wordNoteReplacements, isEmpty);
+      expect(manifest.writeRequest.operationCount, 1);
+      expect(manifest.toReportJson()['supersedes'], const [
+        {
+          'strong_number': 'H5229',
+          'batch_id': 'RESHET-EC-SECOND-SEMANTIC-BATCH-APPROVED-CONTENT-SLICE',
+        },
+      ]);
+    });
+
+    test('v3 self-supersession과 source Strong 부재를 거부한다', () {
+      const activeBatchId = 'RESHET-TEST-H5229-ACTIVE-APPROVED-CONTENT-SLICE';
+      final meaningReplacements = <Map<String, Object?>>[
+        {
+          'word_id': 'H5229_0000',
+          'before': [
+            {'seq': 1, 'meaning': '올곧음'},
+          ],
+          'after': [
+            {'seq': 1, 'meaning': '올바름'},
+          ],
+        },
+      ];
+      final selfSupersession = _v3Manifest(
+        batchId: activeBatchId,
+        meaningReplacements: meaningReplacements,
+        supersedes: const [
+          {'strong_number': 'H5229', 'batch_id': activeBatchId},
+        ],
+      );
+      expect(
+        () => _parseMap(selfSupersession),
+        throwsA(isA<ApprovedContentValidationException>()),
+      );
+
+      final missingSourceStrong = _v3Manifest(
+        batchId: activeBatchId,
+        meaningReplacements: meaningReplacements,
+        supersedes: const [
+          {
+            'strong_number': 'H6772',
+            'batch_id': 'RESHET-EC-P2-APPROVED-CONTENT-SLICE',
+          },
+        ],
+      );
+      expect(
+        () => _parseMap(missingSourceStrong),
+        throwsA(isA<ApprovedContentValidationException>()),
+      );
+    });
+
     test('invalid version, type, required field, unknown operation을 거부한다', () {
       final invalidVersion = _fixtureMap(p1ManifestFile)
-        ..['format_version'] = 3;
+        ..['format_version'] = 4;
       expect(
         () => _parseMap(invalidVersion),
         throwsA(isA<ApprovedContentValidationException>()),
@@ -1151,6 +1235,21 @@ Map<String, dynamic> _v2Manifest({
     'word_note_replacements': wordNoteReplacements,
     'relation_creates': <Object?>[],
   };
+}
+
+Map<String, dynamic> _v3Manifest({
+  required String batchId,
+  required List<Map<String, Object?>> meaningReplacements,
+  required List<Map<String, Object?>> supersedes,
+  List<Map<String, Object?>> wordNoteReplacements = const [],
+}) {
+  return _v2Manifest(
+      meaningReplacements: meaningReplacements,
+      wordNoteReplacements: wordNoteReplacements,
+    )
+    ..['format_version'] = 3
+    ..['batch_id'] = batchId
+    ..['supersedes'] = supersedes;
 }
 
 Map<String, dynamic> _historyJson(Map<String, Object?> historyRow, String key) {

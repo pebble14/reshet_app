@@ -1,4 +1,4 @@
-# 승인 콘텐츠 batch applicator v1/v2
+# 승인 콘텐츠 batch applicator v1/v2/v3
 
 > 문서 분류: 내부 DB 운영 도구의 현행 계약
 >
@@ -10,12 +10,13 @@
 
 - 단어별 `word_meaning_set` 전체 projection 교체
 - v2 단어별 `WORD_TABLE.비고` exact before/after 교체
+- v3 Strong 단위 승인 supersession metadata 검증과 보고
 - `WORD_RELATION` 신규 생성
 - 여러 operation을 한 SQLite transaction과 한 `CHANGE_HISTORY.group_id`로 기록
 - 적용 가능성 dry-run과 실제 `WordRepository.undoLastChange()` 1회 복원 검증
 - live apply 전 `VACUUM INTO` snapshot 및 적용 결과 보고서 생성
 
-v1 manifest는 기존 meaning·relation 계약을 그대로 유지하며 `word_note_replacements`를 받지 않는다. v2는 v1의 operation에 word note 교체만 추가한다. 다음 operation은 두 version 모두 지원하지 않는다.
+v1 manifest는 기존 meaning·relation 계약을 그대로 유지하며 `word_note_replacements`를 받지 않는다. v2는 v1의 operation에 word note 교체를 추가한다. v3는 v2의 DB operation을 그대로 유지하면서 completion authority용 Strong 단위 `supersedes` metadata를 추가한다. 다음 operation은 세 version 모두 지원하지 않는다.
 
 - meaning 일부 행 patch
 - 관계 수정·삭제
@@ -44,7 +45,7 @@ dart run tool/approved_content_batch.dart --manifest <manifest.json> --database 
 
 성공은 exit code `0`, manifest·DB precondition 같은 검증 실패는 `2`, 임시 적용·undo·snapshot·transaction·post-commit 검증 같은 실행 실패는 `1`을 반환한다. stderr의 `검증 실패`와 `실행 실패` 접두어로 두 범주를 구분한다.
 
-## 3. Manifest v1/v2
+## 3. Manifest v1/v2/v3
 
 입력은 UTF-8 JSON이며 YAML dependency를 사용하지 않는다.
 
@@ -130,6 +131,14 @@ v2 word note operation은 다음 형식이다.
 - 빈 문자열과 whitespace-only 문자열은 거부한다. 입력을 trim해 다른 값으로 바꾸지 않으며 삭제는 `after: null`로 명시한다.
 - `before`는 현재 `WORD_TABLE.비고`와 null/string을 포함해 exact 일치해야 한다. 대상 word 부재, before 불일치, before/after가 같은 no-op은 전체 batch를 거부한다.
 - note-only v2 manifest도 기술적으로 허용하며 dry-run·history·undo 계약을 동일하게 적용한다.
+
+v3 supersession metadata 계약은 다음과 같다.
+
+- v3는 v2의 exact top-level 필드 전체와 필수 배열 `supersedes`를 가진다.
+- 각 row는 `strong_number`와 `batch_id`만 가지며, `strong_number`는 `H5229` 같은 canonical Strong 형식이고 `batch_id`는 `-APPROVED-CONTENT-SLICE`로 끝나는 이전 승인 batch identity다.
+- 동일 Strong·batch reference 중복과 self-supersession을 거부하며, supersession을 선언한 현재 manifest의 `meaning_replacements`에도 해당 Strong이 있어야 한다.
+- applicator는 metadata를 manifest 보고서에 보존하지만 DB operation, history payload, undo 범위에는 사용하지 않는다. reference batch의 존재·해당 Strong 포함, tracked set의 batch ID 고유성, cycle과 active approval 결정은 completion gate가 전체 manifest set을 기준으로 fail-closed 검증한다.
+- filename 순서나 Git timestamp는 승인 우선순위가 아니며 과거 manifest는 수정·삭제하지 않는다.
 
 ## 4. Dry-run 계약
 

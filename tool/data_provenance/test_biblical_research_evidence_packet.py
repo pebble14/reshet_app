@@ -42,13 +42,23 @@ class BiblicalResearchEvidencePacketTest(unittest.TestCase):
         meaning: str | None,
         *,
         format_version: int = 1,
+        batch_id: str | None = None,
         word_note_replacements: list[dict[str, object]] | None = None,
+        supersedes: list[dict[str, str]] | None = None,
     ) -> Path:
         directory.mkdir(parents=True, exist_ok=True)
         path = directory / filename
+        default_batch_label = (
+            filename.removesuffix("_approved_content_slice.json")
+            .replace("_", "-")
+            .upper()
+        )
         payload = {
             "format_version": format_version,
-            "batch_id": "RESHET-TEST-APPROVED-CONTENT-SLICE",
+            "batch_id": (
+                batch_id
+                or f"RESHET-TEST-{default_batch_label}-APPROVED-CONTENT-SLICE"
+            ),
             "provenance": {"document_id": "test", "document_sha256": "0" * 64},
             "target": {"expected_work_sha256": "0" * 64, "expected_user_version": 0},
             "meaning_replacements": (
@@ -64,8 +74,10 @@ class BiblicalResearchEvidencePacketTest(unittest.TestCase):
             ),
             "relation_creates": [],
         }
-        if format_version == 2:
+        if format_version in (2, 3):
             payload["word_note_replacements"] = word_note_replacements or []
+        if format_version == 3:
+            payload["supersedes"] = supersedes or []
         path.write_text(
             json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
             encoding="utf-8",
@@ -998,6 +1010,287 @@ from <strongsref language="GREEK" strongs="1223"/> and
         ):
             evidence.completion_gate_state(
                 "H1674", projection, [second, conflicting], source_only
+            )
+
+    def test_completion_gate_uses_explicit_strong_supersession(self) -> None:
+        source_only = self.root / "source_only.json"
+        source_only.write_text('{"entries": []}', encoding="utf-8")
+        for strong, old_meaning, active_meaning, old_batch_id in (
+            (
+                "H5229",
+                "올곧음",
+                "올바름",
+                "RESHET-EC-SECOND-SEMANTIC-BATCH-APPROVED-CONTENT-SLICE",
+            ),
+            (
+                "H6772",
+                "갈증",
+                "목마름",
+                "RESHET-EC-P2-APPROVED-CONTENT-SLICE",
+            ),
+        ):
+            with self.subTest(strong=strong):
+                active_batch_id = (
+                    f"RESHET-TEST-{strong}-ACTIVE-APPROVED-CONTENT-SLICE"
+                )
+                old = self._write_approved_manifest(
+                    self.root,
+                    f"{strong.lower()}_old_approved_content_slice.json",
+                    f"{strong}_0000",
+                    old_meaning,
+                    batch_id=old_batch_id,
+                )
+                active = self._write_approved_manifest(
+                    self.root,
+                    f"{strong.lower()}_active_approved_content_slice.json",
+                    f"{strong}_0000",
+                    active_meaning,
+                    format_version=3,
+                    batch_id=active_batch_id,
+                    supersedes=[
+                        {"strong_number": strong, "batch_id": old_batch_id}
+                    ],
+                )
+
+                active_state = evidence.completion_gate_state(
+                    strong,
+                    [
+                        {
+                            "word_id": f"{strong}_0000",
+                            "meanings": [{"seq": 1, "meaning": active_meaning}],
+                        }
+                    ],
+                    [old, active],
+                    source_only,
+                )
+                self.assertEqual(active_state["state"], "explicit_approved")
+                self.assertEqual(active_state["evidence"], [active.name])
+                self.assertEqual(
+                    active_state["active_approval_evidence"], [active.name]
+                )
+                self.assertEqual(
+                    active_state["superseded_approval_evidence"], [old.name]
+                )
+
+                old_state = evidence.completion_gate_state(
+                    strong,
+                    [
+                        {
+                            "word_id": f"{strong}_0000",
+                            "meanings": [{"seq": 1, "meaning": old_meaning}],
+                        }
+                    ],
+                    [old, active],
+                    source_only,
+                )
+                self.assertNotEqual(old_state["state"], "explicit_approved")
+                self.assertEqual(
+                    old_state["evidence"],
+                    [
+                        "approved_manifest_current_projection_mismatch:"
+                        f"{active.name}"
+                    ],
+                )
+                self.assertEqual(
+                    old_state["active_approval_evidence"], [active.name]
+                )
+                self.assertEqual(
+                    old_state["superseded_approval_evidence"], [old.name]
+                )
+
+    def test_supersession_is_scoped_to_one_strong_in_a_batch(self) -> None:
+        old_batch_id = "RESHET-TEST-MULTI-OLD-APPROVED-CONTENT-SLICE"
+        old = self._write_approved_manifest(
+            self.root,
+            "multi_old_approved_content_slice.json",
+            "H5229_0000",
+            "올곧음",
+            batch_id=old_batch_id,
+        )
+        old_payload = json.loads(old.read_text(encoding="utf-8"))
+        old_payload["meaning_replacements"].append(
+            {
+                "word_id": "H6772_0000",
+                "before": [{"seq": 1, "meaning": "thirst"}],
+                "after": [{"seq": 1, "meaning": "갈증"}],
+            }
+        )
+        old.write_text(
+            json.dumps(old_payload, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+        )
+        active = self._write_approved_manifest(
+            self.root,
+            "multi_active_approved_content_slice.json",
+            "H5229_0000",
+            "올바름",
+            format_version=3,
+            batch_id="RESHET-TEST-MULTI-ACTIVE-APPROVED-CONTENT-SLICE",
+            supersedes=[
+                {"strong_number": "H5229", "batch_id": old_batch_id}
+            ],
+        )
+        source_only = self.root / "source_only.json"
+        source_only.write_text('{"entries": []}', encoding="utf-8")
+
+        state = evidence.completion_gate_state(
+            "H6772",
+            [
+                {
+                    "word_id": "H6772_0000",
+                    "meanings": [{"seq": 1, "meaning": "갈증"}],
+                }
+            ],
+            [old, active],
+            source_only,
+        )
+        self.assertEqual(state["state"], "explicit_approved")
+        self.assertEqual(state["evidence"], [old.name])
+        self.assertNotIn("superseded_approval_evidence", state)
+
+    def test_supersession_reference_contract_fails_closed(self) -> None:
+        source_only = self.root / "source_only.json"
+        source_only.write_text('{"entries": []}', encoding="utf-8")
+        projection = [
+            {
+                "word_id": "H5229_0000",
+                "meanings": [{"seq": 1, "meaning": "올바름"}],
+            }
+        ]
+        missing_reference = self._write_approved_manifest(
+            self.root,
+            "missing_reference_approved_content_slice.json",
+            "H5229_0000",
+            "올바름",
+            format_version=3,
+            batch_id="RESHET-TEST-MISSING-REFERENCE-APPROVED-CONTENT-SLICE",
+            supersedes=[
+                {
+                    "strong_number": "H5229",
+                    "batch_id": "RESHET-TEST-NOT-FOUND-APPROVED-CONTENT-SLICE",
+                }
+            ],
+        )
+        with self.assertRaisesRegex(evidence.ManifestError, "존재하지 않는 batch"):
+            evidence.completion_gate_state(
+                "H5229", projection, missing_reference, source_only
+            )
+
+        wrong_target_batch_id = (
+            "RESHET-TEST-WRONG-TARGET-APPROVED-CONTENT-SLICE"
+        )
+        wrong_target = self._write_approved_manifest(
+            self.root,
+            "wrong_target_approved_content_slice.json",
+            "H6772_0000",
+            "갈증",
+            batch_id=wrong_target_batch_id,
+        )
+        active = self._write_approved_manifest(
+            self.root,
+            "wrong_target_active_approved_content_slice.json",
+            "H5229_0000",
+            "올바름",
+            format_version=3,
+            batch_id="RESHET-TEST-WRONG-TARGET-ACTIVE-APPROVED-CONTENT-SLICE",
+            supersedes=[
+                {
+                    "strong_number": "H5229",
+                    "batch_id": wrong_target_batch_id,
+                }
+            ],
+        )
+        with self.assertRaisesRegex(
+            evidence.ManifestError, "target batch에 해당 Strong 승인이 없음"
+        ):
+            evidence.completion_gate_state(
+                "H5229", projection, [wrong_target, active], source_only
+            )
+
+    def test_self_and_cycle_supersession_fail_closed(self) -> None:
+        source_only = self.root / "source_only.json"
+        source_only.write_text('{"entries": []}', encoding="utf-8")
+        projection = [
+            {
+                "word_id": "H5229_0000",
+                "meanings": [{"seq": 1, "meaning": "올바름"}],
+            }
+        ]
+        self_batch_id = "RESHET-TEST-SELF-APPROVED-CONTENT-SLICE"
+        self_superseding = self._write_approved_manifest(
+            self.root,
+            "self_approved_content_slice.json",
+            "H5229_0000",
+            "올바름",
+            format_version=3,
+            batch_id=self_batch_id,
+            supersedes=[
+                {"strong_number": "H5229", "batch_id": self_batch_id}
+            ],
+        )
+        with self.assertRaisesRegex(evidence.ManifestError, "self-supersession"):
+            evidence.completion_gate_state(
+                "H5229", projection, self_superseding, source_only
+            )
+
+        first_batch_id = "RESHET-TEST-CYCLE-A-APPROVED-CONTENT-SLICE"
+        second_batch_id = "RESHET-TEST-CYCLE-B-APPROVED-CONTENT-SLICE"
+        first = self._write_approved_manifest(
+            self.root,
+            "cycle_a_approved_content_slice.json",
+            "H5229_0000",
+            "올곧음",
+            format_version=3,
+            batch_id=first_batch_id,
+            supersedes=[
+                {"strong_number": "H5229", "batch_id": second_batch_id}
+            ],
+        )
+        second = self._write_approved_manifest(
+            self.root,
+            "cycle_b_approved_content_slice.json",
+            "H5229_0000",
+            "올바름",
+            format_version=3,
+            batch_id=second_batch_id,
+            supersedes=[
+                {"strong_number": "H5229", "batch_id": first_batch_id}
+            ],
+        )
+        with self.assertRaisesRegex(evidence.ManifestError, "supersession cycle"):
+            evidence.completion_gate_state(
+                "H5229", projection, [first, second], source_only
+            )
+
+    def test_duplicate_approved_batch_id_fails_closed(self) -> None:
+        duplicate_batch_id = "RESHET-TEST-DUPLICATE-APPROVED-CONTENT-SLICE"
+        first = self._write_approved_manifest(
+            self.root,
+            "duplicate_a_approved_content_slice.json",
+            "H5229_0000",
+            "올바름",
+            batch_id=duplicate_batch_id,
+        )
+        second = self._write_approved_manifest(
+            self.root,
+            "duplicate_b_approved_content_slice.json",
+            "H5229_0000",
+            "올바름",
+            batch_id=duplicate_batch_id,
+        )
+        source_only = self.root / "source_only.json"
+        source_only.write_text('{"entries": []}', encoding="utf-8")
+        with self.assertRaisesRegex(evidence.ManifestError, "batch_id 중복"):
+            evidence.completion_gate_state(
+                "H5229",
+                [
+                    {
+                        "word_id": "H5229_0000",
+                        "meanings": [{"seq": 1, "meaning": "올바름"}],
+                    }
+                ],
+                [first, second],
+                source_only,
             )
 
     def test_approved_manifest_discovery_uses_tracked_files_only(self) -> None:

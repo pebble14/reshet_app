@@ -48,6 +48,7 @@ final class ApprovedContentBatchManifest {
     required this.documentSha256,
     required this.expectedWorkSha256,
     required this.expectedUserVersion,
+    required this.supersedes,
     required this.writeRequest,
   });
 
@@ -59,6 +60,7 @@ final class ApprovedContentBatchManifest {
   final String documentSha256;
   final String expectedWorkSha256;
   final int expectedUserVersion;
+  final List<ApprovedContentSupersession> supersedes;
   final ApprovedContentBatchWriteRequest writeRequest;
 
   static ApprovedContentBatchManifest parse(Uint8List rawBytes) {
@@ -76,9 +78,9 @@ final class ApprovedContentBatchManifest {
       root['format_version'],
       r'$.format_version',
     );
-    if (formatVersion != 1 && formatVersion != 2) {
+    if (formatVersion != 1 && formatVersion != 2 && formatVersion != 3) {
       throw ApprovedContentValidationException(
-        'manifest format_version은 1 또는 2여야 합니다: $formatVersion',
+        'manifest format_version은 1, 2 또는 3이어야 합니다: $formatVersion',
       );
     }
     final requiredRootKeys = <String>{
@@ -88,11 +90,18 @@ final class ApprovedContentBatchManifest {
       'target',
       'meaning_replacements',
       'relation_creates',
-      if (formatVersion == 2) 'word_note_replacements',
+      if (formatVersion >= 2) 'word_note_replacements',
+      if (formatVersion == 3) 'supersedes',
     };
     _requireExactKeys(root, r'$', required: requiredRootKeys);
 
     final batchId = _requireNonEmptyString(root['batch_id'], r'$.batch_id');
+    if (formatVersion == 3 && !batchId.endsWith('-APPROVED-CONTENT-SLICE')) {
+      throw ApprovedContentValidationException(
+        r'v3 $.batch_id가 approved batch identity가 아닙니다: '
+        '$batchId',
+      );
+    }
     final provenance = _requireObject(root['provenance'], r'$.provenance');
     _requireExactKeys(
       provenance,
@@ -153,7 +162,68 @@ final class ApprovedContentBatchManifest {
       );
     }
 
-    final wordNoteValues = formatVersion == 2
+    final supersessionValues = formatVersion == 3
+        ? _requireList(root['supersedes'], r'$.supersedes')
+        : const <Object?>[];
+    final supersedes = <ApprovedContentSupersession>[];
+    final supersessionIdentities = <String>{};
+    for (var index = 0; index < supersessionValues.length; index++) {
+      final path =
+          r'$.supersedes['
+          '${index.toString()}]';
+      final value = _requireObject(supersessionValues[index], path);
+      _requireExactKeys(
+        value,
+        path,
+        required: const {'strong_number', 'batch_id'},
+      );
+      final strongNumber = _requireNonEmptyString(
+        value['strong_number'],
+        '$path.strong_number',
+      );
+      if (!RegExp(r'^[GH][0-9]{4}$').hasMatch(strongNumber)) {
+        throw ApprovedContentValidationException(
+          '$path.strong_number가 canonical Strong이 아닙니다: $strongNumber',
+        );
+      }
+      final supersededBatchId = _requireNonEmptyString(
+        value['batch_id'],
+        '$path.batch_id',
+      );
+      if (!supersededBatchId.endsWith('-APPROVED-CONTENT-SLICE')) {
+        throw ApprovedContentValidationException(
+          '$path.batch_id가 approved batch identity가 아닙니다: '
+          '$supersededBatchId',
+        );
+      }
+      if (supersededBatchId == batchId) {
+        throw ApprovedContentValidationException(
+          '$path가 현재 batch를 self-supersession 합니다: $batchId',
+        );
+      }
+      final identity = '$strongNumber\u0000$supersededBatchId';
+      if (!supersessionIdentities.add(identity)) {
+        throw ApprovedContentValidationException(
+          '동일 Strong/batch supersession이 중복됐습니다: '
+          '$strongNumber, $supersededBatchId',
+        );
+      }
+      if (!meaningReplacements.any(
+        (replacement) => replacement.wordId.startsWith('${strongNumber}_'),
+      )) {
+        throw ApprovedContentValidationException(
+          '$path의 Strong이 현재 meaning_replacements에 없습니다: $strongNumber',
+        );
+      }
+      supersedes.add(
+        ApprovedContentSupersession(
+          strongNumber: strongNumber,
+          batchId: supersededBatchId,
+        ),
+      );
+    }
+
+    final wordNoteValues = formatVersion >= 2
         ? _requireList(
             root['word_note_replacements'],
             r'$.word_note_replacements',
@@ -269,6 +339,7 @@ final class ApprovedContentBatchManifest {
       documentSha256: documentSha256,
       expectedWorkSha256: expectedWorkSha256,
       expectedUserVersion: expectedUserVersion,
+      supersedes: List<ApprovedContentSupersession>.unmodifiable(supersedes),
       writeRequest: request,
     );
   }
@@ -285,12 +356,31 @@ final class ApprovedContentBatchManifest {
       'expected_work_sha256': expectedWorkSha256,
       'expected_user_version': expectedUserVersion,
     },
+    if (formatVersion == 3)
+      'supersedes': supersedes
+          .map((item) => item.toJson())
+          .toList(growable: false),
     'operation_counts': {
       'meaning_replacements': writeRequest.meaningReplacements.length,
       'word_note_replacements': writeRequest.wordNoteReplacements.length,
       'relation_creates': writeRequest.relationCreates.length,
       'total': writeRequest.operationCount,
     },
+  };
+}
+
+final class ApprovedContentSupersession {
+  const ApprovedContentSupersession({
+    required this.strongNumber,
+    required this.batchId,
+  });
+
+  final String strongNumber;
+  final String batchId;
+
+  Map<String, Object?> toJson() => {
+    'strong_number': strongNumber,
+    'batch_id': batchId,
   };
 }
 

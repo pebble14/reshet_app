@@ -236,6 +236,20 @@ class LocalSourceSpec:
     reference_profile: str
 
 
+@dataclass(frozen=True)
+class _ApprovedSupersession:
+    strong_number: str
+    batch_id: str
+
+
+@dataclass(frozen=True)
+class _ApprovedManifest:
+    path: Path
+    batch_id: str
+    projections_by_strong: dict[str, list[dict[str, object]]]
+    supersedes: tuple[_ApprovedSupersession, ...]
+
+
 def _read_json_object(path: Path, label: str) -> dict[str, object]:
     try:
         payload = json.loads(path.read_text(encoding="utf-8"))
@@ -1832,9 +1846,42 @@ def _validate_approved_word_note_replacements(
             raise ManifestError(f"{row_label}의 before와 after가 같은 no-op임")
 
 
-def _approved_projections_by_strong(
-    path: Path,
-) -> dict[str, list[dict[str, object]]]:
+def _validate_approved_supersessions(
+    payload: dict[str, object], path: Path
+) -> tuple[_ApprovedSupersession, ...]:
+    rows = payload.get("supersedes")
+    if not isinstance(rows, list):
+        raise ManifestError("approved content manifest supersedes가 배열이 아님")
+    supersessions: list[_ApprovedSupersession] = []
+    seen: set[tuple[str, str]] = set()
+    for index, row in enumerate(rows):
+        row_label = f"{path.name} supersedes[{index}]"
+        if not isinstance(row, dict) or set(row) != {"strong_number", "batch_id"}:
+            raise ManifestError(f"{row_label}의 필드가 supersession 계약과 다름")
+        strong_number = row.get("strong_number")
+        batch_id = row.get("batch_id")
+        if not isinstance(strong_number, str) or re.fullmatch(
+            r"[GH]\d{4}", strong_number
+        ) is None:
+            raise ManifestError(f"{row_label}.strong_number가 canonical Strong이 아님")
+        if (
+            not isinstance(batch_id, str)
+            or not batch_id.endswith(APPROVED_BATCH_ID_SUFFIX)
+        ):
+            raise ManifestError(f"{row_label}.batch_id가 approved batch identity가 아님")
+        identity = (strong_number, batch_id)
+        if identity in seen:
+            raise ManifestError(
+                f"approved content supersession 중복: {strong_number}: {batch_id}"
+            )
+        seen.add(identity)
+        supersessions.append(
+            _ApprovedSupersession(strong_number=strong_number, batch_id=batch_id)
+        )
+    return tuple(supersessions)
+
+
+def _load_approved_manifest(path: Path) -> _ApprovedManifest:
     payload = _read_json_object(path, "approved content manifest")
     format_version = payload.get("format_version")
     base_keys = {
@@ -1845,14 +1892,16 @@ def _approved_projections_by_strong(
         "meaning_replacements",
         "relation_creates",
     }
-    expected_keys = base_keys | (
-        {"word_note_replacements"} if format_version == 2 else set()
-    )
+    expected_keys = base_keys
+    if format_version in (2, 3):
+        expected_keys |= {"word_note_replacements"}
+    if format_version == 3:
+        expected_keys |= {"supersedes"}
     batch_id = payload.get("batch_id")
     if (
         set(payload) != expected_keys
         or type(format_version) is not int
-        or format_version not in (1, 2)
+        or format_version not in (1, 2, 3)
         or not isinstance(batch_id, str)
         or not batch_id.endswith(APPROVED_BATCH_ID_SUFFIX)
         or not isinstance(payload.get("provenance"), dict)
@@ -1860,8 +1909,13 @@ def _approved_projections_by_strong(
         or not isinstance(payload.get("relation_creates"), list)
     ):
         raise ManifestError(f"approved content manifest format 계약 불일치: {path.name}")
-    if format_version == 2:
+    if format_version in (2, 3):
         _validate_approved_word_note_replacements(payload, path)
+    supersedes = (
+        _validate_approved_supersessions(payload, path)
+        if format_version == 3
+        else ()
+    )
     rows = payload.get("meaning_replacements")
     if not isinstance(rows, list):
         raise ManifestError("approved content manifest meaning_replacements가 배열이 아님")
@@ -1897,10 +1951,89 @@ def _approved_projections_by_strong(
                 ],
             }
         )
-    return {
+    projections_by_strong = {
         strong: sorted(values, key=lambda value: str(value["word_id"]))
         for strong, values in projections.items()
     }
+    for supersession in supersedes:
+        if supersession.batch_id == batch_id:
+            raise ManifestError(
+                "approved content self-supersession: "
+                f"{supersession.strong_number}: {batch_id}"
+            )
+        if supersession.strong_number not in projections_by_strong:
+            raise ManifestError(
+                f"{path.name} supersession source에 해당 Strong 승인이 없음: "
+                f"{supersession.strong_number}"
+            )
+    return _ApprovedManifest(
+        path=path,
+        batch_id=batch_id,
+        projections_by_strong=projections_by_strong,
+        supersedes=supersedes,
+    )
+
+
+def _approved_projections_by_strong(
+    path: Path,
+) -> dict[str, list[dict[str, object]]]:
+    return _load_approved_manifest(path).projections_by_strong
+
+
+def _load_approved_manifests(
+    paths: tuple[Path, ...],
+) -> tuple[_ApprovedManifest, ...]:
+    manifests = tuple(_load_approved_manifest(path) for path in paths)
+    by_batch_id: dict[str, _ApprovedManifest] = {}
+    for manifest in manifests:
+        existing = by_batch_id.get(manifest.batch_id)
+        if existing is not None:
+            names = ", ".join(sorted((existing.path.name, manifest.path.name)))
+            raise ManifestError(
+                f"approved content batch_id 중복: {manifest.batch_id}: {names}"
+            )
+        by_batch_id[manifest.batch_id] = manifest
+
+    supersession_graphs: dict[str, dict[str, set[str]]] = defaultdict(
+        lambda: defaultdict(set)
+    )
+    for manifest in manifests:
+        for supersession in manifest.supersedes:
+            target_manifest = by_batch_id.get(supersession.batch_id)
+            if target_manifest is None:
+                raise ManifestError(
+                    "approved content supersession이 존재하지 않는 batch를 가리킴: "
+                    f"{supersession.strong_number}: {supersession.batch_id}"
+                )
+            if supersession.strong_number not in target_manifest.projections_by_strong:
+                raise ManifestError(
+                    "approved content supersession target batch에 해당 Strong 승인이 없음: "
+                    f"{supersession.strong_number}: {supersession.batch_id}"
+                )
+            supersession_graphs[supersession.strong_number][manifest.batch_id].add(
+                supersession.batch_id
+            )
+
+    for strong_number, graph in supersession_graphs.items():
+        visiting: set[str] = set()
+        visited: set[str] = set()
+
+        def visit(batch_id: str) -> None:
+            if batch_id in visiting:
+                raise ManifestError(
+                    f"approved content supersession cycle: {strong_number}: {batch_id}"
+                )
+            if batch_id in visited:
+                return
+            visiting.add(batch_id)
+            for target_batch_id in sorted(graph.get(batch_id, set())):
+                visit(target_batch_id)
+            visiting.remove(batch_id)
+            visited.add(batch_id)
+
+        for batch_id in sorted(graph):
+            visit(batch_id)
+    return manifests
 
 
 def _approved_strongs(path: Path) -> set[str]:
@@ -1950,8 +2083,7 @@ def discover_approved_content_manifests(
         root.joinpath(*PurePosixPath(relative).parts)
         for relative in approved_relative_paths
     )
-    for path in paths:
-        _approved_projections_by_strong(path)
+    _load_approved_manifests(paths)
     return paths
 
 
@@ -2143,33 +2275,64 @@ def completion_gate_state(
     approved_manifest: Path | list[Path] | tuple[Path, ...],
     source_only_manifest: Path,
 ) -> dict[str, object]:
-    approved_manifests = _ordered_approved_manifests(approved_manifest)
-    target_approvals: list[tuple[Path, list[dict[str, object]]]] = []
-    for path in approved_manifests:
-        approved_projection = _approved_projections_by_strong(path).get(target)
-        if approved_projection is not None:
-            target_approvals.append((path, approved_projection))
+    approved_manifests = _load_approved_manifests(
+        _ordered_approved_manifests(approved_manifest)
+    )
+    target_approvals = [
+        manifest
+        for manifest in approved_manifests
+        if target in manifest.projections_by_strong
+    ]
+    superseded_batch_ids = {
+        supersession.batch_id
+        for manifest in target_approvals
+        for supersession in manifest.supersedes
+        if supersession.strong_number == target
+    }
+    active_approvals = [
+        manifest
+        for manifest in target_approvals
+        if manifest.batch_id not in superseded_batch_ids
+    ]
+    superseded_approvals = [
+        manifest
+        for manifest in target_approvals
+        if manifest.batch_id in superseded_batch_ids
+    ]
 
     approved_mismatch_evidence: list[str] = []
+    approval_history_evidence: dict[str, object] = {}
     if target_approvals:
-        expected_projection = target_approvals[0][1]
+        if not active_approvals:
+            raise ManifestError(
+                f"동일 Strong의 active approved projection을 확정할 수 없음: {target}"
+            )
+        expected_projection = active_approvals[0].projections_by_strong[target]
         conflicting = [
-            path.name
-            for path, candidate in target_approvals[1:]
-            if candidate != expected_projection
+            manifest.path.name
+            for manifest in active_approvals[1:]
+            if manifest.projections_by_strong[target] != expected_projection
         ]
         if conflicting:
             names = ", ".join(
-                sorted({target_approvals[0][0].name, *conflicting})
+                sorted({active_approvals[0].path.name, *conflicting})
             )
             raise ManifestError(
                 f"동일 Strong의 approved projection이 manifest 간 상충함: {target}: {names}"
             )
-        evidence = sorted(path.name for path, _ in target_approvals)
+        evidence = sorted(manifest.path.name for manifest in active_approvals)
+        if superseded_approvals:
+            approval_history_evidence = {
+                "active_approval_evidence": evidence,
+                "superseded_approval_evidence": sorted(
+                    manifest.path.name for manifest in superseded_approvals
+                ),
+            }
         if _projection_matches_approved(projection, expected_projection):
             return {
                 "state": "explicit_approved",
                 "evidence": evidence,
+                **approval_history_evidence,
                 "interpretation": (
                     "tracked 승인 content manifest의 명시적 meaning 대상이며 "
                     "현재 DB projection이 승인 after와 exact 일치"
@@ -2193,6 +2356,7 @@ def completion_gate_state(
                 *approved_mismatch_evidence,
                 "existing_meaning_parenthesized_hanja_marker",
             ],
+            **approval_history_evidence,
             "interpretation": (
                 "강한 과거 작업 marker이며 자동 최종 승인 확정이 아님. "
                 "한자 부재를 미작업으로 해석하지 않음"
@@ -2208,6 +2372,7 @@ def completion_gate_state(
                 source_only_manifest.name,
                 "current_projection_exact_match",
             ],
+            **approval_history_evidence,
             "interpretation": "승인된 source-only import projection이 현재 DB와 exact 일치",
             "application_approval_ledger": "not_applicable_mvp1",
         }
@@ -2217,6 +2382,7 @@ def completion_gate_state(
     return {
         "state": "unclassified",
         "evidence": evidence,
+        **approval_history_evidence,
         "interpretation": "한자 부재만으로 작업 여부를 추론하지 않음",
         "application_approval_ledger": "not_applicable_mvp1",
     }
