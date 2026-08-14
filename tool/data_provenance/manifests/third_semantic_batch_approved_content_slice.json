@@ -1,0 +1,89 @@
+{
+  "format_version": 3,
+  "batch_id": "RESHET-EC-THIRD-SEMANTIC-BATCH-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "Reshet 승인 의미 7건 work DB 반영 Production 작업 지시",
+    "document_sha256": "011908d1a2af6932d691e337a963e5351af1cd9879023b3d6cf49197140a8d5e"
+  },
+  "target": {
+    "expected_work_sha256": "7fe497b8fc568a588eeb950efc72776dc67b510f2ebf33f657ca56cb138d7b1a",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H1563_0000",
+      "before": [
+        {"seq": 1, "meaning": "휘감다, 접다"}
+      ],
+      "after": [
+        {"seq": 1, "meaning": "말다"}
+      ]
+    },
+    {
+      "word_id": "H1652_0000",
+      "before": [
+        {"seq": 1, "meaning": "비가 오다"}
+      ],
+      "after": [
+        {"seq": 1, "meaning": "비를 내리다"}
+      ]
+    },
+    {
+      "word_id": "H5228_0000",
+      "before": [
+        {"seq": 1, "meaning": "곧은, 올바른, 바른 것, 공정, 정직"}
+      ],
+      "after": [
+        {"seq": 1, "meaning": "올바른"}
+      ]
+    },
+    {
+      "word_id": "H5229_0000",
+      "before": [
+        {"seq": 1, "meaning": "올곧음"}
+      ],
+      "after": [
+        {"seq": 1, "meaning": "올바름"}
+      ]
+    },
+    {
+      "word_id": "H6770_0000",
+      "before": [
+        {"seq": 1, "meaning": "목마르다, 갈증 나다"}
+      ],
+      "after": [
+        {"seq": 1, "meaning": "목마르다"}
+      ]
+    },
+    {
+      "word_id": "H6772_0000",
+      "before": [
+        {"seq": 1, "meaning": "갈증"}
+      ],
+      "after": [
+        {"seq": 1, "meaning": "목마름"}
+      ]
+    },
+    {
+      "word_id": "H2645_0000",
+      "before": [
+        {"seq": 1, "meaning": "덮다, 가리다, 싸다, 씌우다"}
+      ],
+      "after": [
+        {"seq": 1, "meaning": "덮다"}
+      ]
+    }
+  ],
+  "word_note_replacements": [],
+  "relation_creates": [],
+  "supersedes": [
+    {
+      "strong_number": "H5229",
+      "batch_id": "RESHET-EC-SECOND-SEMANTIC-BATCH-APPROVED-CONTENT-SLICE"
+    },
+    {
+      "strong_number": "H6772",
+      "batch_id": "RESHET-EC-P2-APPROVED-CONTENT-SLICE"
+    }
+  ]
+}
