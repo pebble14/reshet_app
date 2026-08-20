@@ -1,0 +1,117 @@
+{
+  "format_version": 4,
+  "batch_id": "RESHET-EC-THIRD-SEMANTIC-BATCH-RELATIONS-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "Reshet 승인 관계 6건 work DB 반영 Production 작업 지시",
+    "document_sha256": "d7001ad21dd48d861f6f75da2d3a86f48f1ba146da350045dde8620bec682b87"
+  },
+  "target": {
+    "expected_work_sha256": "acb1ae39a48c11a2c78989620276894714b633f4e0fd6c0c32cd9603edbd5431",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [],
+  "word_note_replacements": [],
+  "relation_creates": [
+    {
+      "word_id_1": "H1545_0000",
+      "word_id_2": "H1563_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-THIRD-SEMANTIC-BATCH-H1545-H1563"
+    },
+    {
+      "word_id_1": "H6770_0000",
+      "word_id_2": "H6771_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-THIRD-SEMANTIC-BATCH-H6771-H6770"
+    },
+    {
+      "word_id_1": "H2645_0000",
+      "word_id_2": "H2646_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-THIRD-SEMANTIC-BATCH-H2646-H2645"
+    },
+    {
+      "word_id_1": "H2644_0000",
+      "word_id_2": "H2645_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-THIRD-SEMANTIC-BATCH-H2644-H2645"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [
+    {
+      "relation_id": 7617,
+      "word_id_1": "H1652_0000",
+      "word_id_2": "H1653_0000",
+      "before": {
+        "category_code": "etymological",
+        "relation_type": "root_shared",
+        "status_code": "asserted",
+        "direction_code": "undirected",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "RESHET-EC-P1-H1653-H1652"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "RESHET-EC-THIRD-SEMANTIC-BATCH-H1653-H1652"
+      }
+    },
+    {
+      "relation_id": 7618,
+      "word_id_1": "H1652_0000",
+      "word_id_2": "H1656_0000",
+      "before": {
+        "category_code": "etymological",
+        "relation_type": "root_shared",
+        "status_code": "asserted",
+        "direction_code": "undirected",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "RESHET-EC-P1-H1656-H1652"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "RESHET-EC-THIRD-SEMANTIC-BATCH-H1656-H1652"
+      }
+    }
+  ]
+}
