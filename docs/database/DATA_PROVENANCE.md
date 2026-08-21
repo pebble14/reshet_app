@@ -265,6 +265,21 @@ supersession은 manifest 전체가 아니라 Strong 단위다. 과거 manifest�
 
 기존 괄호 한자 marker와 source-only import projection을 함께 사용해 `legacy_hanja_candidate`, `source_only`, `unclassified`를 실행 시 계산한다. `legacy_hanja_candidate`는 최종 승인 상태가 아니며 한자가 없다는 이유만으로 미완료로 분류하지 않는다. `tool/data_provenance/manifests/p1_historical_approval_approved_content_slice.json`은 tracked P1 rehearsal fixture와 그 fixture를 추가한 commit `985830cd6f1dd6d759ae2f8fefc68a035ddb19b8`, SHA-256 `cbc4d60b13b4489f3677122bda486aecafaecc47166a71d1a2cb4c901392599d`의 pre-write snapshot, active history group `1786202221443735`, 현재 work DB projection의 exact 일치를 근거로 H1653·H1655·H1656의 기존 human-approved meaning을 현행 completion 계약에 연결한다. 이 manifest는 historical tracking backfill이며 live apply나 DB write를 수행하지 않는다. completion gate는 세 `meaning_replacements`만 `explicit_approved` 근거로 사용하고 같은 historical batch의 `relation_creates` endpoint는 의미 승인으로 간주하지 않는다. MVP 1에서 LXX alignment, Hebrew↔Greek 분석, 의미 후보·semantic relation 자동 판정, Approval Ledger, Dashboard/UI, DB write와 runtime schema 변경은 N/A다. LXX Human Reference의 explicit lookup·manual review 경계는 아래 11.7의 별도 계약을 유지하며 자동 Evidence Packet join에 참여하지 않는다.
 
+#### 전체 Strong semantic 진행 현황 derivative
+
+`tool/data_provenance/semantic_progress_report.py`는 `strong_sources.json`의 정규화·중복 검증된 Greek 및 Hebrew/Aramaic 전체 entry를 분모로 삼아 현재 semantic 작업 상태를 JSON·CSV·Markdown으로 재구성하는 read-only 개발 도구다. 이 출력은 approval input이나 새 semantic authority가 아니다. tracked approved-content manifest 전체와 현재 `reshet_work.db` meaning projection의 exact 일치를 확인하는 현행 completion gate, `semantic_research_dispositions.json`의 hold, 고정 Strong source가 계속 authority다. relation-only manifest endpoint는 meaning approval에 포함하지 않고, superseded approval과 현재 projection 불일치도 현행 completion 계약대로 `explicit_approved`에서 제외한다. active `explicit_approved`와 hold가 겹치면 report 생성 전에 fail-closed한다.
+
+기본 출력은 저장소 밖 `../reshet_research_output/semantic_progress/`의 `semantic_progress.json`, `semantic_progress.csv`, `semantic_progress.md`이며 기존 세 파일은 완성된 UTF-8 바이트를 임시 파일에 쓴 뒤 atomic replace한다. JSON과 CSV가 전체 canonical Strong row의 machine-readable·정렬 가능한 snapshot이고 Markdown은 summary, 전체 hold, 전체 anomaly와 CSV 필터 안내만 제공한다. 동일 input에서는 벽시계 시각을 넣지 않으며 tool version, work DB SHA-256과 source fingerprint로 snapshot identity를 계산한다.
+
+```powershell
+python -B tool/data_provenance/semantic_progress_report.py `
+  --output-dir ..\reshet_research_output\semantic_progress
+```
+
+`semantic_status`는 `explicit_approved`, `hold`, `unapproved` 세 값만 사용한다. `progress_detail`의 `approved`, `hold`, `unapproved_with_meaning`, `unapproved_without_meaning`, `anomaly`는 사람이 진행표를 필터하기 위한 derivative 분류다. anomaly row도 authority 상태는 세 값 중 하나를 유지하므로 DB meaning 존재나 source/DB 불일치를 승인으로 승격하지 않는다. `semantic_approval_ratio`는 `explicit_approved / total_canonical_strongs`, `decision_disposition_ratio`는 `(explicit_approved + hold) / total_canonical_strongs`이며 hold는 승인이나 semantic 완료가 아니다.
+
+`canonical_occurrence_count`는 `biblical_occurrence_sources.json`이 고정한 OSHB/TAGNT canonical profile을 source별 한 번 읽어 Strong별로 집계하며 translation DB marker 수를 사용하지 않는다. `lexical_out_degree`, `lexical_in_degree`, `lexical_direct_degree`는 고정 Strong XML relation index에서 distinct direct node 수를 계산한 다음 대상·cluster 규모 참고값일 뿐 semantic approval, relation assertion 또는 hub 확정 근거가 아니다. recursive closure size 계산, research artifact 존재 여부, 자동 다음 Strong scoring은 이 v1 계약의 범위 밖이다.
+
 ### 11.7 LXXStp.bdb Human Reference 단건 verse 조회 경계
 
 `LXXStp.bdb`는 사용자가 Bethlehem Bible에서 확보했다고 확인한 로컬 Human Reference 자료다. `tool/data_provenance/manifests/lxx_human_reference_source.json`은 파일명, 크기와 SHA-256 `eb0cc4445d47dd85cdb9977210b39b3d459a4b075663dfecb039510fd3e671ad`로 exact file identity를 고정하지만, 이는 upstream provenance나 license가 검증됐음을 뜻하지 않는다. 이 자료는 canonical Research/Build Source나 canonical occurrence 근거가 아니며 원본 corpus와 절대경로를 Git에 추적하거나 배포하지 않는다.

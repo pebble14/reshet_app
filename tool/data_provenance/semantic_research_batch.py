@@ -57,6 +57,26 @@ def normalize_seeds(values: list[str] | tuple[str, ...]) -> list[str]:
     return sorted(normalized, key=_strong_sort_key)
 
 
+def semantic_status_from_authority(
+    strong: str,
+    completion_gate: dict[str, object],
+    disposition: dict[str, object] | None,
+) -> str:
+    """현행 completion gate와 hold ledger를 3상태 semantic status로 결합한다."""
+
+    is_approved = completion_gate.get("state") == "explicit_approved"
+    is_hold = disposition is not None
+    if is_approved and is_hold:
+        raise SemanticResearchBatchError(
+            f"active explicit_approved와 hold authority가 겹침: {strong}"
+        )
+    if is_approved:
+        return "explicit_approved"
+    if is_hold:
+        return "hold"
+    return "unapproved"
+
+
 def artifact_stem(strong: str) -> str:
     normalized = legacy.normalize_strong_number(strong)
     if normalized is None:
@@ -433,19 +453,10 @@ def _classify_nodes(
             list(approved_manifests),
             source_only_manifest,
         )
-        is_approved = completion_gate.get("state") == "explicit_approved"
         disposition = dispositions.get(strong)
-        is_hold = disposition is not None
-        if is_approved and is_hold:
-            raise SemanticResearchBatchError(
-                f"active explicit_approved와 hold authority가 겹침: {strong}"
-            )
-        if is_approved:
-            classification = "explicit_approved"
-        elif is_hold:
-            classification = "hold"
-        else:
-            classification = "unapproved"
+        classification = semantic_status_from_authority(
+            strong, completion_gate, disposition
+        )
         node["classification"] = classification
         node["completion_gate"] = completion_gate
         node["disposition"] = disposition

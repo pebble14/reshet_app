@@ -250,6 +250,16 @@ class _ApprovedManifest:
     supersedes: tuple[_ApprovedSupersession, ...]
 
 
+@dataclass(frozen=True)
+class CompletionGateAuthority:
+    """여러 Strong에서 같은 completion authority를 재사용하는 준비 결과."""
+
+    approved_manifests: tuple[_ApprovedManifest, ...]
+    approved_by_strong: dict[str, tuple[_ApprovedManifest, ...]]
+    source_only_manifest: Path
+    source_only_entries: dict[str, dict[str, object]]
+
+
 def _read_json_object(path: Path, label: str) -> dict[str, object]:
     try:
         payload = json.loads(path.read_text(encoding="utf-8"))
@@ -1076,13 +1086,14 @@ def _tagnt_surface(raw: str) -> tuple[str, str | None]:
     return raw, None
 
 
-def parse_tagnt_occurrences(
+def _scan_tagnt_occurrences(
     paths: list[Path],
-    target: str,
-) -> tuple[list[dict[str, object]], dict[str, object]]:
-    if target[0] != "G":
+    target: str | None,
+) -> tuple[list[dict[str, object]], Counter[str], dict[str, object]]:
+    if target is not None and target[0] != "G":
         raise ValueError("TAGNT parser target은 G Strong이어야 함")
     occurrences: list[dict[str, object]] = []
+    occurrence_counts: Counter[str] = Counter()
     total_rows = 0
     canonical_rows = 0
     header_count = 0
@@ -1116,7 +1127,9 @@ def parse_tagnt_occurrences(
                 continue
             canonical_rows += 1
             normalized = _normalize_tagnt_simple_strong(fields[11])
-            if normalized != target:
+            if normalized is not None:
+                occurrence_counts[normalized] += 1
+            if target is None or normalized != target:
                 continue
             lexical_tag, morphology = _split_once(fields[3], "=")
             lemma, gloss = _split_once(fields[4], "=")
@@ -1165,7 +1178,7 @@ def parse_tagnt_occurrences(
         if file_header_count == 0:
             raise SourceSchemaError(f"TAGNT header를 찾을 수 없음: {path}")
     occurrences.sort(key=_occurrence_sort_key)
-    return occurrences, {
+    return occurrences, occurrence_counts, {
         "parser_contract": "tagnt_tsv_na27_28_v1",
         "file_count": len(paths),
         "header_count": header_count,
@@ -1175,6 +1188,33 @@ def parse_tagnt_occurrences(
         "canonical_membership_field": "editions",
         "canonical_membership_values": ["NA27", "NA28"],
     }
+
+
+def parse_tagnt_occurrences(
+    paths: list[Path],
+    target: str,
+) -> tuple[list[dict[str, object]], dict[str, object]]:
+    occurrences, _, stats = _scan_tagnt_occurrences(paths, target)
+    return occurrences, stats
+
+
+def count_tagnt_canonical_occurrences(
+    paths: list[Path],
+) -> tuple[dict[str, int], dict[str, object]]:
+    """TAGNT canonical profile을 한 번 읽어 전체 G Strong occurrence를 집계한다."""
+
+    _, counts, stats = _scan_tagnt_occurrences(paths, None)
+    aggregate_stats = {
+        **stats,
+        "mode": "all_strongs_index",
+        "indexed_occurrence_count": sum(counts.values()),
+        "indexed_distinct_strong_count": len(counts),
+    }
+    aggregate_stats.pop("matched_occurrence_count", None)
+    ordered_counts = dict(
+        sorted(counts.items(), key=lambda item: int(item[0][1:]))
+    )
+    return ordered_counts, aggregate_stats
 
 
 KNOWN_OSHB_LEMMA_CODES = {"a", "b", "c", "d", "i", "k", "l", "m", "s"}
@@ -1257,13 +1297,14 @@ def _parse_oshb_reference_alternates(
     return alternates
 
 
-def parse_oshb_occurrences(
+def _scan_oshb_occurrences(
     paths: list[Path],
-    target: str,
-) -> tuple[list[dict[str, object]], dict[str, object]]:
-    if target[0] != "H":
+    target: str | None,
+) -> tuple[list[dict[str, object]], Counter[str], dict[str, object]]:
+    if target is not None and target[0] != "H":
         raise ValueError("OSHB parser target은 H Strong이어야 함")
     occurrences: list[dict[str, object]] = []
+    occurrence_counts: Counter[str] = Counter()
     verse_count = 0
     word_count = 0
     warning_count = 0
@@ -1312,7 +1353,9 @@ def parse_oshb_occurrences(
                         f"OSHB w 필수 필드 누락: {path.name}:{verse_id}:{token_position}"
                     )
                 lemma = parse_oshb_lemma(raw_lemma)
-                if target not in lemma["standard_strongs"]:
+                for strong in lemma["standard_strongs"]:
+                    occurrence_counts[str(strong)] += 1
+                if target is None or target not in lemma["standard_strongs"]:
                     continue
                 warning_count += len(lemma["warnings"])
                 occurrences.append(
@@ -1355,7 +1398,7 @@ def parse_oshb_occurrences(
     for occurrence in occurrences:
         occurrence.pop("_book_number", None)
     occurrences.sort(key=_occurrence_sort_key)
-    return occurrences, {
+    return occurrences, occurrence_counts, {
         "parser_contract": "oshb_wlc_osis_v1",
         "file_count": len(paths),
         "verse_count": verse_count,
@@ -1364,6 +1407,34 @@ def parse_oshb_occurrences(
         "matched_warning_count": warning_count,
         "augmented_lemma_policy": "raw_preserved_deterministic_numeric_component_only",
     }
+
+
+def parse_oshb_occurrences(
+    paths: list[Path],
+    target: str,
+) -> tuple[list[dict[str, object]], dict[str, object]]:
+    occurrences, _, stats = _scan_oshb_occurrences(paths, target)
+    return occurrences, stats
+
+
+def count_oshb_canonical_occurrences(
+    paths: list[Path],
+) -> tuple[dict[str, int], dict[str, object]]:
+    """OSHB canonical profile을 한 번 읽어 전체 H Strong occurrence를 집계한다."""
+
+    _, counts, stats = _scan_oshb_occurrences(paths, None)
+    aggregate_stats = {
+        **stats,
+        "mode": "all_strongs_index",
+        "indexed_occurrence_count": sum(counts.values()),
+        "indexed_distinct_strong_count": len(counts),
+    }
+    aggregate_stats.pop("matched_occurrence_count", None)
+    aggregate_stats.pop("matched_warning_count", None)
+    ordered_counts = dict(
+        sorted(counts.items(), key=lambda item: int(item[0][1:]))
+    )
+    return ordered_counts, aggregate_stats
 
 
 def _occurrence_sort_key(item: dict[str, object]) -> tuple[object, ...]:
@@ -2405,20 +2476,13 @@ def _projection_matches_source_only(
     )
 
 
-def completion_gate_state(
+def _completion_gate_state_with_target_approvals(
     target: str,
     projection: list[dict[str, object]],
-    approved_manifest: Path | list[Path] | tuple[Path, ...],
-    source_only_manifest: Path,
+    target_approvals: tuple[_ApprovedManifest, ...] | list[_ApprovedManifest],
+    source_only: dict[str, object] | None,
+    source_only_manifest_name: str,
 ) -> dict[str, object]:
-    approved_manifests = _load_approved_manifests(
-        _ordered_approved_manifests(approved_manifest)
-    )
-    target_approvals = [
-        manifest
-        for manifest in approved_manifests
-        if target in manifest.projections_by_strong
-    ]
     superseded_batch_ids = {
         supersession.batch_id
         for manifest in target_approvals
@@ -2499,13 +2563,12 @@ def completion_gate_state(
             ),
             "application_approval_ledger": "not_applicable_mvp1",
         }
-    source_only = _source_only_entry(source_only_manifest, target)
     if source_only is not None and _projection_matches_source_only(projection, source_only):
         return {
             "state": "source_only",
             "evidence": [
                 *approved_mismatch_evidence,
-                source_only_manifest.name,
+                source_only_manifest_name,
                 "current_projection_exact_match",
             ],
             **approval_history_evidence,
@@ -2522,6 +2585,89 @@ def completion_gate_state(
         "interpretation": "한자 부재만으로 작업 여부를 추론하지 않음",
         "application_approval_ledger": "not_applicable_mvp1",
     }
+
+
+def load_completion_gate_authority(
+    approved_manifest: Path | list[Path] | tuple[Path, ...],
+    source_only_manifest: Path,
+) -> CompletionGateAuthority:
+    """전체 진행표처럼 반복 판정할 때 authority source를 한 번만 검증한다."""
+
+    approved_manifests = _load_approved_manifests(
+        _ordered_approved_manifests(approved_manifest)
+    )
+    approved_by_strong_lists: defaultdict[str, list[_ApprovedManifest]] = defaultdict(
+        list
+    )
+    for manifest in approved_manifests:
+        for strong in manifest.projections_by_strong:
+            approved_by_strong_lists[strong].append(manifest)
+
+    payload = _read_json_object(source_only_manifest, "source-only import manifest")
+    rows = payload.get("entries")
+    if not isinstance(rows, list):
+        raise ManifestError("source-only import manifest entries가 배열이 아님")
+    source_only_entries: dict[str, dict[str, object]] = {}
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+        strong = legacy.normalize_strong_number(row.get("strong_number"))
+        if strong is None:
+            continue
+        if strong in source_only_entries:
+            raise ManifestError(f"source-only manifest target 중복: {strong}")
+        source_only_entries[strong] = row
+
+    return CompletionGateAuthority(
+        approved_manifests=approved_manifests,
+        approved_by_strong={
+            strong: tuple(manifests)
+            for strong, manifests in approved_by_strong_lists.items()
+        },
+        source_only_manifest=source_only_manifest,
+        source_only_entries=source_only_entries,
+    )
+
+
+def completion_gate_state_from_authority(
+    target: str,
+    projection: list[dict[str, object]],
+    authority: CompletionGateAuthority,
+) -> dict[str, object]:
+    """준비된 authority로 기존 completion gate 의미를 그대로 계산한다."""
+
+    return _completion_gate_state_with_target_approvals(
+        target,
+        projection,
+        authority.approved_by_strong.get(target, ()),
+        authority.source_only_entries.get(target),
+        authority.source_only_manifest.name,
+    )
+
+
+def completion_gate_state(
+    target: str,
+    projection: list[dict[str, object]],
+    approved_manifest: Path | list[Path] | tuple[Path, ...],
+    source_only_manifest: Path,
+) -> dict[str, object]:
+    """단일 Strong용 기존 completion gate 호출 계약."""
+
+    approved_manifests = _load_approved_manifests(
+        _ordered_approved_manifests(approved_manifest)
+    )
+    target_approvals = tuple(
+        manifest
+        for manifest in approved_manifests
+        if target in manifest.projections_by_strong
+    )
+    return _completion_gate_state_with_target_approvals(
+        target,
+        projection,
+        target_approvals,
+        _source_only_entry(source_only_manifest, target),
+        source_only_manifest.name,
+    )
 
 
 def _counter_payload(counter: Counter[str]) -> list[dict[str, object]]:
