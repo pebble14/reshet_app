@@ -690,6 +690,71 @@ def _descendants_with_preceding_text(
     return descendants
 
 
+def _structured_reference_details(
+    node: ET.Element,
+    source_prefix: str,
+) -> dict[str, str | None] | None:
+    name = legacy.local_name(node.tag)
+    if source_prefix == "G" and name == "strongsref":
+        raw_language = node.get("language") or ""
+        raw_reference = node.get("strongs") or ""
+        reference_prefix = {"GREEK": "G", "HEBREW": "H"}.get(
+            raw_language.upper()
+        )
+    elif source_prefix == "H" and name == "w" and node.get("src") is not None:
+        raw_language = "HEBREW"
+        raw_reference = node.get("src") or ""
+        reference_prefix = "H"
+    else:
+        return None
+
+    normalized = (
+        legacy.normalize_strong_number(raw_reference, reference_prefix)
+        if reference_prefix is not None
+        else None
+    )
+    return {
+        "raw_language": raw_language,
+        "raw_reference": raw_reference,
+        "normalized_strong": normalized,
+        "warning": None if normalized is not None else "nonstandard_reference",
+    }
+
+
+def _reference_context(
+    container: ET.Element,
+    source_prefix: str,
+    focused_reference: ET.Element,
+) -> str:
+    """원문 순서를 유지하고 선택 reference target을 ASCII marker로 식별한다."""
+    segments: list[str] = []
+
+    def visit(element: ET.Element) -> None:
+        if element.text:
+            segments.append(element.text)
+        for child in list(element):
+            details = _structured_reference_details(child, source_prefix)
+            if details is not None:
+                target = details["normalized_strong"] or details["raw_reference"]
+                rendered = target or "invalid-reference"
+                segments.append(
+                    f"[[{rendered}]]" if child is focused_reference else rendered
+                )
+            else:
+                name = legacy.local_name(child.tag)
+                if name == "greek" and child.get("unicode"):
+                    segments.append(child.get("unicode") or "")
+                elif name == "pronunciation" and child.get("strongs"):
+                    segments.append(f"[pron={child.get('strongs')}]")
+                else:
+                    visit(child)
+            if child.tail:
+                segments.append(child.tail)
+
+    visit(container)
+    return _normalized_source_text("".join(segments))
+
+
 def _relation_wording(preceding_text: str) -> str | None:
     normalized = _normalized_source_text(preceding_text)
     matches = [
@@ -710,52 +775,115 @@ def _relation_wording(preceding_text: str) -> str | None:
     return fragment or None
 
 
+def _extract_entry_reference_relations(
+    entry: ET.Element,
+    source_strong: str,
+    *,
+    expanded: bool,
+) -> list[dict[str, object]]:
+    """한 parsed Strong entry의 명시적 source reference와 원문 관계 문구를 보존한다."""
+    prefix = source_strong[0]
+    if prefix == "G":
+        allowed_containers = (
+            {"strongs_derivation", "strongs_def", "kjv_def"}
+            if expanded
+            else {"strongs_derivation"}
+        )
+    else:
+        allowed_containers = (
+            {"source", "usage", "meaning"} if expanded else {"source"}
+        )
+    references: list[dict[str, object]] = []
+    entry_text_parts = [entry.text or ""]
+    entry_reference_order = 0
+    for child_order, child in enumerate(list(entry), start=1):
+        container = legacy.local_name(child.tag)
+        direct_entry_reference = (
+            prefix == "G"
+            and expanded
+            and container == "strongsref"
+            and _structured_reference_details(child, prefix) is not None
+        )
+        if direct_entry_reference:
+            entry_reference_order += 1
+            candidates = [
+                (
+                    child,
+                    "".join(entry_text_parts),
+                    entry,
+                    "entry",
+                    entry_reference_order,
+                )
+            ]
+        elif container in allowed_containers:
+            candidates = [
+                (node, preceding_text, child, container, reference_order)
+                for reference_order, (node, preceding_text) in enumerate(
+                    (
+                        pair
+                        for pair in _descendants_with_preceding_text(child)
+                        if _structured_reference_details(pair[0], prefix)
+                        is not None
+                    ),
+                    start=1,
+                )
+            ]
+        else:
+            candidates = []
+
+        for (
+            node,
+            preceding_text,
+            context_container,
+            source_container,
+            reference_order,
+        ) in candidates:
+            details = _structured_reference_details(node, prefix)
+            if details is None:
+                continue
+            references.append(
+                {
+                    "source_strong": source_strong,
+                    "target_strong": details["normalized_strong"],
+                    "source_language_code": prefix,
+                    "source_order": len(references) + 1,
+                    "source_container": source_container,
+                    "source_child_order": child_order,
+                    "reference_order_in_container": reference_order,
+                    "raw_language": details["raw_language"],
+                    "raw_reference": details["raw_reference"],
+                    "normalized_strong": details["normalized_strong"],
+                    "warning": details["warning"],
+                    "relation_wording": _relation_wording(preceding_text),
+                    "source_text": _normalized_source_text(
+                        "".join(context_container.itertext())
+                    ),
+                    "reference_context": _reference_context(
+                        context_container,
+                        prefix,
+                        node,
+                    ),
+                }
+            )
+        entry_text_parts.append("".join(child.itertext()))
+        if child.tail:
+            entry_text_parts.append(child.tail)
+    return references
+
+
 def extract_entry_reference_relations(
     entry: ET.Element,
     source_strong: str,
 ) -> list[dict[str, object]]:
-    """한 parsed Strong entry의 명시적 source reference와 원문 관계 문구를 보존한다."""
-    prefix = source_strong[0]
-    references: list[dict[str, object]] = []
-    for child in list(entry):
-        container = legacy.local_name(child.tag)
-        if prefix == "G" and container != "strongs_derivation":
-            continue
-        if prefix == "H" and container != "source":
-            continue
-        source_text = _normalized_source_text("".join(child.itertext()))
-        for node, preceding_text in _descendants_with_preceding_text(child):
-            name = legacy.local_name(node.tag)
-            if prefix == "G" and name == "strongsref":
-                raw_language = node.get("language") or ""
-                raw_reference = node.get("strongs") or ""
-                reference_prefix = {"GREEK": "G", "HEBREW": "H"}.get(
-                    raw_language.upper()
-                )
-            elif prefix == "H" and name == "w" and node.get("src"):
-                raw_language = "HEBREW"
-                raw_reference = node.get("src") or ""
-                reference_prefix = "H"
-            else:
-                continue
-            normalized = (
-                legacy.normalize_strong_number(raw_reference, reference_prefix)
-                if reference_prefix is not None
-                else None
-            )
-            references.append(
-                {
-                    "source_order": len(references) + 1,
-                    "source_container": container,
-                    "raw_language": raw_language,
-                    "raw_reference": raw_reference,
-                    "normalized_strong": normalized,
-                    "warning": None if normalized is not None else "nonstandard_reference",
-                    "relation_wording": _relation_wording(preceding_text),
-                    "source_text": source_text,
-                }
-            )
-    return references
+    return _extract_entry_reference_relations(entry, source_strong, expanded=False)
+
+
+def extract_relation_discovery_references(
+    entry: ET.Element,
+    source_strong: str,
+) -> list[dict[str, object]]:
+    """relation discovery용 전체 structured Strong reference occurrence를 추출한다."""
+    return _extract_entry_reference_relations(entry, source_strong, expanded=True)
 
 
 def extract_direct_references(source_path: Path, target: str) -> list[dict[str, object]]:

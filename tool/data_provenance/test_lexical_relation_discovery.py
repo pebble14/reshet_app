@@ -97,6 +97,7 @@ class LexicalRelationDiscoveryTest(unittest.TestCase):
 
     def test_duplicate_edge_is_deduplicated(self) -> None:
         self.assertEqual(self.stats["reference_count"], 7)
+        self.assertEqual(self.stats["reference_evidence_occurrence_count"], 7)
         self.assertEqual(self.stats["explicit_edge_count"], 6)
         duplicate_target_edges = [
             edge
@@ -104,6 +105,109 @@ class LexicalRelationDiscoveryTest(unittest.TestCase):
             if edge["to_strong"] == "H0103"
         ]
         self.assertEqual(len(duplicate_target_edges), 1)
+        edge = duplicate_target_edges[0]
+        self.assertEqual(edge["reference_evidence_count"], 2)
+        occurrences = edge["reference_evidence"]
+        self.assertEqual(
+            [row["source_order"] for row in occurrences],
+            [2, 3],
+        )
+        self.assertNotEqual(
+            occurrences[0]["reference_context"],
+            occurrences[1]["reference_context"],
+        )
+
+    def test_expanded_containers_are_indexed_in_both_directions(self) -> None:
+        greek = self.root / "GreekStrong.xml"
+        greek.write_text(
+            """<strongsdictionary><entries>
+<entry strongs="200"><strongs_derivation>from <strongsref language="GREEK" strongs="201"/></strongs_derivation></entry>
+<entry strongs="202"><strongs_def>compare <strongsref language="GREEK" strongs="201"/></strongs_def></entry>
+<entry strongs="203"><kjv_def>variant of <strongsref language="GREEK" strongs="201"/></kjv_def></entry>
+<entry strongs="204">from the same as <strongsref language="GREEK" strongs="201"/>.</entry>
+<entry strongs="205"><strongs_def>probably from <strongsref language="GREEK" strongs="201"/>;
+inflected from <strongsref language="GREEK" strongs="201"/>.</strongs_def></entry>
+</entries></strongsdictionary>""",
+            encoding="utf-8",
+        )
+        hebrew = self.root / "HebrewStrongExpanded.xml"
+        hebrew.write_text(
+            """<lexicon>
+<entry id="H0200"><source>from <w src="H0201">201</w>.</source></entry>
+<entry id="H0202"><usage>Compare <w src="H0201">201</w>.</usage></entry>
+<entry id="H0203"><meaning>equivalent to <w src="H0201">201</w>.</meaning></entry>
+</lexicon>""",
+            encoding="utf-8",
+        )
+
+        outgoing, incoming, stats = discovery.build_relation_indexes(
+            {"G": greek, "H": hebrew},
+            [
+                {"language": "G", "id": "fixture_greek"},
+                {"language": "H", "id": "fixture_hebrew"},
+            ],
+        )
+
+        self.assertEqual(
+            stats["reference_container_counts"],
+            {
+                "G:entry": 1,
+                "G:kjv_def": 1,
+                "G:strongs_def": 3,
+                "G:strongs_derivation": 1,
+                "H:meaning": 1,
+                "H:source": 1,
+                "H:usage": 1,
+            },
+        )
+        self.assertEqual(stats["reference_count"], 9)
+        self.assertEqual(stats["reference_evidence_occurrence_count"], 9)
+        self.assertEqual(stats["explicit_edge_count"], 8)
+        self.assertEqual(stats["invalid_reference_count"], 0)
+        self.assertEqual(
+            {edge["from_strong"] for edge in incoming["G0201"]},
+            {"G0200", "G0202", "G0203", "G0204", "G0205"},
+        )
+        self.assertEqual(
+            {edge["from_strong"] for edge in incoming["H0201"]},
+            {"H0200", "H0202", "H0203"},
+        )
+        self.assertTrue(
+            all(
+                outgoing[source]
+                for source in (
+                    "G0200",
+                    "G0202",
+                    "G0203",
+                    "G0204",
+                    "G0205",
+                    "H0200",
+                    "H0202",
+                    "H0203",
+                )
+            )
+        )
+        multiple_evidence = next(
+            edge
+            for edge in outgoing["G0205"]
+            if edge["to_strong"] == "G0201"
+        )
+        self.assertEqual(multiple_evidence["reference_evidence_count"], 2)
+        contexts = [
+            str(row["reference_context"])
+            for row in multiple_evidence["reference_evidence"]
+        ]
+        self.assertIn("probably from [[G0201]]", contexts[0])
+        self.assertIn("inflected from [[G0201]]", contexts[1])
+
+        nodes, relations = discovery.discover_relation_graph(
+            "G0201", 1, outgoing, incoming
+        )
+        self.assertEqual(
+            {node["strong"] for node in nodes},
+            {"G0200", "G0201", "G0202", "G0203", "G0204", "G0205"},
+        )
+        self.assertTrue(all(edge["direction"] == "incoming" for edge in relations))
 
     def test_max_depth_is_enforced_and_bounded(self) -> None:
         nodes, relations = self._graph(max_depth=1)

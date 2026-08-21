@@ -9,6 +9,7 @@ import sqlite3
 import subprocess
 import tempfile
 import unittest
+import xml.etree.ElementTree as ET
 
 import biblical_research_evidence_packet as evidence
 import strong_source_diff as legacy
@@ -388,6 +389,85 @@ from <strongsref language="GREEK" strongs="1223"/> and
                 "normalized_strong",
                 "warning",
             },
+        )
+
+    def test_relation_discovery_extractor_expands_greek_scope_and_context(self) -> None:
+        entry = ET.fromstring(
+            """<entry strongs="100">
+<strongs_derivation>probably from <strongsref language="GREEK" strongs="101"/>;</strongs_derivation>
+<strongs_def>inflected from <strongsref language="GREEK" strongs="102"/>;
+equivalent to <strongsref language="GREEK" strongs="103"/>;
+compare <strongsref language="GREEK" strongs="104"/>.</strongs_def>
+<kjv_def>variant of <strongsref language="GREEK" strongs="105"/>.</kjv_def>
+from the same as <strongsref language="GREEK" strongs="106"/>.
+</entry>"""
+        )
+
+        direct = evidence.extract_entry_reference_relations(entry, "G0100")
+        expanded = evidence.extract_relation_discovery_references(entry, "G0100")
+
+        self.assertEqual(
+            [row["target_strong"] for row in direct],
+            ["G0101"],
+        )
+        self.assertEqual(
+            [row["target_strong"] for row in expanded],
+            ["G0101", "G0102", "G0103", "G0104", "G0105", "G0106"],
+        )
+        self.assertEqual(
+            [row["source_container"] for row in expanded],
+            [
+                "strongs_derivation",
+                "strongs_def",
+                "strongs_def",
+                "strongs_def",
+                "kjv_def",
+                "entry",
+            ],
+        )
+        self.assertEqual(
+            [row["source_order"] for row in expanded],
+            list(range(1, 7)),
+        )
+        contexts = {
+            str(row["target_strong"]): str(row["reference_context"])
+            for row in expanded
+        }
+        for target, wording in (
+            ("G0101", "probably from"),
+            ("G0102", "inflected from"),
+            ("G0103", "equivalent to"),
+            ("G0104", "compare"),
+            ("G0105", "variant of"),
+            ("G0106", "from the same as"),
+        ):
+            with self.subTest(target=target):
+                self.assertIn(wording, contexts[target].lower())
+                self.assertIn(f"[[{target}]]", contexts[target])
+
+    def test_relation_discovery_extractor_expands_hebrew_scope(self) -> None:
+        entry = ET.fromstring(
+            """<entry id="H200">
+<source>from <w src="H201">201</w>.</source>
+<usage>Compare <w src="H202">202</w>.</usage>
+<meaning>equivalent to <w src="H203">203</w>.</meaning>
+</entry>"""
+        )
+
+        direct = evidence.extract_entry_reference_relations(entry, "H0200")
+        expanded = evidence.extract_relation_discovery_references(entry, "H0200")
+
+        self.assertEqual([row["target_strong"] for row in direct], ["H0201"])
+        self.assertEqual(
+            [row["target_strong"] for row in expanded],
+            ["H0201", "H0202", "H0203"],
+        )
+        self.assertEqual(
+            [row["source_container"] for row in expanded],
+            ["source", "usage", "meaning"],
+        )
+        self.assertTrue(
+            all(row["source_language_code"] == "H" for row in expanded)
         )
 
     def test_tagnt_canonical_profile_excludes_other_only_variant(self) -> None:

@@ -15,7 +15,7 @@ import strong_source_diff as legacy
 import strong_source_mapping as strong_mapping
 
 
-TOOL_VERSION = "1.0.0"
+TOOL_VERSION = "1.1.0"
 DEFAULT_MAX_DEPTH = 2
 MIN_MAX_DEPTH = 1
 MAX_MAX_DEPTH = 3
@@ -63,7 +63,9 @@ def build_relation_indexes(
     edge_by_key: dict[tuple[str, str, str, str], dict[str, object]] = {}
     entry_count = 0
     reference_count = 0
+    reference_evidence_occurrence_count = 0
     invalid_reference_count = 0
+    reference_container_counts: defaultdict[str, int] = defaultdict(int)
 
     for prefix in sorted(source_paths):
         source_path = source_paths[prefix]
@@ -87,15 +89,19 @@ def build_relation_indexes(
             if source_strong is None:
                 continue
             entry_count += 1
-            references = evidence.extract_entry_reference_relations(
+            references = evidence.extract_relation_discovery_references(
                 entry, source_strong
             )
             reference_count += len(references)
             for reference in references:
+                reference_container_counts[
+                    f"{prefix}:{reference['source_container']}"
+                ] += 1
                 target = reference["normalized_strong"]
                 if not isinstance(target, str):
                     invalid_reference_count += 1
                     continue
+                reference_evidence_occurrence_count += 1
                 relation_wording = reference["relation_wording"]
                 edge_key = (
                     source_strong,
@@ -104,6 +110,15 @@ def build_relation_indexes(
                     source_id,
                 )
                 if edge_key in edge_by_key:
+                    occurrences = edge_by_key[edge_key]["reference_evidence"]
+                    if not isinstance(occurrences, list):
+                        raise LexicalRelationDiscoveryError(
+                            "relation edge reference evidence 내부 계약 불일치"
+                        )
+                    occurrences.append(reference)
+                    edge_by_key[edge_key]["reference_evidence_count"] = len(
+                        occurrences
+                    )
                     continue
                 edge_by_key[edge_key] = {
                     "from_strong": source_strong,
@@ -113,6 +128,9 @@ def build_relation_indexes(
                     "source_container": reference["source_container"],
                     "source_order": reference["source_order"],
                     "source_text": reference["source_text"],
+                    "reference_context": reference["reference_context"],
+                    "reference_evidence_count": 1,
+                    "reference_evidence": [reference],
                 }
 
     outgoing: defaultdict[str, list[dict[str, object]]] = defaultdict(list)
@@ -127,8 +145,10 @@ def build_relation_indexes(
         {
             "entry_count": entry_count,
             "reference_count": reference_count,
+            "reference_evidence_occurrence_count": reference_evidence_occurrence_count,
             "explicit_edge_count": len(edges),
             "invalid_reference_count": invalid_reference_count,
+            "reference_container_counts": dict(sorted(reference_container_counts.items())),
         },
     )
 
