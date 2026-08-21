@@ -121,6 +121,7 @@ def _packet() -> dict[str, object]:
                     "word_id": "G0032_0000",
                     "strong_number": "G0032",
                     "language": "헬라어",
+                    "word_note": "semantic 판단용 현재 비고",
                     "expressions": [
                         {
                             "seq": 1,
@@ -140,6 +141,19 @@ def _packet() -> dict[str, object]:
                 "evidence": {},
                 "application_approval_ledger": "not_applicable_mvp1",
             },
+            "source_disposition": "ready",
+            "source_meanings": [
+                {"role": "strongs_def", "text": "a messenger"},
+                {"role": "kjv_def", "text": "angel"},
+            ],
+        },
+        "lexical_reference": {
+            "source_id": "fixture_lexicon",
+            "scode": "G32",
+            "exact_row_count": 1,
+            "description": "사람이 참고하는 어휘 설명",
+            "warning": None,
+            "selection_policy": "exact scode 1행",
         },
         "direct_references": [
             {
@@ -213,6 +227,45 @@ def _packet() -> dict[str, object]:
     }
 
 
+def _relation_context() -> dict[str, object]:
+    return {
+        "schema_version": 1,
+        "target": {
+            "normalized_strong": "G0032",
+            "status": "unapproved",
+            "preparation": "READY",
+            "disposition": None,
+        },
+        "relations": [
+            {
+                "from_strong": "G0031",
+                "to_strong": "G0032",
+                "node_direction": "incoming",
+                "source": "fixture_greek",
+                "source_container": "strongs_derivation",
+                "relation_wording": "probably from",
+                "source_text": "probably from G0032",
+                "reference_context": "probably from [[G0032]]",
+                "reference_evidence": [
+                    {
+                        "source_container": "strongs_derivation",
+                        "source_order": 1,
+                        "reference_context": "probably from [[G0032]]",
+                    },
+                    {
+                        "source_container": "strongs_def",
+                        "source_order": 2,
+                        "reference_context": "compare [[G0032]]",
+                    },
+                ],
+                "related_strong": "G0031",
+                "related_status": "explicit_approved",
+                "related_preparation": "reused",
+            }
+        ],
+    }
+
+
 class BiblicalResearchEvidenceReviewTest(unittest.TestCase):
     def test_normal_packet_renders_sections_without_mutation(self) -> None:
         packet = _packet()
@@ -243,8 +296,43 @@ class BiblicalResearchEvidenceReviewTest(unittest.TestCase):
         self.assertIn("- 음역: ángelos", output)
         self.assertIn("- 성경 출현: 2회 / 2절", output)
         self.assertIn("사자(使者) / 심부름꾼", output)
+        self.assertIn("현재 Reshet 비고: semantic 판단용 현재 비고", output)
         self.assertIn("완료 상태: `legacy_hanja_candidate`", output)
         self.assertIn("직접 참조: G0071", output)
+
+    def test_lexical_evidence_separates_canonical_and_reference_only(self) -> None:
+        output = review.render_review(_packet())
+        self.assertIn("## Lexical source 근거", output)
+        self.assertIn("| strongs_def | a messenger |", output)
+        self.assertIn("### Reference-only lexical 자료", output)
+        self.assertIn("canonical semantic evidence로 승격하지 않는다", output)
+        self.assertIn("사람이 참고하는 어휘 설명", output)
+
+    def test_reference_only_display_markup_is_readable_without_changing_packet(self) -> None:
+        packet = _packet()
+        packet["lexical_reference"]["description"] = (
+            "<font color='#fff'>표제</font><br>둘째 줄 <num>G32</num>"
+        )
+        before = deepcopy(packet)
+        output = review.render_review(packet)
+        self.assertIn("<pre>표제\n둘째 줄 G32</pre>", output)
+        self.assertNotIn("&lt;br&gt;", output)
+        self.assertEqual(packet, before)
+
+    def test_relation_context_preserves_wording_occurrences_and_status(self) -> None:
+        output = review.render_review(_packet(), _relation_context())
+        self.assertIn("## Lexical relation context", output)
+        self.assertIn("semantic relation type이나 DB assertion으로 자동 변환하지 않는다", output)
+        self.assertIn("probably from", output)
+        self.assertIn("probably from [[G0032]]", output)
+        self.assertIn("compare [[G0032]]", output)
+        self.assertIn("G0031: explicit_approved / reused", output)
+
+    def test_relation_context_target_mismatch_fails_closed(self) -> None:
+        context = _relation_context()
+        context["target"]["normalized_strong"] = "G0033"
+        with self.assertRaisesRegex(review.EvidenceReviewError, "target 불일치"):
+            review.render_review(_packet(), context)
 
     def test_strong_window_table_marks_direct_and_shortens_gloss(self) -> None:
         output = review.render_review(_packet())

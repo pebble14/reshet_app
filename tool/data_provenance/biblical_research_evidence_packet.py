@@ -22,7 +22,7 @@ import strong_source_diff as legacy
 import strong_source_mapping as strong_mapping
 
 
-TOOL_VERSION = "1.2.0"
+TOOL_VERSION = "1.3.0"
 TOOL_DIR = Path(__file__).resolve().parent
 REPOSITORY_ROOT = TOOL_DIR.parent.parent
 DEFAULT_STRONG_MANIFEST = TOOL_DIR / "manifests" / "strong_sources.json"
@@ -1863,7 +1863,7 @@ def load_reshet_projection(
     connection, integrity = _open_sqlite_read_only(work_db)
     try:
         required_tables = {
-            "WORD_TABLE": {"id", "언어", "스트롱넘버"},
+            "WORD_TABLE": {"id", "언어", "스트롱넘버", "비고"},
             "word_expression_set": {
                 "word_id",
                 "seq",
@@ -1884,7 +1884,8 @@ def load_reshet_projection(
                 )
         words = connection.execute(
             '''
-            SELECT id, "스트롱넘버" AS strong_number, "언어" AS language
+            SELECT id, "스트롱넘버" AS strong_number, "언어" AS language,
+                   "비고" AS word_note
             FROM WORD_TABLE
             WHERE "스트롱넘버" = ?
             ORDER BY id
@@ -1918,6 +1919,7 @@ def load_reshet_projection(
                     "word_id": word["id"],
                     "strong_number": word["strong_number"],
                     "language": word["language"],
+                    "word_note": word["word_note"],
                     "expressions": [dict(row) for row in expressions],
                     "meanings": [dict(row) for row in meanings],
                 }
@@ -2703,6 +2705,7 @@ def build_evidence_packet(
             "included": [
                 "completion_gate",
                 "target_strong",
+                "current_reshet_word_note",
                 "strong_numeric_window_plus_minus_10",
                 "direct_source_references",
                 "canonical_biblical_occurrences",

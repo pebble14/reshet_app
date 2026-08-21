@@ -4,8 +4,10 @@
 from __future__ import annotations
 
 import argparse
+import html
 import json
 from pathlib import Path
+import re
 import sys
 from typing import Any
 
@@ -162,6 +164,12 @@ def validate_packet(value: object) -> dict[str, Any]:
     for projection_index, raw_projection in enumerate(projections):
         projection_path = f"packet.target.existing_reshet_projection[{projection_index}]"
         projection = _object(raw_projection, projection_path)
+        if "word_note" in projection:
+            _string(
+                projection["word_note"],
+                f"{projection_path}.word_note",
+                nullable=True,
+            )
         expressions = _list(
             _required(projection, "expressions", projection_path),
             f"{projection_path}.expressions",
@@ -203,6 +211,38 @@ def validate_packet(value: object) -> dict[str, Any]:
         _string(
             completion["interpretation"],
             "packet.target.completion_gate.interpretation",
+        )
+
+    if "source_meanings" in target:
+        source_meanings = _list(
+            target["source_meanings"], "packet.target.source_meanings"
+        )
+        for index, raw_meaning in enumerate(source_meanings):
+            path = f"packet.target.source_meanings[{index}]"
+            meaning = _object(raw_meaning, path)
+            _string(_required(meaning, "role", path), f"{path}.role")
+            _string(_required(meaning, "text", path), f"{path}.text")
+
+    if "lexical_reference" in packet:
+        lexical_reference = _object(
+            packet["lexical_reference"], "packet.lexical_reference"
+        )
+        for key in ("source_id", "scode", "selection_policy"):
+            _string(
+                _required(lexical_reference, key, "packet.lexical_reference"),
+                f"packet.lexical_reference.{key}",
+            )
+        for key in ("description", "warning"):
+            _string(
+                _required(lexical_reference, key, "packet.lexical_reference"),
+                f"packet.lexical_reference.{key}",
+                nullable=True,
+            )
+        _integer(
+            _required(
+                lexical_reference, "exact_row_count", "packet.lexical_reference"
+            ),
+            "packet.lexical_reference.exact_row_count",
         )
 
     direct_references = _list(
@@ -371,6 +411,94 @@ def validate_packet(value: object) -> dict[str, Any]:
     return packet
 
 
+def validate_relation_context(
+    value: object,
+    *,
+    expected_target: str | None = None,
+) -> dict[str, Any]:
+    context = _object(value, "relation_context")
+    if context.get("schema_version") != 1:
+        raise EvidenceReviewError(
+            "지원하지 않는 relation context schema_version: "
+            f"{context.get('schema_version')!r}"
+        )
+    target = _object(
+        _required(context, "target", "relation_context"),
+        "relation_context.target",
+    )
+    normalized = _string(
+        _required(target, "normalized_strong", "relation_context.target"),
+        "relation_context.target.normalized_strong",
+    )
+    if expected_target is not None and normalized != expected_target:
+        raise EvidenceReviewError(
+            "Evidence Packet과 relation context target 불일치: "
+            f"{expected_target} != {normalized}"
+        )
+    for key in ("status", "preparation"):
+        _string(
+            _required(target, key, "relation_context.target"),
+            f"relation_context.target.{key}",
+        )
+    disposition = target.get("disposition")
+    if disposition is not None:
+        disposition_object = _object(
+            disposition, "relation_context.target.disposition"
+        )
+        for key in ("status", "reason", "reopen_condition"):
+            _string(
+                _required(
+                    disposition_object, key, "relation_context.target.disposition"
+                ),
+                f"relation_context.target.disposition.{key}",
+            )
+
+    relations = _list(
+        _required(context, "relations", "relation_context"),
+        "relation_context.relations",
+    )
+    for index, raw_relation in enumerate(relations):
+        path = f"relation_context.relations[{index}]"
+        relation = _object(raw_relation, path)
+        for key in (
+            "from_strong",
+            "to_strong",
+            "node_direction",
+            "source",
+            "source_container",
+            "related_strong",
+            "related_status",
+            "related_preparation",
+        ):
+            _string(_required(relation, key, path), f"{path}.{key}")
+        for key in ("relation_wording", "source_text", "reference_context"):
+            _string(
+                _required(relation, key, path),
+                f"{path}.{key}",
+                nullable=True,
+            )
+        evidence_rows = _list(
+            _required(relation, "reference_evidence", path),
+            f"{path}.reference_evidence",
+        )
+        for evidence_index, raw_evidence in enumerate(evidence_rows):
+            evidence_path = f"{path}.reference_evidence[{evidence_index}]"
+            evidence = _object(raw_evidence, evidence_path)
+            _string(
+                _required(evidence, "source_container", evidence_path),
+                f"{evidence_path}.source_container",
+            )
+            _string(
+                _required(evidence, "reference_context", evidence_path),
+                f"{evidence_path}.reference_context",
+            )
+            _integer(
+                _required(evidence, "source_order", evidence_path),
+                f"{evidence_path}.source_order",
+            )
+    return context
+
+
 def load_packet(path: Path) -> dict[str, Any]:
     try:
         raw = path.read_text(encoding="utf-8")
@@ -381,6 +509,22 @@ def load_packet(path: Path) -> dict[str, Any]:
     except json.JSONDecodeError as error:
         raise EvidenceReviewError(f"Evidence Packet JSON parsing 실패: {error}") from error
     return validate_packet(value)
+
+
+def load_relation_context(path: Path) -> dict[str, Any]:
+    try:
+        raw = path.read_text(encoding="utf-8")
+    except (OSError, UnicodeError) as error:
+        raise EvidenceReviewError(
+            f"relation context를 읽을 수 없음: {path}: {error}"
+        ) from error
+    try:
+        value = json.loads(raw)
+    except json.JSONDecodeError as error:
+        raise EvidenceReviewError(
+            f"relation context JSON parsing 실패: {error}"
+        ) from error
+    return validate_relation_context(value)
 
 
 def _single_line_text(value: object, *, empty: str = "—") -> str:
@@ -432,6 +576,16 @@ def _html_joined(values: list[object]) -> str:
     return " / ".join(rendered) if rendered else "—"
 
 
+def _reference_only_plain_text(value: object) -> str:
+    if value is None:
+        return "—"
+    text = re.sub(r"(?i)<br\s*/?>", "\n", str(value))
+    text = re.sub(r"(?i)</?(?:font|num)\b[^>]*>", "", text)
+    text = html.unescape(text)
+    lines = [" ".join(line.split()) for line in text.splitlines()]
+    return "\n".join(line for line in lines if line) or "—"
+
+
 def _reshet_expressions(target: dict[str, Any]) -> list[str]:
     values: list[str] = []
     for projection in target["existing_reshet_projection"]:
@@ -450,6 +604,14 @@ def _reshet_meanings(target: dict[str, Any]) -> list[str]:
         meaning["meaning"]
         for projection in target["existing_reshet_projection"]
         for meaning in projection["meanings"]
+    ]
+
+
+def _reshet_notes(target: dict[str, Any]) -> list[str]:
+    return [
+        str(projection["word_note"])
+        for projection in target["existing_reshet_projection"]
+        if projection.get("word_note") is not None
     ]
 
 
@@ -538,6 +700,7 @@ def _render_target(lines: list[str], packet: dict[str, Any]) -> None:
             f"{summary['canonical_verse_count']}절",
             f"- 현재 Reshet 표현: {_joined(_reshet_expressions(target))}",
             f"- 현재 Reshet 의미: {_joined(_reshet_meanings(target))}",
+            f"- 현재 Reshet 비고: {_joined(_reshet_notes(target))}",
             f"- 완료 상태: `{_inline(completion['state'])}`",
         ]
     )
@@ -545,6 +708,125 @@ def _render_target(lines: list[str], packet: dict[str, Any]) -> None:
         lines.append(f"- 완료 상태 해석: {_inline(completion['interpretation'])}")
     direct = [_direct_reference_label(row) for row in packet["direct_references"]]
     lines.append(f"- 직접 참조: {_joined(direct)}")
+
+
+def _render_lexical_evidence(lines: list[str], packet: dict[str, Any]) -> None:
+    target = packet["target"]
+    meanings = target.get("source_meanings", [])
+    lines.extend(
+        [
+            "",
+            "## Lexical source 근거",
+            "",
+            "### Canonical Strong source",
+            "",
+            f"- source disposition: `{_inline(target.get('source_disposition'))}`",
+        ]
+    )
+    if meanings:
+        lines.extend(["", "| source role | 원문 |", "|---|---|"])
+        for meaning in meanings:
+            lines.append(
+                f"| {_inline(meaning.get('role'))} | {_inline(meaning.get('text'))} |"
+            )
+    else:
+        lines.extend(["", "표시할 canonical source meaning/usage가 없음."])
+
+    lexical_reference = packet.get("lexical_reference")
+    lines.extend(
+        [
+            "",
+            "### Reference-only lexical 자료",
+            "",
+            "> 이 자료는 human reference이며 canonical semantic evidence로 승격하지 않는다.",
+        ]
+    )
+    if isinstance(lexical_reference, dict):
+        description = _reference_only_plain_text(
+            lexical_reference.get("description")
+        )
+        lines.extend(
+            [
+                f"- 상태: `reference-only`",
+                f"- source: `{_inline(lexical_reference.get('source_id'))}`",
+                f"- scode: `{_inline(lexical_reference.get('scode'))}`",
+                "- 설명: exact row의 표시용 markup만 정리한 derivative",
+                f"- warning: {_inline(lexical_reference.get('warning'))}",
+                f"- 선택 정책: {_inline(lexical_reference.get('selection_policy'))}",
+                "",
+                "<details>",
+                "<summary>reference-only 설명 펼치기</summary>",
+                "",
+                f"<pre>{html.escape(description)}</pre>",
+                "",
+                "</details>",
+            ]
+        )
+    else:
+        lines.append("Packet에 reference-only lexical 자료가 없음.")
+
+
+def _render_relation_context(
+    lines: list[str], relation_context: dict[str, Any]
+) -> None:
+    target = relation_context["target"]
+    disposition = target.get("disposition")
+    lines.extend(
+        [
+            "",
+            "## Lexical relation context",
+            "",
+            "> 아래 문구는 canonical source의 research discovery evidence다. semantic relation type이나 DB assertion으로 자동 변환하지 않는다.",
+            "",
+            f"- cluster 상태: `{_inline(target['status'])}`",
+            f"- preparation 상태: `{_inline(target['preparation'])}`",
+            f"- disposition: `{_inline(disposition.get('status') if isinstance(disposition, dict) else None)}`",
+        ]
+    )
+    if isinstance(disposition, dict):
+        lines.extend(
+            [
+                f"- hold 사유: {_inline(disposition.get('reason'))}",
+                f"- reopen 조건: {_inline(disposition.get('reopen_condition'))}",
+            ]
+        )
+    lines.extend(
+        [
+            "",
+            "| 방향 | canonical edge | source/container | compact wording | reference context | related 상태 |",
+            "|---|---|---|---|---|---|",
+        ]
+    )
+    relations = relation_context["relations"]
+    if not relations:
+        lines.append("| — | — | — | — | relation evidence 없음 | — |")
+        return
+    for relation in relations:
+        evidence_rows = relation["reference_evidence"] or [
+            {
+                "source_container": relation["source_container"],
+                "reference_context": relation["reference_context"],
+                "source_order": 0,
+            }
+        ]
+        for occurrence in evidence_rows:
+            source_label = (
+                f"{relation['source']} / {occurrence['source_container']} "
+                f"#{occurrence['source_order']}"
+            )
+            related = (
+                f"{relation['related_strong']}: {relation['related_status']} / "
+                f"{relation['related_preparation']}"
+            )
+            lines.append(
+                "| "
+                f"{_inline(relation['node_direction'])} | "
+                f"{_inline(relation['from_strong'])} → {_inline(relation['to_strong'])} | "
+                f"{_inline(source_label)} | "
+                f"{_inline(relation['relation_wording'])} | "
+                f"{_inline(occurrence['reference_context'])} | "
+                f"{_inline(related)} |"
+            )
 
 
 def _render_strong_window(lines: list[str], packet: dict[str, Any]) -> None:
@@ -782,10 +1064,24 @@ def _render_provenance(lines: list[str], packet: dict[str, Any]) -> None:
     )
 
 
-def render_review(value: object) -> str:
+def render_review(
+    value: object,
+    relation_context: object | None = None,
+) -> str:
     packet = validate_packet(value)
+    validated_relation_context = (
+        validate_relation_context(
+            relation_context,
+            expected_target=packet["target"]["normalized_strong"],
+        )
+        if relation_context is not None
+        else None
+    )
     lines: list[str] = []
     _render_target(lines, packet)
+    _render_lexical_evidence(lines, packet)
+    if validated_relation_context is not None:
+        _render_relation_context(lines, validated_relation_context)
     _render_strong_window(lines, packet)
     _render_translation_frequencies(lines, packet)
     _render_occurrence_table(lines, packet)
@@ -794,8 +1090,11 @@ def render_review(value: object) -> str:
     return "\n".join(lines) + "\n"
 
 
-def serialize_review(value: object) -> bytes:
-    return render_review(value).encode("utf-8")
+def serialize_review(
+    value: object,
+    relation_context: object | None = None,
+) -> bytes:
+    return render_review(value, relation_context).encode("utf-8")
 
 
 def write_review_file(
@@ -823,6 +1122,11 @@ def build_parser() -> argparse.ArgumentParser:
         type=Path,
         help="PowerShell 변환을 거치지 않고 UTF-8 Markdown을 직접 기록할 경로",
     )
+    parser.add_argument(
+        "--relation-context",
+        type=Path,
+        help="선택형 node-centered lexical relation JSON 경로",
+    )
     return parser
 
 
@@ -830,7 +1134,12 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     try:
         packet = load_packet(args.evidence_packet)
-        output = serialize_review(packet)
+        relation_context = (
+            load_relation_context(args.relation_context)
+            if args.relation_context is not None
+            else None
+        )
+        output = serialize_review(packet, relation_context)
     except EvidenceReviewError as error:
         sys.stderr.reconfigure(encoding="utf-8", errors="strict", newline="\n")
         print(f"오류: {error}", file=sys.stderr)

@@ -218,6 +218,110 @@ inflected from <strongsref language="GREEK" strongs="201"/>.</strongs_def></entr
                 with self.assertRaises(discovery.LexicalRelationDiscoveryError):
                     self._graph(max_depth=invalid)
 
+    def test_closure_reaches_component_without_fixed_depth_cutoff(self) -> None:
+        result = discovery.discover_relation_closure(
+            ["H100"], self.outgoing, self.incoming
+        )
+        self.assertTrue(result["discovery_complete"])
+        self.assertIsNone(result["stopped_reason"])
+        self.assertEqual(result["frontier"], [])
+        self.assertEqual(
+            {node["strong"] for node in result["discovered_nodes"]},
+            {"H0100", "H0101", "H0102", "H0103", "H0104", "H0105"},
+        )
+        self.assertEqual(len(result["visited"]), 6)
+        self.assertEqual(len(result["relations"]), 6)
+
+    def test_closure_preserves_multi_path_as_additional_discovery(self) -> None:
+        result = discovery.discover_relation_closure(
+            ["H0100"], self.outgoing, self.incoming
+        )
+        node = next(
+            item for item in result["discovered_nodes"] if item["strong"] == "H0102"
+        )
+        reasons = node["additional_discovery_reasons"]
+        self.assertTrue(
+            any(
+                reason["from_strong"] == "H0102"
+                and reason["to_strong"] == "H0101"
+                for reason in reasons
+            )
+        )
+
+    def test_closure_preserves_diamond_multi_path_without_duplicate_node(self) -> None:
+        source = self.root / "DiamondHebrewStrong.xml"
+        source.write_text(
+            """<lexicon>
+<entry id="H0200"><source>from <w src="H0201">201</w> and <w src="H0202">202</w>;</source></entry>
+<entry id="H0201"><source>from <w src="H0203">203</w>;</source></entry>
+<entry id="H0202"><source>from <w src="H0203">203</w>;</source></entry>
+<entry id="H0203"><source>a primitive root;</source></entry>
+</lexicon>""",
+            encoding="utf-8",
+        )
+        outgoing, incoming, _ = discovery.build_relation_indexes(
+            {"H": source}, [{"language": "H", "id": "fixture_diamond"}]
+        )
+
+        result = discovery.discover_relation_closure(
+            ["H0200"], outgoing, incoming
+        )
+        nodes = [
+            node for node in result["discovered_nodes"] if node["strong"] == "H0203"
+        ]
+        self.assertEqual(len(nodes), 1)
+        self.assertEqual(nodes[0]["parent"], "H0201")
+        self.assertTrue(
+            any(
+                reason["parent"] == "H0202"
+                and reason["from_strong"] == "H0202"
+                and reason["to_strong"] == "H0203"
+                for reason in nodes[0]["additional_discovery_reasons"]
+            )
+        )
+        paths_to_target = [
+            relation
+            for relation in result["relations"]
+            if relation["to_strong"] == "H0203"
+        ]
+        self.assertEqual(
+            {(row["from_strong"], row["to_strong"]) for row in paths_to_target},
+            {("H0201", "H0203"), ("H0202", "H0203")},
+        )
+
+    def test_closure_max_nodes_preserves_frontier_and_resumes(self) -> None:
+        partial = discovery.discover_relation_closure(
+            ["H0100"], self.outgoing, self.incoming, max_nodes=1
+        )
+        self.assertFalse(partial["discovery_complete"])
+        self.assertEqual(partial["stopped_reason"], "max_nodes_reached")
+        self.assertEqual(partial["visited"], ["H0100"])
+        self.assertEqual(partial["frontier"], ["H0101", "H0104"])
+
+        resumed = partial
+        while not resumed["discovery_complete"]:
+            resumed = discovery.discover_relation_closure(
+                ["H0100"],
+                self.outgoing,
+                self.incoming,
+                previous=resumed,
+                max_nodes=1,
+            )
+        complete = discovery.discover_relation_closure(
+            ["H0100"], self.outgoing, self.incoming
+        )
+        for key in ("discovered_nodes", "relations", "visited", "frontier"):
+            self.assertEqual(resumed[key], complete[key])
+
+    def test_closure_seed_and_result_are_deterministic(self) -> None:
+        first = discovery.discover_relation_closure(
+            ["H104", "H0100", "H100"], self.outgoing, self.incoming
+        )
+        second = discovery.discover_relation_closure(
+            ["H0100", "H0104"], self.outgoing, self.incoming
+        )
+        self.assertEqual(first, second)
+
     def test_numeric_window_is_target_only_and_relation_free(self) -> None:
         window = discovery.build_numeric_window({}, "H0100")
         self.assertEqual(

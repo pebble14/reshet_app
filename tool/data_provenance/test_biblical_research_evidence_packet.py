@@ -1673,6 +1673,56 @@ from the same as <strongsref language="GREEK" strongs="106"/>.
                 with self.assertRaises(evidence.ManifestError):
                     evidence.load_semantic_research_dispositions(path)
 
+    def test_reshet_projection_preserves_nullable_word_note_read_only(self) -> None:
+        path = self.root / "work.db"
+        connection = sqlite3.connect(path)
+        try:
+            connection.executescript(
+                '''
+                CREATE TABLE WORD_TABLE (
+                  id TEXT PRIMARY KEY,
+                  "스트롱넘버" TEXT NOT NULL,
+                  "언어" TEXT NOT NULL,
+                  "비고" TEXT
+                );
+                CREATE TABLE word_expression_set (
+                  word_id TEXT NOT NULL,
+                  seq INTEGER NOT NULL,
+                  is_representative INTEGER NOT NULL,
+                  spelling TEXT NOT NULL,
+                  transliteration TEXT,
+                  pronunciation TEXT,
+                  pronunciation_notation TEXT,
+                  pronunciation_notation_name TEXT
+                );
+                CREATE TABLE word_meaning_set (
+                  word_id TEXT NOT NULL,
+                  seq INTEGER NOT NULL,
+                  meaning TEXT
+                );
+                INSERT INTO WORD_TABLE(id, "스트롱넘버", "언어", "비고")
+                VALUES ('H0001_0000', 'H0001', '히브리어', NULL),
+                       ('H0002_0000', 'H0002', '히브리어', '검증 가능한 비고');
+                '''
+            )
+            connection.commit()
+        finally:
+            connection.close()
+
+        before = self._sha(path)
+        null_projection, null_provenance = evidence.load_reshet_projection(
+            path, "H0001"
+        )
+        note_projection, note_provenance = evidence.load_reshet_projection(
+            path, "H0002"
+        )
+
+        self.assertIsNone(null_projection[0]["word_note"])
+        self.assertEqual(note_projection[0]["word_note"], "검증 가능한 비고")
+        self.assertEqual(self._sha(path), before)
+        self.assertTrue(null_provenance["unchanged"])
+        self.assertTrue(note_provenance["query_only"])
+
     def test_deterministic_json_bytes(self) -> None:
         first = evidence.serialize_packet({"b": 2, "a": ["한글", 1]})
         second = evidence.serialize_packet({"a": ["한글", 1], "b": 2})

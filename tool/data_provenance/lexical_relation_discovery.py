@@ -15,7 +15,7 @@ import strong_source_diff as legacy
 import strong_source_mapping as strong_mapping
 
 
-TOOL_VERSION = "1.1.0"
+TOOL_VERSION = "1.2.0"
 DEFAULT_MAX_DEPTH = 2
 MIN_MAX_DEPTH = 1
 MAX_MAX_DEPTH = 3
@@ -44,6 +44,38 @@ def _validate_max_depth(max_depth: int) -> None:
         raise LexicalRelationDiscoveryError(
             f"max depth는 {MIN_MAX_DEPTH}~{MAX_MAX_DEPTH}만 허용됨: {max_depth}"
         )
+
+
+def _relation_candidates(
+    current: str,
+    outgoing: dict[str, list[dict[str, object]]],
+    incoming: dict[str, list[dict[str, object]]],
+) -> list[tuple[dict[str, object], str, str]]:
+    candidates = [
+        (edge, "outgoing", str(edge["to_strong"]))
+        for edge in outgoing.get(current, [])
+    ]
+    candidates.extend(
+        (edge, "incoming", str(edge["from_strong"]))
+        for edge in incoming.get(current, [])
+    )
+    candidates.sort(
+        key=lambda item: (
+            0 if item[1] == "outgoing" else 1,
+            _strong_sort_key(item[2]),
+            _edge_sort_key(item[0]),
+        )
+    )
+    return candidates
+
+
+def _relation_edge_key(edge: dict[str, object]) -> tuple[str, str, str, str]:
+    return (
+        str(edge["from_strong"]),
+        str(edge["to_strong"]),
+        str(edge["relation_wording"] or ""),
+        str(edge["source"]),
+    )
 
 
 def build_relation_indexes(
@@ -182,29 +214,10 @@ def discover_relation_graph(
         if current_depth >= max_depth:
             continue
 
-        candidates = [
-            (edge, "outgoing", str(edge["to_strong"]))
-            for edge in outgoing.get(current, [])
-        ]
-        candidates.extend(
-            (edge, "incoming", str(edge["from_strong"]))
-            for edge in incoming.get(current, [])
-        )
-        candidates.sort(
-            key=lambda item: (
-                0 if item[1] == "outgoing" else 1,
-                _strong_sort_key(item[2]),
-                _edge_sort_key(item[0]),
-            )
-        )
-
-        for edge, direction, discovered_strong in candidates:
-            edge_key = (
-                str(edge["from_strong"]),
-                str(edge["to_strong"]),
-                str(edge["relation_wording"] or ""),
-                str(edge["source"]),
-            )
+        for edge, direction, discovered_strong in _relation_candidates(
+            current, outgoing, incoming
+        ):
+            edge_key = _relation_edge_key(edge)
             if edge_key in emitted_edges:
                 continue
             emitted_edges.add(edge_key)
@@ -259,6 +272,186 @@ def discover_relation_graph(
         )
     )
     return discovered_nodes, relations
+
+
+def discover_relation_closure(
+    seeds: list[str] | tuple[str, ...],
+    outgoing: dict[str, list[dict[str, object]]],
+    incoming: dict[str, list[dict[str, object]]],
+    *,
+    previous: dict[str, object] | None = None,
+    max_nodes: int | None = None,
+) -> dict[str, object]:
+    """양방향 connected lexical component를 BFS로 확장하고 resume 상태를 반환한다.
+
+    ``max_nodes``는 이번 호출에서 확장할 frontier node 수만 제한한다. 발견된
+    component의 semantic 경계가 아니며, 제한에 도달하면 미확장 frontier를 그대로
+    보존한다.
+    """
+    if max_nodes is not None and (type(max_nodes) is not int or max_nodes < 1):
+        raise LexicalRelationDiscoveryError("max nodes는 1 이상의 정수여야 함")
+
+    normalized_seeds: list[str] = []
+    for raw in seeds:
+        normalized = legacy.normalize_strong_number(raw)
+        if normalized is None:
+            raise LexicalRelationDiscoveryError(
+                f"유효한 standard Strong 번호가 아님: {raw!r}"
+            )
+        if normalized not in normalized_seeds:
+            normalized_seeds.append(normalized)
+    normalized_seeds.sort(key=_strong_sort_key)
+    if not normalized_seeds:
+        raise LexicalRelationDiscoveryError("closure seed Strong이 비어 있음")
+
+    if previous is None:
+        node_by_strong: dict[str, dict[str, object]] = {
+            seed: {
+                "strong": seed,
+                "depth": 0,
+                "parent": None,
+                "direction": None,
+                "relation_wording": None,
+                "source": None,
+                "discovery_path": [],
+                "additional_discovery_reasons": [],
+            }
+            for seed in normalized_seeds
+        }
+        relations: list[dict[str, object]] = []
+        visited: list[str] = []
+        frontier_values = list(normalized_seeds)
+    else:
+        if previous.get("seeds") != normalized_seeds:
+            raise LexicalRelationDiscoveryError("resume closure seed 계약 불일치")
+        raw_nodes = previous.get("discovered_nodes")
+        raw_relations = previous.get("relations")
+        raw_visited = previous.get("visited")
+        raw_frontier = previous.get("frontier")
+        if not all(
+            isinstance(value, list)
+            for value in (raw_nodes, raw_relations, raw_visited, raw_frontier)
+        ):
+            raise LexicalRelationDiscoveryError("resume closure 배열 계약 불일치")
+        node_by_strong = {}
+        for raw_node in raw_nodes:
+            if not isinstance(raw_node, dict):
+                raise LexicalRelationDiscoveryError("resume closure node 계약 불일치")
+            strong = raw_node.get("strong")
+            if not isinstance(strong, str) or strong in node_by_strong:
+                raise LexicalRelationDiscoveryError(
+                    "resume closure node Strong 계약 불일치"
+                )
+            node_by_strong[strong] = dict(raw_node)
+        relations = []
+        for raw_relation in raw_relations:
+            if not isinstance(raw_relation, dict):
+                raise LexicalRelationDiscoveryError(
+                    "resume closure relation 계약 불일치"
+                )
+            relations.append(dict(raw_relation))
+        if not all(isinstance(value, str) for value in raw_visited + raw_frontier):
+            raise LexicalRelationDiscoveryError(
+                "resume closure visited/frontier 계약 불일치"
+            )
+        visited = list(raw_visited)
+        frontier_values = list(raw_frontier)
+        all_state_nodes = set(visited) | set(frontier_values)
+        if (
+            len(visited) != len(set(visited))
+            or len(frontier_values) != len(set(frontier_values))
+            or set(visited) & set(frontier_values)
+            or all_state_nodes != set(node_by_strong)
+        ):
+            raise LexicalRelationDiscoveryError(
+                "resume closure visited/frontier와 node 집합 불일치"
+            )
+
+    frontier: deque[str] = deque(frontier_values)
+    emitted_edges = {_relation_edge_key(edge) for edge in relations}
+    expanded_this_run = 0
+    while frontier and (max_nodes is None or expanded_this_run < max_nodes):
+        current = frontier.popleft()
+        current_node = node_by_strong[current]
+        current_depth = int(current_node["depth"])
+        for edge, direction, discovered_strong in _relation_candidates(
+            current, outgoing, incoming
+        ):
+            edge_key = _relation_edge_key(edge)
+            if edge_key in emitted_edges:
+                continue
+            emitted_edges.add(edge_key)
+            depth = current_depth + 1
+            discovered_new_node = discovered_strong not in node_by_strong
+            relation = {
+                **edge,
+                "direction": direction,
+                "depth": depth,
+                "parent": current,
+                "discovered_strong": discovered_strong,
+                "discovered_new_node": discovered_new_node,
+            }
+            relations.append(relation)
+            reason = {
+                "from_strong": edge["from_strong"],
+                "to_strong": edge["to_strong"],
+                "direction": direction,
+                "relation_wording": edge["relation_wording"],
+                "source": edge["source"],
+                "parent": current,
+            }
+            if discovered_new_node:
+                path_step = {**reason, "strong": discovered_strong}
+                node_by_strong[discovered_strong] = {
+                    "strong": discovered_strong,
+                    "depth": depth,
+                    "parent": current,
+                    "direction": direction,
+                    "relation_wording": edge["relation_wording"],
+                    "source": edge["source"],
+                    "discovery_path": [
+                        *list(current_node["discovery_path"]),
+                        path_step,
+                    ],
+                    "additional_discovery_reasons": [],
+                }
+                frontier.append(discovered_strong)
+            else:
+                additional = node_by_strong[discovered_strong].setdefault(
+                    "additional_discovery_reasons", []
+                )
+                if not isinstance(additional, list):
+                    raise LexicalRelationDiscoveryError(
+                        "closure additional discovery 내부 계약 불일치"
+                    )
+                additional.append(reason)
+        visited.append(current)
+        expanded_this_run += 1
+
+    discovered_nodes = sorted(
+        node_by_strong.values(),
+        key=lambda node: (int(node["depth"]), _strong_sort_key(str(node["strong"]))),
+    )
+    relations.sort(
+        key=lambda edge: (
+            int(edge["depth"]),
+            _strong_sort_key(str(edge["parent"])),
+            0 if edge["direction"] == "outgoing" else 1,
+            _strong_sort_key(str(edge["discovered_strong"])),
+            _edge_sort_key(edge),
+        )
+    )
+    discovery_complete = not frontier
+    return {
+        "seeds": normalized_seeds,
+        "discovered_nodes": discovered_nodes,
+        "relations": relations,
+        "visited": visited,
+        "frontier": list(frontier),
+        "discovery_complete": discovery_complete,
+        "stopped_reason": None if discovery_complete else "max_nodes_reached",
+        "expanded_this_run": expanded_this_run,
+    }
 
 
 def build_numeric_window(
