@@ -1,0 +1,127 @@
+{
+  "format_version": 4,
+  "batch_id": "RESHET-EC-H3-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-08-22 H3 cluster 의미·비고·관계 사용자 승인 및 DB·Git 실행 지시",
+    "document_sha256": "37c591cf6285a1d93b374e348ecd24b8d76cf18872308d0f55f71f291162bde4"
+  },
+  "target": {
+    "expected_work_sha256": "479fd8660cbc19aa18f9f6640cc097656b63f5f65084ee923f718edf6f791fb2",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0003_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "초목, 풀"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "푸른 초목(草木)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0004_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "과일, 열매"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "열매"
+        }
+      ]
+    },
+    {
+      "word_id": "H0024_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "곡식의 이삭, 푸른 싹"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "곡식(穀食)의 풋이삭"
+        },
+        {
+          "seq": 2,
+          "meaning": "아빕월(月)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0003_0000",
+      "before": null,
+      "after": "욥 8:12에서는 식물이 아직 푸른 상태를, 아가 6:11에서는 골짜기의 푸른 초목(草木)·새순을 가리킨다."
+    },
+    {
+      "word_id": "H0024_0000",
+      "before": null,
+      "after": "아빕월(月)은 곡식(穀食)의 풋이삭이 나는 시기에서 이름을 얻은 달이며, 후대에는 니산월(月)로 불렸다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0003_0000",
+      "word_id_2": "H0004_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H3-CLUSTER-H0004-H0003"
+    },
+    {
+      "word_id_1": "H0003_0000",
+      "word_id_2": "H0024_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H3-CLUSTER-H0003-H0024"
+    },
+    {
+      "word_id_1": "H0024_0000",
+      "word_id_2": "H8512_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H3-CLUSTER-H8512-H0024"
+    },
+    {
+      "word_id_1": "H8510_0000",
+      "word_id_2": "H8512_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H3-CLUSTER-H8512-H8510"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": []
+}
