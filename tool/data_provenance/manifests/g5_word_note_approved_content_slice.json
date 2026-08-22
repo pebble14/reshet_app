@@ -1,0 +1,21 @@
+{
+  "format_version": 2,
+  "batch_id": "RESHET-EC-G5-WORD-NOTE-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "Reshet H1 클러스터 사용자 확정 및 G5 비고 반영 지시",
+    "document_sha256": "a7bd8c2b7c0ead62d4235070d881baf9d6c29da51124f9bb1797748816307785"
+  },
+  "target": {
+    "expected_work_sha256": "ab8ec1aaeef9c4bad0d7bbda2576b50b1236fbb06ee62a0396cde7509730a026",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [],
+  "word_note_replacements": [
+    {
+      "word_id": "G0005_0000",
+      "before": "아버지 또는 조상(祖上)을 의미하는 아람어 단어 אַבָּא(아빠)의 헬라어 음역",
+      "after": "아람어 אַבָּא를 헬라어로 음역한 호격이다. 신약의 세 용례 모두 ‘아바, 아버지’ 문맥이며, ‘아빠’는 같은 의미를 친근하게 나타낸 한국어 표현이다."
+    }
+  ],
+  "relation_creates": []
+}
