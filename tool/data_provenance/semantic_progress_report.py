@@ -23,7 +23,7 @@ import strong_source_mapping as strong_mapping
 
 
 TOOL_NAME = "Reshet Semantic Progress Report"
-TOOL_VERSION = "1.0.0"
+TOOL_VERSION = "1.1.0"
 SCHEMA_VERSION = 1
 JSON_FILENAME = "semantic_progress.json"
 CSV_FILENAME = "semantic_progress.csv"

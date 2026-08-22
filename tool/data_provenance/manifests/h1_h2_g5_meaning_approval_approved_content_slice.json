@@ -1,0 +1,54 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H1-H2-G5-MEANING-APPROVAL-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-08-22 H1·H2·G5 현행 meaning 사용자 승인",
+    "document_sha256": "a7bd8c2b7c0ead62d4235070d881baf9d6c29da51124f9bb1797748816307785"
+  },
+  "target": {
+    "expected_work_sha256": "479fd8660cbc19aa18f9f6640cc097656b63f5f65084ee923f718edf6f791fb2",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [],
+  "word_note_replacements": [],
+  "relation_creates": [],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": [
+    {
+      "word_id": "H0001_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "아버지"
+        },
+        {
+          "seq": 2,
+          "meaning": "조상(祖上)/선조(先祖)/시조(始祖)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0002_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "아버지"
+        },
+        {
+          "seq": 2,
+          "meaning": "조상(祖上)/선조(先祖)/시조(始祖)"
+        }
+      ]
+    },
+    {
+      "word_id": "G0005_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "아빠/아버지"
+        }
+      ]
+    }
+  ]
+}

@@ -22,7 +22,7 @@ import strong_source_diff as legacy
 import strong_source_mapping as strong_mapping
 
 
-TOOL_VERSION = "1.3.0"
+TOOL_VERSION = "1.4.0"
 TOOL_DIR = Path(__file__).resolve().parent
 REPOSITORY_ROOT = TOOL_DIR.parent.parent
 DEFAULT_STRONG_MANIFEST = TOOL_DIR / "manifests" / "strong_sources.json"
@@ -2094,33 +2094,35 @@ def _load_approved_manifest(path: Path) -> _ApprovedManifest:
         "relation_creates",
     }
     expected_keys = base_keys
-    if format_version in (2, 3, 4):
+    if format_version in (2, 3, 4, 5):
         expected_keys |= {"word_note_replacements"}
-    if format_version in (3, 4):
+    if format_version in (3, 4, 5):
         expected_keys |= {"supersedes"}
-    if format_version == 4:
+    if format_version in (4, 5):
         expected_keys |= {"relation_replacements"}
+    if format_version == 5:
+        expected_keys |= {"meaning_approvals"}
     batch_id = payload.get("batch_id")
     if (
         set(payload) != expected_keys
         or type(format_version) is not int
-        or format_version not in (1, 2, 3, 4)
+        or format_version not in (1, 2, 3, 4, 5)
         or not isinstance(batch_id, str)
         or not batch_id.endswith(APPROVED_BATCH_ID_SUFFIX)
         or not isinstance(payload.get("provenance"), dict)
         or not isinstance(payload.get("target"), dict)
         or not isinstance(payload.get("relation_creates"), list)
         or (
-            format_version == 4
+            format_version in (4, 5)
             and not isinstance(payload.get("relation_replacements"), list)
         )
     ):
         raise ManifestError(f"approved content manifest format 계약 불일치: {path.name}")
-    if format_version in (2, 3, 4):
+    if format_version in (2, 3, 4, 5):
         _validate_approved_word_note_replacements(payload, path)
     supersedes = (
         _validate_approved_supersessions(payload, path)
-        if format_version in (3, 4)
+        if format_version in (3, 4, 5)
         else ()
     )
     rows = payload.get("meaning_replacements")
@@ -2158,6 +2160,62 @@ def _load_approved_manifest(path: Path) -> _ApprovedManifest:
                 ],
             }
         )
+    if format_version == 5:
+        approval_rows = payload.get("meaning_approvals")
+        if not isinstance(approval_rows, list):
+            raise ManifestError(
+                "approved content manifest meaning_approvals가 배열이 아님"
+            )
+        for index, row in enumerate(approval_rows):
+            row_label = f"{path.name} meaning_approvals[{index}]"
+            if not isinstance(row, dict) or set(row) != {"word_id", "meanings"}:
+                raise ManifestError(
+                    f"{row_label}의 필드가 approved content 계약과 다름"
+                )
+            word_id = row.get("word_id")
+            strong = _strong_from_word_id(word_id)
+            if (
+                not isinstance(word_id, str)
+                or re.fullmatch(r"[GH][0-9]{4}_.+", word_id) is None
+                or strong is None
+            ):
+                raise ManifestError(f"{row_label}.word_id가 Strong word ID가 아님")
+            meanings = row.get("meanings")
+            previous_seq = 0
+            if not isinstance(meanings, list) or not meanings:
+                raise ManifestError(
+                    f"{row_label}.meanings는 비어 있지 않은 배열이어야 함"
+                )
+            for meaning_index, value in enumerate(meanings):
+                meaning_label = f"{row_label}.meanings[{meaning_index}]"
+                if (
+                    not isinstance(value, dict)
+                    or set(value) != {"seq", "meaning"}
+                    or type(value.get("seq")) is not int
+                    or value["seq"] < 1
+                    or value["seq"] <= previous_seq
+                    or not isinstance(value.get("meaning"), str)
+                    or not value["meaning"]
+                ):
+                    raise ManifestError(
+                        f"{meaning_label}의 meaning projection 형식 불일치"
+                    )
+                previous_seq = value["seq"]
+            if word_id in word_ids:
+                raise ManifestError(
+                    "approved content meaning replacement/approval word_id "
+                    f"중복: {word_id}"
+                )
+            word_ids.add(word_id)
+            projections[strong].append(
+                {
+                    "word_id": word_id,
+                    "meanings": [
+                        {"seq": value["seq"], "meaning": value["meaning"]}
+                        for value in meanings
+                    ],
+                }
+            )
     projections_by_strong = {
         strong: sorted(values, key=lambda value: str(value["word_id"]))
         for strong, values in projections.items()

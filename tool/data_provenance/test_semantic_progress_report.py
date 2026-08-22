@@ -128,6 +128,7 @@ class SemanticProgressReportTest(unittest.TestCase):
         batch_id: str | None = None,
         supersedes: list[dict[str, str]] | None = None,
         relation_creates: list[dict[str, object]] | None = None,
+        meaning_approvals: list[dict[str, object]] | None = None,
     ) -> Path:
         path = self.root / filename
         payload: dict[str, object] = {
@@ -149,12 +150,14 @@ class SemanticProgressReportTest(unittest.TestCase):
             ),
             "relation_creates": relation_creates or [],
         }
-        if format_version in (2, 3, 4):
+        if format_version in (2, 3, 4, 5):
             payload["word_note_replacements"] = []
-        if format_version in (3, 4):
+        if format_version in (3, 4, 5):
             payload["supersedes"] = supersedes or []
-        if format_version == 4:
+        if format_version in (4, 5):
             payload["relation_replacements"] = []
+        if format_version == 5:
+            payload["meaning_approvals"] = meaning_approvals or []
         path.write_text(
             json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
             encoding="utf-8",
@@ -288,7 +291,16 @@ class SemanticProgressReportTest(unittest.TestCase):
 
     def test_explicit_approved_uses_exact_completion_gate(self) -> None:
         manifest = self._write_approved_manifest(
-            "approved_content_slice.json", strong="H0001", meaning="승인 의미"
+            "approved_content_slice.json",
+            strong=None,
+            meaning=None,
+            format_version=5,
+            meaning_approvals=[
+                {
+                    "word_id": "H0001_0000",
+                    "meanings": [{"seq": 1, "meaning": "승인 의미"}],
+                }
+            ],
         )
         canonical = self._canonical_rows(
             [("H0001", self._entry("H0001", "אָב", language_code="heb"))]

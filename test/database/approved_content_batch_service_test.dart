@@ -198,6 +198,86 @@ void main() {
       );
     });
 
+    test('valid v5 approval-only manifest를 파싱한다', () {
+      final manifest = _parseMap(
+        _v5Manifest(
+          meaningApprovals: const [
+            {
+              'word_id': 'H0001_0000',
+              'meanings': [
+                {'seq': 1, 'meaning': '아버지'},
+                {'seq': 2, 'meaning': '조상(祖上)/선조(先祖)/시조(始祖)'},
+              ],
+            },
+          ],
+        ),
+      );
+
+      expect(manifest.formatVersion, 5);
+      expect(manifest.meaningApprovals, hasLength(1));
+      expect(manifest.meaningApprovals.single.wordId, 'H0001_0000');
+      expect(manifest.meaningApprovals.single.meanings, hasLength(2));
+      expect(manifest.writeRequest.operationCount, 0);
+      expect(
+        (manifest.toReportJson()['approval_counts']
+            as Map)['meaning_approvals'],
+        1,
+      );
+    });
+
+    test('v5 approval 중복·replacement 충돌·malformed projection을 거부한다', () {
+      const approval = {
+        'word_id': 'H0001_0000',
+        'meanings': [
+          {'seq': 1, 'meaning': '아버지'},
+        ],
+      };
+      final duplicate = _v5Manifest(
+        meaningApprovals: const [approval, approval],
+      );
+      final overlap = _v5Manifest(
+        meaningReplacements: const [
+          {
+            'word_id': 'H0001_0000',
+            'before': [
+              {'seq': 1, 'meaning': '이전'},
+            ],
+            'after': [
+              {'seq': 1, 'meaning': '이후'},
+            ],
+          },
+        ],
+        meaningApprovals: const [approval],
+      );
+      final malformed = _v5Manifest(
+        meaningApprovals: const [
+          {
+            'word_id': 'H0001_0000',
+            'meanings': [
+              {'seq': 2, 'meaning': '둘째'},
+              {'seq': 1, 'meaning': '첫째'},
+            ],
+          },
+        ],
+      );
+      final legacyUnknown = _v4Manifest(
+        relationReplacements: [
+          _relationReplacementRow(
+            relationId: 7617,
+            wordId1: _relationWordIdA,
+            wordId2: _relationWordIdB,
+          ),
+        ],
+      )..['meaning_approvals'] = const [approval];
+
+      for (final invalid in [duplicate, overlap, malformed, legacyUnknown]) {
+        expect(
+          () => _parseMap(invalid),
+          throwsA(isA<ApprovedContentValidationException>()),
+        );
+      }
+    });
+
     test('v1~v3 relation_replacements와 v4 malformed replacement를 거부한다', () {
       final replacement = _relationReplacementRow(
         relationId: 7617,
@@ -364,7 +444,7 @@ void main() {
 
     test('invalid version, type, required field, unknown operation을 거부한다', () {
       final invalidVersion = _fixtureMap(p1ManifestFile)
-        ..['format_version'] = 5;
+        ..['format_version'] = 6;
       expect(
         () => _parseMap(invalidVersion),
         throwsA(isA<ApprovedContentValidationException>()),
@@ -820,6 +900,97 @@ void main() {
   });
 
   group('transaction, undo, apply artifact', () {
+    test(
+      'v5 approval-only dry-run은 DB write·history·undo 없이 exact 검증한다',
+      () async {
+        final manifestFile = await _writeManifest(
+          caseDirectory!,
+          'meaning_approval_only.json',
+          _v5Manifest(
+            expectedWorkSha256: await ApprovedContentSha256.file(p1Snapshot),
+            expectedUserVersion: 0,
+            meaningApprovals: const [
+              {
+                'word_id': 'H1653_0000',
+                'meanings': [
+                  {'seq': 1, 'meaning': 'a shower'},
+                  {'seq': 2, 'meaning': 'rain, shower.'},
+                ],
+              },
+            ],
+          ),
+        );
+        final runner = ApprovedContentBatchRunner(
+          projectRoot: repoRoot,
+          temporaryDirectoryParent: caseDirectory,
+        );
+
+        final result = await runner.dryRun(
+          manifestFile: manifestFile,
+          databaseFile: p1Snapshot,
+        );
+
+        expect(result.writeExecuted, isFalse);
+        expect(result.didUndo, isFalse);
+        expect(result.historyGroupId, isNull);
+        expect(result.historyRowCount, 0);
+        expect(result.meaningApprovalCount, 1);
+        expect(result.meaningReplacementCount, 0);
+        expect(result.databaseSha256Before, result.databaseSha256After);
+        expect(
+          await ApprovedContentSha256.file(p1Snapshot),
+          result.databaseSha256Before,
+        );
+
+        final mismatchManifestFile = await _writeManifest(
+          caseDirectory!,
+          'meaning_approval_mismatch.json',
+          _v5Manifest(
+            expectedWorkSha256: result.databaseSha256Before,
+            expectedUserVersion: 0,
+            meaningApprovals: const [
+              {
+                'word_id': 'H1653_0000',
+                'meanings': [
+                  {'seq': 1, 'meaning': '승인 시점과 다른 값'},
+                  {'seq': 2, 'meaning': 'rain, shower.'},
+                ],
+              },
+            ],
+          ),
+        );
+        await expectLater(
+          runner.dryRun(
+            manifestFile: mismatchManifestFile,
+            databaseFile: p1Snapshot,
+          ),
+          throwsA(
+            isA<ApprovedContentValidationException>().having(
+              (error) => error.message,
+              'message',
+              contains('exact 일치하지 않습니다'),
+            ),
+          ),
+        );
+        expect(
+          await ApprovedContentSha256.file(p1Snapshot),
+          result.databaseSha256Before,
+        );
+
+        await expectLater(
+          runner.apply(manifestFile: manifestFile),
+          throwsA(
+            isA<ApprovedContentValidationException>().having(
+              (error) => error.message,
+              'message',
+              contains('approval-only'),
+            ),
+          ),
+        );
+        expect(await ApprovedContentSha256.file(liveWorkDatabase), liveWorkSha);
+      },
+    );
+
     test('v2 note-only dry-run에서 note set·clear 후 원본을 byte 불변으로 둔다', () async {
       final fixture = await _createNoteFixture(caseDirectory!, p1Snapshot);
       final manifestFile = await _writeManifest(
@@ -1840,6 +2011,32 @@ Map<String, dynamic> _v4Manifest({
     )
     ..['format_version'] = 4
     ..['relation_replacements'] = relationReplacements;
+}
+
+Map<String, dynamic> _v5Manifest({
+  String batchId = 'RESHET-TEST-MEANING-APPROVAL-APPROVED-CONTENT-SLICE',
+  String expectedWorkSha256 =
+      '0000000000000000000000000000000000000000000000000000000000000000',
+  int expectedUserVersion = 0,
+  List<Map<String, Object?>> meaningReplacements = const [],
+  List<Map<String, Object?>> wordNoteReplacements = const [],
+  List<Map<String, Object?>> relationCreates = const [],
+  List<Map<String, Object?>> relationReplacements = const [],
+  List<Map<String, Object?>> supersedes = const [],
+  List<Map<String, Object?>> meaningApprovals = const [],
+}) {
+  return _v4Manifest(
+      batchId: batchId,
+      expectedWorkSha256: expectedWorkSha256,
+      expectedUserVersion: expectedUserVersion,
+      meaningReplacements: meaningReplacements,
+      wordNoteReplacements: wordNoteReplacements,
+      relationCreates: relationCreates,
+      relationReplacements: relationReplacements,
+      supersedes: supersedes,
+    )
+    ..['format_version'] = 5
+    ..['meaning_approvals'] = meaningApprovals;
 }
 
 Map<String, dynamic> _historyJson(Map<String, Object?> historyRow, String key) {

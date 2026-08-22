@@ -1,8 +1,8 @@
-# 승인 콘텐츠 batch applicator v1/v2/v3/v4
+# 승인 콘텐츠 batch applicator v1/v2/v3/v4/v5
 
 > 문서 분류: 내부 DB 운영 도구의 현행 계약
 >
-> 이 문서는 승인 완료된 meaning·word note·relation 생성·relation 교체 payload를 `reshet_work.db`에 원자적으로 반영하는 CLI의 입력·검증·복구 경계를 정의한다. 콘텐츠의 의미·어원·관계를 판단하거나 사용자 UI 확인을 대신하는 문서가 아니다.
+> 이 문서는 승인 완료된 meaning·word note·relation 생성·relation 교체 payload를 `reshet_work.db`에 원자적으로 반영하고, DB 쓰기가 필요 없는 현행 meaning 승인을 exact 검증하는 CLI의 입력·검증·복구 경계를 정의한다. 콘텐츠의 의미·어원·관계를 판단하거나 사용자 UI 확인을 대신하는 문서가 아니다.
 
 ## 1. 목적과 범위
 
@@ -13,11 +13,12 @@
 - v3 Strong 단위 승인 supersession metadata 검증과 보고
 - `WORD_RELATION` 신규 생성
 - v4 기존 `WORD_RELATION`의 identity를 보존하는 in-place 교체
+- v5 DB를 바꾸지 않는 단어별 현행 meaning 전체 projection 승인
 - 여러 operation을 한 SQLite transaction과 한 `CHANGE_HISTORY.group_id`로 기록
 - 적용 가능성 dry-run과 실제 `WordRepository.undoLastChange()` 1회 복원 검증
 - live apply 전 `VACUUM INTO` snapshot 및 적용 결과 보고서 생성
 
-v1 manifest는 기존 meaning·relation 생성 계약을 그대로 유지하며 `word_note_replacements`를 받지 않는다. v2는 v1의 operation에 word note 교체를 추가한다. v3는 v2의 DB operation을 그대로 유지하면서 completion authority용 Strong 단위 `supersedes` metadata를 추가한다. v4는 v3 exact top-level 계약에 필수 `relation_replacements` 배열을 추가한다. 다음 operation은 모든 version에서 지원하지 않는다.
+v1 manifest는 기존 meaning·relation 생성 계약을 그대로 유지하며 `word_note_replacements`를 받지 않는다. v2는 v1의 operation에 word note 교체를 추가한다. v3는 v2의 DB operation을 그대로 유지하면서 completion authority용 Strong 단위 `supersedes` metadata를 추가한다. v4는 v3 exact top-level 계약에 필수 `relation_replacements` 배열을 추가한다. v5는 v4 계약에 필수 `meaning_approvals` 배열을 추가하되 이 배열을 DB operation으로 취급하지 않는다. 다음 operation은 모든 version에서 지원하지 않는다.
 
 - meaning 일부 행 patch
 - 관계 삭제
@@ -46,7 +47,7 @@ dart run tool/approved_content_batch.dart --manifest <manifest.json> --database 
 
 성공은 exit code `0`, manifest·DB precondition 같은 검증 실패는 `2`, 임시 적용·undo·snapshot·transaction·post-commit 검증 같은 실행 실패는 `1`을 반환한다. stderr의 `검증 실패`와 `실행 실패` 접두어로 두 범주를 구분한다.
 
-## 3. Manifest v1/v2/v3/v4
+## 3. Manifest v1/v2/v3/v4/v5
 
 입력은 UTF-8 JSON이며 YAML dependency를 사용하지 않는다.
 
@@ -92,10 +93,11 @@ dart run tool/approved_content_batch.dart --manifest <manifest.json> --database 
 - `format_version: 2`는 v1 필드 전체에 필수 top-level 배열 `word_note_replacements`를 추가한다.
 - `format_version: 3`은 v2 필드 전체에 필수 top-level 배열 `supersedes`를 추가한다.
 - `format_version: 4`는 v3 필드 전체에 필수 top-level 배열 `relation_replacements`를 추가한다. 이 필드는 v1~v3에서는 unknown field다.
+- `format_version: 5`는 v4 필드 전체에 필수 top-level 배열 `meaning_approvals`를 추가한다. 이 필드는 v1~v4에서는 unknown field다.
 - 알 수 없는 필드나 operation 종류, 묵시적 타입 변환을 허용하지 않는다.
 - 문자열은 trim·정규화·번역하지 않는다.
-- operation은 최소 1개여야 한다.
-- 같은 word의 meaning replacement, 같은 word의 note replacement, 같은 unordered relation pair의 중복을 각각 거부한다. 같은 word가 meaning과 note 배열 양쪽에 한 번씩 있는 것은 허용한다.
+- write operation 또는 meaning approval은 최소 1개여야 한다.
+- 같은 word의 meaning replacement, meaning approval, note replacement와 같은 unordered relation pair의 중복을 각각 거부한다. 같은 word를 meaning replacement와 approval 양쪽에 지정할 수 없으며, 같은 word가 meaning과 note 배열 양쪽에 한 번씩 있는 것은 허용한다.
 - meaning `before`는 DB의 `(seq, meaning)` ordered projection과 exact 일치해야 한다.
 - meaning `before`와 `after`가 같으면 no-op으로 거부한다. 각 projection의 `seq`는 양수이고 엄격한 오름차순이어야 하며 문자열은 빈 값일 수 없다.
 - 관계의 두 word와 category/type/status lookup은 실제 DB에 존재해야 한다. type의 category도 manifest와 일치해야 한다.
@@ -139,7 +141,7 @@ v3 supersession metadata 계약은 다음과 같다.
 
 - v3는 v2의 exact top-level 필드 전체와 필수 배열 `supersedes`를 가진다.
 - 각 row는 `strong_number`와 `batch_id`만 가지며, `strong_number`는 `H5229` 같은 canonical Strong 형식이고 `batch_id`는 `-APPROVED-CONTENT-SLICE`로 끝나는 이전 승인 batch identity다.
-- 동일 Strong·batch reference 중복과 self-supersession을 거부하며, supersession을 선언한 현재 manifest의 `meaning_replacements`에도 해당 Strong이 있어야 한다.
+- 동일 Strong·batch reference 중복과 self-supersession을 거부하며, supersession을 선언한 현재 manifest의 `meaning_replacements` 또는 v5 `meaning_approvals`에도 해당 Strong이 있어야 한다.
 - applicator는 metadata를 manifest 보고서에 보존하지만 DB operation, history payload, undo 범위에는 사용하지 않는다. reference batch의 존재·해당 Strong 포함, tracked set의 batch ID 고유성, cycle과 active approval 결정은 completion gate가 전체 manifest set을 기준으로 fail-closed 검증한다.
 - filename 순서나 Git timestamp는 승인 우선순위가 아니며 과거 manifest는 수정·삭제하지 않는다.
 
@@ -201,9 +203,46 @@ v4 relation replacement operation은 다음 형식이다.
 - operation마다 `action_type=update`, `entity_type=relation`, 기존 relation ID, full before/after row를 batch 공통 history group에 기록한다. relation create와 함께 있어도 `undoLastChange()` 1회로 생성 row는 삭제되고 교체 row는 original `updated_at`까지 exact 복원된다.
 - v4 `supersedes`는 v3와 같은 Strong 단위 계약을 유지한다. relation replacement 자체는 meaning 승인이나 semantic supersession을 추론하지 않는다.
 
+v5 current meaning approval은 다음 형식이다.
+
+```json
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-...-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "사용자 승인 식별자",
+    "document_sha256": "64자리 소문자 SHA-256"
+  },
+  "target": {
+    "expected_work_sha256": "64자리 소문자 SHA-256",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [],
+  "word_note_replacements": [],
+  "relation_creates": [],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": [
+    {
+      "word_id": "H0001_0000",
+      "meanings": [
+        {"seq": 1, "meaning": "아버지"},
+        {"seq": 2, "meaning": "조상(祖上)/선조(先祖)/시조(始祖)"}
+      ]
+    }
+  ]
+}
+```
+
+- `meaning_approvals`는 `word_meaning_set`을 수정하지 않고 승인 시점의 현행 `(seq, meaning)` ordered projection 전체를 기록한다. 과거 값을 `before`로 꾸미거나 동일 before/after 교체를 만들지 않는다.
+- `word_id`는 `H0001_0000` 같은 canonical Strong word ID여야 한다. `meanings`는 비어 있지 않아야 하고 `seq`는 양수인 엄격한 오름차순이며 meaning은 non-empty string이다.
+- dry-run은 대상 word 존재, exact work DB SHA·`user_version`, current meaning projection의 exact 일치, integrity/FK와 원본 SHA 불변만 read-only로 검증한다. approval-only manifest에는 임시 복제, DB write, history, snapshot과 undo가 없다.
+- approval-only manifest의 `--apply`는 검증 실패로 거부한다. 사람의 승인 기록과 성공한 read-only dry-run을 가진 Git tracked manifest 자체가 completion authority이며, DB 변경 이력처럼 가장하지 않는다.
+- v5가 실제 write operation도 함께 포함하면 기존 dry-run·apply·snapshot·history·undo 계약은 write operation에만 적용된다. `meaning_approvals` 수는 별도 approval count로 보고하고 write operation count나 history row 수에 더하지 않는다.
+
 ## 4. Dry-run 계약
 
-dry-run은 원본 DB의 SHA와 sidecar 상태를 실행 전후 확인하고 원본을 수정하지 않는다.
+dry-run은 원본 DB의 SHA와 sidecar 상태를 실행 전후 확인하고 원본을 수정하지 않는다. approval-only v5는 아래 1~3의 read-only preflight와 마지막 원본 SHA 확인만 수행하며, 4~8의 write rehearsal은 N/A다.
 
 1. manifest 구조와 대상 DB SHA·`user_version`을 검증한다.
 2. SQLite sidecar(`-wal`, `-shm`, `-journal`)가 있으면 안전한 복제를 위해 거부한다.
@@ -219,7 +258,7 @@ dry-run 성공은 단순 SQL 문법 검사가 아니라 현재 manifest가 대�
 
 ## 5. Live apply 계약
 
-live apply는 같은 manifest의 전체 dry-run이 먼저 성공해야 한다. 이후에도 work DB precondition을 다시 확인한다.
+live apply는 write operation이 있는 manifest에서 같은 manifest의 전체 dry-run이 먼저 성공해야 한다. 이후에도 work DB precondition을 다시 확인한다. approval-only v5는 `--apply` 대상이 아니다.
 
 1. canonical work·seed DB와 sidecar 상태를 확인하고 seed 크기·SHA를 기록한다.
 2. `DatabaseSnapshotService`의 검증된 `VACUUM INTO` 경계로 pre-write snapshot을 만든다.
@@ -248,7 +287,7 @@ data/backups/approved_content_batch/<UTC timestamp>/
 
 - manifest 생성 전 콘텐츠 판단과 provenance 승인은 사람이 수행한다.
 - 도구 성공은 콘텐츠가 언어학적으로 옳다는 판정이 아니다.
-- semantic completion gate의 `explicit_approved` 근거는 계속 `meaning_replacements[].after` exact projection뿐이다. note-only 또는 relation-only manifest는 승인 Strong을 만들지 않으며, relation create/replacement는 relation 정책이나 semantic 의미를 추론하지 않는다. note와 relation 적용 무결성은 이 applicator의 before/after·history·undo 검증에서 별도로 보호한다.
+- semantic completion gate의 `explicit_approved` 근거는 `meaning_replacements[].after` 또는 v5 `meaning_approvals[].meanings` exact projection이다. 둘 다 현재 work DB의 Strong 전체 meaning projection과 exact 일치해야 한다. note-only 또는 relation-only manifest는 승인 Strong을 만들지 않으며, relation create/replacement는 relation 정책이나 semantic 의미를 추론하지 않는다. note와 relation 적용 무결성은 이 applicator의 before/after·history·undo 검증에서 별도로 보호한다.
 - 사용자 UI 확인은 자동화 대상이 아니며 필요한 콘텐츠 batch별로 별도 수행한다.
 - seed DB 반영과 work→seed 승격은 별도 승인·검증 작업이다.
 - `test/fixtures/approved_content_batch/p1_rehearsal_manifest.json`은 P1 절차 재현용 테스트 fixture이며 영구 콘텐츠 정책이나 재적용 지시가 아니다.

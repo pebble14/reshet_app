@@ -171,18 +171,19 @@ final class _ApprovedContentCliOptions {
 }
 
 const String _helpText = '''
-Reshet 승인 콘텐츠 batch applicator v1/v2
+Reshet 승인 콘텐츠 batch applicator v1~v5
 
 사용법:
   dart run tool/approved_content_batch.dart --manifest <manifest.json>
   dart run tool/approved_content_batch.dart --manifest <manifest.json> --apply
 
 옵션:
-  --manifest <path>  manifest v1 또는 v2 JSON 파일
+  --manifest <path>  manifest v1~v5 JSON 파일
   --database <path>  dry-run 전용 read-only 검증 대상 DB
   --apply            전체 dry-run 성공 뒤 canonical data/reshet_work.db에 적용
   --help, -h         도움말 표시
 
 --apply가 없으면 항상 dry-run입니다. --apply는 임의 DB 경로 및 seed DB와
 조합할 수 없으며, manifest의 exact work DB SHA를 승인 경계로 사용합니다.
+v5 approval-only manifest는 read-only dry-run만 허용하며 --apply하지 않습니다.
 ''';

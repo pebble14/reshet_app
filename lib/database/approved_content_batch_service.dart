@@ -49,6 +49,7 @@ final class ApprovedContentBatchManifest {
     required this.expectedWorkSha256,
     required this.expectedUserVersion,
     required this.supersedes,
+    required this.meaningApprovals,
     required this.writeRequest,
   });
 
@@ -61,6 +62,7 @@ final class ApprovedContentBatchManifest {
   final String expectedWorkSha256;
   final int expectedUserVersion;
   final List<ApprovedContentSupersession> supersedes;
+  final List<ApprovedContentMeaningApproval> meaningApprovals;
   final ApprovedContentBatchWriteRequest writeRequest;
 
   static ApprovedContentBatchManifest parse(Uint8List rawBytes) {
@@ -78,9 +80,9 @@ final class ApprovedContentBatchManifest {
       root['format_version'],
       r'$.format_version',
     );
-    if (formatVersion < 1 || formatVersion > 4) {
+    if (formatVersion < 1 || formatVersion > 5) {
       throw ApprovedContentValidationException(
-        'manifest format_version은 1, 2, 3 또는 4여야 합니다: $formatVersion',
+        'manifest format_version은 1, 2, 3, 4 또는 5여야 합니다: $formatVersion',
       );
     }
     final requiredRootKeys = <String>{
@@ -92,14 +94,15 @@ final class ApprovedContentBatchManifest {
       'relation_creates',
       if (formatVersion >= 2) 'word_note_replacements',
       if (formatVersion >= 3) 'supersedes',
-      if (formatVersion == 4) 'relation_replacements',
+      if (formatVersion >= 4) 'relation_replacements',
+      if (formatVersion >= 5) 'meaning_approvals',
     };
     _requireExactKeys(root, r'$', required: requiredRootKeys);
 
     final batchId = _requireNonEmptyString(root['batch_id'], r'$.batch_id');
     if (formatVersion >= 3 && !batchId.endsWith('-APPROVED-CONTENT-SLICE')) {
       throw ApprovedContentValidationException(
-        r'v3/v4 $.batch_id가 approved batch identity가 아닙니다: '
+        r'v3~v5 $.batch_id가 approved batch identity가 아닙니다: '
         '$batchId',
       );
     }
@@ -163,6 +166,24 @@ final class ApprovedContentBatchManifest {
       );
     }
 
+    final meaningApprovalValues = formatVersion >= 5
+        ? _requireList(root['meaning_approvals'], r'$.meaning_approvals')
+        : const <Object?>[];
+    final meaningApprovals = <ApprovedContentMeaningApproval>[];
+    for (var index = 0; index < meaningApprovalValues.length; index++) {
+      final path =
+          r'$.meaning_approvals['
+          '${index.toString()}]';
+      final value = _requireObject(meaningApprovalValues[index], path);
+      _requireExactKeys(value, path, required: const {'word_id', 'meanings'});
+      meaningApprovals.add(
+        ApprovedContentMeaningApproval(
+          wordId: _requireNonEmptyString(value['word_id'], '$path.word_id'),
+          meanings: _parseMeaningRows(value['meanings'], '$path.meanings'),
+        ),
+      );
+    }
+
     final supersessionValues = formatVersion >= 3
         ? _requireList(root['supersedes'], r'$.supersedes')
         : const <Object?>[];
@@ -210,10 +231,14 @@ final class ApprovedContentBatchManifest {
         );
       }
       if (!meaningReplacements.any(
-        (replacement) => replacement.wordId.startsWith('${strongNumber}_'),
-      )) {
+            (replacement) => replacement.wordId.startsWith('${strongNumber}_'),
+          ) &&
+          !meaningApprovals.any(
+            (approval) => approval.wordId.startsWith('${strongNumber}_'),
+          )) {
         throw ApprovedContentValidationException(
-          '$path의 Strong이 현재 meaning_replacements에 없습니다: $strongNumber',
+          '$path의 Strong이 현재 meaning_replacements 또는 '
+          'meaning_approvals에 없습니다: $strongNumber',
         );
       }
       supersedes.add(
@@ -316,7 +341,7 @@ final class ApprovedContentBatchManifest {
       );
     }
 
-    final relationReplacementValues = formatVersion == 4
+    final relationReplacementValues = formatVersion >= 4
         ? _requireList(
             root['relation_replacements'],
             r'$.relation_replacements',
@@ -373,7 +398,7 @@ final class ApprovedContentBatchManifest {
             relationReplacements,
           ),
     );
-    _validateManifestOperationShape(request);
+    _validateManifestOperationShape(request, meaningApprovals);
 
     return ApprovedContentBatchManifest._(
       rawBytes: Uint8List.fromList(rawBytes),
@@ -385,6 +410,9 @@ final class ApprovedContentBatchManifest {
       expectedWorkSha256: expectedWorkSha256,
       expectedUserVersion: expectedUserVersion,
       supersedes: List<ApprovedContentSupersession>.unmodifiable(supersedes),
+      meaningApprovals: List<ApprovedContentMeaningApproval>.unmodifiable(
+        meaningApprovals,
+      ),
       writeRequest: request,
     );
   }
@@ -412,7 +440,21 @@ final class ApprovedContentBatchManifest {
       'relation_replacements': writeRequest.relationReplacements.length,
       'total': writeRequest.operationCount,
     },
+    'approval_counts': {
+      'meaning_approvals': meaningApprovals.length,
+      'total': meaningApprovals.length,
+    },
   };
+}
+
+final class ApprovedContentMeaningApproval {
+  const ApprovedContentMeaningApproval({
+    required this.wordId,
+    required this.meanings,
+  });
+
+  final String wordId;
+  final List<ApprovedContentMeaningRow> meanings;
 }
 
 final class ApprovedContentSupersession {
@@ -441,11 +483,13 @@ final class ApprovedContentDryRunResult {
     required this.userVersion,
     required this.historyGroupId,
     required this.historyRowCount,
+    required this.meaningApprovalCount,
     required this.meaningReplacementCount,
     required this.wordNoteReplacementCount,
     required this.relationCreateCount,
     required this.relationReplacementCount,
     required this.didUndo,
+    required this.writeExecuted,
   });
 
   final String batchId;
@@ -455,13 +499,15 @@ final class ApprovedContentDryRunResult {
   final String databaseSha256After;
   final int schemaVersion;
   final int userVersion;
-  final String historyGroupId;
+  final String? historyGroupId;
   final int historyRowCount;
+  final int meaningApprovalCount;
   final int meaningReplacementCount;
   final int wordNoteReplacementCount;
   final int relationCreateCount;
   final int relationReplacementCount;
   final bool didUndo;
+  final bool writeExecuted;
 
   Map<String, Object?> toJson() => {
     'mode': 'dry-run',
@@ -475,11 +521,13 @@ final class ApprovedContentDryRunResult {
     'user_version': userVersion,
     'history_group_id': historyGroupId,
     'history_row_count': historyRowCount,
+    'meaning_approval_count': meaningApprovalCount,
     'meaning_replacement_count': meaningReplacementCount,
     'word_note_replacement_count': wordNoteReplacementCount,
     'relation_create_count': relationCreateCount,
     'relation_replacement_count': relationReplacementCount,
     'did_undo': didUndo,
+    'write_executed': writeExecuted,
     'original_database_unchanged': databaseSha256Before == databaseSha256After,
   };
 }
@@ -599,6 +647,13 @@ final class ApprovedContentBatchRunner {
     );
 
     final manifest = await _readManifest(manifestFile);
+    if (manifest.writeRequest.operationCount == 0) {
+      throw const ApprovedContentValidationException(
+        'approval-only manifest는 DB write operation이 없으므로 '
+        '--apply할 수 없습니다. dry-run으로 현행 meaning projection을 '
+        '검증한 뒤 Git tracked manifest를 승인 authority로 사용해야 합니다.',
+      );
+    }
     final firstCheck = await _preflightDatabase(
       manifest: manifest,
       databaseFile: workFile,
@@ -913,10 +968,13 @@ final class ApprovedContentBatchRunner {
         );
       }
       try {
-        await WordRepository().validateApprovedContentBatchPreconditions(
-          request: manifest.writeRequest,
-          database: database,
-        );
+        await _verifyMeaningApprovals(database, manifest.meaningApprovals);
+        if (manifest.writeRequest.operationCount > 0) {
+          await WordRepository().validateApprovedContentBatchPreconditions(
+            request: manifest.writeRequest,
+            database: database,
+          );
+        }
       } catch (error) {
         throw ApprovedContentValidationException(
           'DB precondition 검증 실패: $error',
@@ -956,6 +1014,35 @@ final class ApprovedContentBatchRunner {
     required ApprovedContentBatchManifest manifest,
     required _CheckedDatabase checked,
   }) async {
+    if (manifest.writeRequest.operationCount == 0) {
+      await _assertNoSidecars(checked.file);
+      final sourceShaAfter = await ApprovedContentSha256.file(checked.file);
+      if (sourceShaAfter != checked.sha256) {
+        throw ApprovedContentExecutionException(
+          'approval-only dry-run 전후 원본 DB SHA가 변경됐습니다: '
+          '${checked.file.path}',
+        );
+      }
+      return ApprovedContentDryRunResult(
+        batchId: manifest.batchId,
+        manifestSha256: manifest.sha256,
+        databasePath: checked.file.path,
+        databaseSha256Before: checked.sha256,
+        databaseSha256After: sourceShaAfter,
+        schemaVersion: checked.schemaVersion,
+        userVersion: checked.userVersion,
+        historyGroupId: null,
+        historyRowCount: 0,
+        meaningApprovalCount: manifest.meaningApprovals.length,
+        meaningReplacementCount: 0,
+        wordNoteReplacementCount: 0,
+        relationCreateCount: 0,
+        relationReplacementCount: 0,
+        didUndo: false,
+        writeExecuted: false,
+      );
+    }
+
     const temporaryPrefix = 'reshet_approved_content_batch_';
     final temporaryDirectory = await temporaryDirectoryParent.createTemp(
       temporaryPrefix,
@@ -1050,6 +1137,7 @@ final class ApprovedContentBatchRunner {
       userVersion: checked.userVersion,
       historyGroupId: completedWriteResult.groupId,
       historyRowCount: completedWriteResult.historyRowCount,
+      meaningApprovalCount: manifest.meaningApprovals.length,
       meaningReplacementCount: manifest.writeRequest.meaningReplacements.length,
       wordNoteReplacementCount:
           manifest.writeRequest.wordNoteReplacements.length,
@@ -1057,6 +1145,7 @@ final class ApprovedContentBatchRunner {
       relationReplacementCount:
           manifest.writeRequest.relationReplacements.length,
       didUndo: didUndo,
+      writeExecuted: true,
     );
   }
 
@@ -1247,10 +1336,13 @@ ApprovedContentRelationProjection _parseRelationProjection(
   );
 }
 
-void _validateManifestOperationShape(ApprovedContentBatchWriteRequest request) {
-  if (request.operationCount == 0) {
+void _validateManifestOperationShape(
+  ApprovedContentBatchWriteRequest request,
+  List<ApprovedContentMeaningApproval> meaningApprovals,
+) {
+  if (request.operationCount == 0 && meaningApprovals.isEmpty) {
     throw const ApprovedContentValidationException(
-      'manifest operation이 최소 1개 필요합니다.',
+      'manifest write operation 또는 meaning approval이 최소 1개 필요합니다.',
     );
   }
   final meaningTargets = <String>{};
@@ -1275,6 +1367,38 @@ void _validateManifestOperationShape(ApprovedContentBatchWriteRequest request) {
         'meaning before와 after가 동일한 no-op입니다: ${replacement.wordId}',
       );
     }
+  }
+
+  final approvalTargets = <String>{};
+  for (final approval in meaningApprovals) {
+    if (!RegExp(r'^[GH][0-9]{4}_.+$').hasMatch(approval.wordId)) {
+      throw ApprovedContentValidationException(
+        'meaning approval word_id가 canonical Strong word ID가 아닙니다: '
+        '${approval.wordId}',
+      );
+    }
+    if (!approvalTargets.add(approval.wordId)) {
+      throw ApprovedContentValidationException(
+        '동일 word의 meaning approval이 중복됐습니다: ${approval.wordId}',
+      );
+    }
+    if (meaningTargets.contains(approval.wordId)) {
+      throw ApprovedContentValidationException(
+        '동일 word를 meaning replacement와 approval에 동시에 지정했습니다: '
+        '${approval.wordId}',
+      );
+    }
+    if (approval.meanings.isEmpty) {
+      throw ApprovedContentValidationException(
+        'meaning approval projection은 최소 1행이어야 합니다: '
+        '${approval.wordId}',
+      );
+    }
+    _validateManifestMeaningRows(
+      approval.wordId,
+      'approval',
+      approval.meanings,
+    );
   }
 
   final wordNoteTargets = <String>{};
@@ -1511,6 +1635,33 @@ void _requireExactKeys(
   if (unknown.isNotEmpty) {
     throw ApprovedContentValidationException(
       '$path 알 수 없는 필드 또는 operation 종류입니다: ${unknown.join(', ')}',
+    );
+  }
+}
+
+Future<void> _verifyMeaningApprovals(
+  DatabaseExecutor database,
+  List<ApprovedContentMeaningApproval> approvals,
+) async {
+  for (final approval in approvals) {
+    final wordRows = await database.query(
+      'WORD_TABLE',
+      columns: ['id'],
+      where: 'id = ?',
+      whereArgs: [approval.wordId],
+      limit: 2,
+    );
+    if (wordRows.length != 1) {
+      throw StateError(
+        'meaning approval 대상 word를 exact 1건 확인할 수 없습니다: '
+        '${approval.wordId}',
+      );
+    }
+    final actual = await _meaningRowsForWord(database, approval.wordId);
+    _requireMeaningProjection(
+      actual,
+      approval.meanings,
+      label: '${approval.wordId} current approval',
     );
   }
 }

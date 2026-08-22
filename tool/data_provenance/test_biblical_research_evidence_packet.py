@@ -47,6 +47,7 @@ class BiblicalResearchEvidencePacketTest(unittest.TestCase):
         word_note_replacements: list[dict[str, object]] | None = None,
         supersedes: list[dict[str, str]] | None = None,
         relation_replacements: list[dict[str, object]] | None = None,
+        meaning_approvals: list[dict[str, object]] | None = None,
     ) -> Path:
         directory.mkdir(parents=True, exist_ok=True)
         path = directory / filename
@@ -76,12 +77,14 @@ class BiblicalResearchEvidencePacketTest(unittest.TestCase):
             ),
             "relation_creates": [],
         }
-        if format_version in (2, 3, 4):
+        if format_version in (2, 3, 4, 5):
             payload["word_note_replacements"] = word_note_replacements or []
-        if format_version in (3, 4):
+        if format_version in (3, 4, 5):
             payload["supersedes"] = supersedes or []
-        if format_version == 4:
+        if format_version in (4, 5):
             payload["relation_replacements"] = relation_replacements or []
+        if format_version == 5:
+            payload["meaning_approvals"] = meaning_approvals or []
         path.write_text(
             json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
             encoding="utf-8",
@@ -1044,6 +1047,84 @@ from the same as <strongsref language="GREEK" strongs="106"/>.
             json.dumps(payload, ensure_ascii=False), encoding="utf-8"
         )
         with self.assertRaisesRegex(evidence.ManifestError, "format 계약 불일치"):
+            evidence._approved_projections_by_strong(approved)
+
+    def test_completion_gate_v5_approves_exact_current_meaning_projection(
+        self,
+    ) -> None:
+        approved = self._write_approved_manifest(
+            self.root,
+            "h1674_v5_approved_content_slice.json",
+            "H1674_0000",
+            None,
+            format_version=5,
+            meaning_approvals=[
+                {
+                    "word_id": "H1674_0000",
+                    "meanings": [{"seq": 1, "meaning": "걱정"}],
+                }
+            ],
+        )
+        source_only = self.root / "source_only.json"
+        source_only.write_text('{"entries": []}', encoding="utf-8")
+        exact_projection = [
+            {
+                "word_id": "H1674_0000",
+                "meanings": [{"seq": 1, "meaning": "걱정"}],
+            }
+        ]
+
+        state = evidence.completion_gate_state(
+            "H1674", exact_projection, approved, source_only
+        )
+        self.assertEqual(state["state"], "explicit_approved")
+        self.assertEqual(state["evidence"], [approved.name])
+
+        mismatch = evidence.completion_gate_state(
+            "H1674",
+            [
+                {
+                    "word_id": "H1674_0000",
+                    "meanings": [{"seq": 1, "meaning": "다른 값"}],
+                }
+            ],
+            approved,
+            source_only,
+        )
+        self.assertEqual(mismatch["state"], "unclassified")
+
+    def test_completion_gate_v5_approval_contract_fails_closed(self) -> None:
+        approved = self._write_approved_manifest(
+            self.root,
+            "h1674_v5_invalid_approved_content_slice.json",
+            "H1674_0000",
+            "교체 값",
+            format_version=5,
+            meaning_approvals=[
+                {
+                    "word_id": "H1674_0000",
+                    "meanings": [{"seq": 1, "meaning": "현행 값"}],
+                }
+            ],
+        )
+        with self.assertRaisesRegex(evidence.ManifestError, "word_id 중복"):
+            evidence._approved_projections_by_strong(approved)
+
+        payload = json.loads(approved.read_text(encoding="utf-8"))
+        payload["meaning_replacements"] = []
+        payload["meaning_approvals"] = [
+            {
+                "word_id": "H1674_0000",
+                "meanings": [
+                    {"seq": 2, "meaning": "둘째"},
+                    {"seq": 1, "meaning": "첫째"},
+                ],
+            }
+        ]
+        approved.write_text(
+            json.dumps(payload, ensure_ascii=False), encoding="utf-8"
+        )
+        with self.assertRaisesRegex(evidence.ManifestError, "형식 불일치"):
             evidence._approved_projections_by_strong(approved)
 
     def test_completion_gate_v4_keeps_v3_supersession_semantics(self) -> None:
