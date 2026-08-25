@@ -1,0 +1,409 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H14-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-08-25 H14 cluster 의미·비고·관계 사용자 최종 확정 및 DB 반영 지시",
+    "document_sha256": "45b2c8f694d5300e9d666ed0d7ec64cc0886826358d4ec85321386e50a376bb3"
+  },
+  "target": {
+    "expected_work_sha256": "6ec49bfeccb981693183e6d01bf4f50c43f1fee587240909045507a935f23e79",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0014_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "갈망하다, 수락하다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "원하다(願하다)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0015_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "욕망, 갈망"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "원(願)·소원(所願)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0016_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "빠름, 갈대"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "파피루스"
+        }
+      ]
+    },
+    {
+      "word_id": "H0017_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "슬픔, 근심"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "근심(憂)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0034_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "궁핍한, 가난한"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "궁핍한(窮乏한)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0035_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "욕망"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "케이퍼 열매"
+        }
+      ]
+    },
+    {
+      "word_id": "H8375_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "열망함, 갈망함"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "갈망(渴望)"
+        }
+      ]
+    },
+    {
+      "word_id": "H8374_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "몹시 싫어하다, 소름 끼칠 정도로 싫어하다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "혐오하다(嫌惡하다)"
+        }
+      ]
+    },
+    {
+      "word_id": "H8373_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "열망(갈망)하다 long for"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "갈망하다(渴望하다)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0340_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "원수 되다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "원수(怨讐)로 대하다"
+        }
+      ]
+    },
+    {
+      "word_id": "H0341_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "적, 원수"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "원수(怨讐)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0342_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "원수, 적의"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "원한(怨恨)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0014_0000",
+      "before": null,
+      "after": "어떤 일을 하고자 하거나 요청을 받아들일 뜻이 있음을 나타낸다. 부정문에서는 ‘원하지 않다·기꺼이 하지 않다·동의하지 않다·듣지 않다’ 등으로 문맥화된다."
+    },
+    {
+      "word_id": "H0015_0000",
+      "before": null,
+      "after": "욥 34:36에서는 감탄사적으로 ‘원하건대/바라건대’에 해당한다. Canonical Strong source는 H0014에서 유래한 ‘소원·갈망’으로 설명하지만, BDB는 다른 어근의 방언적 동사형일 가능성을 제시하며 KJV margin에는 ‘내 아버지여’라는 대안도 있다."
+    },
+    {
+      "word_id": "H0016_0000",
+      "before": null,
+      "after": "파피루스는 습지에서 자라는 갈대 모양의 식물이다. 욥기 9:26에서는 그 줄기로 만든 가볍고 빠른 배를 가리키며, 이 때문에 번역에서 ‘빠른’으로 풀리기도 한다."
+    },
+    {
+      "word_id": "H0017_0000",
+      "before": null,
+      "after": "히브리어로는 고통을 나타내는 감탄사 ‘아!·오호라!’에 해당하며, 잠언 23:29에서는 문맥상 근심이나 슬픔으로 번역된다."
+    },
+    {
+      "word_id": "H0035_0000",
+      "before": null,
+      "after": "후대 히브리어 미슈나에서 אביונות은 케이퍼나무의 열매로 설명된다. 전 12:5에서는 욕망을 자극한다고 여겨진 열매의 효력이 사라지는 모습으로 이해되어, ‘욕망/정욕’으로도 번역된다."
+    },
+    {
+      "word_id": "H8375_0000",
+      "before": null,
+      "after": "canonical source는 H8374에서 유래하고 H0015와 비교한다고 설명하지만, local lexicon은 H8373에서 유래했다고 설명한다. 따라서 어원 관계는 가설로만 다룬다."
+    },
+    {
+      "word_id": "H8374_0000",
+      "before": null,
+      "after": "동일 철자의 H8373은 시 119:40,174에서 ‘갈망하다’를 뜻한다. canonical source의 동일 어근설은 ‘probably identical’로 한정된다."
+    },
+    {
+      "word_id": "H8373_0000",
+      "before": null,
+      "after": "동일 철자의 H8374는 암 6:8에서 ‘혐오하다’를 뜻하는 별도 Strong이다."
+    },
+    {
+      "word_id": "H0340_0000",
+      "before": null,
+      "after": "상대를 원수로 대하는 것을 뜻한다. H0341은 이 동사의 능동분사이며, H0342는 여기서 파생된 추상명사다. H8374는 혐오 의미의 비교 대상으로만 제시된다."
+    },
+    {
+      "word_id": "H0341_0000",
+      "before": null,
+      "after": "H0340의 능동분사로, 문자적으로 ‘원수로 대하는 자’이며 실제 문맥에서는 원수를 뜻한다."
+    },
+    {
+      "word_id": "H0342_0000",
+      "before": null,
+      "after": "H0340에서 파생된 추상명사로, 서로를 원수로 여기게 하는 깊고 지속적인 미움이다. 문맥에 따라 해치려는 악의와 오래 품은 한을 포함한다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0014_0000",
+      "word_id_2": "H0015_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": "Canonical source는 H0014에서 유래했다고 설명하지만, BDB는 다른 어근의 방언적 동사형일 가능성을 제시한다.",
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H14-CLUSTER-H0014-H0015"
+    },
+    {
+      "word_id_1": "H0014_0000",
+      "word_id_2": "H0016_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": "Canonical source는 ‘from H0014 (in the sense of bending toward)’라고 설명하지만 BDB는 어원을 불확실하다고 본다.",
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H14-CLUSTER-H0014-H0016"
+    },
+    {
+      "word_id_1": "H0014_0000",
+      "word_id_2": "H0017_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": "Canonical source는 H0014의 ‘원하다’에서 유래했다고 설명하지만, BDB는 고통의 감탄사 계통을 더 가능하게 본다.",
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H14-CLUSTER-H0014-H0017"
+    },
+    {
+      "word_id_1": "H0014_0000",
+      "word_id_2": "H0034_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": "Canonical source는 ‘from H0014, in the sense of want (especially in feeling)’라고 설명하지만 local lexicon은 어원을 불확실하다고 본다.",
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H14-CLUSTER-H0014-H0034"
+    },
+    {
+      "word_id_1": "H0014_0000",
+      "word_id_2": "H0035_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": "Canonical source는 H0014에서 유래했다고 설명하며, 케이퍼 열매와 욕망 자극의 연관에 근거한 어원 설명이다.",
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H14-CLUSTER-H0014-H0035"
+    },
+    {
+      "word_id_1": "H8374_0000",
+      "word_id_2": "H8375_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": "Canonical source는 H8374에서 유래하고 H0015와 비교한다고 설명하지만, local lexicon은 H8373에서 유래했다고 설명한다.",
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H14-CLUSTER-H8374-H8375"
+    },
+    {
+      "word_id_1": "H0340_0000",
+      "word_id_2": "H0341_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H14-CLUSTER-H0340-H0341"
+    },
+    {
+      "word_id_1": "H0340_0000",
+      "word_id_2": "H0342_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H14-CLUSTER-H0340-H0342"
+    },
+    {
+      "word_id_1": "H0340_0000",
+      "word_id_2": "H0347_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": "Canonical source는 ‘from H0340; hated (i.e. persecuted)’라고 설명하지만 고유명사 자료의 원어 판정은 미해결이다.",
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H14-CLUSTER-H0340-H0347"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [
+    {
+      "relation_id": 2131,
+      "word_id_1": "G2492_0000",
+      "word_id_2": "H0347_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "transliteration",
+        "relation_type": "direct_transliteration",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "RESHET-EC-H14-CLUSTER-H0347-G2492"
+      }
+    }
+  ],
+  "meaning_approvals": [
+    {
+      "word_id": "H0347_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "욥"
+        }
+      ]
+    },
+    {
+      "word_id": "G2492_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "욥"
+        }
+      ]
+    }
+  ]
+}
