@@ -1,0 +1,39 @@
+{
+  "format_version": 4,
+  "batch_id": "RESHET-EC-H5-NAME-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-08-25 H5 인명 의미·비고 및 G0912 관계 비생성 사용자 확정",
+    "document_sha256": "d780fc918dd2d68e62f9494a318c163dd45a9165a29035e34798735f7faee0b8"
+  },
+  "target": {
+    "expected_work_sha256": "572104fb3787b88f9f6ce60f817918ea6eb7330c4bc997f5e949ac2463aa01a5",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0005_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아박다 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아박다·아바그타 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0005_0000",
+      "before": null,
+      "after": "아박다는 한국어 성경의 관용 표기이고, 아바그타는 히브리어 본문 표기에 따른 한국어 음역이다. 아케메네스 제국권에서 사용된 실제 원형은 확인되지 않는다."
+    }
+  ],
+  "relation_creates": [],
+  "supersedes": [],
+  "relation_replacements": []
+}
