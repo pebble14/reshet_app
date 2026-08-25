@@ -1,0 +1,437 @@
+{
+  "format_version": 4,
+  "batch_id": "RESHET-EC-H6-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-08-25 H6 cluster 의미·비고·관계 사용자 확정, H0006-H0010 관계 삭제 제외, DB 반영 지시",
+    "document_sha256": "7c5c7e84b2d367848b83dc3893b2a4b79afc1a4faf6765e5b65b375c23e47610"
+  },
+  "target": {
+    "expected_work_sha256": "84ee4fbc8e2288b6c01b793593b696720100c5e2b3c0d374becd40c0291b7b21",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0006_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "파멸하다(破滅-)/멸망하다(滅亡-)"
+        },
+        {
+          "seq": 2,
+          "meaning": "없어지다"
+        },
+        {
+          "seq": 3,
+          "meaning": "(길을)잃다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "멸망하다(滅亡-)/죽다"
+        },
+        {
+          "seq": 2,
+          "meaning": "멸망시키다(滅亡-)/파괴하다(破壞-)"
+        },
+        {
+          "seq": 3,
+          "meaning": "없어지다/없애다"
+        },
+        {
+          "seq": 4,
+          "meaning": "잃다/길을 잃다"
+        }
+      ]
+    },
+    {
+      "word_id": "H0007_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "파멸하다(破滅-)/멸망하다(滅亡-)"
+        },
+        {
+          "seq": 2,
+          "meaning": "파멸시키다(破滅-)/멸망시키다(滅亡-)"
+        },
+        {
+          "seq": 3,
+          "meaning": "훼손되다(毁損-)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "멸망하다(滅亡-)/없어지다"
+        },
+        {
+          "seq": 2,
+          "meaning": "멸망시키다(滅亡-)/없애다"
+        }
+      ]
+    },
+    {
+      "word_id": "H0008_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "파멸(破滅)/멸망(滅亡)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "멸망(滅亡)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0009_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "분실물(紛失物)/유실물(遺失物)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "잃어버린 것"
+        }
+      ]
+    },
+    {
+      "word_id": "H0010_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "파멸(破滅)/멸망(滅亡)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "멸망(滅亡)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0011_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "파멸(破滅)/멸망(滅亡)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "멸망(滅亡)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0012_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "파멸(破滅)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "멸망(滅亡)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0013_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "파멸(破滅)/멸망(滅亡)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "멸망(滅亡)"
+        }
+      ]
+    },
+    {
+      "word_id": "G0003_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아바돈"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아바돈·아밧돈"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0006_0000",
+      "before": null,
+      "after": "Qal은 주로 멸망·소멸·상실·방황을, Piel과 Hiphil은 주로 멸망시키거나 없애는 사역 의미를 나타낸다."
+    },
+    {
+      "word_id": "H0009_0000",
+      "before": "잃어버린 것",
+      "after": null
+    },
+    {
+      "word_id": "H0010_0000",
+      "before": null,
+      "after": "잠 27:20에서 스올과 병렬되어 멸망의 장소를 가리키는 기록형이며, 같은 자리의 독음형 H0011 אֲבַדּוֹן과 대응한다. canonical lexical source는 H0009와 동일한 형태이면서 H0011을 잘못 적은 형태라고 설명한다."
+    },
+    {
+      "word_id": "H0011_0000",
+      "before": null,
+      "after": "스올·죽음과 병렬되는 문맥에서는 죽은 자의 영역인 멸망의 장소를 가리킨다."
+    },
+    {
+      "word_id": "G0003_0000",
+      "before": "히브리어 단어 H11 אֲבַדּוֹן(아받돈)의 헬라어 음역,\n히브리어 단어 H11 אֲבַדּוֹן(아받돈)의 의미는 파멸(破滅)/멸망(滅亡)",
+      "after": "아바돈은 한국어 성경의 관용 표기이고, 아밧돈은 헬라어 Ἀβαδδών을 한국어 표기 관습에 따라 옮긴 형태이다. 이 헬라어 이름은 히브리어 H0011 אֲבַדּוֹן을 음역한 것으로, 계 9:11에서 무저갱의 사자를 가리킨다. 같은 절의 헬라어 대응 이름은 Ἀπολλύων(아폴뤼온, G0623, ‘파괴자’)이다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0009_0000",
+      "word_id_2": "H0010_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "uncertain",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H6-CLUSTER-H0009-H0010"
+    },
+    {
+      "word_id_1": "H0010_0000",
+      "word_id_2": "H0011_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H6-CLUSTER-H0011-H0010"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [
+    {
+      "relation_id": 472,
+      "word_id_1": "H0006_0000",
+      "word_id_2": "H0007_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "etymological",
+        "relation_type": "root_shared",
+        "status_code": "asserted",
+        "direction_code": "undirected",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "RESHET-EC-H6-CLUSTER-H0006-H0007"
+      }
+    },
+    {
+      "relation_id": 473,
+      "word_id_1": "H0006_0000",
+      "word_id_2": "H0008_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "RESHET-EC-H6-CLUSTER-H0006-H0008"
+      }
+    },
+    {
+      "relation_id": 474,
+      "word_id_1": "H0006_0000",
+      "word_id_2": "H0009_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "RESHET-EC-H6-CLUSTER-H0006-H0009"
+      }
+    },
+    {
+      "relation_id": 5,
+      "word_id_1": "H0006_0000",
+      "word_id_2": "H0011_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "RESHET-EC-H6-CLUSTER-H0006-H0011"
+      }
+    },
+    {
+      "relation_id": 476,
+      "word_id_1": "H0006_0000",
+      "word_id_2": "H0012_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "RESHET-EC-H6-CLUSTER-H0006-H0012"
+      }
+    },
+    {
+      "relation_id": 477,
+      "word_id_1": "H0006_0000",
+      "word_id_2": "H0013_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "RESHET-EC-H6-CLUSTER-H0006-H0013"
+      }
+    },
+    {
+      "relation_id": 4,
+      "word_id_1": "G0003_0000",
+      "word_id_2": "H0011_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "transliteration",
+        "relation_type": "direct_transliteration",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "RESHET-EC-H6-CLUSTER-H0011-G0003"
+      }
+    },
+    {
+      "relation_id": 5368,
+      "word_id_1": "G0003_0000",
+      "word_id_2": "G0623_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련2"
+      },
+      "after": {
+        "category_code": "translation",
+        "relation_type": "semantic_translation",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "RESHET-EC-H6-CLUSTER-G0003-G0623"
+      }
+    }
+  ]
+}
