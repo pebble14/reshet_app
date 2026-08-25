@@ -1623,7 +1623,8 @@ from the same as <strongsref language="GREEK" strongs="106"/>.
                 ),
                 "evidence_refs": [
                     "docs/database/DATA_PROVENANCE.md",
-                    "reshet_research_output/H1833_review.md",
+                    "reshet_research_output/second_semantic_batch_20260813_1f8fde72/"
+                    "H1833_review.md",
                 ],
                 "reopen_condition": (
                     "provenance가 검증된 critical lexicon/apparatus 또는 동등한 전문 "

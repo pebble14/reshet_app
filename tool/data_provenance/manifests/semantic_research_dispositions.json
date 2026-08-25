@@ -7,7 +7,7 @@
       "reason": "현재 확인된 lexical source에는 damask 직물 의미와 Damascus 지명 의미가 함께 존재하며, Amos 3:12 관련 현재 evidence만으로 일반 semantic meaning을 하나로 확정하기 어려워 보류한다.",
       "evidence_refs": [
         "docs/database/DATA_PROVENANCE.md",
-        "reshet_research_output/H1833_review.md"
+        "reshet_research_output/second_semantic_batch_20260813_1f8fde72/H1833_review.md"
       ],
       "reopen_condition": "provenance가 검증된 critical lexicon/apparatus 또는 동등한 전문 source를 확보해 lexical/textual ambiguity를 해소할 수 있을 때 재검토한다."
     }
