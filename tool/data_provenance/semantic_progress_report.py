@@ -23,8 +23,8 @@ import strong_source_mapping as strong_mapping
 
 
 TOOL_NAME = "Reshet Semantic Progress Report"
-TOOL_VERSION = "1.1.0"
-SCHEMA_VERSION = 1
+TOOL_VERSION = "1.2.0"
+SCHEMA_VERSION = 2
 JSON_FILENAME = "semantic_progress.json"
 CSV_FILENAME = "semantic_progress.csv"
 MARKDOWN_FILENAME = "semantic_progress.md"
@@ -37,6 +37,9 @@ DEFAULT_OUTPUT_DIR = (
 CSV_COLUMNS = (
     "strong",
     "language",
+    "source_language_code",
+    "language_group",
+    "work_db_language",
     "headword",
     "part_of_speech",
     "canonical_occurrence_count",
@@ -453,8 +456,12 @@ def _projection_summary(
         if representative_expressions
         else expressions[0] if expressions else None
     )
+    work_db_language = (
+        projection[0].get("language") if len(projection) == 1 else None
+    )
     word_note = word_notes[0] if len(word_notes) == 1 else None
     return {
+        "work_db_language": work_db_language,
         "current_expression": current_expression,
         "current_expressions": expressions,
         "current_meanings": meanings,
@@ -659,6 +666,18 @@ def assemble_progress_snapshot(
                 "strong_sources.json이 고정한 Greek 및 Hebrew/Aramaic v2 source "
                 "entry의 정규화·중복 검증 집합"
             ),
+            "language_fields": {
+                "language": (
+                    "고정 source language_mapping의 해석값. x-pn은 "
+                    "unresolved로 유지한다."
+                ),
+                "source_language_code": "고정 source의 원시 언어 코드",
+                "language_group": "canonical source의 상위 언어군",
+                "work_db_language": (
+                    "현재 work DB에 정확히 한 행이 있을 때의 "
+                    "WORD_TABLE.언어. 행이 없거나 여러 행이면 null이다."
+                ),
+            },
             "semantic_status": ["explicit_approved", "hold", "unapproved"],
             "progress_detail": [
                 "approved",

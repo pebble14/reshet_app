@@ -94,12 +94,13 @@ class SemanticProgressReportTest(unittest.TestCase):
         meaning: str | None,
         expression: str = "표현",
         note: str | None = None,
+        language: str = "히브리어",
     ) -> list[dict[str, object]]:
         return [
             {
                 "word_id": f"{strong}_0000",
                 "strong_number": strong,
-                "language": "히브리어",
+                "language": language,
                 "word_note": note,
                 "expressions": [
                     {
@@ -289,6 +290,50 @@ class SemanticProgressReportTest(unittest.TestCase):
         with self.assertRaisesRegex(progress.SemanticProgressReportError, "중복"):
             self._canonical_rows([("G0001", entry), ("G0001", entry)])
 
+    def test_source_and_work_database_languages_are_reported_separately(
+        self,
+    ) -> None:
+        relation_only = self._write_approved_manifest(
+            "relation_only_approved_content_slice.json", strong=None, meaning=None
+        )
+        canonical = self._canonical_rows(
+            [("H0005", self._entry("H0005", "אֲבַגְתָא", language_code="x-pn"))]
+        )
+        snapshot = self._snapshot(
+            canonical_rows=canonical,
+            projections={
+                "H0005": self._projection(
+                    "H0005",
+                    meaning="아박다·아바그타 (인)",
+                    expression="אֲבַגְתָא",
+                    language="히브리어",
+                )
+            },
+            manifests=[relation_only],
+        )
+
+        row = snapshot["rows"][0]
+        self.assertEqual(snapshot["schema_version"], 2)
+        self.assertEqual(row["language"], "unresolved")
+        self.assertEqual(row["source_language_code"], "x-pn")
+        self.assertEqual(row["language_group"], "Hebrew/Aramaic")
+        self.assertEqual(row["work_db_language"], "히브리어")
+        self.assertEqual(
+            snapshot["contracts"]["language_fields"]["work_db_language"],
+            "현재 work DB에 정확히 한 행이 있을 때의 "
+            "WORD_TABLE.언어. 행이 없거나 여러 행이면 null이다.",
+        )
+
+        csv_rows = list(
+            csv.DictReader(
+                io.StringIO(progress.render_csv(snapshot).decode("utf-8-sig"))
+            )
+        )
+        self.assertEqual(csv_rows[0]["language"], "unresolved")
+        self.assertEqual(csv_rows[0]["source_language_code"], "x-pn")
+        self.assertEqual(csv_rows[0]["language_group"], "Hebrew/Aramaic")
+        self.assertEqual(csv_rows[0]["work_db_language"], "히브리어")
+
     def test_explicit_approved_uses_exact_completion_gate(self) -> None:
         manifest = self._write_approved_manifest(
             "approved_content_slice.json",
@@ -460,10 +505,39 @@ class SemanticProgressReportTest(unittest.TestCase):
         )
 
         self.assertFalse(snapshot["rows"][0]["db_present"])
+        self.assertIsNone(snapshot["rows"][0]["work_db_language"])
         self.assertEqual(snapshot["rows"][0]["progress_detail"], "anomaly")
         self.assertIn(
             "canonical_strong_missing_from_work_db",
             snapshot["anomalies"][0]["issues"],
+        )
+
+    def test_multiple_db_rows_do_not_choose_a_work_database_language(self) -> None:
+        relation_only = self._write_approved_manifest(
+            "relation_only_approved_content_slice.json", strong=None, meaning=None
+        )
+        canonical = self._canonical_rows(
+            [("H0005", self._entry("H0005", "אֲבַגְתָא", language_code="x-pn"))]
+        )
+        projection = self._projection("H0005", meaning="기존 의미")
+        second = dict(projection[0])
+        second["word_id"] = "H0005_0001"
+        second["language"] = "아람어"
+        snapshot = self._snapshot(
+            canonical_rows=canonical,
+            projections={"H0005": [projection[0], second]},
+            manifests=[relation_only],
+        )
+
+        row = snapshot["rows"][0]
+        self.assertIsNone(row["work_db_language"])
+        self.assertEqual(row["progress_detail"], "anomaly")
+        self.assertTrue(
+            any(
+                "multiple_work_db_rows_for_strong" in anomaly["issues"]
+                for anomaly in snapshot["anomalies"]
+                if anomaly.get("strong") == "H0005"
+            )
         )
 
     def test_db_only_strong_is_reported_as_anomaly(self) -> None:
