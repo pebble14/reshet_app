@@ -1,0 +1,100 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H18-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-08-27 H18 cluster 의미·비고·관계 사용자 최종 확정 및 DB·Git 완료 지시",
+    "document_sha256": "29697305d80719706c6bfe5fe47ed76acad5384a302dcdbe1549f4d717aecfb6"
+  },
+  "target": {
+    "expected_work_sha256": "67ad253b471c8e64d1970c3cc3d565828155581c6ce86b8c1c245f6d9a87adeb",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0018_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "마굿간, 구유"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "구유"
+        }
+      ]
+    },
+    {
+      "word_id": "H0075_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "먹이다, 살찌게 하다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "살찌우다"
+        }
+      ]
+    },
+    {
+      "word_id": "H3965_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "곡물창고"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "곡물 창고(穀物倉庫)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0018_0000",
+      "before": null,
+      "after": "가축의 먹이통을 뜻하며, 욥기 39:9에서는 문맥상 ‘외양간’으로 번역되기도 한다."
+    },
+    {
+      "word_id": "H0075_0000",
+      "before": null,
+      "after": "가축에게 먹이를 주어 살찌게 하는 뜻이며, 확인된 두 용례는 모두 칼 수동분사로 나타난다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0018_0000",
+      "word_id_2": "H0075_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H18-CLUSTER-H0075-H0018"
+    },
+    {
+      "word_id_1": "H0075_0000",
+      "word_id_2": "H3965_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H18-CLUSTER-H0075-H3965"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}
