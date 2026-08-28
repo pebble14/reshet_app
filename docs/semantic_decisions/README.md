@@ -41,6 +41,7 @@
 | H18 클러스터 | 구유·살찌우다·곡물 창고 | `active` | 높음 | 2026-08-27 | [기록](h18_cluster_approved_content_slice.md) |
 | H19 | 칼의 번뜩임 | `active` | 높음 | 2026-08-27 | [기록](h19_cluster_approved_content_slice.md) |
 | H20 | 수박 | `active` | 높음 | 2026-08-28 | [기록](h20_cluster_approved_content_slice.md) |
+| H21 | 아비와 H1 파생 관계 | `active` | 높음 | 2026-08-28 | [기록](h21_cluster_approved_content_slice.md) |
 
 ## 열람 및 후속 판단 원칙
 
