@@ -1,0 +1,40 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H20-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-08-28 H20 cluster 의미·비고 사용자 최종 확정 및 DB·Git 완료 지시",
+    "document_sha256": "5b7a6f6af9045a2b9ee5aa0864aa2d25841fd1b8d39c96ad307a53d8a44b7fb3"
+  },
+  "target": {
+    "expected_work_sha256": "d20c0f44f569fe0dbbf04e69ab7928500c8305558b3089fea540174b920c76d4",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0020_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "참외, 수박"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "수박"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0020_0000",
+      "before": null,
+      "after": "민수기 11:5에 복수형으로 한 번만 나타난다. Strong은 넓게 ‘melon’으로 두고 한국어 번역은 참외와 수박으로 갈리지만, BDB와 식물사 연구는 수박으로 식별한다."
+    }
+  ],
+  "relation_creates": [],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}
