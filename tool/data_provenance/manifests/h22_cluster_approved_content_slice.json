@@ -1,0 +1,59 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H22-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-08-29 H22 cluster 추천안 전체 승인 및 DB·Git 완료 지시",
+    "document_sha256": "9909e3308356c03f85f04547ca2f3e1f98c5da91d3b09640e6e6dd956eafbe8b"
+  },
+  "target": {
+    "expected_work_sha256": "550155e13dd8db5d55880126a03ab5bba66fec903af7a69e59d9074be7c9532c",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [],
+  "word_note_replacements": [
+    {
+      "word_id": "H0022_0000",
+      "before": null,
+      "after": "두 이스라엘 사람의 이름이다. 삼상 9:1·14:51에서는 사울 가문의 조상, 대상 11:32에서는 아르바 사람인 다윗의 용사를 가리킨다. H0001 ‘아버지’와 H0410 ‘엘/하나님’이 결합한 신명적 인명으로, 일반적으로 ‘엘(하나님)은 나의 아버지’로 풀이된다. 대상 11:32의 아비엘은 평행 명단인 삼하 23:31에서 아비알본(H0045)으로 전해진다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0001_0000",
+      "word_id_2": "H0022_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H22-CLUSTER-H0001-H0022"
+    },
+    {
+      "word_id_1": "H0022_0000",
+      "word_id_2": "H0410_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H22-CLUSTER-H0410-H0022"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": [
+    {
+      "word_id": "H0022_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "아비엘 (인)"
+        }
+      ]
+    }
+  ]
+}
