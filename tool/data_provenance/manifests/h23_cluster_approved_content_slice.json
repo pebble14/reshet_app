@@ -1,0 +1,86 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H23-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-08-30 H23 cluster relation 추천안 수용 및 meaning 확정·적용 지시",
+    "document_sha256": "23fc7e46225fabef7a86534d8f4daa50dd9f5310d2dfb64e61ca0bb74d8da563"
+  },
+  "target": {
+    "expected_work_sha256": "c1d3f36bce54c049fc4315f15fc4e0fa8c0357cd27fecf2415574a9aa25a14e6",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0023_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아비아삽 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아비아삽·아비-아사프 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0043_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "에비아삽 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "에비아삽·에브야사프 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [],
+  "relation_creates": [
+    {
+      "word_id_1": "H0001_0000",
+      "word_id_2": "H0023_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H23-CLUSTER-H0001-H0023"
+    },
+    {
+      "word_id_1": "H0023_0000",
+      "word_id_2": "H0622_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H23-CLUSTER-H0622-H0023"
+    },
+    {
+      "word_id_1": "H0023_0000",
+      "word_id_2": "H0043_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H23-CLUSTER-H0023-H0043"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}
