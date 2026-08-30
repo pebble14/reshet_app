@@ -1,0 +1,65 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H25-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-08-30 H25 최종 meaning·note·relation 승인 및 적용·Git 완료 지시",
+    "document_sha256": "42a70e0b483b553d3c2912aabd72753f309b2060643a4fc47daa0790bedc586e"
+  },
+  "target": {
+    "expected_work_sha256": "0a093606123195a372ca7693307464e20830eabd38ce88cab27de96bd75ddb9f",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0025_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아비 기브온 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "기브온의 아버지"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0025_0000",
+      "before": null,
+      "after": "Strong H0025는 대상 8:29·9:35의 אֲבִי גִבְעוֹן을 하나의 고유명 항목으로 묶지만, 본문에서 이는 H0001 연계형과 H1391 지명이 이룬 관계 호칭이며 직접적인 뜻은 ‘기브온의 아버지’이다. 대상 9:35에는 개인 이름 여이엘이 별도로 나오고, 평행문 대상 8:29의 마소라 본문에는 그 이름이 없다. 역대상의 계보 문맥에서는 대표 선조·정착 계통의 시조·성읍 지도자 등으로 이해될 수 있으나, 어느 하나를 원문의 직접 meaning으로 확정하지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0001_0000",
+      "word_id_2": "H0025_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H25-CLUSTER-H0001-H0025"
+    },
+    {
+      "word_id_1": "H0025_0000",
+      "word_id_2": "H1391_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H25-CLUSTER-H1391-H0025"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}
