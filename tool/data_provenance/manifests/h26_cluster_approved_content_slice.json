@@ -1,0 +1,148 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H26-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-08-31 H26 최종 meaning·note·relation 선택 승인 및 적용 지시",
+    "document_sha256": "4a15454b2f645c6073ac0ae523a08291dbadbcc322c6eee000131ef37c0db910"
+  },
+  "target": {
+    "expected_work_sha256": "14b773bb85d7cb55e5b51807bbf213c1c03c1de70d66892f760541975df1d1f3",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0026_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아비가일 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아비가일·아비갈 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H1523_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "기뻐하다, 즐거워 하다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "즐거워하다"
+        }
+      ]
+    },
+    {
+      "word_id": "H1524_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "기쁨, 즐거움"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "즐거움"
+        },
+        {
+          "seq": 2,
+          "meaning": "나이"
+        }
+      ]
+    },
+    {
+      "word_id": "H1525_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "기쁨, 즐거움, 환희"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "즐거움"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0026_0000",
+      "before": null,
+      "after": "H0001(아버지)과 H1524(즐거움)에서 형성된 여성 인명으로, Strong은 ‘즐거움의 아버지(곧 근원)’로 풀이한다. 본문에는 나발의 아내였다가 다윗의 아내가 된 인물과 아마사의 어머니인 인물이 나오며, 후자는 삼하 17:25에서 단축형 ‘아비갈’로 적힌다."
+    },
+    {
+      "word_id": "H1523_0000",
+      "before": null,
+      "after": "Strong은 격한 감정 아래 도는 동작에서 이 뜻을 설명하고 위축된 두려움의 가능성도 언급한다. 그러나 현재 OSHB 46회는 모두 ‘즐거워하다’로 설명되며 별도의 두려움 sense를 요구하지 않는다."
+    },
+    {
+      "word_id": "H1524_0000",
+      "before": null,
+      "after": "H1523에서 파생된 ‘즐거움’ 의미와 단 1:10의 ‘나이’ 의미가 함께 있다. OSHB는 두 동형어를 각각 1524 a와 1524 b로 구분하며, H1523과의 파생 관계는 ‘즐거움’ 의미에 해당한다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0001_0000",
+      "word_id_2": "H0026_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H26-CLUSTER-H0001-H0026"
+    },
+    {
+      "word_id_1": "H0026_0000",
+      "word_id_2": "H1524_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H26-CLUSTER-H1524-H0026"
+    },
+    {
+      "word_id_1": "H1523_0000",
+      "word_id_2": "H1524_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H26-CLUSTER-H1523-H1524"
+    },
+    {
+      "word_id_1": "H1524_0000",
+      "word_id_2": "H1525_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H26-CLUSTER-H1524-H1525"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}
