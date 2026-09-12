@@ -175,3 +175,4 @@ meaning에는 사용자가 단어를 식별하고 의미 범위를 파악하는 
 * [H27 클러스터 결정](../semantic_decisions/h27_cluster_approved_content_slice.md)
 * [H1777 의미·비고 결정](../semantic_decisions/h1777_meaning_note_approved_content_slice.md)
 * [승인 meaning 한국어 표기 정책 정비 결정](../semantic_decisions/approved_meaning_notation_policy_correction.md)
+* [H0026 분석적 합성 표기 결정](../semantic_decisions/h0026_analytic_name_notation_approved_content_slice.md)

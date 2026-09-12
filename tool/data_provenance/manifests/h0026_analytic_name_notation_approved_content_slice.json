@@ -1,0 +1,39 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H0026-ANALYTIC-NAME-NOTATION-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-09-12 H0026 분석적 합성 표기 사용자 승인: 아비가일·아비갈·아비-가일·아비-갈 (인)",
+    "document_sha256": "113d150eade1b1f3c7f028b26da628c68985a25cdac630a30b932867c57c5a97"
+  },
+  "target": {
+    "expected_work_sha256": "eb89e99f116fa9f8f49a715d0cbc2ed6398b9a18ca763b00ee45c81d05199f3a",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0026_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아비가일·아비갈 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아비가일·아비갈·아비-가일·아비-갈 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [],
+  "relation_creates": [],
+  "supersedes": [
+    {
+      "strong_number": "H0026",
+      "batch_id": "RESHET-EC-H26-CLUSTER-APPROVED-CONTENT-SLICE"
+    }
+  ],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}

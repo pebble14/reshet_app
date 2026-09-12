@@ -1,6 +1,6 @@
 # H26 클러스터 결정
 
-- 상태: `active`
+- 상태: `partially_superseded`
 - 기록 성격: 승인 시점 작성
 - 판단 근거 복원 수준: 높음
 - 결정일: 2026-08-31
@@ -8,6 +8,7 @@
 - 승인 manifest: [h26_cluster_approved_content_slice.json](../../tool/data_provenance/manifests/h26_cluster_approved_content_slice.json)
 - 로컬 연구 산출물: `H26_cluster_20260831_14b773bb`
 - DB 적용: 2026-08-31, history group `1788134879371669`
+- 현재 H0026 meaning: [H0026 분석적 합성 표기 결정](h0026_analytic_name_notation_approved_content_slice.md)이 이 기록의 H0026 meaning만 supersede한다. H1523·H1524·H1525와 비고·relation 결정은 계속 active다.
 
 ## 마감 검증
 

@@ -503,6 +503,18 @@ Snapshot과 현재 DB의 12개 사용자 테이블을 양방향 대조한 결과
 
 새 manifest를 명시적으로 포함한 semantic progress는 canonical Strong 14,298건, `explicit_approved=94`, `hold=2`, `unapproved=14,202`, anomaly 113건이다. 18개 대상은 모두 새 manifest를 유일한 active authority로 가지며 현재 DB projection과 exact 일치한다. 산출물 SHA-256은 JSON `d617bb2101d39a44b5b88990d63193ce48f3d04057bf4ece2dc97167fe4ce83e`, CSV `059d52bd92dbb29a7dc070ec6e24a94b93eea7e7b685195477bbce821576a29c`, Markdown `d11567eb619f39229075df21d54151910f5e973090c7912e2b8976bdaf2dbba9`이며 반복 생성에서도 세 값이 동일했다. 같은 세 산출물을 `../reshet_research_output/semantic_progress`에 재생성하고, 출력 루트의 현재값 색인과 관련 Markdown 19개의 갱신 안내를 추가했다. JSON Evidence Packet·research state·database audit은 연구 당시 immutable 스냅샷으로 보존했다. Pre-commit 상태에서 tracked discovery는 새 파일을 자동 발견하지 않으므로 검증 호출에 새 manifest를 명시적으로 전달했으며, 커밋·병합·push는 별도 승인 전까지 수행하지 않는다. Production Dart·schema·seed·UI/UX는 변경하지 않았으므로 사용자 UI 수동 테스트는 N/A다.
 
+### 11.30 H0026 분석적 합성 표기 work DB slice
+
+`tool/data_provenance/manifests/h0026_analytic_name_notation_approved_content_slice.json`은 format v5 batch ID `RESHET-EC-H0026-ANALYTIC-NAME-NOTATION-APPROVED-CONTENT-SLICE`와 사용자가 승인한 `아비가일·아비갈·아비-가일·아비-갈 (인)`을 provenance로 고정한다. H0026의 ordered meaning 한 행만 교체하며, word note·expression/transliteration·relation·hold·schema와 seed DB는 변경하지 않는다. H0026에 한해 기존 `RESHET-EC-H26-CLUSTER-APPROVED-CONTENT-SLICE`의 meaning authority를 supersede한다.
+
+Dry-run은 meaning replacement 한 건을 임시 DB에 적용한 뒤 실제 undo하여 원본 work SHA-256 `eb89e99f116fa9f8f49a715d0cbc2ed6398b9a18ca763b00ee45c81d05199f3a`을 전후 동일하게 유지했다. Live apply 뒤 work SHA-256은 `71b348a889c5de2a2ddbeae5e235bdf38d28a7349de458a0d7f1cd0413fbc21f`이며 seed SHA-256 `e2e356c0f9a5d0d86c059da77c59815521e2abc410b3c4aa69b1ab6e55ff9a67`은 불변이다. 적용 전 snapshot은 `data/backups/approved_content_batch/20260912T090312352183Z/snapshot.db`, SHA-256 `a3830c0ca2ce12e623a8e38a2dd43ea8fbe76fcfa2a006cb933351299c93566f`이고 live history group `1789203793160663`에는 active word update 한 행이 있다.
+
+Snapshot과 현재 DB의 12개 사용자 테이블을 양방향 `EXCEPT` 대조한 결과 `word_meaning_set`의 승인된 교체 전후 각 한 행과 `CHANGE_HISTORY` current-only 한 행 외 차이는 없다. Work·snapshot integrity check는 `ok`, foreign key 위반은 0이고 work·seed SQLite sidecar는 없다. Manifest SHA-256은 `bcb26ac94a4bda215db1074ca9768038029a0a1c5dc4388dcfe5b43320e2c29c`이다.
+
+기존 18개 표기정비 manifest와 새 H0026 manifest를 명시한 semantic progress는 canonical Strong 14,298건, `explicit_approved=94`, `hold=2`, `unapproved=14,202`, anomaly 113건이다. H0026은 새 manifest를 유일한 active authority로 하는 `explicit_approved / approved`이며 현재 DB projection과 exact 일치한다. 산출물 SHA-256은 JSON `cf1ea41fecfddf6926c99c36caa82745d8adf94cb6ed8de514bd647aab1721ea`, CSV `d348ca2b4aa5280a9abd7d080ec46311e682b6340e79d1df081a351460e75716`, Markdown `72300696f2da89cd83fc1559a8ce6bd8e879a01158040400293dce64776cc7be`이다. 자동 discovery는 suffix 규칙 때문에 `approved_meaning_notation_policy_correction.json`을 포함하지 않으므로, 현재 전수 보고는 이 기존 manifest와 새 H0026 manifest를 모두 명시적으로 전달해 생성했다. 외부 현재값 색인과 H26 summary·review 안내도 같은 meaning으로 갱신했고 연구 당시 JSON 증거는 변경하지 않았다.
+
+Production Dart·schema·seed·UI/UX는 변경하지 않았다. Applicator 구현은 직전 표기정비 slice에서 통과한 대상 테스트 29건과 동일하며, 이번에는 exact manifest dry-run·live apply·snapshot diff로 변경 한 건을 검증했으므로 테스트를 반복 실행하지 않았다. 사용자 UI 수동 테스트는 N/A다. 커밋·병합·push는 별도 승인 전까지 수행하지 않는다.
+
 ## 12. pronunciation profile·migration 현행 경계
 
 ### 12.1 active pronunciation 계약
