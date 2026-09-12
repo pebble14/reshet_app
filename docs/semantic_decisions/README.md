@@ -46,6 +46,7 @@
 | H23 클러스터 | 아비아삽·아비-아사프와 에비아삽·에브야사프 | `active` | 높음 | 2026-08-30 | [기록](h23_cluster_approved_content_slice.md) |
 | H25 | 기브온의 아버지와 H1·H1391 구성 관계 | `active` | 높음 | 2026-08-30 | [기록](h25_cluster_approved_content_slice.md) |
 | H26 클러스터 | 아비가일·아비갈과 H1523–H1525 즐거움 계열 | `active` | 높음 | 2026-08-31 | [기록](h26_cluster_approved_content_slice.md) |
+| H27 클러스터 | 판단·송사·단·다니엘·미디안 계열 25개 승인과 H1777·H4092 hold | `active` | 높음 | 2026-09-12 | [기록](h27_cluster_approved_content_slice.md) |
 
 ## 열람 및 후속 판단 원칙
 

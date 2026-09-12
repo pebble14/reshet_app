@@ -1,0 +1,299 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H27-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-09-12 H27 cluster 최신 보완 meaning·note·relation·hold 승인 및 DB·Git 완료 지시",
+    "document_sha256": "236b32c30db8da27953e1def2a85d81bc1f7df9af9b0230fbf5c8fa40f435ca4"
+  },
+  "target": {
+    "expected_work_sha256": "427a6c2f232464566adb56e5518e22f68db4a7bbfa8c02127a5318c3efc18cee",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0027_0000",
+      "before": [{"seq": 1, "meaning": "아비단 (인)"}],
+      "after": [{"seq": 1, "meaning": "아비단·아비-단 (인)"}]
+    },
+    {
+      "word_id": "H1778_0000",
+      "before": [{"seq": 1, "meaning": "심판하다"}],
+      "after": [{"seq": 1, "meaning": "재판하다(裁判하다)"}]
+    },
+    {
+      "word_id": "H1779_0000",
+      "before": [{"seq": 1, "meaning": "심판, 소송, 정죄, 다툼"}],
+      "after": [
+        {"seq": 1, "meaning": "심판(審判)"},
+        {"seq": 2, "meaning": "송사(訟事)"},
+        {"seq": 3, "meaning": "다툼"}
+      ]
+    },
+    {
+      "word_id": "H1780_0000",
+      "before": [{"seq": 1, "meaning": "심판 judgement"}],
+      "after": [
+        {"seq": 1, "meaning": "심판(審判)"},
+        {"seq": 2, "meaning": "공의(公義)"}
+      ]
+    },
+    {
+      "word_id": "H1781_0000",
+      "before": [{"seq": 1, "meaning": "심판관, 재판관"}],
+      "after": [{"seq": 1, "meaning": "재판관(裁判官)"}]
+    },
+    {
+      "word_id": "H1782_0000",
+      "before": [{"seq": 1, "meaning": "판사, 재판관"}],
+      "after": [{"seq": 1, "meaning": "재판관(裁判官)"}]
+    },
+    {
+      "word_id": "H1783_0000",
+      "before": [{"seq": 1, "meaning": "디나 Dinah"}],
+      "after": [{"seq": 1, "meaning": "디나 (인)"}]
+    },
+    {
+      "word_id": "H1835_0000",
+      "before": [
+        {"seq": 1, "meaning": "단"},
+        {"seq": 2, "meaning": "뜻풀이: 심판"}
+      ],
+      "after": [{"seq": 1, "meaning": "단"}]
+    },
+    {
+      "word_id": "H1839_0000",
+      "before": [{"seq": 1, "meaning": "단 자손 Danites"}],
+      "after": [{"seq": 1, "meaning": "단 자손(子孫)"}]
+    },
+    {
+      "word_id": "H1840_0000",
+      "before": [
+        {"seq": 1, "meaning": "다니엘"},
+        {"seq": 2, "meaning": "뜻풀이: 하나님은 나의 심판자이시다"}
+      ],
+      "after": [{"seq": 1, "meaning": "다니엘·다니-엘 (인)"}]
+    },
+    {
+      "word_id": "H1841_0000",
+      "before": [{"seq": 1, "meaning": "다니엘 Daniel(인)"}],
+      "after": [{"seq": 1, "meaning": "다니엘 (인)"}]
+    },
+    {
+      "word_id": "G1158_0000",
+      "before": [{"seq": 1, "meaning": "다니엘[하나님은 나의 심판자이시다]"}],
+      "after": [{"seq": 1, "meaning": "다니엘 (인)"}]
+    },
+    {
+      "word_id": "H1842_0000",
+      "before": [{"seq": 1, "meaning": "다냐안 Dan-jaan(지)"}],
+      "after": [{"seq": 1, "meaning": "다냐안·단-야안 (지)"}]
+    },
+    {
+      "word_id": "H2806_0000",
+      "before": [{"seq": 1, "meaning": "하스밧다나 Hashbadana"}],
+      "after": [{"seq": 1, "meaning": "하스밧다나·하쉬밧다나 (인)"}]
+    },
+    {
+      "word_id": "H4066_0000",
+      "before": [{"seq": 1, "meaning": "논쟁/다툼"}],
+      "after": [{"seq": 1, "meaning": "다툼"}]
+    },
+    {
+      "word_id": "H4079_0000",
+      "before": [{"seq": 1, "meaning": "논쟁/다툼"}],
+      "after": [{"seq": 1, "meaning": "다툼"}]
+    },
+    {
+      "word_id": "H4080_0000",
+      "before": [{"seq": 1, "meaning": "미디안"}],
+      "after": [{"seq": 1, "meaning": "미디안·미드얀"}]
+    },
+    {
+      "word_id": "H4081_0000",
+      "before": [{"seq": 1, "meaning": "밋딘 Middin"}],
+      "after": [{"seq": 1, "meaning": "밋딘 (지)"}]
+    },
+    {
+      "word_id": "H4082_0000",
+      "before": [{"seq": 1, "meaning": "관할구역, 영토"}],
+      "after": [{"seq": 1, "meaning": "지방(地方)"}]
+    },
+    {
+      "word_id": "H4083_0000",
+      "before": [{"seq": 1, "meaning": "지방, 지역, 영토"}],
+      "after": [{"seq": 1, "meaning": "지방(地方)"}]
+    },
+    {
+      "word_id": "H4084_0000",
+      "before": [{"seq": 1, "meaning": "미디안 족속"}],
+      "after": [{"seq": 1, "meaning": "미디안 사람"}]
+    },
+    {
+      "word_id": "H4090_0000",
+      "before": [{"seq": 1, "meaning": "논쟁/다툼"}],
+      "after": [{"seq": 1, "meaning": "다툼"}]
+    },
+    {
+      "word_id": "H4091_0000",
+      "before": [{"seq": 1, "meaning": "므단 Medan"}],
+      "after": [{"seq": 1, "meaning": "므단·메단 (인)"}]
+    },
+    {
+      "word_id": "H4265_0000",
+      "before": [{"seq": 1, "meaning": "마하네단 Mahanehdan"}],
+      "after": [{"seq": 1, "meaning": "마하네단·마하네-단 (지)"}]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0027_0000",
+      "before": null,
+      "after": "민수기의 베냐민 지파 지도자 한 사람을 가리킨다. ‘아비단’은 한국어 성경의 관용 표기이고 ‘아비-단’은 H0001과 H1777의 구성 경계를 드러낸 분석 표기이며, 하이픈은 실제 히브리어 마케프를 뜻하지 않는다."
+    },
+    {
+      "word_id": "H1779_0000",
+      "before": null,
+      "after": "심판에는 재판과 판결이, 송사에는 권리의 구제를 요구하는 사안이 포함된다. 욥기 19:29의 두 표기는 본문 해석이 갈리므로 여기서 별도의 ‘심판자’ 의미를 만들지 않는다."
+    },
+    {
+      "word_id": "H1780_0000",
+      "before": null,
+      "after": "심판은 형벌뿐 아니라 재판의 개시와 성도들에게 유리한 판결도 포함한다."
+    },
+    {
+      "word_id": "H1781_0000",
+      "before": null,
+      "after": "약자의 권리를 지켜 주는 재판의 역할을 포함하며, 두 성경 용례에서는 하나님을 가리킨다."
+    },
+    {
+      "word_id": "H1835_0000",
+      "before": null,
+      "after": "야곱의 아들, 그에게서 이름을 얻은 지파, 그 지파와 연결된 지역·성읍의 이름이다. 창세기 30:6은 이름을 ‘판단하다’와 연결하지만, 그 어원 풀이를 별도 의미로 두지 않는다."
+    },
+    {
+      "word_id": "H1840_0000",
+      "before": null,
+      "after": "‘다니엘’은 한국어 성경의 관용 표기이고 ‘다니-엘’은 H1835와 H0410의 구성 경계를 드러낸 분석 표기이다. 동명 인물들을 가리키며, 에스겔 14:14,20; 28:3의 דנאל은 다니엘서의 인물과 동일한지 이견이 있다. 이름의 ‘하나님은 나의 심판자’라는 풀이는 어원 설명이다."
+    },
+    {
+      "word_id": "H1842_0000",
+      "before": null,
+      "after": "사무엘하 24:6의 지명이다. ‘다냐안’은 한국어 성경의 관용 표기이고 ‘단-야안’은 첫째 요소의 구성 경계를 드러낸 분석 표기이다. 둘째 요소를 יַעַן(H3282)과 연결하는 어원은 추정적이므로 H3282와의 관계를 생성하지 않고, 이름을 ‘심판 때문에’로 확정하여 풀지 않는다."
+    },
+    {
+      "word_id": "H2806_0000",
+      "before": null,
+      "after": "느헤미야 8:4의 인명이다. ‘하스밧다나’는 한국어 성경의 관용 표기이고 ‘하쉬밧다나’는 히브리어 본문에 가까운 표기이다. Strong은 H2803과 H1777의 합성으로 풀이하지만 BDB는 어원을 불확실하게 보므로 두 구성 관계를 생성하지 않으며, 불명확한 내부 경계를 하이픈으로 표시하지 않는다."
+    },
+    {
+      "word_id": "H4080_0000",
+      "before": null,
+      "after": "‘미디안’은 한국어 성경의 관용 표기이고 ‘미드얀’은 히브리어 מִדְיָן에 가까운 표기이다. 가운데 슈와는 독립된 ‘에’ 모음이 아니므로 ‘미데얀’보다 ‘미드얀’을 사용한다. 아브라함과 그두라의 아들 이름에서 집단·지역을 가리키는 이름으로도 쓰인다."
+    },
+    {
+      "word_id": "H4082_0000",
+      "before": null,
+      "after": "통치권에 속한 지역을 가리키며, 문맥에 따라 행정 구역 또는 더 넓은 지역을 뜻한다. 현대의 특정 행정 단위나 국가 크기로 고정하지 않는다."
+    },
+    {
+      "word_id": "H4083_0000",
+      "before": null,
+      "after": "통치권에 속한 지역을 가리키며, 현대의 특정 행정 단위로 고정하지 않는다."
+    },
+    {
+      "word_id": "H4084_0000",
+      "before": null,
+      "after": "미디안에 속함을 나타내며, 사람의 성별과 수는 문맥에 따라 달라진다."
+    },
+    {
+      "word_id": "H4091_0000",
+      "before": null,
+      "after": "‘므단’은 한국어 성경의 관용 표기이고 ‘메단’은 Strong의 일반적 발음 안내에 가까운 표기이다. 어두의 모음성 슈와는 고대 발음 전통과 한국어 대응이 일대일로 확정되지 않으므로 두 표기를 함께 보존한다."
+    },
+    {
+      "word_id": "H4265_0000",
+      "before": null,
+      "after": "사사기 18:12의 ‘단의 진영’이라는 지명이다. ‘마하네단’은 한국어 성경의 관용 표기이고 ‘마하네-단’은 히브리어 מַחֲנֵה־דָן의 실제 마케프와 H4264·H1835 구성 경계를 함께 드러낸다. 사사기 13:25의 유사 표현은 현재 canonical 자료에서 두 단어로 분해되어 있다."
+    }
+  ],
+  "relation_creates": [
+    {"word_id_1":"H0001_0000","word_id_2":"H0027_0000","category_code":"morphological","relation_type":"compound","status_code":"asserted","direction_code":"w1_to_w2","description":null,"relation_group_id":null,"note":null,"source":"RESHET-EC-H27-CLUSTER-H0001-H0027"},
+    {"word_id_1":"H0027_0000","word_id_2":"H1777_0000","category_code":"morphological","relation_type":"compound","status_code":"asserted","direction_code":"w2_to_w1","description":null,"relation_group_id":null,"note":null,"source":"RESHET-EC-H27-CLUSTER-H1777-H0027"},
+    {"word_id_1":"H1777_0000","word_id_2":"H1778_0000","category_code":"etymological","relation_type":"root_shared","status_code":"asserted","direction_code":"undirected","description":null,"relation_group_id":null,"note":null,"source":"RESHET-EC-H27-CLUSTER-H1777-H1778"},
+    {"word_id_1":"H1777_0000","word_id_2":"H1779_0000","category_code":"morphological","relation_type":"derived","status_code":"asserted","direction_code":"w1_to_w2","description":null,"relation_group_id":null,"note":null,"source":"RESHET-EC-H27-CLUSTER-H1777-H1779"},
+    {"word_id_1":"H1777_0000","word_id_2":"H1781_0000","category_code":"morphological","relation_type":"derived","status_code":"asserted","direction_code":"w1_to_w2","description":null,"relation_group_id":null,"note":null,"source":"RESHET-EC-H27-CLUSTER-H1777-H1781"},
+    {"word_id_1":"H1777_0000","word_id_2":"H4082_0000","category_code":"morphological","relation_type":"derived","status_code":"asserted","direction_code":"w1_to_w2","description":null,"relation_group_id":null,"note":null,"source":"RESHET-EC-H27-CLUSTER-H1777-H4082"},
+    {"word_id_1":"H1779_0000","word_id_2":"H1780_0000","category_code":"etymological","relation_type":"root_shared","status_code":"asserted","direction_code":"undirected","description":null,"relation_group_id":null,"note":null,"source":"RESHET-EC-H27-CLUSTER-H1779-H1780"},
+    {"word_id_1":"H1779_0000","word_id_2":"H1783_0000","category_code":"morphological","relation_type":"derived","status_code":"asserted","direction_code":"w1_to_w2","description":null,"relation_group_id":null,"note":null,"source":"RESHET-EC-H27-CLUSTER-H1779-H1783"},
+    {"word_id_1":"H1781_0000","word_id_2":"H1782_0000","category_code":"etymological","relation_type":"root_shared","status_code":"asserted","direction_code":"undirected","description":null,"relation_group_id":null,"note":null,"source":"RESHET-EC-H27-CLUSTER-H1781-H1782"},
+    {"word_id_1":"H1835_0000","word_id_2":"H1839_0000","category_code":"morphological","relation_type":"derived","status_code":"asserted","direction_code":"w1_to_w2","description":null,"relation_group_id":null,"note":null,"source":"RESHET-EC-H27-CLUSTER-H1835-H1839"},
+    {"word_id_1":"H1835_0000","word_id_2":"H1840_0000","category_code":"morphological","relation_type":"compound","status_code":"asserted","direction_code":"w1_to_w2","description":null,"relation_group_id":null,"note":null,"source":"RESHET-EC-H27-CLUSTER-H1835-H1840"},
+    {"word_id_1":"H1835_0000","word_id_2":"H1842_0000","category_code":"morphological","relation_type":"compound","status_code":"asserted","direction_code":"w1_to_w2","description":null,"relation_group_id":null,"note":null,"source":"RESHET-EC-H27-CLUSTER-H1835-H1842"},
+    {"word_id_1":"H1835_0000","word_id_2":"H4265_0000","category_code":"morphological","relation_type":"compound","status_code":"asserted","direction_code":"w1_to_w2","description":null,"relation_group_id":null,"note":null,"source":"RESHET-EC-H27-CLUSTER-H1835-H4265"},
+    {"word_id_1":"H4082_0000","word_id_2":"H4083_0000","category_code":"etymological","relation_type":"root_shared","status_code":"asserted","direction_code":"undirected","description":null,"relation_group_id":null,"note":null,"source":"RESHET-EC-H27-CLUSTER-H4082-H4083"},
+    {"word_id_1":"H1840_0000","word_id_2":"H1841_0000","category_code":"etymological","relation_type":"root_shared","status_code":"asserted","direction_code":"undirected","description":null,"relation_group_id":null,"note":null,"source":"RESHET-EC-H27-CLUSTER-H1840-H1841"},
+    {"word_id_1":"H4264_0000","word_id_2":"H4265_0000","category_code":"morphological","relation_type":"compound","status_code":"asserted","direction_code":"w1_to_w2","description":null,"relation_group_id":null,"note":null,"source":"RESHET-EC-H27-CLUSTER-H4264-H4265"},
+    {"word_id_1":"H4079_0000","word_id_2":"H4080_0000","category_code":"morphological","relation_type":"derived","status_code":"hypothesized","direction_code":"w1_to_w2","description":"Strong의 ‘the same as’는 보통명사와 이름의 어원 연결을 제시하지만, 실제 명명 사건의 독립 근거가 없어 가설로 둔다.","relation_group_id":null,"note":null,"source":"RESHET-EC-H27-CLUSTER-H4079-H4080"},
+    {"word_id_1":"H4090_0000","word_id_2":"H4091_0000","category_code":"morphological","relation_type":"derived","status_code":"hypothesized","direction_code":"w1_to_w2","description":"Strong의 ‘the same as’를 명사에서 인명으로 이어지는 어원 가설로 보존한다.","relation_group_id":null,"note":null,"source":"RESHET-EC-H27-CLUSTER-H4090-H4091"},
+    {"word_id_1":"H4080_0000","word_id_2":"H4081_0000","category_code":"morphological","relation_type":"variant","status_code":"hypothesized","direction_code":"undirected","description":"Strong의 ‘a variation for’를 형태·어원 가설로 보존하며, 미디안과 유다 광야 성읍 밋딘을 같은 장소로 보지 않는다.","relation_group_id":null,"note":null,"source":"RESHET-EC-H27-CLUSTER-H4080-H4081"},
+    {"word_id_1":"H4080_0000","word_id_2":"H4084_0000","category_code":"morphological","relation_type":"derived","status_code":"asserted","direction_code":"w1_to_w2","description":null,"relation_group_id":null,"note":null,"source":"RESHET-EC-H27-CLUSTER-H4080-H4084"}
+  ],
+  "supersedes": [],
+  "relation_replacements": [
+    {
+      "relation_id": 3646,
+      "word_id_1": "H1777_0000",
+      "word_id_2": "H1835_0000",
+      "before": {"category_code":"unspecified","relation_type":"related","status_code":"inferred","direction_code":"unknown","description":null,"relation_group_id":null,"note":null,"source":"WORD_TABLE.관련1"},
+      "after": {"category_code":"morphological","relation_type":"derived","status_code":"asserted","direction_code":"w1_to_w2","description":null,"relation_group_id":null,"note":null,"source":"RESHET-EC-H27-CLUSTER-H1777-H1835"}
+    },
+    {
+      "relation_id": 4388,
+      "word_id_1": "H1777_0000",
+      "word_id_2": "H4066_0000",
+      "before": {"category_code":"unspecified","relation_type":"related","status_code":"inferred","direction_code":"unknown","description":null,"relation_group_id":null,"note":null,"source":"WORD_TABLE.관련1"},
+      "after": {"category_code":"morphological","relation_type":"derived","status_code":"asserted","direction_code":"w1_to_w2","description":null,"relation_group_id":null,"note":null,"source":"RESHET-EC-H27-CLUSTER-H1777-H4066"}
+    },
+    {
+      "relation_id": 4389,
+      "word_id_1": "H4066_0000",
+      "word_id_2": "H4079_0000",
+      "before": {"category_code":"unspecified","relation_type":"related","status_code":"inferred","direction_code":"unknown","description":null,"relation_group_id":null,"note":null,"source":"WORD_TABLE.관련1"},
+      "after": {"category_code":"morphological","relation_type":"variant","status_code":"asserted","direction_code":"undirected","description":null,"relation_group_id":null,"note":null,"source":"RESHET-EC-H27-CLUSTER-H4066-H4079"}
+    },
+    {
+      "relation_id": 4392,
+      "word_id_1": "H4066_0000",
+      "word_id_2": "H4090_0000",
+      "before": {"category_code":"unspecified","relation_type":"related","status_code":"inferred","direction_code":"unknown","description":null,"relation_group_id":null,"note":null,"source":"WORD_TABLE.관련1"},
+      "after": {"category_code":"morphological","relation_type":"variant","status_code":"asserted","direction_code":"undirected","description":null,"relation_group_id":null,"note":null,"source":"RESHET-EC-H27-CLUSTER-H4066-H4090"}
+    },
+    {
+      "relation_id": 6526,
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H1840_0000",
+      "before": {"category_code":"unspecified","relation_type":"related","status_code":"inferred","direction_code":"unknown","description":null,"relation_group_id":null,"note":null,"source":"WORD_TABLE.관련2"},
+      "after": {"category_code":"morphological","relation_type":"compound","status_code":"asserted","direction_code":"w1_to_w2","description":null,"relation_group_id":null,"note":null,"source":"RESHET-EC-H27-CLUSTER-H0410-H1840"}
+    },
+    {
+      "relation_id": 3648,
+      "word_id_1": "G1158_0000",
+      "word_id_2": "H1840_0000",
+      "before": {"category_code":"unspecified","relation_type":"related","status_code":"inferred","direction_code":"unknown","description":null,"relation_group_id":null,"note":null,"source":"WORD_TABLE.관련1"},
+      "after": {"category_code":"etymological","relation_type":"borrowed_from","status_code":"asserted","direction_code":"w2_to_w1","description":null,"relation_group_id":null,"note":null,"source":"RESHET-EC-H27-CLUSTER-H1840-G1158"}
+    },
+    {
+      "relation_id": 4391,
+      "word_id_1": "G3099_0000",
+      "word_id_2": "H4080_0000",
+      "before": {"category_code":"unspecified","relation_type":"related","status_code":"inferred","direction_code":"unknown","description":null,"relation_group_id":null,"note":null,"source":"WORD_TABLE.관련1"},
+      "after": {"category_code":"etymological","relation_type":"borrowed_from","status_code":"asserted","direction_code":"w2_to_w1","description":null,"relation_group_id":null,"note":null,"source":"RESHET-EC-H27-CLUSTER-H4080-G3099"}
+    }
+  ],
+  "meaning_approvals": [
+    {
+      "word_id": "G3099_0000",
+      "meanings": [{"seq": 1, "meaning": "미디안"}]
+    }
+  ]
+}
