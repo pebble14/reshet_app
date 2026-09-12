@@ -1,0 +1,60 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H1777-MEANING-NOTE-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-09-12 H1777 의미·비고 승인, hold 해제 및 DB·Git 완료 지시",
+    "document_sha256": "c27a89b96afd9458ef6f71102e407fd16c2fa1b91747e932753d9034c1ee41bc"
+  },
+  "target": {
+    "expected_work_sha256": "c582781e6a2f348839e2288f8298584d54f63d1f0158d35e8a93ebca42b53436",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H1777_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "심판하다"
+        },
+        {
+          "seq": 2,
+          "meaning": "변론하다"
+        },
+        {
+          "seq": 3,
+          "meaning": "다투다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "심판하다(審判하다)"
+        },
+        {
+          "seq": 2,
+          "meaning": "변호하다(辯護하다)"
+        },
+        {
+          "seq": 3,
+          "meaning": "다투다"
+        },
+        {
+          "seq": 4,
+          "meaning": "다스리다"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H1777_0000",
+      "before": null,
+      "after": "창세기 6:3의 יָדוֹן(야돈)은 형태와 어원 해석에 논쟁이 있다. ‘다투다’로 풀이하기도 하며, 칠십인역은 ‘머무르다’로 옮긴다. ‘머무르다’로 읽으면 하나님의 영이 인간의 생명을 끝없이 유지하지는 않겠다는 뜻으로 이해할 수 있다. 다만 이 용례의 분석이 확정되지 않았으므로 ‘머무르다’는 해석 가능성으로 제시한다."
+    }
+  ],
+  "relation_creates": [],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}

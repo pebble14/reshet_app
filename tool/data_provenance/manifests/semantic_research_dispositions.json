@@ -12,16 +12,6 @@
       "reopen_condition": "provenance가 검증된 critical lexicon/apparatus 또는 동등한 전문 source를 확보해 lexical/textual ambiguity를 해소할 수 있을 때 재검토한다."
     },
     {
-      "strong_number": "H1777",
-      "status": "hold",
-      "reason": "24개 canonical token 중 대부분은 심판·변호·다툼·다스림으로 설명되지만 창세기 6:3의 יָדוֹן은 ‘다투다’와 ‘머무르다’ 등으로 분석이 갈린다. 이 한 용례의 형태와 sense를 확정하지 않은 채 현행 meaning과 note를 유지한다.",
-      "evidence_refs": [
-        "reshet_research_output/H27_cluster_20260911_427a6c2f/H1777_review.md",
-        "reshet_research_output/H27_cluster_20260911_427a6c2f/00_approved_refinement.md"
-      ],
-      "reopen_condition": "창세기 6:3의 형태·문맥·고대 번역을 함께 설명하는 추가 원자료 근거가 확보되거나 사용자가 불확실성 비고를 포함한 최종 sense 구성을 결정할 때 재검토한다."
-    },
-    {
       "strong_number": "H4092",
       "status": "hold",
       "reason": "유일한 용례의 히브리어 הַמְּדָנִים은 므단 계열 형태이나 canonical 사전과 번역 전통은 미디안 사람으로 해석한다. 대표 표기와 집단 식별을 하나의 meaning에 어떻게 반영할지 확정하지 않은 채 현행 meaning과 note를 유지한다.",
