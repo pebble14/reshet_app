@@ -14,9 +14,9 @@
 ## 마감 검증
 
 - semantic progress: canonical 14,298건, `explicit_approved` 93건, `hold` 3건, `unapproved` 14,202건, anomaly 113건
-- snapshot identity: `a6232d92ffcf18c37ffac44e0f4c66d03379e3de45374da40a8a506f6a6dbe63`
-- 산출물 SHA-256: JSON `6f32523c1c49a8886404d1910fb36493aa90e28ac2b0e13520273bf5a7c19cfc`, CSV `a1f63c8c8daeca1a5e8a0cd1f8f7953e62c7f3ee5062fb9a915278cbe4a91a69`, Markdown `3b1332d3a18922585231d843476d1d75b2715e107f13f2ca67e9063e34b7e96c`
-- manifest SHA-256: `4839777d47bf5788eab2e7f6346f1f6f07cdcd75f4fb5756054120819004ffa0`
+- 최종 checkout snapshot identity: `d23ed1b80160041ce2112db5c63087e52621edd01e2c747268c34a84a96a61fb`
+- 최종 checkout 산출물 SHA-256: JSON `b164165058e52524bd5c3b9dc70e9b506875640f67e095916a9493ce0858b5cb`, CSV `a1f63c8c8daeca1a5e8a0cd1f8f7953e62c7f3ee5062fb9a915278cbe4a91a69`, Markdown `c3608bc72cd95500e852893200df4fa47836198ad25633afb511f3ec442bdad6`
+- 적용 manifest SHA-256: `4839777d47bf5788eab2e7f6346f1f6f07cdcd75f4fb5756054120819004ffa0`; `core.autocrlf`가 적용된 최종 checkout 파일 SHA-256: `65e6b25e64e7bd1b62adf6105dd66ef2e88ba84c9297298c1381dd5992e5ff7c`
 - DB SHA-256: work `5b04be523501015aa6bafbec6893f8d4b6de1abccb4d22cac010ade6049cfe21`, seed `e2e356c0f9a5d0d86c059da77c59815521e2abc410b3c4aa69b1ab6e55ff9a67`
 - 적용량: meaning replacement 24건, current meaning approval 1건, word note replacement 14건, relation create 20건, relation replacement 7건
 - live history: word update 38행, relation create 20행, relation update 7행, 합계 65행; 모두 active이며 자동 restore 없음
