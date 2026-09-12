@@ -13,7 +13,9 @@
 ## 마감 검증
 
 - semantic progress: canonical 14,298건, `explicit_approved` 94건, `hold` 2건, `unapproved` 14,202건, anomaly 113건
-- manifest SHA-256: `64d226f777e35f2f99cce15d187aa965ec9cade0c512086c96468ee2eb1f377e`
+- 최종 checkout snapshot identity: `e494d25f2b7b46edd84e05a4c1bc731e7c64b1432f48c8c34a6225df5d97af0f`
+- 최종 checkout 산출물 SHA-256: JSON `9ee7ac16e0575f7a5ca5ed47f55653dca721ffa847509e9099822d9d134c2861`, CSV `da814995cd7a61aead28ed697810c350b97e40900417eb9e01de3c45a0186c22`, Markdown `7dee2b271a904c1ba0ada9b60f44ffcdfc4891fb4eeba8a20083616da4a86a9e`
+- 적용 manifest SHA-256: `64d226f777e35f2f99cce15d187aa965ec9cade0c512086c96468ee2eb1f377e`; `core.autocrlf`가 적용된 최종 checkout 파일 SHA-256: `76a96b50dce8a51197a2319080eca4be9f67397d49c4b71841bccbb8e612004f`
 - DB SHA-256: work `fc77559add8c04021b0ffc0953b30d4f3ff479df998dd4adaedd2401778e4a04`, seed `e2e356c0f9a5d0d86c059da77c59815521e2abc410b3c4aa69b1ab6e55ff9a67`
 - 적용량: meaning replacement 1건, word note replacement 1건, relation 변경 0건
 - live history: word update 2행, 모두 active; 자동 restore 없음
