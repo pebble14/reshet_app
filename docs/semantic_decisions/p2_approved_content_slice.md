@@ -1,19 +1,20 @@
 # P2 승인 배치 결정
 
-- 상태: `partially_superseded` — H6772 의미는 후속 배치에서 대체됨
+- 상태: `partially_superseded` — H6772 의미와 H2020·H5005·H6306 meaning 표기는 후속 결정에서 대체됨
 - 기록 성격: 2026-08-28 소급 작성
 - 판단 근거 복원 수준: 제한적
 - 대상: H2020, H5005, H6306, H6772 및 직접 파생 관계 4건
 - 승인 manifest: [p2_approved_content_slice.json](../../tool/data_provenance/manifests/p2_approved_content_slice.json)
 - 적용 커밋: `4404191130709c0d140d70728fb6217605915347`
+- 후속 표기 결정: [승인 meaning 한국어 표기 정책 정비](approved_meaning_notation_policy_correction.md)
 
 ## 최종 결정
 
 | Strong | 당시 승인 의미 | 현재 상태 |
 |---|---|---|
-| H2020 | 구원 | active |
-| H5005 | 간음 | active |
-| H6306 | 속량 | active |
+| H2020 | 구원 | 후속 표기 정비에서 `구원(救援)`으로 대체 |
+| H5005 | 간음 | 후속 표기 정비에서 `간음(姦淫)`으로 대체 |
+| H6306 | 속량 | 후속 표기 정비에서 `속량(贖良)`으로 대체 |
 | H6772 | 갈증 | `third_semantic_batch`에서 `목마름`으로 대체 |
 
 직접 파생 관계는 `H5337 → H2020`, `H5003 → H5005`, `H6299 → H6306`, `H6770 → H6772`를 모두 `morphological / derived / asserted`로 승인했다.

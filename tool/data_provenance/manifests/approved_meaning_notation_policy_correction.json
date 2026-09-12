@@ -1,0 +1,165 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-APPROVED-MEANING-NOTATION-POLICY-CORRECTION-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-09-12 approved meaning 한국어 표기 정책 정비 18개 Strong 사용자 승인",
+    "document_sha256": "ea2a93c22f32668df050ab40f0667eed03dbea275513a63488440bf1601e5c8f"
+  },
+  "target": {
+    "expected_work_sha256": "fc77559add7ccdd64af1360db1673287cd40dadae0eed5adc16f102f418ae0d7",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "G0005_0000",
+      "before": [{"seq": 1, "meaning": "아빠/아버지"}],
+      "after": [{"seq": 1, "meaning": "아빠·아버지"}]
+    },
+    {
+      "word_id": "H0001_0000",
+      "before": [
+        {"seq": 1, "meaning": "아버지"},
+        {"seq": 2, "meaning": "조상(祖上)/선조(先祖)/시조(始祖)"}
+      ],
+      "after": [
+        {"seq": 1, "meaning": "아버지"},
+        {"seq": 2, "meaning": "조상(祖上)·선조(先祖)·시조(始祖)"}
+      ]
+    },
+    {
+      "word_id": "H0002_0000",
+      "before": [
+        {"seq": 1, "meaning": "아버지"},
+        {"seq": 2, "meaning": "조상(祖上)/선조(先祖)/시조(始祖)"}
+      ],
+      "after": [
+        {"seq": 1, "meaning": "아버지"},
+        {"seq": 2, "meaning": "조상(祖上)·선조(先祖)·시조(始祖)"}
+      ]
+    },
+    {
+      "word_id": "H0006_0000",
+      "before": [
+        {"seq": 1, "meaning": "멸망하다(滅亡-)/죽다"},
+        {"seq": 2, "meaning": "멸망시키다(滅亡-)/파괴하다(破壞-)"},
+        {"seq": 3, "meaning": "없어지다/없애다"},
+        {"seq": 4, "meaning": "잃다/길을 잃다"}
+      ],
+      "after": [
+        {"seq": 1, "meaning": "멸망하다(滅亡하다)·죽다"},
+        {"seq": 2, "meaning": "멸망시키다(滅亡시키다)·파괴하다(破壞하다)"},
+        {"seq": 3, "meaning": "없어지다·없애다"},
+        {"seq": 4, "meaning": "잃다·길을 잃다"}
+      ]
+    },
+    {
+      "word_id": "H0007_0000",
+      "before": [
+        {"seq": 1, "meaning": "멸망하다(滅亡-)/없어지다"},
+        {"seq": 2, "meaning": "멸망시키다(滅亡-)/없애다"}
+      ],
+      "after": [
+        {"seq": 1, "meaning": "멸망하다(滅亡하다)·없어지다"},
+        {"seq": 2, "meaning": "멸망시키다(滅亡시키다)·없애다"}
+      ]
+    },
+    {
+      "word_id": "H0017_0000",
+      "before": [{"seq": 1, "meaning": "근심(憂)"}],
+      "after": [{"seq": 1, "meaning": "근심"}]
+    },
+    {
+      "word_id": "H0340_0000",
+      "before": [{"seq": 1, "meaning": "원수(怨讐)로 대하다"}],
+      "after": [{"seq": 1, "meaning": "원수(怨讐)로 대하다(對하다)"}]
+    },
+    {
+      "word_id": "H1564_0000",
+      "before": [{"seq": 1, "meaning": "형체가 갖추어지지 않은 것"}],
+      "after": [{"seq": 1, "meaning": "형체(形體)가 갖추어지지 않은 것"}]
+    },
+    {
+      "word_id": "H1618_0000",
+      "before": [{"seq": 1, "meaning": "딱지가 생기는 피부병"}],
+      "after": [{"seq": 1, "meaning": "딱지가 생기는 피부병(皮膚病)"}]
+    },
+    {
+      "word_id": "H1655_0000",
+      "before": [
+        {"seq": 1, "meaning": "몸"},
+        {"seq": 2, "meaning": "신체"}
+      ],
+      "after": [{"seq": 1, "meaning": "몸·신체(身體)"}]
+    },
+    {
+      "word_id": "H2020_0000",
+      "before": [{"seq": 1, "meaning": "구원"}],
+      "after": [{"seq": 1, "meaning": "구원(救援)"}]
+    },
+    {
+      "word_id": "H2646_0000",
+      "before": [
+        {"seq": 1, "meaning": "덮개"},
+        {"seq": 2, "meaning": "방"}
+      ],
+      "after": [
+        {"seq": 1, "meaning": "덮개"},
+        {"seq": 2, "meaning": "방(房)"}
+      ]
+    },
+    {
+      "word_id": "H3958_0000",
+      "before": [{"seq": 1, "meaning": "보석의 한 종류"}],
+      "after": [{"seq": 1, "meaning": "보석(寶石)의 한 종류"}]
+    },
+    {
+      "word_id": "H4200_0000",
+      "before": [{"seq": 1, "meaning": "곳간(저장고)"}],
+      "after": [{"seq": 1, "meaning": "곳간·저장고(貯藏庫)"}]
+    },
+    {
+      "word_id": "H4461_0000",
+      "before": [{"seq": 1, "meaning": "치수"}],
+      "after": [{"seq": 1, "meaning": "치수(치寸)"}]
+    },
+    {
+      "word_id": "H5005_0000",
+      "before": [{"seq": 1, "meaning": "간음"}],
+      "after": [{"seq": 1, "meaning": "간음(姦淫)"}]
+    },
+    {
+      "word_id": "H6306_0000",
+      "before": [{"seq": 1, "meaning": "속량"}],
+      "after": [{"seq": 1, "meaning": "속량(贖良)"}]
+    },
+    {
+      "word_id": "H6378_0000",
+      "before": [{"seq": 1, "meaning": "병"}],
+      "after": [{"seq": 1, "meaning": "병(甁)"}]
+    }
+  ],
+  "word_note_replacements": [],
+  "relation_creates": [],
+  "supersedes": [
+    {"strong_number": "G0005", "batch_id": "RESHET-EC-H1-H2-G5-MEANING-APPROVAL-APPROVED-CONTENT-SLICE"},
+    {"strong_number": "H0001", "batch_id": "RESHET-EC-H1-H2-G5-MEANING-APPROVAL-APPROVED-CONTENT-SLICE"},
+    {"strong_number": "H0002", "batch_id": "RESHET-EC-H1-H2-G5-MEANING-APPROVAL-APPROVED-CONTENT-SLICE"},
+    {"strong_number": "H0006", "batch_id": "RESHET-EC-H6-CLUSTER-APPROVED-CONTENT-SLICE"},
+    {"strong_number": "H0007", "batch_id": "RESHET-EC-H6-CLUSTER-APPROVED-CONTENT-SLICE"},
+    {"strong_number": "H0017", "batch_id": "RESHET-EC-H14-CLUSTER-APPROVED-CONTENT-SLICE"},
+    {"strong_number": "H0340", "batch_id": "RESHET-EC-H14-CLUSTER-APPROVED-CONTENT-SLICE"},
+    {"strong_number": "H1564", "batch_id": "RESHET-EC-SECOND-SEMANTIC-BATCH-APPROVED-CONTENT-SLICE"},
+    {"strong_number": "H1618", "batch_id": "RESHET-EC-FIRST-5-STRONG-APPROVED-CONTENT-SLICE"},
+    {"strong_number": "H1655", "batch_id": "RESHET-EC-P1-HISTORICAL-APPROVAL-APPROVED-CONTENT-SLICE"},
+    {"strong_number": "H2020", "batch_id": "RESHET-EC-P2-APPROVED-CONTENT-SLICE"},
+    {"strong_number": "H2646", "batch_id": "RESHET-EC-H2646-APPROVED-CONTENT-SLICE"},
+    {"strong_number": "H3958", "batch_id": "RESHET-EC-SECOND-SEMANTIC-BATCH-APPROVED-CONTENT-SLICE"},
+    {"strong_number": "H4200", "batch_id": "RESHET-EC-FIRST-5-STRONG-APPROVED-CONTENT-SLICE"},
+    {"strong_number": "H4461", "batch_id": "RESHET-EC-FIRST-5-STRONG-APPROVED-CONTENT-SLICE"},
+    {"strong_number": "H5005", "batch_id": "RESHET-EC-P2-APPROVED-CONTENT-SLICE"},
+    {"strong_number": "H6306", "batch_id": "RESHET-EC-P2-APPROVED-CONTENT-SLICE"},
+    {"strong_number": "H6378", "batch_id": "RESHET-EC-FIRST-5-STRONG-APPROVED-CONTENT-SLICE"}
+  ],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}

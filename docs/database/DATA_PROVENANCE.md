@@ -491,6 +491,18 @@ Dry-run은 exit code 0으로 meaning replacement 2건과 relation create 3건을
 
 새 manifest를 stage해 tracked discovery에 포함한 full-data progress는 canonical Strong 14,298건, `explicit_approved=64`, `hold=1`, `unapproved=14,233`, anomaly 113건이며 H25는 새 manifest를 authority로 하는 `explicit_approved / approved`다. Snapshot artifact SHA-256은 JSON `91eee59cbc118835177dc85ed0b5bae705fec89659eb0153a1f9b8b61dbba26e`, CSV `5f86b895de63a5a6b6b0a6e7cc6ea47dc16909c45b5adec5c915d5a5e0f6cd54`, Markdown `1facd759bd3487025dec17189cef3ca0dff10e326015e74f2648a3fe94911454`이며 반복 재생성에서도 세 SHA가 유지됐다. 검증된 Flutter tools snapshot runner로 실행한 대상 applicator service 테스트 29건은 모두 통과했다. Production Dart·schema·seed·UI/UX는 변경하지 않았으므로 사용자 UI 수동 테스트는 N/A다.
 
+### 11.29 기존 승인 meaning 한국어 표기 정책 정비 work DB slice
+
+`tool/data_provenance/manifests/approved_meaning_notation_policy_correction.json`은 format v5 batch ID `RESHET-EC-APPROVED-MEANING-NOTATION-POLICY-CORRECTION-APPROVED-CONTENT-SLICE`와 사용자 승인 문서 SHA-256 `ea2a93c22f32668df050ab40f0667eed03dbea275513a63488440bf1601e5c8f`를 provenance로 고정한다. 대상은 G0005, H0001, H0002, H0006, H0007, H0017, H0340, H1564, H1618, H1655, H2020, H2646, H3958, H4200, H4461, H5005, H6306, H6378이며, meaning replacement 18건만 포함한다. Word note, relation, hold, schema와 seed DB는 변경하지 않는다. 각 Strong의 현재 ordered projection은 [승인 meaning 한국어 표기 정책 정비 결정](../semantic_decisions/approved_meaning_notation_policy_correction.md)에 기록한다.
+
+Dry-run은 18개 operation을 임시 DB에 적용하고 실제 undo해 원본 work SHA-256 `fc77559add7ccdd64af1360db1673287cd40dadae0eed5adc16f102f418ae0d7`을 전후 동일하게 유지했다. Live apply 뒤 work SHA-256은 `eb89e99f116fa9f8f49a715d0cbc2ed6398b9a18ca763b00ee45c81d05199f3a`이며 seed SHA-256 `e2e356c0f9a5d0d86c059da77c59815521e2abc410b3c4aa69b1ab6e55ff9a67`은 불변이다. 적용 전 snapshot은 `data/backups/approved_content_batch/20260912T075022811114Z/snapshot.db`, SHA-256 `b0c506fa640744c33f893827f8a9ef8bb88533e5371554e6417990f15b049f2b`이고 live history group `1789199423626046`에는 active word update 18행이 있다.
+
+Snapshot과 현재 DB의 12개 사용자 테이블을 양방향 대조한 결과 승인 대상 `word_meaning_set` projection과 `CHANGE_HISTORY` 18행 외 차이는 없다. `word_meaning_set`은 H1655의 동일 sense 두 행을 한 행으로 합치면서 18,178행에서 18,177행이 됐다. Work·snapshot integrity check는 `ok`, foreign key 위반은 0이고 work·seed SQLite sidecar는 없다. Applicator 대상 Flutter 테스트 29건은 모두 통과했다.
+
+적용 backup manifest SHA-256은 `ea03e105a759c76c27abe2a5531d7f158275eb59268eaadc407f18228e962721`이다. 적용 후 progress authority 검증에서 첫 5-Strong 배치 ID 4건의 명칭 오기를 발견해 최종 manifest의 supersession 대상만 실제 ID `RESHET-EC-FIRST-5-STRONG-APPROVED-CONTENT-SLICE`로 바로잡았다. 최종 manifest SHA-256은 `7d8b32d45b83e07b7cdc4b309eb3fa453374532b7dab3f694e9582606af69665`이고, backup manifest와의 차이는 이 metadata 문자열 4건뿐이며 meaning operation payload는 동일하다.
+
+새 manifest를 명시적으로 포함한 semantic progress는 canonical Strong 14,298건, `explicit_approved=94`, `hold=2`, `unapproved=14,202`, anomaly 113건이다. 18개 대상은 모두 새 manifest를 유일한 active authority로 가지며 현재 DB projection과 exact 일치한다. 산출물 SHA-256은 JSON `d617bb2101d39a44b5b88990d63193ce48f3d04057bf4ece2dc97167fe4ce83e`, CSV `059d52bd92dbb29a7dc070ec6e24a94b93eea7e7b685195477bbce821576a29c`, Markdown `d11567eb619f39229075df21d54151910f5e973090c7912e2b8976bdaf2dbba9`이며 반복 생성에서도 세 값이 동일했다. 같은 세 산출물을 `../reshet_research_output/semantic_progress`에 재생성하고, 출력 루트의 현재값 색인과 관련 Markdown 19개의 갱신 안내를 추가했다. JSON Evidence Packet·research state·database audit은 연구 당시 immutable 스냅샷으로 보존했다. Pre-commit 상태에서 tracked discovery는 새 파일을 자동 발견하지 않으므로 검증 호출에 새 manifest를 명시적으로 전달했으며, 커밋·병합·push는 별도 승인 전까지 수행하지 않는다. Production Dart·schema·seed·UI/UX는 변경하지 않았으므로 사용자 UI 수동 테스트는 N/A다.
+
 ## 12. pronunciation profile·migration 현행 경계
 
 ### 12.1 active pronunciation 계약

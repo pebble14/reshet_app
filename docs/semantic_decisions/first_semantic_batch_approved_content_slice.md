@@ -1,11 +1,12 @@
 # 첫 5-Strong 승인 배치 결정
 
-- 상태: `active`
+- 상태: `partially_superseded` — H1618·H4200·H4461·H6378 meaning 표기는 후속 정책 정비 결정으로 대체됨
 - 기록 성격: 2026-08-28 소급 작성
 - 판단 근거 복원 수준: 제한적
 - 대상: H1618, H4200, H4461, H5807, H6378와 직접 파생 관계 3건
 - 승인 manifest: [first_semantic_batch_approved_content_slice.json](../../tool/data_provenance/manifests/first_semantic_batch_approved_content_slice.json)
 - 적용 커밋: `a7ec825d2659701fad4db83c04daa65c0dfdbbd6`
+- 후속 결정: [승인 meaning 한국어 표기 정책 정비](approved_meaning_notation_policy_correction.md)
 
 ## 최종 결정
 

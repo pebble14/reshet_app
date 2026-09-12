@@ -1,6 +1,6 @@
 # 두 번째 semantic 배치 결정
 
-- 상태: `partially_superseded` — H5229 의미는 후속 배치에서 대체됨
+- 상태: `partially_superseded` — H5229 의미와 H1564·H3958 meaning 표기는 후속 결정에서 대체됨
 - 기록 성격: 2026-08-28 소급 작성
 - 판단 근거 복원 수준: 중간
 - 대상: H1564, H2251, H3958, H5229; H1833 hold
@@ -9,14 +9,15 @@
 - hold ledger: [semantic_research_dispositions.json](../../tool/data_provenance/manifests/semantic_research_dispositions.json)
 - 적용 커밋: `1faf3cea36bc622aa1d1be994eb8f80f8ca7674f`, `2ec209973b13f55e771d2308a9076f790ccd38da`
 - 로컬 연구 산출물: `second_semantic_batch_20260813_1f8fde72`
+- 후속 표기 결정: [승인 meaning 한국어 표기 정책 정비](approved_meaning_notation_policy_correction.md)
 
 ## 최종 결정
 
 | Strong | 당시 승인 의미 | 비고 판단 | 현재 상태 |
 |---|---|---|---|
-| H1564 | 형체가 갖추어지지 않은 것 | 별도 비고 없음 | active |
+| H1564 | 형체가 갖추어지지 않은 것 | 별도 비고 없음 | 후속 표기 정비에서 `형체(形體)가 갖추어지지 않은 것`으로 대체 |
 | H2251 | 떨다·털다 | 붙어 있는 것을 치거나 흔들어 떼는 동작이며 곡류 문맥에서는 타작으로 번역됨 | active |
-| H3958 | 보석의 한 종류 | 정확한 종류·색은 불확실하고 금빛·불꽃빛·호박빛 전통이 있음을 보존 | active |
+| H3958 | 보석의 한 종류 | 정확한 종류·색은 불확실하고 금빛·불꽃빛·호박빛 전통이 있음을 보존 | 후속 표기 정비에서 `보석(寶石)의 한 종류`로 대체 |
 | H5229 | 올곧음 | 별도 비고 없음 | 후속 배치에서 `올바름`으로 대체 |
 | H1833 | 의미 승인 보류 | damask 직물과 Damascus 지명 및 암 3:12 자료가 하나의 일반 의미로 수렴하지 않음 | hold |
 

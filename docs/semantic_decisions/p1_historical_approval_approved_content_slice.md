@@ -1,11 +1,12 @@
 # P1 historical 승인 복원 결정
 
-- 상태: `partially_superseded` — H1652와 H1653·H1656의 관계 분류가 후속 배치에서 교체됨
+- 상태: `partially_superseded` — H1652와 H1653·H1656의 관계 분류 및 H1655 meaning 표기가 후속 결정에서 교체됨
 - 기록 성격: 2026-08-28 소급 작성
 - 판단 근거 복원 수준: 제한적
 - 대상: H1653, H1655, H1656
 - 승인 manifest: [p1_historical_approval_approved_content_slice.json](../../tool/data_provenance/manifests/p1_historical_approval_approved_content_slice.json)
 - 적용 커밋: `5106d284be36bb99a0f01f35b3c855bea23531d7`
+- 후속 표기 결정: [승인 meaning 한국어 표기 정책 정비](approved_meaning_notation_policy_correction.md)
 
 ## 최종 결정
 

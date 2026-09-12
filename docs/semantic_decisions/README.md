@@ -28,16 +28,16 @@
 |---|---|---|---|---|---|
 | P2 승인 배치 | H2020, H5005, H6306, H6772와 파생 관계 | `partially_superseded` | 제한적 | 2026-08-10 | [기록](p2_approved_content_slice.md) |
 | H1672·H1674 | 걱정하다·걱정 | `active` | 중간 | 2026-08-13 | [기록](h1672_h1674_approved_content_slice.md) |
-| 첫 5-Strong 배치 | H1618, H4200, H4461, H5807, H6378 | `active` | 제한적 | 2026-08-13 | [기록](first_semantic_batch_approved_content_slice.md) |
+| 첫 5-Strong 배치 | H1618, H4200, H4461, H5807, H6378 | `partially_superseded` | 제한적 | 2026-08-13 | [기록](first_semantic_batch_approved_content_slice.md) |
 | 두 번째 semantic 배치 | H1564, H2251, H3958, H5229; H1833 hold | `partially_superseded` | 중간 | 2026-08-14 | [기록](second_semantic_batch_approved_content_slice.md) |
 | P1 historical 승인 복원 | H1653, H1655, H1656 | `partially_superseded` | 제한적 | 2026-08-14 | [기록](p1_historical_approval_approved_content_slice.md) |
-| H2646 | 덮개·방 | `active` | 중간 | 2026-08-14 | [기록](h2646_approved_content_slice.md) |
+| H2646 | 덮개·방 | `partially_superseded` | 중간 | 2026-08-14 | [기록](h2646_approved_content_slice.md) |
 | 세 번째 semantic 배치 | H1563, H1652, H5228, H5229, H6770, H6772, H2645와 관계 | `active` | 중간 | 2026-08-14·20 | [기록](third_semantic_batch_approved_content_slice.md) |
-| H1·H2·G5 | 아버지 계열과 G5 호격 | `active` | 높음 | 2026-08-22 | [기록](h1_h2_g5_meaning_approval_approved_content_slice.md) |
+| H1·H2·G5 | 아버지 계열과 G5 호격 | `partially_superseded` | 높음 | 2026-08-22 | [기록](h1_h2_g5_meaning_approval_approved_content_slice.md) |
 | H3 클러스터 | H3, H4, H24와 합성 관계 | `active` | 높음 | 2026-08-22 | [기록](h3_cluster_approved_content_slice.md) |
 | H5 인명 | 아박다·아바그타 | `active` | 높음 | 2026-08-25 | [기록](h5_name_approved_content_slice.md) |
-| H6 클러스터 | 멸망·상실 계열과 아바돈 | `active` | 높음 | 2026-08-25 | [기록](h6_cluster_approved_content_slice.md) |
-| H14 클러스터 | 원함·갈망·적대 관련 14개 Strong | `active` | 높음 | 2026-08-25 | [기록](h14_cluster_approved_content_slice.md) |
+| H6 클러스터 | 멸망·상실 계열과 아바돈 | `partially_superseded` | 높음 | 2026-08-25 | [기록](h6_cluster_approved_content_slice.md) |
+| H14 클러스터 | 원함·갈망·적대 관련 14개 Strong | `partially_superseded` | 높음 | 2026-08-25 | [기록](h14_cluster_approved_content_slice.md) |
 | H18 클러스터 | 구유·살찌우다·곡물 창고 | `active` | 높음 | 2026-08-27 | [기록](h18_cluster_approved_content_slice.md) |
 | H19 | 칼의 번뜩임 | `active` | 높음 | 2026-08-27 | [기록](h19_cluster_approved_content_slice.md) |
 | H20 | 수박 | `active` | 높음 | 2026-08-28 | [기록](h20_cluster_approved_content_slice.md) |
@@ -48,6 +48,7 @@
 | H26 클러스터 | 아비가일·아비갈과 H1523–H1525 즐거움 계열 | `active` | 높음 | 2026-08-31 | [기록](h26_cluster_approved_content_slice.md) |
 | H27 클러스터 | 판단·송사·단·다니엘·미디안 계열 25개 승인과 H1777·H4092 hold | `partially_superseded` | 높음 | 2026-09-12 | [기록](h27_cluster_approved_content_slice.md) |
 | H1777 | 심판·변호·다툼·다스림 의미와 창세기 6:3 해석 비고, hold 해제 | `active` | 높음 | 2026-09-12 | [기록](h1777_meaning_note_approved_content_slice.md) |
+| 승인 meaning 표기 정책 정비 | 기존 승인 18개 Strong의 한국어 meaning 표기 | `active` | 높음 | 2026-09-12 | [기록](approved_meaning_notation_policy_correction.md) |
 
 ## 열람 및 후속 판단 원칙
 

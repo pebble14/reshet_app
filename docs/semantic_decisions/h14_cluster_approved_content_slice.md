@@ -1,12 +1,13 @@
 # H14 클러스터 결정
 
-- 상태: `active`
+- 상태: `partially_superseded` — H0017·H0340 meaning 표기는 후속 정책 정비 결정으로 대체됨
 - 기록 성격: 2026-08-28 소급 작성
 - 판단 근거 복원 수준: 높음
 - 대상: H0014, H0015, H0016, H0017, H0034, H0035, H8373, H8374, H8375, H0340, H0341, H0342, H0347, G2492
 - 승인 manifest: [h14_cluster_approved_content_slice.json](../../tool/data_provenance/manifests/h14_cluster_approved_content_slice.json)
 - 적용 커밋: `f6ca45b5f1a55a00d217f716665c3874f617546a`
 - 로컬 연구 산출물: `H14_cluster_20260825_6ec49bfe`
+- 후속 결정: [승인 meaning 한국어 표기 정책 정비](approved_meaning_notation_policy_correction.md)
 
 ## 최종 결정
 

@@ -1,6 +1,6 @@
 # H2646 결정
 
-- 상태: `active`
+- 상태: `partially_superseded` — meaning 2의 한국어 표기는 후속 정책 정비 결정으로 대체됨
 - 기록 성격: 2026-08-28 소급 작성
 - 판단 근거 복원 수준: 중간
 - 대상: H2646
@@ -8,6 +8,7 @@
 - 관련 관계 manifest: [third_semantic_batch_relations_approved_content_slice.json](../../tool/data_provenance/manifests/third_semantic_batch_relations_approved_content_slice.json)
 - 적용 커밋: `6fa0cfd533a80bac5f90a3d0b36a95623b76c1f9`
 - 로컬 연구 산출물: `H2646_review_20260814_9ed988d6`
+- 후속 결정: [승인 meaning 한국어 표기 정책 정비](approved_meaning_notation_policy_correction.md)
 
 ## 최종 결정
 

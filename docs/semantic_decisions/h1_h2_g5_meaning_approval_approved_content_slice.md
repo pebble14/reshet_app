@@ -1,6 +1,6 @@
 # H1·H2·G5 의미 결정
 
-- 상태: `active`
+- 상태: `partially_superseded` — H0001·H0002·G0005 meaning 표기는 후속 정책 정비 결정으로 대체됨
 - 기록 성격: 2026-08-28 소급 작성
 - 판단 근거 복원 수준: 높음
 - 대상: H0001, H0002, G0005
@@ -8,6 +8,7 @@
 - 현행 의미 승인 manifest: [h1_h2_g5_meaning_approval_approved_content_slice.json](../../tool/data_provenance/manifests/h1_h2_g5_meaning_approval_approved_content_slice.json)
 - 적용 커밋: `c38c5532ff175e2d1570478c13e4f5b2f6f31d04`, `3c34abe8897c0717e9986c9eca88c893470896d6`
 - 로컬 연구 산출물: `H1_cluster_20260822_ab8ec1aa`
+- 후속 결정: [승인 meaning 한국어 표기 정책 정비](approved_meaning_notation_policy_correction.md)
 
 ## 최종 결정
 
