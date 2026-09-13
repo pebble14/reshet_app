@@ -527,6 +527,20 @@ Snapshot과 현재 DB의 12개 사용자 테이블을 양방향 `EXCEPT` 대조�
 
 Production Dart·schema·seed·UI/UX는 변경하지 않았다. Applicator 구현과 테스트는 직전 승인 slice 이후 변경되지 않았고 이번 exact manifest dry-run·live apply·snapshot diff로 변경 3건을 검증했으므로 applicator 테스트를 반복 실행하지 않았다. 사용자 UI 수동 테스트는 N/A다. 커밋·병합·push는 별도 승인 전까지 수행하지 않는다.
 
+### 11.32 H28 클러스터 approved-content work DB slice
+
+`tool/data_provenance/manifests/h28_cluster_approved_content_slice.json`은 format v5 batch ID `RESHET-EC-H28-CLUSTER-APPROVED-CONTENT-SLICE`, 사용자의 추천안 전체 승인 및 DB·Git 완료 지시 SHA-256 `b7c5554744fcbd9ef747eef62b062362fc08711a955b2803e551381550a4a8c3`, 적용 manifest SHA-256 `5c0e0d6f1bfbf356b44ed93dd617ce94e6dadef0125df0213aa2a6a1fc1ec84e`를 provenance로 고정한다. `H0028_0000`의 active meaning 한 행을 `아비다 (인)`에서 `아비다·아비-다 (인)`으로 교체한다. Word note는 창 25:4와 대상 1:33의 동일 인물 계보, 한국어 성경의 관용 표기와 H0001·H3045 분석 경계, 하이픈의 비마케프 성격, Strong과 reference-only HebGrkKo의 어원 풀이 차이를 기록한다. Expression·transliteration·pronunciation, H0001·H3045의 독립 meaning, hold·schema와 seed DB는 변경하지 않는다.
+
+신규 relation id 7683은 `H0001_0000→H0028_0000`의 `morphological / compound / asserted / w1_to_w2`, id 7684는 semantic 방향 `H3045_0000→H0028_0000`의 같은 관계다. 후자는 canonical pair 정렬에 따라 `H0028_0000, H3045_0000 / w2_to_w1`로 저장했다. Source는 각각 `RESHET-EC-H28-CLUSTER-H0001-H0028`, `RESHET-EC-H28-CLUSTER-H3045-H0028`이며 선택 metadata는 `NULL`이다. Relation replacement, supersession과 hold operation은 없다.
+
+Dry-run은 exit code 0으로 meaning replacement 1건, word note replacement 1건과 relation create 2건을 임시 exact copy에 적용하고 실제 undo해 `did_undo=true`, 임시 history group `1789302772814742`의 4행과 원본 work SHA-256 `75a44ef1098742cca6cfd91194931cd1fc063c040f7219e82ed635855d711171` 전후 exact 동일을 확인했다. Live apply도 exit code 0이며 work SHA-256은 위 값에서 `db8d6a6d28801b2aff9b6bf5a6b76a0d29d58bd2b57761cea8571d9561158c69`으로 변경됐고 seed SHA-256 `e2e356c0f9a5d0d86c059da77c59815521e2abc410b3c4aa69b1ab6e55ff9a67`은 불변이다. 적용 전 snapshot은 `data/backups/approved_content_batch/20260913T123315662676Z/snapshot.db`, SHA-256 `5113501b7a8cb822ab846c8de695c3e24fc28891461b1dc60cf26b5bd3391857`이며 source schema version 1368과 snapshot 1369의 차이는 기존 `VACUUM INTO` 계약상 예상된 schema cookie 차이다. Live history group `1789302796475698`에는 active word update 2행과 relation create 2행이 있고 `undone_at`은 모두 `NULL`이며 자동 restore는 실행되지 않았다.
+
+Snapshot과 현재 DB의 12개 사용자 테이블을 양방향 대조한 결과 `word_expression_set`을 포함한 8개 비대상 테이블은 동일하다. `WORD_TABLE`과 `word_meaning_set`의 current-only·pre-only 각 1행은 승인된 note와 meaning 교체뿐이고, `WORD_RELATION` current-only 2행과 `CHANGE_HISTORY` current-only 4행 외 차이는 없다. `WORD_RELATION`은 7,482행에서 7,484행, `CHANGE_HISTORY`는 1,669행에서 1,673행으로 승인 operation 수만큼 증가했다. Work·seed·snapshot integrity check는 `ok`, foreign key 위반과 work·seed SQLite sidecar는 0이다.
+
+새 H28 manifest와 자동 discovery 대상이 아닌 `approved_meaning_notation_policy_correction.json`을 명시적으로 포함해 생성한 semantic progress는 canonical Strong 14,298건, `explicit_approved=95`, `hold=2`, `unapproved=14,201`, anomaly 113건이다. H0028은 새 manifest를 유일한 active authority로 하는 `explicit_approved / approved`이며 현재 meaning과 exact 일치한다. Snapshot identity는 `8449969a4be2b256487e69fca1b2fa612b8a073299c5f06e0506527a401d65e3`이고 외부 산출물 SHA-256은 JSON `f834b0767924dc0f72277de686454f81e08de9d62e5dd91803ba35db26a1e8df`, CSV `e5347497cd5828be673155cc043cfbb6d908554818ad90cc4ccb06caa201a0f1`, Markdown `0614aedc91256f544b83356338156ea10bf5c721d6b3ff0ba964cb8945e253b8`이다.
+
+Targeted approved-content applicator 테스트 29건은 모두 통과했다. Production Dart·schema·seed·UI/UX는 변경하지 않았으므로 사용자 UI 수동 테스트는 N/A다. Semantic 결정은 `docs/semantic_decisions/h28_cluster_approved_content_slice.md`에 기록하고 README 색인에 추가했다.
+
 ## 12. pronunciation profile·migration 현행 경계
 
 ### 12.1 active pronunciation 계약

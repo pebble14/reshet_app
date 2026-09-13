@@ -1,0 +1,65 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H28-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-09-13 H28 cluster 추천안 전체 승인 및 DB·Git 완료 지시",
+    "document_sha256": "b7c5554744fcbd9ef747eef62b062362fc08711a955b2803e551381550a4a8c3"
+  },
+  "target": {
+    "expected_work_sha256": "75a44ef1098742cca6cfd91194931cd1fc063c040f7219e82ed635855d711171",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0028_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아비다 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아비다·아비-다 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0028_0000",
+      "before": null,
+      "after": "창 25:4와 대상 1:33의 같은 계보에서 미디안의 아들 한 사람, 곧 아브라함과 그두라의 손자를 가리킨다. ‘아비다’는 한국어 성경의 관용 표기이고 ‘아비-다’는 H0001과 H3045의 구성 경계를 드러낸 분석 표기이며, 하이픈은 실제 히브리어 마케프를 뜻하지 않는다. Strong은 이름을 ‘father of knowledge (i.e. knowing)’로, reference-only HebGrkKo는 ‘나의 아버지는 아신다’로 풀이하므로 어원 풀이를 별도 meaning으로 확정하지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0001_0000",
+      "word_id_2": "H0028_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H28-CLUSTER-H0001-H0028"
+    },
+    {
+      "word_id_1": "H0028_0000",
+      "word_id_2": "H3045_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H28-CLUSTER-H3045-H0028"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}
