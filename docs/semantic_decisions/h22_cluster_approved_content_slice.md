@@ -1,6 +1,6 @@
 # H22 결정
 
-- 상태: `active`
+- 상태: `partially_superseded` — H0022 meaning 표기는 후속 분석적 합성 표기 결정으로 대체됨
 - 기록 성격: 승인 시점 작성
 - 판단 근거 복원 수준: 높음
 - 대상: H0022; H0001·H0410은 합성 관계 문맥, H0045는 평행 명단 문맥
@@ -8,6 +8,7 @@
 - 로컬 연구 산출물: `H22_cluster_20260829_550155e1`
 - DB 적용: 2026-08-29, history group `1787969418635585`
 - Git 반영: 승인 manifest와 같은 release commit에 포함
+- 후속 결정: [H0022·H1841·G1158 분석적 합성 표기](h0022_h1841_g1158_analytic_name_notation_approved_content_slice.md)
 
 ## 최종 결정
 

@@ -42,7 +42,7 @@
 | H19 | 칼의 번뜩임 | `active` | 높음 | 2026-08-27 | [기록](h19_cluster_approved_content_slice.md) |
 | H20 | 수박 | `active` | 높음 | 2026-08-28 | [기록](h20_cluster_approved_content_slice.md) |
 | H21 | 아비와 H1 파생 관계 | `active` | 높음 | 2026-08-28 | [기록](h21_cluster_approved_content_slice.md) |
-| H22 | 아비엘과 H1·H410 합성 관계 | `active` | 높음 | 2026-08-29 | [기록](h22_cluster_approved_content_slice.md) |
+| H22 | 아비엘과 H1·H410 합성 관계 | `partially_superseded` | 높음 | 2026-08-29 | [기록](h22_cluster_approved_content_slice.md) |
 | H23 클러스터 | 아비아삽·아비-아사프와 에비아삽·에브야사프 | `active` | 높음 | 2026-08-30 | [기록](h23_cluster_approved_content_slice.md) |
 | H25 | 기브온의 아버지와 H1·H1391 구성 관계 | `active` | 높음 | 2026-08-30 | [기록](h25_cluster_approved_content_slice.md) |
 | H26 클러스터 | 아비가일·아비갈과 H1523–H1525 즐거움 계열 | `partially_superseded` | 높음 | 2026-08-31 | [기록](h26_cluster_approved_content_slice.md) |
@@ -50,6 +50,7 @@
 | H1777 | 심판·변호·다툼·다스림 의미와 창세기 6:3 해석 비고, hold 해제 | `active` | 높음 | 2026-09-12 | [기록](h1777_meaning_note_approved_content_slice.md) |
 | 승인 meaning 표기 정책 정비 | 기존 승인 18개 Strong의 한국어 meaning 표기 | `active` | 높음 | 2026-09-12 | [기록](approved_meaning_notation_policy_correction.md) |
 | H0026 분석 표기 | 아비가일·아비갈·아비-가일·아비-갈 | `active` | 높음 | 2026-09-12 | [기록](h0026_analytic_name_notation_approved_content_slice.md) |
+| H0022·H1841·G1158 분석 표기 | 아비엘·아비-엘과 다니엘·다니-엘 | `active` | 높음 | 2026-09-13 | [기록](h0022_h1841_g1158_analytic_name_notation_approved_content_slice.md) |
 
 ## 열람 및 후속 판단 원칙
 

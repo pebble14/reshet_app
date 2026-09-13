@@ -1,0 +1,77 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H0022-H1841-G1158-ANALYTIC-NAME-NOTATION-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-09-13 H0022·H1841·G1158 분석적 합성 표기 사용자 승인: H0022 아비엘·아비-엘 (인); H1841·G1158 다니엘·다니-엘 (인)",
+    "document_sha256": "06be207a2a89781baeef68bdba881c99921f6ebaa1a9823902a5cabc8a7aa1ae"
+  },
+  "target": {
+    "expected_work_sha256": "71b348a889c5de2a2ddbeae5e235bdf38d28a7349de458a0d7f1cd0413fbc21f",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0022_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아비엘 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아비엘·아비-엘 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H1841_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "다니엘 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "다니엘·다니-엘 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "G1158_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "다니엘 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "다니엘·다니-엘 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [],
+  "relation_creates": [],
+  "supersedes": [
+    {
+      "strong_number": "H0022",
+      "batch_id": "RESHET-EC-H22-CLUSTER-APPROVED-CONTENT-SLICE"
+    },
+    {
+      "strong_number": "H1841",
+      "batch_id": "RESHET-EC-H27-CLUSTER-APPROVED-CONTENT-SLICE"
+    },
+    {
+      "strong_number": "G1158",
+      "batch_id": "RESHET-EC-H27-CLUSTER-APPROVED-CONTENT-SLICE"
+    }
+  ],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}

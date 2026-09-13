@@ -515,6 +515,18 @@ Snapshot과 현재 DB의 12개 사용자 테이블을 양방향 `EXCEPT` 대조�
 
 Production Dart·schema·seed·UI/UX는 변경하지 않았다. Applicator 구현은 직전 표기정비 slice에서 통과한 대상 테스트 29건과 동일하며, 이번에는 exact manifest dry-run·live apply·snapshot diff로 변경 한 건을 검증했으므로 테스트를 반복 실행하지 않았다. 사용자 UI 수동 테스트는 N/A다. 커밋·병합·push는 별도 승인 전까지 수행하지 않는다.
 
+### 11.31 H0022·H1841·G1158 분석적 합성 표기 work DB slice
+
+`tool/data_provenance/manifests/h0022_h1841_g1158_analytic_name_notation_approved_content_slice.json`은 format v5 batch ID `RESHET-EC-H0022-H1841-G1158-ANALYTIC-NAME-NOTATION-APPROVED-CONTENT-SLICE`와 사용자 승인 문서 SHA-256 `06be207a2a89781baeef68bdba881c99921f6ebaa1a9823902a5cabc8a7aa1ae`를 provenance로 고정한다. H0022는 `아비엘 (인)`에서 `아비엘·아비-엘 (인)`, H1841과 G1158은 각각 `다니엘 (인)`에서 `다니엘·다니-엘 (인)`으로 ordered meaning 한 행만 교체한다. Word note·expression/transliteration·relation·hold·schema와 seed DB는 변경하지 않는다. H0022에 한해 기존 H22 manifest, H1841·G1158에 한해 기존 H27 manifest의 meaning authority를 supersede한다.
+
+Dry-run은 meaning replacement 3건을 임시 DB에 적용한 뒤 실제 undo하여 원본 work SHA-256 `71b348a889c5de2a2ddbeae5e235bdf38d28a7349de458a0d7f1cd0413fbc21f`을 전후 동일하게 유지했다. Live apply 뒤 work SHA-256은 `75a44ef1098742cca6cfd91194931cd1fc063c040f7219e82ed635855d711171`이며 seed SHA-256 `e2e356c0f9a5d0d86c059da77c59815521e2abc410b3c4aa69b1ab6e55ff9a67`은 불변이다. 적용 전 snapshot은 `data/backups/approved_content_batch/20260913T020444075006Z/snapshot.db`, SHA-256 `64d2fbe6b3782db9a4b7248bd84deeaa5c3d10651a21dfb4356ae0221a2347b3`이고 live history group `1789265084936111`에는 active word update 3행이 있다.
+
+Snapshot과 현재 DB의 12개 사용자 테이블을 양방향 `EXCEPT` 대조한 결과 `word_meaning_set`의 승인된 교체 전후 각 3행과 `CHANGE_HISTORY` current-only 3행 외 차이는 없다. Work·snapshot integrity check는 `ok`, foreign key 위반은 0이고 work·seed SQLite sidecar는 없다. 적용 manifest와 backup manifest SHA-256은 모두 `e42778640c9252d46ff3ada57d2a6fa295196eb6b4874daeb66f73d48b91d7da`이다.
+
+기존 자동 discovery 대상이 아닌 `approved_meaning_notation_policy_correction.json`을 명시적으로 포함해 재생성한 semantic progress는 canonical Strong 14,298건, `explicit_approved=94`, `hold=2`, `unapproved=14,202`, anomaly 113건이다. 세 대상은 새 manifest를 유일한 active approval authority로 가지며 현재 DB projection과 exact 일치한다. 외부 산출물 SHA-256은 JSON `4979ff2a92f69064a3425aa689747c6fbb571bb7d7c79547b0c52248a1960e97`, CSV `3e108a63f15cbe72cbe86cc91941c2ec73144bbf12fd962e7031a5effbda4173`, Markdown `2f351916049c66c93fb4308ed7fbb57e5b5d0d3dc81dc06c344f927d97a6af55`이다. 외부 현재값 색인과 H22·H27 summary·review 안내도 같은 meaning으로 갱신하고, Evidence Packet·research state·database audit JSON은 연구 당시 immutable 스냅샷으로 보존한다.
+
+Production Dart·schema·seed·UI/UX는 변경하지 않았다. Applicator 구현과 테스트는 직전 승인 slice 이후 변경되지 않았고 이번 exact manifest dry-run·live apply·snapshot diff로 변경 3건을 검증했으므로 applicator 테스트를 반복 실행하지 않았다. 사용자 UI 수동 테스트는 N/A다. 커밋·병합·push는 별도 승인 전까지 수행하지 않는다.
+
 ## 12. pronunciation profile·migration 현행 경계
 
 ### 12.1 active pronunciation 계약

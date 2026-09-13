@@ -1,6 +1,6 @@
 # H27 클러스터 결정
 
-- 상태: `partially_superseded` — H1777 hold 판단은 후속 H1777 의미·비고 승인으로 대체됨
+- 상태: `partially_superseded` — H1777 hold 판단과 H1841·G1158 meaning 표기는 각각 후속 결정으로 대체됨
 - 기록 성격: 승인 시점 작성
 - 판단 근거 복원 수준: 높음
 - 결정일: 2026-09-12
@@ -11,6 +11,7 @@
 - 승인 보완 산출물: `H27_cluster_20260911_427a6c2f/00_approved_refinement.md`
 - DB 적용: 2026-09-12, history group `1789142925366297`
 - 후속 결정: [H1777 의미·비고 승인과 hold 해제](h1777_meaning_note_approved_content_slice.md)
+- 후속 결정: [H0022·H1841·G1158 분석적 합성 표기](h0022_h1841_g1158_analytic_name_notation_approved_content_slice.md)
 
 ## 마감 검증
 
