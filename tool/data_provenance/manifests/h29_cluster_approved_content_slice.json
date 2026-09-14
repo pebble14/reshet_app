@@ -1,0 +1,136 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H29-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-09-14 H29 cluster semantic 안 승인 및 DB 반영·Git 완료 지시",
+    "document_sha256": "3410501498af209b657327a54cd6b16f1c613a1ecdf95cdeee195a2d69e85871"
+  },
+  "target": {
+    "expected_work_sha256": "db8d6a6d28801b2aff9b6bf5a6b76a0d29d58bd2b57761cea8571d9561158c69",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0029_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아비야/아비-야"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아비야·아비-야 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "G0007_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아비야/아비-야"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아비야·아비-야 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0029_0000",
+      "before": "의미는 \"'야'는 나의 아버지\"\n'야'는 하나님의 존함인 H3068/H3069 יהוה의 축약인 H3050 יָהּ(야)",
+      "after": "אֲבִיָּה와 연장형 אֲבִיָּהוּ는 여러 남녀 인물과 제사장 반열·가문 이름에 쓰인다. ‘아비야’는 한국어 성경의 관용 표기이고 ‘아비-야’는 H0001과 H3050의 구성 경계를 드러낸 분석 표기이며, 하이픈은 실제 히브리어 마케프를 뜻하지 않는다. Strong은 이름을 ‘야의 아버지 또는 예배자’ 방향으로, reference-only HebGrkKo는 ‘여호와는 아버지이시다’로 풀이하므로 어원 풀이를 별도 meaning으로 확정하지 않는다. 대하 29:1의 히스기야 어머니는 왕하 18:2의 아비(H0021)와 같은 인물이지만 직접 canonical lexical edge가 없어 별도 relation은 두지 않는다."
+    },
+    {
+      "word_id": "G0007_0000",
+      "before": "아비야를 의미하는 히브리어 단어 H29 אֲבִיָּהוּ/אֲבִיָּה(아비야/아비야후)의 헬라어 음역",
+      "after": "Ἀβιά는 H0029 이름의 헬라어 음역이다. 마 1:7에서는 유다 왕 아비야, 눅 1:5에서는 아비야 제사장 반열을 가리킨다. ‘아비야’는 한국어 성경의 관용 표기이고 ‘아비-야’는 원천 히브리어 이름의 H0001·H3050 구성 경계를 보존한 분석 표기이며, 헬라어 합성어 분석을 뜻하지 않는다."
+    }
+  ],
+  "relation_creates": [],
+  "supersedes": [],
+  "relation_replacements": [
+    {
+      "relation_id": 13,
+      "word_id_1": "G0007_0000",
+      "word_id_2": "H0029_0000",
+      "before": {
+        "category_code": "transliteration",
+        "relation_type": "direct_transliteration",
+        "status_code": "inferred",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "",
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "transliteration",
+        "relation_type": "direct_transliteration",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "RESHET-EC-H29-CLUSTER-H0029-G0007"
+      }
+    },
+    {
+      "relation_id": 14,
+      "word_id_1": "H0001_0000",
+      "word_id_2": "H0029_0000",
+      "before": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "inferred",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "",
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "RESHET-EC-H29-CLUSTER-H0001-H0029"
+      }
+    },
+    {
+      "relation_id": 5370,
+      "word_id_1": "H0029_0000",
+      "word_id_2": "H3050_0000",
+      "before": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "inferred",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "",
+        "source": "WORD_TABLE.관련2"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "RESHET-EC-H29-CLUSTER-H3050-H0029"
+      }
+    }
+  ],
+  "meaning_approvals": []
+}

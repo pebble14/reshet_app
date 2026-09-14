@@ -541,6 +541,20 @@ Snapshot과 현재 DB의 12개 사용자 테이블을 양방향 대조한 결과
 
 Targeted approved-content applicator 테스트 29건은 모두 통과했다. Production Dart·schema·seed·UI/UX는 변경하지 않았으므로 사용자 UI 수동 테스트는 N/A다. Semantic 결정은 `docs/semantic_decisions/h28_cluster_approved_content_slice.md`에 기록하고 README 색인에 추가했다.
 
+### 11.33 H29 클러스터 approved-content work DB slice
+
+`tool/data_provenance/manifests/h29_cluster_approved_content_slice.json`은 format v5 batch ID `RESHET-EC-H29-CLUSTER-APPROVED-CONTENT-SLICE`, 사용자의 semantic 안 승인 및 DB 반영·Git 완료 지시 SHA-256 `3410501498af209b657327a54cd6b16f1c613a1ecdf95cdeee195a2d69e85871`, 적용 manifest SHA-256 `75b5ca53a20d2ef557a4f2ebd9e40d0f3c2e5ca79bea0c48ba05a358d0502ab4`를 provenance로 고정한다. `H0029_0000`과 `G0007_0000`의 active meaning 한 행을 각각 `아비야/아비-야`에서 `아비야·아비-야 (인)`으로 교체한다. 두 word note는 canonical 전 용례의 인명·제사장 반열 문맥, 한국어 관용 표기와 H0001·H3050 분석 경계, 어원 자료 차이와 원천 히브리어 구조의 성격을 기록한다. Expression·transliteration·pronunciation, H0001·H3050의 독립 meaning, hold·schema와 seed DB는 변경하지 않는다.
+
+Relation id 13은 semantic 방향 H0029→G0007의 `transliteration / direct_transliteration / asserted / w2_to_w1`, id 14는 H0001→H0029의 `morphological / compound / asserted / w1_to_w2`, id 5370은 H3050→H0029의 `morphological / compound / asserted / w2_to_w1`로 교체했다. Canonical pair와 relation id는 유지하고 `status_code`를 `inferred`에서 `asserted`로, source를 각각 `RESHET-EC-H29-CLUSTER-H0029-G0007`, `RESHET-EC-H29-CLUSTER-H0001-H0029`, `RESHET-EC-H29-CLUSTER-H3050-H0029`로 변경했으며 선택 metadata는 `NULL`이다. Relation create·supersession·hold operation은 없고 H0021–H0029 relation도 생성하지 않았다.
+
+Dry-run은 exit code 0으로 meaning replacement 2건, word note replacement 2건과 relation replacement 3건을 임시 exact copy에 적용하고 실제 undo해 `did_undo=true`, 임시 history group `1789343822019123`의 7행과 원본 work SHA-256 `db8d6a6d28801b2aff9b6bf5a6b76a0d29d58bd2b57761cea8571d9561158c69` 전후 exact 동일을 확인했다. Live apply도 exit code 0이며 work SHA-256은 위 값에서 `d2aa4704444a529429174fbe36609b1ac490954cd8a33690f20c03e731f7bc5f`로 변경됐고 seed SHA-256 `e2e356c0f9a5d0d86c059da77c59815521e2abc410b3c4aa69b1ab6e55ff9a67`은 불변이다. 적용 전 snapshot은 `data/backups/approved_content_batch/20260913T235718895850Z/snapshot.db`, SHA-256 `6d9fe59da9acefec8783fc4e022dc4166071eb0346dbc69fd5820a3b30e3695b`이며 source schema version 1368과 snapshot 1369의 차이는 기존 `VACUUM INTO` 계약상 예상된 schema cookie 차이다. Live history group `1789343839802287`에는 active word update 4행과 relation update 3행이 있고 `undone_at`은 모두 `NULL`이며 자동 restore는 실행되지 않았다.
+
+Snapshot과 현재 DB의 12개 사용자 테이블을 양방향 대조한 결과 `word_expression_set`을 포함한 8개 비대상 테이블은 동일하다. `WORD_TABLE`과 `word_meaning_set`의 current-only·pre-only 각 2행은 승인된 note와 meaning 교체뿐이고, `WORD_RELATION` current-only·pre-only 각 3행과 `CHANGE_HISTORY` current-only 7행 외 차이는 없다. `WORD_RELATION`은 7,484행으로 row 수가 유지됐고 `CHANGE_HISTORY`는 1,673행에서 1,680행으로 승인 operation 수만큼 증가했다. Work·seed·snapshot integrity check는 `ok`, foreign key 위반과 SQLite sidecar는 0이다.
+
+새 H29 manifest를 Git-tracked discovery에 포함해 생성한 semantic progress는 canonical Strong 14,298건, `explicit_approved=79`, `hold=2`, `unapproved=14,217`, anomaly 113건이다. H0029과 G0007은 새 manifest를 유일한 active authority로 하는 `explicit_approved / approved`이며 현재 meaning·note와 exact 일치한다. Snapshot identity는 `403330652d5496e1986927968bc28b36b51f1c4a8750c53467302357f9128a38`이고 외부 산출물 SHA-256은 JSON `3599af1ed555c5da487806f2af4bd5e6c07a9c36c8359f19724c226ad9ffe230`, CSV `1303d10451252ac374af4d39d58ea930aab7ee4d3e0bb105a0997c7bfec9b5d7`, Markdown `cc3a55e7cbf084f8cc265c11570e902d03e587911663c644effa47fba41fbca6`이다.
+
+Targeted approved-content applicator 테스트 29건은 모두 통과했다. Production Dart·schema·seed·UI/UX는 변경하지 않았으므로 사용자 UI 수동 테스트는 N/A다. Semantic 결정은 `docs/semantic_decisions/h29_cluster_approved_content_slice.md`에 기록하고 README 색인에 추가했다.
+
 ## 12. pronunciation profile·migration 현행 경계
 
 ### 12.1 active pronunciation 계약

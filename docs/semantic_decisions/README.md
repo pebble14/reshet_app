@@ -52,6 +52,7 @@
 | H0026 분석 표기 | 아비가일·아비갈·아비-가일·아비-갈 | `active` | 높음 | 2026-09-12 | [기록](h0026_analytic_name_notation_approved_content_slice.md) |
 | H0022·H1841·G1158 분석 표기 | 아비엘·아비-엘과 다니엘·다니-엘 | `active` | 높음 | 2026-09-13 | [기록](h0022_h1841_g1158_analytic_name_notation_approved_content_slice.md) |
 | H28 클러스터 | 아비다·아비-다와 H0001·H3045 합성 관계 | `active` | 높음 | 2026-09-13 | [기록](h28_cluster_approved_content_slice.md) |
+| H29 클러스터 | 아비야·아비-야와 H0001·H3050 합성 관계 및 G0007 음역 관계 | `active` | 높음 | 2026-09-14 | [기록](h29_cluster_approved_content_slice.md) |
 
 ## 열람 및 후속 판단 원칙
 
