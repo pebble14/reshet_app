@@ -555,6 +555,16 @@ Snapshot과 현재 DB의 12개 사용자 테이블을 양방향 대조한 결과
 
 Targeted approved-content applicator 테스트 29건은 모두 통과했다. Production Dart·schema·seed·UI/UX는 변경하지 않았으므로 사용자 UI 수동 테스트는 N/A다. Semantic 결정은 `docs/semantic_decisions/h29_cluster_approved_content_slice.md`에 기록하고 README 색인에 추가했다.
 
+### 11.34 H30 클러스터 approved-content work DB slice
+
+`tool/data_provenance/manifests/h30_cluster_approved_content_slice.json`은 format v5 batch `RESHET-EC-H30-CLUSTER-APPROVED-CONTENT-SLICE`다. 사용자가 승인한 외부 `00_cluster_summary.md`의 SHA-256 `9c582950de51e87ff8740d8d1f6f885842c4f44d588e8c724cd2458611b18640`를 provenance로 고정하며 적용 manifest SHA-256은 `1f7c038367c708fb11a1c9be0a3367cd5c234ce0088ca5116f27061535d1d078`이다.
+
+H0030 meaning을 `아비후 (인)`에서 `아비후·아비-후 (인)` 한 행으로 교체하고, NULL 비고에 인물 식별·관용/분석 표기 구분·BDB와 Strong의 어원 풀이 차이를 기록했다. H0001→H0030(id 7685, w1_to_w2)과 H1931→H0030(id 7686, w2_to_w1)을 각각 `morphological / compound / asserted`로 생성했다. H1·H1931 의미, expression, hold, schema, seed는 변경하지 않았다.
+
+공식 dry-run은 승인 4작업과 undo에 성공하고 원본 work DB를 보존했다. Live history group은 `1789821998340133`, snapshot은 `data/backups/approved_content_batch/20260919T124637535784Z/snapshot.db`이다. work SHA는 `d2aa4704444a529429174fbe36609b1ac490954cd8a33690f20c03e731f7bc5f`에서 `3d62213308ee031c769236aa9c58d56e6baba2a4ec649fbc2d364cb5e78f1ced`로 변경됐고 seed SHA `e2e356c0f9a5d0d86c059da77c59815521e2abc410b3c4aa69b1ab6e55ff9a67`은 불변이다. 독립 전체 테이블/schema 비교에서 승인 변경과 history 4행 외 차이가 없으며 work·seed·snapshot integrity ok, FK 오류·sidecar 0이다.
+
+Progress는 H0030 explicit_approved, 전체 승인 80·hold 2·미승인 14,216·anomaly 113이다. Snapshot identity는 `3f5996c84de9a46a14a87923358803e61736c403f1c1d5f4b214f6a9d85caa97`, JSON SHA-256은 `7d1335354dc9134b998bb85fbccbf5331571eab51fcc8a9eb875ec5ae2d13dfc`다. 이는 적용 시점의 derivative snapshot이다. Targeted applicator 테스트 29건 통과, UI 테스트 N/A. [H30 결정 기록](../semantic_decisions/h30_cluster_approved_content_slice.md)에 최종값·판단 근거·대안·재검토 조건을 기록했다.
+
 ## 12. pronunciation profile·migration 현행 경계
 
 ### 12.1 active pronunciation 계약

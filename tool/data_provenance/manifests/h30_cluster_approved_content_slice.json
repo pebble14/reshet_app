@@ -1,0 +1,65 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H30-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-09-19 H30 연구 추천안 전체 승인 및 DB 반영·커밋·병합·push·정리 지시; 00_cluster_summary.md",
+    "document_sha256": "9c582950de51e87ff8740d8d1f6f885842c4f44d588e8c724cd2458611b18640"
+  },
+  "target": {
+    "expected_work_sha256": "d2aa4704444a529429174fbe36609b1ac490954cd8a33690f20c03e731f7bc5f",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0030_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아비후 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아비후·아비-후 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0030_0000",
+      "before": null,
+      "after": "아론과 엘리세바의 아들. ‘아비후’는 한국어 성경의 관용 표기이고, ‘아비-후’는 אָב(H0001, 아버지)와 הוּא(H1931, 그)의 구성을 나타내는 분석 표기이다. 붙임표는 원문의 구두점이나 특정 시대의 발음을 뜻하지 않는다. BDB는 이름을 ‘그는 아버지이다’로 풀이하며, Strong은 ‘그분의 아버지’, 곧 ‘그분을 예배하는 자’로 설명하므로 이름 전체의 어원 해석은 구분해 이해해야 한다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0001_0000",
+      "word_id_2": "H0030_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H30-CLUSTER-H0001-H0030"
+    },
+    {
+      "word_id_1": "H0030_0000",
+      "word_id_2": "H1931_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H30-CLUSTER-H1931-H0030"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}
