@@ -1,0 +1,136 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H31-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-09-20 H31 cluster summary 추천안 승인, G10 간결형 아비훗·아비-후드 (인) 선택 및 DB·Git 실행 승인; H31_cluster_20260920_3d622133/00_cluster_summary.md",
+    "document_sha256": "b7f69726abe78557f59d86585a5f39de19287d1a2e5d9ead7224b496cdaa0d01"
+  },
+  "target": {
+    "expected_work_sha256": "3d62213308ee031c769236aa9c58d56e6baba2a4ec649fbc2d364cb5e78f1ced",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0031_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아비훗/아비-훗"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아비훗·아비-후드 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "G0010_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아비훗/아비-훗"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아비훗·아비-후드 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0031_0000",
+      "before": "의미는 '위엄 있으신 나의 아버지'",
+      "after": "'아비훗'은 한국어 성경의 관용 표기이고, '아비-후드'는 אֲבִי와 הוּד의 구성을 드러낸 분석 표기이다. H0001(아버지)과 H1935(위엄·영예 계열)의 합성 이름으로 풀이되지만, 구성 전체의 해석은 '명예의 아버지·소유자'(Strong)와 '아버지는 위엄이 있다'(참고 사전) 등으로 다르다. 역대상 8:3은 인명으로 읽는 전통 외에 '에훗의 아버지'로 읽는 대안도 있다(새번역 각주). G0010과는 같은 이름의 언어별 형태이지 동일 인물이라는 뜻은 아니다."
+    },
+    {
+      "word_id": "G0010_0000",
+      "before": "아비훗을 의미하는 히브리어 단어인 H31 אביהוּד(아비훋)의 헬라어 음역,\n의미는 '위엄 있으신 나의 아버지'",
+      "after": "'아비훗'은 한국어 성경의 관용 표기이고, '아비우드'는 Ἀβιούδ의 헬라어형을 옮긴 표기이다. H0031과 같은 이름의 헬라어 음역이며, '아비-후드'의 붙임표는 헬라어 내부 형태소가 아니라 원천 히브리어 이름의 합성 경계를 표시한다. 마태복음 1:13에서 스룹바벨의 자손이자 엘리아김의 아버지로 두 번 나오며, 역대상 8:3의 인물과 동일인이라는 뜻은 아니다. 이름의 구성 전체에 대한 어원 풀이는 하나로 확정하지 않는다."
+    }
+  ],
+  "relation_creates": [],
+  "supersedes": [],
+  "relation_replacements": [
+    {
+      "relation_id": 22,
+      "word_id_1": "H0001_0000",
+      "word_id_2": "H0031_0000",
+      "before": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "inferred",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "",
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "",
+        "source": "RESHET-EC-H31-CLUSTER-H0001-H0031"
+      }
+    },
+    {
+      "relation_id": 5376,
+      "word_id_1": "H0031_0000",
+      "word_id_2": "H1935_0000",
+      "before": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "inferred",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "",
+        "source": "WORD_TABLE.관련2"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "",
+        "source": "RESHET-EC-H31-CLUSTER-H1935-H0031"
+      }
+    },
+    {
+      "relation_id": 21,
+      "word_id_1": "G0010_0000",
+      "word_id_2": "H0031_0000",
+      "before": {
+        "category_code": "transliteration",
+        "relation_type": "direct_transliteration",
+        "status_code": "inferred",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "",
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "transliteration",
+        "relation_type": "direct_transliteration",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "",
+        "source": "RESHET-EC-H31-CLUSTER-H0031-G0010"
+      }
+    }
+  ],
+  "meaning_approvals": []
+}

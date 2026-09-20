@@ -54,6 +54,7 @@
 | H28 클러스터 | 아비다·아비-다와 H0001·H3045 합성 관계 | `active` | 높음 | 2026-09-13 | [기록](h28_cluster_approved_content_slice.md) |
 | H29 클러스터 | 아비야·아비-야와 H0001·H3050 합성 관계 및 G0007 음역 관계 | `active` | 높음 | 2026-09-14 | [기록](h29_cluster_approved_content_slice.md) |
 | H30 클러스터 | 아비후·아비-후와 H0001·H1931 합성 관계 | `active` | 높음 | 2026-09-19 | [기록](h30_cluster_approved_content_slice.md) |
+| H31 클러스터 | 아비훗·아비-후드와 H1·H1935 합성 및 G10 음역 관계 | `active` | 높음 | 2026-09-20 | [기록](h31_cluster_approved_content_slice.md) |
 
 ## 열람 및 후속 판단 원칙
 

@@ -565,6 +565,18 @@ H0030 meaning을 `아비후 (인)`에서 `아비후·아비-후 (인)` 한 행�
 
 Progress는 H0030 explicit_approved, 전체 승인 80·hold 2·미승인 14,216·anomaly 113이다. Snapshot identity는 `3f5996c84de9a46a14a87923358803e61736c403f1c1d5f4b214f6a9d85caa97`, JSON SHA-256은 `7d1335354dc9134b998bb85fbccbf5331571eab51fcc8a9eb875ec5ae2d13dfc`다. 이는 적용 시점의 derivative snapshot이다. Targeted applicator 테스트 29건 통과, UI 테스트 N/A. [H30 결정 기록](../semantic_decisions/h30_cluster_approved_content_slice.md)에 최종값·판단 근거·대안·재검토 조건을 기록했다.
 
+
+### 11.35 H31 클러스터 approved-content work DB slice
+
+`tool/data_provenance/manifests/h31_cluster_approved_content_slice.json`은 format v5 batch `RESHET-EC-H31-CLUSTER-APPROVED-CONTENT-SLICE`다. 사용자가 외부 연구 추천안을 승인하고 G0010은 간결형을 선택했다. 연구 summary의 UTF-8 LF 정규화 텍스트 SHA-256은 `b7f69726abe78557f59d86585a5f39de19287d1a2e5d9ead7224b496cdaa0d01`, 실제 적용 manifest SHA-256은 `dc1345dd8318d847d07294c5335f29d3d980dfcdae56569258b39761886d9479`다.
+
+H0031·G0010 meaning을 각각 `아비훗·아비-후드 (인)` 한 행으로 교체하고 비고에 어원 풀이 차이, H31의 본문 분석 대안, G10의 헬라어형·원천 이름 분석 표기와 인물 구별을 보존했다. 관계 id 22(H1→H31), 5376(H1935→H31), 21(H31→G10)의 기존 pair/type/direction을 유지하고 inferred→asserted 및 source를 갱신했다. 빈 note와 NULL metadata는 보존했다. H1·H1935 독립 의미, expression·schema·hold·seed는 변경하지 않았다.
+
+공식 dry-run·undo 및 live apply 성공. History group `1789867056755925`, word update 4·relation update 3의 총 7행이며 undone_at NULL이다. Work SHA는 `3d62213308ee031c769236aa9c58d56e6baba2a4ec649fbc2d364cb5e78f1ced`에서 `be51c0c430804b5827f1771383633961192b822c14dbb9bfdabfa15e68f02388`로 변경됐다. Seed SHA `e2e356c0f9a5d0d86c059da77c59815521e2abc410b3c4aa69b1ab6e55ff9a67`은 동일하다. Snapshot `data/backups/approved_content_batch/20260920T011735914468Z/snapshot.db`와 전체 사용자 테이블·schema를 독립 비교하여 승인 범위 외 변경 없음, work·seed·snapshot integrity ok·FK 오류 0·sidecar 없음 확인.
+
+H0031·G0010 explicit_approved, 전체 승인 82·hold 2·미승인 14,214·anomaly 113이다. Progress snapshot identity `3e460ab553e06e085d78d5ce5c716c709a627e210ceddbee5ea3c9e90ebfa220`, JSON SHA `92c2207f86a124257d457165385ca3b9f0c87be38f4d2577644943d2187d08cd`는 적용 시점의 derivative 기록이다. Targeted applicator 테스트 29건 통과, UI 테스트 N/A. [H31 결정 기록](../semantic_decisions/h31_cluster_approved_content_slice.md)에 최종 결정과 대안·불확실성을 기록했다.
+
+
 ## 12. pronunciation profile·migration 현행 경계
 
 ### 12.1 active pronunciation 계약
