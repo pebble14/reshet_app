@@ -1,0 +1,173 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H33-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-09-20 H33 사용자 최종 표기 수정 및 DB·Git 완료 승인; H0033_cluster_20260920_5adbfabf/08_approved_scope.md",
+    "document_sha256": "886460e5f5213942c2f76ff4216e472a33669d621180c48af299120ba6813725"
+  },
+  "target": {
+    "expected_work_sha256": "5adbfabff24214f2238d6c106cb9c89e644622be19339647d63769e5db3efae8",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0033_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아비에셀 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아비에셀·아비-에제르 가문 사람"
+        }
+      ]
+    },
+    {
+      "word_id": "H0044_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아비에셀 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아비에셀·아비-에제르 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0372_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "이에셀 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "이에셀·이에제르 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0373_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "이에셀의 종족"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "이에셀·이에제르 가문 사람"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0033_0000",
+      "before": null,
+      "after": "아비에셀·아비-에제르 가문에 속한 사람을 가리키는 소속형이다. 문맥에 따라 ‘그 가문의’로 풀어 옮길 수 있다."
+    },
+    {
+      "word_id": "H0044_0000",
+      "before": null,
+      "after": "‘아비에셀’은 한국어 성경 관용 표기이고 ‘아비-에제르’는 ‘아비’와 ‘에제르’의 구성을 드러낸 분석 표기다. 이름은 ‘나의 아버지는 도움’ 등으로 풀이되지만, 이를 별도 뜻으로 나누지는 않는다. 므낫세 계열의 인물과 다윗의 아나돗 출신 용사가 이 이름으로 불리며, 사사기 6:34와 8:2에서는 그 이름으로 가문을 가리킨다. 므낫세 계열 이름은 민수기 26:30의 이에셀과 비교된다."
+    },
+    {
+      "word_id": "H0372_0000",
+      "before": null,
+      "after": "‘이에셀’은 한국어 성경 관용 표기이고 ‘이에제르’는 원문 형태를 드러낸 표기다. 민수기 26:30에서 므낫세 계열 가문의 선조 이름으로 나온다. 아비에셀과 대응하는 이름으로 비교되지만, 어원에는 ‘도움 없음’이라는 분석 등 차이가 있어 확정하지 않는다. 어원 풀이를 별도 뜻으로 저장하지 않는다."
+    },
+    {
+      "word_id": "H0373_0000",
+      "before": null,
+      "after": "이에셀·이에제르 가문에 속한 사람을 가리키는 소속형이다. 민수기 26:30에서는 ‘가족·종족’을 뜻하는 말과 결합하여 그 가문에 속함을 나타낸다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0033_0000",
+      "word_id_2": "H0044_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H33-CLUSTER-H0044-H0033"
+    },
+    {
+      "word_id_1": "H0372_0000",
+      "word_id_2": "H0373_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H33-CLUSTER-H0372-H0373"
+    },
+    {
+      "word_id_1": "H0001_0000",
+      "word_id_2": "H0044_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H33-CLUSTER-H0001-H0044"
+    },
+    {
+      "word_id_1": "H0044_0000",
+      "word_id_2": "H5828_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H33-CLUSTER-H5828-H0044"
+    },
+    {
+      "word_id_1": "H0044_0000",
+      "word_id_2": "H0372_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H33-CLUSTER-H0044-H0372"
+    },
+    {
+      "word_id_1": "H0033_0000",
+      "word_id_2": "H0373_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H33-CLUSTER-H0033-H0373"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}

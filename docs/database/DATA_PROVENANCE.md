@@ -587,6 +587,18 @@ H0032 meaning을 `아비하일·아비-하일 (인)` 한 행으로 교체하고 
 
 H0032 explicit_approved, 전체 승인 101·hold 2·미승인 14,195·anomaly 113이다. Targeted applicator 테스트 29건 통과, UI 테스트 N/A. [H32 결정 기록](../semantic_decisions/h32_cluster_approved_content_slice.md)에 최종값·대안·불확실성과 검증을 기록했다.
 
+### 11.37 H33 클러스터 approved-content work DB slice
+
+`tool/data_provenance/manifests/h33_cluster_approved_content_slice.json`은 format v5 batch `RESHET-EC-H33-CLUSTER-APPROVED-CONTENT-SLICE`다. 사용자 최종 검토로 H0033·H0373에 ‘가문 사람’과 기반 인명 병기를 채택하고 H0044·H0372 및 관계 추천을 승인했다. 승인 근거 `08_approved_scope.md` SHA는 `886460e5f5213942c2f76ff4216e472a33669d621180c48af299120ba6813725`, manifest SHA는 `cd7e973c95890e445141dcd42a404685034b620fd6f658d633f8d0e9420d276e`다.
+
+Meaning4·note4·관계6을 반영했다. 관계 id7689–7694는 소속형 파생2·합성2 asserted와 무방향 variant2 hypothesized다. H5829→H0044는 비생성, H0336/H5828→H0372 어원 관계는 보류, 새 word hold는 없다. 정확한 값·채택 이유·한계는 [H33 결정 기록](../semantic_decisions/h33_cluster_approved_content_slice.md)에 보존했다.
+
+공식 dry-run/undo·live apply 성공, history group `1789909426985605` 14행. Work SHA `5adbfabff24214f2238d6c106cb9c89e644622be19339647d63769e5db3efae8` → `62cad49bbca797c9ed22ba0cebb50a94ec5ac9184f144e38d18b2174364a19ea`, seed SHA `e2e356c0f9a5d0d86c059da77c59815521e2abc410b3c4aa69b1ab6e55ff9a67` 불변. Snapshot `data/backups/approved_content_batch/20260920T130346190802Z/snapshot.db`. 전체 사용자 테이블 독립 비교에서 승인된 행과 history 외 차이 없음; integrity ok·FK0·sidecar0.
+
+CORE4개 explicit_approved, 전체 승인105·hold2·미승인14,191·anomaly113. Applicator 테스트29건 통과, UI 테스트 N/A. Expression·발음·schema·기존 관계·hold ledger·seed는 변경하지 않았다.
+
+Git 정규화 LF manifest blob SHA는 `3fb0ffed97b293921cc26f74cacd1b2869aeacd8bb404743492806876bcbe745`이며 적용 snapshot의 CRLF manifest와 JSON 내용은 동일하다.
+
 ## 12. pronunciation profile·migration 현행 경계
 
 ### 12.1 active pronunciation 계약
