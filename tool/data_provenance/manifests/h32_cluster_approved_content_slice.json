@@ -1,0 +1,65 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H32-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-09-20 H32 추천 내용 및 DB·문서 반영 승인; H0032_cluster_20260920_be51c0c4/00_cluster_summary.md",
+    "document_sha256": "01277f617e21a0a6a2a6b156a21291c4205e5b003c3204dc132745061f46b41b"
+  },
+  "target": {
+    "expected_work_sha256": "be51c0c430804b5827f1771383633961192b822c14dbb9bfdabfa15e68f02388",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0032_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아비하일 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아비하일·아비-하일 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0032_0000",
+      "before": null,
+      "after": "아비하일은 한국어 성경의 관용 표기이며, 아비-하일은 H0001(아버지)과 H2428(힘)의 구성 경계를 나타내는 분석 표기다. 히브리어 본문에는 ח를 쓰는 אֲבִיחַיִל 계열과 ה를 쓰는 אֲבִיהַיִל 계열이 함께 나타나며, 이 한글 표기는 두 자음의 음가 차이를 구별하지 않는다. 남성 3명과 여성 2명의 이름으로 쓰이며, 이름의 뜻은 ‘아버지는 힘’ 또는 ‘힘을 지닌 아버지’로 풀이된다. 대하 11:18의 가족관계 해석과 일부 LXX 구절의 이름 표기는 차이가 있으므로 동일 인물 관계나 별도 어휘 관계로 자동 확정하지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0001_0000",
+      "word_id_2": "H0032_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H32-CLUSTER-H0001-H0032"
+    },
+    {
+      "word_id_1": "H0032_0000",
+      "word_id_2": "H2428_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H32-CLUSTER-H2428-H0032"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}

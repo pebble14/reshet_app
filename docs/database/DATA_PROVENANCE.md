@@ -577,6 +577,16 @@ H0031·G0010 meaning을 각각 `아비훗·아비-후드 (인)` 한 행으로 �
 H0031·G0010 explicit_approved, 전체 승인 82·hold 2·미승인 14,214·anomaly 113이다. Progress snapshot identity `3e460ab553e06e085d78d5ce5c716c709a627e210ceddbee5ea3c9e90ebfa220`, JSON SHA `92c2207f86a124257d457165385ca3b9f0c87be38f4d2577644943d2187d08cd`는 적용 시점의 derivative 기록이다. Targeted applicator 테스트 29건 통과, UI 테스트 N/A. [H31 결정 기록](../semantic_decisions/h31_cluster_approved_content_slice.md)에 최종 결정과 대안·불확실성을 기록했다.
 
 
+### 11.36 H32 클러스터 approved-content work DB slice
+
+`tool/data_provenance/manifests/h32_cluster_approved_content_slice.json`은 format v5 batch `RESHET-EC-H32-CLUSTER-APPROVED-CONTENT-SLICE`다. 사용자는 H32 연구 추천 내용과 DB·문서 반영을 승인했다. 연구 summary raw-byte SHA-256은 `01277f617e21a0a6a2a6b156a21291c4205e5b003c3204dc132745061f46b41b`, 적용 manifest SHA-256은 `aaced8b0bffda2dfd716eca9e4cf7de5ee60e04811d847fe67cca52fcb1fc284`다.
+
+H0032 meaning을 `아비하일·아비-하일 (인)` 한 행으로 교체하고 이름 구성·ח/ה 철자 차이·다섯 인물·어원 및 LXX/대하 본문 해석 한계를 비고에 보존했다. H1→H32(id 7687, w1_to_w2), H2428→H32(id 7688, w2_to_w1)를 morphological/compound/asserted로 신규 생성했다. H1·H2428 독립 의미, expression·schema·hold·seed는 변경하지 않았다.
+
+공식 dry-run·undo 및 live apply 성공. History group `1789884646270777`, word update 2·relation create 2의 4행이다. Work SHA는 `be51c0c430804b5827f1771383633961192b822c14dbb9bfdabfa15e68f02388`에서 `5adbfabff24214f2238d6c106cb9c89e644622be19339647d63769e5db3efae8`로 변경되었다. Snapshot은 `data/backups/approved_content_batch/20260920T061045447061Z/snapshot.db`이며 seed SHA는 기존 `e2e356c0f9a5d0d86c059da77c59815521e2abc410b3c4aa69b1ab6e55ff9a67`과 동일하다. 전체 사용자 테이블 독립 비교에서 승인된 변경과 history 외 차이 없음, integrity ok·FK 0·sidecar 없음.
+
+H0032 explicit_approved, 전체 승인 101·hold 2·미승인 14,195·anomaly 113이다. Targeted applicator 테스트 29건 통과, UI 테스트 N/A. [H32 결정 기록](../semantic_decisions/h32_cluster_approved_content_slice.md)에 최종값·대안·불확실성과 검증을 기록했다.
+
 ## 12. pronunciation profile·migration 현행 경계
 
 ### 12.1 active pronunciation 계약
