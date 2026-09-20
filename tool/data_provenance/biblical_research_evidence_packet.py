@@ -38,6 +38,10 @@ DEFAULT_APPROVED_MANIFEST = (
 APPROVED_MANIFEST_FILENAME_RE = re.compile(
     r"^[a-z0-9][a-z0-9_]*_approved_content_slice\.json$"
 )
+# 기존 승인 이력과 참조를 보존해야 하는 비표준 파일명도 명시적으로 포함한다.
+APPROVED_MANIFEST_LEGACY_FILENAMES = frozenset(
+    {"approved_meaning_notation_policy_correction.json"}
+)
 APPROVED_BATCH_ID_SUFFIX = "-APPROVED-CONTENT-SLICE"
 DEFAULT_SOURCE_ONLY_MANIFEST = (
     TOOL_DIR / "manifests" / "phase50w_hebrew20_source_import.json"
@@ -2339,7 +2343,10 @@ def discover_approved_content_manifests(
         relative
         for relative in relative_paths
         if PurePosixPath(relative).parent.as_posix() == relative_manifest_dir
-        and APPROVED_MANIFEST_FILENAME_RE.fullmatch(PurePosixPath(relative).name)
+        and (
+            APPROVED_MANIFEST_FILENAME_RE.fullmatch(PurePosixPath(relative).name)
+            or PurePosixPath(relative).name in APPROVED_MANIFEST_LEGACY_FILENAMES
+        )
     )
     if not approved_relative_paths:
         raise ManifestError("tracked approved content manifest가 없음")

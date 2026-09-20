@@ -1595,6 +1595,12 @@ from the same as <strongsref language="GREEK" strongs="106"/>.
 
         run_git("init")
         run_git("add", "tool/data_provenance/manifests")
+        correction = self._write_approved_manifest(
+            manifest_dir,
+            "approved_meaning_notation_policy_correction.json",
+            "H0001_0000",
+            "아버지",
+        )
         self._write_approved_manifest(
             manifest_dir,
             "pending_approved_content_slice.json",
@@ -1606,6 +1612,13 @@ from the same as <strongsref language="GREEK" strongs="106"/>.
         self.assertEqual(
             [path.name for path in discovered],
             [second.name, third.name, first.name],
+        )
+
+        run_git("add", str(correction.relative_to(repository)))
+        discovered = evidence.discover_approved_content_manifests(repository)
+        self.assertEqual(
+            [path.name for path in discovered],
+            [second.name, correction.name, third.name, first.name],
         )
 
     def test_semantic_hold_ledger_is_separate_from_completion(self) -> None:
