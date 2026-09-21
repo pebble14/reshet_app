@@ -610,6 +610,16 @@ H0036 meaning `아비둡·아비-투브 (인)`과 승인 비고를 반영하고 
 
 H0036 explicit_approved, 전체 승인 106·hold 2·미승인 14,190·anomaly 113. Targeted applicator 테스트 29건 통과. [H36 결정 기록](../semantic_decisions/h36_cluster_approved_content_slice.md)에 정확한 최종값·대안·불확실성을 기록했다. UI 테스트 N/A.
 
+### 11.39 H37 클러스터 approved-content work DB slice
+
+`tool/data_provenance/manifests/h37_cluster_approved_content_slice.json`은 format v5 batch `RESHET-EC-H37-CLUSTER-APPROVED-CONTENT-SLICE`다. 사용자는 2026-09-22 제안 내용과 DB/Git 실행을 승인했다. 연구 summary raw-byte SHA는 `e456deae31285f261199e8179ece2b5783d4af0ceca626f4a96e139c69a4be39`, 적용 manifest SHA는 `99d42e7c2d9f6031a6e02ec40b5a404939578abac945064c8ef8933b997de7cb`다.
+
+H0037 meaning `아비달·아비-탈 (인)`과 승인 비고를 반영하고 H1→H37(id 7697, w1_to_w2), H2919→H37(id 7698, w2_to_w1)를 morphological/compound/asserted로 생성했다. 다른 Strong 의미·expression·언어·schema·hold·seed는 변경하지 않았다.
+
+공식 dry-run undo 및 live apply 성공, history group `1790032500613835`. Work SHA `e55c30fa055e3981ba1d0a9642fe0f5a3888516b89854262be59728af08866f4` → `838d80faa317b5c286ad5394c685041f02deb8fe07fd5eb00fd171b8360bafc8`. Snapshot은 `data/backups/approved_content_batch/20260921T231459786415Z/snapshot.db`다. 독립 schema/전체 사용자 테이블 비교로 승인한 meaning1·note1·relation2 및 history4 외 delta 없음, integrity ok/FK0/sidecar 없음을 확인했다.
+
+H0037 explicit_approved, 전체 승인 107·hold 2·미승인 14,189·anomaly 113. Targeted applicator 테스트 29건 통과. [H37 결정 기록](../semantic_decisions/h37_cluster_approved_content_slice.md)에 최종값·채택 근거·대안·불확실성을 기록했다. UI 테스트 N/A.
+
 ## 12. pronunciation profile·migration 현행 경계
 
 ### 12.1 active pronunciation 계약

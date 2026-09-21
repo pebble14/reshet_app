@@ -1,0 +1,65 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H37-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-09-22 H37 제안 내용 및 DB/Git 실행 승인; H0037_cluster_20260922_e55c30fa/00_cluster_summary.md",
+    "document_sha256": "e456deae31285f261199e8179ece2b5783d4af0ceca626f4a96e139c69a4be39"
+  },
+  "target": {
+    "expected_work_sha256": "e55c30fa055e3981ba1d0a9642fe0f5a3888516b89854262be59728af08866f4",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0037_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아비달 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아비달·아비-탈 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0037_0000",
+      "before": null,
+      "after": "다윗의 아내이며 스바댜의 어머니로, 사무엘하 3:4와 역대상 3:3에 나온다. 아비달은 한국어 성경의 관용 표기이고, 아비-탈은 히브리어 이름의 아비(H0001, 아버지)와 탈(H2919, 이슬) 구성을 보여 주는 분석 표기다. 붙임표는 원문의 구두점이나 특정 시대의 실제 발음을 뜻하지 않는다. 이름의 풀이는 자료에 따라 이슬의 아버지 또는 나의 아버지는 이슬이다로 달라지므로 하나로 확정하지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0001_0000",
+      "word_id_2": "H0037_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H37-CLUSTER-H0001-H0037"
+    },
+    {
+      "word_id_1": "H0037_0000",
+      "word_id_2": "H2919_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H37-CLUSTER-H2919-H0037"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}
