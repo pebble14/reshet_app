@@ -1,0 +1,65 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H36-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-09-22 H36 제안 전체 및 DB/Git 작업 승인; H0036_cluster_20260921_62cad49b/00_cluster_summary.md",
+    "document_sha256": "d5e868b50ac3e082a931dc61c33a40696191ab339969ffe57548fe72659c2ed6"
+  },
+  "target": {
+    "expected_work_sha256": "62cad49bbca797c9ed22ba0cebb50a94ec5ac9184f144e38d18b2174364a19ea",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0036_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아비둡 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아비둡·아비-투브 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0036_0000",
+      "before": null,
+      "after": "베냐민 지파의 사하라임이 후심에게서 낳은 아들로, 역대상 8:11에 한 번 나온다. 아비둡은 한국어 성경의 관용 표기이며, 아비-투브는 אֲבִי와 טוּב의 구성을 드러내는 분석 표기다. 붙임표는 원문의 구두점이 아니며 특정 시대의 실제 발음을 확정한 것도 아니다. Strong은 H0001과 H2898의 합성으로 설명하고, 이름을 선함의 아버지로 풀이한다. 나의 아버지는 선하시다라는 풀이도 있으나, 이는 이름의 어원 설명이며 별도 어휘 의미로 나누지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0001_0000",
+      "word_id_2": "H0036_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H36-CLUSTER-H0001-H0036"
+    },
+    {
+      "word_id_1": "H0036_0000",
+      "word_id_2": "H2898_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H36-CLUSTER-H2898-H0036"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}

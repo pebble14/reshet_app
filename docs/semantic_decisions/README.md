@@ -59,6 +59,8 @@
 
 | H33 클러스터 | 아비에셀·이에셀 인명과 가문 소속형 4개, 파생·합성·가설 변이 관계 | `active` | 높음 | 2026-09-20 | [기록](h33_cluster_approved_content_slice.md) |
 
+| H36 클러스터 | 아비둡·아비-투브와 H1·H2898 합성 관계 | `active` | 높음 | 2026-09-22 | [기록](h36_cluster_approved_content_slice.md) |
+
 ## 열람 및 후속 판단 원칙
 
 1. 새 제안을 만들기 전에 관련 Strong이 이 색인에 있는지 확인한다.

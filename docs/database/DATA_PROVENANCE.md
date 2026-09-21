@@ -599,6 +599,17 @@ CORE4개 explicit_approved, 전체 승인105·hold2·미승인14,191·anomaly113
 
 Git 정규화 LF manifest blob SHA는 `3fb0ffed97b293921cc26f74cacd1b2869aeacd8bb404743492806876bcbe745`이며 적용 snapshot의 CRLF manifest와 JSON 내용은 동일하다.
 
+
+### 11.38 H36 클러스터 approved-content work DB slice
+
+`tool/data_provenance/manifests/h36_cluster_approved_content_slice.json`은 format v5 batch `RESHET-EC-H36-CLUSTER-APPROVED-CONTENT-SLICE`다. 사용자는 2026-09-22 연구 제안 전체와 DB/Git 작업을 승인했다. 연구 summary raw-byte SHA는 `d5e868b50ac3e082a931dc61c33a40696191ab339969ffe57548fe72659c2ed6`, 적용 manifest SHA는 `72f8894185b904bb67a7ebe1e6bc77ee7c56f6f1d51e56457a44651c2f4d6c7e`다.
+
+H0036 meaning `아비둡·아비-투브 (인)`과 승인 비고를 반영하고 H1→H36(id 7695, w1_to_w2), H2898→H36(id 7696, w2_to_w1)를 morphological/compound/asserted로 생성했다. 다른 Strong 의미·expression·schema·hold·seed는 변경하지 않았다.
+
+공식 dry-run undo 및 live apply 성공, history group `1790004038806277`. Work SHA `62cad49bbca797c9ed22ba0cebb50a94ec5ac9184f144e38d18b2174364a19ea` → `e55c30fa055e3981ba1d0a9642fe0f5a3888516b89854262be59728af08866f4`. Snapshot은 `data/backups/approved_content_batch/20260921T152037973494Z/snapshot.db`다. 독립 전체 테이블 비교로 승인한 meaning1·note1·relation2 및 history4 외 delta 없음, integrity ok/FK0을 확인했다.
+
+H0036 explicit_approved, 전체 승인 106·hold 2·미승인 14,190·anomaly 113. Targeted applicator 테스트 29건 통과. [H36 결정 기록](../semantic_decisions/h36_cluster_approved_content_slice.md)에 정확한 최종값·대안·불확실성을 기록했다. UI 테스트 N/A.
+
 ## 12. pronunciation profile·migration 현행 경계
 
 ### 12.1 active pronunciation 계약
