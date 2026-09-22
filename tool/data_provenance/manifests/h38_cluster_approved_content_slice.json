@@ -1,0 +1,65 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H38-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-09-23 H38 추천 5가지 전부 및 DB/Git 실행 승인; H0038_cluster_20260923_838d80fa/00_cluster_summary.md",
+    "document_sha256": "278e4e76856f5f85dc60fa7df02511931647dcf342215eaabace4d034a1a47a2"
+  },
+  "target": {
+    "expected_work_sha256": "838d80faa317b5c286ad5394c685041f02deb8fe07fd5eb00fd171b8360bafc8",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0038_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아비얌 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아비얌·아비-얌 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0038_0000",
+      "before": null,
+      "after": "르호보암의 아들이며 아사의 아버지인 유다 왕으로, 역대기의 아비야(H0029)와 같은 인물이다. ‘아비얌’은 개역 계열의 관용 표기이고 ‘아비-얌’은 Strong이 제시한 H0001·H3220 구성 경계를 드러내는 분석 표기이며, 실제 마케프나 특정 시대의 발음을 재현한 표기는 아니다. Strong의 ‘바다의 아버지(뱃사람)’ 풀이는 이름의 어원 설명이므로 별도 meaning으로 삼지 않는다. 새번역은 해당 네 절에서 ‘아비야’를 쓰고 각주에 히브리어 ‘아비얌’을 남긴다. 두 이름 형태가 생긴 역사적 원인은 확정하지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0001_0000",
+      "word_id_2": "H0038_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H38-CLUSTER-H0001-H0038"
+    },
+    {
+      "word_id_1": "H0038_0000",
+      "word_id_2": "H3220_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H38-CLUSTER-H3220-H0038"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}

@@ -63,6 +63,8 @@
 
 | H37 클러스터 | 아비달·아비-탈과 H1·H2919 합성 관계 | `active` | 높음 | 2026-09-22 | [기록](h37_cluster_approved_content_slice.md) |
 
+| H38 클러스터 | 아비얌·아비-얌과 H1·H3220 합성 관계, H29·H8043 관계 비생성 | `active` | 높음 | 2026-09-23 | [기록](h38_cluster_approved_content_slice.md) |
+
 ## 열람 및 후속 판단 원칙
 
 1. 새 제안을 만들기 전에 관련 Strong이 이 색인에 있는지 확인한다.
