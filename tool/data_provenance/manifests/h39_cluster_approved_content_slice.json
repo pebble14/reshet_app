@@ -1,0 +1,53 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H39-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-09-24 H39 추천 내용 및 DB/Git 완료 승인; H0039_cluster_20260924_47a6f2a8/00_cluster_summary.md",
+    "document_sha256": "85e88e329620392b3ceb8453208725840143836e03e7468ec8242faab6786fb5"
+  },
+  "target": {
+    "expected_work_sha256": "47a6f2a858734def654245708a35e87bba2ae622cfd935f80319a24afd148b25",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0039_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아비마엘 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아비마엘·아비-마엘 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0039_0000",
+      "before": null,
+      "after": "욕단의 아들로 족보에 나오는 이름(창 10:28; 대상 1:22). ‘아비마엘’은 한국어 성경의 관용 표기이고, ‘아비-마엘’은 Strong이 제시한 H0001(아버지)과 마엘 요소의 구성 경계를 드러내는 분석 표기다. 마엘의 뜻과 기원은 확정하기 어렵다. Strong은 아마 외래어인 미확인 요소로 설명하며 ‘마엘의 아버지’로 풀이하고, HebGrkKo는 ‘나의 아버지는 하나님이시다’로 풀이한다. 후자의 풀이만으로 H0410(엘)과의 합성 관계를 확정하지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0001_0000",
+      "word_id_2": "H0039_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H39-CLUSTER-H0001-H0039"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}

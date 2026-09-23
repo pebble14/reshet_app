@@ -630,6 +630,16 @@ H0038 meaning `아비얌·아비-얌 (인)`과 승인 비고를 반영하고 H1�
 
 H0038 explicit_approved, 전체 승인 108·hold 2·미승인 14,188·anomaly 113. Targeted applicator 테스트는 DB 쓰기와 분리한 재실행에서 29건 통과했다. [H38 결정 기록](../semantic_decisions/h38_cluster_approved_content_slice.md)에 최종값·채택 근거·대안·불확실성을 기록했다. UI 테스트 N/A.
 
+### 11.41 H39 클러스터 approved-content work DB slice
+
+`tool/data_provenance/manifests/h39_cluster_approved_content_slice.json`은 format v5 batch `RESHET-EC-H39-CLUSTER-APPROVED-CONTENT-SLICE`다. 사용자는 2026-09-24 추천 내용과 DB/Git 완료를 승인했다. 연구 summary raw-byte SHA는 `85e88e329620392b3ceb8453208725840143836e03e7468ec8242faab6786fb5`, 적용 manifest SHA는 `e53246f9d5b3eec6232af1d7acd63dd12d55eea998d17f66dc63743d285363af`다.
+
+H0039 meaning `아비마엘·아비-마엘 (인)`과 승인 비고를 반영하고 H1→H39(id 7701, w1_to_w2)를 morphological/compound/asserted로 생성했다. H410·미확인 마엘 요소의 관계는 생성하지 않고 H39 hold 없음, H1 기존 승인을 유지했다. 다른 Strong·expression·언어·schema·hold ledger·seed는 변경하지 않았다.
+
+공식 dry-run/undo 및 live apply 성공. History group `1790203611119728`, history 3행, snapshot `data/backups/approved_content_batch/20260923T224650308417Z/snapshot.db`. Work SHA는 `47a6f2a858734def654245708a35e87bba2ae622cfd935f80319a24afd148b25`에서 `5c915348421d589674dc35243d4b3c7cb3c7fe6b5b97b7464c369d8a65a6f571`로 변경됐다. 전체 사용자 테이블 독립 대조에서 승인된 변경 외 차이 없음, integrity ok·FK 0·sidecar 없음, seed SHA 불변을 확인했다.
+
+H0039 explicit_approved, 전체 승인 109·hold 2·미승인 14,187·anomaly 113. Targeted applicator 테스트 29건 통과. [H39 결정 기록](../semantic_decisions/h39_cluster_approved_content_slice.md)에 최종값·채택 근거·대안·불확실성을 기록했다. UI 테스트 N/A.
+
 ## 12. pronunciation profile·migration 현행 경계
 
 ### 12.1 active pronunciation 계약
