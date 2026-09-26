@@ -640,6 +640,16 @@ H0039 meaning `아비마엘·아비-마엘 (인)`과 승인 비고를 반영하�
 
 H0039 explicit_approved, 전체 승인 109·hold 2·미승인 14,187·anomaly 113. Targeted applicator 테스트 29건 통과. [H39 결정 기록](../semantic_decisions/h39_cluster_approved_content_slice.md)에 최종값·채택 근거·대안·불확실성을 기록했다. UI 테스트 N/A.
 
+### 11.42 H40·H1125 클러스터 approved-content work DB slice
+
+`tool/data_provenance/manifests/h40_cluster_approved_content_slice.json`은 format v5 batch `RESHET-EC-H40-CLUSTER-APPROVED-CONTENT-SLICE`다. 사용자는 2026-09-27 H1125 다층 분석 표기 조정안을 포함한 의미·비고·관계 및 DB/Git 완료를 승인했다. 승인 내용 raw-byte SHA는 `c1588f2369bbc5963369da0bc03a2228200e70905bc22d2ccab12c291ec3e82b`, manifest SHA는 `3cbab33b012913e5d9e6d5132d96c29b9de5ab6694370b59ddf24ead488e0b27`이다.
+
+H0040 `아비멜렉·아비-멜레크 (인)`, H1125 `벤아비나답·벤-아비-나다브 (인)`과 승인 비고를 적용했다. H1→H40(id 7702, w1_to_w2), H4428→H40(id 7703, w2_to_w1), H1121→H1125(id 7704, w1_to_w2)를 morphological/compound/asserted로 생성했다. H40–H1125는 비생성, H41→H1125는 생성 보류이며 word-level hold·source·seed·schema 변경은 없다.
+
+공식 dry-run/undo 및 live apply가 성공했다. 독립 snapshot 대조는 WORD_TABLE 2행·word_meaning_set 2행 교체, WORD_RELATION 3행·CHANGE_HISTORY 7행 추가만 확인했다. History group `1790466814169456`, snapshot `data/backups/approved_content_batch/20260926T235333388907Z/snapshot.db`. Work SHA는 `5c915348421d589674dc35243d4b3c7cb3c7fe6b5b97b7464c369d8a65a6f571`에서 `d1710e4e0cb10de5c3cb363b7a3521290d97e6308abb1cb3bd462e89f9c7ccc4`로 변경됐고 seed SHA `e2e356c0f9a5d0d86c059da77c59815521e2abc410b3c4aa69b1ab6e55ff9a67`은 불변이다. Integrity ok, FK 0, sidecar 없음.
+
+두 단어 explicit_approved, 전체 승인 111·hold 2·미승인 14,185·anomaly 113. [H40·H1125 결정 기록](../semantic_decisions/h40_cluster_approved_content_slice.md)에 최종값·표기 선택 이유·관계 보류를 기록했다. UI 테스트 N/A.
+
 ## 12. pronunciation profile·migration 현행 경계
 
 ### 12.1 active pronunciation 계약

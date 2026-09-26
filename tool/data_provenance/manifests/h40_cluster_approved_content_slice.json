@@ -1,0 +1,97 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H40-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-09-27 H40/H1125 최종 의미·비고·세 합성 관계 및 DB/Git 완료 승인; H0040_cluster_20260927_5c915348/00_approved_content.md",
+    "document_sha256": "c1588f2369bbc5963369da0bc03a2228200e70905bc22d2ccab12c291ec3e82b"
+  },
+  "target": {
+    "expected_work_sha256": "5c915348421d589674dc35243d4b3c7cb3c7fe6b5b97b7464c369d8a65a6f571",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0040_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아비멜렉 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아비멜렉·아비-멜레크 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H1125_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "벤아비나답 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "벤아비나답·벤-아비-나다브 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0040_0000",
+      "before": null,
+      "after": "아비멜렉은 한국어 성경의 관용 표기이고, 아비-멜레크는 אֲבִי־מֶלֶךְ의 구성 요소를 드러내는 원문 기반 분석 표기이다. 붙임표는 원문 표제어의 구두점이나 특정 시대의 정확한 발음을 뜻하지 않는다. H0001(아버지)과 H4428(왕)으로 이루어지며, 이름의 풀이는 자료에 따라 ‘왕의 아버지’ 또는 ‘아버지는 왕이시다’로 다르다. 창세기의 그랄 왕들, 기드온의 아들, 역대상 18:16의 제사장에게 쓰인다. 시편 34편 표제의 인물 식별과 역대상 18:16의 ‘아히멜렉’ 이문은 구별해서 보며, 모두를 하나의 인물이나 공통 왕호로 단정하지 않는다."
+    },
+    {
+      "word_id": "H1125_0000",
+      "before": null,
+      "after": "벤아비나답은 한국어 성경의 관용 표기이다. 벤-아비-나다브는 ‘벤 + 아비나답’, 그리고 아비나답 내부의 ‘아비 + 나다브’ 구성을 드러내는 분석 표기이다. 원문의 마케프는 벤과 아비나답 사이에 있으며, 아비와 나다브 사이의 붙임표는 분석을 위해 추가한 것이다. ‘아비나답의 아들’이라는 부칭으로, 열왕기상 4:11에서 솔로몬의 관장으로 언급된다. canonical Strong 자료는 둘째 구성 요소를 H0040으로 참조하지만 표제어와 풀이, 원전분해 및 한국어 사전 참고자료는 아비나답(H0041)을 가리킨다. 이 참조 충돌은 이름 자체의 식별과 구분하며 H0040과의 파생 관계로 해석하지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0001_0000",
+      "word_id_2": "H0040_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H40-CLUSTER-H0001-H0040"
+    },
+    {
+      "word_id_1": "H0040_0000",
+      "word_id_2": "H4428_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H40-CLUSTER-H0040-H4428"
+    },
+    {
+      "word_id_1": "H1121_0000",
+      "word_id_2": "H1125_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H40-CLUSTER-H1121-H1125"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}

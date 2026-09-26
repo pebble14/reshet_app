@@ -66,6 +66,8 @@
 | H38 클러스터 | 아비얌·아비-얌과 H1·H3220 합성 관계, H29·H8043 관계 비생성 | `active` | 높음 | 2026-09-23 | [기록](h38_cluster_approved_content_slice.md) |
 | H39 클러스터 | 아비마엘·아비-마엘과 H1 합성 관계, H410 관계 비생성 | `active` | 높음 | 2026-09-24 | [기록](h39_cluster_approved_content_slice.md) |
 
+| H40·H1125 클러스터 | 아비멜렉·아비-멜레크와 벤아비나답·벤-아비-나다브, 합성 관계 3건 | `active` | 높음 | 2026-09-27 | [기록](h40_cluster_approved_content_slice.md) |
+
 ## 열람 및 후속 판단 원칙
 
 1. 새 제안을 만들기 전에 관련 Strong이 이 색인에 있는지 확인한다.
