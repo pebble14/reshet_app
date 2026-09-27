@@ -1,0 +1,65 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H41-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-09-27 H41 추천 의미·비고·두 합성 관계 및 DB/Git 완료 승인; H0041_cluster_20260927_d1710e4e/00_approved_content.md",
+    "document_sha256": "c9cf8669172b1b2e9c75cd30e27539d644293617f315037affe2eee6cbcf3c4b"
+  },
+  "target": {
+    "expected_work_sha256": "d1710e4e0cb10de5c3cb363b7a3521290d97e6308abb1cb3bd462e89f9c7ccc4",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0041_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아비나답 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아비나답·아비-나다브 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0041_0000",
+      "before": null,
+      "after": "아비나답은 한국어 성경의 관용 표기이고, 아비-나다브는 אֲבִינָדָב의 아비와 나다브 구성을 드러내는 원문 기반 분석 표기이다. 붙임표는 분석 기호이며 원문의 구두점이나 특정 시대의 정확한 발음을 뜻하지 않는다. H0001(아버지)과 H5068(기꺼이 하다)에서 유래한 이름으로, Strong은 ‘관대함의 아버지’, 한국어 사전 참고자료는 ‘나의 아버지는 고귀하다’로 풀이한다. 궤를 보관한 집의 주인, 이새의 아들, 사울의 아들에게 쓰인다. 왕상 4:11의 벤아비나답은 H1125로 별도 집계하며, 그 아버지를 이새의 아들과 동일인으로 단정하지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0001_0000",
+      "word_id_2": "H0041_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H41-CLUSTER-H0001-H0041"
+    },
+    {
+      "word_id_1": "H0041_0000",
+      "word_id_2": "H5068_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H41-CLUSTER-H0041-H5068"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}

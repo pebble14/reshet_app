@@ -650,6 +650,16 @@ H0040 `아비멜렉·아비-멜레크 (인)`, H1125 `벤아비나답·벤-아비
 
 두 단어 explicit_approved, 전체 승인 111·hold 2·미승인 14,185·anomaly 113. [H40·H1125 결정 기록](../semantic_decisions/h40_cluster_approved_content_slice.md)에 최종값·표기 선택 이유·관계 보류를 기록했다. UI 테스트 N/A.
 
+### 11.43 H41 클러스터 approved-content work DB slice
+
+`tool/data_provenance/manifests/h41_cluster_approved_content_slice.json`은 format v5 batch `RESHET-EC-H41-CLUSTER-APPROVED-CONTENT-SLICE`다. 사용자는 2026-09-27 추천 meaning·비고·합성 관계와 DB/Git 완료를 승인했다. 승인 내용 SHA는 `c9cf8669172b1b2e9c75cd30e27539d644293617f315037affe2eee6cbcf3c4b`, 적용 manifest SHA는 `81dc2b11a2db4e9e817703bcb14b775d591dca2ca02331d722097c503ac47e32`다.
+
+H0041 `아비나답·아비-나다브 (인)`과 승인 비고를 적용하고 H1→H41(id 7705, w1_to_w2), H5068→H41(id 7706, w2_to_w1)를 morphological/compound/asserted로 생성했다. H41→H1125 생성 보류와 H41–H3440·추정 Greek 관계 비생성을 유지했다. 다른 단어 의미·expression·언어·hold ledger·source·schema·seed는 변경하지 않았다.
+
+Work SHA `d1710e4e0cb10de5c3cb363b7a3521290d97e6308abb1cb3bd462e89f9c7ccc4` → `5acab4442be19539a36199842bf09ca5f7b051d2d4328d7a10aca2e88d3dab4f`. Seed SHA `e2e356c0f9a5d0d86c059da77c59815521e2abc410b3c4aa69b1ab6e55ff9a67` 불변. History group `1790506379385621`, active 4행. Snapshot 및 독립 검증은 `data/backups/approved_content_batch/20260927T105258568895Z/`에 보존했다. 전체 테이블 대조에서 승인된 word·meaning 1행씩 교체, relation 2행·history 4행 추가만 확인했다. Integrity ok, FK 0, sidecar 없음.
+
+H41 explicit_approved, 전체 승인 112·hold 2·미승인 14,184·anomaly 113. Targeted applicator 테스트 29건 통과. [H41 결정 기록](../semantic_decisions/h41_cluster_approved_content_slice.md)에 최종값·채택 근거·대안·불확실성을 기록했다. UI 테스트 N/A.
+
 ## 12. pronunciation profile·migration 현행 경계
 
 ### 12.1 active pronunciation 계약
