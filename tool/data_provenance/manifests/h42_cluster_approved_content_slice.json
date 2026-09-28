@@ -1,0 +1,65 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H42-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-09-28 H42 의미·비고·합성 관계 2건 및 DB/Git 완료 승인; H0042_cluster_20260928_5acab444/00_approved_content.md",
+    "document_sha256": "c3a6f77d574acac5271d011434b85ccd281c102ffe9f6a1cf0fd8855408c736c"
+  },
+  "target": {
+    "expected_work_sha256": "5acab4442be19539a36199842bf09ca5f7b051d2d4328d7a10aca2e88d3dab4f",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0042_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아비노암 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아비노암·아비-노암 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0042_0000",
+      "before": null,
+      "after": "바락의 아버지로 사사기 4–5장에 네 번 나온다. H0001(아버지)과 H5278(즐거움·아름다움·은총 계열)의 합성 이름이다. ‘아비노암’은 한국어 성경 관용 표기이고 ‘아비-노암’은 마소라 표기와 사전의 구성 분석을 드러내는 표기이다. 붙임표는 분석 기호이며 원문의 실제 구두점이나 특정 시대의 정확한 발음을 뜻하지 않는다. Strong은 이름을 ‘즐거움의 아버지’, 곧 ‘은혜로운’으로 풀이하지만, 참고 사전은 ‘나의 아버지는 은혜·기쁨이시다’로 풀이하므로 이름 전체의 문장적 해석은 하나로 확정하지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0001_0000",
+      "word_id_2": "H0042_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H42-CLUSTER-H0001-H0042"
+    },
+    {
+      "word_id_1": "H0042_0000",
+      "word_id_2": "H5278_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H42-CLUSTER-H0042-H5278"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}

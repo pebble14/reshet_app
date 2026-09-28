@@ -660,6 +660,16 @@ Work SHA `d1710e4e0cb10de5c3cb363b7a3521290d97e6308abb1cb3bd462e89f9c7ccc4` → 
 
 H41 explicit_approved, 전체 승인 112·hold 2·미승인 14,184·anomaly 113. Targeted applicator 테스트 29건 통과. [H41 결정 기록](../semantic_decisions/h41_cluster_approved_content_slice.md)에 최종값·채택 근거·대안·불확실성을 기록했다. UI 테스트 N/A.
 
+### 11.44 H42 클러스터 approved-content work DB slice
+
+`tool/data_provenance/manifests/h42_cluster_approved_content_slice.json`은 format v5 batch `RESHET-EC-H42-CLUSTER-APPROVED-CONTENT-SLICE`다. 사용자는 2026-09-28 추천 의미·비고·관계 및 DB/Git 완료를 승인했다. 승인 내용 SHA는 `c3a6f77d574acac5271d011434b85ccd281c102ffe9f6a1cf0fd8855408c736c`, 적용 manifest SHA는 `574aaaccf32f3649ccabeeb6154fe9ccb05d0b47943fbd57e20c2b1bcb383208`이다.
+
+H0042 `아비노암·아비-노암 (인)`과 승인 비고를 적용하고 H1→H42(id 7707, w1_to_w2), H5278→H42(id 7708, w2_to_w1)를 morphological/compound/asserted로 생성했다. H42 hold 없음, 간접 파생·공통 구성 요소에 근거한 직접 관계 및 추정 Greek 관계는 비생성이다. 다른 단어 의미·expression·언어·hold ledger·source·schema·seed는 변경하지 않았다.
+
+Work SHA `5acab4442be19539a36199842bf09ca5f7b051d2d4328d7a10aca2e88d3dab4f` → `112f7c58b1a5ff753c4f577551a503542db63c31e97a0122c2e8453c870f8246`. Seed SHA `e2e356c0f9a5d0d86c059da77c59815521e2abc410b3c4aa69b1ab6e55ff9a67` 불변. History group `1790553731644648`, active 4행. Snapshot 및 독립 검증은 `data/backups/approved_content_batch/20260928T000210845097Z/`에 보존했다. 전체 사용자 테이블 비교에서 승인 word·meaning 1행씩 교체, relation 2행·history 4행 추가만 확인했다. Integrity ok, FK 0, sidecar 없음.
+
+H42 explicit_approved, 전체 승인 113·hold 2·미승인 14,183·anomaly 113. [H42 결정 기록](../semantic_decisions/h42_cluster_approved_content_slice.md)에 최종값·채택 근거·대안·불확실성을 기록했다. UI 테스트 N/A.
+
 ## 12. pronunciation profile·migration 현행 경계
 
 ### 12.1 active pronunciation 계약

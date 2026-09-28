@@ -70,6 +70,8 @@
 
 | H41 클러스터 | 아비나답·아비-나다브와 H1·H5068 합성 관계, H1125 관계 보류 유지 | `active` | 높음 | 2026-09-27 | [기록](h41_cluster_approved_content_slice.md) |
 
+| H42 클러스터 | 아비노암·아비-노암과 H1·H5278 합성 관계 | `active` | 높음 | 2026-09-28 | [기록](h42_cluster_approved_content_slice.md) |
+
 ## 열람 및 후속 판단 원칙
 
 1. 새 제안을 만들기 전에 관련 Strong이 이 색인에 있는지 확인한다.
