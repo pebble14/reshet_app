@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1254" height="1254" viewBox="0 0 1254 1254">
+  <title>Reshet 작은 크기용 아이콘 — master에서 생성</title>
+  <desc>승인 PNG의 Shin·Taw·Resh 실루엣을 수작업 path로 재구성. 배경은 전체 canvas이며 플랫폼 모서리는 생성 시 별도 적용.</desc>
+  <defs>
+    <circle id="node" r="201"/>
+    <g id="rings">
+      <use xlink:href="#node" x="627" y="366"/>
+      <use xlink:href="#node" x="315" y="833"/>
+      <use xlink:href="#node" x="939" y="833"/>
+    </g>
+    <mask id="outside-nodes" maskUnits="userSpaceOnUse" x="0" y="0" width="1254" height="1254">
+      <rect width="1254" height="1254" fill="white"/>
+      <use xlink:href="#rings" fill="black"/>
+    </mask>
+    <path id="connectors" d="M475 510 L395 643 M779 510 L859 643 M516 835 H738"/>
+    <g id="glyphs">
+      <!-- 위: 승인된 비대칭 접합과 뾰족한 양끝을 유지한 Shin -->
+      <path id="shin" d="M484 309 C480 296 487 291 495 299 L552 382 Q556 389 561 383 L611 333 Q620 324 627 335 L666 390 Q670 396 675 388 L757 300 C766 291 774 294 769 308 L685 449 Q675 466 665 453 L619 385 Q616 379 611 386 L552 449 Q542 460 535 447 Z"/>
+      <!-- 왼쪽 아래: 가늘어지는 네 끝을 가진 Taw -->
+      <path id="taw" d="M213 750 C206 738 215 736 225 743 L315 804 L414 741 C428 733 434 737 423 751 L345 828 L417 926 C427 944 421 950 407 939 L315 863 L218 929 C201 939 197 932 208 918 L289 829 Z"/>
+      <!-- 오른쪽 아래: 삼각 내부 공간과 아래 stem을 가진 Resh -->
+      <path id="resh" fill-rule="evenodd" d="M816 800 L1008 730 Q1025 723 1023 741 L1005 960 C1003 980 990 981 987 960 L978 873 L816 821 Q794 813 816 800 Z M879 806 Q869 810 880 814 L971 837 Q978 840 978 831 L979 783 Q979 773 970 777 Z"/>
+    </g>
+    <g id="network" fill="none" stroke="#62f4ff" stroke-linecap="round"><use xlink:href="#connectors" stroke-width="40" mask="url(#outside-nodes)"/><use xlink:href="#rings" stroke-width="32"/></g>
+  </defs>
+  <rect id="canvas-background" width="1254" height="1254" fill="#031631"/>
+  <g id="artwork"><use xlink:href="#network"/><use xlink:href="#glyphs" fill="#b5ffff" stroke="#b5ffff" stroke-width="3" stroke-linejoin="round"/></g>
+</svg>

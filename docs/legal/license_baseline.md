@@ -87,9 +87,9 @@ SDK 자체는 permissive 계열로 보이지만, SDK가 함께 제공하는 font
 
 `pubspec.yaml` 기준 custom `assets:` 섹션은 Android seed DB 복사를 위해 `data/reshet_seed.db`만 선언한다.
 custom `fonts:` 섹션은 현재 활성화되어 있지 않다.
-별도 `assets/`, `fonts/`, `images/` 디렉터리는 현재 repository root에는 없다.
+`assets/branding/`은 앱 아이콘 SVG 원본과 Linux 배포 준비 자산이며 Flutter runtime asset으로 등록하지 않는다. 별도 custom font는 사용하지 않는다.
 
-현재 확인된 resource는 Flutter template 또는 Flutter SDK bundled resource 중심이다.
+앱 아이콘은 사용자 제공 승인 이미지 `reshet_icon_design.png`를 기준으로 재구성한 프로젝트 브랜딩 자산이다. 이 밖의 SDK resource와 iOS launch asset은 기존 baseline을 유지한다.
 
 | Resource | Path / Source | Baseline | Status | Notes |
 |---|---|---|---|---|
@@ -97,14 +97,22 @@ custom `fonts:` 섹션은 현재 활성화되어 있지 않다.
 | Roboto fonts | Flutter SDK bundled material fonts | Apache-2.0 | Allowed | SDK bundled resource로 관리 |
 | Cupertino Icons | `cupertino_icons` package | MIT | Allowed | package `LICENSE` 확인 |
 | Seed DB asset | `data/reshet_seed.db` | Project data | Allowed | `data/reshet_work.db` 기준 개발 baseline snapshot이며 앱 최초 설치/reset 기준 DB. 앱 공개 전까지 Git 미추적 로컬 private build asset으로 유지 |
-| Web icons / favicon | `web/icons/*`, `web/favicon.png` | Flutter template-derived 가능성 | Review Required | 일부 current SDK template hash와 일치 |
-| Android launcher icons | `android/app/src/main/res/mipmap-*` | Flutter template-derived 가능성 | Review Required | 일부 current SDK template hash와 일치 |
-| iOS app / launch assets | `ios/Runner/Assets.xcassets/*` | Flutter template-derived 가능성 | Review Required | provenance 기록 필요 |
-| macOS app icons | `macos/Runner/Assets.xcassets/*` | Flutter template-derived 가능성 | Review Required | 일부 current SDK template hash와 불일치 |
-| Windows app icon | `windows/runner/resources/app_icon.ico` | Flutter template-derived 가능성 | Review Required | current SDK template hash와 불일치 |
+| 공통 아이콘 원본 / Linux 준비 자산 | `assets/branding/` | 사용자 제공 승인 디자인의 수작업 SVG 재구성 및 생성 PNG | Project asset | 외부 font·bitmap 참조 없음. 원본 제공 경위를 기록하며 별도 배포 권리 승인을 선언하지 않음 |
+| Web icons / favicon | `web/icons/*`, `web/favicon.png` | 공통 SVG에서 생성 | Project asset | 일반·maskable·작은 크기 변형 |
+| Android launcher icons | `android/app/src/main/res/mipmap-*`, `drawable*/reshet_icon_*` | 공통 SVG에서 생성 | Project asset | legacy·adaptive·monochrome |
+| iOS app icons | `ios/Runner/Assets.xcassets/AppIcon.appiconset/` | 공통 SVG에서 생성 | Project asset | 기존 Asset Catalog 크기·파일명 유지 |
+| iOS launch assets | `ios/Runner/Assets.xcassets/LaunchImage.imageset/` | Flutter template-derived 가능성 | Review Required | 이번 앱 아이콘 교체 범위 밖 |
+| macOS app icons | `macos/Runner/Assets.xcassets/AppIcon.appiconset/` | 공통 SVG에서 생성 | Project asset | 기존 Asset Catalog 크기·파일명 유지 |
+| Windows app icon | `windows/runner/resources/app_icon.ico` | 공통 SVG에서 생성 | Project asset | 크기별 독립 렌더링 frame |
 
-`.metadata`에는 Flutter stable create revision이 기록되어 있고, platform asset은 initial Flutter project commit에서 도입된 것으로 확인되었다.
-다만 일부 asset은 현재 설치된 Flutter SDK template과 byte-for-byte로 일치하지 않으므로, release 전 provenance 확인 대상으로 유지한다.
+앱 아이콘 원본은 `assets/branding/reshet_icon_master.svg`다. 작은 크기·단색 SVG 및 플랫폼 자산은
+`tool/generate_app_icons.cjs`로 생성한다. 기존 개발환경의 `sharp`를 `NODE_PATH`로 지정하여
+`node tool/generate_app_icons.cjs`를 실행한다. 앱 dependency와 runtime bundle에는 renderer를 추가하지 않는다.
+생성기는 검토용 PNG와 자산 목록을 Git 제외 경로 `build/icon-review/`에 저장한다.
+마스터는 전체 정사각형 배경을 유지하고 플랫폼 모서리와 Android/Web 안전영역은 생성 단계에서 처리한다.
+
+`.metadata`의 Flutter create revision은 기존 platform scaffold의 이력이다.
+이번 교체 대상 앱 아이콘의 현재 출처를 Flutter template로 간주하지 않는다.
 
 ## 7. SQLite / sqlite3 License 구분
 
