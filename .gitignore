@@ -49,6 +49,7 @@ app.*.map.json
 *.sqlite
 *.sqlite3
 /data/backups/approved_content_batch/
+/data/backups/seed_release/
 
 # Local pinned Strong source cache (verified through the tracked manifest)
 /tool/data_provenance/.source_cache/
