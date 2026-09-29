@@ -16,9 +16,23 @@ Reshet 프로젝트는 SQLite 데이터베이스를 사용한다.
 | `data/reshet_work.db` | 개발자가 데이터를 입력/수정하며 관리하는 권위 있는 작업 DB |
 | `data/bbwdb_20260106.db` | 변형하지 않고 유지하는 보존 원본이며 runtime seed로 사용하지 않음 |
 
-Windows 개발/테스트 경로는 repository root의 `data/` 디렉터리를 기준으로 유지한다.
-Android 앱은 `pubspec.yaml`에 선언된 `data/reshet_seed.db` asset을 앱 내부 `files/data/` 디렉터리로 복사하고, 같은 디렉터리의 `reshet_work.db`를 작업 DB로 사용한다.
-Windows의 work DB 최초 생성과 reset도 `data/reshet_seed.db`만 사용하며 legacy filename fallback은 지원하지 않는다.
+Windows Debug 개발 실행은 repository root의 `data/reshet_work.db`를 사용한다. 이 파일은 개발자의 실제 작업본이며 자동 테스트용 임시 DB가 아니다.
+Windows Release/Profile의 DB 위치는 현재 작업 디렉터리와 무관하게 다음과 같이 결정한다.
+
+| 모드 | 명시 조건 | work DB 위치 |
+| --- | --- | --- |
+| 포터블 | exe와 같은 폴더에 일반 파일 `reshet.portable` 존재 | exe 폴더의 `user_data/reshet_work.db` |
+| 일반 배포 | `reshet.portable` 없음 | `%LOCALAPPDATA%/Reshet/data/reshet_work.db` |
+
+`reshet.portable`은 내용이 없는 파일이어도 된다. 배포 준비자가 포터블 배포 폴더에 포함하며, 현재 작업 디렉터리의 표시 파일이나 DB 존재 여부로 모드를 추측하지 않는다. 일반 배포의 `LOCALAPPDATA`가 비었거나 절대 경로가 아니면 실패하고 상대경로로 우회하지 않는다. 포터블 저장소에 쓰지 못해도 일반 배포 위치로 우회하지 않는다.
+포터블은 앱을 종료한 뒤 **표시 파일과 `user_data`를 포함한 폴더 전체**를 이동한다. 프로그램 업데이트 시 `user_data`를 보존해야 한다. 다른 모드로 바꾸거나 기존 상대경로 DB를 가져오는 작업은 자동 수행하지 않으며, 기존 파일은 원래 위치에 보존한다. 필요한 DB는 사용자가 백업·복원 기능으로 선택한다. 이 계약은 DB 저장에 관한 것이며 SharedPreferences 등 모든 사용자 설정의 이동을 보장하지 않는다.
+Microsoft Store/MSIX는 실제 패키징에 따른 경로 재지정·업데이트·삭제 검증을 별도로 수행해야 하며, 이 경로 구현만으로 Store 지원 완료를 선언하지 않는다.
+
+Android의 work DB는 기존 앱 내부 `files/data/reshet_work.db` 위치를 유지한다.
+최초 work가 없으면 선택된 데이터 폴더의 `reshet_seed.db`를 사용하고, seed도 없는 Windows Release/Profile 및 Android에서는 `pubspec.yaml`의 `data/reshet_seed.db` asset을 읽는다. 개발/격리 테스트에서는 로컬 seed만 사용하며 legacy filename fallback은 지원하지 않는다.
+새 work는 같은 데이터 폴더 아래의 고유 임시 디렉터리에서 복사·`integrity_check`·runtime schema 준비·재검사를 완료하고 연결을 닫은 뒤 최종 이름으로 배치한다. 준비 실패 시 해당 임시 사본을 제거하며 부분 work를 남기지 않는다. 최초 생성 잠금용 `reshet_work.db.bootstrap.lock` 파일은 유지한다. 기존 work가 있으면 seed를 읽거나 자동 교체하지 않고 기존 runtime ensure 경로로 연다. 따라서 기존 DB의 migration 오류는 seed 덮어쓰기로 숨기지 않는다.
+앱 업데이트와 연구 콘텐츠 교체는 별개다. 새 seed를 포함해도 기존 사용자 work를 자동 교체하지 않는다. 배포용 seed 생성 자동화, 버전 정보 표시, 사용자가 선택하는 전체 교체 및 교체 성공 후에도 보관하는 백업은 별도 후속 범위다. 기존 `resetToSeed` 동작은 이번 최초 생성 계약과 별개다.
+
 `data/reshet_seed.db`는 앱 설치/reset baseline 역할의 snapshot이며, 2026-08-01 기준으로 expression·meaning 물리 slot 없이 `word_expression_set`·`word_meaning_set` canonical baseline과 `RELATION_STATUS.inferred` lookup을 포함한다. 앱 공개 전까지 seed DB는 Git 미추적 로컬 private build asset으로 유지한다. 단, 완성 배포 DB를 뜻하지 않고 Hebrew Strong coverage 같은 콘텐츠 완성도는 별도 DB 완성도 phase에서 다룬다.
 `data/reshet_work.db`는 mutable local work DB이므로 Git 미추적 상태로 유지한다.
 clean clone에는 DB 파일이 포함되지 않으므로, Android full build와 fresh install smoke는 별도 private DB 준비 후 수행한다.

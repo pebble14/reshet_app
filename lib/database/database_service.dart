@@ -11,6 +11,7 @@ import 'package:path/path.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import 'database_seed_asset_loader.dart';
+import 'database_bootstrap.dart';
 
 typedef _LegacyRelatedCell = ({
   String sourceWordId,
@@ -40,7 +41,7 @@ class DatabaseService {
   /// 초기 상태(골든) DB 파일명
   static const String _seedDbFileName = 'reshet_seed.db';
 
-  /// Android 앱 번들에 포함되는 초기 DB asset 경로
+  /// 배포 앱 번들에 포함되는 초기 DB asset 경로
   static const String _seedDbAssetPath = 'data/reshet_seed.db';
 
   /// 앱이 실제로 수정하는 작업용 DB 파일명
@@ -559,6 +560,7 @@ class DatabaseService {
     required String resolvedExecutablePath,
     required String systemTempParentPath,
     String? dataRootOverrideForTest,
+    String? localAppDataPath,
   }) {
     return _resolveDataDirPath(
       isAndroid: isAndroid,
@@ -568,12 +570,13 @@ class DatabaseService {
       resolvedExecutablePath: resolvedExecutablePath,
       systemTempParentPath: systemTempParentPath,
       dataRootOverrideForTest: dataRootOverrideForTest,
+      localAppDataPath: localAppDataPath,
     );
   }
 
   /// data 폴더 경로.
   /// Windows Debug는 실행 위치와 무관하게 프로젝트 루트 data 폴더를 사용하고,
-  /// Android는 앱 전용 내부 저장소를 사용한다.
+  /// Windows 배포는 portable 표시 또는 사용자별 저장소, Android는 내부 저장소를 사용한다.
   static Future<String> _dataDirPath() async {
     return _resolveDataDirPath(
       isAndroid: Platform.isAndroid,
@@ -585,6 +588,7 @@ class DatabaseService {
       resolvedExecutablePath: Platform.resolvedExecutable,
       systemTempParentPath: Directory.systemTemp.parent.path,
       dataRootOverrideForTest: _dataRootOverrideForTest,
+      localAppDataPath: Platform.environment['LOCALAPPDATA'],
     );
   }
 
@@ -596,6 +600,7 @@ class DatabaseService {
     required String resolvedExecutablePath,
     required String systemTempParentPath,
     required String? dataRootOverrideForTest,
+    required String? localAppDataPath,
   }) {
     if (dataRootOverrideForTest != null) {
       return dataRootOverrideForTest;
@@ -610,6 +615,23 @@ class DatabaseService {
         currentDirectoryPath: currentDirectoryPath,
         resolvedExecutablePath: resolvedExecutablePath,
       );
+    }
+
+    if (isWindows) {
+      if (!isAbsolute(resolvedExecutablePath)) {
+        throw StateError('Windows 실행 파일의 절대 경로를 확인할 수 없습니다.');
+      }
+      final executableDirectory = dirname(resolvedExecutablePath);
+      final portableMarker = File(join(executableDirectory, 'reshet.portable'));
+      if (portableMarker.existsSync()) {
+        return join(executableDirectory, 'user_data');
+      }
+      if (localAppDataPath == null ||
+          localAppDataPath.trim().isEmpty ||
+          !isAbsolute(localAppDataPath)) {
+        throw StateError('Windows 사용자 데이터 저장 위치(LOCALAPPDATA)를 확인할 수 없습니다.');
+      }
+      return join(localAppDataPath, 'Reshet', 'data');
     }
 
     return join(currentDirectoryPath, 'data');
@@ -687,13 +709,20 @@ class DatabaseService {
       return seedFile;
     }
 
-    if (Platform.isAndroid) {
+    if (_canLoadBundledSeed) {
       await _copyBundledSeedTo(seedPath);
       return File(seedPath);
     }
 
     throw Exception('초기 DB(seed)를 찾을 수 없습니다: $seedPath');
   }
+
+  static bool get _canLoadBundledSeed =>
+      _dataRootOverrideForTest == null &&
+      (Platform.isAndroid ||
+          (Platform.isWindows &&
+              (const bool.fromEnvironment('dart.vm.product') ||
+                  const bool.fromEnvironment('dart.vm.profile'))));
 
   static Future<void> _copyBundledSeedTo(String seedPath) async {
     final seedFile = File(seedPath);
@@ -728,12 +757,23 @@ class DatabaseService {
     final seedPath = await _seedDbPath();
     final workPath = await _workDbPath();
 
-    // work DB가 없으면 seed를 복사하여 work 생성
-    if (!File(workPath).existsSync()) {
-      final seedFile = await _ensureSeedDbFile(seedPath);
-      await Directory(dirname(workPath)).create(recursive: true);
-      await seedFile.copy(workPath);
-    }
+    // 새 DB는 앱 소유 임시 파일에서 검증한 뒤 배치한다.
+    // 기존 work가 있으면 seed나 과거 상대경로 DB를 읽지 않는다.
+    await DatabaseBootstrap.createIfMissing(
+      workPath: workPath,
+      writeSeed: (stagedFile) async {
+        final seedFile = File(seedPath);
+        if (await seedFile.exists()) {
+          await seedFile.copy(stagedFile.path);
+        } else if (_canLoadBundledSeed) {
+          final bytes = await loadBundledDatabaseAsset(_seedDbAssetPath);
+          await stagedFile.writeAsBytes(bytes, flush: true);
+        } else {
+          throw Exception('초기 DB(seed)를 찾을 수 없습니다: $seedPath');
+        }
+      },
+      prepareDatabase: ensureRuntimeSchema,
+    );
 
     Database? openedDatabase;
     try {
