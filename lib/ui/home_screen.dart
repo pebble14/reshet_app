@@ -33,12 +33,14 @@ class HomeScreen extends StatefulWidget {
     this.onThemeModeChanged,
     this.backupService = const DatabaseBackupService(),
     this.restoreService = const DatabaseRestoreService(),
+    this.providedDataService = const DatabaseRestoreService(),
   });
 
   final ThemeMode themeMode;
   final ValueChanged<ThemeMode>? onThemeModeChanged;
   final DatabaseBackupRunner backupService;
   final DatabaseRestoreRunner restoreService;
+  final ProvidedDatabaseReplaceRunner providedDataService;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -551,7 +553,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ..showSnackBar(SnackBar(content: Text(message)));
   }
 
-  Future<void> _confirmAndRestoreDatabase() async {
+  Future<void> _confirmAndRestoreDatabase({bool useBundledSeed = false}) async {
     if (_isDatabaseMaintenanceInProgress || _isLoading) {
       return;
     }
@@ -559,40 +561,51 @@ class _HomeScreenState extends State<HomeScreen> {
     var restoreStarted = false;
     RestoreResult result;
     try {
-      result = await widget.restoreService.restore(
-        confirmation: () async {
-          if (!mounted) return false;
-          final confirmed = await showDialog<bool>(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: const Text('데이터 복원'),
-              content: const Text(
-                '선택한 백업 데이터로 현재 데이터가 교체됩니다. 복원 전에 현재 데이터를 '
-                '별도 파일로 백업하는 것을 권장합니다.\n\n'
-                '내부 rollback snapshot은 실패 복구용 임시 파일이며 사용자 백업이 아닙니다. '
-                '백업 파일은 암호화되지 않았을 수 있고, 복원 후 검색·탐색·현재 작업 화면 '
-                '상태가 초기화될 수 있습니다.',
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context, false),
-                  child: const Text('취소'),
-                ),
-                FilledButton(
-                  onPressed: () => Navigator.pop(context, true),
-                  child: const Text('복원'),
-                ),
-              ],
+      Future<bool> confirmation() async {
+        if (!mounted) return false;
+        final confirmed = await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text(useBundledSeed ? '제공 데이터로 전체 교체' : '데이터 복원'),
+            content: Text(
+              useBundledSeed
+                  ? '이 앱 버전에 포함된 제공 데이터로 현재 데이터를 모두 교체합니다. '
+                        '내가 편집한 내용과 제공 데이터는 합쳐지지 않습니다.\n\n'
+                        '먼저 현재 데이터의 백업을 원하는 위치에 저장해야 합니다. '
+                        '저장을 취소하거나 실패하면 교체하지 않습니다. '
+                        '백업은 교체 후에도 보관되며 데이터 복원 메뉴로 되돌릴 수 있습니다.\n\n'
+                        '백업 파일은 암호화되지 않습니다. 교체 후 검색·탐색 화면이 초기화됩니다.'
+                  : '선택한 백업 데이터로 현재 데이터가 교체됩니다. 복원 전에 현재 데이터를 '
+                        '별도 파일로 백업하는 것을 권장합니다.\n\n'
+                        '내부 rollback snapshot은 실패 복구용 임시 파일이며 사용자 백업이 아닙니다. '
+                        '백업 파일은 암호화되지 않았을 수 있고, 복원 후 검색·탐색·현재 작업 화면 '
+                        '상태가 초기화될 수 있습니다.',
             ),
-          );
-          if (confirmed == true && mounted) {
-            restoreStarted = true;
-            setState(() => _isRestoring = true);
-            return true;
-          }
-          return false;
-        },
-      );
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: Text(useBundledSeed ? '내 데이터 유지' : '취소'),
+              ),
+              FilledButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: Text(useBundledSeed ? '전체 교체' : '복원'),
+              ),
+            ],
+          ),
+        );
+        if (confirmed == true && mounted) {
+          restoreStarted = true;
+          setState(() => _isRestoring = true);
+          return true;
+        }
+        return false;
+      }
+
+      result = useBundledSeed
+          ? await widget.providedDataService.replaceWithBundledSeed(
+              confirmation: confirmation,
+            )
+          : await widget.restoreService.restore(confirmation: confirmation);
     } catch (error, stackTrace) {
       debugPrint('데이터 복원 실행 실패: $error');
       debugPrintStack(stackTrace: stackTrace);
@@ -628,11 +641,15 @@ class _HomeScreenState extends State<HomeScreen> {
     final message = switch (result) {
       RestoreSucceeded() when !stateRefreshSucceeded =>
         '데이터 복원은 완료되었지만 화면 갱신에 실패했습니다. 앱을 다시 실행하세요.',
+      RestoreSucceeded() when useBundledSeed =>
+        '제공 데이터로 교체했습니다. 저장한 백업은 데이터 복원 메뉴에서 사용할 수 있습니다.',
       RestoreSucceeded() => '데이터 복원이 완료되었습니다.',
       RestoreRejected() => _restoreRejectedMessage(result.reason),
       RestoreFailed()
           when result.rollbackStatus == RestoreRollbackStatus.failed =>
         '데이터 복원과 원본 복구에 실패했습니다. 앱을 종료하고 지원을 요청하세요.',
+      RestoreFailed() when result.stage == RestoreFailureStage.userBackupSave =>
+        '백업 저장에 실패해 교체하지 않았습니다. 앱 데이터 폴더 밖의 저장 위치를 선택하세요.',
       RestoreFailed() => '데이터 복원에 실패해 기존 데이터를 유지했습니다.',
       RestoreCancelled() => '',
     };
@@ -682,81 +699,6 @@ class _HomeScreenState extends State<HomeScreen> {
       _restoreGeneration++;
       _defaultStrongListFuture = _createDefaultStrongListFuture();
     });
-  }
-
-  /// DB 초기화를 실행하기 전에 사용자에게 확인을 받는다.
-  Future<void> _confirmAndResetDb() async {
-    if (_isDatabaseMaintenanceInProgress) return;
-    bool backup = true;
-
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              title: const Text('데이터베이스 초기화'),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text(
-                    '작업용 데이터베이스를 초기 상태로 되돌립니다.\n'
-                    '편집한 관계/내용이 모두 초기화됩니다.',
-                  ),
-                  const SizedBox(height: 12),
-                  CheckboxListTile(
-                    contentPadding: EdgeInsets.zero,
-                    value: backup,
-                    onChanged: (v) => setState(() => backup = v ?? true),
-                    title: const Text('초기화 전에 현재 DB 백업하기'),
-                  ),
-                ],
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context, false),
-                  child: const Text('취소'),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.pop(context, true),
-                  child: const Text('초기화'),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
-
-    if (confirmed != true) return;
-
-    // UX: 초기화 중 로딩 표시
-    setState(() => _isLoading = true);
-
-    try {
-      await DatabaseService.resetToSeed(backup: backup);
-      WordGraphDataCache.clear();
-
-      if (!mounted) return;
-
-      setState(() {
-        _isLoading = false;
-        _setVisibleWordListFuture();
-      });
-
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('데이터베이스가 초기 상태로 되돌아갔습니다.')));
-    } catch (e) {
-      if (!mounted) return;
-      setState(() {
-        _isLoading = false;
-        _setVisibleWordListFuture();
-      });
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('데이터베이스 초기화 실패: $e')));
-    }
   }
 
   Future<void> _undoLastChange() async {
@@ -1504,8 +1446,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 await _confirmAndCreateBackup();
               } else if (value == 'restore_backup') {
                 await _confirmAndRestoreDatabase();
-              } else if (value == 'reset_db') {
-                await _confirmAndResetDb();
+              } else if (value == 'replace_provided') {
+                await _confirmAndRestoreDatabase(useBundledSeed: true);
               } else if (value == 'undo_last_change') {
                 await _undoLastChange();
               }
@@ -1520,8 +1462,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Text('데이터 복원'),
               ),
               const PopupMenuItem<String>(
-                value: 'reset_db',
-                child: Text('데이터베이스 초기화(초기 상태로 되돌리기)'),
+                value: 'replace_provided',
+                child: Text('제공 데이터로 전체 교체'),
               ),
               const PopupMenuItem<String>(
                 value: 'undo_last_change',

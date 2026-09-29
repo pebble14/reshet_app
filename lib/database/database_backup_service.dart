@@ -5,6 +5,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_file_dialog/flutter_file_dialog.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
+import 'package:path/path.dart' as p;
+
 import 'database_service.dart';
 import 'database_snapshot_service.dart';
 
@@ -63,6 +65,7 @@ class PlatformBackupDestinationWriter implements BackupDestinationWriter {
 class FileSelectorBackupDestinationWriter implements BackupDestinationWriter {
   const FileSelectorBackupDestinationWriter({
     BackupSaveLocationGetter? saveLocationGetter,
+    this.protectedDirectories = const [],
   }) : _saveLocationGetter = saveLocationGetter;
 
   static const XTypeGroup _sqliteTypeGroup = XTypeGroup(
@@ -71,6 +74,7 @@ class FileSelectorBackupDestinationWriter implements BackupDestinationWriter {
   );
 
   final BackupSaveLocationGetter? _saveLocationGetter;
+  final List<String> protectedDirectories;
 
   @override
   Future<String?> save({
@@ -91,6 +95,26 @@ class FileSelectorBackupDestinationWriter implements BackupDestinationWriter {
       return null;
     }
 
+    final parent = await Directory(
+      p.dirname(p.absolute(location.path)),
+    ).resolveSymbolicLinks();
+    final destination = p.join(parent, p.basename(location.path));
+    for (final directory in protectedDirectories) {
+      final protected = await Directory(directory).resolveSymbolicLinks();
+      if (p.equals(protected, destination) ||
+          p.isWithin(protected, destination)) {
+        throw StateError('백업은 앱 데이터 폴더 밖에 저장해야 합니다.');
+      }
+    }
+    if (await File(destination).exists()) {
+      final resolved = await File(destination).resolveSymbolicLinks();
+      for (final directory in protectedDirectories) {
+        final protected = await Directory(directory).resolveSymbolicLinks();
+        if (p.equals(protected, resolved) || p.isWithin(protected, resolved)) {
+          throw StateError('앱 데이터 파일을 백업 대상으로 덮어쓸 수 없습니다.');
+        }
+      }
+    }
     final file = XFile.fromData(
       bytes,
       mimeType: 'application/vnd.sqlite3',

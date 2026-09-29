@@ -53,7 +53,12 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
     await tester.pumpWidget(
-      MaterialApp(home: HomeScreen(restoreService: restoreRunner)),
+      MaterialApp(
+        home: HomeScreen(
+          restoreService: restoreRunner,
+          providedDataService: restoreRunner,
+        ),
+      ),
     );
     await _pumpUntil(
       tester,
@@ -69,6 +74,53 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
   }
+
+  testWidgets('제공 데이터 유지 선택과 필수 백업 안내를 표시한다', (tester) async {
+    await pumpHome(tester);
+    await tester.tap(find.byType(PopupMenuButton<String>));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    await tester.tap(find.text('제공 데이터로 전체 교체'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.textContaining('합쳐지지 않습니다'), findsOneWidget);
+    expect(find.textContaining('저장을 취소하거나 실패하면 교체하지 않습니다'), findsOneWidget);
+    await tester.tap(find.widgetWithText(TextButton, '내 데이터 유지'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(restoreRunner.didStartDatabaseRestore, isFalse);
+  });
+
+  testWidgets('제공 데이터 교체 성공 후 검색 상태와 백업 복원 안내를 갱신한다', (tester) async {
+    restoreRunner.handler = () async => const RestoreSucceeded();
+    await pumpHome(tester);
+    await tester.enterText(find.byType(TextField).first, '교체 전 검색');
+    await tester.pump();
+    await tester.tap(find.byType(PopupMenuButton<String>));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    await tester.tap(find.text('제공 데이터로 전체 교체'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    await tester.tap(find.widgetWithText(FilledButton, '전체 교체'));
+    await _pumpUntil(
+      tester,
+      () => find.textContaining('제공 데이터로 교체했습니다').evaluate().isNotEmpty,
+    );
+    expect(restoreRunner.didStartDatabaseRestore, isTrue);
+    expect(
+      tester.widget<TextField>(find.byType(TextField).first).controller!.text,
+      isEmpty,
+    );
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 500)),
+    );
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 200)),
+    );
+    await tester.pump(const Duration(seconds: 11));
+  });
 
   testWidgets('복원 메뉴와 교체·rollback·비암호화 안내를 표시한다', (tester) async {
     await pumpHome(tester);
@@ -182,10 +234,15 @@ void main() {
   });
 }
 
-class _FakeRestoreRunner implements DatabaseRestoreRunner {
+class _FakeRestoreRunner
+    implements DatabaseRestoreRunner, ProvidedDatabaseReplaceRunner {
   Future<RestoreResult> Function() handler = () async =>
       const RestoreCancelled();
   bool didStartDatabaseRestore = false;
+  @override
+  Future<RestoreResult> replaceWithBundledSeed({
+    required Future<bool> Function() confirmation,
+  }) => restore(confirmation: confirmation);
 
   @override
   Future<RestoreResult> restore({

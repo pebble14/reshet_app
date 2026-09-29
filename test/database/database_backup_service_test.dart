@@ -149,6 +149,26 @@ void main() {
     expect(await destinationFile.readAsBytes(), [1, 2, 3, 4]);
   });
 
+  test('보호된 앱 데이터 경로는 저장 전에 거부해 원본을 보존한다', () async {
+    final source = File(sourceDatabase.path);
+    final before = await source.readAsBytes();
+    final destinationWriter = FileSelectorBackupDestinationWriter(
+      protectedDirectories: [testRoot.path],
+      saveLocationGetter:
+          ({required acceptedTypeGroups, required suggestedName}) async =>
+              FileSaveLocation(source.path),
+    );
+    await expectLater(
+      destinationWriter.save(
+        fileName: 'backup.db',
+        bytes: Uint8List.fromList([1]),
+        sourceFilePath: source.path,
+      ),
+      throwsStateError,
+    );
+    expect(await source.readAsBytes(), before);
+  });
+
   test('file_selector writer는 위치 선택 취소 시 null을 반환한다', () async {
     final destinationWriter = FileSelectorBackupDestinationWriter(
       saveLocationGetter:

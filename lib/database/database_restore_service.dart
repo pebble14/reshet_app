@@ -7,6 +7,8 @@ import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import 'database_service.dart';
+import 'database_backup_service.dart';
+import 'database_seed_asset_loader.dart';
 import 'database_snapshot_service.dart';
 
 enum RestoreRejectionReason {
@@ -21,6 +23,7 @@ enum RestoreFailureStage {
   candidatePreparation,
   candidateValidation,
   rollbackSnapshotCreation,
+  userBackupSave,
   databaseClose,
   staging,
   replacement,
@@ -138,6 +141,14 @@ abstract interface class DatabaseRestoreRunner {
   });
 }
 
+abstract interface class ProvidedDatabaseReplaceRunner {
+  Future<RestoreResult> replaceWithBundledSeed({
+    required Future<bool> Function() confirmation,
+  });
+}
+
+typedef BundledSeedLoader = Future<Uint8List> Function();
+
 abstract interface class RestoreFileOperations {
   Future<bool> exists(String path);
   Future<void> copyWithFlush(String sourcePath, String destinationPath);
@@ -191,7 +202,8 @@ typedef RestoreStagedDatabaseOpener = Future<Database> Function(String path);
 typedef RestoreRuntimeEnsurer = Future<void> Function(Database database);
 typedef RestoreClock = DateTime Function();
 
-class DatabaseRestoreService implements DatabaseRestoreRunner {
+class DatabaseRestoreService
+    implements DatabaseRestoreRunner, ProvidedDatabaseReplaceRunner {
   const DatabaseRestoreService({
     this.sourcePicker = const PlatformRestoreSourcePicker(),
     this.fileOperations = const IoRestoreFileOperations(),
@@ -204,6 +216,8 @@ class DatabaseRestoreService implements DatabaseRestoreRunner {
     RestoreStagedDatabaseOpener? stagedDatabaseOpener,
     RestoreRuntimeEnsurer? runtimeEnsurer,
     RestoreClock? clock,
+    this.userBackupWriter,
+    this.bundledSeedLoader,
   }) : _databaseOpener = databaseOpener,
        _databaseCloser = databaseCloser,
        _workPathGetter = workPathGetter,
@@ -214,6 +228,8 @@ class DatabaseRestoreService implements DatabaseRestoreRunner {
 
   static const String rollbackSnapshotPrefix = 'reshet_restore_rollback_';
 
+  final BackupDestinationWriter? userBackupWriter;
+  final BundledSeedLoader? bundledSeedLoader;
   final RestoreSourcePicker sourcePicker;
   final RestoreFileOperations fileOperations;
   final DatabaseRestoreSchemaValidator validator;
@@ -274,7 +290,47 @@ class DatabaseRestoreService implements DatabaseRestoreRunner {
     }
   }
 
-  Future<RestoreResult> _restoreCandidate(RestoreCandidate candidate) async {
+  @override
+  Future<RestoreResult> replaceWithBundledSeed({
+    required Future<bool> Function() confirmation,
+  }) async {
+    Directory? temporaryDirectory;
+    try {
+      if (!await confirmation()) return const RestoreCancelled();
+      final bytes =
+          await (bundledSeedLoader?.call() ??
+              loadBundledDatabaseAsset('data/reshet_seed.db'));
+      temporaryDirectory = await Directory.systemTemp.createTemp(
+        'reshet_provided_seed_',
+      );
+      final candidate = File(p.join(temporaryDirectory.path, 'seed.db'));
+      await candidate.writeAsBytes(bytes, flush: true);
+      return await _restoreCandidate(
+        RestoreCandidate(path: candidate.path),
+        requireUserBackup: true,
+      );
+    } catch (error, stackTrace) {
+      return RestoreFailed(
+        stage: RestoreFailureStage.candidatePreparation,
+        rollbackStatus: RestoreRollbackStatus.notRequired,
+        error: error,
+        stackTrace: stackTrace,
+      );
+    } finally {
+      if (temporaryDirectory != null) {
+        try {
+          await temporaryDirectory.delete(recursive: true);
+        } catch (error) {
+          debugPrint('제공 seed 임시 파일 정리 실패: $error');
+        }
+      }
+    }
+  }
+
+  Future<RestoreResult> _restoreCandidate(
+    RestoreCandidate candidate, {
+    bool requireUserBackup = false,
+  }) async {
     try {
       await validator.validateFile(candidate.path);
     } on DatabaseValidationException catch (error) {
@@ -387,6 +443,35 @@ class DatabaseRestoreService implements DatabaseRestoreRunner {
         RestoreFailureStage.candidateValidation,
         () => validator.validateRuntimeFile(stagedPath!),
       );
+
+      if (requireUserBackup) {
+        final writer =
+            userBackupWriter ??
+            PlatformBackupDestinationWriter(
+              fileSelectorWriter: FileSelectorBackupDestinationWriter(
+                protectedDirectories: [
+                  dataDirectory,
+                  rollbackSnapshot!.directory.path,
+                  File(candidate.path).parent.path,
+                ],
+              ),
+            );
+        final destination = await _runStage(
+          RestoreFailureStage.userBackupSave,
+          () async => writer.save(
+            fileName: DatabaseBackupService.buildDefaultFileName(
+              _clock?.call() ?? DateTime.now(),
+            ),
+            bytes: await rollbackSnapshot!.file.readAsBytes(),
+            sourceFilePath: rollbackSnapshot.file.path,
+          ),
+        );
+        if (destination == null) {
+          await _bestEffortDelete(stagedPath);
+          await _bestEffortSnapshotCleanup(rollbackSnapshot);
+          return const RestoreCancelled();
+        }
+      }
 
       await _runStage(
         RestoreFailureStage.databaseClose,

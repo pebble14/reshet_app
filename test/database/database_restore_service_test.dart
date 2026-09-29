@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'dart:typed_data';
+import 'package:reshet_app/database/database_backup_service.dart';
 
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter_file_dialog/flutter_file_dialog.dart';
@@ -44,8 +46,12 @@ void main() {
     RestoreDatabaseCloser? databaseCloser,
     RestoreDatabaseOpener? databaseOpener,
     RestoreRuntimeEnsurer? runtimeEnsurer,
+    BackupDestinationWriter? userBackupWriter,
+    BundledSeedLoader? bundledSeedLoader,
   }) {
     return DatabaseRestoreService(
+      userBackupWriter: userBackupWriter,
+      bundledSeedLoader: bundledSeedLoader,
       sourcePicker: sourcePicker ?? _FixedSourcePicker(candidate.path),
       fileOperations: fileOperations ?? const IoRestoreFileOperations(),
       validator: validator ?? const DatabaseRestoreSchemaValidator(),
@@ -65,6 +71,113 @@ void main() {
   }) {
     return service.restore(confirmation: () async => confirmed);
   }
+
+  test('제공 데이터 유지 선택은 asset 읽기와 백업 없이 종료한다', () async {
+    final result = await createService(
+      bundledSeedLoader: () async => throw StateError('읽으면 안 됨'),
+    ).replaceWithBundledSeed(confirmation: () async => false);
+    expect(result, isA<RestoreCancelled>());
+    expect(await harness.marker(), '복원 전 데이터');
+  });
+
+  test('제공 seed 교체 성공 후 사용자 백업을 남기고 다시 복원할 수 있다', () async {
+    final saved = File(p.join(root.path, 'user_backup.db'));
+    final writer = _UserBackupWriter(saved);
+    final service = createService(
+      userBackupWriter: writer,
+      bundledSeedLoader: candidate.readAsBytes,
+    );
+    final result = await service.replaceWithBundledSeed(
+      confirmation: () async => true,
+    );
+    expect(result, isA<RestoreSucceeded>());
+    expect(await harness.marker(), '백업 시점 데이터');
+    expect(await saved.exists(), isTrue);
+    expect(
+      await restore(
+        createService(sourcePicker: _FixedSourcePicker(saved.path)),
+      ),
+      isA<RestoreSucceeded>(),
+    );
+    expect(await harness.marker(), '복원 전 데이터');
+    expect(await saved.exists(), isTrue);
+  });
+
+  test('실제 번들 seed를 사용하며 내부의 오래된 seed를 선택하지 않는다', () async {
+    await _createCompatibleDatabase(
+      p.join(root.path, 'reshet_seed.db'),
+      marker: '오래된 내부 seed',
+    );
+    final saved = File(p.join(root.path, 'user_backup.db'));
+    final result = await createService(
+      userBackupWriter: _UserBackupWriter(saved),
+    ).replaceWithBundledSeed(confirmation: () async => true);
+    expect(result, isA<RestoreSucceeded>());
+    final db = await harness.open();
+    final count =
+        (await db.rawQuery('SELECT COUNT(*) AS n FROM WORD_TABLE')).single['n']
+            as int;
+    expect(count, greaterThan(10000));
+    expect(await harness.marker(), isNot('오래된 내부 seed'));
+    expect(await db.rawQuery('PRAGMA integrity_check'), [
+      {'integrity_check': 'ok'},
+    ]);
+    expect(await db.rawQuery('PRAGMA foreign_key_check'), isEmpty);
+  });
+
+  test('사용자 백업 저장 취소와 실패는 기존 DB를 보존한다', () async {
+    for (final fail in [false, true]) {
+      final writer = _UserBackupWriter(null, fail: fail);
+      final result = await createService(
+        userBackupWriter: writer,
+        bundledSeedLoader: candidate.readAsBytes,
+      ).replaceWithBundledSeed(confirmation: () async => true);
+      if (fail) {
+        expect(result, isA<RestoreFailed>());
+        expect(
+          (result as RestoreFailed).stage,
+          RestoreFailureStage.userBackupSave,
+        );
+      } else {
+        expect(result, isA<RestoreCancelled>());
+      }
+      expect(await harness.marker(), '복원 전 데이터');
+      expect(
+        await root
+            .list()
+            .where((f) => p.basename(f.path).startsWith('.reshet_restore'))
+            .toList(),
+        isEmpty,
+      );
+    }
+  });
+
+  test('교체 실패는 원본을 복구하고 이미 저장한 사용자 백업을 보존한다', () async {
+    final saved = File(p.join(root.path, 'user_backup.db'));
+    final result = await createService(
+      userBackupWriter: _UserBackupWriter(saved),
+      bundledSeedLoader: candidate.readAsBytes,
+      fileOperations: _FaultingFileOperations(failRenameCalls: {2}),
+    ).replaceWithBundledSeed(confirmation: () async => true);
+    expect(result, isA<RestoreFailed>());
+    expect(
+      (result as RestoreFailed).rollbackStatus,
+      RestoreRollbackStatus.succeeded,
+    );
+    expect(await harness.marker(), '복원 전 데이터');
+    expect(await saved.exists(), isTrue);
+  });
+
+  test('손상된 제공 seed는 백업 저장 전에 거부한다', () async {
+    final writer = _UserBackupWriter(null, fail: true);
+    final result = await createService(
+      userBackupWriter: writer,
+      bundledSeedLoader: () async => Uint8List.fromList([1, 2, 3]),
+    ).replaceWithBundledSeed(confirmation: () async => true);
+    expect(result, isA<RestoreRejected>());
+    expect(writer.called, isFalse);
+    expect(await harness.marker(), '복원 전 데이터');
+  });
 
   test('Windows picker는 db filter와 일반 XFile path를 사용한다', () async {
     List<XTypeGroup>? capturedGroups;
@@ -1288,3 +1401,22 @@ const _legacyExpressionArchiveDdl = '''
     PRIMARY KEY (source_word_id, expression_type, source_slot)
   )
 ''';
+
+class _UserBackupWriter implements BackupDestinationWriter {
+  _UserBackupWriter(this.destination, {this.fail = false});
+  final File? destination;
+  final bool fail;
+  bool called = false;
+  @override
+  Future<String?> save({
+    required String fileName,
+    required Uint8List bytes,
+    required String sourceFilePath,
+  }) async {
+    called = true;
+    if (fail) throw StateError('백업 저장 실패');
+    if (destination == null) return null;
+    await destination!.writeAsBytes(bytes, flush: true);
+    return destination!.path;
+  }
+}
