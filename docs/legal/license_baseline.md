@@ -265,3 +265,12 @@ Release 또는 public distribution을 검토할 때는 최소한 다음을 확�
 
 그러나 이 문서는 current-state baseline이며 project-level license 또는 release readiness를 선언하지 않는다.
 Dependency, asset, SDK, release target이 바뀌면 이 baseline은 다시 검토되어야 한다.
+
+
+## Android 비공개 테스트 준비 점검 (2026-09-30)
+
+현재 `.dart_tool/package_config.json`의 hosted package 65개에 대해 실제 cache LICENSE/NOTICE 파일을 읽어 확인했다. 파일 누락은 없었으며 MPL/GPL/AGPL/LGPL 본문 표지는 발견하지 못했다. 이 결과는 기존 2026-05-08 표의 패키지 수를 현행 수로 단정하는 근거가 아니며, 검증 기록은 `build/play_release/source_audit.json`에 보관한다.
+
+출시 AAB에는 Flutter의 `NOTICES.Z`가 포함되어 Flutter·Dart·SQLite wrapper 및 파일 선택·설정 패키지의 안내를 포함한다. 프로그램 정보에서 Flutter 표준 라이선스 화면으로 접근한다. 자료 출처는 `data_attributions.md`, 개인정보 안내는 `privacy_policy.md`로 별도 제공한다.
+
+Strong 원자료는 pinned manifest의 CC0/CC BY 4.0 근거와 가공 안내를 제공한다. 초기 보존 DB의 한국어 뜻풀이·RMAC 등 전체 자료의 재배포 근거는 아직 확인 중이며, 기술적으로 빌드됐다는 사실을 DB 전체 배포권 검토 완료로 해석하지 않는다. Reshet 자체의 공개 소스 라이선스는 이번 작업으로 정하지 않는다.

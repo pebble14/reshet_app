@@ -20,6 +20,7 @@ import 'word_detail_route_result.dart';
 import 'word_detail_screen.dart';
 import '../data/repositories/word_repository.dart';
 import 'responsive_layout.dart';
+import 'legal_document_dialog.dart';
 import 'word_graph_cache.dart';
 import 'word_graph_screen.dart';
 import 'word_explorer_screen.dart';
@@ -886,6 +887,30 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           actions: [
+            TextButton(
+              onPressed: () => showLegalDocumentDialog(
+                context,
+                title: '개인정보처리방침',
+                assetPath: 'docs/legal/privacy_policy.md',
+              ),
+              child: const Text('개인정보처리방침'),
+            ),
+            TextButton(
+              onPressed: () => showLegalDocumentDialog(
+                context,
+                title: '자료 출처',
+                assetPath: 'docs/legal/data_attributions.md',
+              ),
+              child: const Text('자료 출처'),
+            ),
+            TextButton(
+              onPressed: () => showLicensePage(
+                context: context,
+                applicationName: 'Reshet',
+                applicationVersion: _aboutVersion,
+              ),
+              child: const Text('소프트웨어 라이선스'),
+            ),
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(),
               child: const Text('닫기'),

@@ -53,3 +53,9 @@ app.*.map.json
 
 # Local pinned Strong source cache (verified through the tracked manifest)
 /tool/data_provenance/.source_cache/
+
+# Private Android upload signing backup
+/data/backups/android_signing/
+
+# Private pre-update Android app and database backup
+/data/backups/android_app_update/

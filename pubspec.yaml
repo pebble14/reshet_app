@@ -66,6 +66,8 @@ flutter:
 
   assets:
     - data/reshet_seed.db
+    - docs/legal/privacy_policy.md
+    - docs/legal/data_attributions.md
 
   # To add assets to your application, add an assets section, like this:
   # assets:
