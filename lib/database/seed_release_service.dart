@@ -7,6 +7,7 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'approved_content_sha256.dart';
 import 'database_service.dart';
 import 'database_snapshot_service.dart';
+import 'seed_rmac_policy.dart';
 
 typedef SeedRename = Future<void> Function(String from, String to);
 
@@ -23,6 +24,72 @@ final class SeedReleaseService {
   File get seed => File(p.join(root.path, 'data', 'reshet_seed.db'));
   Directory get output =>
       Directory(p.join(root.path, 'data', 'backups', 'seed_release'));
+
+  File get _holdsFile => File(
+    p.join(
+      root.path,
+      'tool',
+      'data_provenance',
+      'manifests',
+      'seed_pronunciation_holds.json',
+    ),
+  );
+
+  Future<({List<Map<String, Object?>> rows, String? hash})> _readHolds() async {
+    if (!await _holdsFile.exists()) {
+      return (rows: <Map<String, Object?>>[], hash: null);
+    }
+    final bytes = await _holdsFile.readAsBytes();
+    final value = jsonDecode(utf8.decode(bytes));
+    if (value is! Map || value['format'] != 1 || value['rows'] is! List) {
+      throw StateError('지원하지 않는 발음 보류 목록입니다.');
+    }
+    const fields = {
+      'word_id',
+      'seq',
+      'spelling',
+      'pronunciation',
+      'pronunciation_notation',
+      'pronunciation_notation_name',
+    };
+    final rows = <Map<String, Object?>>[];
+    final keys = <String>{};
+    for (final raw in value['rows'] as List) {
+      if (raw is! Map ||
+          raw.length != fields.length ||
+          !raw.keys.every(fields.contains) ||
+          raw['word_id'] is! String ||
+          (raw['word_id'] as String).isEmpty ||
+          raw['seq'] is! int ||
+          (raw['seq'] as int) < 1 ||
+          raw['spelling'] is! String ||
+          raw['pronunciation'] is! String ||
+          (raw['pronunciation'] as String).isEmpty ||
+          (raw['pronunciation_notation'] != null &&
+              raw['pronunciation_notation'] is! String) ||
+          (raw['pronunciation_notation_name'] != null &&
+              raw['pronunciation_notation_name'] is! String)) {
+        throw StateError('발음 보류 목록의 값이 잘못되었습니다.');
+      }
+      if (!keys.add(jsonEncode([raw['word_id'], raw['seq']]))) {
+        throw StateError('발음 보류 대상이 중복되었습니다.');
+      }
+      rows.add(Map<String, Object?>.from(raw));
+    }
+    return (rows: rows, hash: ApprovedContentSha256.bytes(bytes));
+  }
+
+  Future<SeedRmacPolicy> _readRmac() => SeedRmacPolicy.read(
+    File(
+      p.join(
+        root.path,
+        'tool',
+        'data_provenance',
+        'manifests',
+        'seed_rmac_translations.json',
+      ),
+    ),
+  );
 
   static Future<void> _renameFile(String from, String to) async {
     await File(from).rename(to);
@@ -124,16 +191,41 @@ final class SeedReleaseService {
 
   void _assertSameContent(
     Map<String, Object?> before,
-    Map<String, Object?> after,
-  ) {
+    Map<String, Object?> after, {
+    List<Map<String, Object?>> holds = const [],
+    SeedRmacPolicy? rmac,
+  }) {
     final left = Map<String, Object?>.from(before['tables'] as Map)
       ..remove('CHANGE_HISTORY');
     final right = Map<String, Object?>.from(after['tables'] as Map)
       ..remove('CHANGE_HISTORY');
+    if (holds.isNotEmpty) {
+      final expressions = Map<String, Object?>.from(
+        left['word_expression_set'] as Map,
+      );
+      for (final hold in holds) {
+        final matches = expressions.entries.where((entry) {
+          final row = jsonDecode(entry.value as String) as Map;
+          return row['word_id'] == hold['word_id'] && row['seq'] == hold['seq'];
+        }).toList();
+        if (matches.length != 1) throw StateError('발음 보류 대상이 없거나 중복입니다.');
+        final entry = matches.single;
+        final row = jsonDecode(entry.value as String) as Map<String, dynamic>;
+        if (!hold.entries.every((e) => row[e.key] == e.value)) {
+          throw StateError('발음 보류 대상의 원래 값이 변경되었습니다.');
+        }
+        row['pronunciation'] = null;
+        row['pronunciation_notation'] = null;
+        row['pronunciation_notation_name'] = null;
+        expressions[entry.key] = jsonEncode(row);
+      }
+      left['word_expression_set'] = expressions;
+    }
+    rmac?.transformProjection(left);
     if (jsonEncode(left) != jsonEncode(right) ||
         jsonEncode(before['schema']) != jsonEncode(after['schema']) ||
         before['user_version'] != after['user_version']) {
-      throw StateError('편집 이력 이외의 내용 또는 구조가 변경되었습니다.');
+      throw StateError('편집 이력/승인 발음 보류/RMAC 번역 이외의 내용 또는 구조가 변경되었습니다.');
     }
     if ((after['tables'] as Map)['CHANGE_HISTORY'] case final Map history
         when history.isNotEmpty) {
@@ -185,6 +277,8 @@ final class SeedReleaseService {
     }
     final workHash = await ApprovedContentSha256.file(work);
     final seedHash = await ApprovedContentSha256.file(seed);
+    final holds = await _readHolds();
+    final rmac = await _readRmac();
     await _validate(work);
     await _validate(seed);
     final workContent = await _logical(work);
@@ -208,14 +302,44 @@ final class SeedReleaseService {
       final db = await _open(candidate, readOnly: false);
       try {
         await db.execute('PRAGMA secure_delete=ON');
-        await db.delete('CHANGE_HISTORY');
+        await db.transaction((txn) async {
+          await txn.delete('CHANGE_HISTORY');
+          await rmac.apply(txn);
+          for (final hold in holds.rows) {
+            final rows = await txn.query(
+              'word_expression_set',
+              where: 'word_id = ? AND seq = ?',
+              whereArgs: [hold['word_id'], hold['seq']],
+            );
+            if (rows.length != 1 ||
+                !hold.entries.every((e) => rows.single[e.key] == e.value)) {
+              throw StateError('발음 보류 대상의 원래 값이 변경되었습니다.');
+            }
+            final changed = await txn.update(
+              'word_expression_set',
+              {
+                'pronunciation': null,
+                'pronunciation_notation': null,
+                'pronunciation_notation_name': null,
+              },
+              where: 'word_id = ? AND seq = ?',
+              whereArgs: [hold['word_id'], hold['seq']],
+            );
+            if (changed != 1) throw StateError('발음 보류 수정 행 수가 잘못되었습니다.');
+          }
+        });
         await db.execute('VACUUM');
       } finally {
         await db.close();
       }
       await _validate(candidate);
       final candidateContent = await _logical(candidate);
-      _assertSameContent(workContent, candidateContent);
+      _assertSameContent(
+        workContent,
+        candidateContent,
+        holds: holds.rows,
+        rmac: rmac,
+      );
       // runtime ensure는 별도 사본에서만 실행해 후보 내용은 고정한다.
       final probe = await candidate.copy(
         p.join(directory.path, 'runtime_probe.db'),
@@ -232,12 +356,14 @@ final class SeedReleaseService {
       await _noSidecars(work);
       await _noSidecars(seed);
       if (await ApprovedContentSha256.file(work) != workHash ||
-          await ApprovedContentSha256.file(seed) != seedHash) {
+          await ApprovedContentSha256.file(seed) != seedHash ||
+          (await _readHolds()).hash != holds.hash ||
+          (await _readRmac()).hash != rmac.hash) {
         throw StateError('후보 생성 중 원본 DB가 변경되었습니다. 후보를 다시 만드세요.');
       }
       final diff = _diff(seedContent, candidateContent);
       final report = <String, Object?>{
-        'format': 1,
+        'format': 3,
         'created_at': DateTime.now().toUtc().toIso8601String(),
         'history_policy': 'clear_candidate_only',
         'work_path': await work.resolveSymbolicLinks(),
@@ -245,10 +371,17 @@ final class SeedReleaseService {
         'work_sha256': workHash,
         'seed_sha256_before': seedHash,
         'candidate_sha256': await ApprovedContentSha256.file(candidate),
+        'rmac_translations_sha256': rmac.hash,
+        'pronunciation_holds_sha256': holds.hash,
+        'pronunciation_holds': holds.rows,
         'checks': {
           'integrity': 'ok',
           'foreign_key_issues': 0,
-          'content_preserved_except_history': true,
+          'content_preserved_except_history':
+              holds.rows.isEmpty && rmac.hash == null,
+          'content_preserved_except_approved_holds_and_history':
+              rmac.hash == null,
+          'content_preserved_except_approved_seed_changes_and_history': true,
           'runtime_probe': 'passed',
         },
         'removed_history_count':
@@ -257,6 +390,10 @@ final class SeedReleaseService {
       };
       final summary = StringBuffer(
         '배포용 seed 후보 검사 통과\n생성: ${report['created_at']}\n원본 work와 기존 seed는 변경하지 않았습니다.\n편집 이력 ${report['removed_history_count']}건은 후보에서만 제거했습니다.\n',
+      );
+      summary.writeln('승인 발음 보류: ${holds.rows.length}개. 작업 원본은 보존합니다.');
+      summary.writeln(
+        'RMAC 한글 설명 재작성: ${rmac.hash == null ? '없음' : '적용'}. 영문과 작업 원본은 보존합니다.',
       );
       for (final entry in diff.entries) {
         final d = entry.value as Map;
@@ -308,10 +445,22 @@ final class SeedReleaseService {
     }
     final report =
         jsonDecode(await reportFile.readAsString()) as Map<String, dynamic>;
-    if (report['format'] != 1 ||
+    if ((report['format'] != 1 &&
+            report['format'] != 2 &&
+            report['format'] != 3) ||
         report['history_policy'] != 'clear_candidate_only' ||
         report['checks']?['runtime_probe'] != 'passed') {
       throw StateError('지원하지 않거나 검증되지 않은 보고서입니다.');
+    }
+    final holds = await _readHolds();
+    final rmac = await _readRmac();
+    if (report['pronunciation_holds_sha256'] != holds.hash ||
+        jsonEncode(report['pronunciation_holds'] ?? []) !=
+            jsonEncode(holds.rows)) {
+      throw StateError('검사 이후 승인 발음 보류 목록이 변경되었습니다.');
+    }
+    if (report['rmac_translations_sha256'] != rmac.hash) {
+      throw StateError('검사 이후 승인 RMAC 번역 목록이 변경되었습니다.');
     }
     final candidate = File(p.join(p.dirname(reportPath), 'candidate.db'));
     await _noSidecars(candidate);
@@ -328,6 +477,17 @@ final class SeedReleaseService {
       throw StateError('검사 이후 seed 또는 후보가 변경되었습니다.');
     }
     await _validate(candidate);
+    if (holds.rows.isNotEmpty || rmac.hash != null) {
+      if (await ApprovedContentSha256.file(work) != report['work_sha256']) {
+        throw StateError('승인 seed 후보 검사 이후 작업 DB가 변경되었습니다.');
+      }
+      _assertSameContent(
+        await _logical(work),
+        await _logical(candidate),
+        holds: holds.rows,
+        rmac: rmac,
+      );
+    }
     final db = await _open(candidate);
     try {
       if ((await db.rawQuery(

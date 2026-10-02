@@ -102,6 +102,14 @@ Wiktionary는 과거 철자·발음 참고 자료였으나 항목별 provenance�
 
 Wikidata는 이번 감사에서 실제 원천으로 사용하지 않았으며 Reshet 현행 데이터의 출처로 선언하지 않는다. Wikidata의 라이선스 안내 링크는 향후 원천 검토를 위한 기준 정보일 뿐, 현재 데이터 사용 사실을 뜻하지 않는다.
 
+### 기존 입력 범위와 배포 대조의 구분
+
+사용자는 2026-10-01에 e-Sword Strong 모듈과 영어판·그리스어판 Wiktionary에서 복사한 범위가 철자와 발음 표기이며, 의미·비고는 자료를 참고해 직접 작성했다고 설명했다. 이는 입력 과정에 대한 사용자 진술이며 모든 개별 값의 원천 URL을 입증하는 것은 아니다. 한국어 의미·비고를 외부 사전 설명의 일괄 복사로 분류하지 않는다. 원문 설명의 직접 번역·각색이 확인되는 항목은 별도로 검토한다.
+
+공개 Strong 원천과 현재 문자열의 일치, 원천 기반의 실제 교체 기록, 발음 표기 방식 분류는 서로 구분한다. Unicode 정규화·대소문자·아포스트로피 차이만 제거한 비교는 후보 분류에만 사용하며, DB 저장값 변경이나 역사적 출처 확정에 사용하지 않는다. 공식 발음이 아닌 음역과의 일치를 발음 정확성 검증으로 안내하지 않는다.
+
+Wiktionary 원문 페이지는 현재 값의 대조 근거로 기록할 수 있지만 현재 철자로 만든 링크만으로 과거 복사 출처가 확인됐다고 기록하지 않는다. 재사용하는 보호 대상 자료는 해당 페이지의 조건을 확인하고 출처·라이선스·수정 안내 및 필요한 동일조건배포 범위를 갖춘다. 이 작업은 앱 코드 또는 DB 전체의 공개 라이선스를 임의로 정하지 않는다. 음역·IPA·Strong식 발음이나 서로 다른 시대·체계의 발음을 단순 문자열 차이 때문에 일괄 교체하지 않는다.
+
 ## 8. Reshet 작성 데이터
 
 사용자가 직접 작성한 한국어 의미·설명과 사용자가 구성·편집한 단어 관계·메모는 Reshet 작성 데이터로 구분한다. 단어 ID와 Strong 번호는 식별자·사실 범주로 구분한다.
@@ -832,3 +840,27 @@ cohort F에는 `히브리어/아람어` 19 expression의 `F-language`와 tab 문
 - [Wikidata: Licensing](https://www.wikidata.org/wiki/Wikidata:Licensing) — Wikidata 라이선스 안내
 
 외부 링크의 표시는 해당 페이지에서 확인한 사실을 기록한 것이며, Reshet가 해당 데이터를 이미 채택·사용했다는 의미가 아니다.
+
+## 승인된 Wiktionary 대조 철자 정리 (2026-10-02)
+
+사용자가 승인한 `G0000_0015`, `G0000_0101`, `G0000_0102`, `G0000_0172`, `G0000_0201`, `G0000_0246`의 expression seq 1 철자만 각각 `Γάδαρα`, `ἐλαχύς`, `ἐλέφας`, `κόλυμβος`, `λίπος`, `οἶκτος`로 정리했다. 최초 복사 판본을 확정한 작업이 아니라 현행 원문 대조에 근거한 제한적 교정이다. 발음·음역·표기 방식 metadata·의미·비고·관계·Strong 번호·schema·기존 편집 이력은 보존했다. `ἄθλος` 등 보류 항목은 변경하지 않았다.
+
+정확한 변경 전 값과 식별자를 조건으로 작업 DB를 수정했으며, 사본 적용·중간 실패 rollback·전체 테이블 대조로 승인 철자 6개만 변경됨을 검증했다. `integrity_check=ok`, foreign key 위반 0이다. 검증한 작업 DB에서 기존 `seed_release.dart prepare/promote` 절차로 배포 seed를 갱신했다. 후보와 이전 seed의 전체 차이도 철자 6개뿐이며 seed 이력은 0건, work 이력은 1,740건을 유지한다. 사용자 설치 DB에는 자동 적용하지 않는다.
+
+앱 출처 안내 `docs/legal/data_attributions.md`에는 위 6개와 발음만 대조한 `G0000_0042`의 고정 Wiktionary 판본·기여자·라이선스·가공 안내·시대를 명시했다. 이 7개의 현재 대응을 전체 DB의 과거 provenance 또는 배포권 검토 완료로 확대 해석하지 않는다. 보류 항목에 대한 재작성·제외는 별도 승인 범위다.
+
+작업 DB SHA256은 `4512e6bdcaae25ddd0fe774863718351350a0d0a11f5cf57a218b8982935ded6`, 배포 seed는 `1e30237f8fac176386db41d5d3b34dd11aa87ceef52f047aaafdef41219c5b2c`다. 수정 전 work/seed 바이트 백업은 Git 제외 `data/backups/wiktionary_spelling_six/20261001T154456171843Z/`에 보존한다. seed 승격 시 이전 seed는 `data/backups/seed_release/candidate_b2281589/previous_seed.db`에 별도 보존했다. 실행 SQL·검증·변경값 기록은 Git 제외 `build/play_release/spelling_six_receipt.json`, 후보 보고서는 해당 candidate 디렉터리의 `report.json`이다.
+
+### 첫 테스트 seed의 승인 발음 보류
+
+2026-10-02 사용자 승인으로 출처·발음 체계 대조 미확정인 11개 expression의 발음을 첫 배포 seed에서만 비웠다. 정확한 식별자·seq·원래 철자·발음·metadata는 `tool/data_provenance/manifests/seed_pronunciation_holds.json`에 고정한다. 이는 어휘의 오류·위법 판정이나 뜻 삭제가 아니다. 작업 DB에는 원래 연구 값을 보존한다. 이력만 제거하던 기존 seed 정책에 대한 명시적 예외와 재현 절차는 [SEED_RELEASE](SEED_RELEASE.md)를 따른다.
+
+새 seed SHA256은 `8e67a67ecafd507a6287ed7919b5ce2902fc51c899dc8d669279f589a8d6e1de`, work SHA256은 위와 같으며 이전 seed 백업은 `data/backups/seed_release/candidate_976fc8af/previous_seed.db`다. 전체 비교에서 승인 발음·metadata 11행 이외의 데이터와 schema 변경은 0이다. 후보 runtime 검사와 실제 DB integrity/FK 검사를 통과했다. 이 처리와 현행 원문 링크 추가를 전체 데이터의 과거 provenance 복구나 재배포 근거 확인 완료로 해석하지 않는다.
+
+### RMAC 배포용 원천과 한글 설명 재작성
+
+2026-10-02 사용자 승인 범위는 기존 문법 코드·영문 표·작업 DB·사용자 DB를 보존하면서 공개 원천을 명시하고 seed의 한글 설명을 새로 작성하는 것이다. 과거 자료는 Python으로 외부 사이트에서 수집한 것으로 사용자에게 확인했지만 사이트와 기존 번역 작성자는 미확인이다. 이를 직접 작성한 자료로 소급 분류하지 않는다.
+
+현재 영문 설명의 서로 다른 값 97개는 MLV Teams RMAC 페이지 55개의 문법 설명과 대조했고 각 페이지의 RMAC 전용 Public Domain 고지를 확인했다. 사이트 전체 저작권 고지와 RMAC 전용 조건을 구분한다. 원래 Robinson 문서도 https://github.com/byztxt/robinson-documentation 에서 Public Domain을 명시하지만 다른 배포처의 Robinson 모듈·번역에 이를 자동 적용하지 않는다.
+
+`seed_rmac_translations.json`은 열·정확한 영문 값·새 한글 설명·대조 URL·HTML SHA256을 기록한다. 한글 설명은 공개 영문 원천에서 새로 작성했으며 기존 한글 표를 입력으로 사용하지 않았다. 일반 문법 용어는 기존 표현과 같을 수 있다. 97개 영문 값은 열별 중복을 제외한 한글 설명 94개에 대응한다. 전체 1,227개 RMAC 식별자와 원래 NULL 위치를 유지한다. seed 생성 때만 적용하는 정책과 보호 검증은 [SEED_RELEASE](SEED_RELEASE.md)를 따른다. 이는 어휘 meaning·비고·관계나 schema 변경이 아니다.

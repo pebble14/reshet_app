@@ -6,6 +6,7 @@ import 'package:path/path.dart' as p;
 import 'package:reshet_app/database/approved_content_sha256.dart';
 import 'package:reshet_app/database/database_service.dart';
 import 'package:reshet_app/database/seed_release_service.dart';
+import 'package:reshet_app/domain/expression/pronunciation_notation.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 void main() {
@@ -29,6 +30,13 @@ void main() {
     seed = await source.copy(p.join(data.path, 'reshet_seed.db'));
     final db = await databaseFactory.openDatabase(work.path);
     try {
+      await db.insert('CHANGE_HISTORY', {
+        'group_id': 'seed-test',
+        'action_type': 'update',
+        'entity_type': 'word',
+        'entity_id': 'G0185_0000',
+        'created_at': '2026-10-02T00:00:00Z',
+      });
       await db.rawUpdate('UPDATE WORD_TABLE SET 비고 = ? WHERE id = ?', [
         '사용자 비고 보존',
         'G0185_0000',
@@ -52,6 +60,256 @@ void main() {
     report,
     expectedReportSha256: ApprovedContentSha256.bytes(report.readAsBytesSync()),
   );
+
+  Future<File> writeHolds({
+    bool duplicate = false,
+    bool mismatch = false,
+  }) async {
+    final db = await databaseFactory.openDatabase(
+      work.path,
+      options: OpenDatabaseOptions(readOnly: true),
+    );
+    late Map<String, Object?> row;
+    try {
+      row = (await db.rawQuery(
+        "SELECT word_id,seq,spelling,pronunciation,pronunciation_notation,pronunciation_notation_name FROM word_expression_set WHERE word_id='G0185_0000' AND seq=1",
+      )).single;
+    } finally {
+      await db.close();
+    }
+    if (mismatch) row = {...row, 'pronunciation': '원본과 다른 값'};
+    final file = File(
+      p.join(
+        root.path,
+        'tool',
+        'data_provenance',
+        'manifests',
+        'seed_pronunciation_holds.json',
+      ),
+    );
+    await file.parent.create(recursive: true);
+    await file.writeAsString(
+      jsonEncode({
+        'format': 1,
+        'rows': [row, if (duplicate) row],
+      }),
+    );
+    return file;
+  }
+
+  Future<File> writeRmac() async {
+    final file = File(
+      p.join(
+        root.path,
+        'tool',
+        'data_provenance',
+        'manifests',
+        'seed_rmac_translations.json',
+      ),
+    );
+    await file.parent.create(recursive: true);
+    return File(
+      p.join(
+        Directory.current.path,
+        'tool',
+        'data_provenance',
+        'manifests',
+        'seed_rmac_translations.json',
+      ),
+    ).copy(file.path);
+  }
+
+  test('공개 원천의 한글 번역만 적용하고 영문·식별자·작업본을 보존한다', () async {
+    await writeRmac();
+    final db = await databaseFactory.openDatabase(work.path);
+    late List<Map<String, Object?>> english;
+    try {
+      english = await db.query('RMAC_TABLE', orderBy: 'RMAC');
+      await db.rawUpdate(
+        "UPDATE RMAC_TABLE_KR SET Tense='과거 스크랩 설명' WHERE RMAC='V-AAI-1S'",
+      );
+    } finally {
+      await db.close();
+    }
+    workHash = await ApprovedContentSha256.file(work);
+    final file = await service.prepare();
+    await unchanged();
+    final report = jsonDecode(await file.readAsString()) as Map;
+    expect(report['format'], 3);
+    expect(
+      report['checks']['content_preserved_except_approved_seed_changes_and_history'],
+      true,
+    );
+    expect(
+      report['checks']['content_preserved_except_approved_holds_and_history'],
+      false,
+    );
+    final candidate = await databaseFactory.openDatabase(
+      p.join(file.parent.path, 'candidate.db'),
+    );
+    try {
+      expect(await candidate.query('RMAC_TABLE', orderBy: 'RMAC'), english);
+      final korean = await candidate.query('RMAC_TABLE_KR', orderBy: 'RMAC');
+      expect(
+        korean.map((r) => r['RMAC']).toList(),
+        english.map((r) => r['RMAC']).toList(),
+      );
+      expect(
+        (await candidate.query(
+          'RMAC_TABLE_KR',
+          where: 'RMAC = ?',
+          whereArgs: ['V-AAI-1S'],
+        )).single['Tense'],
+        '부정과거 G5777',
+      );
+    } finally {
+      await candidate.close();
+    }
+    await promote(file);
+    expect(await ApprovedContentSha256.file(work), workHash);
+  });
+
+  test('번역 목록에 없는 영문 값과 영문·한글 식별자 차이는 거부한다', () async {
+    await writeRmac();
+    final db = await databaseFactory.openDatabase(work.path);
+    try {
+      await db.rawUpdate(
+        "UPDATE RMAC_TABLE SET Tense='출처 미확인 설명' WHERE RMAC='V-AAI-1S'",
+      );
+    } finally {
+      await db.close();
+    }
+    workHash = await ApprovedContentSha256.file(work);
+    await expectLater(service.prepare(), throwsStateError);
+    await unchanged();
+    final db2 = await databaseFactory.openDatabase(work.path);
+    try {
+      await db2.rawUpdate(
+        "UPDATE RMAC_TABLE SET Tense='Aorist G5777' WHERE RMAC='V-AAI-1S'",
+      );
+      await db2.delete(
+        'RMAC_TABLE_KR',
+        where: 'RMAC = ?',
+        whereArgs: ['V-AAI-1S'],
+      );
+    } finally {
+      await db2.close();
+    }
+    workHash = await ApprovedContentSha256.file(work);
+    await expectLater(service.prepare(), throwsStateError);
+    await unchanged();
+  });
+
+  test('후보 검사 뒤 RMAC 목록을 바꾸면 승격하지 않는다', () async {
+    final policy = await writeRmac();
+    final file = await service.prepare();
+    await policy.writeAsString(' ', mode: FileMode.append);
+    await expectLater(promote(file), throwsStateError);
+    await unchanged();
+  });
+
+  test('RMAC 후보 내용을 변조하면 보고서 hash를 바꿔도 승격하지 않는다', () async {
+    await writeRmac();
+    final file = await service.prepare();
+    final candidate = File(p.join(file.parent.path, 'candidate.db'));
+    final db = await databaseFactory.openDatabase(candidate.path);
+    try {
+      await db.rawUpdate(
+        "UPDATE RMAC_TABLE_KR SET Tense='임의 설명' WHERE RMAC='V-AAI-1S'",
+      );
+    } finally {
+      await db.close();
+    }
+    final report = jsonDecode(await file.readAsString()) as Map;
+    report['candidate_sha256'] = await ApprovedContentSha256.file(candidate);
+    await file.writeAsString(jsonEncode(report));
+    await expectLater(promote(file), throwsStateError);
+    await unchanged();
+  });
+
+  test('승인한 발음만 후보에서 비우고 작업본과 다른 필드는 보존한다', () async {
+    await writeHolds();
+    final file = await service.prepare();
+    await unchanged();
+    final report = jsonDecode(await file.readAsString()) as Map;
+    expect(report['pronunciation_holds'].length, 1);
+    expect(report['checks']['content_preserved_except_history'], false);
+    expect(
+      report['checks']['content_preserved_except_approved_holds_and_history'],
+      true,
+    );
+    final db = await databaseFactory.openDatabase(
+      p.join(file.parent.path, 'candidate.db'),
+      options: OpenDatabaseOptions(readOnly: true),
+    );
+    try {
+      final row = (await db.rawQuery(
+        "SELECT * FROM word_expression_set WHERE word_id='G0185_0000' AND seq=1",
+      )).single;
+      expect(
+        readStoredPronunciation(
+          pronunciation: row['pronunciation'],
+          notationCode: row['pronunciation_notation'],
+          notationName: row['pronunciation_notation_name'],
+        ),
+        isNull,
+      );
+      final change =
+          (report['diff']['word_expression_set']['changed'] as List).single
+              as Map;
+      final before = Map.of(change['before'] as Map);
+      final after = Map.of(change['after'] as Map);
+      for (final key in [
+        'pronunciation',
+        'pronunciation_notation',
+        'pronunciation_notation_name',
+      ]) {
+        before.remove(key);
+        after.remove(key);
+      }
+      expect(after, before);
+    } finally {
+      await db.close();
+    }
+    await promote(file);
+    expect(await ApprovedContentSha256.file(work), workHash);
+  });
+
+  test('원래 발음이 다르거나 대상이 중복이면 원본을 보존하고 거부한다', () async {
+    await writeHolds(mismatch: true);
+    await expectLater(service.prepare(), throwsStateError);
+    await unchanged();
+    await writeHolds(duplicate: true);
+    await expectLater(service.prepare(), throwsStateError);
+    await unchanged();
+  });
+
+  test('검사 뒤 예외 목록이 변경되면 승격하지 않는다', () async {
+    final holds = await writeHolds();
+    final report = await service.prepare();
+    await holds.writeAsString(' ', mode: FileMode.append);
+    await expectLater(promote(report), throwsStateError);
+    await unchanged();
+  });
+
+  test('발음 보류와 무관한 후보 변경은 보고서 hash를 다시 만들어도 거부한다', () async {
+    await writeHolds();
+    final file = await service.prepare();
+    final candidate = File(p.join(file.parent.path, 'candidate.db'));
+    final db = await databaseFactory.openDatabase(candidate.path);
+    try {
+      await db.rawUpdate(
+        "UPDATE WORD_TABLE SET 비고='범위 밖 변경' WHERE id='G0185_0000'",
+      );
+    } finally {
+      await db.close();
+    }
+    final report = jsonDecode(await file.readAsString()) as Map;
+    report['candidate_sha256'] = await ApprovedContentSha256.file(candidate);
+    await file.writeAsString(jsonEncode(report));
+    await expectLater(promote(file), throwsStateError);
+    await unchanged();
+  });
 
   test('후보에서만 이력을 비우고 비고/내용을 보존하며 변경값을 보고한다', () async {
     final reportFile = await service.prepare();

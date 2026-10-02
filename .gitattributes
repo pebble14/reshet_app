@@ -3,3 +3,6 @@ tool/data_provenance/manifests/phase50w_hebrew20_source_import.json text eol=lf
 tool/data_provenance/migrations/phase50w_hebrew20_source_import_result.json text eol=lf
 tool/data_provenance/manifests/hebrewstrong_arc_spelling_sync.json text eol=lf
 tool/data_provenance/migrations/hebrewstrong_arc_spelling_sync_result.json text eol=lf
+tool/data_provenance/manifests/seed_pronunciation_holds.json text eol=lf
+tool/data_provenance/manifests/seed_rmac_translations.json text eol=lf
+docs/legal/data_attributions.md text eol=lf

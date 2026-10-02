@@ -1,0 +1,689 @@
+{
+  "format": 1,
+  "source": "MLV Teams RMAC",
+  "license": "Public Domain",
+  "checked_at": "2026-10-02",
+  "scope": "seed_only_korean_retranslation",
+  "source_note": "The RMAC's were updated and expanded by the MLV Teams for use in our Greek Lexicons, Greek Interlinear, and what you are seeing here. These are Public Domain.",
+  "translations": [
+    {
+      "column": "Part_of_Speech",
+      "english": "ARAMaic transliterated word (indeclinable)",
+      "korean": "아람어를 음역한 불변화 단어",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/ARAM.htm",
+      "source_sha256": "e59a7f74e44ed99f0dabcae62eb1abfa0eed96fe0e039f3c6c09a09993bdc809"
+    },
+    {
+      "column": "Part_of_Speech",
+      "english": "Adjective",
+      "korean": "형용사",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/A-APF-C.htm",
+      "source_sha256": "690ef0ef947f023d8f6653fc0ae7d39d51813ada5d407043c2a0bd3d558ae26c"
+    },
+    {
+      "column": "Part_of_Speech",
+      "english": "Adverb",
+      "korean": "부사",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/ADV-C.htm",
+      "source_sha256": "2aef10fc985187b26596d6c5416939f212c84d6bee18a89e676546e600ddcf4a"
+    },
+    {
+      "column": "Part_of_Speech",
+      "english": "Adverb or adverb and particle combined",
+      "korean": "부사 또는 부사와 소사의 결합",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/ADV.htm",
+      "source_sha256": "016091e2759ee7ccd86a6089cbd17812b4dc9a88fdf6e1c423cce3ccc1d020e1"
+    },
+    {
+      "column": "Part_of_Speech",
+      "english": "CONDitional particle or conjunction",
+      "korean": "조건을 나타내는 소사 또는 접속사",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/COND.htm",
+      "source_sha256": "476618675d0c409224fa6792fb313facb011d1eee4395c472fb3069551f64a30"
+    },
+    {
+      "column": "Part_of_Speech",
+      "english": "CONJunction",
+      "korean": "접속사",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/COND-K.htm",
+      "source_sha256": "8167fd419ee791513dd692fcc12888599fa7f0f18435fcabd00c47c643567561"
+    },
+    {
+      "column": "Part_of_Speech",
+      "english": "CONJunction or conjunctive particle",
+      "korean": "접속사 또는 연결 소사",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/CONJ.htm",
+      "source_sha256": "ed5347bea3bb50f83cbe71096a08416f0880f671f91310c33b5c9d30e93c2324"
+    },
+    {
+      "column": "Part_of_Speech",
+      "english": "CONJunction or conjunctive particle Negative",
+      "korean": "부정을 나타내는 접속사 또는 연결 소사",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/CONJ-N.htm",
+      "source_sha256": "03f1e02138f5c32b13f0dfbe2f9824906f4fc8c2d7451b2807e6f157ab1de4b9"
+    },
+    {
+      "column": "Part_of_Speech",
+      "english": "Demonstrative pronoun",
+      "korean": "지시 대명사",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/D-NPN-K.htm",
+      "source_sha256": "36d806aea390654eb08b112cc9b075355c2698ee83087497ab7b24aa25a390ae"
+    },
+    {
+      "column": "Part_of_Speech",
+      "english": "HEBrew transliterated word (indeclinable)",
+      "korean": "히브리어를 음역한 불변화 단어",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/HEB.htm",
+      "source_sha256": "7d801df53ee6bbc526bb83756958a071b79de870db94102c08bf144788f5727e"
+    },
+    {
+      "column": "Part_of_Speech",
+      "english": "INterJection",
+      "korean": "감탄사",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/INJ.htm",
+      "source_sha256": "2af62b4fe4b5bdd3fa73a9c8a5e598d9c2eb8a40f1638aea9ba932adb9ea9468"
+    },
+    {
+      "column": "Part_of_Speech",
+      "english": "Indeclinable NUmeral (Adjective)",
+      "korean": "불변화 수사(형용사)",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/A-NUI.htm",
+      "source_sha256": "bd5093d07109787b02b7ad7dc85ebfdbd5ac6d926824788c845f755ea70b6151"
+    },
+    {
+      "column": "Part_of_Speech",
+      "english": "Indeclinable Noun of Other type",
+      "korean": "기타 불변화 명사",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/N-OI.htm",
+      "source_sha256": "d7f937b189cde8fcd4817bf34fd4eff93f3aa63e108180eaf550701ecc6063a7"
+    },
+    {
+      "column": "Part_of_Speech",
+      "english": "Indeclinable PRoper Noun",
+      "korean": "불변화 고유명사",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/N-PRI-ABB.htm",
+      "source_sha256": "be4f380b568d80e52dab119ea41d06e36fcc1741f6593b64328b89e429bcbcd5"
+    },
+    {
+      "column": "Part_of_Speech",
+      "english": "Interrogative PaRTicle",
+      "korean": "의문 소사",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/PRT-I.htm",
+      "source_sha256": "3351fd69f90f667815d0c99668a8822058f82b1bb14cc1fca8ed08025e6a6681"
+    },
+    {
+      "column": "Part_of_Speech",
+      "english": "Interrogative pronoun",
+      "korean": "의문 대명사",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/I-APF.htm",
+      "source_sha256": "98288151575f6d06ad18222259f7a848dc6876414e443510d87de4577798354e"
+    },
+    {
+      "column": "Part_of_Speech",
+      "english": "Negative PaRTicle",
+      "korean": "부정 소사",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/PRT-N.htm",
+      "source_sha256": "eeac1da6d0a4558c2a6eb7d4ba2397d19a53a44b6f5cdf8910197b112a68493d"
+    },
+    {
+      "column": "Part_of_Speech",
+      "english": "Noun",
+      "korean": "명사",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/N-DPM-S.htm",
+      "source_sha256": "76786a52d1d5529c5c7ccdab0d0c53f2a80e051acba34d7e4d1c261b32aad34c"
+    },
+    {
+      "column": "Part_of_Speech",
+      "english": "Noun, Indeclinable Letter",
+      "korean": "문자 이름을 나타내는 불변화 명사",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/N-LI.htm",
+      "source_sha256": "fd93f2098820259dfeaab85c214d3d3fef068df784eee8d7c4bde7ce0213bed6"
+    },
+    {
+      "column": "Part_of_Speech",
+      "english": "PREPosition",
+      "korean": "전치사",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/PREP.htm",
+      "source_sha256": "4fb596fb7a8e40e346e749ae5cdb5eac48908a9fb337ec58656e07400193516f"
+    },
+    {
+      "column": "Part_of_Speech",
+      "english": "Personal pronoun",
+      "korean": "인칭 대명사",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/P-1AP.htm",
+      "source_sha256": "5b609c230b3573e71f87af97c24eb1596073370d9ccfff37a02a85caaf0b638e"
+    },
+    {
+      "column": "Part_of_Speech",
+      "english": "Relative pronoun",
+      "korean": "관계 대명사",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/R-ASM-P.htm",
+      "source_sha256": "4ef3b66940928c3438c415931f6fa3192d34be73fe56b108405b56eb4f4273b3"
+    },
+    {
+      "column": "Part_of_Speech",
+      "english": "Verb",
+      "korean": "동사",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-2RAP-APM-ATT.htm",
+      "source_sha256": "df4a8006e8dea30f481c925a0352f8c30caaa6738ee4a8f34bf2628f5280f164"
+    },
+    {
+      "column": "Part_of_Speech",
+      "english": "correlative or interrogative pronoun",
+      "korean": "상관 또는 의문 대명사",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/Q-APF.htm",
+      "source_sha256": "cf9427e0110a58065a677e24ae8f181d49abc3c5e5bd5460a4790f321b0420fc"
+    },
+    {
+      "column": "Part_of_Speech",
+      "english": "correlative pronoun",
+      "korean": "상관 대명사",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/K-APF.htm",
+      "source_sha256": "fd961f7926acf4d91ab4b47dbd0935975de8be277ca260e254d2b3b02e0794f7"
+    },
+    {
+      "column": "Part_of_Speech",
+      "english": "definite article",
+      "korean": "정관사",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/T-APF.htm",
+      "source_sha256": "5ffdfe18cf936a65d5f75fcbae4ec54ccf2d94f90489e39474316d37d2f207e0"
+    },
+    {
+      "column": "Part_of_Speech",
+      "english": "disjunctive PaRTicle",
+      "korean": "선택을 나타내는 소사",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/PRT.htm",
+      "source_sha256": "ce54b8e4d05ad54b29ad13b506ec4870ba1e3f8a00d915375594da8f463f48a4"
+    },
+    {
+      "column": "Part_of_Speech",
+      "english": "disjunctive PaRTicle with “kai”",
+      "korean": "kai가 결합한 선택 소사",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/PRT-K.htm",
+      "source_sha256": "49c9ddcaedaf136a272208cae65ca19421d11c6e3e5ffafacd7188da501262b1"
+    },
+    {
+      "column": "Part_of_Speech",
+      "english": "indefinite pronoun",
+      "korean": "부정 대명사",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/X-APF.htm",
+      "source_sha256": "83bea274c188020d87ede2f454aeb82889c762223d73b9d05ba0d147380c0a60"
+    },
+    {
+      "column": "Part_of_Speech",
+      "english": "poSsessive pronoun",
+      "korean": "소유 대명사",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/S-1APF.htm",
+      "source_sha256": "2bca7e55a779b55dbbcb1a39be82f4f20675daed6ba3dd5cf56060a04cad9f00"
+    },
+    {
+      "column": "Part_of_Speech",
+      "english": "reCiprocal pronoun",
+      "korean": "상호 대명사",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/C-APM.htm",
+      "source_sha256": "910b52fc5bc5eedd74b7b954e62bced11e02e7208efa83224e191595e0f199b1"
+    },
+    {
+      "column": "Part_of_Speech",
+      "english": "reFlexive pronoun",
+      "korean": "재귀 대명사",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/F-1APM.htm",
+      "source_sha256": "464fb8b9f918c58a25d69e396aa4db823d698223919b269e8d093adae7149a34"
+    },
+    {
+      "column": "Tense",
+      "english": "Aorist G5777",
+      "korean": "부정과거 G5777",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-AAO-3P-A.htm",
+      "source_sha256": "d8cecb969b7b683a4f0eb9f3dcd568f9e426931c3d61207471851434f25b8ff7"
+    },
+    {
+      "column": "Tense",
+      "english": "Future G5776",
+      "korean": "미래 G5776",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-FPP-GPN.htm",
+      "source_sha256": "a25e2d2082e48534abaf101531cf514eed7e30c8f4f6dda4e3d61a9631637de9"
+    },
+    {
+      "column": "Tense",
+      "english": "Imperfect G5775",
+      "korean": "미완료 G5775",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-IXI-2P.htm",
+      "source_sha256": "1c90627aa340c6409c3ff0e99733ea67e59a03eadbabbed9fe4f30daabe45fd9"
+    },
+    {
+      "column": "Tense",
+      "english": "Present G5774",
+      "korean": "현재 G5774",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-PNI-1S-C.htm",
+      "source_sha256": "08a7f4161f14a6bf2f3b41c0c72f2a0d2f4a1ace3aab8d497b42c986bff57541"
+    },
+    {
+      "column": "Tense",
+      "english": "Second Aorist G5780",
+      "korean": "제2부정과거 G5780",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-2AAM-2S-AP.htm",
+      "source_sha256": "c545946ee2185497c4ba3dc1fabb65e6e97d2ab805f371c2a114891f1de1d70c"
+    },
+    {
+      "column": "Tense",
+      "english": "Second Future G5781",
+      "korean": "제2미래 G5781",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-2FMI-3S.htm",
+      "source_sha256": "5c4276a83df91f7c101a4dc73ddf5dd15cbe0b2507cc2a16032023aa77a4eed0"
+    },
+    {
+      "column": "Tense",
+      "english": "Second pLuperfect G5783",
+      "korean": "제2과거완료 G5783",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-2LAI-3S.htm",
+      "source_sha256": "676b7e13dbb1c5c75b69d216ecd9c84b78869da02f1f57e10a3fcc4171e9261b"
+    },
+    {
+      "column": "Tense",
+      "english": "Second peRfect G5782",
+      "korean": "제2완료 G5782",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-2RAP-APM-ATT.htm",
+      "source_sha256": "df4a8006e8dea30f481c925a0352f8c30caaa6738ee4a8f34bf2628f5280f164"
+    },
+    {
+      "column": "Tense",
+      "english": "no tense stated (adverbial imperative)",
+      "korean": "시제 표시 없음(부사적 명령 표현)",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-XXM-2P.htm",
+      "source_sha256": "60a6f4f153557929bb5372c59fa7ef92f1e028c2de94e3cc5926d22160ff5561"
+    },
+    {
+      "column": "Tense",
+      "english": "no tense stated (adverbial imperative) (denoted by X) G5799",
+      "korean": "시제 표시 없음(부사적 명령 표현, X) G5799",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-XXM-2S.htm",
+      "source_sha256": "71e74cf1db3e926b97259e9425aec9f1916dedd63f4423ffd1d75f4b0d45b67f"
+    },
+    {
+      "column": "Tense",
+      "english": "pLuperfect G5779",
+      "korean": "과거완료 G5779",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-LAI-1S.htm",
+      "source_sha256": "d0265a192d1355fe79ea204cbfdf3b7606e7b906b734c56ff40368f99302b6ee"
+    },
+    {
+      "column": "Tense",
+      "english": "peRfect G5778",
+      "korean": "완료 G5778",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-RDI-3S.htm",
+      "source_sha256": "f74442d616a6d474ae90c40db089697692504f0c17d18d61c89ae512aa732304"
+    },
+    {
+      "column": "Voice",
+      "english": "Active G5784",
+      "korean": "능동태 G5784",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-2RAP-APM-ATT.htm",
+      "source_sha256": "df4a8006e8dea30f481c925a0352f8c30caaa6738ee4a8f34bf2628f5280f164"
+    },
+    {
+      "column": "Voice",
+      "english": "Either Middle or Passive G5787",
+      "korean": "중간태 또는 수동태 G5787",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-PEP-DPM.htm",
+      "source_sha256": "6034b445480f646665dce710e396528e2a7c716fdaa784d109b01445923f92f6"
+    },
+    {
+      "column": "Voice",
+      "english": "Middle G5785",
+      "korean": "중간태 G5785",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-2FMI-3S.htm",
+      "source_sha256": "5c4276a83df91f7c101a4dc73ddf5dd15cbe0b2507cc2a16032023aa77a4eed0"
+    },
+    {
+      "column": "Voice",
+      "english": "Passive G5786",
+      "korean": "수동태 G5786",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-FPP-GPN.htm",
+      "source_sha256": "a25e2d2082e48534abaf101531cf514eed7e30c8f4f6dda4e3d61a9631637de9"
+    },
+    {
+      "column": "Voice",
+      "english": "impersonal active (denoted by Q) G5905",
+      "korean": "비인칭 능동태(Q) G5905",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-IQI-3S.htm",
+      "source_sha256": "121ec3d7bbf606dae4f230d1c7266cd04bd40a6c7642b0199a259728dc84b12f"
+    },
+    {
+      "column": "Voice",
+      "english": "middle Deponent",
+      "korean": "중간태 형식의 디포넌트",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-RDI-3S.htm",
+      "source_sha256": "f74442d616a6d474ae90c40db089697692504f0c17d18d61c89ae512aa732304"
+    },
+    {
+      "column": "Voice",
+      "english": "middle Deponent G5788",
+      "korean": "중간태 형식의 디포넌트 G5788",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-2ADS-1P.htm",
+      "source_sha256": "1e624b7f60824467e8933a984c883743a1c3148dd39bbb2d5044835f93981136"
+    },
+    {
+      "column": "Voice",
+      "english": "middle or passive depoNent G5790",
+      "korean": "중간태 또는 수동태 형식의 디포넌트 G5790",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-PNI-1S-C.htm",
+      "source_sha256": "08a7f4161f14a6bf2f3b41c0c72f2a0d2f4a1ace3aab8d497b42c986bff57541"
+    },
+    {
+      "column": "Voice",
+      "english": "no voice stated (denoted by X) G5799",
+      "korean": "태 표시 없음(X) G5799",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-IXI-2P.htm",
+      "source_sha256": "1c90627aa340c6409c3ff0e99733ea67e59a03eadbabbed9fe4f30daabe45fd9"
+    },
+    {
+      "column": "Voice",
+      "english": "passive depOnent G5789",
+      "korean": "수동태 형식의 디포넌트 G5789",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-2AON.htm",
+      "source_sha256": "5bc8711498ad1da9a534ef43f0053a8a9f94e7bb10477e226fe39e7237f811f5"
+    },
+    {
+      "column": "Mood",
+      "english": "Indicative G5791",
+      "korean": "직설법 G5791",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-PNI-1S-C.htm",
+      "source_sha256": "08a7f4161f14a6bf2f3b41c0c72f2a0d2f4a1ace3aab8d497b42c986bff57541"
+    },
+    {
+      "column": "Mood",
+      "english": "Optative G5793",
+      "korean": "희구법 G5793",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-AAO-3P-A.htm",
+      "source_sha256": "d8cecb969b7b683a4f0eb9f3dcd568f9e426931c3d61207471851434f25b8ff7"
+    },
+    {
+      "column": "Mood",
+      "english": "Participle G5796",
+      "korean": "분사 G5796",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-2RAP-APM-ATT.htm",
+      "source_sha256": "df4a8006e8dea30f481c925a0352f8c30caaa6738ee4a8f34bf2628f5280f164"
+    },
+    {
+      "column": "Mood",
+      "english": "Subjunctive G5792",
+      "korean": "접속법 G5792",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-2ADS-1P.htm",
+      "source_sha256": "1e624b7f60824467e8933a984c883743a1c3148dd39bbb2d5044835f93981136"
+    },
+    {
+      "column": "Mood",
+      "english": "iMperative G5794",
+      "korean": "명령법 G5794",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-2AAM-2S-AP.htm",
+      "source_sha256": "c545946ee2185497c4ba3dc1fabb65e6e97d2ab805f371c2a114891f1de1d70c"
+    },
+    {
+      "column": "Mood",
+      "english": "iNfinitive G5795",
+      "korean": "부정사 G5795",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-2AON.htm",
+      "source_sha256": "5bc8711498ad1da9a534ef43f0053a8a9f94e7bb10477e226fe39e7237f811f5"
+    },
+    {
+      "column": "Person",
+      "english": "First (I)",
+      "korean": "제1인칭(나)",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-PNI-1S-C.htm",
+      "source_sha256": "08a7f4161f14a6bf2f3b41c0c72f2a0d2f4a1ace3aab8d497b42c986bff57541"
+    },
+    {
+      "column": "Person",
+      "english": "First (we)",
+      "korean": "제1인칭(우리)",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-2ADS-1P.htm",
+      "source_sha256": "1e624b7f60824467e8933a984c883743a1c3148dd39bbb2d5044835f93981136"
+    },
+    {
+      "column": "Person",
+      "english": "Second (you)",
+      "korean": "제2인칭(너)",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-2AAM-2S-AP.htm",
+      "source_sha256": "c545946ee2185497c4ba3dc1fabb65e6e97d2ab805f371c2a114891f1de1d70c"
+    },
+    {
+      "column": "Person",
+      "english": "Second (you)w",
+      "korean": "제2인칭(너)",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-PXO-2S.htm",
+      "source_sha256": "a782504a246d7ff893bb8db45e1a3d8103c54dfb50c748781adc765810e96bc0"
+    },
+    {
+      "column": "Person",
+      "english": "Second (you*)",
+      "korean": "제2인칭(너희)",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-IXI-2P.htm",
+      "source_sha256": "1c90627aa340c6409c3ff0e99733ea67e59a03eadbabbed9fe4f30daabe45fd9"
+    },
+    {
+      "column": "Person",
+      "english": "Third (he/she/it)",
+      "korean": "제3인칭(그·그녀·그것)",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-2FMI-3S.htm",
+      "source_sha256": "5c4276a83df91f7c101a4dc73ddf5dd15cbe0b2507cc2a16032023aa77a4eed0"
+    },
+    {
+      "column": "Person",
+      "english": "Third (they)",
+      "korean": "제3인칭(그들)",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-AAO-3P-A.htm",
+      "source_sha256": "d8cecb969b7b683a4f0eb9f3dcd568f9e426931c3d61207471851434f25b8ff7"
+    },
+    {
+      "column": "Case",
+      "english": "Accusative (direct object; motion towar d; time: \"how long\")",
+      "korean": "대격: 직접 목적어·방향·시간의 길이",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-PNP-APM.htm",
+      "source_sha256": "644fa2a75a39f9d0ff21be5e6068984c81c70997b5a718ffdd036d5d20ebbfdc"
+    },
+    {
+      "column": "Case",
+      "english": "Accusative (direct object; motion toward)",
+      "korean": "대격: 직접 목적어·방향",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/A-APF-C.htm",
+      "source_sha256": "690ef0ef947f023d8f6653fc0ae7d39d51813ada5d407043c2a0bd3d558ae26c"
+    },
+    {
+      "column": "Case",
+      "english": "Accusative (direct object; motion toward; time: \"how long\")",
+      "korean": "대격: 직접 목적어·방향·시간의 길이",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-2RAP-APM-ATT.htm",
+      "source_sha256": "df4a8006e8dea30f481c925a0352f8c30caaa6738ee4a8f34bf2628f5280f164"
+    },
+    {
+      "column": "Case",
+      "english": "Dative (indirect object, \"to\"; also location \"in\", (rarely): \"at\"; instrument, \"with\")",
+      "korean": "여격: 간접 목적어·위치(드물게 at)·도구",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-PEP-DPM.htm",
+      "source_sha256": "6034b445480f646665dce710e396528e2a7c716fdaa784d109b01445923f92f6"
+    },
+    {
+      "column": "Case",
+      "english": "Dative (indirect object, \"to\"; also location \"in\", (rarely): \"at”; instrument, \"with\")",
+      "korean": "여격: 간접 목적어·위치(드물게 at)·도구",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/N-DPM-S.htm",
+      "source_sha256": "76786a52d1d5529c5c7ccdab0d0c53f2a80e051acba34d7e4d1c261b32aad34c"
+    },
+    {
+      "column": "Case",
+      "english": "Genitive (possession, \"of\"; also origin or separation, \"from\")",
+      "korean": "속격: 소유·기원·분리",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-FPP-GPN.htm",
+      "source_sha256": "a25e2d2082e48534abaf101531cf514eed7e30c8f4f6dda4e3d61a9631637de9"
+    },
+    {
+      "column": "Case",
+      "english": "Nominative (subject; predicate nominative)",
+      "korean": "주격: 주어·주격 보어",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/D-NPN-K.htm",
+      "source_sha256": "36d806aea390654eb08b112cc9b075355c2698ee83087497ab7b24aa25a390ae"
+    },
+    {
+      "column": "Case",
+      "english": "Vocative (direct address)",
+      "korean": "호격: 부르는 대상",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/A-VPM.htm",
+      "source_sha256": "75f3dba17447248f46720c004fa86f07e58d2d64a6f2b83d0cee3f06272c4160"
+    },
+    {
+      "column": "Number",
+      "english": "Plural",
+      "korean": "복수",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-2RAP-APM-ATT.htm",
+      "source_sha256": "df4a8006e8dea30f481c925a0352f8c30caaa6738ee4a8f34bf2628f5280f164"
+    },
+    {
+      "column": "Number",
+      "english": "Plural Aeolic",
+      "korean": "복수(아이올리스 방언)",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-AAO-3P-A.htm",
+      "source_sha256": "d8cecb969b7b683a4f0eb9f3dcd568f9e426931c3d61207471851434f25b8ff7"
+    },
+    {
+      "column": "Number",
+      "english": "Singular",
+      "korean": "단수",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-PNI-1S-C.htm",
+      "source_sha256": "08a7f4161f14a6bf2f3b41c0c72f2a0d2f4a1ace3aab8d497b42c986bff57541"
+    },
+    {
+      "column": "Number",
+      "english": "Singular IRRegular or inpure form",
+      "korean": "단수(불규칙 또는 혼합 형태)",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-PAI-2S-IRR.htm",
+      "source_sha256": "1392648dfb7169ed8de823a67ac3c6a03b1bffdb3c7c53d400170563d150d9e3"
+    },
+    {
+      "column": "Number",
+      "english": "Singular Middle significance",
+      "korean": "단수(중간태 의미)",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-API-3S-M.htm",
+      "source_sha256": "3e94dfddc78f2cd734bf0c879ba5896d7ed5084e861e78854cf88874a7750364"
+    },
+    {
+      "column": "Gender",
+      "english": "Feminine",
+      "korean": "여성",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/A-APF-C.htm",
+      "source_sha256": "690ef0ef947f023d8f6653fc0ae7d39d51813ada5d407043c2a0bd3d558ae26c"
+    },
+    {
+      "column": "Gender",
+      "english": "Masculine",
+      "korean": "남성",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-2RAP-APM-ATT.htm",
+      "source_sha256": "df4a8006e8dea30f481c925a0352f8c30caaa6738ee4a8f34bf2628f5280f164"
+    },
+    {
+      "column": "Gender",
+      "english": "Masculine Particle attached",
+      "korean": "남성(소사 결합)",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/R-ASM-P.htm",
+      "source_sha256": "4ef3b66940928c3438c415931f6fa3192d34be73fe56b108405b56eb4f4273b3"
+    },
+    {
+      "column": "Gender",
+      "english": "Neuter",
+      "korean": "중성",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-FPP-GPN.htm",
+      "source_sha256": "a25e2d2082e48534abaf101531cf514eed7e30c8f4f6dda4e3d61a9631637de9"
+    },
+    {
+      "column": "Gender",
+      "english": "Neuter As Noun: ±thing",
+      "korean": "중성의 명사적 용법: ±thing",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/A-ASN.htm",
+      "source_sha256": "8e3c85e1d9a52985c3f9735d7939543dff7525dd7ee16337aecd8dbc2ada96aa"
+    },
+    {
+      "column": "Gender",
+      "english": "Neuter As Noun: ±things",
+      "korean": "중성의 명사적 용법: ±things",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/D-NPN-K.htm",
+      "source_sha256": "36d806aea390654eb08b112cc9b075355c2698ee83087497ab7b24aa25a390ae"
+    },
+    {
+      "column": "Degree",
+      "english": "Comparative",
+      "korean": "비교급",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/A-APF-C.htm",
+      "source_sha256": "690ef0ef947f023d8f6653fc0ae7d39d51813ada5d407043c2a0bd3d558ae26c"
+    },
+    {
+      "column": "Degree",
+      "english": "Negative",
+      "korean": "부정",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/A-ASF-N.htm",
+      "source_sha256": "21cbd9e62b6bbf20239c3f10e38f947916df09bee92c6d174b5ae87038a07771"
+    },
+    {
+      "column": "Degree",
+      "english": "Superlative",
+      "korean": "최상급",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/N-DPM-S.htm",
+      "source_sha256": "76786a52d1d5529c5c7ccdab0d0c53f2a80e051acba34d7e4d1c261b32aad34c"
+    },
+    {
+      "column": "Form",
+      "english": "ABBrevieated",
+      "korean": "줄임 형태",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/N-PRI-ABB.htm",
+      "source_sha256": "be4f380b568d80e52dab119ea41d06e36fcc1741f6593b64328b89e429bcbcd5"
+    },
+    {
+      "column": "Form",
+      "english": "ATTic",
+      "korean": "아티케 방언",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-2RAP-APM-ATT.htm",
+      "source_sha256": "df4a8006e8dea30f481c925a0352f8c30caaa6738ee4a8f34bf2628f5280f164"
+    },
+    {
+      "column": "Form",
+      "english": "Apocopated",
+      "korean": "말끝이 탈락한 형태",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-2AAM-2S-AP.htm",
+      "source_sha256": "c545946ee2185497c4ba3dc1fabb65e6e97d2ab805f371c2a114891f1de1d70c"
+    },
+    {
+      "column": "Form",
+      "english": "Comparative",
+      "korean": "비교급",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/ADV-C.htm",
+      "source_sha256": "2aef10fc985187b26596d6c5416939f212c84d6bee18a89e676546e600ddcf4a"
+    },
+    {
+      "column": "Form",
+      "english": "Contracted",
+      "korean": "축약형",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/V-PNI-1S-C.htm",
+      "source_sha256": "08a7f4161f14a6bf2f3b41c0c72f2a0d2f4a1ace3aab8d497b42c986bff57541"
+    },
+    {
+      "column": "Form",
+      "english": "Contracted with ‘kai’",
+      "korean": "kai와 축약된 형태",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/D-NPN-K.htm",
+      "source_sha256": "36d806aea390654eb08b112cc9b075355c2698ee83087497ab7b24aa25a390ae"
+    },
+    {
+      "column": "Form",
+      "english": "Contracted with ‘kai’ (kai = and or also)",
+      "korean": "kai와 축약된 형태(kai: 그리고·또한)",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/COND-K.htm",
+      "source_sha256": "8167fd419ee791513dd692fcc12888599fa7f0f18435fcabd00c47c643567561"
+    },
+    {
+      "column": "Form",
+      "english": "Interrogative",
+      "korean": "의문형",
+      "source_url": "https://www.modernliteralversion.org/K4-5/RMAC/ADV-I.htm",
+      "source_sha256": "bf9197b1c0b7b8672c2b35e35dd6026211320a327e38493ff3e29fc502ce1373"
+    }
+  ]
+}

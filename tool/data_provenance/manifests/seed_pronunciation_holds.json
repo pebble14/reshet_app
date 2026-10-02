@@ -1,0 +1,94 @@
+{
+  "format": 1,
+  "reason": "2026-10-02 사용자 승인: 첫 테스트 배포에서 출처·발음 체계 미확정 11개 발음만 보류. 작업 원본 보존.",
+  "rows": [
+    {
+      "word_id": "G0000_0008",
+      "seq": 1,
+      "spelling": "Ἀδραμύττειον",
+      "pronunciation": "adramutteion",
+      "pronunciation_notation": "unknown",
+      "pronunciation_notation_name": null
+    },
+    {
+      "word_id": "G0000_0009",
+      "seq": 1,
+      "spelling": "Ἀδρία",
+      "pronunciation": "Adria",
+      "pronunciation_notation": "unknown",
+      "pronunciation_notation_name": null
+    },
+    {
+      "word_id": "G0000_0048",
+      "seq": 1,
+      "spelling": "ἀΐ́σσω",
+      "pronunciation": "aː.ís.sɔː",
+      "pronunciation_notation": "unknown",
+      "pronunciation_notation_name": null
+    },
+    {
+      "word_id": "G0000_0280",
+      "seq": 1,
+      "spelling": "πρόσεδρος",
+      "pronunciation": "ˈpɾo.se.ðɾos",
+      "pronunciation_notation": "unknown",
+      "pronunciation_notation_name": null
+    },
+    {
+      "word_id": "G0000_0389",
+      "seq": 2,
+      "spelling": "ἀλέκω",
+      "pronunciation": "alékō",
+      "pronunciation_notation": "unknown",
+      "pronunciation_notation_name": null
+    },
+    {
+      "word_id": "G0000_0479",
+      "seq": 2,
+      "spelling": "γνάφος",
+      "pronunciation": "gnáphos",
+      "pronunciation_notation": "unknown",
+      "pronunciation_notation_name": null
+    },
+    {
+      "word_id": "H0000_0041",
+      "seq": 1,
+      "spelling": "ל־א־ך",
+      "pronunciation": "l-ʾ-k",
+      "pronunciation_notation": "unknown",
+      "pronunciation_notation_name": null
+    },
+    {
+      "word_id": "L0000_0003\t",
+      "seq": 1,
+      "spelling": "Adramyttéum",
+      "pronunciation": "ad.raˈmyt.ti.um",
+      "pronunciation_notation": "unknown",
+      "pronunciation_notation_name": null
+    },
+    {
+      "word_id": "L0000_0026",
+      "seq": 1,
+      "spelling": "Iūstus",
+      "pronunciation": "ˈi̯uːs.tus",
+      "pronunciation_notation": "unknown",
+      "pronunciation_notation_name": null
+    },
+    {
+      "word_id": "L0000_0142",
+      "seq": 1,
+      "spelling": "triúmpus",
+      "pronunciation": "triˈum.pʰus",
+      "pronunciation_notation": "unknown",
+      "pronunciation_notation_name": null
+    },
+    {
+      "word_id": "L0000_0159",
+      "seq": 1,
+      "spelling": "IESUS",
+      "pronunciation": "예수스",
+      "pronunciation_notation": "unknown",
+      "pronunciation_notation_name": null
+    }
+  ]
+}

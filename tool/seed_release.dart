@@ -8,6 +8,8 @@ Future<void> main(List<String> args) async {
     stdout.writeln(
       '프로젝트 루트에서 실행하세요. 앱과 DB 편집기를 닫아야 합니다.\n'
       '후보 생성: dart run tool/seed_release.dart prepare\n'
+      '승인 발음 보류: tool/data_provenance/manifests/seed_pronunciation_holds.json을 자동 적용합니다.\n'
+      'RMAC 한글 재작성: tool/data_provenance/manifests/seed_rmac_translations.json을 자동 적용합니다.\n'
       '승격: dart run tool/seed_release.dart promote <report.json> <승인한 보고서 SHA256>\n'
       'prepare는 work/seed를 교체하지 않습니다. promote만 기존 seed를 백업하고 교체합니다.',
     );
