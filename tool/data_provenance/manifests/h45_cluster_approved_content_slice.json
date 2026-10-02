@@ -1,0 +1,53 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H45-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-03 H45 의미·비고·합성 관계 및 DB/Git 완료 승인; H0045_cluster_20261003_4512e6bd/00_approved_content.md",
+    "document_sha256": "1c292f2bfd2210c74c26b28fda5907f555db8c32c5b8a13721b784ad18a18aa2"
+  },
+  "target": {
+    "expected_work_sha256": "4512e6bdcaae25ddd0fe774863718351350a0d0a11f5cf57a218b8982935ded6",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0045_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아비알본 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아비알본·아비-알본 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0045_0000",
+      "before": null,
+      "after": "삼하 23:31에 나오는 아르바 사람으로, 다윗의 용사 가운데 한 사람이다. ‘아비-알본’은 원문 אֲבִי־עַלְבוֹן의 구성 경계를 보이는 분석 표기다. 첫 요소는 H0001 ‘아버지’와 연결되지만 둘째 요소의 어원은 불확실하며, Strong의 ‘힘의 아버지(용감한 자)’ 풀이는 추정이다. 평행 명단인 대상 11:32에서는 아비엘(H0022)로 전해지며, 두 이름의 정확한 형태·어원 관계는 확정하지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0001_0000",
+      "word_id_2": "H0045_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "RESHET-EC-H45-CLUSTER-H0001-H0045"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}

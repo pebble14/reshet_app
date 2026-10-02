@@ -864,3 +864,13 @@ cohort F에는 `히브리어/아람어` 19 expression의 `F-language`와 tab 문
 현재 영문 설명의 서로 다른 값 97개는 MLV Teams RMAC 페이지 55개의 문법 설명과 대조했고 각 페이지의 RMAC 전용 Public Domain 고지를 확인했다. 사이트 전체 저작권 고지와 RMAC 전용 조건을 구분한다. 원래 Robinson 문서도 https://github.com/byztxt/robinson-documentation 에서 Public Domain을 명시하지만 다른 배포처의 Robinson 모듈·번역에 이를 자동 적용하지 않는다.
 
 `seed_rmac_translations.json`은 열·정확한 영문 값·새 한글 설명·대조 URL·HTML SHA256을 기록한다. 한글 설명은 공개 영문 원천에서 새로 작성했으며 기존 한글 표를 입력으로 사용하지 않았다. 일반 문법 용어는 기존 표현과 같을 수 있다. 97개 영문 값은 열별 중복을 제외한 한글 설명 94개에 대응한다. 전체 1,227개 RMAC 식별자와 원래 NULL 위치를 유지한다. seed 생성 때만 적용하는 정책과 보호 검증은 [SEED_RELEASE](SEED_RELEASE.md)를 따른다. 이는 어휘 meaning·비고·관계나 schema 변경이 아니다.
+
+### 11.45 H45 클러스터 approved-content work DB slice
+
+`tool/data_provenance/manifests/h45_cluster_approved_content_slice.json`은 format v5 batch `RESHET-EC-H45-CLUSTER-APPROVED-CONTENT-SLICE`다. 사용자는 2026-10-03 연구 추천과 DB/Git 완료를 승인했다. 승인 내용 SHA는 `1c292f2bfd2210c74c26b28fda5907f555db8c32c5b8a13721b784ad18a18aa2`, 적용 manifest SHA는 `0a15e13b5c2c1c1b855a318899034b8fa564239e9ca88856f668679d053de752`이다. 해당 파일은 Git `-text` 속성으로 적용 당시 raw bytes를 보존한다.
+
+H0045 `아비알본·아비-알본 (인)`과 승인 비고를 적용하고 H1→H45(id 7709, w1_to_w2)를 morphological/compound/asserted로 생성했다. H45 hold 없음; H22–H45 및 unknown second root/H410→H45 관계 비생성 유지. H1·H22 기존 승인·note·관계 및 expression·언어·schema·seed·hold ledger·원천 자료는 변경하지 않았다.
+
+공식 dry-run/undo와 live apply 성공. History group `1790981306422466`, active 3행. Snapshot은 `data/backups/approved_content_batch/20261002T224825600507Z/snapshot.db`이며 전체 사용자 테이블 독립 비교에서 word·meaning 각 1행 교체, relation 1행·history 3행 추가 외 차이 없음을 확인했다. Work SHA `4512e6bdcaae25ddd0fe774863718351350a0d0a11f5cf57a218b8982935ded6` → `1278f2e05560729543e1fa16478409cdd94681f2492b724281e4bf15645d20dc`. Seed SHA `e44bb989bebdc46a22bba2efac9defd06f3bdfd500577153de85adfa1bc148bb` 불변. Integrity ok, FK 0, sidecar 없음.
+
+H45 explicit_approved, 전체 승인 114·hold 2·미승인 14,182·anomaly 113. Targeted applicator 테스트 29건 통과. [H45 결정 기록](../semantic_decisions/h45_cluster_approved_content_slice.md)에 최종값·핵심 근거·대안·잔여 불확실성을 기록했다. UI 테스트 N/A.
