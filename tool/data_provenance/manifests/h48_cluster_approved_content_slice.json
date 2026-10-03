@@ -1,0 +1,199 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H48-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-04 H48 추천안 meaning·비고·관계 및 DB/Git 완료 승인; data/backups/approved_content_batch/h48_approval_20261004/00_approved_content.md",
+    "document_sha256": "fe0b9286de236160413e6cb48821eae00d44c45ed376b4b5020c71cee78fd9d5"
+  },
+  "target": {
+    "expected_work_sha256": "3223f756a7e71be0e9d2977a91ffdf2eb4d79f5833c4ed7f24d6e14b4167ac34",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0048_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아비람/아비-람"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아비람·아비-람 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0087_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아브람/아브-람"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아브람·아브-람 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0048_0000",
+      "before": "의미는 '높으신 나의 아버지'",
+      "after": "‘아비-람’은 ‘아버지’(H0001)와 ‘높다’ 계열(H7311)의 구성 경계를 드러낸 표기다. 이름은 ‘나의 아버지는 높다(존귀하다)’ 등으로 풀이되며, BDB는 ‘높으신 분은 나의 아버지’라는 풀이도 제시한다. 엘리압의 아들과 히엘의 맏아들 두 사람의 이름이다(민 16:1; 왕상 16:34). 이름 풀이의 문장 구조는 하나로 확정하지 않는다."
+    },
+    {
+      "word_id": "H0087_0000",
+      "before": "의미는 '높으신 아버지'",
+      "after": "아브라함(H0085)의 이전 이름이다(창 17:5; 대상 1:27; 느 9:7). Strong은 아비람(H0048)의 단축형으로 설명하며, 이름은 ‘높은 아버지’ 또는 ‘아버지는 높임 받으신다’ 등으로 풀이된다. ‘아브-람’은 구성 경계를 드러낸 분석 표기다. 단축형이라는 설명은 이름 형태의 관계이며 아비람이라는 인물들과 아브람이 동일인이라는 뜻이 아니다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0048_0000",
+      "word_id_2": "H0087_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong이 H0087을 H0048 이름 형태의 단축형으로 설명한다. 특정 인물의 실제 개명 순서나 동일인 관계를 뜻하지 않는다.",
+      "source": "RESHET-EC-H48-CLUSTER-H0048-H0087"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [
+    {
+      "relation_id": 26,
+      "word_id_1": "H0001_0000",
+      "word_id_2": "H0048_0000",
+      "before": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "inferred",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "",
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "H0001의 아버지 요소가 H0048 이름 구성에 참여한다. 이름 전체의 문장 풀이를 하나로 확정하는 관계는 아니다.",
+        "source": "RESHET-EC-H48-CLUSTER-H0001-H0048"
+      }
+    },
+    {
+      "relation_id": 5379,
+      "word_id_1": "H0048_0000",
+      "word_id_2": "H7311_0000",
+      "before": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "inferred",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "",
+        "source": "WORD_TABLE.관련2"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "H7311의 높다 계열이 H0048 이름의 רָם 요소에 참여한다. 동사 표제형 רוּם 전체를 그대로 붙였다는 뜻은 아니다.",
+        "source": "RESHET-EC-H48-CLUSTER-H7311-H0048"
+      }
+    },
+    {
+      "relation_id": 25,
+      "word_id_1": "H0001_0000",
+      "word_id_2": "H0087_0000",
+      "before": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "inferred",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "",
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "H48의 단축형으로 설명되는 H87에도 아버지 구성 요소가 보존된다. 직접 canonical H87→H1 참조가 있다는 뜻은 아니다.",
+        "source": "RESHET-EC-H48-CLUSTER-H0001-H0087"
+      }
+    },
+    {
+      "relation_id": 5378,
+      "word_id_1": "H0087_0000",
+      "word_id_2": "H7311_0000",
+      "before": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "inferred",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "",
+        "source": "WORD_TABLE.관련2"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "H87의 רָם 요소를 높다 계열과 연결하는 형태 구성이다. H87 직접 structured source-reference와 연구자가 확인한 구성 분석을 구분한다.",
+        "source": "RESHET-EC-H48-CLUSTER-H7311-H0087"
+      }
+    },
+    {
+      "relation_id": 7480,
+      "word_id_1": "H0085_0000",
+      "word_id_2": "H0087_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "창세기 17:1-14",
+        "source": "WORD_TABLE.관련3"
+      },
+      "after": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "아브람은 아브라함의 이전 이름이다(창 17:5; 대상 1:27; 느 9:7). 방향은 이전 이름에서 이후 이름으로 향한다. 형태 단축·어원 파생이나 일반 동의어 관계를 뜻하지 않는다.",
+        "source": "RESHET-EC-H48-CLUSTER-H0087-H0085"
+      }
+    }
+  ],
+  "meaning_approvals": []
+}

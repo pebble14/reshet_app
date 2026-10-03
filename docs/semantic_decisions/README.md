@@ -74,6 +74,7 @@
 
 | H45 클러스터 | 아비알본·아비-알본과 H1 합성 관계, H22 관계 비생성 | `active` | 높음 | 2026-10-03 | [기록](h45_cluster_approved_content_slice.md) |
 | H46 클러스터 | 강하신 분·힘센·날개 어휘군과 세메벨 병기, 확정 3·가설 합성 2 관계 | `active` | 높음 | 2026-10-04 | [기록](h46_cluster_approved_content_slice.md) |
+| H48 클러스터 | 아비람·아브람 인명 표기와 구성·단축형·개명 관계 6건 | `active` | 높음 | 2026-10-04 | [기록](h48_cluster_approved_content_slice.md) |
 
 ## 열람 및 후속 판단 원칙
 
