@@ -874,3 +874,13 @@ H0045 `아비알본·아비-알본 (인)`과 승인 비고를 적용하고 H1→
 공식 dry-run/undo와 live apply 성공. History group `1790981306422466`, active 3행. Snapshot은 `data/backups/approved_content_batch/20261002T224825600507Z/snapshot.db`이며 전체 사용자 테이블 독립 비교에서 word·meaning 각 1행 교체, relation 1행·history 3행 추가 외 차이 없음을 확인했다. Work SHA `4512e6bdcaae25ddd0fe774863718351350a0d0a11f5cf57a218b8982935ded6` → `1278f2e05560729543e1fa16478409cdd94681f2492b724281e4bf15645d20dc`. Seed SHA `e44bb989bebdc46a22bba2efac9defd06f3bdfd500577153de85adfa1bc148bb` 불변. Integrity ok, FK 0, sidecar 없음.
 
 H45 explicit_approved, 전체 승인 114·hold 2·미승인 14,182·anomaly 113. Targeted applicator 테스트 29건 통과. [H45 결정 기록](../semantic_decisions/h45_cluster_approved_content_slice.md)에 최종값·핵심 근거·대안·잔여 불확실성을 기록했다. UI 테스트 N/A.
+
+### 11.46 H46 클러스터 approved-content work DB slice
+
+`tool/data_provenance/manifests/h46_cluster_approved_content_slice.json`은 format v5 batch `RESHET-EC-H46-CLUSTER-APPROVED-CONTENT-SLICE`다. 사용자는 2026-10-04 후속 토론까지 반영한 최종 제안과 DB/Git 완료를 승인했다. Approval SHA는 `d736743180d7d92ffaf6819fe56835930b2765040ebcd0273487e0a4d09208e0`, manifest SHA는 `df9699500a252610c7ad4c986cb851ab88d584a361ac98ad3fa5e39b27bd4821`이다. 해당 manifest의 working bytes·index·applicator backup copy가 일치하며 파일별 LF 속성을 적용했다.
+
+H46 ‘강하신 분’, H47 ‘힘센 / 황소 / 힘센 말 / 완고한(頑固한)’, H82 ‘날아오르다’, H83/H84 ‘날개’, H8038 ‘세메벨·셰므에베르 (인)’과 여섯 비고를 적용했다. 관계 7710~7714는 H46–H47 morphological/variant/asserted/undirected, H82–H83 etymological/root_shared/asserted/undirected, H83→H84 morphological/derived/asserted/w1_to_w2, H83→H8038 및 H8034→H8038 morphological/compound/hypothesized/w1_to_w2이다. H82→H46 파생 관계 및 H8034–H83 직접 관계는 생성하지 않았다. H8034 의미·비고·기존 관계, expression·언어·발음·schema·seed·hold ledger·앱 코드는 유지했다.
+
+공식 dry-run/undo 및 live apply 성공. History group `1791044686496080`, active 17행. Snapshot은 `data/backups/approved_content_batch/20261003T162445646290Z/snapshot.db`이다. 전체 테이블 독립 비교와 manifest exact match에서 승인 대상 의미·비고 교체 및 relation 5·history 17행 추가 외 사용자 데이터 변경 없음. Work SHA `1278f2e05560729543e1fa16478409cdd94681f2492b724281e4bf15645d20dc` → `3223f756a7e71be0e9d2977a91ffdf2eb4d79f5833c4ed7f24d6e14b4167ac34`. Seed SHA `e44bb989bebdc46a22bba2efac9defd06f3bdfd500577153de85adfa1bc148bb` 불변; work/seed integrity ok, FK 0, sidecar 없음.
+
+여섯 CORE explicit_approved, 전체 승인 120·hold 2·미승인 14,176·anomaly 113. Discovery frontier 8의 graph closure 미완료와 hub 예외를 유지한다. [H46 결정 기록](../semantic_decisions/h46_cluster_approved_content_slice.md)에 최종값·핵심 근거·대안·잔여 불확실성을 기록했다. UI 테스트 N/A.

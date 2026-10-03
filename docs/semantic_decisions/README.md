@@ -73,6 +73,7 @@
 | H42 클러스터 | 아비노암·아비-노암과 H1·H5278 합성 관계 | `active` | 높음 | 2026-09-28 | [기록](h42_cluster_approved_content_slice.md) |
 
 | H45 클러스터 | 아비알본·아비-알본과 H1 합성 관계, H22 관계 비생성 | `active` | 높음 | 2026-10-03 | [기록](h45_cluster_approved_content_slice.md) |
+| H46 클러스터 | 강하신 분·힘센·날개 어휘군과 세메벨 병기, 확정 3·가설 합성 2 관계 | `active` | 높음 | 2026-10-04 | [기록](h46_cluster_approved_content_slice.md) |
 
 ## 열람 및 후속 판단 원칙
 

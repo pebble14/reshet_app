@@ -1,0 +1,213 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H46-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-04 H46 최종 의미·비고·관계 및 DB/Git 완료 승인; data/backups/approved_content_batch/h46_approval_20261004/00_approved_content.md",
+    "document_sha256": "d736743180d7d92ffaf6819fe56835930b2765040ebcd0273487e0a4d09208e0"
+  },
+  "target": {
+    "expected_work_sha256": "1278f2e05560729543e1fa16478409cdd94681f2492b724281e4bf15645d20dc",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0046_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "강한 자, 전능자"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "강하신 분"
+        }
+      ]
+    },
+    {
+      "word_id": "H0047_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "강한 자, 전능자"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "힘센"
+        },
+        {
+          "seq": 2,
+          "meaning": "황소"
+        },
+        {
+          "seq": 3,
+          "meaning": "힘센 말"
+        },
+        {
+          "seq": 4,
+          "meaning": "완고한(頑固한)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0082_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "날아 오르다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "날아오르다"
+        }
+      ]
+    },
+    {
+      "word_id": "H0083_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "깃털, 날개"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "날개"
+        }
+      ]
+    },
+    {
+      "word_id": "H0084_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "깃털, 날개"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "날개"
+        }
+      ]
+    },
+    {
+      "word_id": "H8038_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "세메벨 Shemeber"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "세메벨·셰므에베르 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0046_0000",
+      "before": null,
+      "after": "하나님을 가리키는 명사적 형용사로, 여섯 용례 모두 야곱 또는 이스라엘과 결합한다. 의미의 중심은 강함이며, 한국어 성경의 전능자(全能者)는 관용 번역이다. 단어 자체나 해당 호칭 구문에 모든 능력을 뜻하는 요소는 없다. Strong은 H0082에서의 유래를 제시하지만 BDB의 어근·파생 분석과 차이가 있어 날다에서 강하다로의 파생 방향은 확정하지 않는다."
+    },
+    {
+      "word_id": "H0047_0000",
+      "before": null,
+      "after": "형용사가 명사적으로 쓰이면 힘센 자·용사·우두머리를 가리킨다. 시 78:25의 힘센 자들은 천사로 해석되는 번역 전통이 있다. 마음과 결합하면 담대함 또는 완고함을 나타낸다. 렘 46:15는 용사들과 힘센 황소의 해석이 갈리며, LXX에는 아피스 황소가 나타난다. 렘 50:11도 말과 황소 번역이 갈린다."
+    },
+    {
+      "word_id": "H0082_0000",
+      "before": null,
+      "after": "욥 39:26에서 매가 날아오르는 동작을 나타낸다. Strong은 원시 어근으로 분류하지만 BDB는 H0083의 날개에서 형성된 명사 유래 동사, 곧 날개를 움직여 날다로 분석한다. 두 사전의 분석 차이 때문에 H0083과의 역사적 파생 방향은 확정하지 않는다."
+    },
+    {
+      "word_id": "H0083_0000",
+      "before": null,
+      "after": "새의 날개를 가리키며 문맥에 따라 비행에 쓰이는 날개깃까지 포괄한다. 겔 17:3에서는 날개와 깃털을 나타내는 다른 말들과 함께 쓰여 긴 날개깃으로 이해할 수 있다. 날개와 깃의 번역 차이를 곧바로 독립 의미의 구분으로 보지 않는다."
+    },
+    {
+      "word_id": "H0084_0000",
+      "before": null,
+      "after": "H0083의 여성형으로, 새의 날개와 그 깃을 포괄한다. 여성형이 암컷 전용을 뜻하지는 않는다. 시 91:4에서는 덮는 깃과 피하는 날개의 비유에 쓰이며 보호는 문맥상 기능이지 별도 어휘 의미가 아니다. 욥 39:13의 새 종류와 구문에는 해석 차이가 있다."
+    },
+    {
+      "word_id": "H8038_0000",
+      "before": null,
+      "after": "창 14:2에 나오는 스보임 왕이다. 세메벨은 한국어 성경 관용 표기이고 셰므에베르는 원문 대조용 한글 표기이며, 특정 시대의 실제 발음이나 므의 모음을 확정한 표기는 아니다. Strong은 셰므(H8034, 이름)와 에베르(H0083, 날개)의 합성으로 추정한다. 이 분석에 따른 구성 표기는 셰므-에베르이며, 어원은 확정되지 않았다. Strong의 날개의 이름, 곧 이름 높은 자라는 풀이는 추정 해석으로만 보존한다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0046_0000",
+      "word_id_2": "H0047_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 for에 따른 동일 자음 어휘의 모음·겹자음 변이이다. 역사적 발생 방향은 확정하지 않는다.",
+      "source": "RESHET-EC-H46-CLUSTER-H0046-H0047"
+    },
+    {
+      "word_id_1": "H0082_0000",
+      "word_id_2": "H0083_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "밀접한 날다·날개 어휘군이다. Strong과 BDB의 파생 분석 차이 때문에 역사적 방향은 확정하지 않는다.",
+      "source": "RESHET-EC-H46-CLUSTER-H0082-H0083"
+    },
+    {
+      "word_id_1": "H0083_0000",
+      "word_id_2": "H0084_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong과 BDB가 H0083의 여성형으로 설명한다.",
+      "source": "RESHET-EC-H46-CLUSTER-H0083-H0084"
+    },
+    {
+      "word_id_1": "H0083_0000",
+      "word_id_2": "H8038_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 apparently from H8034 and H83에 따른 추정 합성의 둘째 요소이다. 확정된 어원으로 승격하지 않는다.",
+      "source": "RESHET-EC-H46-CLUSTER-H0083-H8038"
+    },
+    {
+      "word_id_1": "H8034_0000",
+      "word_id_2": "H8038_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 apparently from H8034 and H83에 따른 추정 합성의 첫째 요소이다. 확정된 어원으로 승격하지 않는다.",
+      "source": "RESHET-EC-H46-CLUSTER-H8034-H8038"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}
