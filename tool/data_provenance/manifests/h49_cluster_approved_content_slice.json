@@ -1,0 +1,205 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H49-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-04 H49 최종 meaning·비고·관계 및 DB/Git 완료 승인; data/backups/approved_content_batch/h49_approval_20261004/00_approved_content.md",
+    "document_sha256": "35c1fd70b574f55ecaed994fbed781583ad740a297c5b01d3b48a418a41eabdd"
+  },
+  "target": {
+    "expected_work_sha256": "d58aa42d6b7a1ca798fcd4c096de42aed0a52a7fb4f530dbd0cc8b11bb354341",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0049_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아비삭 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아비삭·아비-샤그 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H7686_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "길을 잃다, 옆길로 빗나가다, 잘못 타락하다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "빗나가다·잘못하다"
+        },
+        {
+          "seq": 2,
+          "meaning": "취하다(醉하다)·마음을 빼앗기다"
+        }
+      ]
+    },
+    {
+      "word_id": "H4870_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "잘못, 실수, 착오"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "잘못"
+        }
+      ]
+    },
+    {
+      "word_id": "H7681_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "사게 Shage"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "사게·샤게 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H7691_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "실수, 잘못, 과실"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "허물·잘못"
+        }
+      ]
+    },
+    {
+      "word_id": "H7692_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "식가욘 Shiggaion"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "식가욘"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0049_0000",
+      "before": null,
+      "after": "수넴 출신으로 늙은 다윗을 돌보던 여성이다. ‘아비삭’은 한국어 성경 관용 표기이고 ‘아비-샤그’는 אֲבִישַׁג의 구성 요소를 드러낸 원문 기반 근사 표기다. H1과 H7686의 합성으로 설명되지만 이름 전체의 풀이를 하나로 확정하지 않는다. 왕상 1:4는 다윗이 그와 잠자리를 같이하지 않았다고 명시한다."
+    },
+    {
+      "word_id": "H7686_0000",
+      "before": null,
+      "after": "길이나 바른 판단·행동에서 벗어나는 것을 뜻하며, 일부 용례에서는 알지 못하고 잘못을 범하는 경우를 가리킨다. 히필형은 ‘빗나가게 하다·잘못 이끌다’의 사역 표현이다. 술에 취해 비틀거리는 용법과 비유적으로 사랑에 깊이 빠지는 용법이 있으며, 잠 5:19의 아내 사랑은 긍정적 용례다."
+    },
+    {
+      "word_id": "H4870_0000",
+      "before": null,
+      "after": "유일한 성경 용례인 창세기 43:12에서는, 돈이 되돌아온 일을 실수나 착오였을 가능성으로 설명한다."
+    },
+    {
+      "word_id": "H7681_0000",
+      "before": null,
+      "after": "하랄 사람 요나단의 아버지를 가리킨다. ‘사게’는 한국어 성경 관용 표기이고 ‘샤게’는 원문 기반 근사 표기다. Canonical 표제어 שָׁגֶא와 대상 11:34의 שָׁגֵה가 다르며, H7686에서 유래했다는 Strong의 설명은 추정이다."
+    },
+    {
+      "word_id": "H7691_0000",
+      "before": null,
+      "after": "시편 19편에서는 스스로 알아차리기 어려운 도덕적 잘못을 가리킨다. 유일한 용례의 히브리어 절 번호는 시 19:13이며, 한국어 성경과 KJV의 시 19:12에 해당한다."
+    },
+    {
+      "word_id": "H7692_0000",
+      "before": null,
+      "after": "시편 7편 표제와 합 3:1에 쓰인 문학·음악 용어로, 구체적인 형식이나 연주 방식은 분명하지 않다. 합 3:1의 ‘시기오놋’은 복수형이다. Strong은 H7686에서 유래한 격정적인 시로 설명하지만 이를 확정 번역이나 확정 어원으로 채택하지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0001_0000",
+      "word_id_2": "H0049_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "H0001의 아버지 요소가 H0049 이름 구성에 참여한다. 이름 전체의 풀이를 하나로 확정하는 관계는 아니다.",
+      "source": "RESHET-EC-H49-CLUSTER-H0001-H0049"
+    },
+    {
+      "word_id_1": "H0049_0000",
+      "word_id_2": "H7686_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong은 H0049을 H0001과 H7686의 합성으로 설명한다. H7686 구성 요소에서 이름으로 향하며 이름 전체의 뜻을 하나로 확정하지 않는다.",
+      "source": "RESHET-EC-H49-CLUSTER-H7686-H0049"
+    },
+    {
+      "word_id_1": "H4870_0000",
+      "word_id_2": "H7686_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong은 H4870을 H7686에서 유래한 명사로 설명한다. 파생 관계이며 모든 문맥의 의미나 비의도성을 동일하게 고정하지 않는다.",
+      "source": "RESHET-EC-H49-CLUSTER-H7686-H4870"
+    },
+    {
+      "word_id_1": "H7686_0000",
+      "word_id_2": "H7691_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong은 H7691을 H7686에서 유래한 명사로 설명한다. 시편 용례의 허물은 의도적인 잘못에만 한정되는 뜻으로 확정하지 않는다.",
+      "source": "RESHET-EC-H49-CLUSTER-H7686-H7691"
+    },
+    {
+      "word_id_1": "H7681_0000",
+      "word_id_2": "H7686_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 probably from H7686 설명을 보존한 추정 파생 관계다. 인명 식별과 확정 어원을 구분한다.",
+      "source": "RESHET-EC-H49-CLUSTER-H7686-H7681"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}

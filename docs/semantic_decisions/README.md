@@ -76,6 +76,8 @@
 | H46 클러스터 | 강하신 분·힘센·날개 어휘군과 세메벨 병기, 확정 3·가설 합성 2 관계 | `active` | 높음 | 2026-10-04 | [기록](h46_cluster_approved_content_slice.md) |
 | H48 클러스터 | 아비람·아브람 인명 표기와 구성·단축형·개명 관계 6건 | `active` | 높음 | 2026-10-04 | [기록](h48_cluster_approved_content_slice.md) |
 
+| H49 클러스터 | 아비삭·사게 인명과 빗나감·잘못·허물·식가욘, 확정 4·가설 1 관계 | `active` | 높음 | 2026-10-04 | [기록](h49_cluster_approved_content_slice.md) |
+
 ## 열람 및 후속 판단 원칙
 
 1. 새 제안을 만들기 전에 관련 Strong이 이 색인에 있는지 확인한다.

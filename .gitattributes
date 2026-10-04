@@ -9,3 +9,4 @@ docs/legal/data_attributions.md text eol=lf
 tool/data_provenance/manifests/h45_cluster_approved_content_slice.json -text whitespace=cr-at-eol
 tool/data_provenance/manifests/h46_cluster_approved_content_slice.json text eol=lf
 tool/data_provenance/manifests/h48_cluster_approved_content_slice.json text eol=lf
+tool/data_provenance/manifests/h49_cluster_approved_content_slice.json text eol=lf
