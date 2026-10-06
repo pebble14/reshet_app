@@ -80,6 +80,8 @@
 
 | H50 클러스터 | 아비수아·엘리사·밧세바 및 슈아 어휘군, 관계 18건·H7774 hold | `active` | 높음 | 2026-10-06 | [기록](h50_cluster_approved_content_slice.md) |
 
+| H51 클러스터 | 아비술·아히살 및 담·이동·노래·소 어휘군, H7794/H8450 소·G5022 수소, 관계11건·H8284 hold | `active` | 높음 | 2026-10-06 | [기록](h51_cluster_approved_content_slice.md) |
+
 ## 열람 및 후속 판단 원칙
 
 1. 새 제안을 만들기 전에 관련 Strong이 이 색인에 있는지 확인한다.

@@ -31,6 +31,17 @@
         "reshet_research_output/H0050_cluster_20261006_4c3b7ab8/00_cluster_summary.md"
       ],
       "reopen_condition": "OSHB lemma 할당, 가나안 사람 수아와 헤벨의 딸 구별 및 H7770/H7774 corpus 집계·annotation 정책을 원자료와 사용자 판단으로 정리할 때 재검토한다. 자동 Strong 재태깅이나 인물 병합으로 해소하지 않는다."
+    },
+    {
+      "strong_number": "H8284",
+      "status": "hold",
+      "reason": "유일한 canonical 용례 렘 5:10의 의미가 Strong·KJV·개역의 담/성벽과 새번역·NET의 포도밭 이랑·담을 쌓은 단 해석으로 갈린다. H7791의 probably feminine of라는 어원 설명도 불확실하므로 현행 meaning 벽, 담과 note NULL을 유지하며 의미와 파생 관계를 확정하지 않는다.",
+      "evidence_refs": [
+        "docs/semantic_decisions/h51_cluster_approved_content_slice.md",
+        "reshet_research_output/H51_cluster_20261006_d2c0be3e/H8284_review.md",
+        "reshet_research_output/H51_cluster_20261006_d2c0be3e/00_cluster_summary.md"
+      ],
+      "reopen_condition": "본문 모음·어근·포도원 문맥의 분석을 구분할 직접 critical lexicon 또는 본문비평 근거를 확보하고 사용자가 meaning과 H7791 관계를 별도로 선택할 때 재검토한다. 자동 Strong 재태깅이나 번역어 병합으로 해소하지 않는다."
     }
   ]
 }
