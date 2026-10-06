@@ -1,0 +1,409 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H52-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-07 H52 클러스터 최종 의미·비고·관계 및 문서/DB/Git 완료 승인; data/backups/approved_content_batch/h52_approval_20261007/00_approved_content.md",
+    "document_sha256": "d8b8bb2d78d97bf8a0f46151744f82183ce35d45ebb7f12960d16cb78a8abbf4"
+  },
+  "target": {
+    "expected_work_sha256": "162830931dc84f0b0d61d74855f270c75453c33de0482a1117bb7fc1d9dca9bc",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0052_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아비새 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아비새·아비샤이·아브샤이 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3144_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "요사 Joshah(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "요사·요샤 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3145_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "요사위야 Joshabiah(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "요사위야·요샤우-야 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3438_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "이스와 Isuah(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "이스와·이쉬와 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3440_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "이스위 Isui(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "이스위·이쉬위 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3441_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "이스위의 후손들 Jesuites"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "이스위 자손·이쉬위 자손(子孫)"
+        }
+      ]
+    },
+    {
+      "word_id": "H7737_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "일치하다, 부합하다, 같다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "같다(같게 하다)"
+        },
+        {
+          "seq": 2,
+          "meaning": "알맞다"
+        },
+        {
+          "seq": 3,
+          "meaning": "고르게 하다"
+        },
+        {
+          "seq": 4,
+          "meaning": "두다"
+        },
+        {
+          "seq": 5,
+          "meaning": "만들어 내다"
+        }
+      ]
+    },
+    {
+      "word_id": "H7739_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "같다, 닮다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "같게 하다"
+        },
+        {
+          "seq": 2,
+          "meaning": "만들다"
+        }
+      ]
+    },
+    {
+      "word_id": "H7740_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "사웨 Shaveh"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "평원(平原)"
+        },
+        {
+          "seq": 2,
+          "meaning": "사웨·샤웨 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H7741_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "사웨기랴다임"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "사웨기랴다임·샤웨-키르야타임 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H7862_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "예물/선물"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "예물(禮物)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0052_0000",
+      "before": null,
+      "after": "아비새는 한국어 성경의 관용 표기이며, 아비샤이와 아브샤이는 원문의 긴 형태와 짧은 형태를 보여 주는 근사 표기다. 모두 스루야의 아들이며 요압과 아사헬의 형제인 같은 인물을 가리킨다. Strong은 아버지와 선물의 합성으로, BDB는 나의 아버지는 이새라는 뜻으로 설명하므로 이름의 두 번째 요소와 전체 어원은 확정하지 않는다."
+    },
+    {
+      "word_id": "H3144_0000",
+      "before": null,
+      "after": "대상 4:34에 나오는 아마시야의 아들이다. H3145의 형태 변이라는 설명은 추정이며, 두 이름의 인물을 동일인으로 보지 않는다."
+    },
+    {
+      "word_id": "H3145_0000",
+      "before": null,
+      "after": "대상 11:46에 나오는 엘라암의 아들이며 다윗의 용사다. 요사위야는 한국어 성경 관용 표기이며, 요샤우-야는 고대 히브리어 ו의 /w/ 읽기를 참고하고 H7737과 신명 요소의 구성을 보여 주는 원문 기반 분석 표기다. 우는 자음 /w/를 한글로 근사한 것으로 별도 /u/ 모음을 뜻하지 않는다. 붙임표는 분석한 구성 경계를 표시하며 이름 전체의 특정 시대 실제 발음을 확정한 것은 아니다. H3144의 요사와는 다른 인물이다."
+    },
+    {
+      "word_id": "H3438_0000",
+      "before": null,
+      "after": "아셀의 아들로, 같은 자손 명단의 이스위(H3440)와 다른 이름이다."
+    },
+    {
+      "word_id": "H3440_0000",
+      "before": null,
+      "after": "아셀의 아들(창 46:17, 민 26:44, 대상 7:30)과 사울의 아들(삼상 14:49)의 동명이인 이름이다. 이스위는 한국어 성경 관용 표기이며, 이쉬위는 원문 יִשְׁוִי의 /w/ 기반 근사 표기다. 개역한글·새번역의 삼상 14:49에서는 리스위로 표기하지만, 대한성서공회 용어 사전은 개역한글의 리스위를 잘못된 음역으로 설명한다. 판본 식별 정보로 비고에만 보존한다. 사울의 아들 아비나답(H0041)과 동일인인지 여부는 확정하지 않는다."
+    },
+    {
+      "word_id": "H3441_0000",
+      "before": null,
+      "after": "민 26:44의 가문 소속형으로, 아셀의 아들 이스위에게서 이어지는 집단을 가리킨다. 이스위 자손은 한국어 성경 관용 표기이며, 이쉬위 자손은 H3440의 원문 기반 이름 표기와 맞춘 병기다. 두 표기는 같은 집단을 가리키며 별도 의미로 나누지 않는다. 사울의 아들 이스위의 후손으로 혼동하지 않는다."
+    },
+    {
+      "word_id": "H7737_0000",
+      "before": null,
+      "after": "문맥과 동사형에 따라 닮거나 맞먹다, 적합하거나 충분하다, 평평하게 하거나 마음을 가라앉히다, 놓거나 부여하다, 열매를 내다로 구체화된다. 욥 33:27은 죄에 상응하는 갚음과 유익에 관한 해석이 갈린다. 사 38:13의 견디다·헤아리다·마음을 가라앉히다 해석 및 울부짖다로 본문을 달리 읽는 제안은 미확정이며, 별도 확정 의미로 추가하지 않는다."
+    },
+    {
+      "word_id": "H7739_0000",
+      "before": null,
+      "after": "아람어 동사로, 단 5:21에서는 사람의 마음을 들짐승과 같게 하는 표현이고 단 3:29에서는 집을 거름터로 만드는 표현이다. 수동·재귀형 문맥에서는 같게 되다·만들어지다로 옮길 수 있다. 단 5:21의 기록형과 읽기형은 같은 대목의 다른 표기다."
+    },
+    {
+      "word_id": "H7740_0000",
+      "before": null,
+      "after": "BDB는 창 14:5의 기랴다임 평원 표현에서 첫 요소를 보통명사 평원으로, 창 14:17에서는 왕의 골짜기라고 부르는 사웨 지명으로 분석한다. Strong과 OSHB는 고유명사 계열로 표시하므로 자료 간 품사 분석 차이를 보존한다. 두 의미는 실제 용례 분석에 근거하며 지명의 어원 풀이만으로 추가한 것이 아니다. 두 장소를 같은 곳으로 확정하지 않는다. 샤웨는 /w/ 기반 원문 형태의 근사 표기다."
+    },
+    {
+      "word_id": "H7741_0000",
+      "before": null,
+      "after": "창 14:5의 기랴다임 평원을 가리키는 지명 표현이다. 분석 표기는 평원 요소와 기랴다임 요소의 경계를 보여 준다. 두 평원이라는 뜻이나 창 14:17의 사웨 골짜기와 같은 장소라는 뜻으로 확정하지 않는다."
+    },
+    {
+      "word_id": "H7862_0000",
+      "before": null,
+      "after": "경의를 표하여 바치는 선물이다. 세 성경 용례는 모두 하나님께 가져오는 예물을 가리키지만, 일반적인 어휘 의미를 신에게만 드리는 물품으로 제한하지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0001_0000",
+      "word_id_2": "H0052_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "아버지 요소는 Strong과 BDB의 주요 설명에서 공통. 둘째 요소는 별도 보류. 원자료의 lexical 설명에 근거하며 독립적인 현대 역사언어학 검증으로 확대하지 않는다.",
+      "source": "RESHET-EC-H52-CLUSTER-H0001-H0052"
+    },
+    {
+      "word_id_1": "H7737_0000",
+      "word_id_2": "H7862_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "raw source probably from. BDB의 어근 불확실성도 함께 보존. 원자료의 lexical 설명에 근거하며 독립적인 현대 역사언어학 검증으로 확대하지 않는다.",
+      "source": "RESHET-EC-H52-CLUSTER-H7737-H7862"
+    },
+    {
+      "word_id_1": "H3068_0000",
+      "word_id_2": "H3145_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "canonical source의 신명 구성 요소. local H3050 reference와 구분. 원자료의 lexical 설명에 근거하며 독립적인 현대 역사언어학 검증으로 확대하지 않는다.",
+      "source": "RESHET-EC-H52-CLUSTER-H3068-H3145"
+    },
+    {
+      "word_id_1": "H3145_0000",
+      "word_id_2": "H7737_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "canonical from H3068 and H7737. 원자료의 lexical 설명에 근거하며 독립적인 현대 역사언어학 검증으로 확대하지 않는다.",
+      "source": "RESHET-EC-H52-CLUSTER-H7737-H3145"
+    },
+    {
+      "word_id_1": "H3144_0000",
+      "word_id_2": "H3145_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "hypothesized",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "probably a form of. Compare 참조는 독립 두 번째 relation으로 만들지 않음. 인물 동일성 아님. 원자료의 lexical 설명에 근거하며 독립적인 현대 역사언어학 검증으로 확대하지 않는다.",
+      "source": "RESHET-EC-H52-CLUSTER-H3145-H3144"
+    },
+    {
+      "word_id_1": "H3438_0000",
+      "word_id_2": "H7737_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from H7737; 인명 파생. 원자료의 lexical 설명에 근거하며 독립적인 현대 역사언어학 검증으로 확대하지 않는다.",
+      "source": "RESHET-EC-H52-CLUSTER-H7737-H3438"
+    },
+    {
+      "word_id_1": "H3440_0000",
+      "word_id_2": "H7737_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from H7737; 인명 파생. 원자료의 lexical 설명에 근거하며 독립적인 현대 역사언어학 검증으로 확대하지 않는다.",
+      "source": "RESHET-EC-H52-CLUSTER-H7737-H3440"
+    },
+    {
+      "word_id_1": "H3440_0000",
+      "word_id_2": "H3441_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "patronymically from. 아셀 자손의 가문 소속형. 원자료의 lexical 설명에 근거하며 독립적인 현대 역사언어학 검증으로 확대하지 않는다.",
+      "source": "RESHET-EC-H52-CLUSTER-H3440-H3441"
+    },
+    {
+      "word_id_1": "H7737_0000",
+      "word_id_2": "H7739_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Aramaic corresponding to. 공통 어근 대응이며 직접 차용 방향을 단정하지 않음. 원자료의 lexical 설명에 근거하며 독립적인 현대 역사언어학 검증으로 확대하지 않는다.",
+      "source": "RESHET-EC-H52-CLUSTER-H7737-H7739"
+    },
+    {
+      "word_id_1": "H7737_0000",
+      "word_id_2": "H7740_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from H7737; 평원/사웨 어형 파생. 원자료의 lexical 설명에 근거하며 독립적인 현대 역사언어학 검증으로 확대하지 않는다.",
+      "source": "RESHET-EC-H52-CLUSTER-H7737-H7740"
+    },
+    {
+      "word_id_1": "H7740_0000",
+      "word_id_2": "H7741_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from the same as H7740는 첫 요소의 어원 공유. 사웨 골짜기에서 지명이 유래했다는 방향을 만들지 않음. 원자료의 lexical 설명에 근거하며 독립적인 현대 역사언어학 검증으로 확대하지 않는다.",
+      "source": "RESHET-EC-H52-CLUSTER-H7740-H7741"
+    },
+    {
+      "word_id_1": "H7151_0000",
+      "word_id_2": "H7741_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "dual of H7151; 두 번째 구성 요소. 실제 token H7156과 source-reference H7151은 구분. 원자료의 lexical 설명에 근거하며 독립적인 현대 역사언어학 검증으로 확대하지 않는다.",
+      "source": "RESHET-EC-H52-CLUSTER-H7151-H7741"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}
