@@ -20,6 +20,17 @@
         "reshet_research_output/H27_cluster_20260911_427a6c2f/00_approved_refinement.md"
       ],
       "reopen_condition": "므단과 미디안 집단 식별을 판별할 수 있는 본문비평·역사언어학 근거가 확보되거나 사용자가 대표 표기와 설명 방식을 최종 결정할 때 재검토한다."
+    },
+    {
+      "strong_number": "H7774",
+      "status": "hold",
+      "reason": "대상 7:32의 헤벨의 딸 수아는 식별되지만, OSHB는 대상 2:3의 수아의 딸이라는 가나안 사람 문맥도 H7774에 할당한다. 여성 인명만 설명하는 lexical source와 canonical occurrence mapping의 어휘 경계가 충돌하므로 현행 meaning·비고·expression·관계를 유지하고 새 의미·비고·관계를 적용하지 않는다.",
+      "evidence_refs": [
+        "docs/semantic_decisions/h50_cluster_approved_content_slice.md",
+        "reshet_research_output/H0050_cluster_20261006_4c3b7ab8/H7774_review.md",
+        "reshet_research_output/H0050_cluster_20261006_4c3b7ab8/00_cluster_summary.md"
+      ],
+      "reopen_condition": "OSHB lemma 할당, 가나안 사람 수아와 헤벨의 딸 구별 및 H7770/H7774 corpus 집계·annotation 정책을 원자료와 사용자 판단으로 정리할 때 재검토한다. 자동 Strong 재태깅이나 인물 병합으로 해소하지 않는다."
     }
   ]
 }

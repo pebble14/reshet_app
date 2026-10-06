@@ -78,6 +78,8 @@
 
 | H49 클러스터 | 아비삭·사게 인명과 빗나감·잘못·허물·식가욘, 확정 4·가설 1 관계 | `active` | 높음 | 2026-10-04 | [기록](h49_cluster_approved_content_slice.md) |
 
+| H50 클러스터 | 아비수아·엘리사·밧세바 및 슈아 어휘군, 관계 18건·H7774 hold | `active` | 높음 | 2026-10-06 | [기록](h50_cluster_approved_content_slice.md) |
+
 ## 열람 및 후속 판단 원칙
 
 1. 새 제안을 만들기 전에 관련 Strong이 이 색인에 있는지 확인한다.

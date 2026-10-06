@@ -1,0 +1,578 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H50-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-06 H50 클러스터 meaning·비고·관계·hold 및 DB/Git 완료 승인; data/backups/approved_content_batch/h50_approval_20261006/00_approved_content.md",
+    "document_sha256": "d6eb2fbb5fb7e5d405fae64c25083f4b5cddb107446006692e5ea1a44e6fddc2"
+  },
+  "target": {
+    "expected_work_sha256": "4c3b7ab814d1de7ae52fc19b823f4459ad0da378f2203630e476793b1d83bf13",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0050_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아비수아 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아비수아·아비-슈아 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0474_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "엘리수아"
+        },
+        {
+          "seq": 2,
+          "meaning": "뜻풀이: 나의 하나님은 구원이시다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엘리수아·엘리-슈아 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0477_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "엘리사"
+        },
+        {
+          "seq": 2,
+          "meaning": "뜻풀이: 나의 하나님은 구원이시다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엘리사·엘리-샤 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "G1666_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "엘리사[나의 하나님은 구원이시다]"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엘리사·엘리사이오스 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H1339_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "밧세바 Bathsheba(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "밧세바·바트-셰바 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H1340_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "밧수아 Bathshua"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "밧수아·바트-슈아 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H4444_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "말기수아 Malchishua"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "말기수아·말키-슈아 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H7768_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "부르짖다, 외치다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "도움을 청하며 부르짖다"
+        }
+      ]
+    },
+    {
+      "word_id": "H7770_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "수아 Shua"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "수아·슈아 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H7771_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "귀족, 부자,"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "귀인(貴人)"
+        },
+        {
+          "seq": 2,
+          "meaning": "부르짖음"
+        }
+      ]
+    },
+    {
+      "word_id": "H7772_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "소아 Shoa"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "소아·쇼아"
+        }
+      ]
+    },
+    {
+      "word_id": "H7773_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "도움을 위한 부르짖음"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "도움을 청하는 부르짖음"
+        }
+      ]
+    },
+    {
+      "word_id": "H8668_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "구출, 구원"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "구원(救援)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0050_0000",
+      "before": null,
+      "after": "두 사람의 이름. 제사장 계보에서는 비느하스의 아들이며 북기의 아버지이고, 대상 8:4에서는 베냐민 지파 벨라의 아들이다. 아비-슈아는 아버지 요소와 슈아 요소의 합성 경계를 보이는 분석 표기이다. 이름의 뜻은 풍요 또는 구원과 관련된 해석이 갈리므로 확정하지 않는다."
+    },
+    {
+      "word_id": "H0474_0000",
+      "before": null,
+      "after": "다윗의 아들 이름(삼하 5:15; 대상 14:5). 엘리-슈아는 하나님 요소와 슈아 요소의 합성 경계를 나타낸다. 이름의 구원·간구·풍요 관련 뜻풀이는 자료가 서로 달라 확정하지 않는다. 선지자 엘리사(H0477)와는 서로 다른 인물이다."
+    },
+    {
+      "word_id": "H0477_0000",
+      "before": null,
+      "after": "사밧의 아들이며 엘리야를 이은 선지자. 엘리-샤는 하나님 요소와 이름의 뒤 요소를 구분한 분석 표기이다. 이름은 보통 나의 하나님은 구원이라는 뜻으로 풀이하지만, 그 뜻풀이는 이름 자체와 별도 의미가 아니다. Strong은 H0474의 축약으로 설명하나 이를 확정된 역사적 형성 과정으로 단정하지 않는다."
+    },
+    {
+      "word_id": "G1666_0000",
+      "before": null,
+      "after": "히브리어 엘리사(H0477)가 헬라어로 전승된 이름. 눅 4:27에서 나아만 사건의 선지자를 가리킨다. 엘리사이오스는 표제어를 드러내는 원문 기반 표기이며 특정 시대의 실제 발음을 확정한 표기는 아니다. 표제어는 Ἐλισσαῖος, 확보된 TAGNT 본문형은 Ἐλισαίου로 시그마 수와 굴절형이 다르다."
+    },
+    {
+      "word_id": "H1339_0000",
+      "before": null,
+      "after": "우리아의 아내였으며 후에 다윗의 아내가 된 솔로몬의 어머니. 바트-셰바는 딸 요소와 셰바 요소의 합성 경계를 나타낸다. 맹세의 딸이라는 뜻풀이는 불확실한 어원 해석이다. 대상 3:5의 밧수아(H1340)는 같은 인물의 다른 이름 형태이다."
+    },
+    {
+      "word_id": "H1340_0000",
+      "before": null,
+      "after": "대상 3:5에 나오는 솔로몬의 어머니로, 밧세바(H1339)와 같은 인물의 이름 형태이다. 바트-슈아는 딸 요소와 슈아 요소의 합성 경계를 나타낸다. 풍요의 딸이라는 뜻풀이는 확정하지 않는다."
+    },
+    {
+      "word_id": "H4444_0000",
+      "before": null,
+      "after": "사울의 아들 이름. 말키-슈아는 왕 요소와 슈아 요소의 합성 경계를 나타낸다. Strong의 왕과 풍요라는 풀이와 구원 관련 해석을 이름의 확정된 뜻으로 단정하지 않는다."
+    },
+    {
+      "word_id": "H7768_0000",
+      "before": null,
+      "after": "고통이나 필요 속에서 도움을 청하는 부르짖음. 사람의 기도뿐 아니라 사람에게 도움을 청하는 경우와 까마귀 새끼의 부르짖음(욥 38:41)도 포함한다. 확보된 21회는 Pi‘el 형태이며 자유롭게 하다라는 어원 가설을 별도 의미로 추가하지 않는다."
+    },
+    {
+      "word_id": "H7769_0000",
+      "before": null,
+      "after": "곤경에서 도움을 청하는 부르짖음. 욥 36:19는 부르짖음과 재물의 해석이 갈리며 KJV와 새번역은 재물로, 개역 계열은 부르짖음으로 옮긴다. 해당 구절의 해석은 확정하지 않는다."
+    },
+    {
+      "word_id": "H7770_0000",
+      "before": null,
+      "after": "창 38:2,12에서 유다의 아내의 아버지인 가나안 사람. 본문에서 이름이 밝혀지지 않은 그의 딸과 구별한다. 슈아는 원문 기반 표기이며 이름을 일반 명사의 부 또는 부르짖음으로 풀이하지 않는다."
+    },
+    {
+      "word_id": "H7771_0000",
+      "before": null,
+      "after": "첫째 의미는 부와 지위가 있거나 존귀하고 후한 사람을 가리킨다(욥 34:19; 사 32:5). 세습 귀족 계급으로 한정하지 않는다. 둘째 의미는 사 22:5의 부르짖음이다. OSHB는 두 계열을 7771 a와 7771 b로 구분하며, 두 계열의 어원적 동일성은 확정하지 않는다."
+    },
+    {
+      "word_id": "H7772_0000",
+      "before": null,
+      "after": "겔 23:23에서 바벨론 사람들 등과 함께 나열되는 집단 이름. 부자라는 일반 의미로 번역하지 않는다. 특정 역사적 집단과의 동일시 및 H7771의 부·풍요에서 파생되었다는 어원은 확정하지 않는다."
+    },
+    {
+      "word_id": "H7773_0000",
+      "before": null,
+      "after": "시 5:3(통상 번역 절수 5:2)의 도움을 청하는 부르짖음. canonical lexical source의 품사 표시는 동사이나 OSHB는 명사 구성형으로, 원전분해는 부정사 계열로 제시해 형태 분석이 일치하지 않는다. 문맥의 명사적 기능은 분명하므로 의미는 제안하되 source 품사값을 자동 교정하지 않는다."
+    },
+    {
+      "word_id": "H7775_0000",
+      "before": null,
+      "after": "고통과 곤경에서 도움을 구하는 부르짖음. 삼상 5:12처럼 고통의 외침도 포함하며 말로 된 기도에만 한정하지 않는다. 문법적 여성형 명사라는 사실이 부르짖는 사람의 성별을 한정하지 않는다."
+    },
+    {
+      "word_id": "H8668_0000",
+      "before": null,
+      "after": "위험과 곤경에서 벗어나도록 돕는 구원. 실제 용례에는 구출, 전쟁의 승리, 안전과 도움, 하나님이 베푸시는 구원이 포함된다. 사람의 도움도 나타나므로 내세의 구원이나 하나님의 행위에만 한정하지 않는다. H7768/H3467과의 어원 연결은 자료가 갈려 확정하지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0001_0000",
+      "word_id_2": "H0050_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "아버지 요소는 canonical source와 אבי 형태로 확인된다. 뒤 요소의 의미를 확정하지 않는다.",
+      "source": "RESHET-EC-H50-CLUSTER-H0001-H0050"
+    },
+    {
+      "word_id_1": "H0050_0000",
+      "word_id_2": "H7771_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "hypothesized",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong은 풍요, BDB는 구원 또는 풍요를 제시한다. 뒤 요소의 구체적 Strong 연결은 가설로 제한한다.",
+      "source": "RESHET-EC-H50-CLUSTER-H7771-H0050"
+    },
+    {
+      "word_id_1": "H7768_0000",
+      "word_id_2": "H7771_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "7771 b의 부르짖음 계열은 연결되나, 7771 a의 부·지위에 같은 어근을 단정할 수 없다. relation 비고에 b 의미 범위만 명시한다.",
+      "source": "RESHET-EC-H50-CLUSTER-H7768-H7771"
+    },
+    {
+      "word_id_1": "H1340_0000",
+      "word_id_2": "H7771_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "hypothesized",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "딸-슈아 경계는 확인되지만 슈아의 부·구원 관련 기원은 불확실하다.",
+      "source": "RESHET-EC-H50-CLUSTER-H7771-H1340"
+    },
+    {
+      "word_id_1": "H0474_0000",
+      "word_id_2": "H7769_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "hypothesized",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "source 자체가 supplication or riches로 대안을 남긴다.",
+      "source": "RESHET-EC-H50-CLUSTER-H7769-H0474"
+    },
+    {
+      "word_id_1": "H1323_0000",
+      "word_id_2": "H1339_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "bat 딸 요소는 철자와 합성 구조에서 직접 확인된다.",
+      "source": "RESHET-EC-H50-CLUSTER-H1323-H1339"
+    },
+    {
+      "word_id_1": "H1339_0000",
+      "word_id_2": "H7651_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "hypothesized",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "sheba 형태와 일곱 요소는 확인되지만 이름의 맹세 관련 풀이가 불확실하여 가설로 제한한다.",
+      "source": "RESHET-EC-H50-CLUSTER-H7651-H1339"
+    },
+    {
+      "word_id_1": "H1339_0000",
+      "word_id_2": "H1340_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "같은 솔로몬의 어머니를 가리킨다. 형태 변화의 역사적 방향은 미확정이므로 undirected를 권장한다.",
+      "source": "RESHET-EC-H50-CLUSTER-H1339-H1340"
+    },
+    {
+      "word_id_1": "H1323_0000",
+      "word_id_2": "H1340_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "bat 딸 요소는 source와 합성 구조에서 분명하다.",
+      "source": "RESHET-EC-H50-CLUSTER-H1323-H1340"
+    },
+    {
+      "word_id_1": "H4428_0000",
+      "word_id_2": "H4444_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "malki 왕 요소는 분명하다. 이를 여호와 요소로 풀이하는 local 설명은 채택하지 않는다.",
+      "source": "RESHET-EC-H50-CLUSTER-H4428-H4444"
+    },
+    {
+      "word_id_1": "H4444_0000",
+      "word_id_2": "H7769_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "hypothesized",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "king of wealth와 구원 관련 풀이가 경쟁하며 뒤 요소의 어원은 불확실하다.",
+      "source": "RESHET-EC-H50-CLUSTER-H7769-H4444"
+    },
+    {
+      "word_id_1": "H7768_0000",
+      "word_id_2": "H7769_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "도움을 청하는 동사와 부르짖음 명사의 파생 관계이다. 욥 36:19의 대안 읽기까지 확정하는 승인은 아니다.",
+      "source": "RESHET-EC-H50-CLUSTER-H7768-H7769"
+    },
+    {
+      "word_id_1": "H7768_0000",
+      "word_id_2": "H7773_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "부르짖는 동사와 문맥의 명사적 형태가 연결된다. source 품사 불일치는 보존한다.",
+      "source": "RESHET-EC-H50-CLUSTER-H7768-H7773"
+    },
+    {
+      "word_id_1": "H7769_0000",
+      "word_id_2": "H7770_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "same as라는 형태 비교를 인명 어원의 확정으로 바꾸지 않는다. 부르짖음·풍요 관련 직접 파생은 가설이다.",
+      "source": "RESHET-EC-H50-CLUSTER-H7769-H7770"
+    },
+    {
+      "word_id_1": "H7773_0000",
+      "word_id_2": "H7775_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "feminine of는 문법적 여성형에 의한 단어 형성 관계이며 사람의 성별 관계가 아니다.",
+      "source": "RESHET-EC-H50-CLUSTER-H7773-H7775"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [
+    {
+      "relation_id": 3943,
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H0474_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "하나님 요소는 형태와 source에서 분명하다. 기존 3943을 합성/확정으로 교체하는 승인 후보이다.",
+        "source": "RESHET-EC-H50-CLUSTER-H0410-H0474"
+      }
+    },
+    {
+      "relation_id": 3944,
+      "word_id_1": "H0474_0000",
+      "word_id_2": "H0477_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "variant",
+        "status_code": "hypothesized",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "Strong은 contracted for, BDB는 비교를 제시한다. 서로 다른 인물의 동일성을 뜻하지 않는다. 기존 3944를 형태 변이/가설로 교체하는 후보이다.",
+        "source": "RESHET-EC-H50-CLUSTER-H0474-H0477"
+      }
+    },
+    {
+      "relation_id": 3945,
+      "word_id_1": "G1666_0000",
+      "word_id_2": "H0477_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "transliteration",
+        "relation_type": "direct_transliteration",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "of Hebrew origin과 나아만 사건으로 같은 선지자의 이름 전승이 확인된다. 기존 3945 교체 후보이다. canonical pair는 G1666이 앞이므로 w2_to_w1이다.",
+        "source": "RESHET-EC-H50-CLUSTER-H0477-G1666"
+      }
+    }
+  ],
+  "meaning_approvals": [
+    {
+      "word_id": "H7769_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "도움을 청하는 부르짖음"
+        }
+      ]
+    },
+    {
+      "word_id": "H7775_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "도움을 청하는 부르짖음"
+        }
+      ]
+    }
+  ]
+}
