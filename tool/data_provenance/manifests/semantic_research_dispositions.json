@@ -42,6 +42,17 @@
         "reshet_research_output/H51_cluster_20261006_d2c0be3e/00_cluster_summary.md"
       ],
       "reopen_condition": "본문 모음·어근·포도원 문맥의 분석을 구분할 직접 critical lexicon 또는 본문비평 근거를 확보하고 사용자가 meaning과 H7791 관계를 별도로 선택할 때 재검토한다. 자동 Strong 재태깅이나 번역어 병합으로 해소하지 않는다."
+    },
+    {
+      "strong_number": "H8003",
+      "status": "hold",
+      "reason": "OSHB 대상 12:39(많은 번역의 12:38)에서 H8003과 H3824의 lemma 할당이 마음과 온전한 표면형에 엇갈려 대응한다. 원자료의 어휘 경계와 canonical occurrence mapping을 먼저 정리해야 하므로 현행 meaning·비고·expression과 기존 관계2852/2853을 유지하고 새 의미·비고·관계를 적용하지 않는다.",
+      "evidence_refs": [
+        "docs/semantic_decisions/h53_cluster_approved_content_slice.md",
+        "reshet_research_output/H0053_cluster_20261007_abfdfcf4/H8003_review.md",
+        "reshet_research_output/H0053_cluster_20261007_abfdfcf4/00_cluster_summary.md"
+      ],
+      "reopen_condition": "히브리어 표면형·문법과 OSHB lemma 할당 및 H8003/H3824 corpus 집계 경계를 원자료와 사용자 판단으로 정리할 때 재검토한다. 자동 Strong 재태깅이나 의미 병합으로 해소하지 않는다."
     }
   ]
 }

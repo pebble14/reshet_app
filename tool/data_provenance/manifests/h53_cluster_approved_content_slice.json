@@ -1,0 +1,1160 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H53-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-07 H53 클러스터 최종 의미·비고·관계 및 문서/DB/Git 완료 승인; data/backups/approved_content_batch/h53_approval_20261007/00_approved_content.md",
+    "document_sha256": "8d642401f96067f3ba3e2b48ede7fef10c81c01fefca113522a89a10e4e18d8f"
+  },
+  "target": {
+    "expected_work_sha256": "abfdfcf48bf6117f21681583faddeeee164153bd9d1594ebeb395855e33f7e12",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "G4532_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "살렘"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "살렘·샬렘 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "G4539_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "살로메"
+        },
+        {
+          "seq": 2,
+          "meaning": "[뜻풀이: 평화]"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "살로메 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "G4672_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "솔로몬"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "솔로몬·셸로모 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0053_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "압살롬 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "압살롬·아비살롬·아브-샬롬·아비-샬롬 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3073_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "여호와 살롬 Jehovahshalom"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "여호와 살롬"
+        }
+      ]
+    },
+    {
+      "word_id": "H4918_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "므술람 Meshullam(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "므술람·메슐람 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H4919_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "무실레못 Meshillemoth"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "무실레못·므실레못·메쉴레모트 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H4920_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "므셀레먀 Meshelemiah"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "므셀레먀·메셸렘-야·메셸렘-야후 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H4921_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "므실레밋 Meshillemith"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "므실레밋·메쉴레미트 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H4922_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "므술레멧 Meshullemeth"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "므술레멧·메슐레메트 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H7759_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "술람미 여자 (The) Shulammite"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "술람미 여자"
+        }
+      ]
+    },
+    {
+      "word_id": "H7965_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "평화/평안"
+        },
+        {
+          "seq": 2,
+          "meaning": "화친"
+        },
+        {
+          "seq": 3,
+          "meaning": "완전"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "평안(平安)"
+        },
+        {
+          "seq": 2,
+          "meaning": "평화(平和)"
+        },
+        {
+          "seq": 3,
+          "meaning": "온전함(穩全함)"
+        }
+      ]
+    },
+    {
+      "word_id": "H7966_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "보답, 보상, 보수"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "보상(報償)"
+        }
+      ]
+    },
+    {
+      "word_id": "H7967_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "살룸 Shallum(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "살룸·샬룸 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H7968_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "살룬 Shallun(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "살룬·샬룬 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H7999_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "완성하다"
+        },
+        {
+          "seq": 2,
+          "meaning": "화친하다"
+        },
+        {
+          "seq": 3,
+          "meaning": "갚다/보상하다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "끝나다·끝내다"
+        },
+        {
+          "seq": 2,
+          "meaning": "평안하다(平安하다)"
+        },
+        {
+          "seq": 3,
+          "meaning": "화목하다(和睦하다)"
+        },
+        {
+          "seq": 4,
+          "meaning": "갚다"
+        },
+        {
+          "seq": 5,
+          "meaning": "온전하다(穩全하다)"
+        }
+      ]
+    },
+    {
+      "word_id": "H8000_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "완성하다, 끝마치다, 완전하다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "끝나다·끝내다"
+        },
+        {
+          "seq": 2,
+          "meaning": "넘겨주다"
+        }
+      ]
+    },
+    {
+      "word_id": "H8001_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "평안, 안녕, 번영, 형통"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "평안(平安)"
+        }
+      ]
+    },
+    {
+      "word_id": "H8002_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "화목제, 감사제"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "화목제(和睦祭)"
+        }
+      ]
+    },
+    {
+      "word_id": "H8004_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "살렘[뜻풀이: 평화로운]"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "살렘·샬렘 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H8005_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "보답, 보수"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "보상(報償)"
+        }
+      ]
+    },
+    {
+      "word_id": "H8006_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "실렘 Shillem"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "실렘·쉴렘 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H8010_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "솔로몬[뜻풀이: 평화로운]"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "솔로몬·셸로모 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H8011_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "보응 retribution"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "보상(報償)"
+        }
+      ]
+    },
+    {
+      "word_id": "H8013_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "슬로못 Shelomoth"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "슬로못·슬로밋·셸로모트·셸로미트 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H8015_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "슬로미 Shelomi"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "슬로미·셸로미 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H8016_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "실렘 자손들 Sillemites"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "실렘 자손(子孫)·쉴렘 자손(子孫)"
+        }
+      ]
+    },
+    {
+      "word_id": "H8017_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "슬루미엘 Shelumiel"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "슬루미엘·셸루미-엘 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H8018_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "셀레마 Shelemiah"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "셀레먀·셸렘-야·셸렘-야후 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H8019_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "슬로밋 Shelomith"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "슬로밋·슬로못·셸로미트 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H8021_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "보수, 보상, 사례금, 뇌물"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "보상(報償)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "G4532_0000",
+      "before": null,
+      "after": "히브리어 지명 살렘(H8004)의 헬라어 표기다. 살렘은 한국어 성경의 관용 표기이며, 샬렘은 원천 히브리어 이름의 분석 표기다. 샬렘을 헬라어 표제어의 실제 발음으로 제시하는 것은 아니다. 히브리서 7:2는 이 이름을 평화와 연결하여 풀이한다."
+    },
+    {
+      "word_id": "G4539_0000",
+      "before": null,
+      "after": "마가복음 15:40·16:1에 나오는 여인의 이름이다. 히브리어 평안 계열에서 유래했을 가능성이 있지만, 이 이름의 실제 히브리어·아람어 원형과 발음은 확정되지 않았다."
+    },
+    {
+      "word_id": "G4672_0000",
+      "before": null,
+      "after": "히브리어 인명 솔로몬(H8010)의 헬라어 표기다. 솔로몬은 한국어 성경의 관용 표기이며, 셸로모는 원천 히브리어 이름의 분석 표기다. 어두 셰와의 한글 근사인 셸을 특정 시대의 실제 발음으로 확정하거나, 셸로모를 헬라어 표제어의 실제 발음으로 제시하지 않는다."
+    },
+    {
+      "word_id": "H0053_0000",
+      "before": null,
+      "after": "아버지(H1)와 평안(H7965) 계열의 합성 인명이다. 압살롬은 단축형, 아비살롬은 완전형에 대응한다. 열왕기상 15장의 아비살롬과 다윗의 아들 압살롬의 인물 동일성은 이름 자체만으로 확정하지 않는다."
+    },
+    {
+      "word_id": "H3073_0000",
+      "before": null,
+      "after": "기드온이 제단에 붙인 이름으로, ‘여호와는 평안이시다’라는 뜻이다. ‘여호와’는 한국어 성경의 관용 표기이며, 히브리어 신명의 고대 발음을 확정한 표기는 아니다."
+    },
+    {
+      "word_id": "H4918_0000",
+      "before": null,
+      "after": "메슐람는 원문과 사전 전사를 대조하기 위한 분석 표기다. 어두 ‘메’는 셰와의 한글 근사이며 특정 시대의 실제 발음을 확정하지 않는다."
+    },
+    {
+      "word_id": "H4919_0000",
+      "before": null,
+      "after": "므실레밋(H4921)과 비교되는 이름이지만, 같은 인물로 확정하지 않는다. 메쉴레모트는 원문과 사전 전사를 대조하기 위한 분석 표기다. 어두 ‘메’는 셰와의 한글 근사이며 특정 시대의 실제 발음을 확정하지 않는다."
+    },
+    {
+      "word_id": "H4920_0000",
+      "before": null,
+      "after": "H7999 계열과 야(H3050)가 결합된 인명이다. 야·야후 두 어말형이 쓰인다. 메셸렘-야·메셸렘-야후는 원문과 사전 전사를 대조하기 위한 분석 표기다. 어두 ‘메’는 셰와의 한글 근사이며 특정 시대의 실제 발음을 확정하지 않는다."
+    },
+    {
+      "word_id": "H4921_0000",
+      "before": null,
+      "after": "무실레못·므실레못(H4919)과 비교되는 이름이지만, 같은 인물로 확정하지 않는다. 메쉴레미트는 원문과 사전 전사를 대조하기 위한 분석 표기다. 어두 ‘메’는 셰와의 한글 근사이며 특정 시대의 실제 발음을 확정하지 않는다."
+    },
+    {
+      "word_id": "H4922_0000",
+      "before": null,
+      "after": "메슐레메트는 원문과 사전 전사를 대조하기 위한 분석 표기다. 어두 ‘메’는 셰와의 한글 근사이며 특정 시대의 실제 발음을 확정하지 않는다."
+    },
+    {
+      "word_id": "H7759_0000",
+      "before": null,
+      "after": "아가 7:1(많은 번역의 6:13)에서 여인을 부르고 지칭하는 표현이다. 출신을 나타내는 명칭인지 별칭인지, 정확한 유래와 뜻은 확정되지 않았다."
+    },
+    {
+      "word_id": "H7965_0000",
+      "before": null,
+      "after": "건강·안전·안녕·형통을 아우르는 평안과, 적대가 없는 관계·화친·친목을 뜻한다. 온전함은 예레미야 13:19의 드문 용례에 근거하며, 이 구절의 본문 독법에는 이견이 있다."
+    },
+    {
+      "word_id": "H7966_0000",
+      "before": null,
+      "after": "행위에 상응하는 갚음을 가리킨다. 호세아 9:7과 이사야 34:8에서는 부정적 행위에 대한 갚음이며, 미가 7:3에서는 재판과 관련하여 요구하는 뇌물이다. 좋은 행위에 주는 상으로만 한정하지 않는다."
+    },
+    {
+      "word_id": "H7968_0000",
+      "before": null,
+      "after": "느헤미야 3:15의 인명이다. 살룸(H7967)의 이형일 가능성이 있으나 확정하지 않는다."
+    },
+    {
+      "word_id": "H7999_0000",
+      "before": null,
+      "after": "갚다는 손해를 배상하거나 행위에 보응하고, 서원·약속을 이행하거나 잃은 것을 되돌려 주는 문맥까지 포함한다. 완료·평안·화목은 사역형을 포함하며, 이사야 42:19의 분사 해석에는 이견이 있다."
+    },
+    {
+      "word_id": "H8000_0000",
+      "before": null,
+      "after": "아람어 동사로, 완료·종결을 나타내며 에스라 7:19에서는 그릇들을 하나님 앞에 넘겨주는 행위를 가리킨다."
+    },
+    {
+      "word_id": "H8001_0000",
+      "before": null,
+      "after": "아람어로, 편지와 왕의 조서에서 안녕을 비는 인사말에 쓰인다."
+    },
+    {
+      "word_id": "H8002_0000",
+      "before": null,
+      "after": "감사제(感謝祭)를 포함하며, 서원하거나 자원하여 드리는 경우도 있는 제사이다. 그 제물도 가리킨다."
+    },
+    {
+      "word_id": "H8004_0000",
+      "before": null,
+      "after": "창세기 14:18과 시편 76:3의 지명이다. 창세기 33:18의 동형 표현은 현재 canonical source에서 H8003로 분류되며, 지명과 형용사 해석이 갈린다."
+    },
+    {
+      "word_id": "H8005_0000",
+      "before": null,
+      "after": "행위에 상응하는 갚음을 가리킨다. 유일한 용례인 신명기 32:35에서는 악에 대한 갚음이며, 복수만을 뜻하는 말로 한정하지 않는다."
+    },
+    {
+      "word_id": "H8010_0000",
+      "before": null,
+      "after": "평안(H7965) 계열의 인명이다. 시편 표제와 아가의 이름 사용도 포함되며, 저자·연대는 어휘 의미로 확정하지 않는다. 셸로모는 원문과 사전 전사를 대조하기 위한 분석 표기다. 어두 ‘셸’는 셰와의 한글 근사이며 특정 시대의 실제 발음을 확정하지 않는다."
+    },
+    {
+      "word_id": "H8011_0000",
+      "before": null,
+      "after": "행위에 상응하는 갚음을 가리킨다. 시편 91:8에서는 악인이 자기 행위에 따라 받는 갚음이다."
+    },
+    {
+      "word_id": "H8013_0000",
+      "before": null,
+      "after": "역대상 일부 용례에는 슬로못 계열의 케티브와 슬로밋 계열의 케레가 함께 있다. 이 철자·읽기 차이는 인물 동일성을 자동 확정하는 근거가 아니다. 셸로모트·셸로미트는 원문과 사전 전사를 대조하기 위한 분석 표기다. 어두 ‘셸’는 셰와의 한글 근사이며 특정 시대의 실제 발음을 확정하지 않는다."
+    },
+    {
+      "word_id": "H8015_0000",
+      "before": null,
+      "after": "셸로미는 원문과 사전 전사를 대조하기 위한 분석 표기다. 어두 ‘셸’는 셰와의 한글 근사이며 특정 시대의 실제 발음을 확정하지 않는다."
+    },
+    {
+      "word_id": "H8017_0000",
+      "before": null,
+      "after": "평안(H7965) 계열과 엘(H410)이 결합된 인명이다. 셸루미-엘는 원문과 사전 전사를 대조하기 위한 분석 표기다. 어두 ‘셸’는 셰와의 한글 근사이며 특정 시대의 실제 발음을 확정하지 않는다."
+    },
+    {
+      "word_id": "H8018_0000",
+      "before": null,
+      "after": "canonical lexical source는 화목제(H8002)와 야(H3050)가 결합된 이름으로 설명한다. 야·야후 두 어말형이 쓰인다."
+    },
+    {
+      "word_id": "H8019_0000",
+      "before": null,
+      "after": "남녀에게 모두 쓰이는 이름이다. 일부 용례는 슬로못 계열의 표기·읽기 및 한국어 관용 표기와 겹치며, H8013과의 인물 동일성을 일괄 확정하지 않는다. 셸로미트는 원문과 사전 전사를 대조하기 위한 분석 표기다. 어두 ‘셸’는 셰와의 한글 근사이며 특정 시대의 실제 발음을 확정하지 않는다."
+    },
+    {
+      "word_id": "H8021_0000",
+      "before": null,
+      "after": "어떤 행위나 호의의 대가로 주는 사례물을 가리킨다. 유일한 용례인 이사야 1:23에서는 부패한 지도자들이 추구하는 부당한 사례물, 곧 뇌물이다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0001_0000",
+      "word_id_2": "H0053_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 두 구성요소 중 한 요소에서 합성명으로 향함. 형태 분해와 이름 전체의 의미 번역을 구분. 원자료의 lexical 설명에 근거하며 독립적인 현대 역사언어학 검증으로 확대하지 않는다.",
+      "source": "RESHET-EC-H53-CLUSTER-H0001-H0053"
+    },
+    {
+      "word_id_1": "H0053_0000",
+      "word_id_2": "H7965_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 두 구성요소 중 한 요소에서 합성명으로 향함. 형태 분해와 이름 전체의 의미 번역을 구분. 원자료의 lexical 설명에 근거하며 독립적인 현대 역사언어학 검증으로 확대하지 않는다.",
+      "source": "RESHET-EC-H53-CLUSTER-H0053-H7965"
+    },
+    {
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H8017_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 두 구성요소 중 한 요소에서 합성명으로 향함. 형태 분해와 이름 전체의 의미 번역을 구분. 원자료의 lexical 설명에 근거하며 독립적인 현대 역사언어학 검증으로 확대하지 않는다.",
+      "source": "RESHET-EC-H53-CLUSTER-H0410-H8017"
+    },
+    {
+      "word_id_1": "H3050_0000",
+      "word_id_2": "H4920_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 두 구성요소 중 한 요소에서 합성명으로 향함. 형태 분해와 이름 전체의 의미 번역을 구분. 원자료의 lexical 설명에 근거하며 독립적인 현대 역사언어학 검증으로 확대하지 않는다.",
+      "source": "RESHET-EC-H53-CLUSTER-H3050-H4920"
+    },
+    {
+      "word_id_1": "H3050_0000",
+      "word_id_2": "H8018_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 두 구성요소 중 한 요소에서 합성명으로 향함. 형태 분해와 이름 전체의 의미 번역을 구분. 원자료의 lexical 설명에 근거하며 독립적인 현대 역사언어학 검증으로 확대하지 않는다.",
+      "source": "RESHET-EC-H53-CLUSTER-H3050-H8018"
+    },
+    {
+      "word_id_1": "H3068_0000",
+      "word_id_2": "H3073_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 두 구성요소 중 한 요소에서 합성명으로 향함. 형태 분해와 이름 전체의 의미 번역을 구분. 원자료의 lexical 설명에 근거하며 독립적인 현대 역사언어학 검증으로 확대하지 않는다.",
+      "source": "RESHET-EC-H53-CLUSTER-H3068-H3073"
+    },
+    {
+      "word_id_1": "H3073_0000",
+      "word_id_2": "H7965_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 두 구성요소 중 한 요소에서 합성명으로 향함. 형태 분해와 이름 전체의 의미 번역을 구분. 원자료의 lexical 설명에 근거하며 독립적인 현대 역사언어학 검증으로 확대하지 않는다.",
+      "source": "RESHET-EC-H53-CLUSTER-H3073-H7965"
+    },
+    {
+      "word_id_1": "H4918_0000",
+      "word_id_2": "H4922_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "canonical lexical source의 from/feminine/plural 및 형태·용례를 함께 확인. 어원 풀이를 고유명사의 별도 meaning으로 만들지 않음. 원자료의 lexical 설명에 근거하며 독립적인 현대 역사언어학 검증으로 확대하지 않는다.",
+      "source": "RESHET-EC-H53-CLUSTER-H4918-H4922"
+    },
+    {
+      "word_id_1": "H4918_0000",
+      "word_id_2": "H7999_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "canonical lexical source의 from/feminine/plural 및 형태·용례를 함께 확인. 어원 풀이를 고유명사의 별도 meaning으로 만들지 않음. 원자료의 lexical 설명에 근거하며 독립적인 현대 역사언어학 검증으로 확대하지 않는다.",
+      "source": "RESHET-EC-H53-CLUSTER-H4918-H7999"
+    },
+    {
+      "word_id_1": "H4919_0000",
+      "word_id_2": "H7999_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "canonical lexical source의 from/feminine/plural 및 형태·용례를 함께 확인. 어원 풀이를 고유명사의 별도 meaning으로 만들지 않음. 원자료의 lexical 설명에 근거하며 독립적인 현대 역사언어학 검증으로 확대하지 않는다.",
+      "source": "RESHET-EC-H53-CLUSTER-H4919-H7999"
+    },
+    {
+      "word_id_1": "H4920_0000",
+      "word_id_2": "H7999_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 두 구성요소 중 한 요소에서 합성명으로 향함. 형태 분해와 이름 전체의 의미 번역을 구분. 원자료의 lexical 설명에 근거하며 독립적인 현대 역사언어학 검증으로 확대하지 않는다.",
+      "source": "RESHET-EC-H53-CLUSTER-H4920-H7999"
+    },
+    {
+      "word_id_1": "H4921_0000",
+      "word_id_2": "H7999_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "canonical lexical source의 from/feminine/plural 및 형태·용례를 함께 확인. 어원 풀이를 고유명사의 별도 meaning으로 만들지 않음. 원자료의 lexical 설명에 근거하며 독립적인 현대 역사언어학 검증으로 확대하지 않는다.",
+      "source": "RESHET-EC-H53-CLUSTER-H4921-H7999"
+    },
+    {
+      "word_id_1": "H7759_0000",
+      "word_id_2": "H7999_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong은 from이라고 하나 BDB/NET에서 지명형·솔로몬의 여성형 등 다른 해석이 경쟁. שׁלם 계열 가능성으로만 추천. 원자료의 lexical 설명에 근거하며 독립적인 현대 역사언어학 검증으로 확대하지 않는다.",
+      "source": "RESHET-EC-H53-CLUSTER-H7759-H7999"
+    },
+    {
+      "word_id_1": "H7965_0000",
+      "word_id_2": "H8001_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Aramaic corresponding to: 대응하는 동계 어휘. 차용 방향을 증명하지 않으므로 borrowed_from/일방향은 제안하지 않음. 원자료의 lexical 설명에 근거하며 독립적인 현대 역사언어학 검증으로 확대하지 않는다.",
+      "source": "RESHET-EC-H53-CLUSTER-H7965-H8001"
+    },
+    {
+      "word_id_1": "H7965_0000",
+      "word_id_2": "H8013_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "canonical lexical source의 from/feminine/plural 및 형태·용례를 함께 확인. 어원 풀이를 고유명사의 별도 meaning으로 만들지 않음. 원자료의 lexical 설명에 근거하며 독립적인 현대 역사언어학 검증으로 확대하지 않는다.",
+      "source": "RESHET-EC-H53-CLUSTER-H7965-H8013"
+    },
+    {
+      "word_id_1": "H7965_0000",
+      "word_id_2": "H8015_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "canonical lexical source의 from/feminine/plural 및 형태·용례를 함께 확인. 어원 풀이를 고유명사의 별도 meaning으로 만들지 않음. 원자료의 lexical 설명에 근거하며 독립적인 현대 역사언어학 검증으로 확대하지 않는다.",
+      "source": "RESHET-EC-H53-CLUSTER-H7965-H8015"
+    },
+    {
+      "word_id_1": "H7965_0000",
+      "word_id_2": "H8017_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 두 구성요소 중 한 요소에서 합성명으로 향함. 형태 분해와 이름 전체의 의미 번역을 구분. 원자료의 lexical 설명에 근거하며 독립적인 현대 역사언어학 검증으로 확대하지 않는다.",
+      "source": "RESHET-EC-H53-CLUSTER-H7965-H8017"
+    },
+    {
+      "word_id_1": "H7965_0000",
+      "word_id_2": "H8019_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "canonical lexical source의 from/feminine/plural 및 형태·용례를 함께 확인. 어원 풀이를 고유명사의 별도 meaning으로 만들지 않음. 원자료의 lexical 설명에 근거하며 독립적인 현대 역사언어학 검증으로 확대하지 않는다.",
+      "source": "RESHET-EC-H53-CLUSTER-H7965-H8019"
+    },
+    {
+      "word_id_1": "H7966_0000",
+      "word_id_2": "H7967_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "보통명사에서 동형 고유명사를 형성한 관계로 추천. 개별 어휘 의미/지시대상은 분리하며 동의어·동일 인물 관계로 만들지 않음. 원자료의 lexical 설명에 근거하며 독립적인 현대 역사언어학 검증으로 확대하지 않는다.",
+      "source": "RESHET-EC-H53-CLUSTER-H7966-H7967"
+    },
+    {
+      "word_id_1": "H7966_0000",
+      "word_id_2": "H7999_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "canonical lexical source의 from/feminine/plural 및 형태·용례를 함께 확인. 어원 풀이를 고유명사의 별도 meaning으로 만들지 않음. 원자료의 lexical 설명에 근거하며 독립적인 현대 역사언어학 검증으로 확대하지 않는다.",
+      "source": "RESHET-EC-H53-CLUSTER-H7966-H7999"
+    },
+    {
+      "word_id_1": "H7966_0000",
+      "word_id_2": "H8011_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "canonical lexical source의 from/feminine/plural 및 형태·용례를 함께 확인. 어원 풀이를 고유명사의 별도 meaning으로 만들지 않음. 원자료의 lexical 설명에 근거하며 독립적인 현대 역사언어학 검증으로 확대하지 않는다.",
+      "source": "RESHET-EC-H53-CLUSTER-H7966-H8011"
+    },
+    {
+      "word_id_1": "H7967_0000",
+      "word_id_2": "H7968_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "source probably for를 보존. 살룸과 살룬을 동일 인물로 확정하지 않음. 원자료의 lexical 설명에 근거하며 독립적인 현대 역사언어학 검증으로 확대하지 않는다.",
+      "source": "RESHET-EC-H53-CLUSTER-H7967-H7968"
+    },
+    {
+      "word_id_1": "H7999_0000",
+      "word_id_2": "H8000_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Aramaic corresponding to: 대응하는 동계 어휘. 차용 방향을 증명하지 않으므로 borrowed_from/일방향은 제안하지 않음. 원자료의 lexical 설명에 근거하며 독립적인 현대 역사언어학 검증으로 확대하지 않는다.",
+      "source": "RESHET-EC-H53-CLUSTER-H7999-H8000"
+    },
+    {
+      "word_id_1": "H7999_0000",
+      "word_id_2": "H8002_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "canonical lexical source의 from/feminine/plural 및 형태·용례를 함께 확인. 어원 풀이를 고유명사의 별도 meaning으로 만들지 않음. 원자료의 lexical 설명에 근거하며 독립적인 현대 역사언어학 검증으로 확대하지 않는다.",
+      "source": "RESHET-EC-H53-CLUSTER-H7999-H8002"
+    },
+    {
+      "word_id_1": "H7999_0000",
+      "word_id_2": "H8005_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "canonical lexical source의 from/feminine/plural 및 형태·용례를 함께 확인. 어원 풀이를 고유명사의 별도 meaning으로 만들지 않음. 원자료의 lexical 설명에 근거하며 독립적인 현대 역사언어학 검증으로 확대하지 않는다.",
+      "source": "RESHET-EC-H53-CLUSTER-H7999-H8005"
+    },
+    {
+      "word_id_1": "H7999_0000",
+      "word_id_2": "H8021_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "canonical lexical source의 from/feminine/plural 및 형태·용례를 함께 확인. 어원 풀이를 고유명사의 별도 meaning으로 만들지 않음. 원자료의 lexical 설명에 근거하며 독립적인 현대 역사언어학 검증으로 확대하지 않는다.",
+      "source": "RESHET-EC-H53-CLUSTER-H7999-H8021"
+    },
+    {
+      "word_id_1": "H8002_0000",
+      "word_id_2": "H8018_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 두 구성요소 중 한 요소에서 합성명으로 향함. 형태 분해와 이름 전체의 의미 번역을 구분. 원자료의 lexical 설명에 근거하며 독립적인 현대 역사언어학 검증으로 확대하지 않는다.",
+      "source": "RESHET-EC-H53-CLUSTER-H8002-H8018"
+    },
+    {
+      "word_id_1": "H8005_0000",
+      "word_id_2": "H8006_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "보통명사에서 동형 고유명사를 형성한 관계로 추천. 개별 어휘 의미/지시대상은 분리하며 동의어·동일 인물 관계로 만들지 않음. 원자료의 lexical 설명에 근거하며 독립적인 현대 역사언어학 검증으로 확대하지 않는다.",
+      "source": "RESHET-EC-H53-CLUSTER-H8005-H8006"
+    },
+    {
+      "word_id_1": "H8006_0000",
+      "word_id_2": "H8016_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "canonical lexical source의 from/feminine/plural 및 형태·용례를 함께 확인. 어원 풀이를 고유명사의 별도 meaning으로 만들지 않음. 원자료의 lexical 설명에 근거하며 독립적인 현대 역사언어학 검증으로 확대하지 않는다.",
+      "source": "RESHET-EC-H53-CLUSTER-H8006-H8016"
+    },
+    {
+      "word_id_1": "H8013_0000",
+      "word_id_2": "H8019_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Compare와 역대상 케티브/케레 및 source Strong 분류 차이가 직접 확인됨. 철자/읽기 이형 관계만, 동명이인 전체를 하나로 병합하지 않음. 원자료의 lexical 설명에 근거하며 독립적인 현대 역사언어학 검증으로 확대하지 않는다.",
+      "source": "RESHET-EC-H53-CLUSTER-H8013-H8019"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [
+    {
+      "relation_id": 2854,
+      "word_id_1": "G4532_0000",
+      "word_id_2": "H8004_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "transliteration",
+        "relation_type": "direct_transliteration",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "Greek lexical source의 Hebrew origin과 실제 지명/인명 사용을 대조한 언어 간 음역 관계. LXX 자동 alignment 결과가 아님. 원자료의 lexical 설명에 근거하며 독립적인 현대 역사언어학 검증으로 확대하지 않는다.",
+        "source": "RESHET-EC-H53-CLUSTER-G4532-H8004"
+      }
+    },
+    {
+      "relation_id": 3845,
+      "word_id_1": "G4539_0000",
+      "word_id_2": "H7965_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "hypothesized",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "Greek source probably of Hebrew origin (feminine from). 살로메의 이름 풀이를 보통명사 평화와 동의관계로 만들지 않음. 원자료의 lexical 설명에 근거하며 독립적인 현대 역사언어학 검증으로 확대하지 않는다.",
+        "source": "RESHET-EC-H53-CLUSTER-G4539-H7965"
+      }
+    },
+    {
+      "relation_id": 2960,
+      "word_id_1": "G4672_0000",
+      "word_id_2": "H8010_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "transliteration",
+        "relation_type": "direct_transliteration",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "Greek lexical source의 Hebrew origin과 실제 지명/인명 사용을 대조한 언어 간 음역 관계. LXX 자동 alignment 결과가 아님. 원자료의 lexical 설명에 근거하며 독립적인 현대 역사언어학 검증으로 확대하지 않는다.",
+        "source": "RESHET-EC-H53-CLUSTER-G4672-H8010"
+      }
+    },
+    {
+      "relation_id": 2958,
+      "word_id_1": "H7965_0000",
+      "word_id_2": "H7999_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "canonical lexical source의 from/feminine/plural 및 형태·용례를 함께 확인. 어원 풀이를 고유명사의 별도 meaning으로 만들지 않음. 원자료의 lexical 설명에 근거하며 독립적인 현대 역사언어학 검증으로 확대하지 않는다.",
+        "source": "RESHET-EC-H53-CLUSTER-H7965-H7999"
+      }
+    },
+    {
+      "relation_id": 2959,
+      "word_id_1": "H7965_0000",
+      "word_id_2": "H8010_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "canonical lexical source의 from/feminine/plural 및 형태·용례를 함께 확인. 어원 풀이를 고유명사의 별도 meaning으로 만들지 않음. 원자료의 lexical 설명에 근거하며 독립적인 현대 역사언어학 검증으로 확대하지 않는다.",
+        "source": "RESHET-EC-H53-CLUSTER-H7965-H8010"
+      }
+    }
+  ],
+  "meaning_approvals": []
+}
