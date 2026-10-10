@@ -1,0 +1,435 @@
+{
+  "format_version": 1,
+  "kind": "approved_lexical_corrections",
+  "use": "승인한 3단어의 정확한 전후 값·출처·검증 기록. 표현을 지원하지 않는 approved_content_batch 자동 적용 manifest로 사용하지 않음.",
+  "date": "2026-10-10",
+  "status": "사용자 승인·작업 DB 적용·검증 완료",
+  "approval_contract": "사용자가 조사·피드백 후 최종 제안대로 문서·작업 DB 수정 및 Git 완료를 명시적으로 승인. 고대 페르시아어 최종 의미는 제사장(祭司長)[고대 이란 문화권의 마기].",
+  "git_publication": {
+    "approval": "사용자가 문서·DB·Git 완료를 명시적으로 승인",
+    "result_record": "data/backups/approved_content_batch/20261010_other_ancient_languages/git_closeout.json"
+  },
+  "identity": "기존 word id와 표현·의미 내부 id 보존. 추가 표현·의미는 기존 단어의 새 seq에 등록.",
+  "work_sha256_before": "25be68d0887105b1b42413431bf71b8c528deaf810b22751c5db5facd2057c86",
+  "work_sha256_after": "780a78d9204a86b229f575c28d9d63a78d4435b102090dd16c605cc359cf6259",
+  "seed_sha256": "e44bb989bebdc46a22bba2efac9defd06f3bdfd500577153de85adfa1bc148bb",
+  "summary": {
+    "existing_expression_rows": 3,
+    "existing_expression_field_changes": 12,
+    "new_expression_rows": 1,
+    "existing_meanings_reworded": 2,
+    "new_meanings": 1,
+    "notes_added": 3,
+    "word_history_rows": 3,
+    "relation_changes": 0
+  },
+  "words": [
+    {
+      "word_id": "U0000_0001",
+      "before": {
+        "id": "U0000_0001",
+        "언어": "고대 페르시아어",
+        "스트롱넘버": null,
+        "비고": null,
+        "graph_expand_mode": "default",
+        "expressions": [
+          {
+            "id": 7297,
+            "word_id": "U0000_0001",
+            "seq": 1,
+            "is_representative": 1,
+            "spelling": "𐎶𐎦𐎢𐏁",
+            "transliteration": "마구스",
+            "pronunciation": null,
+            "pronunciation_notation": null,
+            "pronunciation_notation_name": null
+          }
+        ],
+        "meanings": [
+          {
+            "id": 4357,
+            "word_id": "U0000_0001",
+            "seq": 1,
+            "meaning": "마즈다[조로아스터교의 신]의 사제"
+          }
+        ]
+      },
+      "after": {
+        "id": "U0000_0001",
+        "언어": "고대 페르시아어",
+        "스트롱넘버": null,
+        "비고": "고대 페르시아어 magu-의 남성 단수 주격형 maguš로 읽는다. 등록된 𐎶𐎦𐎢𐏁 표기는 보존한다. 통상 미디아·페르시아 등 고대 이란 문화권에서 종교 의례를 담당하던 마기 집단의 구성원을 가리키는 말로 해석하나 정확한 사회적 범위와 직무에는 논의가 있으므로 마즈다 한 신의 전속 제사장으로 한정하지 않는다. 어말 š는 /ʃ/ 계열이며 마구쉬는 한글 근사다. 로마자 표기는 학술 읽기 전사이며 강세·모음 길이를 확정한 IPA가 아니다.",
+        "graph_expand_mode": "default",
+        "expressions": [
+          {
+            "id": 7297,
+            "word_id": "U0000_0001",
+            "seq": 1,
+            "is_representative": 1,
+            "spelling": "𐎶𐎦𐎢𐏁",
+            "transliteration": "마구쉬",
+            "pronunciation": "maguš",
+            "pronunciation_notation": "other",
+            "pronunciation_notation_name": "고대 페르시아어 학술 읽기 전사"
+          }
+        ],
+        "meanings": [
+          {
+            "id": 4357,
+            "word_id": "U0000_0001",
+            "seq": 1,
+            "meaning": "제사장(祭司長)[고대 이란 문화권의 마기]"
+          }
+        ]
+      },
+      "history_group_id": "1791642366270440",
+      "source_ids": [
+        "wiktionary_old_persian_current",
+        "wiktionary_old_persian_short",
+        "tolman1908_ocr"
+      ]
+    },
+    {
+      "word_id": "U0000_0004",
+      "before": {
+        "id": "U0000_0004",
+        "언어": "아카드어",
+        "스트롱넘버": null,
+        "비고": null,
+        "graph_expand_mode": "default",
+        "expressions": [
+          {
+            "id": 7300,
+            "word_id": "U0000_0004",
+            "seq": 1,
+            "is_representative": 1,
+            "spelling": "𒀸𒋩𒆠",
+            "transliteration": "앗수르",
+            "pronunciation": null,
+            "pronunciation_notation": null,
+            "pronunciation_notation_name": null
+          }
+        ],
+        "meanings": [
+          {
+            "id": 4417,
+            "word_id": "U0000_0004",
+            "seq": 1,
+            "meaning": "아수르[아시리아의 최고신]"
+          },
+          {
+            "id": 16442,
+            "word_id": "U0000_0004",
+            "seq": 2,
+            "meaning": "아시리아"
+          }
+        ]
+      },
+      "after": {
+        "id": "U0000_0004",
+        "언어": "아카드어",
+        "스트롱넘버": null,
+        "비고": "Aššur는 아시리아의 신명과 도시명·지역명에 쓰인다. 표현 1의 𒆠(ki)는 지명 한정기호이며 발음하지 않는다. 이 표기는 아시리아라는 나라 이름에도 쓰이므로 도시만을 뜻한다고 제한하지 않는다. 표현 2의 𒀭(d)는 신명 한정기호이며 발음하지 않는다. 한정기호가 없는 표기도 있으므로 기호 유무만으로 모든 용례를 자동 분류하지 않는다. 앗슈르는 šš의 중복과 /ʃ/ 계열을 드러낸 한글 근사다. 발음란 Aššur는 학술 읽기 전사이며 모음 장단·강세를 확정한 IPA가 아니다.",
+        "graph_expand_mode": "default",
+        "expressions": [
+          {
+            "id": 7300,
+            "word_id": "U0000_0004",
+            "seq": 1,
+            "is_representative": 1,
+            "spelling": "𒀸𒋩𒆠",
+            "transliteration": "앗슈르",
+            "pronunciation": "Aššur",
+            "pronunciation_notation": "other",
+            "pronunciation_notation_name": "아카드어 학술 읽기 전사"
+          },
+          {
+            "word_id": "U0000_0004",
+            "seq": 2,
+            "is_representative": 0,
+            "spelling": "𒀭𒀸𒋩",
+            "transliteration": "앗슈르",
+            "pronunciation": "Aššur",
+            "pronunciation_notation": "other",
+            "pronunciation_notation_name": "아카드어 학술 읽기 전사",
+            "id": 19876
+          }
+        ],
+        "meanings": [
+          {
+            "id": 4417,
+            "word_id": "U0000_0004",
+            "seq": 1,
+            "meaning": "아슈르[아시리아의 최고신(最高神)]"
+          },
+          {
+            "id": 16442,
+            "word_id": "U0000_0004",
+            "seq": 2,
+            "meaning": "아시리아"
+          },
+          {
+            "word_id": "U0000_0004",
+            "seq": 3,
+            "meaning": "아슈르 (지)",
+            "id": 22787
+          }
+        ]
+      },
+      "history_group_id": "1791642366270441",
+      "source_ids": [
+        "wiktionary_assur",
+        "oracc_rinap4_names",
+        "oracc_rinap4_text_license",
+        "oracc_nimrud_ashur"
+      ]
+    },
+    {
+      "word_id": "U0000_0007",
+      "before": {
+        "id": "U0000_0007",
+        "언어": "우가릿어",
+        "스트롱넘버": null,
+        "비고": null,
+        "graph_expand_mode": "default",
+        "expressions": [
+          {
+            "id": 7303,
+            "word_id": "U0000_0007",
+            "seq": 1,
+            "is_representative": 1,
+            "spelling": "𐎍𐎛𐎋",
+            "transliteration": "리크",
+            "pronunciation": "lỉk",
+            "pronunciation_notation": "unknown",
+            "pronunciation_notation_name": null
+          }
+        ],
+        "meanings": [
+          {
+            "id": 7054,
+            "word_id": "U0000_0007",
+            "seq": 1,
+            "meaning": "보내다"
+          }
+        ]
+      },
+      "after": {
+        "id": "U0000_0007",
+        "언어": "우가릿어",
+        "스트롱넘버": null,
+        "비고": "원문 𐎍𐎛𐎋의 문자 전사는 lỉk이며 ỉ를 단순한 모음 i로 읽지 않는다. laʾika는 원문에 모두 적혀 있지 않은 모음을 보완한 학술 재구 읽기다. 이 읽기는 통상 완료형 3인칭 남성 단수로 분석하는 형태에 해당하며 모든 활용형의 발음을 뜻하지 않는다. 라이카는 라·이·카의 한글 근사로, 성문폐쇄 ʾ를 정확히 나타내지 못하므로 발음란에 보존한다. 의미는 사전형 보내다로 기록한다.",
+        "graph_expand_mode": "default",
+        "expressions": [
+          {
+            "id": 7303,
+            "word_id": "U0000_0007",
+            "seq": 1,
+            "is_representative": 1,
+            "spelling": "𐎍𐎛𐎋",
+            "transliteration": "라이카",
+            "pronunciation": "laʾika",
+            "pronunciation_notation": "other",
+            "pronunciation_notation_name": "우가릿어 학술 재구 읽기 전사"
+          }
+        ],
+        "meanings": [
+          {
+            "id": 7054,
+            "word_id": "U0000_0007",
+            "seq": 1,
+            "meaning": "보내다"
+          }
+        ]
+      },
+      "history_group_id": "1791642366270442",
+      "source_ids": [
+        "wiktionary_ugaritic"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "source_id": "wiktionary_old_persian_current",
+      "author_or_project": "Wiktionary 기여자들",
+      "license": "CC BY-SA 4.0",
+      "use_scope": "현행 철자·읽기·의미 불확실성",
+      "revision_or_record": 88090315,
+      "url": "https://en.wiktionary.org/w/index.php?title=%F0%90%8E%B6%F0%90%8E%A6%F0%90%8E%A2%F0%90%8F%81&oldid=88090315",
+      "sha256": "d78317a505d16aa4f1848ecdf20dab78b325fd82a6ef7927c952be52e76b4af9",
+      "retrieved_bytes": 63015,
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "attribution": "Wiktionary 기여자들; 고정 문서 및 문서 이력 링크"
+    },
+    {
+      "source_id": "wiktionary_old_persian_short",
+      "author_or_project": "Wiktionary 기여자들",
+      "license": "CC BY-SA 4.0",
+      "use_scope": "maguš 학술 읽기와 일반 사제 뜻 대조; 현행 철자의 교체 근거로 쓰지 않음",
+      "revision_or_record": 92163561,
+      "url": "https://en.wiktionary.org/w/index.php?title=%F0%90%8E%B6%F0%90%8E%A6%F0%90%8F%81&oldid=92163561",
+      "sha256": "920086c5783f342c3ae5036a38411022de0cd8b9b4976b6391de63e8ac1417c0",
+      "retrieved_bytes": 93642,
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "attribution": "Wiktionary 기여자들; 고정 문서 및 문서 이력 링크"
+    },
+    {
+      "source_id": "wiktionary_assur",
+      "author_or_project": "Wiktionary 기여자들",
+      "license": "CC BY-SA 4.0",
+      "use_scope": "현행 철자와 도시명, 후보 IPA 대조",
+      "revision_or_record": 92525695,
+      "url": "https://en.wiktionary.org/w/index.php?title=A%C5%A1%C5%A1%C5%ABr&oldid=92525695",
+      "sha256": "d0cde99549f853123657628a247cb3ed99272ae3a9805b736582bf165e1d627c",
+      "retrieved_bytes": 81340,
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "attribution": "Wiktionary 기여자들; 고정 문서 및 문서 이력 링크"
+    },
+    {
+      "source_id": "wiktionary_ugaritic",
+      "author_or_project": "Wiktionary 기여자들",
+      "license": "CC BY-SA 4.0",
+      "use_scope": "현행 철자·뜻·재구 IPA /la.ʔi.ka/를 로마자 laʾika로 가공",
+      "revision_or_record": 75513432,
+      "url": "https://en.wiktionary.org/w/index.php?title=%F0%90%8E%8D%F0%90%8E%9B%F0%90%8E%8B&oldid=75513432",
+      "sha256": "12b57cc393bca28c17d320db42b470b69e1dcf615d64979d77ad43ba4c777f9b",
+      "retrieved_bytes": 60527,
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "attribution": "Wiktionary 기여자들; 고정 문서 및 문서 이력 링크"
+    },
+    {
+      "source_id": "oracc_rinap4_names",
+      "author_or_project": "RINAP Project, University of Pennsylvania",
+      "license": "CC BY-SA 3.0: RINAP 본문·프로젝트 조건과 연결해 사용",
+      "use_scope": "Aššur 정규화, 신명·도시명·나라명과 한정기호의 용례 구분",
+      "revision_or_record": null,
+      "url": "https://oracc.museum.upenn.edu/rinap/rinap4/cbd/qpn/A.html",
+      "sha256": "30574ba6bb874de9a20d98192e1633cb2fcce9c0f299743884cae61842d88a83",
+      "retrieved_bytes": 195196,
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+    },
+    {
+      "source_id": "oracc_rinap4_text_license",
+      "author_or_project": "RINAP Project, Erle Leichty; lemmatization Jamie Novotny",
+      "license": "CC BY-SA 3.0",
+      "use_scope": "본문 용례와 해당 판본 footer의 라이선스 확인; 이미지·인쇄 PDF는 별개",
+      "revision_or_record": "Q003230",
+      "url": "https://oracc.museum.upenn.edu/rinap/rinap4/Q003230",
+      "sha256": "79a9aa8bd7ea051d0f46c06dfd5704149fc16bbf3282c55915f8cfbeef87ea7c",
+      "retrieved_bytes": 1300285,
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+    },
+    {
+      "source_id": "oracc_nimrud_ashur",
+      "author_or_project": "Eleanor Robson, The Nimrud Project at Oracc.org",
+      "license": "CC BY-SA 3.0",
+      "use_scope": "신 Aššur의 역할과 도시·국가와의 관계; 이미지 제외",
+      "revision_or_record": null,
+      "url": "https://oracc.museum.upenn.edu/nimrud/ancientkalhu/thepeople/ashur/index.html",
+      "sha256": "bd36f537dcc8b44f670af60a33d572874f0f73c8d95d18746ac347d4f1185223",
+      "retrieved_bytes": 47580,
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+    },
+    {
+      "source_id": "tolman1908_ocr",
+      "author_or_project": "Herbert Cushing Tolman; Cornell University Library digitization",
+      "license": "1908 원저작물; Commons는 미국 퍼블릭 도메인 명시",
+      "use_scope": "115–116쪽의 magu-·단수 주격·사제 집단 설명을 사실 대조에만 사용. OCR의 부호 오류를 고려; 판면·설명문을 DB 추천값으로 전재하지 않음",
+      "revision_or_record": "cu31924026893150",
+      "url": "https://archive.org/download/cu31924026893150/cu31924026893150_djvu.txt",
+      "sha256": "e64ee2f7227413b60c6f83bdf958575c3667298c95a632cbd9594f3ab5b2b342",
+      "retrieved_bytes": 318507,
+      "adopted_text": false
+    }
+  ],
+  "reference_only_recheck": {
+    "purpose": "우가릿어 재구 읽기의 독립 학술 사실 대조. 본문·표·판면은 데이터 채택 대상이 아님.",
+    "date": "2026-10-10",
+    "author": "David Marcus",
+    "title": "The Three Alephs in Ugaritic",
+    "publication": "JANES 1:1 (1968), 50-60",
+    "official_article_url": "https://janes.jtsa.edu/volumes/1/1/article-4/",
+    "official_linked_pdf_url": "https://d156pv0y1gr4h3.cloudfront.net/pdfs/vol1/2225-the-three-aleph-s-in-ugaritic.pdf",
+    "pdf_sha256": "44113b1c9a35d309a0479c47e895e4b8d4f95f8b9f3f553a5e6b7222455c58cc",
+    "checked_print_page": 57,
+    "checked_footnote": 118,
+    "checked_reading": "laʾika",
+    "checked_morphology": "perfect; 자세한 인칭 설명은 어미 분석에 따른 것",
+    "visual_page_checked": true,
+    "reuse_scope": "논문은 독립적인 언어학 사실 대조용. CC 재사용 허락을 확인하지 못했으므로 논문 본문·표·판면을 Reshet에 전재할 대상으로 채택하지 않음. 기존 CC BY-SA 4.0 Wiktionary 읽기와 교차확인."
+  },
+  "additional_reference_only": [
+    {
+      "author": "Muhammad A. Dandamayev",
+      "title": "Magi",
+      "url": "https://www.iranicaonline.org/articles/magi/",
+      "use": "미디아·페르시아의 마기 집단에 관한 사실 대조. 원문 설명문 전재 없음; 상업 재사용 원천으로 채택하지 않음."
+    },
+    {
+      "author": "국립국어원",
+      "title": "제사장(祭司長)",
+      "url": "https://kli.korean.go.kr/term/trgtWord/indexTrgtWord.do?trgtWordNo=2449079",
+      "use": "한국어 한자 표기 확인. 뜻풀이·수어·영상 전재 없음."
+    }
+  ],
+  "reuse_criterion": "제3자의 상업적 이용·수정·재배포 허용. 채택한 보호 자료·가공물의 attribution·변경 안내·동일조건 공유 조건 보존. 기존 DB 전체의 과거 provenance나 라이선스를 소급 확정하지 않음.",
+  "attribution_document": "docs/legal/data_attributions.md",
+  "raw_sources_in_repository": false,
+  "verification": {
+    "verified_tables": 13,
+    "unexpected_differences": 0,
+    "schema_unchanged": true,
+    "integrity_check": "ok",
+    "foreign_key_violations": 0,
+    "sidecars_present": false,
+    "row_counts_before": {
+      "CHANGE_HISTORY": 5834,
+      "RELATION_CATEGORY": 8,
+      "RELATION_STATUS": 7,
+      "RELATION_TYPE": 25,
+      "RMAC_TABLE": 1227,
+      "RMAC_TABLE_KR": 1227,
+      "WORD_LEGACY_EXPRESSION_VALUE": 2,
+      "WORD_LEGACY_RELATED_VALUE": 4,
+      "WORD_RELATION": 7587,
+      "WORD_TABLE": 15029,
+      "sqlite_sequence": 2,
+      "word_expression_set": 15257,
+      "word_meaning_set": 18188
+    },
+    "row_counts_after": {
+      "CHANGE_HISTORY": 5837,
+      "RELATION_CATEGORY": 8,
+      "RELATION_STATUS": 7,
+      "RELATION_TYPE": 25,
+      "RMAC_TABLE": 1227,
+      "RMAC_TABLE_KR": 1227,
+      "WORD_LEGACY_EXPRESSION_VALUE": 2,
+      "WORD_LEGACY_RELATED_VALUE": 4,
+      "WORD_RELATION": 7587,
+      "WORD_TABLE": 15029,
+      "sqlite_sequence": 2,
+      "word_expression_set": 15258,
+      "word_meaning_set": 18189
+    },
+    "history_ids": [
+      5842,
+      5843,
+      5844
+    ],
+    "new_expression_id": 19876,
+    "new_meaning_id": 22787,
+    "plan_sha256": "f0dec76a0aef6651b5f066e2abfd75876a618179de940a4688053b37ece3d56a"
+  },
+  "semantic_progress": {
+    "output_directory": "C:\\Users\\kkiih\\Documents\\Workspace\\FlutterWorkspace\\reshet_research_output\\semantic_progress",
+    "canonical_rows": 14298,
+    "rows_unchanged": true,
+    "summary_unchanged": true,
+    "csv_bytes_unchanged": true,
+    "work_sha256": "780a78d9204a86b229f575c28d9d63a78d4435b102090dd16c605cc359cf6259",
+    "u_words_outside_canonical_strong_universe": true
+  },
+  "backup_directory": "data/backups/approved_content_batch/20261010_other_ancient_languages",
+  "ui_and_runtime_undo": "실행하지 않음. 앱 UX·코드 변경 없음. 명령어 기반 데이터 교정 검증과 구분."
+}

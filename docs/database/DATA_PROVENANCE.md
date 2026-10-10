@@ -159,6 +159,12 @@ PRAGMA foreign_key_check;
 
 표준 외부 진행 보고서도 후속 DB 지문으로 공식 CLI를 통해 갱신했다. canonical H/G 행·summary·외부 출처 지문·CSV byte는 그대로이며 JSON의 작업 DB 지문·snapshot identity와 Markdown의 DB 지문만 현재 상태로 바뀌었다. 검증은 후속 백업 폴더의 `semantic_progress_validation.json`을 따른다. 이 표현 정비를 의미·관계 승인이나 semantic hold 변경에 가산하지 않는다. 앱 코드·상설 도구·schema 변경은 없으며 UI·runtime undo 검증은 실행하지 않았다.
 
+고대 페르시아어·아카드어·우가릿어 전량 3단어도 2026-10-10 후속 피드백과 최종 승인대로 정비했다. `U0000_0001`은 마구쉬 / maguš와 `제사장(祭司長)[고대 이란 문화권의 마기]`, `U0000_0004`는 앗슈르 / Aššur와 신명 표기 `𒀭𒀸𒋩`·도시 의미 `아슈르 (지)` 추가, `U0000_0007`은 라이카 / laʾika와 의미 보내다 유지다. 세 단어에 읽기와 의미 범위·불확실성 비고를 추가하고 발음 metadata는 `other` 및 언어별 학술 읽기·재구 읽기 체계명으로 명시했다. 원어 기존 표기·언어명·Strong·관계·기존 id·schema·seed는 보존했다. [결정 기록](../semantic_decisions/other_ancient_languages_approved_content_slice.md)과 [정확한 변경값 JSON](../semantic_decisions/other_ancient_languages_approved_changes.json)에 최종값·원천 판본·가공 내용·라이선스·참고 전용 자료를 기록했다. [앱 자료 출처 안내](../legal/data_attributions.md)도 갱신했다.
+
+이번 적용은 표현을 지원하지 않는 기존 일괄 도구와 구분한 일회성 오프라인 교정이다. 기존 표현 3행의 12필드·새 표현 1행·의미 교정 2행·추가 1행·비고 3개 및 normalized 이력 3개(id 5842–5844)로 한정했다. 전체 13테이블·DDL 비교에서 승인 범위·이력·관련 sequence 외 차이 0건, integrity ok·FK 0·sidecar 없음, 사본/실제 적용 후 byte 해시 일치를 확인했다. 작업 DB SHA-256은 `25be68d0887105b1b42413431bf71b8c528deaf810b22751c5db5facd2057c86` → `780a78d9204a86b229f575c28d9d63a78d4435b102090dd16c605cc359cf6259`, seed는 기존 `e44bb989bebdc46a22bba2efac9defd06f3bdfd500577153de85adfa1bc148bb`를 유지했다. 전체 단어 15,029·표현 15,258·의미 18,189·관계 7,587·이력 5,837행이다. 백업·승인 계획·사본/실제 receipt·진행 보고서 검증·Git closeout은 `data/backups/approved_content_batch/20261010_other_ancient_languages/`에 보존한다. 원자료 HTML·논문 PDF·이미지는 앱이나 저장소에 편입하지 않았다.
+
+공식 CLI로 표준 외부 진행 보고서 세 형식을 현재 DB 지문으로 갱신했다. canonical H/G 14,298행·summary·외부 원천 지문·CSV byte는 동일하고 승인 198·hold 5·미승인 14,095·anomaly 113을 유지한다. U 단어는 Strong 집계 밖이므로 이번 의미 교정을 canonical Strong 승인 수에 가산하지 않는다. 별도 외부 기타 언어 조사 보고서에는 승인·적용 결과를 반영했다. 앱 코드·상설 도구·테스트 파일 변경은 없으며 UI·앱 runtime undo는 실행하지 않았다.
+
 외부 데이터를 새로 입력할 때 다음 항목을 기록한다.
 
 - 원천 이름

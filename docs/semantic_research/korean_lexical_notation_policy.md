@@ -139,6 +139,10 @@ c·g는 /k, ɡ/, 자음 v는 /w/, 자음 i/j는 /j/, 단독 y는 위 계열로 �
 
 같은 날 후속 승인한 네 단어는 독일어 `Zither`의 치타, 러시아어 `царь`의 짜르, 이탈리아어 `timpani`의 팀파니와 `tìmpano`의 팀파노로 정리했다. 러시아어의 연음화된 `rʲ`는 별도의 /i/ 모음이 아니며, 짜르는 한글 근사로 선택하고 정확한 자음 정보는 IPA에 보존한다. 이탈리아어 복수형 IPA는 단수형 IPA와 복수형의 강세·음절 근거를 조합한 전사로 구분한다. 출처의 대괄호·빗금 구분을 각각 `ipa_phonetic`·`ipa_phonemic` metadata로 기록한다. 이 개별 승인을 다른 단어의 음역 자동 변경 규칙으로 확대하지 않는다. 최종값·출처·검증은 [현대 외국어 표현 정비 결정](../semantic_decisions/modern_foreign_expression_approved_content_slice.md)을 따른다.
 
+### 6-4. 고대 페르시아어·아카드어·우가릿어 개별 승인 — 2026-10-10
+
+이번 세 단어의 발음란은 학술 읽기 전사 또는 학술 재구 읽기로 명시하고 `other`와 체계명을 함께 기록한다. 문자 전사를 실제 음성 또는 IPA로 취급하지 않는다. 고대 페르시아어 maguš의 의미는 `제사장(祭司長)[고대 이란 문화권의 마기]`이며 언어명과 집단의 문화적 범위를 구분한다. 아카드어 한정기호는 발음하지 않고, 우가릿어 lỉk의 문자 전사와 laʾika의 재구 읽기를 구분한다. 한글 근사에서 빠지는 정보와 불확실성은 발음란·비고에 보존한다. 이 승인을 다른 항목의 일괄 변경 규칙으로 확대하지 않는다. 정확한 값·근거·라이선스·검증은 [기타 고대 언어 정비 결정](../semantic_decisions/other_ancient_languages_approved_content_slice.md)을 따른다.
+
 ## 7. 가운데점 사용
 
 가운데점 `·`은 동일한 대상 또는 동일한 lexical sense에 속하는 한국어 표기를 한 meaning 안에서 병기할 때 사용한다.
@@ -228,3 +232,4 @@ c·g는 /k, ɡ/, 자음 v는 /w/, 자음 i/j는 /j/, 단독 y는 위 계열로 �
 * [H0026 분석적 합성 표기 결정](../semantic_decisions/h0026_analytic_name_notation_approved_content_slice.md)
 * [H22 클러스터 결정](../semantic_decisions/h22_cluster_approved_content_slice.md)
 * [라틴어 표현 정비 결정](../semantic_decisions/latin_expression_approved_content_slice.md)
+* [기타 고대 언어 정비 결정](../semantic_decisions/other_ancient_languages_approved_content_slice.md)

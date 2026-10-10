@@ -264,6 +264,36 @@ https://it.wiktionary.org/w/index.php?title=timpani&oldid=4038010
 라이선스: https://creativecommons.org/licenses/by-sa/4.0/
 이 자료와 보호되는 가공물을 재사용할 때는 출처·라이선스 링크·변경 표시를 보존하고 동일조건 공유 의무를 따릅니다. 이 라이선스는 상업적 이용·수정·재배포를 허용합니다. 앱 코드나 기존 DB 전체의 라이선스를 일괄 확정하는 선언은 아닙니다.
 
+고대 페르시아어·아카드어·우가릿어 정비 자료 — 2026-10-10
+
+U0000_0001 / 𐎶𐎦𐎢𐏁 / 고대 페르시아어 / 학술 읽기 maguš
+Wiktionary 기여자, 영어판 고정 판본 88090315 및 비교 판본 92163561
+https://en.wiktionary.org/w/index.php?title=%F0%90%8E%B6%F0%90%8E%A6%F0%90%8E%A2%F0%90%8F%81&oldid=88090315
+https://en.wiktionary.org/w/index.php?title=%F0%90%8E%B6%F0%90%8E%A6%F0%90%8F%81&oldid=92163561
+
+U0000_0004 / 𒀸𒋩𒆠, 𒀭𒀸𒋩 / 아카드어 / 학술 읽기 Aššur
+Wiktionary 기여자, 영어판 Aššūr 고정 판본 92525695: 철자·이름·읽기 비교
+https://en.wiktionary.org/w/index.php?title=A%C5%A1%C5%A1%C5%ABr&oldid=92525695
+
+U0000_0007 / 𐎍𐎛𐎋 / 우가릿어 / 학술 재구 읽기 laʾika
+Wiktionary 기여자, 영어판 고정 판본 75513432
+https://en.wiktionary.org/w/index.php?title=%F0%90%8E%8D%F0%90%8E%9B%F0%90%8E%8B&oldid=75513432
+
+위 Wiktionary 자료의 기여자 정보는 각 고정 문서의 이력으로 확인할 수 있습니다. 텍스트 라이선스는 CC BY-SA 4.0입니다.
+https://creativecommons.org/licenses/by-sa/4.0/
+
+아카드어 Aššur의 정규화 읽기와 신명·도시명·나라명 및 한정기호 용례에는 University of Pennsylvania RINAP 4 자료를 함께 활용했습니다. 본문 편집 Erle Leichty, lemmatization Jamie Novotny, RINAP Project. 해당 프로젝트의 본문 및 Q003230 판본에 표시된 CC BY-SA 3.0 조건을 따릅니다.
+https://oracc.museum.upenn.edu/rinap/rinap4/cbd/qpn/A.html
+https://oracc.museum.upenn.edu/rinap/rinap4/Q003230
+
+신명·도시·국가의 관계 설명에는 Eleanor Robson, The Nimrud Project at Oracc.org의 Aššur 글을 참고했습니다. 해당 글의 텍스트는 CC BY-SA 3.0이며 이미지는 가져오지 않았습니다.
+https://oracc.museum.upenn.edu/nimrud/ancientkalhu/thepeople/ashur/index.html
+https://creativecommons.org/licenses/by-sa/3.0/
+
+가공 내용: 학술 읽기를 발음란에 기록하고 IPA와 구분하는 체계명을 붙였습니다. 우가릿어의 /la.ʔi.ka/는 laʾika로 옮겼고 문자 전사 lỉk와 구분했습니다. 아카드어는 ORACC의 Aššur 표기를 선택했으며 Wiktionary의 Aššūr·강세·모음 길이를 그대로 채택한 것으로 안내하지 않습니다. 읽지 않는 한정기호가 포함된 신명 표현과 도시 의미를 추가했습니다. 한글 음역·한국어 의미·비고는 근거를 참고하여 별도로 작성했습니다.
+
+재사용하는 보호 자료와 그 가공물에는 각 원천의 출처·라이선스 링크·변경 표시·동일조건 공유 요건을 보존합니다. 위 CC BY-SA 라이선스는 상업적 이용·수정·재배포를 허용합니다. ORACC의 이미지·출판사 PDF·모든 하위 프로젝트에 같은 허가가 있다고 확대하지 않습니다. Marcus의 1968년 우가릿어 논문, Tolman의 1908년 원저작물, Iranica의 마기 설명 등은 언어학·역사 사실 대조용으로만 참고했고 그 본문·표·판면을 전재하지 않았습니다. 원문 HTML·PDF·음원·이미지는 이번 정비로 앱에 편입하지 않았습니다. 이 안내가 기존 DB 전체의 과거 provenance나 앱 코드 전체의 라이선스를 확정하는 것은 아닙니다.
+
 소프트웨어 라이선스
 
 Flutter·Dart·SQLite와 사용한 패키지의 라이선스는 프로그램 정보 화면의 '소프트웨어 라이선스'에서 확인할 수 있습니다. 이 안내는 Reshet 자체의 소스 코드나 데이터 전체에 하나의 공개 라이선스를 부여하는 선언이 아닙니다.
