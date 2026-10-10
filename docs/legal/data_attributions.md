@@ -207,6 +207,40 @@ https://www.modernliteralversion.org/K4-5/RMAC/V-2RAP-APM-ATT.htm
 
 한글 문법 설명은 위 공개 영문 설명을 바탕으로 Reshet 배포용으로 새로 작성했습니다. 반복되는 문법 용어를 정리하고 부가 설명을 간략하게 표현했습니다. 문법 코드와 영문 표는 유지합니다. 과거 스크랩 사이트나 기존 한글 표의 작성자를 복구했다는 뜻은 아닙니다.
 
+라틴어 연구 참고자료
+
+2026년 10월 10일 라틴어 작업 데이터의 원어·발음·한글 음역을 고전 라틴어 교재식 읽기로 정비하면서 다음 자료를 대조했습니다. 배포용 초기 데이터의 갱신 여부는 별도 배포 기록을 따릅니다. 새 IPA와 한글 음역은 아래 자료의 어형·장단 사실과 문법 규칙을 바탕으로 구성했으며, 사전의 정의·설명문·배열이나 현대 웹의 IPA를 그대로 옮긴 자료로 안내하지 않습니다. 유지한 기존값의 과거 수집 출처가 이번 대조로 소급 확인되는 것은 아닙니다.
+
+Lewis & Short, A Latin Dictionary (1879)
+전자 자료: Perseus Digital Library, Tufts University, National Endowment for the Humanities 지원
+고정 원자료 버전: edd73d89ce159e72a285829f849fb32ac250a4ea
+라이선스: Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
+https://github.com/PerseusDL/lexica/blob/edd73d89ce159e72a285829f849fb32ac250a4ea/CTS_XML_TEI/perseus/pdllex/lat/ls/lat.ls.perseus-eng2.xml
+https://creativecommons.org/licenses/by-sa/4.0/
+
+Allen & Greenough's New Latin Grammar, 편집 Meagan Ayer, Dickinson College Commentaries (2014)
+라이선스: Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
+음가·음절 장단·강세·어말 장단 및 접미사 규칙을 참고했습니다.
+https://dcc.dickinson.edu/grammar/latin/vowel-and-consonant-pronunciation
+https://dcc.dickinson.edu/grammar/latin/quantity-syllables
+https://dcc.dickinson.edu/grammar/latin/accents
+https://dcc.dickinson.edu/grammar/latin/quantity-final-syllables
+https://dcc.dickinson.edu/grammar/latin/nouns-adjective-suffixes
+https://dcc.dickinson.edu/about-dcc
+
+Charles Edwin Bennett, The Latin Language (1907), 제3장 §§36–53
+원본 소장·스캔: Robarts Library, University of Toronto / Internet Archive
+퍼블릭 도메인 원저작물의 모음 길이 논증·어휘 목록을 참고했으며 현대 웹 재게시본의 추가 주석은 가져오지 않았습니다.
+https://archive.org/details/latinlanguagehis00bennuoft
+
+FIPAT. Terminologia Anatomica. 2nd ed., 2019; IFAA 승인·채택 2020
+cranium·larynx 두 개별 용어의 철자만 확인했습니다. FIPAT가 퍼블릭 도메인으로 명시한 개별 용어와 CC BY-ND 4.0인 PDF 편집물은 구분합니다. PDF의 편집·배열·설명·번역은 가져오지 않았습니다.
+https://cdn.dal.ca/content/dam/dalhousie/pdf/library/FIPAT/TA2/FIPAT-TA2-Front-Matter.pdf
+https://cdn.dal.ca/content/dam/dalhousie/pdf/library/FIPAT/TA2/FIPAT-TA2-Part-2.pdf
+https://cdn.dal.ca/content/dam/dalhousie/pdf/library/FIPAT/TA2/FIPAT-TA2-Part-3.pdf
+
+확인일: 2026-10-10. 변경·작성 범위: 개별 어형·장단·문법 규칙 대조, 교재식 발음·한국어 음역 제안 구성 및 승인값 반영. 원자료 XML·문법서 본문 자체를 변경하거나 출처 기관이 Reshet의 표기를 승인했다고 표시하지 않습니다. 보호되는 자료를 재사용한 경우 해당 자료와 가공물의 출처·라이선스·변경 안내·동일조건 공유 의무를 보존합니다. 이는 앱 코드나 독립적으로 작성한 설명 전체에 같은 라이선스를 부여하는 선언이 아닙니다.
+
 소프트웨어 라이선스
 
 Flutter·Dart·SQLite와 사용한 패키지의 라이선스는 프로그램 정보 화면의 '소프트웨어 라이선스'에서 확인할 수 있습니다. 이 안내는 Reshet 자체의 소스 코드나 데이터 전체에 하나의 공개 라이선스를 부여하는 선언이 아닙니다.

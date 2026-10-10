@@ -127,6 +127,10 @@ Wiktionary 원문 페이지는 현재 값의 대조 근거로 기록할 수 있�
 
 ## 10. 향후 데이터 변경 절차
 
+2026-10-10 사용자 지시에 따라 외부 자료 선정은 Reshet 자체의 비영리 여부와 별개로 **제3자의 상업 이용·수정·재배포가 가능한가**를 기준으로 한다. 비상업(NC)·변경물 배포 금지(ND) 조건이 붙은 보호 자료는 채택하지 않는다. 개별 용어·사실에 별도로 명시된 퍼블릭 도메인 범위는 제한된 편집물 전체와 구분한다. CC BY-SA 자료는 상업적 수정·재배포를 허용하므로 해당 재사용 자료의 출처·변경 표시·동일조건 의무를 보존하는 조건으로 사용할 수 있다. 이는 코드·DB 전체의 최종 라이선스를 정하는 선언이 아니다.
+
+라틴어 표현 정비에서는 고정 Perseus L&S XML·DCC A&G(CC BY-SA 4.0), Bennett 1907 원저작물 및 FIPAT의 퍼블릭 도메인 개별 용어만 현재 근거로 채택했다. Gaffiot 2016·Vatican 웹 본문·허가 불명확한 현대 추가 주석의 보호되는 본문은 가져오지 않았다. 새 IPA·한글 표기는 어형·장단·문법 규칙을 대조해 구성했으며 기존값의 과거 수집 출처를 소급 확정하지 않는다. 자료별 범위·고정 버전·출처 조건과 실제 적용은 [라틴어 표현 정비 결정](../semantic_decisions/latin_expression_approved_content_slice.md)과 [자료 출처 안내](../legal/data_attributions.md)에 기록한다.
+
 외부 데이터를 새로 입력할 때 다음 항목을 기록한다.
 
 - 원천 이름
@@ -806,7 +810,9 @@ Strong 번호만으로 모든 expression의 IPA를 자동 확정할 수 없다. 
 | E | 검증 가능한 IPA 원천이 없음 | `NULL` 유지 |
 | F | 언어 또는 identity 등 데이터 자체의 선행 검토가 필요함 | 원천 매칭 전에 데이터 판정 |
 
-cohort F에는 `히브리어/아람어` 19 expression의 `F-language`와 tab 문자가 포함된 word ID `L0000_0003\t`의 `F-identity`가 포함된다. 재사용 가능한 다른 선행 예외는 pronunciation 첫 문자에 carriage return이 있는 `G2943_0000`, 철자 없이 legacy slot 2에 pronunciation `G2767`만 있는 `G0185_0000`이다. slash 포함 59건과 괄호 포함 26건은 순수 IPA 저장 규칙 대조를 위한 형식 신호이며, 그 자체만으로 잘못된 값이라고 확정하지 않는다.
+선행 조사에서 cohort F에는 `히브리어/아람어` 19 expression의 `F-language`와 tab 문자가 포함된 word ID `L0000_0003\t`의 `F-identity`가 포함됐다. 재사용 가능한 다른 선행 예외는 pronunciation 첫 문자에 carriage return이 있는 `G2943_0000`, 철자 없이 legacy slot 2에 pronunciation `G2767`만 있는 `G0185_0000`이다. slash 포함 59건과 괄호 포함 26건은 순수 IPA 저장 규칙 대조를 위한 형식 신호이며, 그 자체만으로 잘못된 값이라고 확정하지 않는다.
+
+2026-10-10 후속 사용자 승인으로 작업 DB의 `L0000_0003\t`와 표현·뜻·관계·수정 이력 참조를 `L0000_0003`으로 교정해 해당 identity 예외를 정리했다. seed DB와 기존 seed 발음 보류 manifest는 보존하며 다음 seed 갱신 때 승인값과 별도로 맞춘다. 적용 범위와 전후 검증은 [라틴어 정비 결정](../semantic_decisions/latin_expression_approved_content_slice.md#id-말미-tab--후속-승인으로-정리-완료)을 따른다.
 
 현재 확정할 수 있는 것은 위 분류 기준과 확인된 예외뿐이다. cohort A~F의 실제 배정은 원천 검증 결과에 따라 달라지며, 원천 채택 전에 B·C·E의 최종 건수를 선언하거나 모든 행을 강제로 변환하지 않는다. 결과는 확인 완료, 잠정 분류와 미해결 항목을 구분해 기록한다.
 

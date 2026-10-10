@@ -86,6 +86,8 @@
 
 | H53 클러스터 | 압살롬·살렘·솔로몬과 평안·갚음·제사 어휘군, CORE31 승인·관계35건·H8003 hold | `active` | 높음 | 2026-10-07 | [기록](h53_cluster_approved_content_slice.md) |
 
+| 라틴어 표현 정비 | 라틴어 159단어·166표현 검수, 본문 수정42·metadata 정리165, 본문 판단 유보5·ID 말미 탭1건 정리 | `active` | 항목별 확인·추론·유보 구분 | 2026-10-10 | [기록](latin_expression_approved_content_slice.md) |
+
 ## 열람 및 후속 판단 원칙
 
 1. 새 제안을 만들기 전에 관련 Strong이 이 색인에 있는지 확인한다.
