@@ -131,6 +131,34 @@ Wiktionary 원문 페이지는 현재 값의 대조 근거로 기록할 수 있�
 
 라틴어 표현 정비에서는 고정 Perseus L&S XML·DCC A&G(CC BY-SA 4.0), Bennett 1907 원저작물 및 FIPAT의 퍼블릭 도메인 개별 용어만 현재 근거로 채택했다. Gaffiot 2016·Vatican 웹 본문·허가 불명확한 현대 추가 주석의 보호되는 본문은 가져오지 않았다. 새 IPA·한글 표기는 어형·장단·문법 규칙을 대조해 구성했으며 기존값의 과거 수집 출처를 소급 확정하지 않는다. 자료별 범위·고정 버전·출처 조건과 실제 적용은 [라틴어 표현 정비 결정](../semantic_decisions/latin_expression_approved_content_slice.md)과 [자료 출처 안내](../legal/data_attributions.md)에 기록한다.
 
+2026-10-10 초기 적용에서는 사용자 승인으로 영어·기타 현대 외국어의 음역 정책을 정리했다. 작업 DB의 영어 155개 단어·166개 표현은 이미 음역이 모두 `NULL`이므로 삭제 0건이며 이 상태를 유지한다. 독일어·러시아어·이탈리아어의 4개 표현은 한글 음역을 보존했다. 실제 교정은 `U0000_0002 / 1`, expression 내부 id 7298의 `spelling`을 `zither`에서 `Zither`로 바꾼 1필드다. 이 초기 적용에서는 러시아어 `U0000_0003 / 1`의 `차리/짜리`는 연음화 근사의 검토 대상으로 남겼으며 새 한글값을 확정하지 않았다. 이탈리아어 2건의 발음 공란도 유지했다. 의미·비고·관계·대표 여부·발음 metadata·다른 언어의 기존 표현은 변경하지 않았다. 아래 후속 적용 기록에서 러시아어 음역과 이탈리아어 발음의 유보를 해소한다.
+
+독일어 명사의 대문자 표기는 [Duden의 Zither 항목](https://www.duden.de/rechtschreibung/Zither), 러시아어 어말 연음화의 성격은 [Gramota의 ь 설명](https://gramota.ru/biblioteka/spravochniki/pravila-russkoy-orfografii-i-punktuatsii/bukva-kak-znak-myagkosti-soglasnogo)과 대조했다. 이탈리아어 표기 검토에는 [Treccani의 tìmpano 항목](https://www.treccani.it/vocabolario/timpano/)을 참고했다. 이 자료는 언어적 사실의 비교 검토에 사용했으며 정의·설명문·사전 IPA 데이터나 원자료 파일을 새로 전재하지 않았다. 이번 적용은 기존 철자의 첫 글자 대소문자만 교정하며 기존 데이터 전체의 과거 provenance·배포 허락을 소급 확정하지 않는다.
+
+원본 byte 백업 후 격리 사본과 실제 작업 DB에 같은 단일 트랜잭션을 적용했다. 표현 필드 1개와 기존 normalized 형식의 단어 수정 이력 1개(id 5837), 관련 `sqlite_sequence` 외 차이 0건이었다. 13개 테이블·schema 전후 대조, `integrity_check=ok`, 외래 키 위반 0건을 확인했고 사본·실제 DB의 적용 후 byte 해시는 일치했다. CHANGE_HISTORY는 5,829→5,830행이며 단어·표현·의미·관계 행 수는 동일하다. 작업 DB SHA-256은 `07f7ab79ace2af4c384f12b1a663240a2dff1d7c9b4cbeb6c0467ecdbc8f86a8`에서 `f95871ecdd8f7aee9f102369c954de401ed374e0189ace9dd002b685c814679f`로 바뀌었고 seed DB는 byte 그대로 보존했다. 앱 코드·schema·상설 도구를 추가·변경하지 않았으며 앱 UI·runtime undo는 실행하지 않았다.
+
+조회·교정 SQL의 핵심 형태는 다음과 같다. 영어 조회 매개변수는 `영어`, UPDATE 매개변수는 `('Zither', 7298, 'U0000_0002', 1, 'zither')`다. 조회 결과는 단어 155개·표현 166개·음역 값 0개, UPDATE 결과는 1행이다.
+
+```sql
+SELECT COUNT(DISTINCT w.id), COUNT(e.id), COUNT(e.transliteration)
+FROM WORD_TABLE w JOIN word_expression_set e ON e.word_id = w.id
+WHERE w."언어" = ?;
+UPDATE word_expression_set SET spelling = ?
+WHERE id = ? AND word_id = ? AND seq = ? AND spelling = ?;
+PRAGMA integrity_check;
+PRAGMA foreign_key_check;
+```
+
+승인 정책은 [한국어 표기 정책 6-3절](../semantic_research/korean_lexical_notation_policy.md#6-3-영어기타-현대-외국어의-음역-승인-기준--2026-10-10)을 따른다. Git 제외 백업·승인 계획·사본/실제 적용 receipt·전후 검증은 `data/backups/approved_content_batch/20261010_modern_foreign_expression_review/`에 보관한다. 영어·기타 현대 외국어는 canonical H/G Strong 진행 보고서의 대상이 아니므로 이 정비를 의미·관계 승인이나 semantic hold 변경에 가산하지 않는다.
+
+형제 폴더 `reshet_research_output/semantic_progress`의 JSON·CSV·Markdown을 공식 CLI로 재생성했다. JSON·Markdown의 작업 DB 지문과 snapshot identity는 적용 후 상태와 일치한다. canonical Strong 14,298행 전량과 summary·외부 출처 지문은 동일하고 CSV byte도 동일하다. explicit_approved 198건·hold 5건·unapproved 14,095건·anomaly 113건은 유지했다. 검증 결과는 같은 백업 폴더의 `semantic_progress_validation.json`에 기록한다.
+
+같은 날 후속 사용자 지시에 따라 네 단어의 음역·발음 선택과 공란 보완을 위임받아 적용했다. `U0000_0002`의 치타·기존 IPA는 유지하고 체계를 명시했다. `U0000_0003`의 음역은 짜르로 교환하고 기존 IPA의 체계를 명시했다. `U0000_0005`·`U0000_0006`의 발음은 각각 `ˈtim.pa.ni`·`ˈtim.pa.no`로 채우고 `ipa_phonemic`으로 기록했다. 네 단어 모두 음역·발음 공란이 없으며 근거 부족으로 남긴 항목은 0건이다. 새 출처는 상업적 수정·재배포를 허용하는 CC BY-SA 4.0 Wiktionary 고정 판본 4개다. 독일어·러시아어 기존 IPA의 현재 대조 근거와 이탈리아어 새 발음의 근거를 구분하고, 복수형 IPA는 단수형 IPA와 복수형의 강세·음절 자료를 조합한 가공물로 표시한다. 출처·판본·HTML byte 지문·가공·라이선스 의무는 [현대 외국어 표현 정비 결정](../semantic_decisions/modern_foreign_expression_approved_content_slice.md), [정확한 변경값](../semantic_decisions/modern_foreign_expression_approved_changes.json), [자료 출처 안내](../legal/data_attributions.md)에 보존한다. 원문 HTML·음원·정의문은 저장소나 앱에 편입하지 않았다.
+
+후속 적용은 4개 표현의 7필드와 normalized 수정 이력 4개(id 5838–5841), 관련 `sqlite_sequence`로 한정했다. 13개 테이블·schema 전후 대조에서 예상 밖 차이 0건, `integrity_check=ok`, 외래 키 위반 0건, 격리 사본·실제 적용 후 byte 해시 일치를 확인했다. 의미·비고·관계·식별자·대표 여부·seed는 그대로다. 작업 DB SHA-256은 `f95871ecdd8f7aee9f102369c954de401ed374e0189ace9dd002b685c814679f`에서 `25be68d0887105b1b42413431bf71b8c528deaf810b22751c5db5facd2057c86`로 바뀌었으며, CHANGE_HISTORY는 5,830→5,834행이다. 초기 적용까지 합산하면 표현 4행·8필드와 이력 5개다. 백업·적용 계획·receipt·전후 검증은 Git 제외 폴더 `data/backups/approved_content_batch/20261010_modern_foreign_expression_completion/`에 보관한다.
+
+표준 외부 진행 보고서도 후속 DB 지문으로 공식 CLI를 통해 갱신했다. canonical H/G 행·summary·외부 출처 지문·CSV byte는 그대로이며 JSON의 작업 DB 지문·snapshot identity와 Markdown의 DB 지문만 현재 상태로 바뀌었다. 검증은 후속 백업 폴더의 `semantic_progress_validation.json`을 따른다. 이 표현 정비를 의미·관계 승인이나 semantic hold 변경에 가산하지 않는다. 앱 코드·상설 도구·schema 변경은 없으며 UI·runtime undo 검증은 실행하지 않았다.
+
 외부 데이터를 새로 입력할 때 다음 항목을 기록한다.
 
 - 원천 이름

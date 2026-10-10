@@ -1,0 +1,352 @@
+{
+  "format_version": 1,
+  "kind": "approved_expression_corrections",
+  "use": "승인한 정확한 표현 변경값 기록. 의미·비고·관계용 자동 적용 manifest가 아님.",
+  "date": "2026-10-10",
+  "status": "사용자 위임 승인·작업 DB 적용·검증 완료",
+  "approval_contract": "사용자가 지정한 4개 단어의 적절한 음역·발음 선택, 근거가 있는 공란 보완, DB 수정 및 Git 완료를 명시적으로 위임 승인. 후보가 부족하면 강제 입력하지 않음.",
+  "git_publication": {
+    "approval": "이번 사용자 지시에서 작업 DB 수정과 Git 작업 완료를 명시적으로 승인함",
+    "result_record": "data/backups/approved_content_batch/20261010_modern_foreign_expression_completion/git_closeout.json"
+  },
+  "identity": "word_expression_set (word_id, seq); 내부 id·대표 여부 보존",
+  "english_policy": {
+    "words": 155,
+    "expressions": 166,
+    "non_null_transliterations": 0,
+    "deleted_values": 0,
+    "decision": "영어 음역 NULL 유지. 원어·발음·의미 보존."
+  },
+  "summary": {
+    "words": 4,
+    "expression_sets": 4,
+    "current_changed_fields": 7,
+    "current_history_rows": 4,
+    "combined_changed_fields": 8,
+    "combined_history_rows": 5,
+    "hold_count": 0,
+    "transliteration_blanks": 0,
+    "pronunciation_blanks": 0
+  },
+  "predecessor_application": {
+    "backup_directory": "data/backups/approved_content_batch/20261010_modern_foreign_expression_review",
+    "work_sha256_before": "07f7ab79ace2af4c384f12b1a663240a2dff1d7c9b4cbeb6c0467ecdbc8f86a8",
+    "work_sha256_after": "f95871ecdd8f7aee9f102369c954de401ed374e0189ace9dd002b685c814679f",
+    "change": {
+      "word_id": "U0000_0002",
+      "seq": 1,
+      "expression_id": 7298,
+      "field": "spelling",
+      "before": "zither",
+      "after": "Zither"
+    },
+    "history_id": 5837,
+    "scope": "첫 글자 대문자 교정만. 당시 러시아어 음역·이탈리아어 발음은 유보."
+  },
+  "work_sha256_before": "f95871ecdd8f7aee9f102369c954de401ed374e0189ace9dd002b685c814679f",
+  "work_sha256_after": "25be68d0887105b1b42413431bf71b8c528deaf810b22751c5db5facd2057c86",
+  "seed_sha256": "e44bb989bebdc46a22bba2efac9defd06f3bdfd500577153de85adfa1bc148bb",
+  "words": [
+    {
+      "word_id": "U0000_0002",
+      "language": "독일어",
+      "before_expressions": [
+        {
+          "id": 7298,
+          "word_id": "U0000_0002",
+          "seq": 1,
+          "is_representative": 1,
+          "spelling": "Zither",
+          "transliteration": "치타",
+          "pronunciation": "ˈt͡sɪtɐ",
+          "pronunciation_notation": "unknown",
+          "pronunciation_notation_name": null
+        }
+      ],
+      "after_expressions": [
+        {
+          "id": 7298,
+          "word_id": "U0000_0002",
+          "seq": 1,
+          "is_representative": 1,
+          "spelling": "Zither",
+          "transliteration": "치타",
+          "pronunciation": "ˈt͡sɪtɐ",
+          "pronunciation_notation": "ipa_phonetic",
+          "pronunciation_notation_name": null
+        }
+      ]
+    },
+    {
+      "word_id": "U0000_0003",
+      "language": "러시아어",
+      "before_expressions": [
+        {
+          "id": 7299,
+          "word_id": "U0000_0003",
+          "seq": 1,
+          "is_representative": 1,
+          "spelling": "царь",
+          "transliteration": "차리/짜리",
+          "pronunciation": "t͡sarʲ",
+          "pronunciation_notation": "unknown",
+          "pronunciation_notation_name": null
+        }
+      ],
+      "after_expressions": [
+        {
+          "id": 7299,
+          "word_id": "U0000_0003",
+          "seq": 1,
+          "is_representative": 1,
+          "spelling": "царь",
+          "transliteration": "짜르",
+          "pronunciation": "t͡sarʲ",
+          "pronunciation_notation": "ipa_phonetic",
+          "pronunciation_notation_name": null
+        }
+      ]
+    },
+    {
+      "word_id": "U0000_0005",
+      "language": "이탈리아어",
+      "before_expressions": [
+        {
+          "id": 7301,
+          "word_id": "U0000_0005",
+          "seq": 1,
+          "is_representative": 1,
+          "spelling": "timpani",
+          "transliteration": "팀파니",
+          "pronunciation": null,
+          "pronunciation_notation": null,
+          "pronunciation_notation_name": null
+        }
+      ],
+      "after_expressions": [
+        {
+          "id": 7301,
+          "word_id": "U0000_0005",
+          "seq": 1,
+          "is_representative": 1,
+          "spelling": "timpani",
+          "transliteration": "팀파니",
+          "pronunciation": "ˈtim.pa.ni",
+          "pronunciation_notation": "ipa_phonemic",
+          "pronunciation_notation_name": null
+        }
+      ]
+    },
+    {
+      "word_id": "U0000_0006",
+      "language": "이탈리아어",
+      "before_expressions": [
+        {
+          "id": 7302,
+          "word_id": "U0000_0006",
+          "seq": 1,
+          "is_representative": 1,
+          "spelling": "tìmpano",
+          "transliteration": "팀파노",
+          "pronunciation": null,
+          "pronunciation_notation": null,
+          "pronunciation_notation_name": null
+        }
+      ],
+      "after_expressions": [
+        {
+          "id": 7302,
+          "word_id": "U0000_0006",
+          "seq": 1,
+          "is_representative": 1,
+          "spelling": "tìmpano",
+          "transliteration": "팀파노",
+          "pronunciation": "ˈtim.pa.no",
+          "pronunciation_notation": "ipa_phonemic",
+          "pronunciation_notation_name": null
+        }
+      ]
+    }
+  ],
+  "changes": [
+    {
+      "word_id": "U0000_0002",
+      "seq": 1,
+      "expression_id": 7298,
+      "changes": {
+        "pronunciation_notation": {
+          "before": "unknown",
+          "after": "ipa_phonetic"
+        }
+      },
+      "source_ids": [
+        "de_zither"
+      ],
+      "rationale": "치타는 [ˈt͡sɪtɐ]를 옮기는 기존 한글 근사로 유지. 치터라는 의미란의 관용명에 맞춰 음역을 자동 통일하지 않음. 기존 IPA 본문 유지, 출처의 [] 음성전사 체계만 명시."
+    },
+    {
+      "word_id": "U0000_0003",
+      "seq": 1,
+      "expression_id": 7299,
+      "changes": {
+        "transliteration": {
+          "before": "차리/짜리",
+          "after": "짜르"
+        },
+        "pronunciation_notation": {
+          "before": "unknown",
+          "after": "ipa_phonetic"
+        }
+      },
+      "source_ids": [
+        "en_tsar"
+      ],
+      "rationale": "끝의 rʲ는 연음화된 자음이며 별도의 i 모음이 아님. 비기식 [t͡s]는 짜로 근사하고 차리/짜리를 짜르 하나로 정리. 한글 르에도 보조 모음이 있으므로 실제 한 음절의 발음과 같다고 주장하지 않고 rʲ는 IPA에 보존."
+    },
+    {
+      "word_id": "U0000_0005",
+      "seq": 1,
+      "expression_id": 7301,
+      "changes": {
+        "pronunciation": {
+          "before": null,
+          "after": "ˈtim.pa.ni"
+        },
+        "pronunciation_notation": {
+          "before": null,
+          "after": "ipa_phonemic"
+        }
+      },
+      "source_ids": [
+        "en_timpano",
+        "it_timpani"
+      ],
+      "rationale": "이탈리아어 timpano의 IPA와 복수형의 tìm | pa | ni 강세·음절을 조합한 정규화 전사. 영어 timpani의 /ˈtɪmpəni/를 사용하지 않음. 기존 팀파니 유지."
+    },
+    {
+      "word_id": "U0000_0006",
+      "seq": 1,
+      "expression_id": 7302,
+      "changes": {
+        "pronunciation": {
+          "before": null,
+          "after": "ˈtim.pa.no"
+        },
+        "pronunciation_notation": {
+          "before": null,
+          "after": "ipa_phonemic"
+        }
+      },
+      "source_ids": [
+        "en_timpano"
+      ],
+      "rationale": "고정 Wiktionary 이탈리아어 섹션의 /ˈtim.pa.no/에서 바깥 구분 기호만 생략. 기존 사전식 강세 철자 tìmpano와 한글 팀파노 유지."
+    }
+  ],
+  "sources": [
+    {
+      "source_id": "de_zither",
+      "language_section": "German",
+      "revision": 10670429,
+      "url": "https://de.wiktionary.org/w/index.php?title=Zither&oldid=10670429",
+      "contributors": "Wiktionary 기여자들; 고정 판본의 문서 이력으로 확인",
+      "license": "CC BY-SA 4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "source_html_sha256": "ce515c6d7f879d88db416fcebaf3c3ea193de093adf6909818f1abefc81a47e4",
+      "license_links_in_source": [
+        "https://creativecommons.org/licenses/by-sa/4.0/deed.de"
+      ],
+      "selected_source_facts": {
+        "ipa": "[ˈt͡sɪtɐ]"
+      }
+    },
+    {
+      "source_id": "en_tsar",
+      "language_section": "Russian",
+      "revision": 92935751,
+      "url": "https://en.wiktionary.org/w/index.php?title=%D1%86%D0%B0%D1%80%D1%8C&oldid=92935751",
+      "contributors": "Wiktionary 기여자들; 고정 판본의 문서 이력으로 확인",
+      "license": "CC BY-SA 4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "source_html_sha256": "972133112a5efa22b97efac8030dc77f6d75b21467137148b7b6456c20c2c46d",
+      "license_links_in_source": [
+        "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+      ],
+      "selected_source_facts": {
+        "ipa": "[t͡sarʲ]",
+        "language_scope": "현대 러시아어; 고대 교회 슬라브어 섹션 제외"
+      }
+    },
+    {
+      "source_id": "en_timpano",
+      "language_section": "Italian",
+      "revision": 90623067,
+      "url": "https://en.wiktionary.org/w/index.php?title=timpano&oldid=90623067",
+      "contributors": "Wiktionary 기여자들; 고정 판본의 문서 이력으로 확인",
+      "license": "CC BY-SA 4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "source_html_sha256": "4a0fcf1fdc9180a8c185296165918d122c05734e8e3b55e82b03c35727334d80",
+      "license_links_in_source": [
+        "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+      ],
+      "selected_source_facts": {
+        "ipa": "/ˈtim.pa.no/",
+        "language_scope": "이탈리아어; 영어·에스페란토 섹션 제외"
+      }
+    },
+    {
+      "source_id": "it_timpani",
+      "language_section": "Italian",
+      "revision": 4038010,
+      "url": "https://it.wiktionary.org/w/index.php?title=timpani&oldid=4038010",
+      "contributors": "Wiktionary 기여자들; 고정 판본의 문서 이력으로 확인",
+      "license": "CC BY-SA 4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "source_html_sha256": "d33c60f286c2f56e6e00e77a9e7c295afb758551b2b9398aaba543041c35f3af",
+      "license_links_in_source": [
+        "https://creativecommons.org/licenses/by-sa/4.0/deed.it"
+      ],
+      "selected_source_facts": {
+        "stress_syllabification": "tìm | pa | ni",
+        "form": "timpano의 이탈리아어 복수형",
+        "ipa_directly_supplied": false
+      }
+    }
+  ],
+  "license_scope": "선택한 Wiktionary 발음 자료 및 그 가공물에 CC BY-SA 4.0의 출처·수정 표시·동일조건 공유 요건을 보존. 기존 DB 전체나 앱 코드의 라이선스를 일괄 확정하지 않음.",
+  "source_use_boundary": "원문 HTML·정의문·음원·이미지 미편입. 독일어·러시아어 기존 IPA 대조; 이탈리아어 단수 IPA 입력 및 복수형 IPA 구성. 기존값의 과거 수집 provenance를 소급 확정하지 않음.",
+  "comparison_only_sources": [
+    "https://www.duden.de/rechtschreibung/Zither",
+    "https://www.treccani.it/vocabolario/timpano/"
+  ],
+  "raw_sources_in_repository": false,
+  "validation": {
+    "schema_unchanged": true,
+    "compared_tables": 13,
+    "changed_expression_fields": 7,
+    "new_history_rows": 4,
+    "unexpected_differences": 0,
+    "integrity_check": "ok",
+    "foreign_key_violations": 0,
+    "seed_sha256_unchanged": true,
+    "target_transliteration_nulls": 0,
+    "target_pronunciation_nulls": 0
+  },
+  "history_ids": [
+    5838,
+    5839,
+    5840,
+    5841
+  ],
+  "backup_directory": "data/backups/approved_content_batch/20261010_modern_foreign_expression_completion",
+  "semantic_progress": {
+    "canonical_rows": 14298,
+    "explicit_approved": 198,
+    "hold": 5,
+    "unapproved": 14095,
+    "anomaly": 113,
+    "csv_bytes_unchanged": true,
+    "evidence": "data/backups/approved_content_batch/20261010_modern_foreign_expression_completion/semantic_progress_validation.json"
+  },
+  "ui_and_runtime_undo": "실행하지 않음. 데이터 교정 명령어 검증과 구분."
+}

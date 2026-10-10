@@ -30,11 +30,13 @@ Open Scriptures Hebrew Bible Project, STEP Bible 등의 자료는 연구 중 근
 
 Wiktionary 표기·발음 자료
 
-일부 철자와 발음 표기는 영어판·그리스어판 Wiktionary에서 가져왔습니다. 한국어 의미·비고는 자료를 참고하여 별도로 작성했으며 Wiktionary의 뜻풀이를 일괄 복사한 자료로 안내하지 않습니다.
+일부 철자와 발음 표기는 영어판·그리스어판 Wiktionary에서 가져왔습니다. 아래 현대 외국어 정비에는 독일어판·이탈리아어판도 활용했습니다. 한국어 의미·비고는 자료를 참고하여 별도로 작성했으며 Wiktionary의 뜻풀이를 일괄 복사한 자료로 안내하지 않습니다.
 
 자료 제공자: Wiktionary 기여자
 영어판: https://en.wiktionary.org/
 그리스어판: https://el.wiktionary.org/
+독일어판: https://de.wiktionary.org/
+이탈리아어판: https://it.wiktionary.org/
 텍스트 라이선스: Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
 라이선스: https://creativecommons.org/licenses/by-sa/4.0/
 
@@ -240,6 +242,27 @@ https://cdn.dal.ca/content/dam/dalhousie/pdf/library/FIPAT/TA2/FIPAT-TA2-Part-2.
 https://cdn.dal.ca/content/dam/dalhousie/pdf/library/FIPAT/TA2/FIPAT-TA2-Part-3.pdf
 
 확인일: 2026-10-10. 변경·작성 범위: 개별 어형·장단·문법 규칙 대조, 교재식 발음·한국어 음역 제안 구성 및 승인값 반영. 원자료 XML·문법서 본문 자체를 변경하거나 출처 기관이 Reshet의 표기를 승인했다고 표시하지 않습니다. 보호되는 자료를 재사용한 경우 해당 자료와 가공물의 출처·라이선스·변경 안내·동일조건 공유 의무를 보존합니다. 이는 앱 코드나 독립적으로 작성한 설명 전체에 같은 라이선스를 부여하는 선언이 아닙니다.
+
+2026년 10월 10일 현대 외국어 표현 정비
+
+아래 고정 판본에서 독일어·러시아어 기존 IPA를 대조하고 이탈리아어 발음 공란을 보완했습니다. 기여자 표시는 각 판본의 문서·이력 링크를 통해 제공합니다. 자료 제공자는 Wiktionary 기여자들이며 텍스트 라이선스는 Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)입니다. 기존값의 과거 수집 출처를 소급 확정하는 기록은 아닙니다. 적용 대상은 작업 DB이며 배포용 초기 데이터의 갱신은 별도 배포 기록을 따릅니다.
+
+U0000_0002 / Zither / 독일어 / [ˈt͡sɪtɐ] / 판본 10670429
+https://de.wiktionary.org/w/index.php?title=Zither&oldid=10670429
+
+U0000_0003 / царь / 러시아어 / [t͡sarʲ] / 판본 92935751의 러시아어 절
+https://en.wiktionary.org/w/index.php?title=%D1%86%D0%B0%D1%80%D1%8C&oldid=92935751
+
+U0000_0006 / tìmpano / 이탈리아어 / /ˈtim.pa.no/ / 판본 90623067의 이탈리아어 절
+https://en.wiktionary.org/w/index.php?title=timpano&oldid=90623067
+
+U0000_0005 / timpani / 이탈리아어 복수형·강세·음절 찾기 / 판본 4038010
+https://it.wiktionary.org/w/index.php?title=timpani&oldid=4038010
+
+가공 내용: DB에서는 IPA의 바깥 대괄호·빗금을 생략하고 전사 체계를 별도 metadata에 기록했습니다. timpani의 /ˈtim.pa.ni/는 단수형 /ˈtim.pa.no/와 복수형의 tìm | pa | ni 근거를 조합해 구성한 전사이며 사전에서 직접 제공한 복수형 IPA로 안내하지 않습니다. 영어·에스페란토 발음은 채택하지 않았습니다. 짜르를 포함한 한글 음역 판단은 Reshet가 별도로 작성한 근사입니다. 원문 정의문·설명문·음원·이미지는 가져오지 않았습니다.
+
+라이선스: https://creativecommons.org/licenses/by-sa/4.0/
+이 자료와 보호되는 가공물을 재사용할 때는 출처·라이선스 링크·변경 표시를 보존하고 동일조건 공유 의무를 따릅니다. 이 라이선스는 상업적 이용·수정·재배포를 허용합니다. 앱 코드나 기존 DB 전체의 라이선스를 일괄 확정하는 선언은 아닙니다.
 
 소프트웨어 라이선스
 
