@@ -54727,5 +54727,407 @@
         }
       ]
     }
-  ]
+  ],
+  "held_scope": "2026-10-10 최초 적용 당시의 보류 이력. 최신 상태는 current_held와 follow_up_reviews를 따른다.",
+  "current_held": [
+    {
+      "word_id": "G3753_0000",
+      "seq": 2
+    },
+    {
+      "word_id": "G3753_0000",
+      "seq": 3
+    },
+    {
+      "word_id": "G3753_0000",
+      "seq": 4
+    },
+    {
+      "word_id": "G0000_0114",
+      "seq": 1
+    },
+    {
+      "word_id": "G0000_0208",
+      "seq": 1
+    },
+    {
+      "word_id": "G0000_0337",
+      "seq": 1
+    }
+  ],
+  "follow_up_reviews": [
+    {
+      "date": "2026-10-11",
+      "approval": "스트롱에 이미 있는 자료들은 분명한 근거 없이는 스트롱과 다르게 바꾸지는 않는 것이 좋아. 그밖에 내가 조사해서 입력한 데이터들은 네 제안대로 바꿔도 좋다.",
+      "status": "작업 DB 적용·SQL 검증·표준 진행 보고서 갱신 완료. 사용자가 후속 Git 마무리를 승인했으며 실제 게시 검증 결과는 git_publication.result_record를 따른다.",
+      "write_boundary": "승인된 오프라인 데이터 교정: 단일 SQLite transaction, 기존 normalized history 형식, 앱 Repository·schema 미변경",
+      "db_sha256_before": "780a78d9204a86b229f575c28d9d63a78d4435b102090dd16c605cc359cf6259",
+      "db_sha256_after": "b5a87078fad6438642c620194546f40520493e1a62939f82f978f48e6ec364ab",
+      "seed_sha256": "e44bb989bebdc46a22bba2efac9defd06f3bdfd500577153de85adfa1bc148bb",
+      "sources": [
+        {
+          "id": "strong_greek",
+          "license": "CC0-1.0",
+          "commit": "dd6758b82f46b620804a8ea677d715844679eea1",
+          "sha256": "91474213b208a4e487d35f85c10e5c90737acc69082dad15dec5431406003545",
+          "url": "https://github.com/morphgnt/strongs-dictionary-xml/blob/dd6758b82f46b620804a8ea677d715844679eea1/strongsgreek.xml",
+          "scope": "G2458 표제 악센트 일치. 인물 성별 판단은 하지 않음."
+        },
+        {
+          "id": "perseus_ls",
+          "license": "CC-BY-SA-4.0",
+          "commit": "edd73d89ce159e72a285829f849fb32ac250a4ea",
+          "sha256": "a21c3799f42d33931b463c19a036b0e5c4a6504ccbd81ee55a262421a9e1836c",
+          "url": "https://github.com/PerseusDL/lexica/blob/edd73d89ce159e72a285829f849fb32ac250a4ea/CTS_XML_TEI/perseus/pdllex/lat/ls/lat.ls.perseus-eng2.xml",
+          "entry_ids": [
+            "n27403",
+            "n29033",
+            "n37077",
+            "n37078",
+            "n47288"
+          ],
+          "scope": "개별 철자·모음 길이·문법적 성·어휘 구분의 사실 대조. 정의문·배열은 수입하지 않음."
+        },
+        {
+          "id": "perseus_lsj",
+          "license": "CC-BY-SA-4.0",
+          "commit": "56061ca127f4a2844980baffc5f2b6d1332897b3",
+          "url": "https://github.com/PerseusDL/lexica/tree/56061ca127f4a2844980baffc5f2b6d1332897b3/CTS_XML_TEI/perseus/pdllex/grc/lsj",
+          "scope": "사용자 입력 세 어형의 근거 미확인과 τρώγω의 아오리스트 구분. 미확인을 부재 증명으로 취급하지 않음."
+        }
+      ],
+      "rights_boundary": "상업적 이용·수정·재배포 허용 자료. CC BY-SA의 출처·수정 안내 및 보호되는 재사용 자료·가공물의 동일조건 공유를 보존. 기존 입력값의 과거 출처를 소급 확정하지 않음.",
+      "verification": {
+        "schema_unchanged": true,
+        "tables_compared": 13,
+        "foreign_key_violations": 0,
+        "integrity": "ok",
+        "relations_unchanged": true,
+        "existing_internal_ids_preserved": true,
+        "meaning_id_17076_moved_not_deleted": true,
+        "history_rows_added": 10,
+        "history_group": "1791709503729588",
+        "ui_test": "N/A — UX 흐름·앱 코드 미변경",
+        "runtime_undo": "미실행. 기존 normalized snapshot 형식만 대조"
+      },
+      "progress_verification": {
+        "passed": true,
+        "canonical_rows": 14298,
+        "changed_rows": [
+          {
+            "strong": "G2458",
+            "fields": [
+              "current_expression",
+              "current_expressions",
+              "word_note",
+              "word_note_present",
+              "word_notes"
+            ]
+          }
+        ],
+        "csv_changed_rows": [
+          "G2458"
+        ],
+        "semantic_summary_unchanged": true,
+        "anomalies_unchanged": true,
+        "external_source_fingerprints_unchanged": true,
+        "work_database_sha256_after": "b5a87078fad6438642c620194546f40520493e1a62939f82f978f48e6ec364ab",
+        "artifacts": {
+          "semantic_progress.csv": "a2a0c62eda49dc58ce9a29ead7ea43ea6d49fa24f7e870bbefb384e0700860e4",
+          "semantic_progress.json": "ccafbf2dba9a14eccea49b54e312ecab8688bae5a128c4bd6cd03157bc59f654",
+          "semantic_progress.md": "c4a2caf05c9951c1251149e117c36ed49770a1759117b38316740052bc4979f6"
+        }
+      },
+      "changes": [
+        {
+          "word_id": "G2458_0000",
+          "before": {
+            "core": {
+              "id": "G2458_0000",
+              "언어": "헬라어",
+              "스트롱넘버": "G2458",
+              "비고": null,
+              "graph_expand_mode": "default"
+            },
+            "expressions": [
+              {
+                "id": 3136,
+                "word_id": "G2458_0000",
+                "seq": 1,
+                "is_representative": 1,
+                "spelling": "Ἰουνίας",
+                "transliteration": "이우니아스",
+                "pronunciation": "ee-oo-nee'-as",
+                "pronunciation_notation": "strong_dictionary",
+                "pronunciation_notation_name": null
+              }
+            ],
+            "meanings": [
+              {
+                "id": 6370,
+                "word_id": "G2458_0000",
+                "seq": 1,
+                "meaning": "유니아/이우니아스"
+              }
+            ]
+          },
+          "after": {
+            "core": {
+              "id": "G2458_0000",
+              "언어": "헬라어",
+              "스트롱넘버": "G2458",
+              "비고": "표제는 Strong G2458의 Ἰουνιᾶς를 따른다. 현재 입력의 악센트를 Strong 표제와 맞춘 것이며, 로마서 16:7 인명의 성별이나 여성형 Ἰουνία 해석을 확정하는 교정은 아니다.",
+              "graph_expand_mode": "default"
+            },
+            "expressions": [
+              {
+                "id": 3136,
+                "word_id": "G2458_0000",
+                "seq": 1,
+                "is_representative": 1,
+                "spelling": "Ἰουνιᾶς",
+                "transliteration": "이우니아스",
+                "pronunciation": "ee-oo-nee'-as",
+                "pronunciation_notation": "strong_dictionary",
+                "pronunciation_notation_name": null
+              }
+            ],
+            "meanings": [
+              {
+                "id": 6370,
+                "word_id": "G2458_0000",
+                "seq": 1,
+                "meaning": "유니아/이우니아스"
+              }
+            ]
+          }
+        },
+        {
+          "word_id": "G0000_0114",
+          "before": {
+            "core": {
+              "id": "G0000_0114",
+              "언어": "헬라어",
+              "스트롱넘버": null,
+              "비고": null,
+              "graph_expand_mode": "default"
+            },
+            "expressions": [
+              {
+                "id": 282,
+                "word_id": "G0000_0114",
+                "seq": 1,
+                "is_representative": 1,
+                "spelling": "επαίσχυντος",
+                "transliteration": "에파이스퀸토스",
+                "pronunciation": null,
+                "pronunciation_notation": null,
+                "pronunciation_notation_name": null
+              }
+            ],
+            "meanings": [
+              {
+                "id": 6848,
+                "word_id": "G0000_0114",
+                "seq": 1,
+                "meaning": "부끄러움을 일으키는/수치심을 일으키는"
+              }
+            ]
+          },
+          "after": {
+            "core": {
+              "id": "G0000_0114",
+              "언어": "헬라어",
+              "스트롱넘버": null,
+              "비고": "입력된 επαίσχυντος의 독립된 고대 그리스어 표제와 원전 출처를 현재 확보하지 못했다. 기존 철자·음역·의미는 입력 기록으로 보존하며 발음 공란을 추정으로 채우지 않는다. αἰσχρός(G0150) 등 다른 어휘와의 동일성은 확정하지 않는다.",
+              "graph_expand_mode": "default"
+            },
+            "expressions": [
+              {
+                "id": 282,
+                "word_id": "G0000_0114",
+                "seq": 1,
+                "is_representative": 1,
+                "spelling": "επαίσχυντος",
+                "transliteration": "에파이스퀸토스",
+                "pronunciation": null,
+                "pronunciation_notation": null,
+                "pronunciation_notation_name": null
+              }
+            ],
+            "meanings": [
+              {
+                "id": 6848,
+                "word_id": "G0000_0114",
+                "seq": 1,
+                "meaning": "부끄러움을 일으키는/수치심을 일으키는"
+              }
+            ]
+          }
+        },
+        {
+          "word_id": "G0000_0208",
+          "before": {
+            "core": {
+              "id": "G0000_0208",
+              "언어": "헬라어",
+              "스트롱넘버": null,
+              "비고": null,
+              "graph_expand_mode": "default"
+            },
+            "expressions": [
+              {
+                "id": 376,
+                "word_id": "G0000_0208",
+                "seq": 1,
+                "is_representative": 1,
+                "spelling": "μέθῠστος",
+                "transliteration": null,
+                "pronunciation": null,
+                "pronunciation_notation": null,
+                "pronunciation_notation_name": null
+              }
+            ],
+            "meanings": [
+              {
+                "id": 3554,
+                "word_id": "G0000_0208",
+                "seq": 1,
+                "meaning": "(술)취한"
+              }
+            ]
+          },
+          "after": {
+            "core": {
+              "id": "G0000_0208",
+              "언어": "헬라어",
+              "스트롱넘버": null,
+              "비고": "입력된 μέθῠστος의 독립 표제와 해당 의미의 원전 근거를 현재 확보하지 못했다. μέθυσος(G3183)와의 혼동 가능성은 있으나 같은 단어로 확정하지 않는다. 기존 철자·의미와 발음·음역 공란을 보존한다.",
+              "graph_expand_mode": "default"
+            },
+            "expressions": [
+              {
+                "id": 376,
+                "word_id": "G0000_0208",
+                "seq": 1,
+                "is_representative": 1,
+                "spelling": "μέθῠστος",
+                "transliteration": null,
+                "pronunciation": null,
+                "pronunciation_notation": null,
+                "pronunciation_notation_name": null
+              }
+            ],
+            "meanings": [
+              {
+                "id": 3554,
+                "word_id": "G0000_0208",
+                "seq": 1,
+                "meaning": "(술)취한"
+              }
+            ]
+          }
+        },
+        {
+          "word_id": "G0000_0337",
+          "before": {
+            "core": {
+              "id": "G0000_0337",
+              "언어": "헬라어",
+              "스트롱넘버": null,
+              "비고": null,
+              "graph_expand_mode": "default"
+            },
+            "expressions": [
+              {
+                "id": 505,
+                "word_id": "G0000_0337",
+                "seq": 1,
+                "is_representative": 1,
+                "spelling": "τράγω",
+                "transliteration": "트라고",
+                "pronunciation": null,
+                "pronunciation_notation": null,
+                "pronunciation_notation_name": null
+              }
+            ],
+            "meanings": [
+              {
+                "id": 6983,
+                "word_id": "G0000_0337",
+                "seq": 1,
+                "meaning": "G5176의 도리스식 형태[깨물다/씹다, 먹다]"
+              }
+            ]
+          },
+          "after": {
+            "core": {
+              "id": "G0000_0337",
+              "언어": "헬라어",
+              "스트롱넘버": null,
+              "비고": "입력된 τράγω를 τρώγω(G5176)의 도리스식 현재형이라고 하는 설명을 독립 원자료에서 재확인하지 못했다. LSJ의 아오리스트 ἔτραγον만으로 이 현재형을 확정하지 않는다. 기존 철자·음역·의미는 입력 기록으로 보존하고 발음 공란은 유지한다.",
+              "graph_expand_mode": "default"
+            },
+            "expressions": [
+              {
+                "id": 505,
+                "word_id": "G0000_0337",
+                "seq": 1,
+                "is_representative": 1,
+                "spelling": "τράγω",
+                "transliteration": "트라고",
+                "pronunciation": null,
+                "pronunciation_notation": null,
+                "pronunciation_notation_name": null
+              }
+            ],
+            "meanings": [
+              {
+                "id": 6983,
+                "word_id": "G0000_0337",
+                "seq": 1,
+                "meaning": "G5176의 도리스식 형태[깨물다/씹다, 먹다]"
+              }
+            ]
+          }
+        }
+      ],
+      "current_held_expressions": [
+        {
+          "word_id": "G3753_0000",
+          "seq": 2
+        },
+        {
+          "word_id": "G3753_0000",
+          "seq": 3
+        },
+        {
+          "word_id": "G3753_0000",
+          "seq": 4
+        },
+        {
+          "word_id": "G0000_0114",
+          "seq": 1
+        },
+        {
+          "word_id": "G0000_0208",
+          "seq": 1
+        },
+        {
+          "word_id": "G0000_0337",
+          "seq": 1
+        }
+      ],
+      "git_publication": {
+        "approval": "git 작업까지 완료해.",
+        "integration": "main fast-forward 병합·push 후 실제 원격 ref 검증",
+        "work_branch": "codex/fix-expression-held-review",
+        "expected_remote": "https://github.com/pebble14/reshet_app.git",
+        "cleanup": "이번 작업 브랜치만 정리하고 기존 작업 브랜치 5개는 보존",
+        "result_record": "data/backups/approved_content_batch/20261011_expression_holds_review/git_closeout.json"
+      }
+    }
+  ],
+  "current_db_sha256": "b5a87078fad6438642c620194546f40520493e1a62939f82f978f48e6ec364ab",
+  "current_db_sha256_scope": "2026-10-11 이번 후속 적용 직후 전체 작업 DB byte 지문. 최초 적용 전후 지문은 원래 필드에 보존한다."
 }

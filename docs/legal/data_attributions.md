@@ -297,3 +297,14 @@ https://creativecommons.org/licenses/by-sa/3.0/
 소프트웨어 라이선스
 
 Flutter·Dart·SQLite와 사용한 패키지의 라이선스는 프로그램 정보 화면의 '소프트웨어 라이선스'에서 확인할 수 있습니다. 이 안내는 Reshet 자체의 소스 코드나 데이터 전체에 하나의 공개 라이선스를 부여하는 선언이 아닙니다.
+
+2026-10-11 후속 승인 자료와 변경 안내
+
+G2458의 표제 악센트는 위 CC0 Strong 고정 원자료의 Ἰουνιᾶς와 맞췄습니다. 여성형으로 표제를 교체하거나 인물의 성별을 확정한 것이 아닙니다. 라틴어 Lysias·Syria의 첫 모음 길이와 populus의 백성/나무 어휘 구분은 위 CC BY-SA 4.0 L&S 고정 XML의 개별 사실을 대조했습니다. Rachel·mile의 로마자 안내는 성격과 미확정 사항을 밝힌 Reshet의 교재식 독법이며 출처의 공식 IPA로 표시하지 않습니다. 기존 나무 의미는 사용자 입력 문자열을 보존하여 별도 단어로 옮겼습니다.
+
+Perseus Digital Library의 Liddell–Scott–Jones, A Greek-English Lexicon 전자 자료도 사용자 입력 세 어형의 근거 재검토에 참고했습니다. 고정 버전 56061ca127f4a2844980baffc5f2b6d1332897b3, 라이선스 CC BY-SA 4.0입니다. 표제를 확인하지 못한 것을 해당 어휘가 존재하지 않는다는 증명으로 취급하지 않으며 사전 정의문을 DB에 복사하지 않았습니다.
+https://github.com/PerseusDL/lexica/tree/56061ca127f4a2844980baffc5f2b6d1332897b3/CTS_XML_TEI/perseus/pdllex/grc/lsj
+https://github.com/PerseusDL/lexica/blob/master/license.md
+https://creativecommons.org/licenses/by-sa/4.0/
+
+보호되는 원자료와 가공물을 재사용하는 범위에서는 출처·라이선스·변경 안내와 동일조건 공유 의무를 유지합니다. 과거 입력값의 출처를 이번 대조로 소급 확정하지 않으며 배포용 seed 갱신도 별도입니다. 정확한 승인값·근거는 헬라어·라틴어 표현 정비 결정의 2026-10-11 후속 기록에 있습니다.

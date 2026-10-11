@@ -86,7 +86,8 @@
 
 | H53 클러스터 | 압살롬·살렘·솔로몬과 평안·갚음·제사 어휘군, CORE31 승인·관계35건·H8003 hold | `active` | 높음 | 2026-10-07 | [기록](h53_cluster_approved_content_slice.md) |
 
-| 라틴어 표현 정비 | 라틴어 159단어·166표현 검수, 본문 수정42·metadata 정리165, 본문 판단 유보5·ID 말미 탭1건 정리 | `active` | 항목별 확인·추론·유보 구분 | 2026-10-10 | [기록](latin_expression_approved_content_slice.md) |
+| 헬라어 표현 정비 | 최초 6,106표현 검수와 승인 적용, G2458 Strong 악센트 일치·사용자 어형 미확인 비고, 현재 표현 보류6 | `active` | Strong 표제 선택과 역사적 인명 해석 구분 | 2026-10-11 | [기록](greek_expression_approved_content_slice.md) |
+| 라틴어 표현 정비 | 최초 159단어·166표현 검수 후 유보5 정리, populus 분리로 현재 160단어·167표현, 역사적 독법 일부 미확정 | `active` | 사전 장단·교재식 독법·서로 다른 어휘 구분 | 2026-10-11 | [기록](latin_expression_approved_content_slice.md) |
 
 | 영어·현대 외국어 표현 정비 | 영어 155단어·166표현 음역 NULL 유지, 독일어·러시아어·이탈리아어 4표현 교정·발음 보완 | `active` | 출처 확인·한글 근사·복수형 전사 구성 구분 | 2026-10-10 | [기록](modern_foreign_expression_approved_content_slice.md) |
 | 기타 고대 언어 정비 | 고대 페르시아어·아카드어·우가릿어 전량 3단어의 표현·의미·비고 | `active` | 학술 읽기·재구 읽기·한정기호와 불확실성 구분, 상업 재배포 가능한 원천과 참고용 자료 분리 | 2026-10-10 | [기록](other_ancient_languages_approved_content_slice.md) |
