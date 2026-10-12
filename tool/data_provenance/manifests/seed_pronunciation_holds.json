@@ -1,54 +1,54 @@
 {
   "format": 1,
-  "reason": "2026-10-02 사용자 승인: 첫 테스트 배포에서 출처·발음 체계 미확정 11개 발음만 보류. 작업 원본 보존.",
+  "reason": "2026-10-02 승인한 11개 배포 발음 보류를 2026-10-11 사용자 재확인으로 모두 유지. 대조 기준만 최신 승인 표현값과 라틴어 ID 교정에 맞춤. 작업 원본 보존.",
   "rows": [
     {
       "word_id": "G0000_0008",
       "seq": 1,
       "spelling": "Ἀδραμύττειον",
-      "pronunciation": "adramutteion",
-      "pronunciation_notation": "unknown",
-      "pronunciation_notation_name": null
+      "pronunciation": "Adramýtteion",
+      "pronunciation_notation": "other",
+      "pronunciation_notation_name": "교재식 그리스어 읽기 전사"
     },
     {
       "word_id": "G0000_0009",
       "seq": 1,
       "spelling": "Ἀδρία",
-      "pronunciation": "Adria",
-      "pronunciation_notation": "unknown",
-      "pronunciation_notation_name": null
+      "pronunciation": "Adría",
+      "pronunciation_notation": "other",
+      "pronunciation_notation_name": "교재식 그리스어 읽기 전사"
     },
     {
       "word_id": "G0000_0048",
       "seq": 1,
-      "spelling": "ἀΐ́σσω",
-      "pronunciation": "aː.ís.sɔː",
-      "pronunciation_notation": "unknown",
-      "pronunciation_notation_name": null
+      "spelling": "ἀΐσσω",
+      "pronunciation": "aḯssō",
+      "pronunciation_notation": "other",
+      "pronunciation_notation_name": "교재식 그리스어 읽기 전사"
     },
     {
       "word_id": "G0000_0280",
       "seq": 1,
       "spelling": "πρόσεδρος",
-      "pronunciation": "ˈpɾo.se.ðɾos",
-      "pronunciation_notation": "unknown",
-      "pronunciation_notation_name": null
+      "pronunciation": "prósedros",
+      "pronunciation_notation": "other",
+      "pronunciation_notation_name": "교재식 그리스어 읽기 전사"
     },
     {
       "word_id": "G0000_0389",
       "seq": 2,
       "spelling": "ἀλέκω",
       "pronunciation": "alékō",
-      "pronunciation_notation": "unknown",
-      "pronunciation_notation_name": null
+      "pronunciation_notation": "other",
+      "pronunciation_notation_name": "교재식 그리스어 읽기 전사"
     },
     {
       "word_id": "G0000_0479",
       "seq": 2,
       "spelling": "γνάφος",
       "pronunciation": "gnáphos",
-      "pronunciation_notation": "unknown",
-      "pronunciation_notation_name": null
+      "pronunciation_notation": "other",
+      "pronunciation_notation_name": "교재식 그리스어 읽기 전사"
     },
     {
       "word_id": "H0000_0041",
@@ -59,11 +59,11 @@
       "pronunciation_notation_name": null
     },
     {
-      "word_id": "L0000_0003\t",
+      "word_id": "L0000_0003",
       "seq": 1,
       "spelling": "Adramyttéum",
-      "pronunciation": "ad.raˈmyt.ti.um",
-      "pronunciation_notation": "unknown",
+      "pronunciation": "ad.ra.mytˈteː.um",
+      "pronunciation_notation": "ipa_phonemic",
       "pronunciation_notation_name": null
     },
     {
@@ -71,23 +71,23 @@
       "seq": 1,
       "spelling": "Iūstus",
       "pronunciation": "ˈi̯uːs.tus",
-      "pronunciation_notation": "unknown",
+      "pronunciation_notation": "ipa_phonemic",
       "pronunciation_notation_name": null
     },
     {
       "word_id": "L0000_0142",
       "seq": 1,
       "spelling": "triúmpus",
-      "pronunciation": "triˈum.pʰus",
-      "pronunciation_notation": "unknown",
+      "pronunciation": "triˈum.pus",
+      "pronunciation_notation": "ipa_phonemic",
       "pronunciation_notation_name": null
     },
     {
       "word_id": "L0000_0159",
       "seq": 1,
       "spelling": "IESUS",
-      "pronunciation": "예수스",
-      "pronunciation_notation": "unknown",
+      "pronunciation": "ˈjeː.suːs",
+      "pronunciation_notation": "ipa_phonemic",
       "pronunciation_notation_name": null
     }
   ]

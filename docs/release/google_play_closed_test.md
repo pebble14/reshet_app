@@ -345,3 +345,18 @@ SQL 검증: `PRAGMA integrity_check`는 work/seed 모두 `ok`, `PRAGMA foreign_k
 현재 `adb devices -l`에서 연결 기기 0개다. 이번 새 출시 파일의 실제 휴대폰 설치와 수동 UI 확인은 아직 하지 않았다. 기존 9월 30일 휴대폰 검사는 과거 앱의 결과로 유지한다. 기존 개발용 앱의 서명은 이번 출시 APK와 다를 수 있으므로 삭제하지 않고 연결 후 서명과 백업을 확인하여 업데이트 방법을 정한다. 이번 작업에서 휴대폰 앱·사용자 DB 변경과 Play Console 업로드·제출은 수행하지 않았다.
 
 Git 발행 전 줄바꿈 점검: 두 seed 정책 JSON의 실제 파일이 CRLF였으므로 Git의 LF 정규화와 일치하도록 실제 파일도 LF로 맞췄다. 번역 목록 생성 도구도 LF를 직접 출력하도록 수정했다. 값·승인 대상은 그대로이고 정규화 후 발음 목록 SHA256은 `fb9723e5cbea927cc1f1b67e1856a595d170f377109a92049e84ed101c006879`, 번역 목록은 `b8960dac7303f86163d939e8eeb8cc6d91e989bf5a97f26151a212d24e3e48a8`다. 앞선 승격 기록의 목록 SHA는 당시 CRLF 파일의 역사적 값이다. 새 prepare 보고서 `candidate_17e62176/report.json` SHA256 `8c2f34fd9c88f0d4fc08d9806bbd351e561941fcba171c30cf8e85c4e9d651e2`로 정규화 후 정책을 재검증했다. 기존 seed 대비 전체 차이는 0이며 새 후보와 실제 seed의 바이트 SHA도 같다. DB 재교체나 앱 재빌드는 불필요했다. 옛 보고서는 현재 정책 SHA와 다르므로 재승격하지 않는다.
+
+## 2026-10-11 비공개 테스트 업데이트 준비 — 1.0.0+2
+
+사용자는 최신 작업 DB의 배포 반영과 AAB 생성을 승인했고, Play Console의 최대 업로드 versionCode가 1임을 확인했다. 표시 버전 1.0.0을 유지하고 versionCode와 앱 프로그램 정보를 2로 갱신했다. 기존 11개 발음 보류는 사용자 재확인에 따라 모두 유지한다. 최신 승인 표현값과 라틴어 ID 교정은 보류 목록의 대조 기준에만 반영하며, 배포 후보의 해당 발음·유형·체계명은 계속 NULL이다.
+
+- 작업 DB SHA256 `b5a87078fad6438642c620194546f40520493e1a62939f82f978f48e6ec364ab`와 편집 이력 5,847행을 보존했다. 후보에는 기존 승인 RMAC 변환·11개 발음 보류·이력 제거만 적용했다. 후보 생성의 전체 내용·구조 대조, runtime probe, 무결성 및 외래키 검사를 통과했다.
+- 새 seed SHA256 `a7e0d6a50a3ab6b520c3bf7532b2780cfd6418709d9739a451eb4ce5493fbdb1`. 후보는 `data/backups/seed_release/candidate_4627583b/`, 보고서 SHA256은 `7e3ea266dc3b5310ba043832488198345287461a4c95109a81c1e70560de5339`다. 이전 seed SHA256 `e44bb989bebdc46a22bba2efac9defd06f3bdfd500577153de85adfa1bc148bb`를 같은 폴더의 `previous_seed.db`에 백업했다.
+- AAB: `build/play_release/update_20261011/Reshet-1.0.0+2.aab`, 51,083,882 bytes, SHA256 `4ba59f14ebc80d3d42c83617ef8b4b5a8418433bc0907cfbb451ae11b12777a0`. 기존 빌드 경로에도 같은 파일이 있으며 이전 AAB는 업데이트 기록 폴더의 `previous-app-release.aab`에 보존했다.
+- bundletool 검증과 jarsigner 서명 검증을 통과했다. 업로드 인증서 SHA256은 기존과 같은 `e3de0b3448c11e9e29c79780ac6f73752c184fd2841d37aaba42f03b4a012f72`다. 자체 서명·인증서 체인·타임스탬프 및 JarInputStream manifest 순서 경고는 이전 AAB에서도 관찰된 유형이며 로그에 보존했다.
+- 내장 seed·개인정보처리방침·자료 출처 안내는 현재 파일과 바이트가 같다. 작업 DB·백업·후보·보고서는 포함하지 않았다. manifest의 패키지 `org.reshet.study`, versionCode 2·versionName 1.0.0, minSdk 24·targetSdk 36을 확인했다. 64-bit ELF LOAD alignment 최소 16,384와 bundle 설정 `PAGE_ALIGNMENT_16K`도 확인했다. 실제 16 KB 기기 실행은 미수행이다.
+- 배포 seed와 출처 안내 관련 기존 자동 테스트 19개가 통과했다. 배포 DB의 `PRAGMA integrity_check`는 `ok`, `PRAGMA foreign_key_check`는 0행, `SELECT COUNT(*) FROM CHANGE_HISTORY`는 0이다. `word_id`·`seq`로 보류 대상 11행의 `pronunciation`·`pronunciation_notation`·`pronunciation_notation_name`을 조회해 모두 NULL임을 확인했다. 이는 구조·참조·이력 제거와 보류 유지 검증이며 의미의 정당성을 새로 승인하는 검사는 아니다.
+
+검증 로그와 DB 보류 목록 변경 근거는 Git 제외 `build/play_release/update_20261011/`에 보존한다. 새 APK 생성·휴대폰 설치·수동 UI 확인·Play 업로드·Git 커밋·병합·push는 이번 작업에서 수행하지 않았다. 기존 설치자는 앱 업데이트만으로 DB가 바뀌지 않으며, 새 제공 데이터를 쓰려면 백업과 전체 교체 범위를 확인하고 앱의 `제공 데이터로 전체 교체`를 선택해야 한다.
+
+후속 Git 정리 검증에서는 위 업데이트 변경을 최신 `main`의 H54 승인 기록 위에 보존했다. 이후 H54 연구가 반영된 작업 DB와 10월 11일 배포 seed·AAB를 각각 그대로 유지하며, seed 재생성·교체나 앱 재빌드는 수행하지 않았다. 두 DB의 무결성은 `ok`, 외래키 위반은 0행이며 작업 이력은 work 5,901행·seed 0행이다. 보류 11개 expression의 작업본 원래 값과 seed의 발음·유형·체계명 NULL을 확인했고, AAB 내장 seed·법적 안내도 현재 배포 파일과 일치했다. 배포 관련 자동 테스트 19개가 다시 통과했다. `home_screen.dart` 정적 분석은 기존의 `avoid_print` 정보 4개로 종료 코드 1이며, 해당 네 줄이 이번 변경 전과 같음을 확인했다. 실기기 수동 UI 확인과 Play 업로드는 이 후속 정리에서도 수행하지 않았다. 원본 백업과 검증 결과는 Git 제외 `data/backups/seed_release/update_test_seed_closeout_20261012/`에 보존한다.
