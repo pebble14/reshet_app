@@ -997,3 +997,20 @@ CORE32 중 meaning31·비고28을 적용했다. G4532 살렘·샬렘, G4672/H801
 공식 progress CLI를 명시적 표준 경로 `C:\Users\kkiih\Documents\Workspace\FlutterWorkspace\reshet_research_output\semantic_progress`에 실행해 JSON·CSV·Markdown을 함께 갱신했다. 새 manifest는 git ls-files 자동 발견을 위해 정확한 경로로 stage한 후 생성했다. 전체14,298 중 승인167→198·hold4→5·미승인14,127→14,095·anomaly113 동일이다. JSON/CSV14,298행·동일 상태 집계, CORE31 explicit_approved/H8003 hold를 확인했고 다른 모든 progress row는 동일하다. 의미 승인 비율1.167996%→1.384809%이며 hold를 승인에 합산하지 않는다. README 색인에도 최종 결정 기록을 연결했다.
 
 CORE998토큰 조회·검토 및997건 잠정 분류와 H8003 충돌1건, 공식 frontier48·research_complete=false 및 hub 예외 경계를 구분한다. LXX는 reference-only다. 앱 코드·schema·expression·음역·발음 필드·품사·언어·seed 변경 없음, UI 테스트 N/A(데이터·문서 반영이며 UX 변경 없음)다. work/seed DB는 기존 *.db Git 제외 정책을 유지하며 로컬 work DB 적용을 강제로 Git 추적하지 않는다.
+
+
+### 11.53 H54 클러스터 approved-content work DB slice
+
+`tool/data_provenance/manifests/h54_cluster_approved_content_slice.json`은 format v5 batch `RESHET-EC-H54-CLUSTER-APPROVED-CONTENT-SLICE`다. 사용자는 2026-10-12 최신 meaning·비고·관계와 DB 반영을 승인했다. H3505의 마지막 선택은 ‘이델 사람·예테르 가문(家門) 사람’이며 관용 표기와 Strong의 기반 인명 풀이를 같은 meaning에 둔다. 승인 발췌·정확한 최종 값은 `data/backups/approved_content_batch/h54_approval_20261012/00_approved_content.md`, approval SHA `c828dad2c999a0fbfb6b293d3b7cc236878da79949143eacc729069c660b1976`다. Manifest SHA는 `e953c0392f3a1910c82aef0cd27b4c861b6d8a0440b49390bb6eb9d027bfe6ad`이며 새 파일에만 LF 속성을 추가했다.
+
+Meaning19·비고14·관계 신규18·기존 inferred 교체3, 총54operations를 공식 applicator로 적용했다. G8은 H54와 원천 이름 병기를 맞추고, H3148은 더 / 나음·유익(有益), H3492는 얏딜·얏티르, H3493은 뛰어난 / 매우를 유지한다. H3498의 창49:4 뛰어나다와 H3499의 줄 용례를 비고에 설명하고, H3508은 간엽(肝葉)과 일반 부가물의 용례 부재·해부학적 한계를 구분한다. 전체 exact meaning·비고·관계와 근거는 [H54 결정 기록](../semantic_decisions/h54_cluster_approved_content_slice.md) 및 manifest가 기준이다.
+
+H3491은 욥39:8의 표면형·morphology와 Strong 사전 항목의 어근·품사 경계 충돌 때문에 hold ledger에만 추가했다. 기존 meaning·비고·expression·관계를 유지하며 H3498→H3491을 생성하지 않는다. H3492–H3493과 H3499–H4340의 추가 직접 파생도 생성하지 않는다. 기존 hold5·CORE 밖 독립 의미·승인·원자료는 유지한다.
+
+공식 dry-run·사본 undo 및 live apply 성공. History group `1791810686827865`의 active54행은 word update33·relation create18·relation update3, undone0이다. 공식 snapshot/result/manifest copy는 `C:\Users\kkiih\Documents\Workspace\FlutterWorkspace\reshet_app\data\backups\approved_content_batch\20261012T131125603728Z`, 승인 원본·byte 백업·독립 SQL·test·progress 검증은 `C:\Users\kkiih\Documents\Workspace\FlutterWorkspace\reshet_app\data\backups\approved_content_batch\h54_approval_20261012`에 보존한다. Work SHA `b5a87078fad6438642c620194546f40520493e1a62939f82f978f48e6ec364ab` → `16eca62391a2cc76ecf1a6561fe43791c07ff84dc0be0bb166df410a9af1cf80`, seed SHA `a7e0d6a50a3ab6b520c3bf7532b2780cfd6418709d9739a451eb4ce5493fbdb1` 불변이다.
+
+독립 SQL은 적용 전·후·snapshot 각13테이블의 전체 행과 sqlite_master(type/name/tbl_name/sql), 대상 의미 순서·비고, relation exact metadata·중복, history group을 대조했다. 승인 범위와 history·관련 sequence 증가 외 차이 없음, snapshot은 적용 전 전체 projection과 일치, DDL 동일, work/seed/snapshot integrity ok·FK0·sidecar0이다. 모든 expression·음역·발음·기존 개발 파일·원래 연구 산출물은 그대로다. 기존 applicator 테스트29건 통과, 실제 SQL·결과·해석은 `sql_verification.json`에 보존한다.
+
+공식 CLI로 표준 외부 `C:\Users\kkiih\Documents\Workspace\FlutterWorkspace\reshet_research_output\semantic_progress`의 JSON·CSV·Markdown을 함께 갱신했다. 새 manifest는 git ls-files 발견을 위해 정확한 경로만 index에 등록했다. 전체14,298 중 승인198→217·hold5→6·미승인14,095→14,075·anomaly113 동일이다. JSON/CSV14,298행·동일 상태 집계, 대상19개 explicit_approved/H3491 hold 및 나머지 모든 행 불변을 검증했다. Semantic 승인 비율1.384809%→1.517695%, hold는 승인에 합산하지 않는다. 결정 기록과 README 색인도 갱신했다.
+
+실제 DB는 원래 프로젝트의 work DB에 적용했으며 approval/hold/결정/provenance 기록은 별도 작업 공간 `C:\Users\kkiih\.codex\worktrees\h54-approved-content\reshet_app`의 `codex/h54-approved-content-20261012`에 준비했다. 원래 개발 브랜치의 기존 변경은 보존했다. DB 반영 후 사용자는 관련 6개 파일의 단일 커밋·작업 브랜치 push·main fast-forward 병합·push까지 후속 승인했다. 최종 commit·실제 원격 참조·DB 불변 검증은 같은 백업 폴더의 `git_closeout_verification.json`에 보존한다. CORE327토큰 검토 및325분류·2미해결, 공식 frontier49·research_complete=false와 hub 예외 scope를 구분한다. LXX는 reference-only다. 앱 코드·schema·품사·언어·seed 변경 없음, UI 테스트 N/A다.

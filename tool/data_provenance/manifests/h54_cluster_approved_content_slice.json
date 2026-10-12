@@ -1,0 +1,712 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H54-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-12 H54 클러스터 최신 meaning·비고·관계와 DB 반영 승인; data/backups/approved_content_batch/h54_approval_20261012/00_approved_content.md",
+    "document_sha256": "c828dad2c999a0fbfb6b293d3b7cc236878da79949143eacc729069c660b1976"
+  },
+  "target": {
+    "expected_work_sha256": "b5a87078fad6438642c620194546f40520493e1a62939f82f978f48e6ec364ab",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "G0008_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아비아달/에브-야타르"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아비아달·에브-야타르 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0054_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아비아달/에브-야타르"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아비아달·에브-야타르 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H1956_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "호딜 Hothir(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "호딜·호티르 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3148_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "탁월, 이익, 초과"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "더"
+        },
+        {
+          "seq": 2,
+          "meaning": "나음·유익(有益)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3492_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "얏딜 Jattir(지)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "얏딜·얏티르 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3493_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "탁월한, 비범한, 비상한, 극도의"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "뛰어난"
+        },
+        {
+          "seq": 2,
+          "meaning": "매우"
+        }
+      ]
+    },
+    {
+      "word_id": "H3498_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "남다"
+        },
+        {
+          "seq": 2,
+          "meaning": "남기다"
+        },
+        {
+          "seq": 3,
+          "meaning": "넘치다"
+        },
+        {
+          "seq": 4,
+          "meaning": "탁월하다(卓越-)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "남다·남기다"
+        },
+        {
+          "seq": 2,
+          "meaning": "풍성하게 하다(豐盛하게 하다)"
+        },
+        {
+          "seq": 3,
+          "meaning": "뛰어나다"
+        }
+      ]
+    },
+    {
+      "word_id": "H3499_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "나머지, 여부, 초과, 탁월, 끈, 줄"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "나머지"
+        },
+        {
+          "seq": 2,
+          "meaning": "뛰어남"
+        },
+        {
+          "seq": 3,
+          "meaning": "넘침"
+        },
+        {
+          "seq": 4,
+          "meaning": "줄"
+        }
+      ]
+    },
+    {
+      "word_id": "H3500_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "예델 Jether(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "예델·여델·예테르 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3501_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "이드라 Ithra"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "이드라·이트라 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3502_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "부, 재물"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "재물(財物)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3503_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "이드로 Jethro(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "이드로·이트로 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3504_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "유익, 소득, 뛰어남, 탁월함"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "유익(有益)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3505_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "이델 족속 Ithrites"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "이델 사람·예테르 가문(家門) 사람"
+        }
+      ]
+    },
+    {
+      "word_id": "H3506_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "이드란 Ithran(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "이드란·이트란 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3507_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "이드르암 Ithream(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "이드르암·이트레-암 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3508_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "부가물, 꺼풀"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "간엽(肝葉)"
+        }
+      ]
+    },
+    {
+      "word_id": "H4195_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "이익, 풍부, 뛰어남"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "이익(利益)"
+        },
+        {
+          "seq": 2,
+          "meaning": "뛰어남"
+        }
+      ]
+    },
+    {
+      "word_id": "H4340_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "줄, 끈, 실"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "줄"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "G0008_0000",
+      "before": "아비아달을 의미하는 히브리어 단어 H54 אֶבְיָתָר(에브야타르)의 헬라어 음역,\n의미는 '넘치시는 아버지'",
+      "after": "H54 아비아달의 헬라어 음역이다. ‘에브-야타르’는 히브리어 원천 이름의 분석 표기이며, 헬라어형의 음역은 ‘아비아타르’다. 원천 이름은 H1과 H3498의 축약 합성으로 설명되며, 이름 전체의 어원 풀이는 확정하지 않는다."
+    },
+    {
+      "word_id": "H0054_0000",
+      "before": "의미는 '넘치시는 아버지'",
+      "after": "Strong은 ‘풍성함의 아버지’로 풀이하며, H1 ‘아버지’와 H3498 ‘남다’의 축약 합성으로 분석한다. 이름 전체의 어원 해석에는 이견이 있다."
+    },
+    {
+      "word_id": "H3148_0000",
+      "before": null,
+      "after": "비교·정도에서는 ‘더’, 지나친 정도에서는 ‘지나치게’, 추가나 범위를 넘는 문맥에서는 ‘더욱이·그 밖에·그보다 더’로 옮길 수 있다. 명사적으로는 다른 것보다 나은 점이나 얻는 유익(有益)을 나타낸다. 전 12:9·12는 문장 연결과 범위 해석에 차이가 있다."
+    },
+    {
+      "word_id": "H3492_0000",
+      "before": null,
+      "after": "‘얏딜’은 한국어 성경의 관용 표기이고, ‘얏티르’는 원문 이름의 한국어 표기다. 자음 대응을 드러내는 교재식 음역 ‘얕티르’와 구별한다."
+    },
+    {
+      "word_id": "H3493_0000",
+      "before": null,
+      "after": "‘뛰어난’은 밝음·위엄·지혜·정신의 특성을, ‘매우’는 열기·힘·두려움의 정도를 나타낸다."
+    },
+    {
+      "word_id": "H3498_0000",
+      "before": "'남다'라는 기본의미에서 파생되는 '차고 남다'라는 의미의 '넘치다' 또는 '탁월하다(卓越-)'의 의미로 사용되기도 함",
+      "after": "니팔형은 주로 ‘남다’, 히필형은 ‘남기다’에 쓰이며, 살아남게 하거나 보존하는 뜻도 포함한다. 신 28:11·30:9은 ‘풍성하게 하다(豐盛하게 하다)’, 창 49:4는 ‘뛰어나다’로 쓰인다."
+    },
+    {
+      "word_id": "H3499_0000",
+      "before": null,
+      "after": "‘줄’은 활시위·묶는 줄·장막 줄에 쓰인다. 잠 17:7은 ‘뛰어난 말’과 ‘지나친·거만한 말’로 해석이 갈린다. 욥 4:21의 ‘줄/뛰어남’과 욥 30:11의 본문 이형도 유의한다."
+    },
+    {
+      "word_id": "H3500_0000",
+      "before": null,
+      "after": "여러 동명 인물에게 쓰인다. 출 4:18에서는 모세의 장인 이름으로 H3503 이드로와 같은 인물을 가리키며, 아마사의 아버지는 H3501 이드라로도 불린다."
+    },
+    {
+      "word_id": "H3501_0000",
+      "before": null,
+      "after": "아마사의 아버지 이름. 삼하 17:25에서는 이드라, 대상 2:17에서는 예델(H3500)로 나온다. 민족 표기는 ‘이스라엘’과 ‘이스마엘’로 전승·번역이 갈린다."
+    },
+    {
+      "word_id": "H3504_0000",
+      "before": null,
+      "after": "수고나 재물에서 얻는 이익(利益)뿐 아니라 지혜·빛이 다른 것보다 더 나은 점도 포함한다. 전 5:8(한국어 성경 5:9)은 문장 해석이 갈린다."
+    },
+    {
+      "word_id": "H3505_0000",
+      "before": null,
+      "after": "‘이델 사람’은 한국어 성경의 관용 표기다. ‘예테르 가문(家門) 사람’은 Strong이 H3500 예테르에서 파생된 소속형으로 설명한 데 따른 풀이이다. 대상 2:53에서는 가문 전체를 가리킨다. 어느 예테르를 선조로 가리키는지는 확정하지 않는다."
+    },
+    {
+      "word_id": "H3507_0000",
+      "before": null,
+      "after": "H3499 ‘뛰어남’과 H5971 ‘백성’의 합성 인명이다. Strong은 ‘백성의 뛰어남’으로 풀이한다."
+    },
+    {
+      "word_id": "H3508_0000",
+      "before": null,
+      "after": "성경에서는 제물의 간에서 떼어 내는 부분을 가리킨다. Strong은 간의 엽(葉) 또는 늘어진 부분으로 설명하며, 일반적인 부가물이나 다른 기관의 꺼풀을 뜻하는 용례는 확인되지 않는다. 한국어 성경의 ‘꺼풀·껍질·기름 덩어리’와 정확한 해부학적 범위를 같다고 단정하지 않는다."
+    },
+    {
+      "word_id": "H4340_0000",
+      "before": null,
+      "after": "장막 줄과 활시위에 쓰인다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H1956_0000",
+      "word_id_2": "H3498_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "H3498 히필형에서 형성된 인명.",
+      "source": "RESHET-EC-H54-CLUSTER-H1956-H3498"
+    },
+    {
+      "word_id_1": "H3148_0000",
+      "word_id_2": "H3498_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "active participle of H3498; 독립적인 명사·부사 기능으로 어휘화된 항목이다.",
+      "source": "RESHET-EC-H54-CLUSTER-H3148-H3498"
+    },
+    {
+      "word_id_1": "H3492_0000",
+      "word_id_2": "H3498_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from H3498; 지명 형성 관계이다.",
+      "source": "RESHET-EC-H54-CLUSTER-H3492-H3498"
+    },
+    {
+      "word_id_1": "H3498_0000",
+      "word_id_2": "H3499_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from H3498; 남음·초과·줄 의미를 가진 명사.",
+      "source": "RESHET-EC-H54-CLUSTER-H3498-H3499"
+    },
+    {
+      "word_id_1": "H3498_0000",
+      "word_id_2": "H3504_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from H3498; 유익을 나타내는 파생명사.",
+      "source": "RESHET-EC-H54-CLUSTER-H3498-H3504"
+    },
+    {
+      "word_id_1": "H3498_0000",
+      "word_id_2": "H3506_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from H3498; 인명 형성 관계이다.",
+      "source": "RESHET-EC-H54-CLUSTER-H3498-H3506"
+    },
+    {
+      "word_id_1": "H3498_0000",
+      "word_id_2": "H3508_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "feminine active participle of H3498; 간의 제사 부위 명칭으로 어휘화되었다.",
+      "source": "RESHET-EC-H54-CLUSTER-H3498-H3508"
+    },
+    {
+      "word_id_1": "H3498_0000",
+      "word_id_2": "H4195_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from H3498; 이익·우위를 나타내는 명사.",
+      "source": "RESHET-EC-H54-CLUSTER-H3498-H4195"
+    },
+    {
+      "word_id_1": "H3498_0000",
+      "word_id_2": "H4340_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from H3498; 줄 명칭. H3499와의 compare는 별도 직접 파생으로 바꾸지 않는다.",
+      "source": "RESHET-EC-H54-CLUSTER-H3498-H4340"
+    },
+    {
+      "word_id_1": "H3499_0000",
+      "word_id_2": "H3500_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "the same as H3499; 같은 형태가 인명으로 쓰이는 단어 형성이다. 보통명사와 인명을 동의어로 취급하지 않는다.",
+      "source": "RESHET-EC-H54-CLUSTER-H3499-H3500"
+    },
+    {
+      "word_id_1": "H3499_0000",
+      "word_id_2": "H3502_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "feminine of H3499; 재물을 가리키는 별도 어휘로 형성되었다.",
+      "source": "RESHET-EC-H54-CLUSTER-H3499-H3502"
+    },
+    {
+      "word_id_1": "H3499_0000",
+      "word_id_2": "H3503_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from H3499 with pron. suffix; 인명 형성과 대명사 접미사 설명을 보존한다.",
+      "source": "RESHET-EC-H54-CLUSTER-H3499-H3503"
+    },
+    {
+      "word_id_1": "H3499_0000",
+      "word_id_2": "H3507_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "H3499+H5971 합성. Strong의 excellence of people 풀이에 근거한다.",
+      "source": "RESHET-EC-H54-CLUSTER-H3499-H3507"
+    },
+    {
+      "word_id_1": "H3507_0000",
+      "word_id_2": "H5971_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "H3499+H5971 합성의 백성 구성 요소. H5971의 독립 의미 전체를 승인하는 operation은 아니다.",
+      "source": "RESHET-EC-H54-CLUSTER-H3507-H5971"
+    },
+    {
+      "word_id_1": "H3500_0000",
+      "word_id_2": "H3505_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "patronymically from H3500; 어느 예델의 후손인지 확정하지 않고 이드로 자손과 동일시하지 않는다.",
+      "source": "RESHET-EC-H54-CLUSTER-H3500-H3505"
+    },
+    {
+      "word_id_1": "H3501_0000",
+      "word_id_2": "H3502_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "by variation for H3502; 보통명사 형태에서 인명으로 형성되었다는 Strong 설명을 보존한다. 두 lexical sense의 동일성을 의미하지 않는다.",
+      "source": "RESHET-EC-H54-CLUSTER-H3501-H3502"
+    },
+    {
+      "word_id_1": "H3500_0000",
+      "word_id_2": "H3503_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "출 4:18의 같은 인물을 가리키는 יֶתֶר/יִתְרוֹ에 한정한다. 모든 H3500 동명인을 이드로로 합치지 않는다.",
+      "source": "RESHET-EC-H54-CLUSTER-H3500-H3503"
+    },
+    {
+      "word_id_1": "H3500_0000",
+      "word_id_2": "H3501_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "삼하 17:25와 대상 2:17의 아마사 아버지 이름 이드라/예델에 한정한다. 이스라엘/이스마엘 본문 차이는 해소하지 않는다.",
+      "source": "RESHET-EC-H54-CLUSTER-H3500-H3501"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [
+    {
+      "relation_id": 19,
+      "word_id_1": "G0008_0000",
+      "word_id_2": "H0054_0000",
+      "before": {
+        "category_code": "transliteration",
+        "relation_type": "direct_transliteration",
+        "status_code": "inferred",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "",
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "transliteration",
+        "relation_type": "direct_transliteration",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "H54 인명의 헬라어 음역. Strong의 of Hebrew origin과 막 2:26 이름을 근거로 한다.",
+        "source": "RESHET-EC-H54-CLUSTER-G0008-H0054"
+      }
+    },
+    {
+      "relation_id": 20,
+      "word_id_1": "H0001_0000",
+      "word_id_2": "H0054_0000",
+      "before": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "inferred",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "",
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "H1+H3498의 축약 합성이라는 Strong 설명. 구성 요소 관계를 인정하며 이름 전체의 신학적·문장식 풀이를 확정하지 않는다.",
+        "source": "RESHET-EC-H54-CLUSTER-H0001-H0054"
+      }
+    },
+    {
+      "relation_id": 5375,
+      "word_id_1": "H0054_0000",
+      "word_id_2": "H3498_0000",
+      "before": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "inferred",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "",
+        "source": "WORD_TABLE.관련2"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "H1+H3498의 축약 합성이라는 Strong 설명. 원자료의 lexical 분석이며 독립적인 현대 역사언어학 검증으로 확대하지 않는다.",
+        "source": "RESHET-EC-H54-CLUSTER-H0054-H3498"
+      }
+    }
+  ],
+  "meaning_approvals": []
+}

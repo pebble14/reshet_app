@@ -53,6 +53,17 @@
         "reshet_research_output/H0053_cluster_20261007_abfdfcf4/00_cluster_summary.md"
       ],
       "reopen_condition": "히브리어 표면형·문법과 OSHB lemma 할당 및 H8003/H3824 corpus 집계 경계를 원자료와 사용자 판단으로 정리할 때 재검토한다. 자동 Strong 재태깅이나 의미 병합으로 해소하지 않는다."
+    },
+    {
+      "strong_number": "H3491",
+      "status": "hold",
+      "reason": "욥 39:8의 canonical 표면형·동사 morphology 및 원전분해의 H8446 식별과 Strong H3491의 수동분사·남은 것/이삭줍기 설명 사이에 어근·품사 식별 충돌이 있다. 현행 meaning ‘수색, 조사, 탐색’과 비고·expression·관계를 유지하고 H3498 파생 관계를 확정하지 않는다.",
+      "evidence_refs": [
+        "docs/semantic_decisions/h54_cluster_approved_content_slice.md",
+        "reshet_research_output/H0054_cluster_20261012_b5a87078/H3491_review.md",
+        "reshet_research_output/H0054_cluster_20261012_b5a87078/00_cluster_summary.md"
+      ],
+      "reopen_condition": "OSHB의 Strong 부착·형태 분석과 Strong/BDB 항목 정체성을 본문 단위에서 정리하거나 사용자가 채택 분석을 명시적으로 결정할 때 재검토한다. 자동 Strong 재태깅이나 표제 교정으로 해소하지 않는다."
     }
   ]
 }
