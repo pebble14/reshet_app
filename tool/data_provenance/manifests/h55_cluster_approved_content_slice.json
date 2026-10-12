@@ -1,0 +1,40 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H55-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-13 H55 의미·비고와 DB·문서·Git 완료 승인; data/backups/approved_content_batch/h55_approval_20261013/00_approved_content.md",
+    "document_sha256": "aaa152acaee458d530f7b737911c751d13546b77c07bb34a49b3f0d02cdfde2e"
+  },
+  "target": {
+    "expected_work_sha256": "16eca62391a2cc76ecf1a6561fe43791c07ff84dc0be0bb166df410a9af1cf80",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0055_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "휘감아 올라가게 하다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "휘돌며 올라가다"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0055_0000",
+      "before": null,
+      "after": "이사야 9:18(히브리어 절 번호 9:17)의 히트파엘형으로 한 번만 나타난다. 불타는 수풀이 연기와 함께 휘돌며 올라가는 모습으로 이해되며, 기본 어근의 정확한 뜻은 확정적이지 않다."
+    }
+  ],
+  "relation_creates": [],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}

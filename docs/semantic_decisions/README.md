@@ -88,6 +88,8 @@
 
 | H54 클러스터 | 아비아달·남음·유익 어휘군, CORE19 승인·관계21건·H3491 hold | `active` | 높음 | 2026-10-12 | [기록](h54_cluster_approved_content_slice.md) |
 
+| H55 클러스터 | 휘돌며 올라가다, 단일 용례의 의미·비고와 관계 비생성 | `active` | 높음 | 2026-10-13 | [기록](h55_cluster_approved_content_slice.md) |
+
 | 헬라어 표현 정비 | 최초 6,106표현 검수와 승인 적용, G2458 Strong 악센트 일치·사용자 어형 미확인 비고, 현재 표현 보류6 | `active` | Strong 표제 선택과 역사적 인명 해석 구분 | 2026-10-11 | [기록](greek_expression_approved_content_slice.md) |
 | 라틴어 표현 정비 | 최초 159단어·166표현 검수 후 유보5 정리, populus 분리로 현재 160단어·167표현, 역사적 독법 일부 미확정 | `active` | 사전 장단·교재식 독법·서로 다른 어휘 구분 | 2026-10-11 | [기록](latin_expression_approved_content_slice.md) |
 
