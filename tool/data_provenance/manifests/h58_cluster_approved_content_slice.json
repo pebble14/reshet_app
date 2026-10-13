@@ -1,0 +1,477 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H58-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-13 H58 클러스터 최신 meaning·비고·관계와 문서·DB 반영 승인; data/backups/approved_content_batch/h58_approval_20261013/00_approved_content.md",
+    "document_sha256": "9eeee37e77395edf3decb669c6f27d697627914c6fa2b2c3243bf6b8d14c8617"
+  },
+  "target": {
+    "expected_work_sha256": "bc6347374e03cdfc651422be525d201f1c0b7659006de5ef82316046043ce78b",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0058_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "풀밭, 목초지"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "풀밭, 목초지(牧草地)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0059_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아벨, 초원"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아벨 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0062_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아벨벧마아가 (지)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아벨벧마아가·아벨벳마아가·아벨-베트-마아카 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0063_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아벨싯딤 (지)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아벨싯딤·아벨-하쉿팀 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0064_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아벨 그라밈 (지)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아벨그라밈·아벨-케라밈 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0065_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아벨므홀라 (지)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아벨므홀라·아벨므흘라·아벨-메홀라 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0066_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아벨마임 (지)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아벨마임·아벨-마임 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0067_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아벨미스라임 (지)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아벨미스라임·아벨-미츠라임 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H4259_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "므홀랏 Meholath"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "므훌랏 사람·므흘랏 사람·므홀랏 사람·메홀라 사람"
+        }
+      ]
+    },
+    {
+      "word_id": "G0009_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아빌레네"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아빌레네 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H1038_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "벧마아가 (지)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "벧마아가·베트-마아카 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H7851_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "싯딤 Shittim"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "싯딤·쉿팀 (지)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0058_0000",
+      "before": null,
+      "after": "‘아벨’로 시작하는 지명에서 ‘풀밭’을 뜻하는 구성 요소로 쓰인다. Strong은 ‘풀이 우거지다’라는 미사용 어근에서 나온 말로 설명한다. 일반명사 용례로 거론되는 삼상 6:18은 ‘큰 돌’ 독법과의 논란이 있다."
+    },
+    {
+      "word_id": "H0059_0000",
+      "before": null,
+      "after": "삼하 20:14–18에서는 북부 성읍을 가리키며 아벨벧마아가와 연결된다. 삼상 6:18은 ‘아벨’과 ‘큰 돌’ 독법이 갈려, 별도의 두 번째 장소인지 확실하지 않다."
+    },
+    {
+      "word_id": "H0062_0000",
+      "before": null,
+      "after": "H58(풀밭)·H1004(집)·H4601(마아가)로 이루어진 지명이다. ‘아벨벧마아가’와 ‘아벨벳마아가’는 같은 이름의 한국어 성경 관용 표기이며, ‘아벨-베트-마아카’는 원문 구성에 기초한 분석 표기이다. 왕상 15:20과 대하 16:4의 병행 기사에서는 아벨마임과 대응한다."
+    },
+    {
+      "word_id": "H0063_0000",
+      "before": null,
+      "after": "H58과 H7848(아카시아)의 복수형에 관사가 결합한 이름이다. ‘아벨-하쉿팀’은 관사와 합성 경계를 드러낸 분석 표기이다. 민 33:49의 모압 평지 지명으로, 가나안 진입 문맥의 싯딤과 연결된다."
+    },
+    {
+      "word_id": "H0064_0000",
+      "before": null,
+      "after": "H58과 H3754(포도밭)의 복수형으로 이루어진 이름이다. 삿 11:33에서 암몬과의 전투 범위를 나타낸다. KJV의 ‘포도밭의 평원’은 이 지명을 뜻풀이해 옮긴 표현이다."
+    },
+    {
+      "word_id": "H0065_0000",
+      "before": null,
+      "after": "H58과 H4246(춤)으로 이루어진 이름이다. 성경에는 ‘아벨므홀라’와 ‘아벨므흘라’가 쓰이며, ‘아벨-메홀라’는 구성 경계를 나타내는 분석 표기이다. 왕상 19:16에서는 엘리사의 출신지로 나온다."
+    },
+    {
+      "word_id": "H0066_0000",
+      "before": null,
+      "after": "H58(풀밭)과 H4325(물)로 이루어진 이름이다. 대하 16:4와 왕상 15:20의 병행 기사에 근거하여 아벨벧마아가의 다른 이름으로 이해된다."
+    },
+    {
+      "word_id": "H0067_0000",
+      "before": null,
+      "after": "Strong은 H58과 H4714의 합성으로 ‘이집트의 풀밭’이라고 풀이한다. 창 50:11은 ‘애도(哀悼)’를 뜻하는 אֵבֶל(H60)과의 말놀이로 이름을 설명하며, LXX도 ‘이집트의 애도’로 옮긴다. 지명 자체와 본문의 명명 설명을 구별한다."
+    },
+    {
+      "word_id": "H4259_0000",
+      "before": null,
+      "after": "원문 מְחֹלָתִי는 메홀라 계열의 출신자를 나타내는 소속형이며, Strong은 아벨므홀라(H65)의 주민으로 풀이한다. 원어 형태 자체에는 ‘아벨’이 없다. 한국어 성경의 ‘므훌랏 사람’·‘므흘랏 사람’·‘므홀랏 사람’은 같은 말의 표기 차이다."
+    },
+    {
+      "word_id": "G0009_0000",
+      "before": null,
+      "after": "눅 3:1에서 루사니아가 다스리는 시리아 지역을 가리킨다. Strong의 H58 참조는 compare이므로 확정 차용이나 직접 음역 관계를 뜻하지 않는다."
+    },
+    {
+      "word_id": "H1038_0000",
+      "before": null,
+      "after": "H1004(집)와 H4601(마아가)의 합성 지명이다. 삼하 20:14에서 아벨과 병렬로 나오며, 20:15에서는 ‘벧마아가의 아벨’이라는 이름 구성을 이룬다."
+    },
+    {
+      "word_id": "H7851_0000",
+      "before": null,
+      "after": "‘싯딤’은 성경 관용 지명이고 ‘쉿팀’은 원문 형태에 기초한 근사 표기이다. H7848(아카시아)의 복수형과 같은 형태이다. 민 25:1·수 2:1·3:1·미 6:5는 가나안 진입 문맥이다. 욜 3:18[히브리어 4:18]의 ‘싯딤 골짜기’는 위치와 같은 장소인지가 불확실하며 ‘아카시아 골짜기’로도 풀이된다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0058_0000",
+      "word_id_2": "H0059_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong 원문: from H0058; a meadow;",
+      "source": "RESHET-EC-H58-CLUSTER-H0058-H0059"
+    },
+    {
+      "word_id_1": "H0058_0000",
+      "word_id_2": "H0062_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong 원문: from H0058 and H1004 and H4601; meadow of Beth-Maakah;",
+      "source": "RESHET-EC-H58-CLUSTER-H0058-H0062"
+    },
+    {
+      "word_id_1": "H0058_0000",
+      "word_id_2": "H0063_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong 원문: from H0058 and the plural of H7848, with the article inserted; meadow of the acacias;",
+      "source": "RESHET-EC-H58-CLUSTER-H0058-H0063"
+    },
+    {
+      "word_id_1": "H0058_0000",
+      "word_id_2": "H0064_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong 원문: from H0058 and the plural of H3754; meadow of vineyards;",
+      "source": "RESHET-EC-H58-CLUSTER-H0058-H0064"
+    },
+    {
+      "word_id_1": "H0058_0000",
+      "word_id_2": "H0065_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong 원문: from H0058 and H4246; meadow of dancing;",
+      "source": "RESHET-EC-H58-CLUSTER-H0058-H0065"
+    },
+    {
+      "word_id_1": "H0058_0000",
+      "word_id_2": "H0066_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong 원문: from H0058 and H4325; meadow of water;",
+      "source": "RESHET-EC-H58-CLUSTER-H0058-H0066"
+    },
+    {
+      "word_id_1": "H0058_0000",
+      "word_id_2": "H0067_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong 원문: from H0058 and H4714; meadow of Egypt; 창 50:11의 애도 말놀이는 비고에 별도로 보존한다.",
+      "source": "RESHET-EC-H58-CLUSTER-H0058-H0067"
+    },
+    {
+      "word_id_1": "H0062_0000",
+      "word_id_2": "H1004_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong 원문: from H0058 and H1004 and H4601; meadow of Beth-Maakah;",
+      "source": "RESHET-EC-H58-CLUSTER-H1004-H0062"
+    },
+    {
+      "word_id_1": "H0062_0000",
+      "word_id_2": "H4601_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong 원문: from H0058 and H1004 and H4601; meadow of Beth-Maakah;",
+      "source": "RESHET-EC-H58-CLUSTER-H4601-H0062"
+    },
+    {
+      "word_id_1": "H0063_0000",
+      "word_id_2": "H7848_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong 원문: from H0058 and the plural of H7848, with the article inserted; meadow of the acacias;",
+      "source": "RESHET-EC-H58-CLUSTER-H7848-H0063"
+    },
+    {
+      "word_id_1": "H0064_0000",
+      "word_id_2": "H3754_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong 원문: from H0058 and the plural of H3754; meadow of vineyards;",
+      "source": "RESHET-EC-H58-CLUSTER-H3754-H0064"
+    },
+    {
+      "word_id_1": "H0065_0000",
+      "word_id_2": "H4246_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong 원문: from H0058 and H4246; meadow of dancing;",
+      "source": "RESHET-EC-H58-CLUSTER-H4246-H0065"
+    },
+    {
+      "word_id_1": "H0065_0000",
+      "word_id_2": "H4259_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong 원문: patrial from H0065; H4259 어형에는 아벨이 없으며 출신지를 H65와 연결하는 Strong의 분석이다. NAS 사전은 파생을 불확실로 표시한다.",
+      "source": "RESHET-EC-H58-CLUSTER-H0065-H4259"
+    },
+    {
+      "word_id_1": "H0066_0000",
+      "word_id_2": "H4325_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong 원문: from H0058 and H4325; meadow of water;",
+      "source": "RESHET-EC-H58-CLUSTER-H4325-H0066"
+    },
+    {
+      "word_id_1": "H0067_0000",
+      "word_id_2": "H4714_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong 원문: from H0058 and H4714; meadow of Egypt; 창 50:11의 애도 말놀이는 비고에 별도로 보존한다.",
+      "source": "RESHET-EC-H58-CLUSTER-H4714-H0067"
+    },
+    {
+      "word_id_1": "H1004_0000",
+      "word_id_2": "H1038_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong 원문: from H1004 and H4601; house of Maakah;",
+      "source": "RESHET-EC-H58-CLUSTER-H1004-H1038"
+    },
+    {
+      "word_id_1": "H1038_0000",
+      "word_id_2": "H4601_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong 원문: from H1004 and H4601; house of Maakah;",
+      "source": "RESHET-EC-H58-CLUSTER-H4601-H1038"
+    },
+    {
+      "word_id_1": "H7848_0000",
+      "word_id_2": "H7851_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong 원문: the same as the plural of H7848; acacia trees; 보통명사의 복수형을 지명으로 사용한 관계이며, 요엘 골짜기의 정확한 식별은 미확정이다.",
+      "source": "RESHET-EC-H58-CLUSTER-H7848-H7851"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}
