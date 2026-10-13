@@ -1071,3 +1071,17 @@ CORE25 중 의미 교체20·기존값 그대로 의미 승인5·비고 교체16,
 공식 CLI로 표준 외부 semantic_progress JSON·CSV·Markdown을 갱신했다. CORE25만 unapproved→explicit_approved이며 전체14,298 중 승인235→260·hold6·미승인14,057→14,032·anomaly113이다. 모든 비대상 progress 행은 동일하고 CSV14,298행·공식 CSV/Markdown 렌더 일치를 확인했다. Snapshot identity `efdc5feba7c0ee7a1583c1e113b0a263aa43c43ab64205d3c92303e13de71e07`, 승인 비율1.643587%→1.818436%다.
 
 외부 현재 요약·검토표를 승인 적용 상태로 정리하고 H68의 이전 저울추 값과 coverage를 최신 추 범위로 수정했다. 최초 상세 연구와 자동 대기표는 과거 스냅샷으로 명시하여 보존한다. Full Review81개 및 원본 발견 state는 바이트 불변이고 frontier100·research_complete=false를 유지한다. CORE25·812토큰 검토와 전역 발견 완료는 구분한다. 앱 코드·표현·발음·언어·schema·seed 변경 없으며 UI 테스트·앱 빌드는 N/A다. 문서·DB 반영 완료 뒤 사용자가 커밋·main fast-forward 병합·push·이번 작업 브랜치 정리를 추가 승인했다. 실제 공개 커밋은 Git 이력에서 확인한다.
+
+### 11.58 H73 클러스터 approved-content work DB slice
+
+[h73_cluster_approved_content_slice.json](../../tool/data_provenance/manifests/h73_cluster_approved_content_slice.json)은 format v5 batch `RESHET-EC-H73-CLUSTER-APPROVED-CONTENT-SLICE`다. 사용자는 2026-10-13 착용 위치 재검토 후의 최신 `띠` 의미·비고와 문서·DB·Git·작업 브랜치 정리를 승인했다. DB는 같은 날 적용했고 중단된 문서·Git 마무리는 2026-10-14 재개했다. 승인 원문과 정확한 값은 `data/backups/approved_content_batch/h73_approval_20261013/00_approved_content.md`, approval SHA는 `9fee3767b6d035209185d233e9df2273e29d1dd592b940c6649fb37b08f7f122`다. Manifest SHA는 `280f8562051fb619f9eba2beff14281f047d7c91766c50af4174f5dcf9ed684a`이며 새 manifest에만 `text eol=lf`를 적용했다.
+
+H0073_0000의 meaning seq1을 `띠, 허리띠`에서 `띠`로 교체하고 NULL 비고에 옷 위로 몸통에 두르는 기능, 제사장·관리의 복장, 요세푸스의 가슴 부근 착용 설명을 추가했다. 의미1·비고1의 총2operations이며 관계는 기존0건 유지, 신규 word hold0·기존 hold6 유지다. 최신 결정은 초기 허리띠 추천을 대체한다. 정확한 비고·근거·배제 대안·후대 증언의 한계는 [H73 결정 기록](../semantic_decisions/h73_cluster_approved_content_slice.md)과 README active 색인에 기록했다.
+
+공식 dry-run의 사본 적용·undo와 live apply가 성공했다. History group `1791890340110875`의 active2행은 H73 word update이며 undone0이다. Snapshot·result·manifest 사본은 `data/backups/approved_content_batch/20261013T111858887270Z/`, 승인 원문·실행 로그·독립 SQL·test·progress 검증은 `data/backups/approved_content_batch/h73_approval_20261013/`에 있다. Work SHA는 `69935b6edf5f868d7703d1e7528153f8365fe2a89eb239b534dd936216dfefb6` → `0eca226722a751627f2b3c4e5e91885a7c19fa8871fabfe71ceaf87aced21fb2`, seed SHA는 `a7e0d6a50a3ab6b520c3bf7532b2780cfd6418709d9739a451eb4ce5493fbdb1`로 불변이다. 재개 시에도 적용 후 hash를 확인했고 DB를 재적용하지 않았다.
+
+독립 SQL43조회·148검증으로 전체13테이블·schema·snapshot·비대상 행을 대조했다. 승인된 meaning·비고와 history·관련 sequence 외 변경 없고 표현·음역·발음·언어·관계·기존 history·DDL은 불변이다. Work·seed·snapshot integrity ok·FK0·sidecar0이며 초기 입력과 machine evidence113파일을 보존했다. 조회 SQL·결과·해석은 `sql_verification.json`에 있다. 기존 approved-content applicator Flutter 테스트29건도 통과했다.
+
+공식 CLI로 표준 외부 `C:/Users/kkiih/Documents/Workspace/FlutterWorkspace/reshet_research_output/semantic_progress`의 JSON·CSV·Markdown을 함께 갱신했다. 전체14,298행 중 H73만 unapproved→explicit_approved, 승인260→261·hold6·미승인14,032→14,031·anomaly113이다. JSON/CSV 행 수·공식 CSV/Markdown 렌더·비대상 행 불변·승인값 일치 등11항목을 검증했다. Snapshot identity는 `c638d45450ed185786967956e30c6af6982ad86eb80b8b1b5146651859e4059f`, 승인 비율은1.818436%→1.825430%다.
+
+연구는 CORE1·canonical9토큰/9절 전량 검토, frontier0·discovery/research_complete=true다. 외부 요약은 최신 승인값으로 갱신하고 초기 요약은 로컬 검증 폴더에 과거 제안으로 보존한다. Machine state·Packet·관계·Review는 적용 전 연구 스냅샷으로 유지한다. 로컬 번역본·LXX 참고자료의 provenance·versification·license 한계와 어원 불확실성을 보존했다. DB 파일은 기존 정책대로 Git 미추적 로컬 자산이다. 앱 코드·schema·seed 변경이 없어 UI 테스트·앱 빌드는 N/A다.

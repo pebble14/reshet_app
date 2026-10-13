@@ -1,0 +1,40 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H73-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-13 H73 최신 띠 의미·비고와 문서·DB·Git·작업 브랜치 정리 승인; data/backups/approved_content_batch/h73_approval_20261013/00_approved_content.md",
+    "document_sha256": "9fee3767b6d035209185d233e9df2273e29d1dd592b940c6649fb37b08f7f122"
+  },
+  "target": {
+    "expected_work_sha256": "69935b6edf5f868d7703d1e7528153f8365fe2a89eb239b534dd936216dfefb6",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0073_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "띠, 허리띠"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "띠"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0073_0000",
+      "before": null,
+      "after": "옷 위로 몸통에 둘러매는 띠로, 제사장과 관리의 복장에 쓰인다. 요세푸스는 제사장의 띠를 가슴 부근에 둘러매는 것으로 설명하므로, 착용 위치를 허리로만 한정하지 않는다."
+    }
+  ],
+  "relation_creates": [],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}
