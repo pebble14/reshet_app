@@ -1,0 +1,144 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H56-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-13 H56 클러스터 최신 meaning·비고·관계와 DB·문서·Git·작업 브랜치 정리 승인; data/backups/approved_content_batch/h56_approval_20261013/00_approved_content.md",
+    "document_sha256": "fd6c8373c903e41b193ac6a6a5fee6fb868250477d11b841882724726a5af6fa"
+  },
+  "target": {
+    "expected_work_sha256": "65c25be516f70ff219ed545692f8868cec7fed2dd4212cbf24e439999edf4b63",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0056_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "슬퍼하다, 애도하다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "슬퍼하다, 애도하다(哀悼하다)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0057_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "슬퍼하는, 애도하는"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "슬퍼하는, 애도하는(哀悼하는)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0060_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "슬퍼함, 애도"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "슬퍼함, 애도(哀悼)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0061_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "확실히, 진실로"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "참으로"
+        },
+        {
+          "seq": 2,
+          "meaning": "그러나"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0056_0000",
+      "before": null,
+      "after": "죽음뿐 아니라 재난·상실·죄 때문에 슬퍼하는 데도 쓰이며, 애도 행동을 나타내기도 한다. 사역형에서는 ‘슬퍼하게 하다’로 쓰인다. 땅·초장 등이 주어인 구절은 의인화로 읽을 수 있으나, 일부 사전은 ‘마르다’라는 별도 어근으로 분석한다(사 24:4·7; 욜 1:10; 암 1:2 등). 관련 용례의 어근·의미 분리에는 견해 차이가 있다."
+    },
+    {
+      "word_id": "H0057_0000",
+      "before": null,
+      "after": "사별뿐 아니라 좌절이나 재난으로 슬퍼하는 상태에도 쓰인다. 명사적으로는 ‘슬퍼하는 사람’을 뜻하며, 애 1:4에서는 시온으로 가는 길을 의인화한다."
+    },
+    {
+      "word_id": "H0060_0000",
+      "before": null,
+      "after": "죽음뿐 아니라 재난을 슬퍼하는 데도 쓰인다. 문맥에 따라 애도 기간·상복·초상집과 관련된 표현을 이룬다."
+    },
+    {
+      "word_id": "H0061_0000",
+      "before": null,
+      "after": "창 17:19·왕상 1:43·단 10:21에서는 확언과 앞말을 바로잡거나 전환하는 기능이 겹칠 수 있다. ‘슬퍼하다’ 계열과의 어원 연결은 Strong이 추정으로 제시한다."
+    },
+    {
+      "word_id": "H0179_0000",
+      "before": null,
+      "after": "다윗의 낙타를 맡은 이스마엘 사람(대상 27:30). 이름의 어원은 미확정이며, ‘낙타 모는 사람’이라는 설명도 제시된다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0056_0000",
+      "word_id_2": "H0057_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong은 H56에서 파생된 형용사로 제시한다.",
+      "source": "RESHET-EC-H56-CLUSTER-H0056-H0057"
+    },
+    {
+      "word_id_1": "H0056_0000",
+      "word_id_2": "H0060_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong은 H56에서 파생된 명사로 제시한다.",
+      "source": "RESHET-EC-H56-CLUSTER-H0056-H0060"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": [
+    {
+      "word_id": "H0179_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "오빌 (인)"
+        }
+      ]
+    }
+  ]
+}
