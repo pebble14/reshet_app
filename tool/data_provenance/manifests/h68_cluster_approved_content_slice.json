@@ -1,0 +1,775 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H68-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-13 H68 클러스터 최신 의미·비고·관계와 문서·DB 반영 승인; data/backups/approved_content_batch/h68_approval_20261013/00_approved_content.md",
+    "document_sha256": "49870d84818e02fa75afc6a1fd80c0a3d3f71e35ebf093b1ac8ddf3800ac1607"
+  },
+  "target": {
+    "expected_work_sha256": "f1c4634bb4ce4270b0d9e7128655bc35f304cd9230aef7ae0f65cfbd6ed44275",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0068_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "돌"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "돌"
+        },
+        {
+          "seq": 2,
+          "meaning": "추(錘)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0070_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "원반, 녹로, 걸상"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "물레"
+        },
+        {
+          "seq": 2,
+          "meaning": "분만대(分娩臺)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0072_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "에벤에셀 (지)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "에벤에셀·에벤-하에제르"
+        }
+      ]
+    },
+    {
+      "word_id": "H0549_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아마나"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아마나 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H1124_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "건축하다, 세우다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "짓다"
+        }
+      ]
+    },
+    {
+      "word_id": "H1129_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "세우다, 짓다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "짓다"
+        },
+        {
+          "seq": 2,
+          "meaning": "세우다"
+        }
+      ]
+    },
+    {
+      "word_id": "H1140_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "건물"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "건물(建物)"
+        }
+      ]
+    },
+    {
+      "word_id": "H1141_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "브나야 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "브나야·베나-야·베나-야후 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H1146_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "집, 건물"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "구조물(構造物)"
+        }
+      ]
+    },
+    {
+      "word_id": "H1147_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "집, 건물"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "구조물(構造物)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2995_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "얍느엘 Jabneel"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "얍느엘·야브네-엘 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2996_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "야브네 Jabneh"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "야브네 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2997_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "이브느야 Ibneiah"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "이브느야·이브네-야 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2998_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "이브니야 Ibnijah(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "이브니야·이브니-야 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H4011_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "건물, 구조물, 구조"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "구조물(構造物)"
+        }
+      ]
+    },
+    {
+      "word_id": "H4012_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "므분내 Mebunnai"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "므분내·메분나이 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H4963_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "짚 더미 straw-heap"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "짚 더미"
+        }
+      ]
+    },
+    {
+      "word_id": "H8401_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "짚 straw"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "짚"
+        }
+      ]
+    },
+    {
+      "word_id": "H8402_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "디브니 Tibni"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "디브니·티브니 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H8403_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "구조, 모형, 형상"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "모양"
+        },
+        {
+          "seq": 2,
+          "meaning": "본(本)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0068_0000",
+      "before": null,
+      "after": "자연석·건축석뿐 아니라 보석과 광석, 돌에 빗댄 우박에도 쓰인다. 저울추와 측량용 추를 가리키기도 한다. 사 34:11과 슥 4:10에서는 측량용 추, 슥 5:8에서는 에바의 입구를 덮는 무거운 납덩이를 가리킨다."
+    },
+    {
+      "word_id": "H0070_0000",
+      "before": null,
+      "after": "본문에는 쌍수형 הָאָבְנָיִם으로 나타난다. 렘 18:3은 토기장이의 물레, 출 1:16은 전통적으로 산모를 받치는 해산 자리로 이해한다. 분만대는 이 전통적 기능을 옮긴 말이며 정확한 기구 구조는 미확정이다. Strong의 두 원반 설명을 고고학적으로 입증된 구조로 단정하지 않는다."
+    },
+    {
+      "word_id": "H0071_0000",
+      "before": null,
+      "after": "다메섹의 강 이름. 왕하 5:12의 기록형(ketiv)은 אבנה, 읽기형(qere)은 אֲמָנָה(H0549)다. 개역개정은 아바나, 개역한글과 새번역은 아마나를 사용한다. H0068의 여성형이라는 Strong 어원 설명은 perhaps로 제시되어 확정하지 않는다."
+    },
+    {
+      "word_id": "H0072_0000",
+      "before": null,
+      "after": "H0068(돌)과 정관사 ha-, H5828(도움)이 결합한 이름으로 도움의 돌이라는 뜻이다. 삼상 4:1·5:1에서는 장소 이름, 7:12에서는 사무엘이 세운 기념돌의 이름이다. 앞의 장소와 뒤의 기념돌을 동일한 위치나 동일한 물체로 확정하지 않는다. 에벤에셀은 한국어 성경 관용 표기, 에벤-하에제르는 Strong 표제의 구성을 드러낸 교재식 근사 표기다."
+    },
+    {
+      "word_id": "H0549_0000",
+      "before": "아4:8에 등장.",
+      "after": "아 4:8에서는 산 이름, 왕하 5:12에서는 아바나(H0071)의 읽기형(qere)으로 강 이름이다. 기존 비고의 아 4:8 언급에 왕하 5:12의 읽기형 용례를 보완한다. LXX 아 4:8은 이 부분을 믿음의 시작으로 풀지만 그것을 히브리어 고유명사의 meaning으로 대체하지 않는다. H0548과의 어원 설명은 별도 미확정 사항이다."
+    },
+    {
+      "word_id": "H1129_0000",
+      "before": null,
+      "after": "집·성벽·제단·배 등을 짓거나 다시 짓는 데 쓰이며, 창 2:22에서는 여자를 이루어 만드는 데 사용된다. 집안·왕조·백성·사람을 세우고 회복시키는 비유적 용법도 있다. 창 16:2·30:3의 자녀를 얻다는 집안이 세워진다는 관용 표현이다. 말 3:15의 번성하다도 세워지다는 비유에 속한다. 분사 건축자와 강조용 부정사 참으로를 독립 meaning으로 늘리지 않는다."
+    },
+    {
+      "word_id": "H1141_0000",
+      "before": null,
+      "after": "H1129와 H3050이 결합한 이름이며 Strong은 야가 세웠다는 뜻으로 설명한다. 본문에는 -야와 -야후 형태가 모두 있다. 브나야는 성경 관용 표기, 베나-야와 베나-야후는 원문 구성을 보이는 교재식 근사 표기다. 어두 셰와의 역사적 음가를 한 모음으로 확정한 것은 아니다. 여러 동명 인물을 하나로 합치지 않는다."
+    },
+    {
+      "word_id": "H1146_0000",
+      "before": null,
+      "after": "에스겔 성전 묘사에서 건물과 그 건축 구조를 가리킨다. 겔 40:5에서는 담의 두께와 높이를 재는 문맥이다."
+    },
+    {
+      "word_id": "H2995_0000",
+      "before": null,
+      "after": "H1129와 H0410이 결합한 지명이다. 얍느엘은 한국어 성경 관용 표기, 야브네-엘은 Strong 표제의 구성을 드러낸 교재식 근사 표기다. 수 15:11의 유다 경계와 19:33의 납달리 경계에 나타나며 두 장소를 동일시하지 않는다."
+    },
+    {
+      "word_id": "H2997_0000",
+      "before": null,
+      "after": "H1129와 H3050이 결합한 이름. 대상 9:8에서 여로함의 아들이다. 이브느야는 한국어 성경 관용 표기, 이브네-야는 원문 구성을 드러낸 교재식 근사 표기다. 같은 절의 H2998과 구별한다."
+    },
+    {
+      "word_id": "H2998_0000",
+      "before": null,
+      "after": "H1129와 H3050이 결합한 이름. 대상 9:8에서 르우엘 계보의 조상으로 언급되며, 같은 절의 여로함의 아들 H2997과 구별한다. 이브니야는 관용 표기, 이브니-야는 원문 구성의 교재식 근사 표기다."
+    },
+    {
+      "word_id": "H4011_0000",
+      "before": null,
+      "after": "겔 40:2에서는 높은 산에서 보이는 성읍 같은 건축 구조를 가리킨다. 그 표현만으로 특정 단일 건물이나 실제 성읍 전체의 정확한 범위를 확정하지 않는다."
+    },
+    {
+      "word_id": "H4012_0000",
+      "before": null,
+      "after": "삼하 23:27의 후사 사람이며 다윗의 용사 명단에 나온다. 므분내는 한국어 성경 관용 표기, 메분나이는 표제 מְבֻנַּי를 읽는 교재식 한글 근사다. 다른 명단의 십브개와의 동일 인물 추정은 별도 문제이며 이름 관계를 자동 생성하지 않는다."
+    },
+    {
+      "word_id": "H8401_0000",
+      "before": null,
+      "after": "곡식을 타작한 뒤 남은 줄기·마른 부스러기로서 가축 먹이와 벽돌 재료로 쓰인다. 번역본의 검불·겨·쭉정이는 관련 문맥의 표현 차이이며 각각을 독립 meaning으로 자동 추가하지 않는다. H1129에서 왔다는 Strong 설명에는 probably가 있으므로 확정 관계로 다루지 않는다."
+    },
+    {
+      "word_id": "H8402_0000",
+      "before": null,
+      "after": "왕상 16:21–22에서 기낫의 아들로, 오므리와 왕권을 다투던 사람이다. 디브니는 성경 관용 표기, 티브니는 תִּבְנִי의 교재식 한글 근사다."
+    },
+    {
+      "word_id": "H8403_0000",
+      "before": null,
+      "after": "형태나 닮은 모습을 가리키며, 제작의 기준이 되는 본을 뜻할 때는 문맥에 따라 모형·양식·설계도라고 옮길 수 있다. 건축 어원만으로 독립 meaning 구조물을 추가하지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0068_0000",
+      "word_id_2": "H0069_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "언어별 동계 대응 또는 같은 어원 바탕의 명시적 source 설명. 역사적 차용·파생 방향을 입증하지 않아 무방향으로 제안. Strong 원문: (Aramaic) corresponding to 68",
+      "source": "RESHET-EC-H68-CLUSTER-H0068-H0069"
+    },
+    {
+      "word_id_1": "H0068_0000",
+      "word_id_2": "H0070_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "언어별 동계 대응 또는 같은 어원 바탕의 명시적 source 설명. 역사적 차용·파생 방향을 입증하지 않아 무방향으로 제안. Strong 원문: from the same as 68;",
+      "source": "RESHET-EC-H68-CLUSTER-H0068-H0070"
+    },
+    {
+      "word_id_1": "H0068_0000",
+      "word_id_2": "H0072_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 구성 요소→합성 이름 Strong 원문: from 68 and 5828 with the article inserted; stone of the help;",
+      "source": "RESHET-EC-H68-CLUSTER-H0068-H0072"
+    },
+    {
+      "word_id_1": "H1124_0000",
+      "word_id_2": "H1129_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "언어별 동계 대응 또는 같은 어원 바탕의 명시적 source 설명. 역사적 차용·파생 방향을 입증하지 않아 무방향으로 제안. Strong 원문: (Aramaic) or בְּנָה; (Aramaic), corresponding to 1129;",
+      "source": "RESHET-EC-H68-CLUSTER-H1124-H1129"
+    },
+    {
+      "word_id_1": "H1129_0000",
+      "word_id_2": "H1131_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 어근·기본어→파생 명사/이름. source-reference 방향과 semantic 방향을 구분함. Strong 원문: from 1129; built up;",
+      "source": "RESHET-EC-H68-CLUSTER-H1129-H1131"
+    },
+    {
+      "word_id_1": "H1129_0000",
+      "word_id_2": "H1137_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 어근·기본어→파생 명사/이름. source-reference 방향과 semantic 방향을 구분함. Strong 원문: from 1129; built;",
+      "source": "RESHET-EC-H68-CLUSTER-H1129-H1137"
+    },
+    {
+      "word_id_1": "H1129_0000",
+      "word_id_2": "H1138_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 어근·기본어→파생 명사/이름. source-reference 방향과 semantic 방향을 구분함. Strong 원문: or (fuller) בּוּנִי; from 1129; built;",
+      "source": "RESHET-EC-H68-CLUSTER-H1129-H1138"
+    },
+    {
+      "word_id_1": "H1129_0000",
+      "word_id_2": "H1140_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 어근·기본어→파생 명사/이름. source-reference 방향과 semantic 방향을 구분함. Strong 원문: feminine from 1129;",
+      "source": "RESHET-EC-H68-CLUSTER-H1129-H1140"
+    },
+    {
+      "word_id_1": "H1129_0000",
+      "word_id_2": "H1141_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 구성 요소→합성 이름 Strong 원문: or בּנָיָהוּ; (prolonged) from 1129 and 3050; Jah has built;",
+      "source": "RESHET-EC-H68-CLUSTER-H1129-H1141"
+    },
+    {
+      "word_id_1": "H1129_0000",
+      "word_id_2": "H1146_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 어근·기본어→파생 명사/이름. source-reference 방향과 semantic 방향을 구분함. Strong 원문: from 1129;",
+      "source": "RESHET-EC-H68-CLUSTER-H1129-H1146"
+    },
+    {
+      "word_id_1": "H1129_0000",
+      "word_id_2": "H2995_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 구성 요소→합성 이름 Strong 원문: from 1129 and 410; built of God;",
+      "source": "RESHET-EC-H68-CLUSTER-H1129-H2995"
+    },
+    {
+      "word_id_1": "H1129_0000",
+      "word_id_2": "H2996_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 어근·기본어→파생 명사/이름. source-reference 방향과 semantic 방향을 구분함. Strong 원문: from 1129; a building;",
+      "source": "RESHET-EC-H68-CLUSTER-H1129-H2996"
+    },
+    {
+      "word_id_1": "H1129_0000",
+      "word_id_2": "H2997_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 구성 요소→합성 이름 Strong 원문: from 1129 and 3050; built of Jah;",
+      "source": "RESHET-EC-H68-CLUSTER-H1129-H2997"
+    },
+    {
+      "word_id_1": "H1129_0000",
+      "word_id_2": "H2998_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 구성 요소→합성 이름 Strong 원문: from 1129 and 3050; building of Jah;",
+      "source": "RESHET-EC-H68-CLUSTER-H1129-H2998"
+    },
+    {
+      "word_id_1": "H1129_0000",
+      "word_id_2": "H4011_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 어근·기본어→파생 명사/이름. source-reference 방향과 semantic 방향을 구분함. Strong 원문: from 1129;",
+      "source": "RESHET-EC-H68-CLUSTER-H1129-H4011"
+    },
+    {
+      "word_id_1": "H1129_0000",
+      "word_id_2": "H4012_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 어근·기본어→파생 명사/이름. source-reference 방향과 semantic 방향을 구분함. Strong 원문: from 1129; built up;",
+      "source": "RESHET-EC-H68-CLUSTER-H1129-H4012"
+    },
+    {
+      "word_id_1": "H1129_0000",
+      "word_id_2": "H8403_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 어근·기본어→파생 명사/이름. source-reference 방향과 semantic 방향을 구분함. Strong 원문: from 1129;",
+      "source": "RESHET-EC-H68-CLUSTER-H1129-H8403"
+    },
+    {
+      "word_id_1": "H0071_0000",
+      "word_id_2": "H0549_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "단순 Compare만을 근거로 삼지 않는다. 왕하 5:12의 OSHB 기록형/읽기형을 직접 확인한 제한된 표기 변이 관계다. 산과 강 전체를 동일시하지 않는다. Strong 원문: perhaps feminine of 68; stony; Compare 549.",
+      "source": "RESHET-EC-H68-CLUSTER-H0071-H0549"
+    },
+    {
+      "word_id_1": "H0072_0000",
+      "word_id_2": "H5828_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 구성 요소→합성 이름 Strong 원문: from 68 and 5828 with the article inserted; stone of the help;",
+      "source": "RESHET-EC-H68-CLUSTER-H0072-H5828"
+    },
+    {
+      "word_id_1": "H1141_0000",
+      "word_id_2": "H3050_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 구성 요소→합성 이름 Strong 원문: or בּנָיָהוּ; (prolonged) from 1129 and 3050; Jah has built;",
+      "source": "RESHET-EC-H68-CLUSTER-H1141-H3050"
+    },
+    {
+      "word_id_1": "H1146_0000",
+      "word_id_2": "H1147_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "언어별 동계 대응 또는 같은 어원 바탕의 명시적 source 설명. 역사적 차용·파생 방향을 입증하지 않아 무방향으로 제안. Strong 원문: (Aramaic) corresponding to 1146",
+      "source": "RESHET-EC-H68-CLUSTER-H1146-H1147"
+    },
+    {
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H2995_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 구성 요소→합성 이름 Strong 원문: from 1129 and 410; built of God;",
+      "source": "RESHET-EC-H68-CLUSTER-H0410-H2995"
+    },
+    {
+      "word_id_1": "H2997_0000",
+      "word_id_2": "H3050_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 구성 요소→합성 이름 Strong 원문: from 1129 and 3050; built of Jah;",
+      "source": "RESHET-EC-H68-CLUSTER-H2997-H3050"
+    },
+    {
+      "word_id_1": "H2998_0000",
+      "word_id_2": "H3050_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 구성 요소→합성 이름 Strong 원문: from 1129 and 3050; building of Jah;",
+      "source": "RESHET-EC-H68-CLUSTER-H2998-H3050"
+    },
+    {
+      "word_id_1": "H4963_0000",
+      "word_id_2": "H8401_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 어근·기본어→파생 명사/이름. source-reference 방향과 semantic 방향을 구분함. Strong 원문: denominative from 8401;",
+      "source": "RESHET-EC-H68-CLUSTER-H4963-H8401"
+    },
+    {
+      "word_id_1": "H8401_0000",
+      "word_id_2": "H8402_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 어근·기본어→파생 명사/이름. source-reference 방향과 semantic 방향을 구분함. Strong 원문: from 8401; strawy;",
+      "source": "RESHET-EC-H68-CLUSTER-H8401-H8402"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": [
+    {
+      "word_id": "H0069_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "돌"
+        }
+      ]
+    },
+    {
+      "word_id": "H0071_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "아바나 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H1131_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "빈누이 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H1137_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "바니 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H1138_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "분니 (인)"
+        }
+      ]
+    }
+  ]
+}

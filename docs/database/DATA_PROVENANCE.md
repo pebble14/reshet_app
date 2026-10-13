@@ -1056,3 +1056,18 @@ CORE12의 meaning 교체12·비고 교체12·관계 생성18, 총42operations다
 공식 CLI로 표준 외부 `C:/Users/kkiih/Documents/Workspace/FlutterWorkspace/reshet_research_output/semantic_progress`의 JSON·CSV·Markdown을 함께 갱신했다. 대상12개만 unapproved→explicit_approved, 전체14,298 중 승인223→235·hold6 동일·미승인14,069→14,057·anomaly113 동일이다. JSON/CSV14,298행, 공식 CSV·Markdown 렌더 일치와 모든 비대상 progress 행 불변을34항목으로 검증했다. 승인 비율은1.559659%→1.643587%이며 hold를 승인에 합산하지 않는다. Snapshot identity는 `025276fc167ef010d7bdadcdbdfda3747bcc444ff8ca7dd024809cd625f52c40`다.
 
 연구는 CORE12·전체canonical23건/21절 검토이며 미해결2건을 보존한다. 원본 discovery는86nodes·91edges·frontier69·research_complete=false로 유지하고 H1004 등의 허브 예외와 CORE 직접 관계 전량 검토를 구분한다. UI 테스트·앱 빌드는 N/A다. 이번 승인 범위는 DB·문서 반영이며 commit·merge·push·작업 브랜치 삭제는 수행하지 않았다. DB 파일은 기존 정책대로 Git 미추적 로컬 자산이다.
+
+
+### 11.57 H68 클러스터 approved-content work DB slice
+
+[h68_cluster_approved_content_slice.json](../../tool/data_provenance/manifests/h68_cluster_approved_content_slice.json)은 format v5 batch `RESHET-EC-H68-CLUSTER-APPROVED-CONTENT-SLICE`다. 사용자는 2026-10-13 H68의 최종 `돌` / `추(錘)`와 슥5:8 납덩이 비고 및 나머지 최신 추천안의 문서·DB 적용, 외부 연구 산출물 정비를 승인했다. 승인 원문과 정확한 값은 `data/backups/approved_content_batch/h68_approval_20261013/00_approved_content.md`에 있다. Approval SHA `49870d84818e02fa75afc6a1fd80c0a3d3f71e35ebf093b1ac8ddf3800ac1607`, manifest SHA `da2174430a776655aa4d6ac95357877c8072a41333fd39af1d4233bb8ae53387`이며 working bytes·index·공식 applicator 사본이 일치한다. 새 manifest에만 `text eol=lf`를 적용했다.
+
+CORE25 중 의미 교체20·기존값 그대로 의미 승인5·비고 교체16, 신규 관계26을 반영했다. 실제 write62operations이며 history group `1791883039053166`의 active62행(ID5964–6025)은 word update36·relation create26, undone0이다. 관계ID7826–7851은 derived11·compound10·root_shared4·variant1, 모두 asserted다. 어원 관계4건은 비생성, 기존 relation367과 hold6건은 유지한다. 최종 의미·비고·관계·채택 근거·대안·불확실성은 [H68 결정 기록](../semantic_decisions/h68_cluster_approved_content_slice.md)에 기록했다.
+
+공식 dry-run의 사본 적용·undo와 live apply가 성공했다. Snapshot·result·manifest 사본은 `data/backups/approved_content_batch/20261013T091717814887Z/`, 승인 원문·원본 byte 백업·독립 SQL·실행 로그·테스트·progress 검증은 `data/backups/approved_content_batch/h68_approval_20261013/`에 보존한다. Work SHA `f1c4634bb4ce4270b0d9e7128655bc35f304cd9230aef7ae0f65cfbd6ed44275` → `69935b6edf5f868d7703d1e7528153f8365fe2a89eb239b534dd936216dfefb6`, seed SHA `a7e0d6a50a3ab6b520c3bf7532b2780cfd6418709d9739a451eb4ce5493fbdb1` 불변이다.
+
+독립 검증은 전체13테이블·DDL·snapshot·비대상 행·기존 manifests·machine evidence81개를 대조해 300항목을 통과했다. 승인 범위·history·관련 sequence 외 변경 없으며 work·seed·snapshot·byte 백업 integrity ok·FK0·sidecar0이다. 조회 SQL·결과·해석은 `sql_verification.json`에 있다. 기존 approved-content applicator Flutter 테스트29건도 통과했다.
+
+공식 CLI로 표준 외부 semantic_progress JSON·CSV·Markdown을 갱신했다. CORE25만 unapproved→explicit_approved이며 전체14,298 중 승인235→260·hold6·미승인14,057→14,032·anomaly113이다. 모든 비대상 progress 행은 동일하고 CSV14,298행·공식 CSV/Markdown 렌더 일치를 확인했다. Snapshot identity `efdc5feba7c0ee7a1583c1e113b0a263aa43c43ab64205d3c92303e13de71e07`, 승인 비율1.643587%→1.818436%다.
+
+외부 현재 요약·검토표를 승인 적용 상태로 정리하고 H68의 이전 저울추 값과 coverage를 최신 추 범위로 수정했다. 최초 상세 연구와 자동 대기표는 과거 스냅샷으로 명시하여 보존한다. Full Review81개 및 원본 발견 state는 바이트 불변이고 frontier100·research_complete=false를 유지한다. CORE25·812토큰 검토와 전역 발견 완료는 구분한다. 앱 코드·표현·발음·언어·schema·seed 변경 없으며 UI 테스트·앱 빌드는 N/A다. 문서·DB 반영 완료 뒤 사용자가 커밋·main fast-forward 병합·push·이번 작업 브랜치 정리를 추가 승인했다. 실제 공개 커밋은 Git 이력에서 확인한다.
