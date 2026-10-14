@@ -375,7 +375,11 @@ final class ApprovedContentBatchManifest {
             value['word_id_2'],
             '$path.word_id_2',
           ),
-          before: _parseRelationProjection(value['before'], '$path.before'),
+          before: _parseRelationProjection(
+            value['before'],
+            '$path.before',
+            allowUnclassified: true,
+          ),
           after: _parseRelationProjection(value['after'], '$path.after'),
         ),
       );
@@ -1289,8 +1293,9 @@ List<ApprovedContentMeaningRow> _parseMeaningRows(Object? raw, String path) {
 
 ApprovedContentRelationProjection _parseRelationProjection(
   Object? raw,
-  String path,
-) {
+  String path, {
+  bool allowUnclassified = false,
+}) {
   final value = _requireObject(raw, path);
   _requireExactKeys(
     value,
@@ -1307,14 +1312,12 @@ ApprovedContentRelationProjection _parseRelationProjection(
     },
   );
   return ApprovedContentRelationProjection(
-    categoryCode: _requireNonEmptyString(
-      value['category_code'],
-      '$path.category_code',
-    ),
-    relationType: _requireNonEmptyString(
-      value['relation_type'],
-      '$path.relation_type',
-    ),
+    categoryCode: allowUnclassified && value['category_code'] == null
+        ? null
+        : _requireNonEmptyString(value['category_code'], '$path.category_code'),
+    relationType: allowUnclassified && value['relation_type'] == null
+        ? null
+        : _requireNonEmptyString(value['relation_type'], '$path.relation_type'),
     statusCode: _requireNonEmptyString(
       value['status_code'],
       '$path.status_code',
@@ -1498,13 +1501,19 @@ void _validateManifestRelationProjection(
   ApprovedContentRelationProjection projection,
   Set<String> supportedDirections,
 ) {
-  final codes = <String, String>{
+  final codes = <String, String?>{
     'category_code': projection.categoryCode,
     'relation_type': projection.relationType,
     'status_code': projection.statusCode,
   };
   for (final entry in codes.entries) {
-    if (entry.value.trim() != entry.value) {
+    final value = entry.value;
+    if (value == null &&
+        projectionName == 'before' &&
+        (entry.key == 'category_code' || entry.key == 'relation_type')) {
+      continue;
+    }
+    if (value == null || value.isEmpty || value.trim() != value) {
       throw ApprovedContentValidationException(
         'relation $relationId $projectionName ${entry.key}는 '
         'trim 없는 canonical 값이어야 합니다.',

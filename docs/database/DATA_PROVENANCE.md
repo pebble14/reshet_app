@@ -1085,3 +1085,19 @@ H0073_0000의 meaning seq1을 `띠, 허리띠`에서 `띠`로 교체하고 NULL 
 공식 CLI로 표준 외부 `C:/Users/kkiih/Documents/Workspace/FlutterWorkspace/reshet_research_output/semantic_progress`의 JSON·CSV·Markdown을 함께 갱신했다. 전체14,298행 중 H73만 unapproved→explicit_approved, 승인260→261·hold6·미승인14,032→14,031·anomaly113이다. JSON/CSV 행 수·공식 CSV/Markdown 렌더·비대상 행 불변·승인값 일치 등11항목을 검증했다. Snapshot identity는 `c638d45450ed185786967956e30c6af6982ad86eb80b8b1b5146651859e4059f`, 승인 비율은1.818436%→1.825430%다.
 
 연구는 CORE1·canonical9토큰/9절 전량 검토, frontier0·discovery/research_complete=true다. 외부 요약은 최신 승인값으로 갱신하고 초기 요약은 로컬 검증 폴더에 과거 제안으로 보존한다. Machine state·Packet·관계·Review는 적용 전 연구 스냅샷으로 유지한다. 로컬 번역본·LXX 참고자료의 provenance·versification·license 한계와 어원 불확실성을 보존했다. DB 파일은 기존 정책대로 Git 미추적 로컬 자산이다. 앱 코드·schema·seed 변경이 없어 UI 테스트·앱 빌드는 N/A다.
+
+### 11.59 H74 클러스터 approved-content work DB slice
+
+[h74_cluster_approved_content_slice.json](../../tool/data_provenance/manifests/h74_cluster_approved_content_slice.json)은 format v5 batch `RESHET-EC-H74-CLUSTER-APPROVED-CONTENT-SLICE`다. 최신 의미·비고·관계는 2026-10-14 승인되었고, 기존 NULL 관계 적용 도구의 최소 보완과 실행 보류 해제는 2026-10-15 승인되었다. 최종 결정·근거·대안·불확실성은 [H74 결정 기록](../semantic_decisions/h74_cluster_approved_content_slice.md)에 있다. Meaning 교체10·기존값 유지 승인1·비고 교체11·관계 신규6·기존 교체2를 반영했다. 기존 relation3993과 hold6건은 유지한다.
+
+재개 승인 문서는 `data/backups/approved_content_batch/h74_approval_20261014/02_resumed_approval_20261015.md`, approval SHA는 `cc432b613bfd8458a1adedf23ca055aac5087425d8b0e1cbfc8cf6283a167517`, manifest SHA는 `fe570ae8321b94aeedbe3906b3b1980b68182b4d23d55e9ee82b9b83dd9db7df`다. 새 manifest에만 `text eol=lf`를 적용했다. 공식 snapshot·result·manifest 사본은 `data/backups/approved_content_batch/20261014T230522949321Z/`에, 원승인·보류·재개 기록과 독립 검증은 `data/backups/approved_content_batch/h74_approval_20261014/`에 있다. Work SHA는 `0eca226722a751627f2b3c4e5e91885a7c19fa8871fabfe71ceaf87aced21fb2` → `2bf598118f3023b5179116fdfd3cdb1a0d0513283e23834e70133c0598579fa5`, seed SHA `a7e0d6a50a3ab6b520c3bf7532b2780cfd6418709d9739a451eb4ce5493fbdb1`는 불변이다.
+
+공식 dry-run에서 29건의 사본 적용과 실제 undo 1회 복원이 성공했고, live apply도 성공했다. History group `1792019124584167`의 active29행(ID6028–6056)은 word update21·relation create6·relation update2, undone0이다. 신규 관계 ID7852–7857과 기존 ID3994·6692의 최종값을 확인했다.
+
+독립 SQL54조회·175검증으로 전체13테이블·DDL·적용 전 byte 백업·공식 snapshot을 비교했다. 승인 meaning·비고·관계와 해당 history·sequence 외 차이가 없다. Work·seed·snapshot·적용 전 백업 integrity ok·FK0·sidecar0, seed SHA 불변이며 기존 승인·원천·raw evidence160파일도 불변이다. 조회 목적·SQL·결과·해석은 로컬 `sql_verification.json`에 있다.
+
+공식 progress JSON·CSV·Markdown을 함께 생성하고28항목을 검증했다. 전체14,298행 중 CORE11만 바뀌어 승인261→272·hold6·미승인14,031→14,020·anomaly113이다. 비대상 행 불변과 공식 CSV/Markdown 렌더 일치를 확인했다. Snapshot identity는 `71035b533e26e433b3ae0da452a5a5f3944d7de498e64a8d2458c5ac1c3a54e1`다.
+
+최소 보완한 applicator 코드3파일과 관련 테스트의 정적 분석은 오류0이며 Flutter 테스트31건이 통과했다. 기존 관계의 before category_code/relation_type에만 명시적 NULL을 허용하고 새 값·신규 관계 검증은 유지한다. 잘못된 before, NULL after 거부와 NULL 원본의 undo 복원을 검증했다. UI·schema·의존성 변경이 없으므로 사용자 UI 테스트와 전체 앱 빌드는 N/A다.
+
+연구는 CORE11·222토큰/165절 전량 검토이며 잠21:4 미해결·CONTEXT2·HUB-EXCLUDED174·원본 frontier45·전역 closure 미선언을 유지한다. Raw Packet·관계·Review33파일과 machine state/queue는 역사적 연구 스냅샷으로 보존하고 human assessment·coverage·요약·실행 상태만 최신 적용 결과로 갱신했다. 코드 보완 계약은 [applicator 문서](APPROVED_CONTENT_BATCH_APPLICATOR.md)에 있다. 스키마·표현·발음·언어·seed 변경은 없으며 DB는 Git 미추적 로컬 자산이다. DB·문서 반영 완료 뒤 사용자가 커밋·main fast-forward 병합·push를 추가 승인했다. 실제 공개 커밋은 Git 이력에서 확인하며 작업 브랜치 삭제는 이번 승인에 포함하지 않는다.

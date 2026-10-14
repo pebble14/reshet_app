@@ -195,7 +195,7 @@ v4 relation replacement operation은 다음 형식이다.
 
 - v4 relation-only manifest도 허용한다. `meaning_replacements`, `word_note_replacements`, `relation_creates`, `supersedes`가 모두 빈 배열이어도 `relation_replacements`에 operation이 있으면 유효하다.
 - identity는 `relation_id`, `word_id_1`, `word_id_2`이며 교체할 수 없다. pair는 canonical 순서로 명시하고 실제 ID의 pair와 exact 일치해야 한다.
-- `before`와 `after`는 `category_code`, `relation_type`, `status_code`, `direction_code`, `description`, `relation_group_id`, `note`, `source`만 갖는 exact mutable projection이다. category·type·status·direction·source는 non-empty 문자열이고 `description`, `relation_group_id`, `note`는 JSON `null`을 명시할 수 있다.
+- `before`와 `after`는 `category_code`, `relation_type`, `status_code`, `direction_code`, `description`, `relation_group_id`, `note`, `source`만 갖는 exact mutable projection이다. 기존 미분류 관계를 표현하기 위해 `before.category_code`와 `before.relation_type`에만 명시적 JSON `null`을 허용한다. 키 생략이나 빈 문자열은 허용하지 않는다. `after`의 category·type과 양쪽 status·direction·source는 non-empty 문자열이고 `description`, `relation_group_id`, `note`는 JSON `null`을 명시할 수 있다. 신규 관계의 필수 코드 검증은 유지한다.
 - 실제 row가 없거나 mutable `before`가 DB와 다르거나 `before`와 `after`가 같은 no-op이면 전체 batch를 거부한다. 입력 문자열과 pair를 trim·변환·재정렬해 보정하지 않는다.
 - `after`의 category·type·status lookup과 type→category 일치를 검증한다. target pair/type/direction signature가 다른 기존 relation과 충돌하면 거부한다.
 - 동일 `relation_id`, 동일 unordered replacement pair, create와 replacement 양쪽에 같은 unordered pair가 있는 manifest를 거부한다.

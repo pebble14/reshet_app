@@ -5026,13 +5026,19 @@ class WordRepository {
     ApprovedContentRelationProjection projection,
     Set<String> directionCodes,
   ) {
-    final codes = <String, String>{
+    final codes = <String, String?>{
       'category_code': projection.categoryCode,
       'relation_type': projection.relationType,
       'status_code': projection.statusCode,
     };
     for (final entry in codes.entries) {
-      if (entry.value.isEmpty || entry.value.trim() != entry.value) {
+      final value = entry.value;
+      if (value == null &&
+          projectionName == 'before' &&
+          (entry.key == 'category_code' || entry.key == 'relation_type')) {
+        continue;
+      }
+      if (value == null || value.isEmpty || value.trim() != value) {
         throw ArgumentError(
           'relation $relationId $projectionName ${entry.key}는 '
           'trim 없는 non-empty canonical 값이어야 합니다.',

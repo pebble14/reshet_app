@@ -89,8 +89,8 @@ final class ApprovedContentRelationProjection {
     required this.source,
   });
 
-  final String categoryCode;
-  final String relationType;
+  final String? categoryCode;
+  final String? relationType;
   final String statusCode;
   final String directionCode;
   final String? description;

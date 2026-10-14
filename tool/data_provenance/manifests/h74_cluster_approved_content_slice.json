@@ -1,0 +1,375 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H74-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-15 H74 최소 보완 후 전체 작업 완료 승인; data/backups/approved_content_batch/h74_approval_20261014/02_resumed_approval_20261015.md",
+    "document_sha256": "cc432b613bfd8458a1adedf23ca055aac5087425d8b0e1cbfc8cf6283a167517"
+  },
+  "target": {
+    "expected_work_sha256": "0eca226722a751627f2b3c4e5e91885a7c19fa8871fabfe71ceaf87aced21fb2",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0074_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아브넬 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아브넬·아브-네르 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H4501_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "등대, 촛대"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "등잔대(燈盞臺)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5135_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "불 fire"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "불"
+        }
+      ]
+    },
+    {
+      "word_id": "H5214_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "새로 갈다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "갈아엎다"
+        }
+      ]
+    },
+    {
+      "word_id": "H5215_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "경작하기에 알맞은 땅, 묵은 땅"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "경작지(耕作地)"
+        },
+        {
+          "seq": 2,
+          "meaning": "경작(耕作)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5216_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "등불"
+        },
+        {
+          "seq": 2,
+          "meaning": "등잔"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "등불(燈불)"
+        },
+        {
+          "seq": 2,
+          "meaning": "등잔(燈盞)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5369_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "넬 Ner"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "넬·네르 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5374_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "네리야"
+        },
+        {
+          "seq": 2,
+          "meaning": "뜻풀이: 여호와의 등불"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "네리야·네리-야·네리-야후 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H8574_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "화로, 화덕"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "화덕(火덕)"
+        }
+      ]
+    },
+    {
+      "word_id": "G3518_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "네리[등불]"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "네리 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0074_0000",
+      "before": null,
+      "after": "아브넬은 한국어 성경의 관용 표기이고, 아브-네르는 H0001과 H5216의 구성을 드러내는 원문 기반 분석 표기이다. 삼상 14:50에는 긴 형태 אֲבִינֵר가 나타나며 아비-네르로 분석할 수 있다. Strong은 이름을 빛의 아버지로 풀이하고, HebGrkKo는 나의 아버지는 등불이시다로 설명하므로 구성 요소와 이름 문장의 해석을 구분한다. 분석 표기는 특정 시대의 실제 발음을 확정한 것이 아니다."
+    },
+    {
+      "word_id": "H4500_0000",
+      "before": null,
+      "after": "베틀에 쓰는 굵은 나무 부재를 가리키며, 네 용례에서 창자루의 크기를 빗댄다. 현대 베틀의 특정 부품과 엄밀히 일치한다고 단정하지 않는다. Strong의 경작 어근 연결과 BDB의 직조 관련 어근 설명이 달라 H5214·H4501과의 직접 파생 관계는 확정하지 않는다."
+    },
+    {
+      "word_id": "H4501_0000",
+      "before": null,
+      "after": "등잔을 받치는 조명 기구를 가리킨다. 성막·성전의 기구뿐 아니라 왕하 4:10의 생활용 기구에도 쓰인다. 출 25:31–37과 레 24:4는 본체와 등잔을 구별하지만, 등잔까지 한 덩어리였는지 또는 분리할 수 있었는지는 단정하지 않는다. 후대 유대 전승에도 두 견해가 있다. 번역본의 촛대라는 표현만으로 밀랍초를 사용하는 기구라고 단정하지 않으며, 환상 속의 상징을 별도 어휘 의미로 늘리지 않는다."
+    },
+    {
+      "word_id": "H5135_0000",
+      "before": null,
+      "after": "다니엘서에 쓰인 아람어 명사이다. 불붙은 풀무 같은 결합에서도 이 어휘는 불을 뜻하며, 풀무 또는 불타다는 주변 어휘의 뜻이다. H5216과의 어원 대응은 미사용 어근을 전제한 사전 설명이므로 직접 파생을 확정하지 않는다."
+    },
+    {
+      "word_id": "H5214_0000",
+      "before": null,
+      "after": "렘 4:3과 호 10:12에서 묵은 땅을 갈아 일구는 동사로 쓰이며, 두 용례 모두 행실의 전환을 촉구하는 비유이다. 이 문맥을 근거로 회개하다를 독립 의미로 추가하지 않는다. Strong이 H5216과의 어근 동일성을 probably로 한정하므로 그 관계는 미확정이다."
+    },
+    {
+      "word_id": "H5215_0000",
+      "before": null,
+      "after": "갈아서 농사지을 땅이나 갈아 놓은 땅을 가리키며, 예언서 문맥에서는 묵은 땅으로 이해되기도 한다. 경작은 Strong의 행위 명사 설명과 잠 21:4의 농경적 분석을 보존한 의미이다. 잠 21:4의 נִר는 OSHB에서 H5215로 분류하지만, 경작·경작지로 읽는 해석과 H5216 계열의 등불로 읽는 해석이 경쟁한다. 형통은 이 비유에 대한 해석적 번역이며, 해당 용례의 어휘 판별은 확정하지 않는다."
+    },
+    {
+      "word_id": "H5216_0000",
+      "before": null,
+      "after": "등잔이라는 기구와 그 기구에서 나는 불빛을 모두 가리킨다. 생명·왕조의 지속·형통·하나님의 인도를 말하는 용례는 등불 이미지의 비유적 사용이며 각각을 독립 의미로 늘리지 않는다. 기구와 불빛이 함께 떠오르는 용례는 둘 중 하나로 과도하게 단정하지 않는다."
+    },
+    {
+      "word_id": "H5369_0000",
+      "before": null,
+      "after": "넬은 한국어 성경의 관용 표기이고 네르는 נֵר의 원문 기반 근사 표기이다. 일반명사 H5216의 등불과 같은 형태가 인명으로 쓰인다. 사무엘서와 역대기의 족보 표현 차이만으로 별도 어휘 의미나 동일 인물 여부를 확정하지 않는다."
+    },
+    {
+      "word_id": "H5374_0000",
+      "before": null,
+      "after": "네리야는 한국어 성경의 관용 표기이고 네리-야와 네리-야후는 H5216과 신명 요소의 구성을 드러내는 분석 표기이다. Strong은 야의 빛으로, HebGrkKo는 여호와는 등불로 풀이하므로 구성 요소와 문장 해석을 구분한다. נֵרִיָּהוּ는 같은 이름의 긴 형태로 렘 36:14·36:32·43:6에 나오며 별도 인물 의미로 나누지 않는다. 분석 표기는 특정 시대의 실제 발음을 확정한 것이 아니다."
+    },
+    {
+      "word_id": "H8574_0000",
+      "before": null,
+      "after": "빵을 굽는 화덕을 중심으로 불과 열을 내는 기구를 가리킨다. 창 15:17의 환상과 시 21:10 등의 비유도 같은 기구의 이미지를 사용한다. 풀무라는 번역만으로 송풍 도구를 독립 의미로 추가하지 않는다. Strong은 H5216에서의 유래를 제시하지만 BDB에는 차용어 설명도 있으므로 그 직접 파생 관계는 확정하지 않는다."
+    },
+    {
+      "word_id": "G3518_0000",
+      "before": null,
+      "after": "눅 3:27의 족보에 나오는 인명이다. Strong은 H5374의 히브리어 기원을, HebGrkKo와 Thayer는 נֵר, 곧 등불에서의 유래를 제시한다. 이름의 어원 설명을 별도 meaning으로 두지 않으며, 정확한 단축·전승 방식과 예레미야서의 네리야와 동일 인물이라는 판단은 확정하지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0001_0000",
+      "word_id_2": "H0074_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "H0074: from 1 and 5216 — 합성 이름의 아버지 요소. 이름 전체의 문장 풀이와 구분.",
+      "source": "RESHET-EC-H74-CLUSTER-H0001-H0074"
+    },
+    {
+      "word_id_1": "H0074_0000",
+      "word_id_2": "H5216_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "H0074: from 1 and 5216 — 합성 이름의 등불 요소. 저장 pair는 H0074,H5216.",
+      "source": "RESHET-EC-H74-CLUSTER-H0074-H5216"
+    },
+    {
+      "word_id_1": "H5214_0000",
+      "word_id_2": "H5215_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "H5215: from 5214 — 동사와 동족 명사. 렘 4:3·호 10:12의 동족 목적어 구조.",
+      "source": "RESHET-EC-H74-CLUSTER-H5214-H5215"
+    },
+    {
+      "word_id_1": "H5216_0000",
+      "word_id_2": "H5369_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "H5369: the same as 5216 — 보통명사가 인명으로 쓰인 lexical derivation; 굴절형 관계가 아님.",
+      "source": "RESHET-EC-H74-CLUSTER-H5216-H5369"
+    },
+    {
+      "word_id_1": "H4501_0000",
+      "word_id_2": "H5216_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "H4501: in the original sense of 5216; HebGrkKo: 어원이 동일 — 두 사전의 어원 연결을 공유 관계로 표현. H5216에서 H4501로의 직접 파생 단계를 확정하지 않음.",
+      "source": "RESHET-EC-H74-CLUSTER-H4501-H5216"
+    },
+    {
+      "word_id_1": "H5135_0000",
+      "word_id_2": "H5216_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "unused root (corresponding to that of 5216); H5216의 see 5135 — 미사용 어근을 전제한 비교 설명을 가설로 보존. 아람어 명사가 히브리어 명사를 직접 낳았다는 뜻이 아님.",
+      "source": "RESHET-EC-H74-CLUSTER-H5135-H5216"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [
+    {
+      "relation_id": 3994,
+      "word_id_1": "H5216_0000",
+      "word_id_2": "H5374_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "H5374: from 5216 and 3050 — 일반적인 연관을 확인된 합성 요소 방향으로 구체화.",
+        "source": "RESHET-EC-H74-CLUSTER-H5216-H5374"
+      }
+    },
+    {
+      "relation_id": 6692,
+      "word_id_1": "H3050_0000",
+      "word_id_2": "H5374_0000",
+      "before": {
+        "category_code": null,
+        "relation_type": null,
+        "status_code": "inferred",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "",
+        "source": "WORD_TABLE.관련2"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "H5374: from 5216 and 3050 — 신명 축약 요소에서 합성 이름으로 향함. H3050의 별도 의미 승인은 하지 않음.",
+        "source": "RESHET-EC-H74-CLUSTER-H3050-H5374"
+      }
+    }
+  ],
+  "meaning_approvals": [
+    {
+      "word_id": "H4500_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "베틀채"
+        }
+      ]
+    }
+  ]
+}

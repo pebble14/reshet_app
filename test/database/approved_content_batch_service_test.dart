@@ -4,6 +4,7 @@ import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
+import 'package:reshet_app/data/models/approved_content_batch_models.dart';
 import 'package:reshet_app/data/repositories/word_repository.dart';
 import 'package:reshet_app/database/approved_content_batch_service.dart';
 import 'package:reshet_app/database/approved_content_sha256.dart';
@@ -195,6 +196,56 @@ void main() {
         (manifest.toReportJson()['operation_counts']
             as Map)['relation_replacements'],
         1,
+      );
+    });
+
+    test('relation before의 명시적 NULL 분류만 허용한다', () {
+      Map<String, Object?> manifestWith(
+        String projection,
+        String field,
+        Object? value, {
+        bool omit = false,
+      }) {
+        final row = _relationReplacementRow(
+          relationId: 7617,
+          wordId1: _relationWordIdA,
+          wordId2: _relationWordIdB,
+        );
+        final fields = row[projection]! as Map<String, Object?>;
+        if (omit) {
+          fields.remove(field);
+        } else {
+          fields[field] = value;
+        }
+        return _v4Manifest(relationReplacements: [row]);
+      }
+
+      for (final field in ['category_code', 'relation_type']) {
+        final parsed = _parseMap(manifestWith('before', field, null));
+        expect(
+          parsed.writeRequest.relationReplacements.single.before
+              .toDatabaseFields()[field],
+          isNull,
+        );
+        for (final invalid in ['', 1]) {
+          expect(
+            () => _parseMap(manifestWith('before', field, invalid)),
+            throwsA(isA<ApprovedContentValidationException>()),
+          );
+        }
+        for (final invalidManifest in [
+          manifestWith('before', field, null, omit: true),
+          manifestWith('after', field, null),
+        ]) {
+          expect(
+            () => _parseMap(invalidManifest),
+            throwsA(isA<ApprovedContentValidationException>()),
+          );
+        }
+      }
+      expect(
+        () => _parseMap(manifestWith('before', 'status_code', null)),
+        throwsA(isA<ApprovedContentValidationException>()),
       );
     });
 
@@ -832,6 +883,17 @@ void main() {
         'before projection',
       );
 
+      final nullBeforeMismatch = _deepClone(base) as Map<String, Object?>;
+      (nullBeforeMismatch['before']! as Map<String, dynamic>)['category_code'] =
+          null;
+      (nullBeforeMismatch['before']! as Map<String, dynamic>)['relation_type'] =
+          null;
+      await expectFailure(
+        'replacement_null_before_mismatch.json',
+        nullBeforeMismatch,
+        'before projection',
+      );
+
       final missingLookup = _deepClone(base) as Map<String, Object?>;
       (missingLookup['after']! as Map<String, dynamic>)['status_code'] =
           'missing_status';
@@ -1060,6 +1122,141 @@ void main() {
       expect(await ApprovedContentSha256.file(p1Snapshot), p1ShaBefore);
       expect(await ApprovedContentSha256.file(liveWorkDatabase), liveWorkSha);
       expect(await ApprovedContentSha256.file(liveSeedDatabase), liveSeedSha);
+    });
+
+    test('NULL 기존 관계를 검증·교체하고 undo로 전체 원본 행을 복원한다', () async {
+      final dataDirectory = Directory(p.join(caseDirectory!.path, 'data'));
+      final beforeProjection = {
+        ..._relationBeforeProjection(),
+        'category_code': null,
+        'relation_type': null,
+      };
+      final fixture = await _createRelationFixture(
+        dataDirectory,
+        p1Snapshot,
+        fileName: 'reshet_work.db',
+        beforeProjection: beforeProjection,
+      );
+      final row = _relationReplacementRow(
+        relationId: fixture.relationId,
+        wordId1: _relationWordIdA,
+        wordId2: _relationWordIdB,
+      )..['before'] = beforeProjection;
+      final manifestFile = await _writeManifest(
+        caseDirectory!,
+        'null_before_relation.json',
+        _v4Manifest(
+          expectedWorkSha256: fixture.sha256,
+          expectedUserVersion: fixture.userVersion,
+          relationReplacements: [row],
+        ),
+      );
+      final dryRun = await ApprovedContentBatchRunner(
+        projectRoot: repoRoot,
+      ).dryRun(manifestFile: manifestFile, databaseFile: fixture.database);
+      expect(dryRun.didUndo, isTrue);
+      expect(dryRun.historyRowCount, 1);
+      expect(
+        await ApprovedContentSha256.file(fixture.database),
+        fixture.sha256,
+      );
+      final manifest = ApprovedContentBatchManifest.parse(
+        await manifestFile.readAsBytes(),
+      );
+      await DatabaseService.withIsolatedDataRoot(
+        dataRootPath: dataDirectory.path,
+        action: () async {
+          final database = await DatabaseService.openDatabaseFile();
+          final before = await _relationRowById(database, fixture.relationId);
+          final historyBefore = await database.query('CHANGE_HISTORY');
+          final replacement = manifest.writeRequest.relationReplacements.single;
+          final repository = WordRepository();
+          Future<void> rejectNullAfter(String field) async {
+            final validAfter = replacement.after;
+            final request = ApprovedContentBatchWriteRequest(
+              batchId: manifest.writeRequest.batchId,
+              meaningReplacements: const [],
+              wordNoteReplacements: const [],
+              relationCreates: const [],
+              relationReplacements: [
+                ApprovedContentRelationReplacement(
+                  relationId: replacement.relationId,
+                  wordId1: replacement.wordId1,
+                  wordId2: replacement.wordId2,
+                  before: replacement.before,
+                  after: ApprovedContentRelationProjection(
+                    categoryCode: field == 'category_code'
+                        ? null
+                        : validAfter.categoryCode,
+                    relationType: field == 'relation_type'
+                        ? null
+                        : validAfter.relationType,
+                    statusCode: validAfter.statusCode,
+                    directionCode: validAfter.directionCode,
+                    description: validAfter.description,
+                    relationGroupId: validAfter.relationGroupId,
+                    note: validAfter.note,
+                    source: validAfter.source,
+                  ),
+                ),
+              ],
+            );
+            await expectLater(
+              repository.applyApprovedContentBatch(request),
+              throwsA(
+                isA<ArgumentError>().having(
+                  (error) => error.message,
+                  'message',
+                  contains('after $field'),
+                ),
+              ),
+            );
+            expect(
+              await _relationRowById(database, fixture.relationId),
+              before,
+            );
+            expect(await database.query('CHANGE_HISTORY'), historyBefore);
+          }
+
+          await rejectNullAfter('category_code');
+          await rejectNullAfter('relation_type');
+          // 기존 NULL을 유효한 코드로 꾸민 before도 exact-match에서 거부한다.
+          final wrongRow = _relationReplacementRow(
+            relationId: fixture.relationId,
+            wordId1: _relationWordIdA,
+            wordId2: _relationWordIdB,
+          );
+          await expectLater(
+            repository.applyApprovedContentBatch(
+              _parseMap(
+                _v4Manifest(relationReplacements: [wrongRow]),
+              ).writeRequest,
+            ),
+            throwsA(isA<StateError>()),
+          );
+          expect(await _relationRowById(database, fixture.relationId), before);
+          expect(await database.query('CHANGE_HISTORY'), historyBefore);
+
+          final result = await repository.applyApprovedContentBatch(
+            manifest.writeRequest,
+          );
+          final after = await _relationRowById(database, fixture.relationId);
+          expect(result.historyRowCount, 1);
+          for (final field in ['id', 'word_id_1', 'word_id_2', 'created_at']) {
+            expect(after[field], before[field], reason: field);
+          }
+          expect(replacement.after.matchesDatabaseRow(after), isTrue);
+          final history = (await database.query(
+            'CHANGE_HISTORY',
+            where: 'group_id = ?',
+            whereArgs: [result.groupId],
+          )).single;
+          expect(_historyJson(history, 'before_json'), before);
+          expect(_historyJson(history, 'after_json'), after);
+          expect((await repository.undoLastChange()).didUndo, isTrue);
+          expect(await _relationRowById(database, fixture.relationId), before);
+        },
+      );
     });
 
     test('v4 create+replacement를 한 group으로 적용하고 undo 1회로 복원한다', () async {
@@ -1810,6 +2007,7 @@ Future<_RelationFixture> _createRelationFixture(
   Directory directory,
   File source, {
   String fileName = 'approved_relation_fixture.db',
+  Map<String, Object?>? beforeProjection,
 }) async {
   await directory.create(recursive: true);
   final databaseFile = await source.copy(p.join(directory.path, fileName));
@@ -1839,7 +2037,7 @@ Future<_RelationFixture> _createRelationFixture(
       relationId = await txn.insert('WORD_RELATION', {
         'word_id_1': _relationWordIdA,
         'word_id_2': _relationWordIdB,
-        ..._relationBeforeProjection(),
+        ...(beforeProjection ?? _relationBeforeProjection()),
         'created_at': '2026-01-01T00:00:00.000000',
         'updated_at': '2026-01-02T00:00:00.000000',
       });
