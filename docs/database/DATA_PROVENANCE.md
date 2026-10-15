@@ -1154,3 +1154,18 @@ Relation ID23은 H85→G11 transliteration/direct_transliteration/asserted/w2_to
 공식 CLI로 표준 외부 semantic_progress JSON·CSV·Markdown을 함께 갱신했다. 전체14,298행에서 H86만 unapproved→explicit_approved이며 승인283→284·hold6·미승인14,009→14,008·anomaly113이다. 비대상 행과 anomaly는 불변이며 snapshot identity는 `d892cc1ea470e7942a63b862ce9bd9f5a0f54402900b5e18838af7c8d568b6d1`다. 진행 현황은 derivative이고 semantic authority는 현재 승인 manifest와 DB다.
 
 정상 단일-node cluster closure, canonical 전체1출현, 로컬6종 및 명시적 LXX1절의 검토 결과를 사용했다. 정확한 뜻·어원·형태는 여전히 미확정이며 대표 풀이와 비고를 승인한 것으로 기록한다. 기존 연구11파일은 적용 전 snapshot으로 보존하고 적용 결과는 외부 `00_applied_content.md/json`에 별도 기록한다. 앱 코드·UI 변경이 없어 사용자 UI 테스트·전체 앱 빌드는 N/A다. DB는 기존 정책대로 Git 미추적 로컬 자산이다.
+
+
+### 11.64 H88·H178 어휘군 approved-content work DB slice
+
+[h88_cluster_approved_content_slice.json](../../tool/data_provenance/manifests/h88_cluster_approved_content_slice.json)은 format v5 batch `RESHET-EC-H88-CLUSTER-APPROVED-CONTENT-SLICE`다. 사용자는 2026-10-16 Codex의3 sense 추천안과 DB·문서·필요한 파일·Git 게시·문제없는 경우 작업 브랜치 정리를 승인했다. H88의 `오봇 (지)`는 meaning_approvals1건으로 기존 projection을 승인하고 H178의 쉼표 결합1행을 `신접한 자(神接한 者)` / `가죽 부대` / `죽은 이의 영(靈)`의 ordered3행으로 교체했다. 비고2·신규 관계1을 포함한 DB write는4건이며 유지 의미 승인은 별도1건이다. 최종 결정·근거·미채택 대안·잔여 불확실성은 [H88·H178 결정 기록](../semantic_decisions/h88_cluster_approved_content_slice.md)과 README active 색인에 있다.
+
+Relation ID7862는 H0178→H0088, morphological/derived/asserted이며 canonical pair H0088_0000·H0178_0000 및 direction_code=w2_to_w1로 저장했다. H178 복수형의 지명 형성을 나타내고 지명 의미를 일반명사로 대체하지 않는다. H1–H178 apparently 어원 관계는 생성하지 않는다. H1 기존 승인 유지·새 hold0·기존 hold6 유지이며 expression·음역·발음·언어·schema·seed·canonical source·local reference는 불변이다.
+
+승인 원문·byte 백업·독립 검증은 `data/backups/approved_content_batch/h88_approval_20261016/`, 공식 snapshot·result·manifest 사본은 `data/backups/approved_content_batch/20261015T164427883724Z/`에 보존한다. Approval SHA는 `a978bf9a1732eb43869a235a89da19d612bfdd276d159df65b5a6dc86d858ff8`, manifest SHA는 `3c8f0e4f1fc8649ddda64c10ede7b636435be21e9d35cc0a1694d7ca385175b9`다. 새 manifest는 처음부터 UTF-8 LF로 기록하고 해당 경로에만 `.gitattributes`의 text eol=lf를 지정하여 work bytes·index blob·공식 사본의 SHA를 일치시켰다.
+
+공식 dry-run의 사본 적용·undo·원본 불변과 live apply가 성공했다. History group `1792082669067326`의 ID6085–6088는 active4행(word update3·relation create1, undone0)이다. Work SHA는 `1eca4a97830ddd97c358950233442111f4f01d6bf2b53939416b340e4ed82c27` → `5751bea2c8d370309b6cc665fb49da865416876cd2c02c135e82c3cf7bee3806`, seed SHA `a7e0d6a50a3ab6b520c3bf7532b2780cfd6418709d9739a451eb4ce5493fbdb1`는 불변이다. 독립 SQL52조회·53검증으로 전체13테이블·DDL·snapshot·byte 백업을 비교했고 승인 의미·비고·관계 및 해당 history/sequence 외 차이가 없다. Work·seed·snapshot·byte 백업 integrity ok·FK0·sidecar0이며 기존 applicator 테스트31건 통과. SQL 목적·실행문·결과 digest·해석은 `03_independent_db_verification.json`에 있다.
+
+공식 CLI로 표준 외부 semantic_progress JSON·CSV·Markdown을 함께 갱신했다. 전체14,298행에서 H88·H178만 unapproved→explicit_approved이며 승인284→286·hold6·미승인14,008→14,006·anomaly113이다. 비대상 행·anomaly와 기존60 승인 manifest·원천·참고자료·hold fingerprint는 불변이다. Progress 및 보호 입력 검증44건이 통과했고 snapshot identity는 `9332d189006f00b3277c23ea49ef492b370920e01525493e1ef2f9b3a33c4b50`다.
+
+연구 CORE2의 canonical21 token/20절을 전량 검토한 추천안을 채택했다. H1 hub 예외·CONTEXT1·HUB-EXCLUDED44·원본 frontier39·max_nodes_reached·전역 graph closure 미선언을 유지한다. H178의 사람/영/술법 competing9 token을 비고에 보존하며 별도 술법 sense는 미채택했다. 원본 연구16개 artifact와 machine state/queue는 적용 전 snapshot으로 보존하고 외부 `00_applied_content.md/json`에 적용 결과를 별도로 기록한다. DB는 Git 미추적 로컬 자산이며 앱/UI 코드 변경이 없어 UI 수동 테스트·전체 앱 빌드는 N/A다.

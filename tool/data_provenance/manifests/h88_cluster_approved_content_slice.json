@@ -1,0 +1,76 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H88-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-16 H88·H178 3 sense 추천안과 DB·문서·Git·작업 브랜치 정리 승인; data/backups/approved_content_batch/h88_approval_20261016/00_user_approval.json",
+    "document_sha256": "a978bf9a1732eb43869a235a89da19d612bfdd276d159df65b5a6dc86d858ff8"
+  },
+  "target": {
+    "expected_work_sha256": "1eca4a97830ddd97c358950233442111f4f01d6bf2b53939416b340e4ed82c27",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0178_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "신접한 자, 가죽 부대"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "신접한 자(神接한 者)"
+        },
+        {
+          "seq": 2,
+          "meaning": "가죽 부대"
+        },
+        {
+          "seq": 3,
+          "meaning": "죽은 이의 영(靈)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0088_0000",
+      "before": null,
+      "after": "H178의 ‘가죽 부대’에 해당하는 복수형에서 온 지명이다. 이스라엘이 광야 행군 중 진을 친 곳으로 민 21:10–11과 33:43–44에 나온다. 정확한 현대 위치는 확정하지 않는다."
+    },
+    {
+      "word_id": "H0178_0000",
+      "before": null,
+      "after": "욥 32:19에서는 액체를 담는 가죽 부대를 뜻한다. 신접 관련 용례에서는 죽은 이를 불러 묻는 사람과 그가 다루는 영을 구별하여 이해한다. 삼상 28:7–8과 대상 10:13의 אוב를 영 또는 술법 자체로 읽는 분석이 있으며, 사 29:4도 죽은 이의 영과 신접한 자의 목소리 사이에 해석 차이가 있다. 여기서는 술법을 별도 의미로 확정하지 않고 비고에 보존한다. Strong의 중얼거림·복화술 설명과 H1 ‘아버지’에 연결하는 어원은 실제 용례만으로 확정할 수 없다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0088_0000",
+      "word_id_2": "H0178_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "H178의 가죽 부대에 해당하는 복수형이 지명 H88로 사용됨. 지명의 본문 의미를 일반명사 가죽 부대로 대체하는 관계는 아님.",
+      "source": "RESHET-EC-H88-CLUSTER-H0178-H0088"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": [
+    {
+      "word_id": "H0088_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "오봇 (지)"
+        }
+      ]
+    }
+  ]
+}
