@@ -1,0 +1,40 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H86-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-16 H86 추천안 의미·비고 및 DB·문서 반영 승인; data/backups/approved_content_batch/h86_approval_20261016/00_user_approval.json",
+    "document_sha256": "ac4c4c040f5d659655c17dbe557abaf3c9cf439f0e549ab381f7e3befb13a317"
+  },
+  "target": {
+    "expected_work_sha256": "55db8b355cec97f54e545bacdd820ecafd41abff3fb7822709d22157a63da8a4",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0086_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "무릎 꿇다, 엎드리다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "무릎을 꿇다"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0086_0000",
+      "before": null,
+      "after": "창세기 41:43에서 요셉 앞에서 외친 말이다. ‘무릎을 꿇어라’는 Strong·KJV 등이 따른 전통적 풀이이며, 개역개정·개역한글은 ‘엎드리라’, 새번역은 ‘물러나거라’로 옮긴다. 어원과 정확한 뜻은 불확실하며, 이집트어 기원설과 히브리어의 ‘무릎 꿇다’ 어근에 연결하는 해석 등이 있다. 이 뜻은 대표 풀이로 사용하되 확정된 어원이나 동사 형태를 뜻하지 않는다."
+    }
+  ],
+  "relation_creates": [],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}
