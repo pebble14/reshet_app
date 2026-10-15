@@ -1,0 +1,82 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H79-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-15 H79 어휘군 추천 의미·비고·관계 및 문서·DB 반영 승인; data/backups/approved_content_batch/h79_approval_20261015/00_approved_content.md",
+    "document_sha256": "cd9ad6d2739e684f6435de20527d7c2029b3ea69dc1c0aafb05d9e0735076667"
+  },
+  "target": {
+    "expected_work_sha256": "995754cc28397c0c9d2bfb24f44d2b5a183fb9bfec5ecce3fb8188f53f7cab90",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0081_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "가루, 분말"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "가루"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0079_0000",
+      "before": null,
+      "after": "창세기 32:24–25(히브리어 본문 32:25–26)에서 니팔형으로만 쓰인다. Strong은 H80 ‘먼지’와 연결하여 설명하지만, 두 단어의 역사적 파생 방향은 현 용례만으로 확정하기 어렵다."
+    },
+    {
+      "word_id": "H0080_0000",
+      "before": null,
+      "after": "나훔 1:3은 구름을 ‘그 발의 먼지’에 빗댄 표현이다. ‘구름’은 별도 단어(H6051)로 쓰인다."
+    },
+    {
+      "word_id": "H0081_0000",
+      "before": null,
+      "after": "유일한 성경 용례인 아가 3:6에서는 가루 형태의 향료(香料)를 가리킨다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0080_0000",
+      "word_id_2": "H0081_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong은 H81을 H80의 여성형으로 설명한다. 별도 여성명사 형성 관계로 보존한다.",
+      "source": "RESHET-EC-H79-CLUSTER-H0080-H0081"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": [
+    {
+      "word_id": "H0079_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "씨름하다"
+        }
+      ]
+    },
+    {
+      "word_id": "H0080_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "먼지"
+        }
+      ]
+    }
+  ]
+}
