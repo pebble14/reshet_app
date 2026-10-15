@@ -1,0 +1,172 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H76-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-15 H76 확장 어휘군 최신 의미·비고·관계 및 문서·DB 반영 승인; data/backups/approved_content_batch/h76_approval_20261015/00_approved_content.md",
+    "document_sha256": "2d6ac244e212907b0316f1adc6a7fb139069d8eacb2c0036dc2cb8e8269e6b78"
+  },
+  "target": {
+    "expected_work_sha256": "2bf598118f3023b5179116fdfd3cdb1a0d0513283e23834e70133c0598579fa5",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0076_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "물집, 종기"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "물집·종기(腫氣)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0077_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "에베스 (지)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "에베스·에베츠 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0078_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "입산 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "입산·이브찬 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5042_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "흘러나오다, 솟아나오다, 붓다, 거품을 일으키다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "솟아나다·발하다(發하다)"
+        }
+      ]
+    },
+    {
+      "word_id": "H4002_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "샘, 샘물"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "샘"
+        }
+      ]
+    },
+    {
+      "word_id": "G2044_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "내뱉다[흘려 내다, 발설하다]"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "발하다(發하다)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0076_0000",
+      "before": null,
+      "after": "두 용례 모두 복수형이며, 사람과 짐승에게 돋는 염증성 피부 병변을 가리킨다. 개역개정의 ‘악성’과 개역한글의 ‘독’은 종기 발생 문맥을 옮긴 표현으로, 이 단어 자체는 명사다. 특정 질병명은 확정하지 않는다."
+    },
+    {
+      "word_id": "H0077_0000",
+      "before": null,
+      "after": "잇사갈 지파에게 배정된 성읍이다(수 19:20). ‘에베스’는 한국어 성경 관용 표기이고 ‘에베츠’는 사전 표제어 אֶבֶץ을 옮긴 교재식 근사 표기이다. 해당 본문형은 אָבֶץ으로 첫 모음이 다르다. 정확한 위치와 이름의 뜻은 확정하기 어렵다."
+    },
+    {
+      "word_id": "H0078_0000",
+      "before": null,
+      "after": "베들레헴 출신으로 입다 뒤를 이은 이스라엘의 사사이다(삿 12:8–10). ‘입산’은 한국어 성경 관용 표기이고 ‘이브찬’은 원문 형태를 옮긴 교재식 근사 표기이다. 이름의 뜻과 어원은 확정하지 않는다."
+    },
+    {
+      "word_id": "H5042_0000",
+      "before": null,
+      "after": "물이 솟아 흐르는 데서 말·찬양 등을 쏟아내는 데까지 쓰인다. 히필형은 ‘내뿜다·쏟아내다’로 옮길 수 있으며 좋은 말과 악한 말 모두에 쓰인다. 전 10:1은 향유가 악취를 내거나 거품을 일으키며 변질되는 문맥으로, 구체적인 동작 풀이에는 차이가 있다."
+    },
+    {
+      "word_id": "G2044_0000",
+      "before": null,
+      "after": "본래 입으로 내뿜는 동작을 가리키며, 마 13:35에서는 감추어진 것을 말로 드러내는 비유적 용법이다. 이 구절은 시 78:2를 인용한 문맥이다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0077_0000",
+      "word_id_2": "H0078_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "BDB는 두 이름을 뜻을 알 수 없는 אבץ 아래에 함께 배치하고, Gesenius/Tregelles는 같은 미사용 어근 설명을 perhaps로 한정한다. 공통 어근 후보를 가설로 보존하며 이름의 뜻이나 직접 파생 방향을 확정하지 않는다. Strong H78의 H76 참조를 교정하거나 확정 관계로 승격한 것이 아니다.",
+      "source": "RESHET-EC-H76-CLUSTER-H0077-H0078"
+    },
+    {
+      "word_id_1": "H4002_0000",
+      "word_id_2": "H5042_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "H4002 canonical Strong source는 from H5042를 명시한다. 물이 솟아 흐르는 동사에서 샘을 가리키는 명사로의 파생 관계이며, 저장 pair H4002,H5042와 의미상 방향 H5042→H4002를 구분한다.",
+      "source": "RESHET-EC-H76-CLUSTER-H4002-H5042"
+    },
+    {
+      "word_id_1": "G2044_0000",
+      "word_id_2": "H5042_0000",
+      "category_code": "translation",
+      "relation_type": "semantic_translation",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "시19:2(히브리어19:3/LXX18:3) 및 시78:2를 인용한 마13:35의 말·발화 문맥에 한정한 번역 대응이다. 모든 용례의 일대일 동의어·공통 어근·직접 차용을 뜻하지 않는다. 로컬 LXX 시77:2 자체는 φθεγξομαι로, 마태복음의 동사와 다르다.",
+      "source": "RESHET-EC-H76-CLUSTER-G2044-H5042"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}
