@@ -1,0 +1,104 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H98-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-16 H98·H99·H100 의미·비고·공통 어근2(가설1 포함) 및 DB·문서·Git·작업 브랜치 정리 승인; data/backups/approved_content_batch/h98_approval_20261016/00_user_approval.json",
+    "document_sha256": "b1cd1b81e2651e407ddec60a15f24f316d5be9940ab626b80b657f29cfc05a11"
+  },
+  "target": {
+    "expected_work_sha256": "ce2b0b9e8d84697c0962b2523ff0118c5bca54f7118de557c5dfed9f468f3d66",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0098_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "습지, 웅덩이, 늪"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "못·늪"
+        }
+      ]
+    },
+    {
+      "word_id": "H0100_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "갈대, 골풀"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "갈대·골풀"
+        },
+        {
+          "seq": 2,
+          "meaning": "밧줄"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0098_0000",
+      "before": null,
+      "after": "렘 51:32에서는 불태운 대상으로 나와, 늪 자체보다 그곳에 자란 갈대밭을 가리키는 환유로 이해할 수 있다. Strong은 갈대와 갈대 울타리 풀이도 전하지만, 이 용례를 별도의 요새 의미로 확정하지 않는다."
+    },
+    {
+      "word_id": "H0099_0000",
+      "before": null,
+      "after": "사 19:10에서 נֶפֶשׁ와 결합하여 마음이 슬프거나 근심하는 상태를 나타낸다. KJV는 해당 구절을 ‘못’으로 달리 풀이하지만, 여기서는 원문의 형용사 분석에 따라 ‘슬픈’을 유지한다. Strong의 H98 공통 어원 설명에는 probably라는 제한이 있으므로 역사적 어원을 확정하지 않는다."
+    },
+    {
+      "word_id": "H0100_0000",
+      "before": null,
+      "after": "정확한 식물 종은 확정하지 않는다. 사 9:14와 19:15에서는 종려가지와 대비되어 낮은 지위의 사람들을 비유하며, 이를 별도 의미로 나누지 않는다. 욥 41:2에서는 코를 꿰는 줄을 가리키며, Strong은 골풀 등으로 꼰 줄로 풀이한다. 욥 41:20은 태우는 갈대 풀이를 우선하되, KJV의 ‘가마’ 및 NET 번역 주석이 전하는 다른 히브리어 읽기에 따른 끓는 솥 해석도 가능성으로 남긴다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0098_0000",
+      "word_id_2": "H0099_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 probably를 보존하는 공통 어근 가설이다. 직접 파생 방향과 역사적 어원을 확정하지 않는다.",
+      "source": "RESHET-EC-H98-CLUSTER-H0098-H0099"
+    },
+    {
+      "word_id_1": "H0098_0000",
+      "word_id_2": "H0100_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "같은 어근이라는 Strong의 명시적 설명에 따른다. H98에서 H100으로의 직접 파생 방향을 확정하지 않으며 kettle에 관한 다른 어근 대안은 해당 용례의 비고에 남긴다.",
+      "source": "RESHET-EC-H98-CLUSTER-H0098-H0100"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": [
+    {
+      "word_id": "H0099_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "슬픈"
+        }
+      ]
+    }
+  ]
+}

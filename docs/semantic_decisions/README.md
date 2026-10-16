@@ -89,6 +89,7 @@
 | H93 호두 어휘 | 호두 의미1·집합적 호두나무 문맥 비고1, 일반 견과 대안과 수종 불확실성 보존·관계 비생성 | `active` | 높음 | 2026-10-16 | [기록](h93_cluster_approved_content_slice.md) |
 | H94·H95·H103 어휘군 | 아굴·아구르, 삯, 거두어 모으다, 의미3·비고2·가설 파생1건·신규 hold 없음 | `active` | 높음 | 2026-10-16 | [기록](h94_cluster_approved_content_slice.md) |
 | H96·H97 클러스터 | 방울·에글라임 및 가설 파생 관계 | `active` | 높음 | 2026-10-16 | [기록](h96_cluster_approved_content_slice.md) |
+| H98·H99·H100 클러스터 | 못·늪, 슬픔, 갈대·밧줄 및 공통 어근2건(가설1 포함) | `active` | 높음 | 2026-10-16 | [기록](h98_cluster_approved_content_slice.md) |
 | 헬라어 표현 정비 | 최초 6,106표현 검수와 승인 적용, G2458 Strong 악센트 일치·사용자 어형 미확인 비고, 현재 표현 보류6 | `active` | Strong 표제 선택과 역사적 인명 해석 구분 | 2026-10-11 | [기록](greek_expression_approved_content_slice.md) |
 | 라틴어 표현 정비 | 최초 159단어·166표현 검수 후 유보5 정리, populus 분리로 현재 160단어·167표현, 역사적 독법 일부 미확정 | `active` | 사전 장단·교재식 독법·서로 다른 어휘 구분 | 2026-10-11 | [기록](latin_expression_approved_content_slice.md) |
 | 영어·현대 외국어 표현 정비 | 영어 155단어·166표현 음역 NULL 유지, 독일어·러시아어·이탈리아어 4표현 교정·발음 보완 | `active` | 출처 확인·한글 근사·복수형 전사 구성 구분 | 2026-10-10 | [기록](modern_foreign_expression_approved_content_slice.md) |
