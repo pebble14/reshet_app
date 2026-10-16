@@ -1184,3 +1184,16 @@ H90→H91 신규 relation ID7863은 morphological/derived/asserted, canonical pa
 공식 CLI로 표준 외부 semantic_progress JSON·CSV·Markdown을 함께 갱신했다. 전체14,298행에서 H89·H90·H91만 unapproved→explicit_approved이며 승인286→289·hold6·미승인14,006→14,003·anomaly113이다. 비대상 row·anomaly는 불변이고 progress 교차검증19건이 통과했다. Snapshot identity는 `d62ba43514b6d4d1b9fe9f22bc37c486382770f4ff1e2f5c1423147bc4f0a805`다. Progress는 derivative이며 현재 DB와 승인 manifest를 대체하지 않는다.
 
 정상 CORE3 closure·frontier0, 전체14 canonical token/12절 및 로컬 참고6종·명시적 LXX12절의 연구를 사용했다. 가문 풀이와 실제 혈통 확인을 구분하고 H90의 왕명·칭호·불꽃 어원 및 source x-pn의 한계를 비고·결정 기록에 보존했다. 원본 연구17개 파일과 machine state/queue는 적용 전 snapshot으로 남기며 외부 `00_applied_content.md/json`에 최종 적용값을 별도로 기록한다. DB는 Git 미추적 로컬 자산이고 앱/UI 코드 변경이 없어 UI 수동 테스트·전체 앱 빌드는 N/A다.
+
+
+### 11.66 H92 묶음·결속 어휘 approved-content work DB slice
+
+[h92_cluster_approved_content_slice.json](../../tool/data_provenance/manifests/h92_cluster_approved_content_slice.json)은 format v5 batch `RESHET-EC-H92-CLUSTER-APPROVED-CONTENT-SLICE`다. 사용자는 2026-10-16 마지막 추천의 네 meaning과 비고 전문을 채택하고 DB·문서·필요한 파일 반영, 검증 성공 후 Git 완료와 작업 브랜치 정리를 승인했다. 기존 `띠, 무리, 묶음` 한 행을 `묶음` / `묶는 줄` / `무리` / `둥근 천장(天障)` ordered 4행으로 교체하고 비고를 추가했다. Meaning replacement1·note replacement1의 총2 write다. 정확한 최종값·판단 근거·미채택 대안·잔여 불확실성은 [H92 결정 기록](../semantic_decisions/h92_cluster_approved_content_slice.md)과 README active 색인에 있다.
+
+아모스의 둥근 천장은 결합된 건축 구조를 하늘의 천장으로 이해하는 전통적 해석으로 채택하고, 정확한 지시 대상·기초 지지 구조 대안·KJV 무리/묶음·LXX 약속의 차이를 마지막 승인 비고에 보존했다. 기존 relation0에서 생성·교체·삭제0이며 새 hold도 없다. 원문·음역·발음·언어·schema·seed·원천·로컬 reference·기존 hold6건은 불변이다.
+
+승인 원문·byte 백업·독립 검증은 `data/backups/approved_content_batch/h92_approval_20261016/`, 공식 snapshot·result·manifest 사본은 `data/backups/approved_content_batch/20261016T025722639484Z/`에 보존한다. Approval SHA는 `2f1895f9bd369d1e3a3c66df27657d4c8593d71d0cc754992c770657fdb223a4`, manifest SHA는 `52e570991d56e05522a18e9370f0c9264423be9240170026a87e6a6756562832`다. 새 manifest의 UTF-8 LF bytes와 Git index·공식 사본이 일치하도록 해당 경로에만 `.gitattributes`의 `text eol=lf`를 지정했다.
+
+공식 dry-run의 사본 적용·undo·원본 불변과 live apply가 성공했다. History group `1792119443828097`의 ID6095–6096은 active word update2행, undone0이다. Work SHA는 `18bdd88377ed7c6bd1f9d92a62bf5525cbc061c2e8f71293d30c22939bdc1bba` → `1ba1c63b8f35fc0fdd942e4652d1350af46199effe000f5f070c63006e4e2015`, seed SHA `a7e0d6a50a3ab6b520c3bf7532b2780cfd6418709d9739a451eb4ce5493fbdb1`는 불변이다. 독립 SQL53조회·60검증으로 전체13테이블·DDL·byte 백업·공식 snapshot을 비교했고 승인 의미·비고·history2행 및 해당 sequence 외 차이가 없다. Work·seed·snapshot·byte 백업 integrity ok·FK0·sidecar0이며 기존 applicator Flutter 테스트31건이 통과했다. SQL 목적·실행문·결과·해석은 `05_independent_db_verification.json`에 있다.
+
+공식 표준 semantic_progress JSON·CSV·Markdown을 함께 갱신했다. 전체14,298행 중 H0092만 unapproved→explicit_approved이며 승인289→290·미승인14,003→14,002·hold6·anomaly113이다. Progress·보호 입력 교차검증37건이 통과했고 snapshot identity는 `ed64761d8621d91de41838c3b477f4ca605807e7bb85056587d6d0e4f8648586`다. 기존62 manifest·원천·로컬 reference·hold와 비대상 progress row는 불변이다. 정상 CORE1 closure·frontier0, canonical4회 전량 및 확보 reference를 검토한 결과를 사용했으며 아모스1건의 해석 불확실성을 유지한다. 원본 연구16파일은 보존하고 실제 적용값은 외부 `00_applied_content.md/json`에 별도로 기록한다. DB는 Git 미추적 로컬 자산이며 앱/UI 코드 변경이 없어 UI 수동 테스트·전체 앱 빌드는 N/A다.

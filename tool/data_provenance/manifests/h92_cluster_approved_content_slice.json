@@ -1,0 +1,52 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H92-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-16 H92 네 meaning과 마지막 비고 및 DB·문서·Git·작업 브랜치 정리 승인; data/backups/approved_content_batch/h92_approval_20261016/00_user_approval.json",
+    "document_sha256": "2f1895f9bd369d1e3a3c66df27657d4c8593d71d0cc754992c770657fdb223a4"
+  },
+  "target": {
+    "expected_work_sha256": "18bdd88377ed7c6bd1f9d92a62bf5525cbc061c2e8f71293d30c22939bdc1bba",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0092_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "띠, 무리, 묶음"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "묶음"
+        },
+        {
+          "seq": 2,
+          "meaning": "묶는 줄"
+        },
+        {
+          "seq": 3,
+          "meaning": "무리"
+        },
+        {
+          "seq": 4,
+          "meaning": "둥근 천장(天障)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0092_0000",
+      "before": null,
+      "after": "묶음과 무리는 ‘한데 묶이거나 모인 것’이라는 개념으로 연결되며, 묶는 줄은 그 결속을 이루는 수단이다. 사 58:6의 멍에 줄은 압제를 푸는 비유에 쓰인다. 암 9:6의 ‘둥근 천장’은 단단히 결합된 구조물을 하늘의 천장으로 이해하는 전통적 해석이다. 다만 이 구절의 정확한 지시 대상은 불확실하며, 기초를 받치는 구조라는 해석도 있다. KJV는 ‘무리’(난외: ‘묶음’), LXX는 ‘그의 약속’으로 옮긴다."
+    }
+  ],
+  "relation_creates": [],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}
