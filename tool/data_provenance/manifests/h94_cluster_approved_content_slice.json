@@ -1,0 +1,88 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H94-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-16 H94·H95·H103 최신 의미·비고·가설 파생 관계 및 DB·문서·Git·작업 브랜치 정리 승인; data/backups/approved_content_batch/h94_approval_20261016/00_user_approval.json",
+    "document_sha256": "2809ac36db8c3711443a0780cca3930c063941f4523d5b9830abbfc681edfdf3"
+  },
+  "target": {
+    "expected_work_sha256": "128f8ff9866e6637fde6d07b08c50a5f8e42a464c6e81fec0d8204980fb9a16d",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0094_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아굴 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아굴·아구르 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0095_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "지불, 조각"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "삯"
+        }
+      ]
+    },
+    {
+      "word_id": "H0103_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "모으다, 추수하다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "거두어 모으다"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0094_0000",
+      "before": null,
+      "after": "잠 30:1에서 야게의 아들로 소개되는 인물. ‘아굴’은 한국어 성경 관용 표기이고, ‘아구르’는 히브리어 형태를 드러내는 근사 표기다. Strong은 H103 ‘거두어 모으다’의 수동분사로 설명하며 솔로몬의 별명으로 해석하지만, 본문은 솔로몬과의 동일성을 확정하지 않는다. 비교 사전에는 ‘고용된 이’ 계열의 어원 설명도 있어 이름의 뜻은 확정하지 않는다."
+    },
+    {
+      "word_id": "H0095_0000",
+      "before": null,
+      "after": "삼상 2:36에서 제사장 직분을 맡아 생계를 잇고자 하며 구하는 적은 돈을 가리킨다. 뒤의 כֶּסֶף(H3701)가 은으로 지급되는 것임을 명시한다. 지급금·보수로 보는 분석과 작은 은전으로 보는 사전 해석이 있으며, 정확한 금액·무게나 주조된 동전인지는 확정하지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0094_0000",
+      "word_id_2": "H0103_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 수동분사 분석에 따른 이름 파생 가설. BDB는 고용된 이 계열의 경쟁 어원도 제시한다.",
+      "source": "RESHET-EC-H94-CLUSTER-H0103-H0094"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}
