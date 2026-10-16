@@ -1,0 +1,452 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H101-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-16 H101 클러스터 최신 수정안·나머지 추천 및 DB·문서·Git·작업 브랜치 정리 승인; data/backups/approved_content_batch/h101_approval_20261016/00_user_approval.json",
+    "document_sha256": "35929a29729fa6052d73a73594384b61b75f5cd3ee4b91d662702501281f86ed"
+  },
+  "target": {
+    "expected_work_sha256": "25554f27cafaa5dec997b8bf9839e5d3866de50a6d01a8d8c49a911232369989",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0101_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "사발, 그릇"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "오목한 그릇"
+        }
+      ]
+    },
+    {
+      "word_id": "H5059_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "현악기를 연주하다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "연주하다(演奏하다)"
+        }
+      ]
+    },
+    {
+      "word_id": "H1660_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "포도주틀/포도즙틀"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "포도즙(葡萄汁) 틀"
+        }
+      ]
+    },
+    {
+      "word_id": "H4485_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "노래, 음악"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "비웃는 노래"
+        }
+      ]
+    },
+    {
+      "word_id": "H5058_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "음악 music, 노래 song"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "음악(音樂)"
+        }
+      ]
+    },
+    {
+      "word_id": "G1068_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "겟세마네[기름 짜는 틀/착유기]"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "겟세마네·가트-셰마네 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H1661_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "가드 Gath"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "가드·가트 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H1662_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "가드 헤벨 Gath-hepher(지)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "가드헤벨·가트-하헤페르 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H1663_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "가드사람 Gittite(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "가드 사람·가트 사람"
+        }
+      ]
+    },
+    {
+      "word_id": "H1664_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "깃다임 Gittaim"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "깃다임·깃타임 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H1667_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "가드림몬 Gath-rimmon"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "가드림몬·가트-림몬 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H4182_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "모레셋가드 Moreshethgath"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "가드모레셋·모레셋가드·모레셰트-가트 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H4183_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "모레셋 사람"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "모레셋 사람·모레셰트 사람"
+        }
+      ]
+    },
+    {
+      "word_id": "H1665_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "깃딧"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "깃딧·깃티트"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0101_0000",
+      "before": null,
+      "after": "양푼·사발·잔과 같은 그릇을 가리키며, 크기·재질이나 의식용이라는 용도를 특정하지 않는다. 오목한 그릇이라는 풀이는 사발·대야 계열을 나타내며 정확한 깊이나 곡률을 규정하지 않는다. 이사야 22:24에서는 집안 식구들을 그릇에 빗댄다. H5059와의 어원 관계는 Strong도 추정으로 제시한다."
+    },
+    {
+      "word_id": "H5059_0000",
+      "before": null,
+      "after": "분사형은 악기를 연주하는 사람을 가리킨다. 성경 용례에서는 특히 현악기 연주와 연결되지만, Strong의 일반적인 음악 연주 풀이와 성경 밖 사전의 피리 연주 설명을 고려하여 현악기에만 배타적으로 한정하지 않는다. 구약에서 피리 연주 용례가 직접 확인되었다는 뜻은 아니며, 번역본의 수금·거문고를 특정 악기 하나로 고정하지 않는다."
+    },
+    {
+      "word_id": "H1660_0000",
+      "before": null,
+      "after": "포도를 밟아 즙을 내는 시설로, 포도를 담아 밟는 통이나 공간도 가리킨다. 삿 6:11의 밀 타작은 그 시설의 다른 사용이며, 사 63:2·애 1:15·욜 3:13에서는 심판을 포도 밟기에 빗댄다. 겟세마네를 기름 짜는 틀로 풀이하는 합성 이름에서 관련 말의 확장 사용을 볼 수 있지만, 이것만으로 구약의 이 단어를 모든 기름틀·압착틀로 일반화하지 않는다. H5059에서 유래했다는 설명은 추정이다."
+    },
+    {
+      "word_id": "H4485_0000",
+      "before": null,
+      "after": "성경의 유일한 용례인 애 3:63에서는 화자 자신이 남들의 비웃음의 노랫거리가 되는 상황을 가리킨다. 이 성경 문맥을 meaning에 반영한 것이며, 명사 형성 요소 מ 자체가 비웃음을 뜻하거나 모든 시대에 조롱만을 뜻한다고 단정하지 않는다. 성경 밖 후대 자료에는 조롱과 무관한 음악 용법도 확인되지만, 고대의 일반적인 노래 의미를 직접 입증한 것으로 소급하지 않는다."
+    },
+    {
+      "word_id": "H5058_0000",
+      "before": null,
+      "after": "연주와 노래를 포괄하며, 성경에서는 특히 현악기로 연주하는 음악과 그 반주·악기를 가리킨다. 노래를 뜻할 때에는 비웃는 노래도 포함한다(욥 30:9; 시 69:12; 애 3:14). 시편 표제와 합 3:19에서는 연주 지시로 쓰인다. 음악·반주·악기 가운데 정확히 무엇을 지시하는지는 문맥마다 확정되지 않으며, 음악이라는 포괄 표현으로 하나의 meaning에 정리한다."
+    },
+    {
+      "word_id": "G1068_0000",
+      "before": null,
+      "after": "아람어계 어원으로 '기름 짜는 틀'이라는 풀이가 전해지는 지명이다. 겟세마네는 한국어 성경의 관용명이고 가트-셰마네는 그 어원 풀이에 따른 분석 표기다. 독립된 아람어 원자료에서 정확한 원형·모음·당대 발음을 확인한 직접 전사로 단정하지 않는다. 마 26:36·막 14:32에서는 예수께서 기도하신 장소의 이름이다. Strong의 H1660·H8081 compare를 두 히브리어 단어에서 헬라어 표제어가 직접 만들어졌다는 확정 관계로 바꾸지 않는다."
+    },
+    {
+      "word_id": "H1661_0000",
+      "before": null,
+      "after": "가드는 한국어 성경의 관용 표기이고 가트는 원문 형태를 보여주는 표기다. 포도즙 틀을 뜻하는 H1660과 같은 형태가 도시명으로 쓰인다. 개별 본문이 가리키는 장소를 특정 현대 유적 하나로 일괄 고정하지 않는다."
+    },
+    {
+      "word_id": "H1662_0000",
+      "before": null,
+      "after": "가드헤벨은 한국어 성경의 관용명이고 가트-하헤페르는 표제형의 구성을 드러내는 표기다. 수 19:13의 깉타-헤페르는 OSHB가 방향 표시 접미형으로 분석하는 본문 형태이며 Strong의 짧은 형태 설명과 함께 참고한다. 분석 표기는 고대 실제 발음의 복원이 아니다. Strong은 H1660과 H2658의 결합으로 '우물의 포도즙 틀'을 풀이한다. 원전분해는 두 요소를 H1660·H2660으로 나누므로 그 marker 수를 H1662의 출현 수로 대체하지 않는다."
+    },
+    {
+      "word_id": "H1663_0000",
+      "before": null,
+      "after": "가드에서 온 사람 또는 가드에 속한 사람을 가리키는 출신지 형용사다. 가드 사람은 한국어 성경 관용 표기이고 가트 사람은 기반 지명 가트의 표기를 풀어 쓴 표현이다. 오벧에돔·잇대·골리앗 등에 붙으며 이 낱말만으로 모두 같은 혈통이나 민족이라고 단정하지 않는다."
+    },
+    {
+      "word_id": "H1664_0000",
+      "before": null,
+      "after": "깃다임은 한국어 성경의 관용명이고 깃타임은 읽기 쉬운 원문 기반 이름 표기다. 현재 expression의 깉타임 음역은 별도로 보존한다. 두 표기는 서로 다른 장소나 별도 sense를 나타내지 않는다. Strong은 H1660의 쌍수형으로 이름을 설명하지만, 이름만으로 현장에 포도즙 틀이 실제 두 개 있었다고 단정하지 않는다."
+    },
+    {
+      "word_id": "H1667_0000",
+      "before": null,
+      "after": "가드림몬은 관용명이고 가트-림몬은 이름의 구성을 보여준다. Strong은 H1660과 H7416의 결합으로 풀이한다. 수 21:25의 가드림몬은 LXX의 다른 지명 및 병행 목록 대상 6:70의 빌르암과 차이가 있어 정확한 지리적 동일시가 불확실하다. 현재 히브리어 본문에 있는 이름은 보존한다."
+    },
+    {
+      "word_id": "H4182_0000",
+      "before": null,
+      "after": "가드모레셋은 개역 계열의 관용 표기, 모레셋가드는 새번역의 순서와 현재 DB 이름, 모레셰트-가트는 원문 구성 표기다. Strong은 H3423과 H1661의 결합으로 '가드의 소유지'를 풀이한다. 미 1:14의 어원적 말놀이는 별도의 보통명사 meaning으로 늘리지 않는다."
+    },
+    {
+      "word_id": "H1665_0000",
+      "before": null,
+      "after": "시 8·81·84편 표제의 음악 지시어다. 깃딧은 한국어 성경 관용 표기이고 깃티트는 원문 자음 구성을 보여 주는 분석 표기로, 특정 시대의 실제 발음을 확정하지 않는다. Strong은 가드 사람형 H1663의 여성형으로 가드의 수금을 풀이하지만, 가드에서 온 악기·곡조인지 정확히 확정되지 않는다. LXX의 해당 표제는 '포도주틀들에 관하여'로 전한다. 특정 악기나 포도 수확 노래 하나로 단정하지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H4485_0000",
+      "word_id_2": "H5059_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 H5059 from에 따른 명사 파생이다. מ 자체가 조롱 의미를 만든다고 해석하지 않으며, 비웃는 노래는 성경 용례의 문맥이다.",
+      "source": "RESHET-EC-H101-CLUSTER-H5059-H4485"
+    },
+    {
+      "word_id_1": "H5058_0000",
+      "word_id_2": "H5059_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시적 from과 연주·노래 어휘군",
+      "source": "RESHET-EC-H101-CLUSTER-H5059-H5058"
+    },
+    {
+      "word_id_1": "H1660_0000",
+      "word_id_2": "H1661_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "the same as; 보통명사에서 지명으로의 전용",
+      "source": "RESHET-EC-H101-CLUSTER-H1660-H1661"
+    },
+    {
+      "word_id_1": "H1660_0000",
+      "word_id_2": "H1662_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from H1660 and H2658 with the article inserted",
+      "source": "RESHET-EC-H101-CLUSTER-H1660-H1662"
+    },
+    {
+      "word_id_1": "H1662_0000",
+      "word_id_2": "H2658_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 구성 어근 참조; H2660의 인물·지명 동일시와 구분",
+      "source": "RESHET-EC-H101-CLUSTER-H2658-H1662"
+    },
+    {
+      "word_id_1": "H1660_0000",
+      "word_id_2": "H1664_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "dual of; lexicalized 지명의 형성",
+      "source": "RESHET-EC-H101-CLUSTER-H1660-H1664"
+    },
+    {
+      "word_id_1": "H1660_0000",
+      "word_id_2": "H1667_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from H1660 and H7416",
+      "source": "RESHET-EC-H101-CLUSTER-H1660-H1667"
+    },
+    {
+      "word_id_1": "H1667_0000",
+      "word_id_2": "H7416_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "석류 구성 요소; H7417 marker와 canonical source를 구분",
+      "source": "RESHET-EC-H101-CLUSTER-H7416-H1667"
+    },
+    {
+      "word_id_1": "H1661_0000",
+      "word_id_2": "H1663_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "patrial from; 출신지 형용사",
+      "source": "RESHET-EC-H101-CLUSTER-H1661-H1663"
+    },
+    {
+      "word_id_1": "H1661_0000",
+      "word_id_2": "H4182_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from H3423 and H1661",
+      "source": "RESHET-EC-H101-CLUSTER-H1661-H4182"
+    },
+    {
+      "word_id_1": "H3423_0000",
+      "word_id_2": "H4182_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "소유 어근 구성; H3423 자체 meaning 승인 범위 아님",
+      "source": "RESHET-EC-H101-CLUSTER-H3423-H4182"
+    },
+    {
+      "word_id_1": "H4182_0000",
+      "word_id_2": "H4183_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "patrial from; 출신지 형용사",
+      "source": "RESHET-EC-H101-CLUSTER-H4182-H4183"
+    },
+    {
+      "word_id_1": "H1663_0000",
+      "word_id_2": "H1665_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 feminine of는 원문대로 보존하되 실제 음악 지시어의 기원 해석은 경쟁하므로 가설 추천",
+      "source": "RESHET-EC-H101-CLUSTER-H1663-H1665"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}

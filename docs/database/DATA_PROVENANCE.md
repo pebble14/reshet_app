@@ -1237,3 +1237,20 @@ H90→H91 신규 relation ID7863은 morphological/derived/asserted, canonical pa
 공식 dry-run의 사본 적용·실제 undo·원본 불변과 live apply가 성공했다. History group `1792143244476028`, ID6108–6114는 active word update5·relation create2, undone0이다. Work SHA는 `ce2b0b9e8d84697c0962b2523ff0118c5bca54f7118de557c5dfed9f468f3d66` → `25554f27cafaa5dec997b8bf9839e5d3866de50a6d01a8d8c49a911232369989`, seed SHA `a7e0d6a50a3ab6b520c3bf7532b2780cfd6418709d9739a451eb4ce5493fbdb1`는 불변이다. 독립 SQL59조회·54검증·전체13테이블·DDL·snapshot·byte 백업 대조에서 승인 변경과 history7·해당 sequence 외 차이가 없다. Work·seed·snapshot·byte 백업 integrity ok·FK0·sidecar0, 보호 입력167개·원본 연구22파일 불변, 기존 applicator 테스트31건 통과다. SQL 목적·실행문·결과·해석은 `04_independent_db_verification.json`에 있다.
 
 공식 표준 semantic_progress JSON·CSV·Markdown을 함께 갱신했다. 전체14,298행 중 H0098·H0099·H0100만 unapproved→explicit_approved이며 승인296→299·미승인13,996→13,993·hold6·anomaly113은 유지한다. Snapshot identity는 `c3d8c2d1b43e23050866e289d461ae7dbcc67f51b22bfe10a7d46bdb9d6bd2f7`이며 비대상 row·anomaly 불변과 CSV/Markdown 공식 render 일치를 검증했다. 정상 CORE3 closure·frontier0, canonical15회 전량과 로컬6종 및 LXX 대응 문맥15절의 수동 비교를 사용했다. 원본 연구22파일은 적용 전 snapshot으로 보존하고 실제 적용 결과는 외부 `00_applied_content.md/json`에 별도 기록한다. DB는 Git 미추적 로컬 자산이고 앱/UI 코드 변경이 없어 UI 수동 테스트·전체 앱 빌드는 N/A다.
+
+
+### 11.71 H101 그릇·음악·가트 이름군 approved-content work DB slice
+
+[h101_cluster_approved_content_slice.json](../../tool/data_provenance/manifests/h101_cluster_approved_content_slice.json)은 format v5 batch `RESHET-EC-H101-CLUSTER-APPROVED-CONTENT-SLICE`다. 사용자는 2026-10-16 최신 피드백 수정안과 나머지 추천을 승인하고 DB·문서·필요한 파일, 이상 없는 경우 Git과 이번 작업 브랜치 정리까지 승인했다. 2026-10-17 적용했으며 의미14·비고13·신규 관계13, 총40 write다. 최종값·비고 전문·근거·미채택 대안·미해결 경계는 [H101 결정 기록](../semantic_decisions/h101_cluster_approved_content_slice.md)과 README active 색인에 있다.
+
+H5059는 연주하다, H5058은 음악1행으로 정리하고 G1068의 가트-셰마네 및 가트 사람·깃타임·모레셰트 사람·깃티트를 병기했다. H101 오목한 그릇·H1660 포도즙 틀·H4485 비웃는 노래는 유지하되 형태·용도·시대별 의미 범위의 배타성을 비고에서 제한했다. 신규 관계 ID7868–7880은 asserted12·hypothesized1이며 H1663→H1665는 가설이다. H5059→H101/H1660 추정 어원2건 비생성, G1068 기존 ID3645·6525는 raw 그대로 유지했다. H4183 비고 NULL·expression·음역·발음·언어·schema·seed·기존 hold6건은 보존했다.
+
+승인 원문·byte 백업·독립 검증은 `data/backups/approved_content_batch/h101_approval_20261016/`, 공식 snapshot·result·manifest 사본은 `data/backups/approved_content_batch/20261016T150123404020Z/`에 있다. Approval SHA `35929a29729fa6052d73a73594384b61b75f5cd3ee4b91d662702501281f86ed`, manifest SHA `38d365b34f62fbe8e50acc6461758b17406f1b391f26e550ca3fb29293ad6e3a`이며 새 manifest만 UTF-8 LF·text eol=lf로 기록했다.
+
+공식 dry-run에서 사본 적용·실제 undo·원본 불변이 성공했고 live apply도 성공했다. History group `1792162884626272`, ID6115–6154는 active40행(word update27·relation create13), undone0이다. 독립 SQL81조회·282검증에서 전체13테이블·DDL·snapshot·byte 백업을 대조했고 승인 변경·history40행·해당 sequence 외 변경이 없다. Work·seed·snapshot·byte 백업 integrity ok·FK0·sidecar0이며 기존 applicator Flutter 테스트31건이 통과했다. 조회 목적·실행 SQL·결과·해석은 `04_independent_db_verification.json`에 보존한다.
+
+Work SHA `25554f27cafaa5dec997b8bf9839e5d3866de50a6d01a8d8c49a911232369989` → `011938a8149ad6c4610fa5524eaa7a1113c2d23e83d00fea21c5d03122ca7bb7`, seed SHA `a7e0d6a50a3ab6b520c3bf7532b2780cfd6418709d9739a451eb4ce5493fbdb1`는 불변이다. 원본 연구57파일과 보호 입력90개 및 canonical occurrence 원천41파일의 불변을 확인했다.
+
+표준 외부 semantic_progress 3종을 공식 CLI로 함께 갱신하고22건을 교차검증했다. 전체14,298행 중 CORE14만 승인으로 전환돼 승인299→313·미승인13,993→13,979·hold6·anomaly113이다. Snapshot identity `be914feae22aec40a3b750ac68e1dfb4d5e1a850207e9184a3950365a434c93a`이며 비대상 행·anomaly·canonical relation index·공식 CSV/Markdown render가 일치한다.
+
+Discovery의 max_nodes_reached·frontier58·research_complete=false와 CORE14·CONTEXT6·HUB-EXCLUDED102를 유지하며 전역 closure를 선언하지 않는다. 승인 범위는 canonical97토큰/90절을 검토한 CORE14와 명시한 관계다. LXX/local은 reference-only이며 추정 어원·음악 지시 대상·정확한 원형·지리적 동일시의 불확실성을 보존한다. 원본 연구를 덮어쓰지 않고 외부 `00_applied_content.md/json`에 최신값·적용 결과를 추가한다. DB는 Git 미추적 로컬 자산이며 앱/UI 코드 변경이 없어 UI 수동 테스트·전체 앱 빌드는 N/A다.
