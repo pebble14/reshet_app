@@ -1,0 +1,88 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H89-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-16 H89·H90·H91 최신 병기·가문 풀이 및 DB·문서·Git·작업 브랜치 정리 승인; data/backups/approved_content_batch/h89_approval_20261016/00_user_approval.json",
+    "document_sha256": "bb9e83ef934dbc5b51a806fa3e01e1a73c01b09147d97d4920c536fe4fdf759f"
+  },
+  "target": {
+    "expected_work_sha256": "5751bea2c8d370309b6cc665fb49da865416876cd2c02c135e82c3cf7bee3806",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0090_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아각 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아각·아가그 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0091_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아각 사람"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아각 사람·아가그 가문(家門) 사람"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0089_0000",
+      "before": null,
+      "after": "다윗의 용사 삼마의 아버지로 나온다(삼하 23:11). 이름의 어원은 불확실하다."
+    },
+    {
+      "word_id": "H0090_0000",
+      "before": null,
+      "after": "아말렉 왕의 이름으로 나온다. Strong은 아말렉 왕들의 칭호로 설명하지만, 민 24:7과 삼상 15장의 아각이 동일 인물인지, 왕들이 공유한 칭호인지는 본문만으로 확정하기 어렵다. Strong의 ‘불꽃’ 풀이는 어원이 불확실한 이름에 대한 설명이며 별도 일반명사 의미로 두지 않는다. ‘아각’은 한국어 성경 관용 표기이고, ‘아가그’는 원문 철자를 드러내는 표기다."
+    },
+    {
+      "word_id": "H0091_0000",
+      "before": null,
+      "after": "에스더서에서 하만에게 붙는 소속·계통 명칭이다. Strong은 아각·아가그(H90)에서 나온 출신·소속형 또는 부칭형으로 설명한다. ‘가문 사람’은 전통적인 후손·소속자 풀이를 반영한 표현이다. 사무엘이 죽인 특정 아각에게 이어지는 실제 혈통이나 어느 동명이인을 가리키는지는 확정하지 않으며, 문학적 호칭으로 보는 해석도 있다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0090_0000",
+      "word_id_2": "H0091_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "아각·아가그(H90)에서 형성된 소속·계통형. 어휘 파생을 나타내며 하만의 구체적 역사적 혈통을 확정하지 않는다.",
+      "source": "RESHET-EC-H89-CLUSTER-H0090-H0091"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": [
+    {
+      "word_id": "H0089_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "아게 (인)"
+        }
+      ]
+    }
+  ]
+}

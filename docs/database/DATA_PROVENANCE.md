@@ -1169,3 +1169,18 @@ Relation ID7862는 H0178→H0088, morphological/derived/asserted이며 canonical
 공식 CLI로 표준 외부 semantic_progress JSON·CSV·Markdown을 함께 갱신했다. 전체14,298행에서 H88·H178만 unapproved→explicit_approved이며 승인284→286·hold6·미승인14,008→14,006·anomaly113이다. 비대상 행·anomaly와 기존60 승인 manifest·원천·참고자료·hold fingerprint는 불변이다. Progress 및 보호 입력 검증44건이 통과했고 snapshot identity는 `9332d189006f00b3277c23ea49ef492b370920e01525493e1ef2f9b3a33c4b50`다.
 
 연구 CORE2의 canonical21 token/20절을 전량 검토한 추천안을 채택했다. H1 hub 예외·CONTEXT1·HUB-EXCLUDED44·원본 frontier39·max_nodes_reached·전역 graph closure 미선언을 유지한다. H178의 사람/영/술법 competing9 token을 비고에 보존하며 별도 술법 sense는 미채택했다. 원본 연구16개 artifact와 machine state/queue는 적용 전 snapshot으로 보존하고 외부 `00_applied_content.md/json`에 적용 결과를 별도로 기록한다. DB는 Git 미추적 로컬 자산이며 앱/UI 코드 변경이 없어 UI 수동 테스트·전체 앱 빌드는 N/A다.
+
+
+### 11.65 H89·H90·H91 이름군 approved-content work DB slice
+
+[h89_cluster_approved_content_slice.json](../../tool/data_provenance/manifests/h89_cluster_approved_content_slice.json)은 format v5 batch `RESHET-EC-H89-CLUSTER-APPROVED-CONTENT-SLICE`다. 사용자는 2026-10-16 최신 가문 풀이·기반 인명 병기와 DB·문서·필요한 파일·Git 게시 및 이상 없는 경우 이번 작업 브랜치 정리를 승인했다. H89 아게 (인)는 meaning_approvals1건으로 기존 projection을 승인하고 H90은 아각·아가그 (인), H91은 아각 사람·아가그 가문(家門) 사람으로 교체했다. 비고3·신규 파생 관계1을 포함한 DB write는6건이며 유지 의미 승인은 별도1건이다. 최종값·선택 근거·미채택 대안·잔여 불확실성은 [결정 기록](../semantic_decisions/h89_cluster_approved_content_slice.md)과 README active 색인에 있다.
+
+H90→H91 신규 relation ID7863은 morphological/derived/asserted, canonical pair H0090_0000–H0091_0000, direction w1_to_w2다. 어휘 형성을 나타내며 하만이 특정 아각의 실제 후손임을 입증하는 관계가 아니다. H89–H90 compare 관계는 생성하지 않고 새 hold는 없다. Expression·음역·발음·언어·schema·seed·원천·로컬 참고자료·기존 hold6건은 불변이다.
+
+승인 원문·byte 백업·독립 검증은 `data/backups/approved_content_batch/h89_approval_20261016/`, 공식 snapshot·result·manifest 사본은 `data/backups/approved_content_batch/20261016T014727086038Z/`에 보존한다. Approval SHA는 `bb9e83ef934dbc5b51a806fa3e01e1a73c01b09147d97d4920c536fe4fdf759f`, manifest SHA는 `a77d889b7b816eadbda642230899a3ebeb075c32127ee1c3d2249d0a5cc27d02`다. 실제 적용한 CRLF manifest 바이트와 Git index·공식 사본을 일치시키기 위해 새 경로에만 `.gitattributes`의 `-text whitespace=cr-at-eol`을 지정했다.
+
+공식 dry-run의 사본 적용·undo·원본 불변과 live apply가 성공했다. History group1792115248248599의 ID6089–6094는 active6행(word update5·relation create1), undone0이다. Work SHA는 `5751bea2c8d370309b6cc665fb49da865416876cd2c02c135e82c3cf7bee3806` → `18bdd88377ed7c6bd1f9d92a62bf5525cbc061c2e8f71293d30c22939bdc1bba`, seed SHA `a7e0d6a50a3ab6b520c3bf7532b2780cfd6418709d9739a451eb4ce5493fbdb1`는 불변이다. 독립 SQL47조회·48검증으로 전체13테이블·DDL·snapshot·byte 백업을 비교했고 승인 데이터·history6행 및 해당 sequence 외 차이가 없다. Work·seed·snapshot·byte 백업 integrity ok·FK0·sidecar0, 기존 applicator Flutter 테스트31건 통과. SQL 목적·실행문·결과 digest·해석은 `04_independent_db_verification.json`에 있다.
+
+공식 CLI로 표준 외부 semantic_progress JSON·CSV·Markdown을 함께 갱신했다. 전체14,298행에서 H89·H90·H91만 unapproved→explicit_approved이며 승인286→289·hold6·미승인14,006→14,003·anomaly113이다. 비대상 row·anomaly는 불변이고 progress 교차검증19건이 통과했다. Snapshot identity는 `d62ba43514b6d4d1b9fe9f22bc37c486382770f4ff1e2f5c1423147bc4f0a805`다. Progress는 derivative이며 현재 DB와 승인 manifest를 대체하지 않는다.
+
+정상 CORE3 closure·frontier0, 전체14 canonical token/12절 및 로컬 참고6종·명시적 LXX12절의 연구를 사용했다. 가문 풀이와 실제 혈통 확인을 구분하고 H90의 왕명·칭호·불꽃 어원 및 source x-pn의 한계를 비고·결정 기록에 보존했다. 원본 연구17개 파일과 machine state/queue는 적용 전 snapshot으로 남기며 외부 `00_applied_content.md/json`에 최종 적용값을 별도로 기록한다. DB는 Git 미추적 로컬 자산이고 앱/UI 코드 변경이 없어 UI 수동 테스트·전체 앱 빌드는 N/A다.
