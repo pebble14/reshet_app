@@ -1,0 +1,61 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H96-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-16 H96 방울 유지·H97 에글라임 유지·비고2·가설 관계1 및 DB·문서·Git·작업 브랜치 정리 승인; data/backups/approved_content_batch/h96_approval_20261016/00_user_approval.json",
+    "document_sha256": "440e1849340d0e89afc75831bdb3968724cf057ad75d508bcd24b96b0fd64468"
+  },
+  "target": {
+    "expected_work_sha256": "f23a32b94b6e19c5248d071b6b3168f7ed802001ed439d08e3aada489990f83d",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [],
+  "word_note_replacements": [
+    {
+      "word_id": "H0096_0000",
+      "before": null,
+      "after": "욥 38:28에서는 ‘이슬 방울’을 가리킨다. Strong은 ‘물이 모여 있는 곳(reservoir)’으로 정의하고 ‘방울’을 용례 번역으로 제시하며, BDB는 물의 모임·저장분으로 보는 견해도 전한다. 별도의 ‘저수지’ 의미로 쓰인 용례는 현재 canonical 본문에서 확인되지 않는다."
+    },
+    {
+      "word_id": "H0097_0000",
+      "before": null,
+      "after": "사 15:8에 나오는 모압의 지명이다. Strong은 H96 אֶגֶל의 쌍수형에서 나온 이름으로 ‘두 연못’이라 풀이하지만, BDB는 이름의 뜻을 미확정으로 둔다. 이 어원 풀이와 정확한 위치는 확정하지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0096_0000",
+      "word_id_2": "H0097_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong은 H97을 H96의 쌍수형에서 나온 지명으로 풀이하며 ‘두 연못’이라고 설명한다. BDB는 이름의 뜻을 미확정으로 두므로 역사적 어원을 확정하지 않는 가설 관계로 기록한다.",
+      "source": "RESHET-EC-H96-CLUSTER-H0096-H0097"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": [
+    {
+      "word_id": "H0096_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "방울"
+        }
+      ]
+    },
+    {
+      "word_id": "H0097_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "에글라임 (지)"
+        }
+      ]
+    }
+  ]
+}
