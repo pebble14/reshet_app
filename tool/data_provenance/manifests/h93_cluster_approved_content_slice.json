@@ -1,0 +1,40 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H93-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-16 H93 최신 호두 meaning·비고 및 DB·문서·Git·작업 브랜치 정리 승인; data/backups/approved_content_batch/h93_approval_20261016/00_user_approval.json",
+    "document_sha256": "b8a774a9b664d24008460d7f6483d91a28300d90257069ec427972a5ce315136"
+  },
+  "target": {
+    "expected_work_sha256": "1ba1c63b8f35fc0fdd942e4652d1350af46199effe000f5f070c63006e4e2015",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0093_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "견과, 호도"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "호두"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0093_0000",
+      "before": null,
+      "after": "아가 6:11에서는 단수형이 집합적으로 쓰여 호두나무들이 있는 동산을 나타낸다. 전문 연구에서는 보통 호두(Juglans regia)로 식별하지만 성경 용례가 한 번뿐이므로 수종 식별의 불확실성은 남는다. Strong의 페르시아어 기원 설명은 추정이다."
+    }
+  ],
+  "relation_creates": [],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}
