@@ -4,7 +4,7 @@
 
 이 문서는 현재 repository 상태의 third-party dependency, SDK resource, icon, font, asset license baseline을 기록한다.
 
-이 문서는 Reshet 자체의 배포 license를 선언하지 않는다.
+Reshet 자체 소스코드의 라이선스는 루트 [LICENSE](../../LICENSE)의 MIT를 따른다. 이 문서는 DB·외부 자료·제3자 코드와 자산의 이용 조건을 일괄 확정하지 않는다.
 release, commercial distribution, public distribution, open-source 전환 전에는 별도 compliance review가 필요하다.
 
 ## 2. 문서 Status와 Scope
@@ -21,7 +21,7 @@ Status: Baseline reference
 
 이 문서는 다음을 선언하지 않는다.
 
-- Reshet project-level license
+- DB·외부 자료·제3자 코드와 자산에 대한 단일 project-level license
 - release readiness
 - commercial distribution readiness
 - public distribution readiness
@@ -131,16 +131,16 @@ Release artifact에 native SQLite binary가 포함되는 경우, 해당 target�
 
 ## 8. Root Project License 상태
 
-현재 repository root에는 project-level `LICENSE`, `NOTICE`, `COPYING` 파일이 없다.
+Reshet 자체 소스코드는 루트 [LICENSE](../../LICENSE)의 MIT 라이선스를 따른다. 원저작권 표시는 `Copyright (c) 2026 pebble14`다.
 
-따라서 이 문서는 Reshet 자체의 배포 license를 선언하지 않는다.
-현재 문서는 third-party dependency와 bundled resource의 baseline만 기록한다.
+수정·재배포·상업적 이용과 수정판의 비공개 배포를 허용하며, 재배포 시 원저작권 표시와 MIT 전문을 유지한다. 프로젝트명·소개 페이지·저장소 링크를 알리는 권장 출처 문구는 [README](../../README.md)에 제공하며, 추가 라이선스 의무로 부과하지 않는다.
 
-Project-level license를 정하기 전까지는 다음을 구분한다.
+코드의 MIT와 다음 범위는 구분한다.
 
-- Reshet source code의 license: undecided
+- DB·어휘 연구 데이터(문서·manifest에 포함된 데이터 포함): 코드 MIT의 일괄 적용 대상이 아니며 별도 이용 조건·배포 범위를 정한다.
+- 외부 원자료·제3자 코드와 자산: 해당 원자료의 라이선스와 고지를 유지한다.
 - Third-party dependency baseline: 이 문서에서 current-state 기준으로 기록
-- Release / distribution notice: future review 대상
+- Release / distribution notice: 실제 배포물 기준으로 코드 MIT와 제3자 고지 포함 여부를 확인한다.
 
 ## 9. Allowed / Review Required / Prohibited License Policy
 
@@ -228,7 +228,7 @@ Asset provenance가 불명확한 resource는 release 대상에 포함하기 전�
 - Flutter SDK bundled artifact의 release target별 notice 필요 여부 확인
 - platform template asset이 Flutter template 원본에서 유래했는지 최종 provenance 확인
 - Windows / macOS app icon의 current SDK template hash 불일치 원인 확인
-- root project-level `LICENSE` 결정
+- 배포물에 Reshet 소스코드의 MIT 전문과 원저작권 표시 포함 여부 확인
 - public distribution 또는 open-source 전환 시 `NOTICE` / `THIRD_PARTY_NOTICES` 필요 여부 확인
 - release artifact에 포함되는 native SQLite binary 확인
 
@@ -263,7 +263,7 @@ Release 또는 public distribution을 검토할 때는 최소한 다음을 확�
 현재 dependency baseline은 MIT / BSD-style / Apache-2.0 중심이다.
 현재 확인 범위에서 GPL / AGPL / LGPL 후보는 발견되지 않았다.
 
-그러나 이 문서는 current-state baseline이며 project-level license 또는 release readiness를 선언하지 않는다.
+Reshet 자체 소스코드는 루트 `LICENSE`의 MIT를 따른다. 이 baseline은 DB·외부 자료 전체의 라이선스나 release readiness를 선언하지 않는다.
 Dependency, asset, SDK, release target이 바뀌면 이 baseline은 다시 검토되어야 한다.
 
 
@@ -273,4 +273,4 @@ Dependency, asset, SDK, release target이 바뀌면 이 baseline은 다시 검�
 
 출시 AAB에는 Flutter의 `NOTICES.Z`가 포함되어 Flutter·Dart·SQLite wrapper 및 파일 선택·설정 패키지의 안내를 포함한다. 프로그램 정보에서 Flutter 표준 라이선스 화면으로 접근한다. 자료 출처는 `data_attributions.md`, 개인정보 안내는 `privacy_policy.md`로 별도 제공한다.
 
-Strong 원자료는 pinned manifest의 CC0/CC BY 4.0 근거와 가공 안내를 제공한다. 초기 보존 DB의 한국어 뜻풀이·RMAC 등 전체 자료의 재배포 근거는 아직 확인 중이며, 기술적으로 빌드됐다는 사실을 DB 전체 배포권 검토 완료로 해석하지 않는다. Reshet 자체의 공개 소스 라이선스는 이번 작업으로 정하지 않는다.
+Strong 원자료는 pinned manifest의 CC0/CC BY 4.0 근거와 가공 안내를 제공한다. 초기 보존 DB의 한국어 뜻풀이·RMAC 등 전체 자료의 재배포 근거는 아직 확인 중이며, 기술적으로 빌드됐다는 사실을 DB 전체 배포권 검토 완료로 해석하지 않는다. 당시 Android 비공개 테스트 준비에서는 Reshet 자체의 공개 소스 라이선스를 정하지 않았으며, 현재 코드 라이선스는 위 8절과 루트 `LICENSE`를 따른다.
