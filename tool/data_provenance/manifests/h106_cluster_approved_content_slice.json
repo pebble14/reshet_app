@@ -1,0 +1,87 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H106-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-17 H106·H1640·H4053 의미 유지·비고·파생 관계 및 DB·문서·Git·브랜치 정리 승인; data/backups/approved_content_batch/h106_approval_20261017/00_user_approval.json",
+    "document_sha256": "b2af076572eafbaa2a84e243d95117495b5a7c6b93aabb7700a59989d31ebf1a"
+  },
+  "target": {
+    "expected_work_sha256": "a4820f7deb562e0b472fafd7478710a92feb77634047b4f19079e7cd39e127f0",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [],
+  "word_note_replacements": [
+    {
+      "word_id": "H0106_0000",
+      "before": null,
+      "after": "사 58:4의 '악한 주먹'에서 '악한'은 뒤따르는 רֶשַׁע가 더하는 문맥 의미이며, 이 단어 자체의 별도 의미가 아니다. BDB가 소개하는 '몽둥이·막대기' 대안은 남아 있지만, 확보된 용례와 그리스어 참고 본문은 '주먹' 해석을 지지한다. Strong의 '붙잡다' 설명은 H1640과 연결하는 어원적 풀이로 구분한다."
+    },
+    {
+      "word_id": "H1640_0000",
+      "before": null,
+      "after": "성경의 유일한 용례인 삿 5:21에서는 강물이 사람들을 휩쓸어 가는 데 쓰인다. 관련 명사의 어원 풀이에 나오는 '붙잡다·떠내다'를 별도 성경 의미로 확정하지 않으며, 로컬 사전의 '파악하다·이해하다'도 확보된 성경 용례에서 입증되지 않는다."
+    },
+    {
+      "word_id": "H4053_0000",
+      "before": null,
+      "after": "욜 1:17에만 나오며, 본문의 대상과 해석에는 불확실성이 있다. Strong과 여러 번역은 '흙 덩어리'로 풀이하지만, BDB·NET은 '삽' 풀이를 제시하고, 확보된 LXX 참고 본문은 암소와 구유를 말하는 다른 문장을 전한다. '삽'이나 '구유'를 별도 확정 의미로 추가하지 않고, 현행 의미를 대표 해석으로 유지한다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0106_0000",
+      "word_id_2": "H1640_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong은 H106을 H1640의 '붙잡다'라는 어원적 측면에서 유래한 명사로 설명한다. 성경에서 H1640의 해당 의미가 독립적으로 확인된 것은 아니다.",
+      "source": "RESHET-EC-H106-CLUSTER-H1640-H0106"
+    },
+    {
+      "word_id_1": "H1640_0000",
+      "word_id_2": "H4053_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong은 H4053을 H1640에서 파생한 명사로 설명한다. 욜 1:17의 흙덩이·삽·다른 본문 해석에 관한 불확실성은 단어 비고에 보존한다.",
+      "source": "RESHET-EC-H106-CLUSTER-H1640-H4053"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": [
+    {
+      "word_id": "H0106_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "주먹"
+        }
+      ]
+    },
+    {
+      "word_id": "H1640_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "휩쓸어가다"
+        }
+      ]
+    },
+    {
+      "word_id": "H4053_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "흙 덩어리"
+        }
+      ]
+    }
+  ]
+}
