@@ -1,0 +1,93 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H104-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-17 H104 클러스터 추천 의미·비고·관계, DB·문서·Git 및 작업 브랜치 정리 승인; data/backups/approved_content_batch/h104_approval_20261017/00_user_approval.json",
+    "document_sha256": "a9368279753762d35132b5d11e823e5cda707da14d43d2c74e2a20ee8a3d6c6b"
+  },
+  "target": {
+    "expected_work_sha256": "0955d232eade5cef0b8afd765e353a35436e6ca1035bbd08306f00adbb9bdde7",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0104_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "서신(書信)/편지(便紙/片紙)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "편지(便紙/片紙)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0107_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "편지"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "편지(便紙/片紙)"
+        }
+      ]
+    },
+    {
+      "word_id": "G0029_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "징발하다(徵發-)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "억지로 일을 시키다"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0104_0000",
+      "before": "아람어\n\n고대 페르시아어에서 유래",
+      "after": "에스라 4:8·11, 5:6에서 왕에게 보내는 편지를 가리킨다. Strong은 페르시아어 기원으로 설명하지만, 아카드어 egirtu와의 관계 및 차용 경로에 관한 다른 분석이 있어 고대 페르시아어에서 직접 빌려온 말로 확정하지 않는다."
+    },
+    {
+      "word_id": "H0107_0000",
+      "before": null,
+      "after": "왕이 내리는 편지를 가리킬 때에는 문맥에 따라 조서(詔書)나 친서(親書)로 옮긴다. 일반적인 서신 교환이나 협박 편지에도 쓰이므로 왕의 명령에만 한정된 말은 아니다."
+    },
+    {
+      "word_id": "G0029_0000",
+      "before": "고대 페르시아어에서 유래,\n페르시아의 기마 급사(騎馬急使)를 의미하는 ἄγγαρος(앙가로스)와 -εύω(동사 형성 접미사)의 합성어,\n이 기마 급사는 왕의 명령을 전달하는 과정에서 마주치는 마필(馬匹), 선박(船舶), 인력(人力) 등의 자원들을 강제(強制)로 징발(徵發)할 수 있었다고 함,\n\nⓐ징발하다(徵發-)- 마5:41; 27:32; 막15:21",
+      "after": "공적 역무나 운송을 위해 사람을 강제로 동원하는 배경의 말로, 문맥에 따라 징발하다(徵發하다)로 옮길 수 있다. 신약에서는 일정 거리를 가게 하거나 십자가를 지고 가게 하는 데 쓰인다(마태복음 5:41; 27:32; 마가복음 15:21). ἄγγαρος(급사)에서 형성된 동사이며, 이 명사는 이란계 차용어로 보는 분석이 있으나 정확한 원천형과 H104와의 직접 어원 관계는 확정하지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0104_0000",
+      "word_id_2": "H0107_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "같은 편지 어휘의 아람어·히브리어 대응형이다. Strong은 H107을 H104의 feminine of로 설명하지만 두 정본 표제 모두 여성명사이며, 여기서는 남성에서 여성으로의 전환이나 직접 차용 방향을 확정하지 않는다.",
+      "source": "RESHET-EC-H104-CLUSTER-H0104-H0107"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}
