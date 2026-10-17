@@ -30,7 +30,7 @@ Linux 플랫폼 디렉터리는 저장소에 있으나 실제 검증 환경이 �
 | `test/` | UI·도메인·repository·database 검증 |
 | `docs/` | 현행 authority, 설계 참고, migration, 과거 기록 |
 | `sql/` | 명시적으로 실행하는 migration·검증 SQL |
-| `data/` | 로컬 private SQLite DB 위치. DB 파일은 Git 추적 대상이 아님 |
+| `data/` | 로컬 SQLite DB 위치. DB 파일은 Git 추적 대상이 아님 |
 | `windows/`, `android/` | 검증된 플랫폼 runner |
 
 세부 책임은 [프로젝트 구조](docs/architecture/PROJECT_STRUCTURE.md)에서 확인할 수 있다.
@@ -50,14 +50,14 @@ Linux 플랫폼 디렉터리는 저장소에 있으나 실제 검증 환경이 �
 
 Repository와 데이터 경계의 세부 계약은 [Repository Data Boundary Policy](docs/architecture/repository_data_boundary_policy.md)를 따른다.
 
-## SQLite DB와 private asset 경계
+## SQLite DB와 Git 미추적 asset 경계
 
 `data/reshet_seed.db`와 `data/reshet_work.db`는 의도적으로 Git에 포함하지 않는다. 따라서 clean clone에는 실행용 DB가 없다.
 
 - 소스와 문서 열람, 의존성 설치는 DB 없이 가능하다.
-- 전체 앱 실행과 일부 integration/runtime 테스트에는 별도로 준비된 private seed/work DB가 필요하다.
-- Android build에는 `pubspec.yaml`에 asset으로 선언된 `data/reshet_seed.db`가 필요하다.
-- 공개되지 않은 DB의 입수 방법이나 재배포 가능성은 이 저장소에서 안내하지 않는다.
+- 전체 앱 실행과 일부 integration/runtime 테스트에는 별도로 준비된 seed/work DB가 필요하다.
+- Windows·Android build에는 `pubspec.yaml`에 asset으로 선언된 `data/reshet_seed.db`가 필요하다.
+- 공식 DB 배포 파일은 게시가 완료되면 [프로젝트 소개](https://github.com/pebble14/reshet-info/blob/main/README.md)에서 안내한다. 입수한 공식 seed는 `data/reshet_seed.db`로 준비한다. 기존 DB가 있으면 먼저 백업하고, 개인 작업 DB를 배포 DB로 임의 덮어쓰지 않는다.
 
 현재 DB 계약은 [SCHEMA](docs/database/SCHEMA.md)에서 확인한다.
 
@@ -78,7 +78,9 @@ Reshet의 소스코드를 활용했습니다.
 
 ## 데이터와 라이선스
 
-데이터의 이용 조건과 배포 범위는 코드의 MIT 라이선스와 별도로 정한다. 현재 데이터 provenance 정리와 공개 Strong 원천을 통한 선택적 재검증이 진행 중이며, e-Sword 모듈 파일은 저장소와 배포물에 포함하지 않는다.
+Reshet가 권리를 가진 데이터 기여분은 [CC BY 4.0](docs/legal/data_license.md)으로 제공한다. 수정·재배포·상업적 이용을 허용하며 수정판의 동일조건배포나 DB·소스 공개를 요구하지 않는다. 출처·라이선스와 변경 사실을 안내해야 한다. 외부 원자료의 조건은 유지하며 DB 전체를 단일 CC BY 자료로 안내하지 않는다.
+
+현재 데이터 provenance 정리와 공개 Strong 원천을 통한 선택적 재검증이 진행 중이며, e-Sword 모듈 파일은 저장소와 배포물에 포함하지 않는다. DB 파일은 계속 Git에서 제외하며 실제 다운로드 경로는 배포가 완료되면 안내한다.
 
 확인된 출처, 재배포 경계와 향후 데이터 입력 기준은 [데이터 출처와 재배포 경계](docs/database/DATA_PROVENANCE.md)를 따른다.
 
@@ -92,7 +94,7 @@ Reshet의 소스코드를 활용했습니다.
 flutter pub get
 ```
 
-`flutter pub get`은 private DB 없이 실행할 수 있다. 전체 앱을 실행하려면 먼저 앞의 DB 경계에 맞는 private DB를 준비해야 한다.
+`flutter pub get`은 DB 없이 실행할 수 있다. 전체 앱을 실행하려면 먼저 앞의 DB 경계에 맞는 DB를 준비해야 한다.
 
 ```powershell
 flutter run -d windows
@@ -122,11 +124,13 @@ flutter test test/domain/relation/relation_formatter_test.dart
 - [프로젝트 구조](docs/architecture/PROJECT_STRUCTURE.md)
 - [Repository/Data 경계](docs/architecture/repository_data_boundary_policy.md)
 - [현재 DB schema](docs/database/SCHEMA.md)
+- [데이터 이용 조건](docs/legal/data_license.md)
+- [Windows 베타 배포 절차](docs/release/windows_beta.md)
 - [Workspace UX Architecture](docs/ux/workspace_ux_architecture.md)
 - [Navigation Policy](docs/ux/navigation_policy.md)
 
 ## 현재 제한사항
 
-- clean clone만으로는 전체 앱과 private DB 의존 테스트를 실행할 수 없다.
+- clean clone만으로는 전체 앱과 DB 의존 테스트를 실행할 수 없다.
 - Linux는 실제 검증 환경이 없어 지원 완료 상태가 아니다.
-- private DB 콘텐츠의 배포·재배포 가능성은 이 문서의 판단 범위가 아니다.
+- DB 전체에 단일한 라이선스를 적용하지 않으며 Reshet 기여분과 외부 원자료의 조건을 구분한다.

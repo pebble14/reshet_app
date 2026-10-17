@@ -137,7 +137,7 @@ Reshet 자체 소스코드는 루트 [LICENSE](../../LICENSE)의 MIT 라이선�
 
 코드의 MIT와 다음 범위는 구분한다.
 
-- DB·어휘 연구 데이터(문서·manifest에 포함된 데이터 포함): 코드 MIT의 일괄 적용 대상이 아니며 별도 이용 조건·배포 범위를 정한다.
+- DB·어휘 연구 데이터(문서·manifest에 포함된 데이터 포함): 코드 MIT의 일괄 적용 대상이 아니다. Reshet가 권리를 가진 기여분은 [데이터 이용 조건](data_license.md)의 CC BY 4.0으로 제공하며 외부 원자료의 조건은 유지한다.
 - 외부 원자료·제3자 코드와 자산: 해당 원자료의 라이선스와 고지를 유지한다.
 - Third-party dependency baseline: 이 문서에서 current-state 기준으로 기록
 - Release / distribution notice: 실제 배포물 기준으로 코드 MIT와 제3자 고지 포함 여부를 확인한다.
