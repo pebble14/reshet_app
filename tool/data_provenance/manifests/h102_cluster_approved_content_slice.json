@@ -1,0 +1,177 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H102-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-17 H102 최신 의미·표기·관계 및 H6211 선택지4와 DB·문서·Git·작업 브랜치 정리 승인; data/backups/approved_content_batch/h102_approval_20261017/00_user_approval.json",
+    "document_sha256": "acc1173aacf2adc722b47628a5092bc1fb85d25c842423b0b0d187f2f651173f"
+  },
+  "target": {
+    "expected_work_sha256": "600ebfbc67d6082d47933b3b5c689e51a3c721f7f9c1237b19bcdca58d98f5f4",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0102_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "무리, 군대"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "부대(部隊)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5062_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "치다, 때리다, 강타하다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "치다"
+        },
+        {
+          "seq": 2,
+          "meaning": "부딪치다"
+        }
+      ]
+    },
+    {
+      "word_id": "H4046_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "타격, 재난(앙), 역병"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "재앙(災殃)"
+        },
+        {
+          "seq": 2,
+          "meaning": "타격(打擊)"
+        }
+      ]
+    },
+    {
+      "word_id": "H4047_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "막비아스 Magpiash"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "막비아스·마그피아쉬 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5063_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "타격, 재앙"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "재앙(災殃)"
+        },
+        {
+          "seq": 2,
+          "meaning": "부딪침"
+        }
+      ]
+    },
+    {
+      "word_id": "H6211_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "나방, 반대좀, 풀, 목초"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "나방"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0102_0000",
+      "before": null,
+      "after": "에스겔서에서만 복수형으로 쓰이며 왕이나 민족에 딸린 군사 집단을 가리킨다. 일정한 병력 수나 현대의 편제 규모로 한정하지 않는다. 군대의 날개라는 어원 설명을 신체의 날개라는 별도 의미로 삼지 않는다. H5062에서의 파생은 Strong의 추정이며, 차용어 등 다른 분석도 있어 확정 관계로 처리하지 않는다."
+    },
+    {
+      "word_id": "H5062_0000",
+      "before": null,
+      "after": "사람이나 짐승을 쳐서 다치게 하는 일뿐 아니라, 질병·재앙으로 치거나 전투에서 패하게 하는 데도 쓰인다. 니팔형은 주로 전투에서 패함을 나타내며, 이를 별도 어근 의미로 나누지 않는다. 발이 돌에 부딪치거나 걸려 넘어지는 용례는 두 번째 의미에 둔다."
+    },
+    {
+      "word_id": "H4046_0000",
+      "before": null,
+      "after": "질병에 의한 재앙과 사람·재산에 닥치는 큰 재앙을 포괄하며, 모든 용례를 특정 전염병으로 한정하지 않는다. 전투에서 다수가 죽거나 패하는 경우와 에스겔 24:16의 죽음에 이르는 타격은 두 번째 의미에 둔다. 갑작스러운 죽음의 구체적 원인이나 병명은 본문이 밝히지 않는다."
+    },
+    {
+      "word_id": "H4047_0000",
+      "before": null,
+      "after": "느헤미야 10:20(히브리어 본문 10:21)의 언약 관련 백성 지도자 명단에 나오는 인명이다. 막비아스는 한국어 성경 관용 표기, 마그피아쉬는 기존 DB의 원문 기반 한국어 음역이다. 특정 시대의 실제 발음을 새로 확정한 표기가 아니다. 이름의 구성은 H1479 또는 H5062와 H6211의 결합이라는 추정이므로 확정 합성 관계를 만들지 않는다."
+    },
+    {
+      "word_id": "H5063_0000",
+      "before": null,
+      "after": "출애굽기·민수기·여호수아의 6회는 사람들에게 닥치는 치명적 재앙을 가리키며 질병에 의한 경우도 포함한다. 이사야 8:14에서는 발이 돌에 부딪쳐 걸려 넘어지는 이미지로 쓰인다. 해당 용례의 부딪침은 비유적 적용도 포함한다."
+    },
+    {
+      "word_id": "H6211_0000",
+      "before": null,
+      "after": "히브리어 עָשׁ는 의복을 갉아먹는 나방류를 가리키며 유충에 의한 손상도 포함한다. 이 어휘의 OSHB 출현은 7회다. 전통 번역의 좀을 현대 곤충명 반대좀과 자동으로 동일시하지 않으며 특정 현생 종은 확정하지 않는다. 욥 4:19의 하루살이 번역과 욥 27:18의 나방집·거미집 해석 차이는 별도 확정 의미로 늘리지 않는다. OSHB의 같은 숫자 번호 6211 b로 집계되는 아람어 עֲשַׂב의 풀 5회는 별개 어휘이며, Strong 번호 없는 보충 항목 H0000_0042에 수록했다. 정규 Strong 번호의 12회 집계와 이 히브리어 표제의 7회를 구분한다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H4046_0000",
+      "word_id_2": "H5062_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 H5062 from 설명과 전체 용례를 검토하여 승인한 명사 파생 관계다. 질병·전투·발의 충돌 등 문맥별 결과를 별도 어근으로 분리하지 않는다.",
+      "source": "RESHET-EC-H102-CLUSTER-H5062-H4046"
+    },
+    {
+      "word_id_1": "H5062_0000",
+      "word_id_2": "H5063_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 H5062 from 설명과 전체 용례를 검토하여 승인한 명사 파생 관계다. 질병·전투·발의 충돌 등 문맥별 결과를 별도 어근으로 분리하지 않는다.",
+      "source": "RESHET-EC-H102-CLUSTER-H5062-H5063"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}

@@ -35,3 +35,6 @@ tool/data_provenance/manifests/h96_cluster_approved_content_slice.json text eol=
 tool/data_provenance/manifests/h98_cluster_approved_content_slice.json -text whitespace=cr-at-eol
 
 tool/data_provenance/manifests/h101_cluster_approved_content_slice.json text eol=lf
+tool/data_provenance/manifests/h102_cluster_approved_content_slice.json -text whitespace=cr-at-eol
+tool/data_provenance/manifests/h6211_aramaic_supplemental_word.json -text whitespace=cr-at-eol
+tool/data_provenance/migrations/h6211_aramaic_supplemental_word.dart text eol=lf

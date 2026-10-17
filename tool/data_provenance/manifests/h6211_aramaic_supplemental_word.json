@@ -1,0 +1,44 @@
+{
+  "format_version": 1,
+  "operation": "create_non_strong_word_via_existing_repository",
+  "provenance": {
+    "document_id": "data\\backups\\approved_content_batch\\h102_approval_20261017\\00_user_approval.json",
+    "document_sha256": "acc1173aacf2adc722b47628a5092bc1fb85d25c842423b0b0d187f2f651173f"
+  },
+  "target": {
+    "expected_work_sha256": "011938a8149ad6c4610fa5524eaa7a1113c2d23e83d00fea21c5d03122ca7bb7",
+    "expected_user_version": 0
+  },
+  "word": {
+    "word_id": "H0000_0042",
+    "language": "아람어",
+    "strong_number": null,
+    "spelling": "עֲשַׂב",
+    "transliteration": null,
+    "pronunciation": null,
+    "meanings": [
+      "풀"
+    ],
+    "note": "아람어 עֲשַׂב로 땅에 난 풀과 소가 먹는 풀을 가리킨다. Open Scriptures Hebrew Bible Project의 LexicalIndex에서 6211 b(어휘 ID ouo, BDB xp.ap.ac)로 구분하며 BDB 아람어 부록 1108쪽에서도 확인된다. 다니엘 4:15·25·32·33, 5:21의 5회이며 עִשְׂבָּא 등은 굴절형이다. 채택한 HebrewStrong.xml의 히브리어 H6211 나방 표제에 직접 수록된 뜻으로 취급하지 않고 별도 보충 어휘로 보존한다. 6211 b는 출처 식별자이며 공식 Strong 번호를 새로 부여한 것이 아니다. 목초는 먹이 문맥의 풀이로 별도 의미를 두지 않으며 H6212와의 비교를 확정 파생 관계로 만들지 않는다."
+  },
+  "source_evidence": {
+    "publisher": "Open Scriptures Hebrew Bible Project",
+    "role": "승인된 보충 어휘의 근거; canonical Strong 원자료·manifest 교체 아님",
+    "repository_commit": "21c9add13bc727d3a951361778e97e3ff7afd1ce",
+    "lexical_index_url": "https://raw.githubusercontent.com/openscriptures/HebrewLexicon/21c9add13bc727d3a951361778e97e3ff7afd1ce/LexicalIndex.xml",
+    "lexical_index_sha256": "8f7a605c58899d2f44430149c143c00903976e1e91232476677972a69e5bc85f",
+    "entry_id": "ouo",
+    "bdb_id": "xp.ap.ac",
+    "source_identifier": "6211 b",
+    "original_bdb_printed_page": 1108,
+    "original_bdb_sha256": "490c318e5bf11ded78320cda690d3fdaff5441e40620253f6c172d08181ed0cf",
+    "license_basis": "Open Scriptures Hebrew Bible Project CC BY 4.0 귀속을 유지; BDB 1906 원본을 참고하며 원문 사전 설명의 전량 import는 하지 않음"
+  },
+  "invariants": {
+    "strong_number": null,
+    "relations_created": 0,
+    "canonical_source_change": false,
+    "seed_change": false,
+    "pronunciation_or_transliteration_added": false
+  }
+}

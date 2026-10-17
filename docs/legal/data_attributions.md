@@ -28,6 +28,16 @@ Reshet는 표기·음역·발음·정의 일부를 추출·정리하고 한국�
 
 Open Scriptures Hebrew Bible Project, STEP Bible 등의 자료는 연구 중 근거를 확인하는 데 활용합니다. 원천 코퍼스 파일과 로컬 연구 참고파일은 이 앱의 배포 asset에 포함하지 않습니다. 연구에서 확인한 내용은 Reshet의 뜻풀이·메모·관계에 반영될 수 있습니다.
 
+H6211 관련 아람어 보충 어휘
+
+아람어 עֲשַׂב의 풀 의미는 Open Scriptures Hebrew Bible Project의 LexicalIndex.xml과 BrownDriverBriggs.xml(고정 버전 21c9add13bc727d3a951361778e97e3ff7afd1ce), BDB 1906년판 아람어 부록 1108쪽 및 다니엘 용례를 대조하여 별도 한국어 뜻풀이·메모로 작성했습니다. 이 항목에는 Strong 번호를 부여하지 않았고 기존 Strong H6211의 나방 표제와 구분합니다. 출처의 6211 b는 보충 어휘 식별자입니다.
+
+전자 자료 제공자: Open Scriptures Hebrew Bible Project
+출처와 라이선스 안내: https://github.com/openscriptures/HebrewLexicon/blob/21c9add13bc727d3a951361778e97e3ff7afd1ce/readme.md
+라이선스: Creative Commons Attribution 4.0 International (CC BY 4.0), https://creativecommons.org/licenses/by/4.0/
+
+원저작물의 public domain과 전자 자료의 귀속 조건을 구별합니다. 원천 XML·PDF 판면·사전 설명문을 전량 편입하지 않았으며, Reshet가 한국어 뜻풀이와 어휘 구분 설명을 추가한 가공임을 명시합니다. 이 기록은 해당 보충 항목의 출처 설명이며 전체 LexicalIndex를 canonical Strong 자료로 채택한 것이 아닙니다.
+
 Wiktionary 표기·발음 자료
 
 일부 철자와 발음 표기는 영어판·그리스어판 Wiktionary에서 가져왔습니다. 아래 현대 외국어 정비에는 독일어판·이탈리아어판도 활용했습니다. 한국어 의미·비고는 자료를 참고하여 별도로 작성했으며 Wiktionary의 뜻풀이를 일괄 복사한 자료로 안내하지 않습니다.
