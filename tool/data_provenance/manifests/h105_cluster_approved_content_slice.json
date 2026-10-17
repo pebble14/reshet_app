@@ -1,0 +1,40 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H105-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-17 H105 추천 의미·비고, DB·문서·Git 및 작업 브랜치 정리 승인; data/backups/approved_content_batch/h105_approval_20261017/00_user_approval.json",
+    "document_sha256": "e3a5afc95aaef30c0832c0520e69814ef127d886e2a6da03ce62f5b333e1ede5"
+  },
+  "target": {
+    "expected_work_sha256": "4a4a48939b2985de98773cc355d7c66548e1a7b3a2be73bd04f3e6092d26ebf6",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0105_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "그릇, 대야, 바구니"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "그릇"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0105_0000",
+      "before": null,
+      "after": "에스라 1:9에서 금·은으로 만든 성전 그릇을 가리킨다. 접시, 대야, 바구니 등의 풀이가 있으나 정확한 형태와 어원은 불확실하다."
+    }
+  ],
+  "relation_creates": [],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}
