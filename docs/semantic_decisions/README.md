@@ -95,6 +95,7 @@
 | H104 클러스터 | 편지 어휘2·강제 역무 G29, 의미3·비고3·공통어원 대응1·기존 비교 관계 유지 | `active` | 높음 | 2026-10-17 | [기록](h104_cluster_approved_content_slice.md) |
 | H105 그릇 어휘 | 그릇 의미1·비고1, 형태·어원 불확실성 보존·관계 비생성 | `active` | 높음 | 2026-10-17 | [기록](h105_cluster_approved_content_slice.md) |
 | H106 어휘군 | 주먹·휩쓸어가다·흙 덩어리 의미3 유지 승인·비고3·파생2, 욜1:17 해석 미해결 보존 | `active` | 높음 | 2026-10-17 | [기록](h106_cluster_approved_content_slice.md) |
+| H108 클러스터 | 안개·불탄 나무·원인/관련 기능·재앙·정도/힘, meaning5·비고4·관계 비생성 | `active` | 높음 | 2026-10-17 | [기록](h108_cluster_approved_content_slice.md) |
 | 헬라어 표현 정비 | 최초 6,106표현 검수와 승인 적용, G2458 Strong 악센트 일치·사용자 어형 미확인 비고, 현재 표현 보류6 | `active` | Strong 표제 선택과 역사적 인명 해석 구분 | 2026-10-11 | [기록](greek_expression_approved_content_slice.md) |
 | 라틴어 표현 정비 | 최초 159단어·166표현 검수 후 유보5 정리, populus 분리로 현재 160단어·167표현, 역사적 독법 일부 미확정 | `active` | 사전 장단·교재식 독법·서로 다른 어휘 구분 | 2026-10-11 | [기록](latin_expression_approved_content_slice.md) |
 | 영어·현대 외국어 표현 정비 | 영어 155단어·166표현 음역 NULL 유지, 독일어·러시아어·이탈리아어 4표현 교정·발음 보완 | `active` | 출처 확인·한글 근사·복수형 전사 구성 구분 | 2026-10-10 | [기록](modern_foreign_expression_approved_content_slice.md) |

@@ -1,0 +1,123 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H108-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-17 H108 클러스터 최종 의미·비고 및 H182 for 기능 보완, DB·문서·Git·작업 브랜치 정리 승인; data/backups/approved_content_batch/h108_approval_20261017/00_user_approval.json",
+    "document_sha256": "a73806b760a76039e23c40571bde886b5c80c3f00807f820f52f4748d43b11a1"
+  },
+  "target": {
+    "expected_work_sha256": "d4ac11bc06a35e8e1558a1f61567e2aab4faf70838a1db7126dcef22fd2c089b",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0108_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "안개, 수증기"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "안개·수증기(水蒸氣)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0181_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "부지깽이, 나무 조각"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "타다 남은 나무토막"
+        }
+      ]
+    },
+    {
+      "word_id": "H0182_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "~때문에, ~에 대하여"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "~ 때문에·~을 위하여"
+        },
+        {
+          "seq": 2,
+          "meaning": "~에 관하여"
+        }
+      ]
+    },
+    {
+      "word_id": "H0343_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "재앙, 재난"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "재앙(災殃)·재난(災難)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3966_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "힘, 굉장히, 매우, 대단히"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "매우·크게"
+        },
+        {
+          "seq": 2,
+          "meaning": "힘"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0108_0000",
+      "before": null,
+      "after": "정확한 뜻은 논의가 있다. Strong과 전통 번역은 안개·수증기로 풀이하지만, 창 2:6에는 땅에서 솟는 물·샘·물줄기 해석도 있다. LXX는 창 2:6을 샘, 욥 36:27을 구름 계열로 옮긴다. 여기서는 전통적 풀이를 대표 의미로 유지하며, 두 용례를 현대 과학의 특정 물의 상태나 순환 과정으로 확정하지 않는다."
+    },
+    {
+      "word_id": "H0181_0000",
+      "before": null,
+      "after": "Strong은 불씨를 헤집거나 모으는 부지깽이로 설명한다. 실제 세 용례는 연기 나는 나무 또는 불에서 꺼낸 나무토막으로 사람이나 집단을 비유한다. 일반적인 나무 조각 전체나 금속 부지깽이로 범위를 넓히지 않는다."
+    },
+    {
+      "word_id": "H0182_0000",
+      "before": null,
+      "after": "여성명사의 복수형으로, 주로 עַל과 결합하여 어떤 일의 까닭이나 관련 대상을 나타낸다. 문맥에 따라 ‘~ 때문에’, ‘~을 위하여’, ‘~에 관하여’로 옮긴다. 출 18:8에서는 이스라엘을 위한 행동의 동기와 수혜 대상을 드러내며, 창 21:25에서는 원인과 관련 대상의 뜻이 겹친다. 삼하 13:16은 문장 구성과 해석이 불확실하다."
+    },
+    {
+      "word_id": "H3966_0000",
+      "before": null,
+      "after": "대부분 정도·강조를 나타내며, 문맥에 따라 몹시·많이·힘써·철저히·아주 등으로 옮긴다. 반복형은 강조를 더한다. 신 6:5와 왕하 23:25에서는 힘을 다한다는 명사적 용법이다. 삼상 20:19의 빨리/멀리와 욥 35:15의 문장 해석은 불확실성을 남긴다. 대하 16:14는 명사 형태로 분석되지만 구문 전체는 불을 크게 피운 정도를 나타낸다."
+    }
+  ],
+  "relation_creates": [],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}
