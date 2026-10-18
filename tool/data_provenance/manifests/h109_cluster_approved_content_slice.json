@@ -1,0 +1,55 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H109-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-18 H109·H110 최종 의미·비고, H110 붙임표 비사용, DB·문서·Git·작업 브랜치 정리 승인; data/backups/approved_content_batch/h109_approval_20261018/00_user_approval.json",
+    "document_sha256": "ff7bf3d7d288fe9b9d1f6265cc2a48301491324c94f27348760591ebe82d04c8"
+  },
+  "target": {
+    "expected_work_sha256": "a09d3545e97ef60ae8b0bf111f6edaa842fa0ffbf857e808ec50ca21970ab0ce",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0110_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "앗브엘 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "앗브엘·아드베엘 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0109_0000",
+      "before": null,
+      "after": "Strong의 기본 풀이는 ‘쇠약해지다’이며, 성경의 유일한 용례(삼상 2:33)는 마음을 슬프게 하는 히필형이다. 어근을 דוב로 달리 분석하는 견해도 있으나, 현행 Strong·OSHB의 H109 분류를 따른다."
+    },
+    {
+      "word_id": "H0110_0000",
+      "before": null,
+      "after": "이스마엘의 아들로, 창 25:13과 대상 1:29에 나온다. ‘앗브엘’은 한국어 성경의 관용 표기이고 ‘아드베엘’은 마소라 표기와 Strong 음역을 참고한 읽기 표기이며, 고대의 실제 발음을 확정한 것은 아니다. Strong은 H109와 H410에서 온 이름으로 추정하여 ‘하나님께 징계받은’으로 풀이하지만, 어원이 확정된 것은 아니다."
+    }
+  ],
+  "relation_creates": [],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": [
+    {
+      "word_id": "H0109_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "슬프게 하다"
+        }
+      ]
+    }
+  ]
+}
