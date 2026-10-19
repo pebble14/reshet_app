@@ -1,0 +1,40 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H133-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-20 H133 아드마다·아드마타 병기·추천 비고·관계 비생성·hold 없음, DB·문서·Git·작업 브랜치 정리 승인; data/backups/approved_content_batch/h133_approval_20261020/00_user_approval.json",
+    "document_sha256": "60708c37bf94269f46a716fd6957cfc92edacb81263cc03f0547f4ef354384cc"
+  },
+  "target": {
+    "expected_work_sha256": "2de906f1aa1e7694c735ca0d2d2a4fad59a7087681a180b361584f060556b021",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0133_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아드마다 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아드마다·아드마타 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0133_0000",
+      "before": null,
+      "after": "에스더 1:14에 나오는, 아하수에로 왕을 가까이에서 섬긴 페르시아와 메대의 일곱 고관(高官) 중 한 사람이다. 아드마다는 한국어 성경의 관용 표기이며, 아드마타는 히브리어 전승형을 옮긴 교재식 근사 표기이다. Strong은 페르시아어계 어원을 추정하나 이름의 본뜻과 내부 구성은 확정하지 않는다."
+    }
+  ],
+  "relation_creates": [],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}

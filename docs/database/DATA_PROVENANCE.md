@@ -1391,3 +1391,14 @@ Work SHA `e2fa8f22edc4f347bed118cd983065bc77c1eeaf05bdc589e5ab7118c680c1e2` → 
 Work SHA `4c0a259bbe84f5114cd4bfb985c83055faba01f9def5f7c2c76a9fe0814acb3d` → `2de906f1aa1e7694c735ca0d2d2a4fad59a7087681a180b361584f060556b021`, seed SHA `a7e0d6a50a3ab6b520c3bf7532b2780cfd6418709d9739a451eb4ce5493fbdb1` 불변이다. Approval SHA `340e8e8d46d666aedecbc6be130aec4419529ce6fc606f49c76e69f09aaeeaef`, manifest SHA `8a47b4005c9572017e3d008b0b21aa967efa6bc019e9d27ed8c3d5a252808ca5`이며 새 manifest 경로를 LF로 고정한다.
 
 표준 progress3종을 공식 생성하고 CSV·Markdown renderer와 대조했다. 전체14298, 승인396→418·미승인13896→13874·hold6·anomaly113이며 CORE22 외 row·canonical relation index·anomaly 목록은 불변이다. Snapshot identity `2160f820da6c0e1a26d9d4428b08bd0bc31f32ca7f8a7275f9bc7c7621c08681`. 외부 H0119_cluster_20261019_4c0a259b/의 원본 연구를 보존하고 00_applied_content.md/json에 후속 적용 결과를 별도로 기록한다. Frontier47·max_nodes_reached와 hub 예외를 보존하며 전역 closure 완료를 주장하지 않는다. DB는 미추적 로컬 자산이며 앱 배포·seed 교체·UI 테스트·전체 앱 빌드는 N/A다.
+
+
+## H133 아드마다·아드마타 인명 병기 승인 — 2026-10-20
+
+[h133_cluster_approved_content_slice.json](../../tool/data_provenance/manifests/h133_cluster_approved_content_slice.json)은 format v5 batch RESHET-EC-H133-CLUSTER-APPROVED-CONTENT-SLICE다. 사용자가 추천 meaning `아드마다·아드마타 (인)` 1 sense·비고·관계 비생성·hold 없음과 DB·문서·필요 파일, 검증 후 Git·이번 작업 브랜치 정리를 승인했다. Meaning replacement1·word note replacement1·관계 생성/교체/삭제0이며 기존 원어·음역·발음·언어·schema·seed·hold ledger·앱 코드와 비대상 데이터는 보존한다. 최종 비고·근거·주요 대안·불확실성과 재검토 조건은 [active 결정 기록](../semantic_decisions/h133_cluster_approved_content_slice.md)과 README 색인에 있다.
+
+공식 dry-run 사본 적용·undo·원본 불변 후 live apply 성공. History group1792428868942486, ID6433–6434는 word update2·undone0이다. 독립 SQL56조회·194검증에서 전체13테이블·DDL·byte 백업·공식 snapshot·최종 projection을 대조했고 integrity ok·FK0·sidecar0다. 보호146파일·원본 연구8파일 불변, 기존 applicator 테스트31건 통과다. 승인 원문·백업·검증은 data/backups/approved_content_batch/h133_approval_20261020/, 공식 snapshot/result/manifest 사본은 data/backups/approved_content_batch/20261019T165427716854Z/에 보존한다.
+
+Work SHA `2de906f1aa1e7694c735ca0d2d2a4fad59a7087681a180b361584f060556b021` → `4c155203f4db21aa465d0502efa663e5763382c2e09eb2f8560a316497998215`, seed SHA `a7e0d6a50a3ab6b520c3bf7532b2780cfd6418709d9739a451eb4ce5493fbdb1` 불변이다. Approval SHA `60708c37bf94269f46a716fd6957cfc92edacb81263cc03f0547f4ef354384cc`, manifest SHA `5cac960d0dc9615007b652441c3b8a0336e6c1d878c89e9eb2bdef8bc0d99f03`이며 실제 적용 bytes를 보존하도록 새 manifest 경로만 -text로 지정한다.
+
+표준 progress3종 공식 생성·renderer 대조 및18검증에서 H0133만 승인 전환됐다. 전체14298, 승인418→419·미승인13874→13873·hold6·anomaly113이며 snapshot identity는 `3a10c956cc42dd13ee19c069f3a88579f37c9827a8d41f270c73189e608adb8b`다. 정상 CORE1 closure·frontier0, canonical1/1회와 확보 local reference 전량을 검토한 결정이며 추정 페르시아어 어원·source x-pn·LXX 인명 명단 차이를 보존한다. 외부 H0133_cluster_20261020_2de906f1/의 원본 연구를 유지하고 00_applied_content.md/json에 최종 적용 결과를 별도로 남긴다. DB는 미추적 로컬 자산이며 앱 배포·seed 교체·UI 테스트·전체 앱 빌드는 N/A다.
