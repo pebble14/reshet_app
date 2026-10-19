@@ -1,0 +1,40 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H118-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-19 H118 아달리야·아달랴 병기 및 추천 비고·관계 비생성·hold 없음, DB·문서·Git·작업 브랜치 정리 승인; data/backups/approved_content_batch/h118_approval_20261019/00_user_approval.json",
+    "document_sha256": "5e96f695fdae33911f30b361c158deec96b97ba98721456342f4b8f78a8f0b33"
+  },
+  "target": {
+    "expected_work_sha256": "e2fa8f22edc4f347bed118cd983065bc77c1eeaf05bdc589e5ab7118c680c1e2",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0118_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아달리야 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아달리야·아달랴 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0118_0000",
+      "before": null,
+      "after": "하만의 열 아들 가운데 한 사람이다(에 9:7–10). Strong은 페르시아어 기원으로 설명하지만, 이름의 구체적인 뜻은 제시하지 않는다."
+    }
+  ],
+  "relation_creates": [],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}
