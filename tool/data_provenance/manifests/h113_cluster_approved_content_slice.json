@@ -1,0 +1,546 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H113-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-19 H113 CORE16 최종 수정안·비고·관계19·hold 없음 및 DB·문서·Git·이번 작업 브랜치 정리 승인; data/backups/approved_content_batch/h113_approval_20261019/00_user_approval.json",
+    "document_sha256": "d427b27e263f69e243148b262b7e11ed47abb6b68f85afa20bec1e4e9ffa5834"
+  },
+  "target": {
+    "expected_work_sha256": "a70dcd894eb63f7ad48990664f1ebae37e1fa0224682f2771b50092f7fe4405f",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0113_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "주, 주인"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "주(主)·주인(主人)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0134_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "기초, 받침, 토대"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "받침"
+        }
+      ]
+    },
+    {
+      "word_id": "H0135_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "앗단 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "앗단 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0136_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "주, 나의 주"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "주(主)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0137_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아도니베섹 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아도니베섹·아도니-베제크 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0138_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아도니야 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아도니야·아도니-야 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0139_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아도니세덱 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아도니세덱·아도니-체데크 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0140_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아도니감 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아도니감·아도니-캄 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0141_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아도니람 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아도니람·아도니-람 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0966_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "베섹 (지)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "베섹·베제크 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H1078_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "벨"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "벨 (신명)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2899_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "도바도니야 Tobadonijah"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "도바도니야·토브-아도니-야후 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0113_0000",
+      "before": null,
+      "after": "사람이나 하나님을 가리키는 주·주인이라는 칭호다. 종의 주인·소유자·통치자뿐 아니라 남편이나 웃어른·예언자를 높이는 말로도 쓰인다. 나의 주 등은 문맥과 접미사에 따른 표현이며 별도 의미로 나누지 않는다. 창 18:3과 스 10:3 등에서는 지시 대상에 해석 차이가 있으며, H136과 모음형만으로 일률적으로 구별되지 않는다."
+    },
+    {
+      "word_id": "H0114_0000",
+      "before": null,
+      "after": "느 7:61에서는 귀환자들의 출신지 목록에 나오며, 병행 본문 스 2:59의 앗단(H135)과 대응한다. Strong은 인명으로 설명하고 H113의 강조형일 가능성을 제시하지만, 지명 식별과 불확실한 어원을 구별한다."
+    },
+    {
+      "word_id": "H0134_0000",
+      "before": null,
+      "after": "성막에서는 널판과 기둥을 세우는 은·놋 받침을 가리킨다. 욥 38:6에서는 땅을 떠받치는 기반의 비유로, 아 5:15에서는 다리를 기둥에 견준 표현의 금 받침으로 쓰인다. 돌로 만든 주추에만 한정하지 않는다."
+    },
+    {
+      "word_id": "H0135_0000",
+      "before": null,
+      "after": "스 2:59의 귀환자 출신지명이며 느 7:61의 앗돈(H114)과 대응한다. Strong은 품사에는 지명을 표시하면서 뜻에는 이스라엘 사람으로 설명하지만, 본문과 병행 목록은 지명 해석을 지지한다. H134와의 공통 어원은 확정하지 않는다."
+    },
+    {
+      "word_id": "H0136_0000",
+      "before": null,
+      "after": "H113과 연결되는 강조·존칭 형태로, 주로 하나님을 가리키는 칭호로 쓰인다. 형태상 나의 주와 연결되지만 굳어진 칭호의 모든 용례를 1인칭 소유 표현으로 옮기지는 않는다. 사 21:8에서는 파수꾼이 부르는 대상이 하나님인지 사람인 지휘자인지 해석이 갈린다. 창 19:18·수 5:14 등의 사자와의 대화에서는 대상의 신학적 동일시와 칭호의 뜻을 구별한다. 하나님의 이름을 대신 읽는 관습과 본문에 이 단어가 실제로 쓰인 경우를 구별한다."
+    },
+    {
+      "word_id": "H0137_0000",
+      "before": null,
+      "after": "아도니베섹은 관용명이고 아도니-베제크는 주와 베섹 지명의 구성을 드러내는 표기다. 이름 또는 통치자의 칭호로 이해할 수 있다. 그리스어 전승에는 수 10장의 아도니세덱도 아도니베섹과 같은 이름형으로 나타나지만, 이를 근거로 삿 1장의 인물과 동일인으로 합치지는 않는다."
+    },
+    {
+      "word_id": "H0138_0000",
+      "before": null,
+      "after": "아도니야는 관용명이고 아도니-야는 주와 신명 요소 야의 구성을 보여 준다. 장형 אֲדֹנִיָּהוּ도 쓰이며 아도니-야후로 나타낼 수 있다. 이름은 흔히 나의 주는 야로 풀이하지만, Strong의 야의 주·숭배자 풀이와 구별한다. 다윗의 아들·레위인·귀환 후 지도자를 모두 한 인물로 합치지 않는다."
+    },
+    {
+      "word_id": "H0139_0000",
+      "before": null,
+      "after": "아도니세덱은 관용명이고 아도니-체데크는 주와 체데크의 구성을 보여 준다. 이름의 뜻은 의의 주·나의 주는 의롭다 등으로 풀이되며, 둘째 요소를 신명으로 보는 해석도 있어 하나로 확정하지 않는다. 확보한 그리스어 전승은 아도니베섹이라는 이름형을 쓰지만 현재 히브리어 이름과 인물의 구별을 보존한다."
+    },
+    {
+      "word_id": "H0140_0000",
+      "before": null,
+      "after": "아도니감은 관용명이고 아도니-캄은 주와 일어나다의 구성을 보여 준다. 귀환 목록에서는 이 이름을 딴 가문의 자손을 가리킨다. 일부 사전은 느 10장의 아도니야와 비교하지만, 이름 전체를 동일 인물이나 동일 이름형으로 자동 통합하지 않는다."
+    },
+    {
+      "word_id": "H0141_0000",
+      "before": null,
+      "after": "아도니람은 관용명이고 아도니-람은 주와 높다의 구성을 보여 준다. 왕상 4:6과 5:14에서 역군 감독의 이름으로 쓰인다. H151 아도람은 이 이름의 단축형으로 설명되지만 여러 왕 시대의 기록을 모두 한 사람의 생애로 확정하지 않는다."
+    },
+    {
+      "word_id": "H0151_0000",
+      "before": null,
+      "after": "Strong은 아도니람(H141)의 단축형으로 설명한다. 삼하 20:24와 왕상 12:18은 역군 감독 문맥이며, 일부 한국어 번역과 그리스어 전승은 아도니람으로 옮긴다. 이름형의 대응과 여러 시대에 등장한 관리의 동일인 여부를 구별한다."
+    },
+    {
+      "word_id": "H0965_0000",
+      "before": null,
+      "after": "겔 1:14의 빠르게 왕래하는 생물 모습을 번갯불에 견준 표현이다. 유일한 용례이고 비슷한 번개 어휘와의 관계 및 본문 전승에는 불확실성이 있으므로, 번개라는 대표 의미와 어원·본문의 확실성을 구별한다."
+    },
+    {
+      "word_id": "H0966_0000",
+      "before": null,
+      "after": "베섹은 관용 지명이고 베제크는 בֶּזֶק에 대응하는 원문 기반 근사 표기다. 삿 1장의 전투 장소와 삼상 11:8의 집결 장소가 지리적으로 같은 곳인지는 확정하지 않는다. 번개 어휘 H965와의 연결은 Strong의 전통적 어원 설명이며 실제 지명 유래의 확정을 뜻하지 않는다."
+    },
+    {
+      "word_id": "H1078_0000",
+      "before": null,
+      "after": "이 세 용례에서는 바벨론의 신을 가리키며 마르둑과 연결되는 이름 또는 칭호다. 바알 계열 칭호와의 관련성을 이 신과 모든 바알 용례의 동일한 신격이라는 주장으로 확대하지 않는다. Strong의 축약 설명은 역사적 차용 경로와 방향이 확정되었다는 뜻은 아니다."
+    },
+    {
+      "word_id": "H1081_0000",
+      "before": null,
+      "after": "성경에서는 바빌론 왕 므로닥발라단의 아버지 이름으로 나온다. Strong은 벨(H1078)과 주(H113)의 축약 결합으로 풀이하므로 발-아단은 그 어원설을 따른 가설적 분절로 설명할 수 있다. 그러나 BDB는 바빌로니아어 abal-iddina, 곧 그가 아들을 주었다에 해당하는 이름으로 분석하고 신명이 생략되었을 가능성을 제시한다. 두 분석이 충돌하므로 발라단을 유지하고, 확정된 합성 경계를 나타내는 붙임표와 H113·H1078과의 관계를 만들지 않는다."
+    },
+    {
+      "word_id": "H2899_0000",
+      "before": null,
+      "after": "도바도니야는 관용명이고 토브-아도니-야후는 Strong 표제의 장형 구성을 보여 주는 분석 표기다. 토브와 아도니야후의 결합 안에서 아도니와 신명 요소 야후의 경계까지 표시한다. 대하 17:8의 실제 본문에는 짧은 형태 토브-아도니-야가 쓰인다. 좋음과 아도니야의 구성은 보존하되 이름의 정확한 문장 뜻과 그리스어 전승에서 달라지는 이름 목록은 미확정으로 남긴다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0113_0000",
+      "word_id_2": "H0136_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "an emphatic form of. 어휘화된 강조·존칭 형태로 연결하며 모든 복수 굴절형을 H136으로 다시 태깅하지 않음.",
+      "source": "RESHET-EC-H113-CLUSTER-H0113-H0136"
+    },
+    {
+      "word_id_1": "H0113_0000",
+      "word_id_2": "H0137_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from H113 and 둘째 요소. 현재 히브리어 이름의 구성 관계이며 특정 인물 동일시나 정확한 문장 뜻의 확정이 아님.",
+      "source": "RESHET-EC-H113-CLUSTER-H0113-H0137"
+    },
+    {
+      "word_id_1": "H0137_0000",
+      "word_id_2": "H0966_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시적 둘째 구성 요소. CONTEXT 단어의 독립 meaning 승인·변경은 포함하지 않음.",
+      "source": "RESHET-EC-H113-CLUSTER-H0966-H0137"
+    },
+    {
+      "word_id_1": "H0113_0000",
+      "word_id_2": "H0138_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from H113 and 둘째 요소. 현재 히브리어 이름의 구성 관계이며 특정 인물 동일시나 정확한 문장 뜻의 확정이 아님.",
+      "source": "RESHET-EC-H113-CLUSTER-H0113-H0138"
+    },
+    {
+      "word_id_1": "H0138_0000",
+      "word_id_2": "H3050_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시적 둘째 구성 요소. CONTEXT 단어의 독립 meaning 승인·변경은 포함하지 않음.",
+      "source": "RESHET-EC-H113-CLUSTER-H3050-H0138"
+    },
+    {
+      "word_id_1": "H0113_0000",
+      "word_id_2": "H0139_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from H113 and 둘째 요소. 현재 히브리어 이름의 구성 관계이며 특정 인물 동일시나 정확한 문장 뜻의 확정이 아님.",
+      "source": "RESHET-EC-H113-CLUSTER-H0113-H0139"
+    },
+    {
+      "word_id_1": "H0139_0000",
+      "word_id_2": "H6664_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시적 둘째 구성 요소. CONTEXT 단어의 독립 meaning 승인·변경은 포함하지 않음.",
+      "source": "RESHET-EC-H113-CLUSTER-H6664-H0139"
+    },
+    {
+      "word_id_1": "H0113_0000",
+      "word_id_2": "H0140_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from H113 and 둘째 요소. 현재 히브리어 이름의 구성 관계이며 특정 인물 동일시나 정확한 문장 뜻의 확정이 아님.",
+      "source": "RESHET-EC-H113-CLUSTER-H0113-H0140"
+    },
+    {
+      "word_id_1": "H0140_0000",
+      "word_id_2": "H6965_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시적 둘째 구성 요소. CONTEXT 단어의 독립 meaning 승인·변경은 포함하지 않음.",
+      "source": "RESHET-EC-H113-CLUSTER-H6965-H0140"
+    },
+    {
+      "word_id_1": "H0113_0000",
+      "word_id_2": "H0141_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from H113 and 둘째 요소. 현재 히브리어 이름의 구성 관계이며 특정 인물 동일시나 정확한 문장 뜻의 확정이 아님.",
+      "source": "RESHET-EC-H113-CLUSTER-H0113-H0141"
+    },
+    {
+      "word_id_1": "H0141_0000",
+      "word_id_2": "H7311_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시적 둘째 구성 요소. CONTEXT 단어의 독립 meaning 승인·변경은 포함하지 않음.",
+      "source": "RESHET-EC-H113-CLUSTER-H7311-H0141"
+    },
+    {
+      "word_id_1": "H0141_0000",
+      "word_id_2": "H0151_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "contracted for. 긴 이름형에서 단축형으로 향하며 모든 역사적 인물을 동일인으로 합치지 않음.",
+      "source": "RESHET-EC-H113-CLUSTER-H0141-H0151"
+    },
+    {
+      "word_id_1": "H0138_0000",
+      "word_id_2": "H2899_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from H2896 and H138. 현재 히브리어 이름의 구성을 보존하며 목록의 원형·정확한 이름 뜻은 미확정.",
+      "source": "RESHET-EC-H113-CLUSTER-H0138-H2899"
+    },
+    {
+      "word_id_1": "H2896_0000",
+      "word_id_2": "H2899_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from H2896 and H138. 첫 좋음 요소의 구성 관계. 단형·장형은 비고에 구분.",
+      "source": "RESHET-EC-H113-CLUSTER-H2896-H2899"
+    },
+    {
+      "word_id_1": "H0114_0000",
+      "word_id_2": "H0135_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "스 2:59와 느 7:61의 병행 출신지 목록, KJV alternate Addan/AddOn과 BDB 지명 대응에 근거. 역사적 변화 방향은 미확정.",
+      "source": "RESHET-EC-H113-CLUSTER-H0114-H0135"
+    },
+    {
+      "word_id_1": "H0113_0000",
+      "word_id_2": "H0114_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "source의 probably intensive for를 보존. 현재 지명 식별과 그 이름의 히브리어 어원 가설을 구별.",
+      "source": "RESHET-EC-H113-CLUSTER-H0113-H0114"
+    },
+    {
+      "word_id_1": "H0113_0000",
+      "word_id_2": "H0134_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from the same as H113 (in the sense of strength). H113의 미사용 어근과 힘 개념의 연결을 실제 확증된 동사에서의 직접 파생으로 만들지 않음.",
+      "source": "RESHET-EC-H113-CLUSTER-H0113-H0134"
+    },
+    {
+      "word_id_1": "H0134_0000",
+      "word_id_2": "H0135_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "intensive from the same as H134; firm. 지명 문맥은 분명하지만 공통 어원은 전통적 설명 수준.",
+      "source": "RESHET-EC-H113-CLUSTER-H0134-H0135"
+    },
+    {
+      "word_id_1": "H0965_0000",
+      "word_id_2": "H0966_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from H965; lightning. 단일 번개 용례와 지명 사이의 전통적 어원으로 제안하며 실제 명명 동기를 확정하지 않음.",
+      "source": "RESHET-EC-H113-CLUSTER-H0965-H0966"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": [
+    {
+      "word_id": "H0114_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "앗돈 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0151_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "아도람 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0965_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "번개"
+        }
+      ]
+    },
+    {
+      "word_id": "H1081_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "발라단 (인)"
+        }
+      ]
+    }
+  ]
+}
