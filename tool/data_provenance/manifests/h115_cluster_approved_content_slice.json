@@ -1,0 +1,362 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H115-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-19 H115 CORE11 최신 수정 추천안·관계10·hold 없음 및 DB·문서·Git·이번 작업 브랜치 정리 승인; data/backups/approved_content_batch/h115_approval_20261019/00_user_approval.json",
+    "document_sha256": "2022a278e453e7e02a006d458df3ca2a757afaaca21fa8a8a106fc4c5cbabf43"
+  },
+  "target": {
+    "expected_work_sha256": "70d8e091d3c64e262ef99dc11d1c2101e4d5070725f63d5e979a3c0350d09665",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0117_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "큰, 위대한, 장엄한"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "크고 힘센"
+        },
+        {
+          "seq": 2,
+          "meaning": "존귀한(尊貴한), 위엄 있는(威嚴 있는)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0142_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "장엄하다, 영광스럽다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "장엄하다(莊嚴하다), 영광스럽다(榮光스럽다)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0145_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "영광, 장엄, 겉옷"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "겉옷"
+        },
+        {
+          "seq": 2,
+          "meaning": "장엄함(莊嚴함)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0146_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아달 (인, 지)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아달·앗달·앗다르 (인, 지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0148_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "모사, 법관"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "고문관(顧問官)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0152_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아드람멜렉 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아드람멜렉·아드람멜레크 (신명, 인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0155_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "장엄, 외투"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "겉옷"
+        },
+        {
+          "seq": 2,
+          "meaning": "장엄함(莊嚴함)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2692_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "하살아달 Hazar addar"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "하살아달·하차르-앗다르 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5853_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아다롯앗달 Atarothadar"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아다롯앗달·아트로트-앗다르 (지)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0115_0000",
+      "before": null,
+      "after": "르호보암이 요새화한 유다 성읍 중 하나이다(대하 11:9). Strong은 H0142에서 유래한 쌍수형으로 설명하지만, 지명의 어원 해석은 확정하지 않는다. ‘이중의 영광’ 또는 ‘두 언덕’ 같은 풀이를 지명 자체의 별도 의미로 삼지 않는다."
+    },
+    {
+      "word_id": "H0117_0000",
+      "before": null,
+      "after": "크기·힘의 뛰어남과 지위·위엄의 뛰어남을 나타내며, 명사적으로 쓰이면 귀인이나 지도자를 가리킨다. 삿 5:25는 ‘귀한 그릇’ 또는 ‘귀인들의 그릇’, 사 10:34는 ‘능한 자’ 또는 ‘힘차게’로 이해할 수 있다. 슥 11:2는 나무의 장대함과 지도자 비유를 함께 고려한다. 이런 문맥 차이를 각각 별도 의미로 늘리지는 않는다."
+    },
+    {
+      "word_id": "H0142_0000",
+      "before": null,
+      "after": "출 15:6, 11에서는 하나님의 오른손과 거룩함의 장엄함을 나타낸다. 사 42:21의 사역형은 율법을 존귀하고 영광스럽게 한다는 뜻이다. Strong의 확대에 관한 어원 설명을 별도 일반 의미로 확정하지 않는다."
+    },
+    {
+      "word_id": "H0145_0000",
+      "before": null,
+      "after": "미 2:8에서는 옷을 벗기는 문맥의 겉옷으로 이해된다. 슥 11:13에서는 평가된 값의 훌륭함·장엄함을 반어적으로 말하는 것으로 이해할 수 있다. 미 2:8의 형태를 H0155 계열로 읽는 본문비평 대안도 있어 두 용례의 형태·의미 연결을 완전히 확정하지 않는다."
+    },
+    {
+      "word_id": "H0146_0000",
+      "before": null,
+      "after": "수 15:3에서는 유다 남쪽 경계의 지명, 대상 8:3에서는 베냐민 계열의 인명이다. 같은 표제어에 속하지만 같은 대상은 아니다. 아달·앗달은 한국어 성경의 관용 표기이고, 앗다르는 원문 기반의 교재식 근사 표기이다. H2692와 H5853의 분석 표기에서도 같은 요소를 앗다르로 통일한다. 기존 음역 필드 앋다르의 변경이나 특정 시대 발음의 확정을 뜻하지 않는다."
+    },
+    {
+      "word_id": "H0147_0000",
+      "before": null,
+      "after": "단 2:35의 여름 타작마당을 가리키는 아람어 명사이다. Strong은 H0142에 대응한다고 설명하지만 어원은 확정하기 어렵다. 표제어의 성 표기와 실제 활용형 분석에 차이가 있으므로 히브리어 동사에서 직접 파생되었다고 단정하지 않는다."
+    },
+    {
+      "word_id": "H0148_0000",
+      "before": null,
+      "after": "단 3:2–3에서 왕의 소집을 받는 관직명이다. 고문관으로 이해하되 정확한 직무는 확정하지 않는다. 한국어 번역에는 모사·법관 등이 있고 KJV는 judges로 옮긴다. Strong의 점술 관련 풀이 및 H0147·H1505 결합 설명과, 페르시아계 차용어 고문관으로 보는 사전 해석은 서로 경쟁한다."
+    },
+    {
+      "word_id": "H0152_0000",
+      "before": null,
+      "after": "왕하 17:31에서는 스발와임 사람들이 섬긴 신의 이름이고, 왕하 19:37과 사 37:38에서는 산헤립의 아들 이름이다. 같은 표제어 아래 서로 다른 대상을 구분하며 동일한 어원을 자동 전제하지 않는다. 아드람멜렉은 한국어 성경 관용 표기이고 아드람멜레크는 원문 기반의 교재식 근사 표기이다. Strong은 H0142와 H4428의 결합으로 풀이하지만 경쟁 어원 해석이 있어 아드람-멜레크처럼 합성 경계를 확정하지 않는다."
+    },
+    {
+      "word_id": "H0155_0000",
+      "before": null,
+      "after": "대부분의 용례에서는 몸을 두르는 겉옷을 뜻하며 털옷·예언자의 겉옷 같은 구체적 모습은 문맥에 따라 다르다. 겔 17:8은 포도나무의 훌륭함·장대함을, 슥 11:3은 목자들의 영광 또는 그 기반의 황폐화를 나타내는 것으로 이해할 수 있다. 이 두 곳의 형용사적 분석이나 의복 이미지 해석은 대안으로 남긴다."
+    },
+    {
+      "word_id": "H2692_0000",
+      "before": null,
+      "after": "민 34:4의 남쪽 경계 지명이다. Strong은 H2691과 H0146의 합성으로 설명한다. 하살아달은 한국어 성경 관용 표기이고 하차르-앗다르는 구성 요소를 드러내는 분석 표기이다. 붙임표는 형태 분석 기호이며 특정 시대의 실제 발음을 재구한 것이 아니다. 수 15:3의 아달과의 관계는 지명 식별의 참고로 남긴다."
+    },
+    {
+      "word_id": "H5853_0000",
+      "before": null,
+      "after": "수 16:5와 18:13의 경계 지명이다. Strong은 H5852와 같은 어휘 요소 및 H0146을 들어 설명한다. 아다롯앗달은 관용 표기이고 아트로트-앗다르는 구성 요소를 보이는 분석 표기이다. 별도 지명 H5852 자체에서 직접 파생되었다는 뜻은 아니며, 붙임표와 모음 표기는 고대 발음의 확정적 재구가 아니다."
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": [
+    {
+      "word_id": "H0115_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "아도라임 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0147_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "타작마당"
+        }
+      ]
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0115_0000",
+      "word_id_2": "H0142_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "dual from 142 (in the sense of eminence); double mound; Strong의 쌍수형 파생 설명. 지명 어원 자체의 확정성은 제한적.",
+      "source": "RESHET-EC-H115-CLUSTER-H0115-H0142"
+    },
+    {
+      "word_id_1": "H0117_0000",
+      "word_id_2": "H0142_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from 142; Strong의 from 관계와 의미·형태의 일치.",
+      "source": "RESHET-EC-H115-CLUSTER-H0117-H0142"
+    },
+    {
+      "word_id_1": "H0142_0000",
+      "word_id_2": "H0145_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from 142; 직접 from 근거. 개별 본문 해석 대안은 비고에 보존.",
+      "source": "RESHET-EC-H115-CLUSTER-H0142-H0145"
+    },
+    {
+      "word_id_1": "H0142_0000",
+      "word_id_2": "H0146_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "intensive from 142; ample; Strong의 직접 파생 설명. 이름 의미를 형용사 의미로 대체하지 않음.",
+      "source": "RESHET-EC-H115-CLUSTER-H0142-H0146"
+    },
+    {
+      "word_id_1": "H0142_0000",
+      "word_id_2": "H0147_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "(Aramaic) intensive, from a root corresponding to 142; corresponding to는 직접 차용 방향을 확정하지 않음; 경쟁 어원 보존.",
+      "source": "RESHET-EC-H115-CLUSTER-H0142-H0147"
+    },
+    {
+      "word_id_1": "H0117_0000",
+      "word_id_2": "H0155_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "feminine of 117; ; also the same as 145 Strong의 여성형 설명.",
+      "source": "RESHET-EC-H115-CLUSTER-H0117-H0155"
+    },
+    {
+      "word_id_1": "H0145_0000",
+      "word_id_2": "H0155_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "feminine of 117; ; also the same as 145 동일 어근 및 source의 synonym 비교. 의복/위엄 범위 겹침; 직접 파생 방향은 주장하지 않음.",
+      "source": "RESHET-EC-H115-CLUSTER-H0145-H0155"
+    },
+    {
+      "word_id_1": "H0146_0000",
+      "word_id_2": "H2692_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from 2691 and 146; (the) village of Addar; H2691과 H146의 직접 합성 설명.",
+      "source": "RESHET-EC-H115-CLUSTER-H0146-H2692"
+    },
+    {
+      "word_id_1": "H2691_0000",
+      "word_id_2": "H2692_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from 2691 and 146; (the) village of Addar; 마을·뜰 구성 요소의 직접 합성 설명.",
+      "source": "RESHET-EC-H115-CLUSTER-H2691-H2692"
+    },
+    {
+      "word_id_1": "H0146_0000",
+      "word_id_2": "H5853_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from the same as 5852 and 146; crowns of Addar; Strong의 H146 구성 요소 명시.",
+      "source": "RESHET-EC-H115-CLUSTER-H0146-H5853"
+    }
+  ]
+}

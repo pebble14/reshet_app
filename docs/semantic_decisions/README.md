@@ -104,6 +104,7 @@
 | 라틴어 표현 정비 | 최초 159단어·166표현 검수 후 유보5 정리, populus 분리로 현재 160단어·167표현, 역사적 독법 일부 미확정 | `active` | 사전 장단·교재식 독법·서로 다른 어휘 구분 | 2026-10-11 | [기록](latin_expression_approved_content_slice.md) |
 | 영어·현대 외국어 표현 정비 | 영어 155단어·166표현 음역 NULL 유지, 독일어·러시아어·이탈리아어 4표현 교정·발음 보완 | `active` | 출처 확인·한글 근사·복수형 전사 구성 구분 | 2026-10-10 | [기록](modern_foreign_expression_approved_content_slice.md) |
 | 기타 고대 언어 정비 | 고대 페르시아어·아카드어·우가릿어 전량 3단어의 표현·의미·비고 | `active` | 학술 읽기·재구 읽기·한정기호와 불확실성 구분, 상업 재배포 가능한 원천과 참고용 자료 분리 | 2026-10-10 | [기록](other_ancient_languages_approved_content_slice.md) |
+| H115 클러스터 | 아도라임·장엄함 CORE11, 앗다르·아드람멜레크 병기, 비고11·관계10 | `active` | 높음 | 2026-10-19 | [기록](h115_cluster_approved_content_slice.md) |
 
 ## 열람 및 후속 판단 원칙
 
