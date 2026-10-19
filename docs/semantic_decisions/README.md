@@ -98,6 +98,7 @@
 | H108 클러스터 | 안개·불탄 나무·원인/관련 기능·재앙·정도/힘, meaning5·비고4·관계 비생성 | `active` | 높음 | 2026-10-17 | [기록](h108_cluster_approved_content_slice.md) |
 | H109·H110 클러스터 | 슬프게 하다 유지 승인·앗브엘/아드베엘 병기·비고2, 붙임표 및 추정 구성 관계 비사용 | `active` | 높음 | 2026-10-18 | [기록](h109_cluster_approved_content_slice.md) |
 | H111 클러스터 | CORE34 검토·33 신규 승인, 신명/지명 경쟁 해석·높임/아름다움/영광 정돈·관계38 | `active` | 높음 | 2026-10-19 | [기록](h111_cluster_approved_content_slice.md) |
+| H112 잇도 | 기존 meaning 유지 승인·비고1, 관계 비생성·hold 없음 | `active` | 높음 | 2026-10-19 | [기록](h112_cluster_approved_content_slice.md) |
 | 헬라어 표현 정비 | 최초 6,106표현 검수와 승인 적용, G2458 Strong 악센트 일치·사용자 어형 미확인 비고, 현재 표현 보류6 | `active` | Strong 표제 선택과 역사적 인명 해석 구분 | 2026-10-11 | [기록](greek_expression_approved_content_slice.md) |
 | 라틴어 표현 정비 | 최초 159단어·166표현 검수 후 유보5 정리, populus 분리로 현재 160단어·167표현, 역사적 독법 일부 미확정 | `active` | 사전 장단·교재식 독법·서로 다른 어휘 구분 | 2026-10-11 | [기록](latin_expression_approved_content_slice.md) |
 | 영어·현대 외국어 표현 정비 | 영어 155단어·166표현 음역 NULL 유지, 독일어·러시아어·이탈리아어 4표현 교정·발음 보완 | `active` | 출처 확인·한글 근사·복수형 전사 구성 구분 | 2026-10-10 | [기록](modern_foreign_expression_approved_content_slice.md) |
