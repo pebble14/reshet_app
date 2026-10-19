@@ -1,0 +1,816 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H119-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-19 H119 CORE22 의미·비고 및 관계20, H726 아람 사람+이문 설명·hold 없음, DB·문서·Git·작업 브랜치 정리 승인; data/backups/approved_content_batch/h119_approval_20261019/00_user_approval.json",
+    "document_sha256": "340e8e8d46d666aedecbc6be130aec4419529ce6fc606f49c76e69f09aaeeaef"
+  },
+  "target": {
+    "expected_work_sha256": "4c0a259bbe84f5114cd4bfb985c83055faba01f9def5f7c2c76a9fe0814acb3d",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0119_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "붉다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "붉다·붉어지다"
+        }
+      ]
+    },
+    {
+      "word_id": "H0120_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아담"
+        },
+        {
+          "seq": 2,
+          "meaning": "사람"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "사람·인간(人間)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0121_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아담"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아담 (인)"
+        },
+        {
+          "seq": 2,
+          "meaning": "아담 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0123_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "에돔"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "에돔 (인, 지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0124_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "홍옥수(紅玉髓)"
+        },
+        {
+          "seq": 2,
+          "meaning": "자마노(紫瑪瑙)"
+        },
+        {
+          "seq": 3,
+          "meaning": "sard"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "붉은 보석(寶石)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0126_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아드마"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아드마 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0128_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아다마"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아다마 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0130_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "에돔 사람(족속)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "에돔 사람"
+        }
+      ]
+    },
+    {
+      "word_id": "H0132_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "붉은, 불그레한"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "불그레한"
+        }
+      ]
+    },
+    {
+      "word_id": "H0726_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "에돔 사람"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아람 사람"
+        }
+      ]
+    },
+    {
+      "word_id": "H5654_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "오벧에돔 Obed-edom(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "오벧에돔·오베드-에돔 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "G0076_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아담"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아담 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "G2401_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "이두매"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "이두매·이두마이아 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0658_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "에베스담밈 (지)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "에베스담밈·에페스-담밈 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H6450_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "바스담밈 Pas-dammin"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "바스담밈·파스-담밈 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "G0184_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아겔다마[피의 밭]"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아겔다마·아켈다마 (지)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0119_0000",
+      "before": null,
+      "after": "상태가 붉거나 붉게 되는 것을 나타낸다. 출애굽기의 숫양 가죽에는 붉게 물든 상태로 쓰이고, 포도주·몸빛·방패 및 죄의 붉음에도 쓰인다. 동사형에 따른 표현 차이를 별도 의미로 나누지 않는다."
+    },
+    {
+      "word_id": "H0120_0000",
+      "before": null,
+      "after": "개인과 사람들 또는 인류 전체를 가리키며 남녀를 포괄한다. 창세기 2–4장에서 첫 사람을 가리키는 말이 아담으로 옮겨지기도 한다. 같은 형태의 인명·지명 항목 H121과 관련되지만 보통명사와 이름의 경계를 번역 표기만으로 확정하지 않는다."
+    },
+    {
+      "word_id": "H0121_0000",
+      "before": null,
+      "after": "첫 사람의 이름이며, 여호수아 3:16에서는 사르단 부근 요단 강가의 성읍 이름이다. 욥기 31:33과 호세아 6:7은 아담이라는 인명과 일반적인 사람 해석이 갈리고, 호세아 구절에는 지명으로 읽는 견해도 있다. 해당 구절을 하나의 독해로 한정하지 않는다."
+    },
+    {
+      "word_id": "H0123_0000",
+      "before": "에서의 별명, 의미는 '붉은'",
+      "after": "에서의 다른 이름이며, 그 후손 집단과 그들이 사는 지역도 가리킨다. 창세기 25:30은 붉은 죽과 이름을 연결한다. 같은 이름이 인물에서 집단·지역으로 확장되는 용법을 서로 무관한 별도 이름으로 나누지 않는다."
+    },
+    {
+      "word_id": "H0124_0000",
+      "before": null,
+      "after": "전통적으로 홍보석·홍옥수 등으로 옮기는 붉은빛 보석이다. 출애굽기 28:17·39:10과 에스겔 28:13에 나오지만, 정확한 현대 광물 종류를 확정하지 않는다."
+    },
+    {
+      "word_id": "H0126_0000",
+      "before": "싯딤 골짜기의 도시, 의미는 '붉은 땅'",
+      "after": "소돔·고모라와 함께 언급되는 평지의 성읍이다. Strong은 H127(땅)의 단축형으로 설명한다. 붉은 땅은 어원적 설명으로 이해하며 지명의 번역이나 실제 토양색의 확정으로 삼지 않는다."
+    },
+    {
+      "word_id": "H0127_0000",
+      "before": null,
+      "after": "흙·경작할 땅·지면과 사람이 사는 땅 또는 고국을 가리킨다. 농사꾼·농사로 옮겨진 곳에서도 땅을 가는 사람 또는 땅을 사랑하는 구문을 확인할 수 있다. 창세기 2:7은 사람(H120)과 땅의 말놀이를 보여 주지만 역사적 파생 방향까지 확정하지 않는다."
+    },
+    {
+      "word_id": "H0128_0000",
+      "before": "납달리 지파의 도시, 의미는 '땅'",
+      "after": "납달리 지파의 성읍이며, 보통명사 H127(땅)과 같은 형태의 지명이다(여호수아 19:36)."
+    },
+    {
+      "word_id": "H0129_0000",
+      "before": null,
+      "after": "여호수아 19:33의 경계 지명에 나타나며, 한국어 번역에서는 뒤 요소와 묶어 아다미네겝으로 옮긴다. 아다미 자체와 뒤 요소의 의미·합성 관계는 구별한다."
+    },
+    {
+      "word_id": "H0130_0000",
+      "before": null,
+      "after": "에돔 출신이나 에돔계 사람을 가리키며 여성과 복수 집단도 포함한다. 열왕기하 16:6의 에돔 사람은 읽기 전통(Qere)에 속하고, 기록된 자음 본문(Ketiv)의 아람 사람과 구별한다. 시편 52편 표제에서도 도엑을 수식한다."
+    },
+    {
+      "word_id": "H0131_0000",
+      "before": null,
+      "after": "여호수아 15:7·18:17의 비탈길 이름이다. Strong은 붉은 곳들이라는 어원 설명과 함께 H121의 복수형이라고 적지만, 그 참조는 형태 및 의미와 긴장하므로 아담 인명에서의 파생이나 H122로의 참조 교정을 확정하지 않는다."
+    },
+    {
+      "word_id": "H0132_0000",
+      "before": null,
+      "after": "사람의 피부빛이나 머리털이 붉은 기운을 띠는 모습을 나타낸다. 에서와 다윗에게 쓰이며, 각 구절이 피부와 머리털 중 어느 쪽을 주로 가리키는지는 하나로 확정하지 않는다."
+    },
+    {
+      "word_id": "H0726_0000",
+      "before": null,
+      "after": "열왕기하 16:6의 기록 본문(Ketiv)은 아람 사람을 가리키며, 읽기 전통(Qere)은 에돔 사람(H130)으로 읽는다. Strong은 기록형을 H130의 필사 오류로 보아 정의에는 에돔 사람을 채택하지만, 번역 용례에는 Syrian(아람 사람)을 제시한다."
+    },
+    {
+      "word_id": "H5654_0000",
+      "before": null,
+      "after": "H5647의 능동분사 오베드와 에돔(H123)이 결합한 이름이다. 오벧에돔은 한국어 성경의 관용 표기이고 오베드-에돔은 구성 경계를 드러낸 근사 표기다. 법궤를 맡긴 인물과 성전 봉사 관련 인물들의 이름으로 나오며, 이름만으로 모든 문맥의 인물을 한 사람으로 합치지 않는다."
+    },
+    {
+      "word_id": "G0076_0000",
+      "before": null,
+      "after": "첫 사람 아담의 이름이다. 고린도전서 15:45의 마지막 아담은 그리스도를 가리키는 유형적 명칭이며, 메시아를 별도의 일반 사전 의미로 추가하지 않는다."
+    },
+    {
+      "word_id": "G2401_0000",
+      "before": null,
+      "after": "이두매는 한국어 성경의 관용 표기이며 이두마이아는 헬라어 형태를 드러낸 읽기 근사다. 에돔계 이름을 이어받은 지역명으로, 신약의 지리 범위와 고대 에돔의 경계가 모두 같다는 뜻은 아니다."
+    },
+    {
+      "word_id": "H1818_0000",
+      "before": null,
+      "after": "사람·동물의 피와 제의의 피에 쓰이며, 피 흘림·살인 및 그 죄책·죽음·생명을 가리키는 환유도 있다. 창세기 49:11과 신명기 32:14의 포도의 피는 포도즙의 비유다. 에스겔 19:10은 네 피 가운데라는 본문과 포도밭 등의 교정 독해가 갈리므로 그 구절만으로 포도밭을 일반 의미에 추가하지 않는다."
+    },
+    {
+      "word_id": "H0658_0000",
+      "before": null,
+      "after": "에페스(H657)와 피의 복수형 담밈(H1818)이 결합한 지명이다. 에베스담밈은 관용 표기이고 에페스-담밈은 구성 경계를 드러낸 근사 표기다. 사무엘상 17:1에서 소고와 아세가 사이의 진영 장소로 나온다. 바스담밈과 같은 장소로 보는 견해는 비교 정보로 남긴다."
+    },
+    {
+      "word_id": "H6450_0000",
+      "before": null,
+      "after": "파스와 피의 복수형 담밈(H1818)이 결합한 지명이다. 바스담밈은 관용 표기이고 파스-담밈은 구성 경계를 드러낸 근사 표기다. 파스의 palm·골짜기라는 어원 풀이와 H6446의 의복 용례 사이에는 불확실성이 있어 유혈의 바닥이라는 뜻을 확정 번역으로 삼지 않는다."
+    },
+    {
+      "word_id": "G0184_0000",
+      "before": null,
+      "after": "예루살렘의 피의 밭이라는 이름이다(사도행전 1:19). 아겔다마는 관용 표기이고 아켈다마는 Strong 표제어에 기초한 근사 표기다. 실제 TAGNT 용례는 Ἁκελδαμάχ 형태로 끝의 χ가 있으나 Strong 표제어 Ἀκελδαμά를 자동 변경하지 않는다. 아람어 이름을 옮긴 말이며 히브리어 H2506·H1818을 직접 합성한 헬라어 단어로 보지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0119_0000",
+      "word_id_2": "H0132_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "붉음 계열의 형용사·명사·중복형 형성과 본문 용법이 일치한다.",
+      "source": "RESHET-EC-H119-CLUSTER-H0119-H0132"
+    },
+    {
+      "word_id_1": "H0127_0000",
+      "word_id_2": "H0129_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "땅 명사의 지명화·단축형/소속형 형성이다. 각 지명이 같은 장소라는 주장은 아니다.",
+      "source": "RESHET-EC-H119-CLUSTER-H0127-H0129"
+    },
+    {
+      "word_id_1": "H0123_0000",
+      "word_id_2": "H0130_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "patronymic 소속·출신 형용사이며 여성·복수형도 포함한다.",
+      "source": "RESHET-EC-H119-CLUSTER-H0123-H0130"
+    },
+    {
+      "word_id_1": "H0123_0000",
+      "word_id_2": "H5654_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "에돔과 H5647의 능동분사 오베드가 결합한 인명이다.",
+      "source": "RESHET-EC-H119-CLUSTER-H0123-H5654"
+    },
+    {
+      "word_id_1": "H5647_0000",
+      "word_id_2": "H5654_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "에돔과 H5647의 능동분사 오베드가 결합한 인명이다.",
+      "source": "RESHET-EC-H119-CLUSTER-H5647-H5654"
+    },
+    {
+      "word_id_1": "H0658_0000",
+      "word_id_2": "H1818_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "에페스와 담밈의 구성 및 canonical source의 명시적 from에 근거한다.",
+      "source": "RESHET-EC-H119-CLUSTER-H1818-H0658"
+    },
+    {
+      "word_id_1": "H0657_0000",
+      "word_id_2": "H0658_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "에페스와 담밈의 구성 및 canonical source의 명시적 from에 근거한다.",
+      "source": "RESHET-EC-H119-CLUSTER-H0657-H0658"
+    },
+    {
+      "word_id_1": "H1818_0000",
+      "word_id_2": "H6450_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "담밈은 피의 복수형으로 지명의 두 번째 요소다.",
+      "source": "RESHET-EC-H119-CLUSTER-H1818-H6450"
+    },
+    {
+      "word_id_1": "H6446_0000",
+      "word_id_2": "H6450_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong은 파스에서 유래한다고 하지만 해당 어휘의 의복 용례와 palm/dell 어원 설명 사이를 직접 확정하기 어렵다.",
+      "source": "RESHET-EC-H119-CLUSTER-H6446-H6450"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [
+    {
+      "relation_id": 108,
+      "word_id_1": "H0119_0000",
+      "word_id_2": "H0122_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "붉음 계열의 형용사·명사·중복형 형성과 본문 용법이 일치한다.",
+        "source": "RESHET-EC-H119-CLUSTER-H0119-H0122"
+      }
+    },
+    {
+      "relation_id": 110,
+      "word_id_1": "H0119_0000",
+      "word_id_2": "H0124_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "붉음 계열의 형용사·명사·중복형 형성과 본문 용법이 일치한다.",
+        "source": "RESHET-EC-H119-CLUSTER-H0119-H0124"
+      }
+    },
+    {
+      "relation_id": 111,
+      "word_id_1": "H0119_0000",
+      "word_id_2": "H0125_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "붉음 계열의 형용사·명사·중복형 형성과 본문 용법이 일치한다.",
+        "source": "RESHET-EC-H119-CLUSTER-H0119-H0125"
+      }
+    },
+    {
+      "relation_id": 106,
+      "word_id_1": "H0119_0000",
+      "word_id_2": "H0120_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "etymological",
+        "relation_type": "root_shared",
+        "status_code": "hypothesized",
+        "direction_code": "undirected",
+        "description": null,
+        "relation_group_id": null,
+        "note": "Strong의 from과 붉음 설명은 보존하되 사람·땅이 붉다 동사에서 역사적으로 직접 파생되었다고 확정하지 않는다.",
+        "source": "RESHET-EC-H119-CLUSTER-H0119-H0120"
+      }
+    },
+    {
+      "relation_id": 107,
+      "word_id_1": "H0119_0000",
+      "word_id_2": "H0127_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "etymological",
+        "relation_type": "root_shared",
+        "status_code": "hypothesized",
+        "direction_code": "undirected",
+        "description": null,
+        "relation_group_id": null,
+        "note": "Strong의 from과 붉음 설명은 보존하되 사람·땅이 붉다 동사에서 역사적으로 직접 파생되었다고 확정하지 않는다.",
+        "source": "RESHET-EC-H119-CLUSTER-H0119-H0127"
+      }
+    },
+    {
+      "relation_id": 5393,
+      "word_id_1": "H0120_0000",
+      "word_id_2": "H0121_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련2"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "같은 형태의 보통명사가 인명·지명으로 사용되는 명명 전용이다.",
+        "source": "RESHET-EC-H119-CLUSTER-H0120-H0121"
+      }
+    },
+    {
+      "relation_id": 109,
+      "word_id_1": "H0122_0000",
+      "word_id_2": "H0123_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "Strong의 from과 창25:30의 붉은 죽에 연결된 이름 설명이 뒷받침한다.",
+        "source": "RESHET-EC-H119-CLUSTER-H0122-H0123"
+      }
+    },
+    {
+      "relation_id": 112,
+      "word_id_1": "H0126_0000",
+      "word_id_2": "H0127_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "땅 명사의 지명화·단축형/소속형 형성이다. 각 지명이 같은 장소라는 주장은 아니다.",
+        "source": "RESHET-EC-H119-CLUSTER-H0127-H0126"
+      }
+    },
+    {
+      "relation_id": 114,
+      "word_id_1": "H0127_0000",
+      "word_id_2": "H0128_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "땅 명사의 지명화·단축형/소속형 형성이다. 각 지명이 같은 장소라는 주장은 아니다.",
+        "source": "RESHET-EC-H119-CLUSTER-H0127-H0128"
+      }
+    },
+    {
+      "relation_id": 104,
+      "word_id_1": "G0076_0000",
+      "word_id_2": "H0121_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "transliteration",
+        "relation_type": "direct_transliteration",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "히브리어 인명 아담의 헬라어 전승형이다.",
+        "source": "RESHET-EC-H119-CLUSTER-H0121-G0076"
+      }
+    },
+    {
+      "relation_id": 3725,
+      "word_id_1": "G2401_0000",
+      "word_id_2": "H0123_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "transliteration",
+        "relation_type": "approx_transliteration",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "에돔계 이름을 헬라어 지명형 Idoumaia로 수용한 형태다. 시대별 영토 동일성은 주장하지 않는다.",
+        "source": "RESHET-EC-H119-CLUSTER-H0123-G2401"
+      }
+    }
+  ],
+  "meaning_approvals": [
+    {
+      "word_id": "H0122_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "붉은"
+        }
+      ]
+    },
+    {
+      "word_id": "H0125_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "불그스름한"
+        }
+      ]
+    },
+    {
+      "word_id": "H0127_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "땅"
+        }
+      ]
+    },
+    {
+      "word_id": "H0129_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "아다미 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0131_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "아둠밈 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H1818_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "피"
+        }
+      ]
+    }
+  ]
+}

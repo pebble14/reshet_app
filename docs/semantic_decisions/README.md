@@ -107,6 +107,8 @@
 | H115 클러스터 | 아도라임·장엄함 CORE11, 앗다르·아드람멜레크 병기, 비고11·관계10 | `active` | 높음 | 2026-10-19 | [기록](h115_cluster_approved_content_slice.md) |
 | H116 시간·서사 부사 | 그때·이에 1 sense·비고1, 관계 비생성·hold 없음 | `active` | 높음 | 2026-10-19 | [기록](h116_cluster_approved_content_slice.md) |
 
+| H119 클러스터 | CORE22 의미·비고·관계20, H726 아람 사람 및 Ketiv/Qere 설명·신규 hold 없음 | `active` | 높음 | 2026-10-19 | [기록](h119_cluster_approved_content_slice.md) |
+
 ## 열람 및 후속 판단 원칙
 
 1. 새 제안을 만들기 전에 관련 Strong이 이 색인에 있는지 확인한다.

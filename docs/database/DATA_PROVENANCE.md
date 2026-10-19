@@ -1380,3 +1380,14 @@ Work SHA `b33fa82207f8b3478ff890b5c9eceabb12398a053d9e415f3c6a5b2af5886f2c` → 
 Work SHA `e2fa8f22edc4f347bed118cd983065bc77c1eeaf05bdc589e5ab7118c680c1e2` → `4c0a259bbe84f5114cd4bfb985c83055faba01f9def5f7c2c76a9fe0814acb3d`, seed SHA `a7e0d6a50a3ab6b520c3bf7532b2780cfd6418709d9739a451eb4ce5493fbdb1` 불변이다. Approval SHA `5e96f695fdae33911f30b361c158deec96b97ba98721456342f4b8f78a8f0b33`, manifest SHA `86e7e506b943419cdd9f3b08dc554bf5562c42483ce10a689964849fc566fa6d`이며 새 manifest 경로의 LF bytes를 고정한다.
 
 표준 progress3종 공식 생성·renderer 대조와30검증에서 H0118만 승인 전환됐다. 전체14298, 승인395→396·미승인13897→13896·hold6·anomaly113이며 snapshot identity는 `b8370deca5b863eed632b382e8000f578acc9276c16cc39f2311919330a9da92`다. 정상 CORE1 closure·frontier0, canonical1/1회와 확보 local reference 전량을 검토한 결정이며 페르시아어 이름 뜻·source x-pn·LXX 대응 한계를 보존한다. 원본 연구를 유지하고 외부 00_applied_content.md/json에 후속 적용 결과를 별도로 기록한다. DB는 Git 미추적 로컬 자산이며 앱 배포·seed 교체·UI 테스트·전체 앱 빌드는 N/A다.
+
+
+## H119 붉음·사람·땅·에돔·피 클러스터 승인 — 2026-10-19
+
+[h119_cluster_approved_content_slice.json](../../tool/data_provenance/manifests/h119_cluster_approved_content_slice.json)은 format v5 batch RESHET-EC-H119-CLUSTER-APPROVED-CONTENT-SLICE다. 사용자 승인 CORE22의 의미 변경16·유지 승인6·비고20·관계 신규9/교체11을 반영했다. H726은 최신 승인에 따라 `아람 사람`과 Ketiv/Qere·Strong의 정의/usage 차이를 설명하는 비고를 채택했고 hold를 설정하지 않았다. 최종값·관계 방향·근거·경쟁 대안·잔여 불확실성은 [active 결정 기록](../semantic_decisions/h119_cluster_approved_content_slice.md)과 README 색인에 있다. 원어·음역·발음·schema·seed·기존 hold6·앱 코드·비대상 데이터는 보존한다.
+
+공식 dry-run 사본 적용·undo·원본 불변 후 live apply 성공. History group1792417002303605, ID6377–6432는56건·undone0이다. 독립 SQL69조회·233검증에서 전체13테이블·DDL·byte 백업·공식 snapshot·승인 projection을 대조했다. Integrity ok·FK0·sidecar0, 보호178파일(원본 연구82 포함) 불변, 기존 applicator 테스트31건 통과다. 승인 원문·백업·검증은 data/backups/approved_content_batch/h119_approval_20261019/, 공식 snapshot/result/manifest 사본은 data/backups/approved_content_batch/20261019T133641018967Z/에 보존한다.
+
+Work SHA `4c0a259bbe84f5114cd4bfb985c83055faba01f9def5f7c2c76a9fe0814acb3d` → `2de906f1aa1e7694c735ca0d2d2a4fad59a7087681a180b361584f060556b021`, seed SHA `a7e0d6a50a3ab6b520c3bf7532b2780cfd6418709d9739a451eb4ce5493fbdb1` 불변이다. Approval SHA `340e8e8d46d666aedecbc6be130aec4419529ce6fc606f49c76e69f09aaeeaef`, manifest SHA `8a47b4005c9572017e3d008b0b21aa967efa6bc019e9d27ed8c3d5a252808ca5`이며 새 manifest 경로를 LF로 고정한다.
+
+표준 progress3종을 공식 생성하고 CSV·Markdown renderer와 대조했다. 전체14298, 승인396→418·미승인13896→13874·hold6·anomaly113이며 CORE22 외 row·canonical relation index·anomaly 목록은 불변이다. Snapshot identity `2160f820da6c0e1a26d9d4428b08bd0bc31f32ca7f8a7275f9bc7c7621c08681`. 외부 H0119_cluster_20261019_4c0a259b/의 원본 연구를 보존하고 00_applied_content.md/json에 후속 적용 결과를 별도로 기록한다. Frontier47·max_nodes_reached와 hub 예외를 보존하며 전역 closure 완료를 주장하지 않는다. DB는 미추적 로컬 자산이며 앱 배포·seed 교체·UI 테스트·전체 앱 빌드는 N/A다.
