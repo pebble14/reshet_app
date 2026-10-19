@@ -1,0 +1,40 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H116-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-19 H116 추천 meaning·비고·관계 비생성·hold 없음 및 DB·문서·Git·이번 작업 브랜치 정리 승인; data/backups/approved_content_batch/h116_approval_20261019/00_user_approval.json",
+    "document_sha256": "92a899b6238fa60875c5543c112f91145e7ef59d5dc8400a2ef646fe4a2079ff"
+  },
+  "target": {
+    "expected_work_sha256": "b33fa82207f8b3478ff890b5c9eceabb12398a053d9e415f3c6a5b2af5886f2c",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0116_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "이에, 그 때"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "그때·이에"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0116_0000",
+      "before": null,
+      "after": "서사의 다음 국면을 잇는 아람어 부사로, 문맥에 따라 ‘그때에’, ‘그러자’, ‘그 다음에’ 등으로 옮긴다. ‘그러므로·드디어·이튿날에’는 문맥과 주변 어구를 반영한 번역이며 각각을 별도 뜻으로 나누지는 않는다. 스 5:16의 ‘그때부터’는 מִן과 결합한 표현이다. 어원은 확정되지 않았다."
+    }
+  ],
+  "relation_creates": [],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}
