@@ -1,0 +1,1144 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H111-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-19 H111 클러스터 전체 추천과 최종 피드백 보완안, DB·문서·Git·이번 작업 브랜치 정리 승인; data/backups/approved_content_batch/h111_approval_20261019/00_user_approval.json",
+    "document_sha256": "20ed59469ff03499da679718e9ffec1f08255973d3ebce472e035dc344f99db2"
+  },
+  "target": {
+    "expected_work_sha256": "650608e83efc61131f491d1a82c0df118226f657793ddfae848f2f0428409dc7",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0111_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아닷 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "하닷·아다드 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H1130_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "벤하닷 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "벤하닷·벤-하다드 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H1908_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "하닷 Hadad"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "하닷·하다드 (인)"
+        },
+        {
+          "seq": 2,
+          "meaning": "하닷·하다드 (신명)"
+        }
+      ]
+    },
+    {
+      "word_id": "H1909_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "하닷에셀 Hadadezer"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "하닷에셀·하다드-에제르 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H1910_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "하다드림몬 Hadadrimmon"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "하다드림몬·하다드-림몬 (신명 또는 지명)"
+        }
+      ]
+    },
+    {
+      "word_id": "H1921_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "부풀어 (솟아) 오르다, 꾸미다, 존경하다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "높여 대하다"
+        },
+        {
+          "seq": 2,
+          "meaning": "아름답게 꾸미다"
+        },
+        {
+          "seq": 3,
+          "meaning": "부풀어 오르다·솟아오르다"
+        }
+      ]
+    },
+    {
+      "word_id": "H1922_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "존경하다, 영광을 돌리다 찬양하다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "높여 기리다·영광(榮光)을 돌리다"
+        }
+      ]
+    },
+    {
+      "word_id": "H1923_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "영예, 위엄"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "위엄(威嚴)·영광(榮光)"
+        }
+      ]
+    },
+    {
+      "word_id": "H1924_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "하달"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "하달·하다르 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H1925_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "빛남, 영예, 영광"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "영광(榮光)"
+        }
+      ]
+    },
+    {
+      "word_id": "H1926_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "장식, 광체, 장려, 위엄"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아름다움·화려함(華麗함)"
+        },
+        {
+          "seq": 2,
+          "meaning": "위엄(威嚴)·영광(榮光)"
+        }
+      ]
+    },
+    {
+      "word_id": "H1927_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "장식, 영광"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아름다움·꾸밈"
+        },
+        {
+          "seq": 2,
+          "meaning": "영광(榮光)"
+        }
+      ]
+    },
+    {
+      "word_id": "H1928_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "하닷에셀 Hadarezer(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "하닷에셀·하다르-에제르 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2299_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "날카로운, 예리한"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "날카로운"
+        }
+      ]
+    },
+    {
+      "word_id": "H2300_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "날카롭다, 예리하다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "날카롭다·날카롭게 하다"
+        },
+        {
+          "seq": 2,
+          "meaning": "사납다"
+        }
+      ]
+    },
+    {
+      "word_id": "H2301_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "하닷 Hadad(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "하닷·하다드 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2303_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "날카로운"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "뾰족한 것"
+        }
+      ]
+    },
+    {
+      "word_id": "H2307_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "하딧 Hadid"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "하딧·하디드 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2314_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "둘러싸다, 봉쇄하다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "둘러싸다"
+        }
+      ]
+    },
+    {
+      "word_id": "H2315_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "방, 침(내)실, 내부"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "방"
+        }
+      ]
+    },
+    {
+      "word_id": "H2316_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "하달 Hadar"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "하달·하다르 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2582_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "헤나닷 Henadad(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "헤나닷·헤나다드 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2886_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "다브림몬 Tabrimmon"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "다브림몬·타브-림몬 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5876_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "엔핫다 En-haddah(지)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엔핫다·엔-핫다 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5884_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "에느림몬 En-rimmon(지)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "에느림몬·엔-림몬 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H7318_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "높임, 찬송, 찬양"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "찬양(讚揚)"
+        }
+      ]
+    },
+    {
+      "word_id": "H7319_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "높임, 찬양, 찬송"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "찬양(讚揚)"
+        }
+      ]
+    },
+    {
+      "word_id": "H7415_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "구더기, 벌레"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "구더기"
+        }
+      ]
+    },
+    {
+      "word_id": "H7416_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "석류 pomegranate"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "석류(石榴)"
+        }
+      ]
+    },
+    {
+      "word_id": "H7417_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "림몬 Rimmon"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "림몬 (신명)"
+        },
+        {
+          "seq": 2,
+          "meaning": "림몬 (인)"
+        },
+        {
+          "seq": 3,
+          "meaning": "림몬·림모노 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H7426_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "높아지다, 오르다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "오르다·높아지다"
+        }
+      ]
+    },
+    {
+      "word_id": "H7427_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "높임, 들어올림, 일어남"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "일어남"
+        }
+      ]
+    },
+    {
+      "word_id": "H7428_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "림몬베레스Rimmon-perez"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "림몬베레스·림몬-페레츠 (지)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0111_0000",
+      "before": null,
+      "after": "하닷은 한국어 성경의 관용 표기이고 아다드는 אֲדַד에 대응하는 원문 기반 표기다. 왕상 11:17에서는 אֲדַד와 הֲדַד가 같은 에돔계 인물을 가리킨다. Strong은 H2301의 철자 변이일 가능성을 제시하지만, H2301의 이스마엘계 인물과 동일인으로 합치지 않는다."
+    },
+    {
+      "word_id": "H1130_0000",
+      "before": null,
+      "after": "벤하닷은 관용명이고 벤-하다드는 '하닷의 아들'이라는 이름의 구성을 드러내는 표기다. 여러 아람 왕에게 쓰인 이름이므로 모든 용례를 한 인물로 합치지 않는다. 분석 표기는 고대 실제 발음의 복원이 아니다."
+    },
+    {
+      "word_id": "H1908_0000",
+      "before": null,
+      "after": "하닷은 관용 표기이고 하다드는 הֲדַד에 대응하는 원문 기반 표기다. 정본의 독립 출현 12토큰은 에돔계 인명이며 여러 인물을 포함한다. 신명은 Strong의 사전 풀이와 합성 이름의 구성요소에 근거하며 이 12토큰을 신명 용례로 세지 않는다. Strong의 외래 기원 설명은 추정이다."
+    },
+    {
+      "word_id": "H1909_0000",
+      "before": null,
+      "after": "하닷에셀은 관용명이고 하다드-에제르는 '하닷은 도움이다'라는 이름의 구성을 보여준다. H1928은 같은 소바 왕의 다른 이름형으로 사전에 수록되어 있다. 현행 OSHB는 관련 21토큰을 H1909로 분류하며 일부 번역 자료의 H1928 표지를 정본 출현 수로 대체하지 않는다. 분석 표기는 고대 실제 발음의 복원이 아니다."
+    },
+    {
+      "word_id": "H1910_0000",
+      "before": null,
+      "after": "하다드림몬은 한국어 성경의 관용명이고 하다드-림몬은 이름의 구성을 보여 주는 분석 표기다. 하다드와 림몬을 신명 요소로 분석하는 것과 슥 12:11에서 이름 전체가 가리키는 대상을 구분한다. Strong과 NET은 지명으로 풀이하며 NET은 요시야 애도와의 연결을 제시한다. BDB는 신명 또는 그 신명에서 유래한 지명으로 설명하고 NABRE는 신을 위한 애곡으로 해석한다. 이는 하나의 용례에 대한 경쟁 해석이며, 신명과 지명이 각각 독립적으로 확증된 두 의미라는 뜻은 아니다. 확보한 LXX는 이름을 그대로 음역하지 않고 석류나무 관련 표현으로 옮긴다. '석류의 하닷'을 확정된 이름 뜻으로 저장하지 않는다."
+    },
+    {
+      "word_id": "H1921_0000",
+      "before": null,
+      "after": "높여 대함은 노인을 공경함뿐 아니라 재판에서 특정인을 편드는 경우도 포함하며, 수동·재귀형에서는 높임을 받거나 스스로 높은 체함으로 나타난다. 사 63:1은 화려하게 차려입은 모습을 가리킨다. 세 번째 meaning은 Strong의 전통적 어근 풀이를 보존한 것이다. 사 45:2의 הֲדוּרִים은 현행 OSHB가 명사 복수로 분석하고 정확한 뜻도 논쟁적이며, 이 절의 '솟은 곳·험한 곳·산' 해석은 잠정적이다. 이를 관련 어휘 전체의 확정된 의미 중심으로 삼지 않는다."
+    },
+    {
+      "word_id": "H1922_0000",
+      "before": null,
+      "after": "아람어 동사다. 다니엘서에서 하나님을 높여 기리는 행위를 나타내며, 번역의 경배하다·존경하다·영광을 돌리다는 해당 문맥의 표현 차이로 본다."
+    },
+    {
+      "word_id": "H1924_0000",
+      "before": null,
+      "after": "하달은 개역 계열의 관용명이고 하다르는 הֲדַר에 대응하는 원문 기반 표기다. 창 36:39와 병행하는 대상 1:50–51에서는 하닷 형태가 전해진다. 현재 본문들의 다른 이름형을 보존하며 어느 것이 원래 이름인지 확정하지 않는다. 이 에돔계 왕을 이스마엘계 H2316과 동일인으로 합치지 않는다."
+    },
+    {
+      "word_id": "H1925_0000",
+      "before": null,
+      "after": "단 11:20의 '나라의 영광'에 쓰인다. Strong은 이를 예루살렘을 가리키는 비유로 풀이하지만, 확보한 번역 자료는 나라의 아름다운 곳 또는 나라의 영광로도 처리한다. 특정 도시명 자체를 독립 meaning으로 확정하지 않는다."
+    },
+    {
+      "word_id": "H1926_0000",
+      "before": null,
+      "after": "가시적인 아름다움·꾸밈과 지위나 능력이 드러나는 위엄·영광을 포괄한다. 두 영역은 왕·하나님·도시를 묘사할 때 겹칠 수 있다. 시 110:3의 '거룩한 아름다움·차림'은 옷 또는 광채로 풀이되며, 일부 번역의 '거룩한 산'은 다른 본문 읽기와 관련된다. 이를 '옷'이나 '산'이라는 확정 독립 meaning으로 늘리지 않는다."
+    },
+    {
+      "word_id": "H1927_0000",
+      "before": null,
+      "after": "네 용례의 '거룩한 아름다움·꾸밈'은 거룩한 옷차림, 거룩함의 아름다움, 거룩한 현현 등으로 해석된다. 확보한 LXX와 KJV 여백에는 성소·뜰과 관련된 다른 읽기도 있다. 이를 예복 하나로 고정하지 않는다. 잠 14:28은 많은 백성이 왕의 영광가 됨을 말한다."
+    },
+    {
+      "word_id": "H1928_0000",
+      "before": null,
+      "after": "하닷에셀은 한국어 성경의 관용명이고 하다르-에제르는 הֲדַרְעֶזֶר의 구성 표기다. Strong과 local 사전은 H1909와 같은 소바 왕의 다른 이름형으로 설명한다. 현행 OSHB에서 H1928로 분류된 토큰은 0회이며 관련 문맥은 H1909로 수록되어 있다. 번역 자료의 H1928 표지나 이 표제의 존재만으로 정본에 독립 출현을 추가하지 않는다."
+    },
+    {
+      "word_id": "H2300_0000",
+      "before": null,
+      "after": "잠 27:17의 친구 얼굴을 '빛나게 하다'는 철을 갈듯 서로를 벼리는 비유로 본다. 겔 21장의 수동형은 날카롭게 된 칼을 나타낸다. 합 1:8에서는 말의 사나움을 묘사한다. 상태·사역·수동의 차이와 번역 표현 차이를 각각 새 sense로 늘리지 않는다."
+    },
+    {
+      "word_id": "H2301_0000",
+      "before": null,
+      "after": "하닷은 관용명이고 하다드는 חֲדַד에 대응하는 원문 기반 표기다. 창 25:15와 대상 1:30의 이스마엘계 이름이며 에돔계 H0111·H1908과 인물을 구별한다. KJV 창 25:15는 H2316의 하달 형태를 본문에 두고 Hadad를 여백 대안으로 제시한다. 현행 OSHB의 표제·태그는 보존한다."
+    },
+    {
+      "word_id": "H2303_0000",
+      "before": null,
+      "after": "욥 41:22(한국어 성경 41:30)의 חַדּוּדֵי חָרֶשׂ에 쓰이며 날카로운 질그릇 조각 같은 배 밑면을 묘사한다. Strong은 point로 풀이하면서 품사를 형용사로 표시하고, OSHB는 해당 형태를 명사 복수 연계형으로 분석한다. 뾰족한 부분·날카로운 것이라는 기능을 보존하며 특정 도구나 물질 하나로 한정하지 않는다."
+    },
+    {
+      "word_id": "H2307_0000",
+      "before": null,
+      "after": "하딧은 관용명이고 하디드는 חָדִיד에 대응하는 원문 기반 표기다. 세 용례 모두 로드·오노와 함께 나오는 지명이다. Strong의 품사 표지는 남성 인명형이지만 같은 entry의 뜻풀이와 실제 용례는 장소를 가리킨다. 원어 표제와 현재 expression은 보존한다."
+    },
+    {
+      "word_id": "H2314_0000",
+      "before": null,
+      "after": "겔 21:19(한국어 성경 21:14)의 칼을 묘사하는 분사에 쓰인다. Strong의 enclose·beset와 개역개정·새번역의 둘러싸는 칼 해석을 대표로 둔다. KJV와 개역한글의 '밀실에 들어가다' 해석도 전해지므로 정확한 동작 이미지는 미확정으로 남긴다."
+    },
+    {
+      "word_id": "H2315_0000",
+      "before": null,
+      "after": "침실·안방·골방은 같은 방의 용도나 위치를 드러내는 문맥적 표현이다. 몸속 깊은 곳, 죽음의 공간, 하늘이나 폭풍의 은밀한 곳에도 방의 비유가 쓰인다. 욥 37:9의 남쪽·남풍 번역은 그 구절의 해석이며 '남쪽'을 별도 확정 meaning으로 추가하지 않는다."
+    },
+    {
+      "word_id": "H2316_0000",
+      "before": null,
+      "after": "하달은 KJV Hadar 전통에 대응하는 이름이고 하다르는 חֲדַר의 원문 기반 표기다. 사전에서는 이스마엘의 아들을 가리키며, KJV 창 25:15는 H2316으로 표시하고 Hadad를 여백 대안으로 둔다. 현행 OSHB는 그 구절을 H2301로 분류하므로 H2316의 정본 출현 수는 0회다. 에돔계 H1924와는 다른 인물이다."
+    },
+    {
+      "word_id": "H2582_0000",
+      "before": null,
+      "after": "헤나닷은 관용명이고 헤나다드는 חֵנָדָד의 원문 기반 표기다. Strong은 H2580과 H1908의 합성으로 '하닷의 호의'를 풀이하지만 probably를 붙인다. 이 구성과 고대 발음을 확정하지 않으며 분석적 붙임표는 사용하지 않는다. local 사전의 여성명사 표시는 Strong의 남성 고유명사 표지 및 자손 문맥과 구별한다."
+    },
+    {
+      "word_id": "H2886_0000",
+      "before": null,
+      "after": "다브림몬은 관용명이고 타브-림몬은 이름의 구성 표기다. 왕상 15:18에서 벤하닷의 아버지로 나온다. Strong은 '림몬을 기쁘게 하는', local 사전은 '림몬은 선하다'라는 풀이를 제시하므로 이름의 정확한 문장 관계는 확정하지 않는다. 분석 표기는 고대 실제 발음의 복원이 아니다."
+    },
+    {
+      "word_id": "H5876_0000",
+      "before": null,
+      "after": "엔핫다는 관용명이고 엔-핫다는 이름의 구성을 드러내는 표기다. 수 19:21의 잇사갈 지명이다. Strong은 H5869와 H2300 계열의 여성형 파생 요소로 '날카로움의 샘'을 풀이한다. local 사전의 H5871 참조와 정본 Strong의 H5869 참조를 구별하며 현지 수질이나 지형까지 단정하지 않는다."
+    },
+    {
+      "word_id": "H5884_0000",
+      "before": null,
+      "after": "에느림몬은 관용명이고 엔-림몬은 '석류의 샘'이라는 이름의 구성을 드러내는 표기다. 느 11:29의 지명이다. Strong의 구성 참조는 H5869와 H7416이며 local 사전의 H5871 참조와 구별한다. 별개의 아인·림몬 목록 전체를 이 한 장소와 자동 통합하지 않는다."
+    },
+    {
+      "word_id": "H7415_0000",
+      "before": null,
+      "after": "썩는 음식이나 살, 시신을 먹는 벌레를 가리키며 욥 25:6에서는 인간의 연약함을 비유한다. 구체적인 생물 종은 한정하지 않는다. Strong의 '번식'을 매개로 한 H7426 어원 설명과 H7311 compare는 보존하되 확인된 의미 파생으로 확정하지 않는다."
+    },
+    {
+      "word_id": "H7416_0000",
+      "before": null,
+      "after": "열매와 나무를 모두 가리키며 제사장 옷과 성전 장식에서는 석류 모양을 나타낸다. 장식의 재료·크기 차이를 별도 의미로 늘리지 않는다. 실제 식물·열매 문맥 12토큰과 모양 장식 20토큰을 같은 어휘의 사용 범위로 본다."
+    },
+    {
+      "word_id": "H7417_0000",
+      "before": null,
+      "after": "왕하 5:18은 아람 신명, 삼하 4장은 브에롯 사람의 이름, 나머지는 여러 장소의 이름이다. 대상 6:62(한국어 성경 6:77)의 림모노는 지명형 변이로 함께 보존한다. 수 19:13의 הַמְּתֹאָר는 Strong이 지명 뒤의 설명 구문으로 구별하므로 '림몬메도알'을 별도 기본 이름으로 늘리지 않는다. 모든 신명·인명·지명을 한 대상이나 석류에서 유래한 동일 어원으로 합치지 않는다."
+    },
+    {
+      "word_id": "H7426_0000",
+      "before": null,
+      "after": "어간과 문맥에 따라 높이 들리다·올라가다로 번역된다. 민 17:10(한국어 성경 16:45)의 명령은 회중 가운데서 물러나라는 상황에 쓰인다. 이 문맥적 떠남과 욥 24:24의 일시적 높은 지위를 각각 새 meaning으로 늘리지 않는다."
+    },
+    {
+      "word_id": "H7428_0000",
+      "before": null,
+      "after": "림몬베레스는 관용명이고 림몬-페레츠는 Strong 표제형의 구성 표기다. 민 33:19–20의 광야 여정 지명이며 Strong은 H7416과 H6556의 결합으로 풀이한다. 이름만으로 실제 석류 파열 사건이나 특정 지형을 확정하지 않는다. 분석 표기는 고대 실제 발음의 복원이 아니다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H1121_0000",
+      "word_id_2": "H1130_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 구성요소 또는 해당 어근의 파생 요소에서 합성 이름으로 향함; 표제형 전체의 단순 연결이나 실제 인물 혈연을 뜻하지 않음 Strong: from 1121 and 1908; son of Hadad;",
+      "source": "RESHET-EC-H111-CLUSTER-H1121-H1130"
+    },
+    {
+      "word_id_1": "H1130_0000",
+      "word_id_2": "H1908_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 구성요소 또는 해당 어근의 파생 요소에서 합성 이름으로 향함; 표제형 전체의 단순 연결이나 실제 인물 혈연을 뜻하지 않음 Strong: from 1121 and 1908; son of Hadad;",
+      "source": "RESHET-EC-H111-CLUSTER-H1908-H1130"
+    },
+    {
+      "word_id_1": "H1908_0000",
+      "word_id_2": "H1909_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 구성요소 또는 해당 어근의 파생 요소에서 합성 이름으로 향함; 표제형 전체의 단순 연결이나 실제 인물 혈연을 뜻하지 않음 Strong: from 1908 and 5828; Hadad (is his) help;",
+      "source": "RESHET-EC-H111-CLUSTER-H1908-H1909"
+    },
+    {
+      "word_id_1": "H1909_0000",
+      "word_id_2": "H5828_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 구성요소 또는 해당 어근의 파생 요소에서 합성 이름으로 향함; 표제형 전체의 단순 연결이나 실제 인물 혈연을 뜻하지 않음 Strong: from 1908 and 5828; Hadad (is his) help;",
+      "source": "RESHET-EC-H111-CLUSTER-H5828-H1909"
+    },
+    {
+      "word_id_1": "H1908_0000",
+      "word_id_2": "H1910_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 구성요소 또는 해당 어근의 파생 요소에서 합성 이름으로 향함; 표제형 전체의 단순 연결이나 실제 인물 혈연을 뜻하지 않음 Strong: from 1908 and 7417; 이름의 구성 관계만 나타내며 신명·지명의 경쟁 해석은 단어 비고에 보존한다.",
+      "source": "RESHET-EC-H111-CLUSTER-H1908-H1910"
+    },
+    {
+      "word_id_1": "H1910_0000",
+      "word_id_2": "H7417_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 구성요소 또는 해당 어근의 파생 요소에서 합성 이름으로 향함; 표제형 전체의 단순 연결이나 실제 인물 혈연을 뜻하지 않음 Strong: from 1908 and 7417; 이름의 구성 관계만 나타내며 신명·지명의 경쟁 해석은 단어 비고에 보존한다.",
+      "source": "RESHET-EC-H111-CLUSTER-H7417-H1910"
+    },
+    {
+      "word_id_1": "H1924_0000",
+      "word_id_2": "H1928_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 구성요소 또는 해당 어근의 파생 요소에서 합성 이름으로 향함; 표제형 전체의 단순 연결이나 실제 인물 혈연을 뜻하지 않음 Strong: from 1924 and 5828; Hadar (i.e. Hadad, 1908) is his help; (i.e. Hadadezer, 1909)",
+      "source": "RESHET-EC-H111-CLUSTER-H1924-H1928"
+    },
+    {
+      "word_id_1": "H1928_0000",
+      "word_id_2": "H5828_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 구성요소 또는 해당 어근의 파생 요소에서 합성 이름으로 향함; 표제형 전체의 단순 연결이나 실제 인물 혈연을 뜻하지 않음 Strong: from 1924 and 5828; Hadar (i.e. Hadad, 1908) is his help; (i.e. Hadadezer, 1909)",
+      "source": "RESHET-EC-H111-CLUSTER-H5828-H1928"
+    },
+    {
+      "word_id_1": "H2886_0000",
+      "word_id_2": "H2895_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 구성요소 또는 해당 어근의 파생 요소에서 합성 이름으로 향함; 표제형 전체의 단순 연결이나 실제 인물 혈연을 뜻하지 않음 Strong: from 2895 and 7417; pleasing (to) Rimmon;",
+      "source": "RESHET-EC-H111-CLUSTER-H2895-H2886"
+    },
+    {
+      "word_id_1": "H2886_0000",
+      "word_id_2": "H7417_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 구성요소 또는 해당 어근의 파생 요소에서 합성 이름으로 향함; 표제형 전체의 단순 연결이나 실제 인물 혈연을 뜻하지 않음 Strong: from 2895 and 7417; pleasing (to) Rimmon;",
+      "source": "RESHET-EC-H111-CLUSTER-H7417-H2886"
+    },
+    {
+      "word_id_1": "H2300_0000",
+      "word_id_2": "H5876_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 구성요소 또는 해당 어근의 파생 요소에서 합성 이름으로 향함; 표제형 전체의 단순 연결이나 실제 인물 혈연을 뜻하지 않음 Strong: from 5869 and the feminine of a derivative from 2300; fountain of sharpness;",
+      "source": "RESHET-EC-H111-CLUSTER-H2300-H5876"
+    },
+    {
+      "word_id_1": "H5869_0000",
+      "word_id_2": "H5876_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 구성요소 또는 해당 어근의 파생 요소에서 합성 이름으로 향함; 표제형 전체의 단순 연결이나 실제 인물 혈연을 뜻하지 않음 Strong: from 5869 and the feminine of a derivative from 2300; fountain of sharpness;",
+      "source": "RESHET-EC-H111-CLUSTER-H5869-H5876"
+    },
+    {
+      "word_id_1": "H5869_0000",
+      "word_id_2": "H5884_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 구성요소 또는 해당 어근의 파생 요소에서 합성 이름으로 향함; 표제형 전체의 단순 연결이나 실제 인물 혈연을 뜻하지 않음 Strong: from 5869 and 7416; fountain of a pomegranate;",
+      "source": "RESHET-EC-H111-CLUSTER-H5869-H5884"
+    },
+    {
+      "word_id_1": "H5884_0000",
+      "word_id_2": "H7416_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 구성요소 또는 해당 어근의 파생 요소에서 합성 이름으로 향함; 표제형 전체의 단순 연결이나 실제 인물 혈연을 뜻하지 않음 Strong: from 5869 and 7416; fountain of a pomegranate;",
+      "source": "RESHET-EC-H111-CLUSTER-H7416-H5884"
+    },
+    {
+      "word_id_1": "H6556_0000",
+      "word_id_2": "H7428_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 구성요소 또는 해당 어근의 파생 요소에서 합성 이름으로 향함; 표제형 전체의 단순 연결이나 실제 인물 혈연을 뜻하지 않음 Strong: from 7416 and 6556; pomegranate of the breach;",
+      "source": "RESHET-EC-H111-CLUSTER-H6556-H7428"
+    },
+    {
+      "word_id_1": "H7416_0000",
+      "word_id_2": "H7428_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 구성요소 또는 해당 어근의 파생 요소에서 합성 이름으로 향함; 표제형 전체의 단순 연결이나 실제 인물 혈연을 뜻하지 않음 Strong: from 7416 and 6556; pomegranate of the breach;",
+      "source": "RESHET-EC-H111-CLUSTER-H7416-H7428"
+    },
+    {
+      "word_id_1": "H1922_0000",
+      "word_id_2": "H1923_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from / feminine of / participle / same-as / another-form source의 실제 문맥을 보존한 전통적 파생·명명 분석; 현대 어원 재구의 확정으로 일반화하지 않음 Strong: (Aramaic) from 1922;",
+      "source": "RESHET-EC-H111-CLUSTER-H1922-H1923"
+    },
+    {
+      "word_id_1": "H1924_0000",
+      "word_id_2": "H1926_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from / feminine of / participle / same-as / another-form source의 실제 문맥을 보존한 전통적 파생·명명 분석; 현대 어원 재구의 확정으로 일반화하지 않음 Strong: the same as 1926;",
+      "source": "RESHET-EC-H111-CLUSTER-H1926-H1924"
+    },
+    {
+      "word_id_1": "H1921_0000",
+      "word_id_2": "H1925_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from / feminine of / participle / same-as / another-form source의 실제 문맥을 보존한 전통적 파생·명명 분석; 현대 어원 재구의 확정으로 일반화하지 않음 Strong: from 1921;",
+      "source": "RESHET-EC-H111-CLUSTER-H1921-H1925"
+    },
+    {
+      "word_id_1": "H1921_0000",
+      "word_id_2": "H1926_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from / feminine of / participle / same-as / another-form source의 실제 문맥을 보존한 전통적 파생·명명 분석; 현대 어원 재구의 확정으로 일반화하지 않음 Strong: from 1921;",
+      "source": "RESHET-EC-H111-CLUSTER-H1921-H1926"
+    },
+    {
+      "word_id_1": "H1926_0000",
+      "word_id_2": "H1927_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from / feminine of / participle / same-as / another-form source의 실제 문맥을 보존한 전통적 파생·명명 분석; 현대 어원 재구의 확정으로 일반화하지 않음 Strong: feminine of 1926;",
+      "source": "RESHET-EC-H111-CLUSTER-H1926-H1927"
+    },
+    {
+      "word_id_1": "H2299_0000",
+      "word_id_2": "H2300_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from / feminine of / participle / same-as / another-form source의 실제 문맥을 보존한 전통적 파생·명명 분석; 현대 어원 재구의 확정으로 일반화하지 않음 Strong: from 2300;",
+      "source": "RESHET-EC-H111-CLUSTER-H2300-H2299"
+    },
+    {
+      "word_id_1": "H2300_0000",
+      "word_id_2": "H2301_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from / feminine of / participle / same-as / another-form source의 실제 문맥을 보존한 전통적 파생·명명 분석; 현대 어원 재구의 확정으로 일반화하지 않음 Strong: from 2300; fierce;",
+      "source": "RESHET-EC-H111-CLUSTER-H2300-H2301"
+    },
+    {
+      "word_id_1": "H2300_0000",
+      "word_id_2": "H2303_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from / feminine of / participle / same-as / another-form source의 실제 문맥을 보존한 전통적 파생·명명 분석; 현대 어원 재구의 확정으로 일반화하지 않음 Strong: from 2300;",
+      "source": "RESHET-EC-H111-CLUSTER-H2300-H2303"
+    },
+    {
+      "word_id_1": "H2300_0000",
+      "word_id_2": "H2307_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from / feminine of / participle / same-as / another-form source의 실제 문맥을 보존한 전통적 파생·명명 분석; 현대 어원 재구의 확정으로 일반화하지 않음 Strong: from 2300; a peak;",
+      "source": "RESHET-EC-H111-CLUSTER-H2300-H2307"
+    },
+    {
+      "word_id_1": "H7318_0000",
+      "word_id_2": "H7426_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from / feminine of / participle / same-as / another-form source의 실제 문맥을 보존한 전통적 파생·명명 분석; 현대 어원 재구의 확정으로 일반화하지 않음 Strong: from 7426;",
+      "source": "RESHET-EC-H111-CLUSTER-H7426-H7318"
+    },
+    {
+      "word_id_1": "H7319_0000",
+      "word_id_2": "H7426_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from / feminine of / participle / same-as / another-form source의 실제 문맥을 보존한 전통적 파생·명명 분석; 현대 어원 재구의 확정으로 일반화하지 않음 Strong: feminine active participle of 7426;",
+      "source": "RESHET-EC-H111-CLUSTER-H7426-H7319"
+    },
+    {
+      "word_id_1": "H7416_0000",
+      "word_id_2": "H7426_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from / feminine of / participle / same-as / another-form source의 실제 문맥을 보존한 전통적 파생·명명 분석; 현대 어원 재구의 확정으로 일반화하지 않음 Strong: or רִמֹּן; from 7426;",
+      "source": "RESHET-EC-H111-CLUSTER-H7426-H7416"
+    },
+    {
+      "word_id_1": "H7426_0000",
+      "word_id_2": "H7427_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from / feminine of / participle / same-as / another-form source의 실제 문맥을 보존한 전통적 파생·명명 분석; 현대 어원 재구의 확정으로 일반화하지 않음 Strong: from the active participle of 7426;",
+      "source": "RESHET-EC-H111-CLUSTER-H7426-H7427"
+    },
+    {
+      "word_id_1": "H2314_0000",
+      "word_id_2": "H2315_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from / feminine of / participle / same-as / another-form source의 실제 문맥을 보존한 전통적 파생·명명 분석; 현대 어원 재구의 확정으로 일반화하지 않음 Strong: from 2314;",
+      "source": "RESHET-EC-H111-CLUSTER-H2314-H2315"
+    },
+    {
+      "word_id_1": "H2315_0000",
+      "word_id_2": "H2316_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from / feminine of / participle / same-as / another-form source의 실제 문맥을 보존한 전통적 파생·명명 분석; 현대 어원 재구의 확정으로 일반화하지 않음 Strong: another form for 2315; chamber;",
+      "source": "RESHET-EC-H111-CLUSTER-H2315-H2316"
+    },
+    {
+      "word_id_1": "H0111_0000",
+      "word_id_2": "H1908_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "왕상 11:17의 두 형태가 같은 에돔계 인물을 가리킴; compare 이외에 직접 본문 근거 확인 Strong: probably of foreign origin (compare 111);",
+      "source": "RESHET-EC-H111-CLUSTER-H0111-H1908"
+    },
+    {
+      "word_id_1": "H1908_0000",
+      "word_id_2": "H1924_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "창36:39와 대상1:50–51의 병행 왕명 형태에 한정; 어느 철자가 원형인지는 미확정",
+      "source": "RESHET-EC-H111-CLUSTER-H1908-H1924"
+    },
+    {
+      "word_id_1": "H1909_0000",
+      "word_id_2": "H1928_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong과 사전·번역 전통의 같은 소바 왕 이름형; OSHB H1928 독립 출현을 주장하지 않음 Strong: Hadadezer. Compare 1928. / from 1924 and 5828; Hadar (i.e. Hadad, 1908) is his help; (i.e. Hadadezer, 1909)",
+      "source": "RESHET-EC-H111-CLUSTER-H1909-H1928"
+    },
+    {
+      "word_id_1": "H2301_0000",
+      "word_id_2": "H2316_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "창25:15 OSHB H2301과 exact KJV H2316 및 Hadar/Hadad margin; source identity와 token count는 각각 보존",
+      "source": "RESHET-EC-H111-CLUSTER-H2301-H2316"
+    },
+    {
+      "word_id_1": "H1921_0000",
+      "word_id_2": "H1922_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "corresponding to로 제시된 히브리어·아람어 동계 어근 대응; 차용 방향은 확정하지 않음 Strong: (Aramaic) corresponding to 1921;",
+      "source": "RESHET-EC-H111-CLUSTER-H1921-H1922"
+    },
+    {
+      "word_id_1": "H2580_0000",
+      "word_id_2": "H2582_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "probably from 2580 and 1908; probably를 양쪽 구성 요소 모두에 보존 Strong: probably from 2580 and 1908; favor of Hadad;",
+      "source": "RESHET-EC-H111-CLUSTER-H2580-H2582"
+    },
+    {
+      "word_id_1": "H1908_0000",
+      "word_id_2": "H2582_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "probably from 2580 and 1908; probably를 양쪽 구성 요소 모두에 보존 Strong: probably from 2580 and 1908; favor of Hadad;",
+      "source": "RESHET-EC-H111-CLUSTER-H1908-H2582"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}
