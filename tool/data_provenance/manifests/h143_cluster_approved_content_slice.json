@@ -1,0 +1,73 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H143-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-20 H143·H144 추천 의미·비고·무방향 대응 관계1건, DB·문서·Git·작업 브랜치 정리 승인; data/backups/approved_content_batch/h143_approval_20261020/00_user_approval.json",
+    "document_sha256": "e7bbf17a1fa74813ce864b02cfda2df9220f64ef3c764dd6bbf1a4b784030d63"
+  },
+  "target": {
+    "expected_work_sha256": "4c155203f4db21aa465d0502efa663e5763382c2e09eb2f8560a316497998215",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0143_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아달(월)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아달·아다르 (월)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0144_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아달(월)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아달·아다르 (월)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0143_0000",
+      "before": null,
+      "after": "‘아달’은 한국어 성경의 관용 표기, ‘아다르’는 원문 אֲדָר를 옮긴 한글 근사 표기다. 니산월을 첫째로 세는 달력의 열두째 달이며, 양력으로 대체로 2~3월 무렵에 해당한다. Strong은 외래어 기원과 ‘불’이라는 어원 뜻을 추정하지만, 성경 용례는 달 이름이므로 ‘불’을 별도 의미로 확정하지 않는다."
+    },
+    {
+      "word_id": "H0144_0000",
+      "before": null,
+      "after": "‘아달’은 한국어 성경의 관용 표기, ‘아다르’는 원문 אֲדָר를 옮긴 한글 근사 표기다. 니산월을 첫째로 세는 달력의 열두째 달이며, 양력으로 대체로 2~3월 무렵에 해당한다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0143_0000",
+      "word_id_2": "H0144_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "같은 달 이름의 히브리어·아람어 대응형이다. Strong의 H144는 H143에 대응한다고 설명한다. 두 언어 사이의 직접 차용·파생 방향이나 ‘불’이라는 어원을 확정하지 않는다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml, H144 source; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}

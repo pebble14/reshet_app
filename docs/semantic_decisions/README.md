@@ -110,6 +110,7 @@
 | H119 클러스터 | CORE22 의미·비고·관계20, H726 아람 사람 및 Ketiv/Qere 설명·신규 hold 없음 | `active` | 높음 | 2026-10-19 | [기록](h119_cluster_approved_content_slice.md) |
 
 | H133 아드마다·아드마타 | 동일 인명 병기·비고1, 관계 비생성·hold 없음 | `active` | 높음 | 2026-10-20 | [기록](h133_cluster_approved_content_slice.md) |
+| H143·H144 아달월 | 아달·아다르 월명2·비고2·무방향 대응1, 어원 추정 보존·hold 없음 | `active` | 높음 | 2026-10-20 | [기록](h143_cluster_approved_content_slice.md) |
 
 ## 열람 및 후속 판단 원칙
 
