@@ -1,0 +1,40 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H149-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-21 H149 충실히 단일 의미·문맥 비고, 관계 비생성·hold 없음, DB·문서·Git·작업 브랜치 정리 승인; data/backups/approved_content_batch/h149_approval_20261021/00_user_approval.json",
+    "document_sha256": "30d10a011b374ef145fc9e8a1e67382a2e89cf9bd1903d5941c3bd9d2701df42"
+  },
+  "target": {
+    "expected_work_sha256": "38a30e02359ffa75331a3285cc6b4085118a7ca05078393d64556c77c797c1c4",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0149_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "주의깊게, 부지런히"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "충실히(忠實히)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0149_0000",
+      "before": null,
+      "after": "스 7:23에서는 명령을 정해진 대로 소홀함 없이 이행하는 뜻이다."
+    }
+  ],
+  "relation_creates": [],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}
