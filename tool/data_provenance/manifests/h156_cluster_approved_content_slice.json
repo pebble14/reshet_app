@@ -1,0 +1,239 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H156-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-21 H156 CORE8 최신 의미·비고·관계3 및 DB·문서·Git·이번 작업 브랜치 정리 승인; data/backups/approved_content_batch/h156_approval_20261021/00_user_approval.json",
+    "document_sha256": "1df2bc3e2e19df27c435eda8851f264ce7059f6b7b086f3dced038a59221cb07"
+  },
+  "target": {
+    "expected_work_sha256": "dca6192915e5eb92d9303a61c4af55a457af3461170ab377c4611ed83dc78080",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0156_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "타작하다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "타작하다(打作하다)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0157_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "사랑하다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "사랑하다"
+        },
+        {
+          "seq": 2,
+          "meaning": "좋아하다"
+        }
+      ]
+    },
+    {
+      "word_id": "H0577_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아아, 슬프다, 구하다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아!"
+        }
+      ]
+    },
+    {
+      "word_id": "H1758_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "(짓) 밟다, 타작하다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "타작하다(打作하다)"
+        },
+        {
+          "seq": 2,
+          "meaning": "짓밟다"
+        }
+      ]
+    },
+    {
+      "word_id": "H4994_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "바라건대/원컨대/제발"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "부디"
+        },
+        {
+          "seq": 2,
+          "meaning": "자"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0156_0000",
+      "before": null,
+      "after": "이사야 28:28에서 곡식을 타작하는 일을 가리킨다. 본문형 אָדוֹשׁ는 OSHB에서 절대부정사로 분석되며, 뒤에는 H1758 דּוּשׁ의 활용형이 이어진다. 비교 사전과 문법서는 두 형태를 연결하지만 형태·본문비평 분석에는 차이가 있으므로 Strong의 별도 표제와 원문 할당은 보존한다."
+    },
+    {
+      "word_id": "H0157_0000",
+      "before": null,
+      "after": "사람·하나님을 향한 사랑뿐 아니라 음식·잠·재물·행위 등을 좋아하는 데도 쓰인다. 분사형은 문맥에 따라 친구·연인·사랑받는 이를 나타내며, 그 자체가 도덕적으로 좋은 사랑만을 뜻하지 않는다. 호세아 4:18의 הֵבוּ는 OSHB에서 H157로 분류되지만 KJV와 한국어 자료의 분석이 달라 개별 어형의 해석은 확정하지 않는다."
+    },
+    {
+      "word_id": "H0158_0000",
+      "before": null,
+      "after": "두 성경 용례는 모두 남성명사 복수형이다. 잠언 5:19에서는 사랑스러운 암사슴이라는 수식에 쓰이며, 호세아 8:9에서는 사랑 또는 그 상대인 연인으로 풀이된다. 후자는 앗수르를 찾는 에브라임의 행동을 연애에 빗댄 문맥으로, 선한 사랑만을 가리키는 말은 아니다."
+    },
+    {
+      "word_id": "H0159_0000",
+      "before": null,
+      "after": "잠언 7:18에서는 남녀 사이의 성적 사랑을 가리킨다. Strong 원자료는 H156에서 왔다고 적지만, 그 항목은 타작 동사이고 비교 사전은 H157을 제시하므로 이 어원 참조의 충돌은 해소된 것으로 보지 않는다. 일부 사전이 함께 드는 호세아 9:10은 OSHB에서 H157로 분류하므로 이 항목의 출현에 추가하지 않는다."
+    },
+    {
+      "word_id": "H0160_0000",
+      "before": null,
+      "after": "사람 사이의 사랑과 하나님의 사랑뿐 아니라 욕망이 섞인 사랑도 포함한다. 아가서에서는 사랑이 인격화되거나 사랑하는 이를 가리키는 표현으로 쓰일 수 있다. 명사와 같은 꼴의 동사 부정사로 분석되는 용례도 있으므로 동사처럼 번역된다는 이유만으로 다른 의미를 만들지 않는다."
+    },
+    {
+      "word_id": "H0577_0000",
+      "before": null,
+      "after": "간청하거나 상대에게 간절히 호소할 때 쓰는 감탄사다. 청원에서는 아, 부디처럼, 탄식·항변·고백을 여는 자리에서는 아!처럼 옮길 수 있다. 출애굽기 32:31의 슬프다, 시편 116:16의 참으로 등은 문맥에 따른 번역이며 각각을 독립된 동사·부사 의미로 확정하지 않는다. Strong과 비교 사전의 어원 설명이 다르므로 H160 사랑에서 파생되었다고 확정하지 않는다."
+    },
+    {
+      "word_id": "H1758_0000",
+      "before": null,
+      "after": "곡식을 밟거나 타작 기구를 써서 낟알을 떠는 일과, 곡식이 아닌 대상을 밟아 으깨는 일을 나타낸다. 사람·민족·산 등을 타작하거나 짓밟는 표현은 가혹한 취급·정복·파괴의 비유로도 쓰인다. 사전이 함께 다루는 일부 본문비평적 재분류를 현재 Strong·OSHB의 표제나 출현에 자동 적용하지 않는다."
+    },
+    {
+      "word_id": "H4994_0000",
+      "before": null,
+      "after": "청원·소망·권유·명령·자기 결심 등에 붙는 불변사다. 청원에서는 부디·바라건대, 권유·촉구나 발화 전환에서는 자·이제 등으로 옮길 수 있으며, 항상 공손한 부탁이나 시간상 지금을 뜻하는 것은 아니다. 제시사·조건사·탄식사·의문사 등에 붙으면 개별 단어보다 문장 전체의 어조로 드러날 수 있다. 기본 기능을 간청·강조·귀결 중 무엇으로 설명할지는 견해가 갈린다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0158_0000",
+      "word_id_2": "H0159_0000",
+      "category_code": "semantic",
+      "relation_type": "similar",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; H156 CORE8 사용자 승인 연구"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [
+    {
+      "relation_id": 41,
+      "word_id_1": "H0157_0000",
+      "word_id_2": "H0158_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; H156 CORE8 사용자 승인 연구"
+      }
+    },
+    {
+      "relation_id": 43,
+      "word_id_1": "H0158_0000",
+      "word_id_2": "H0160_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; H156 CORE8 사용자 승인 연구"
+      }
+    }
+  ],
+  "meaning_approvals": [
+    {
+      "word_id": "H0158_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "사랑"
+        }
+      ]
+    },
+    {
+      "word_id": "H0159_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "사랑"
+        }
+      ]
+    },
+    {
+      "word_id": "H0160_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "사랑"
+        }
+      ]
+    }
+  ]
+}

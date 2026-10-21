@@ -62,3 +62,4 @@ tool/data_provenance/manifests/h143_cluster_approved_content_slice.json text eol
 tool/data_provenance/manifests/h149_cluster_approved_content_slice.json text eol=lf
 tool/data_provenance/manifests/h150_cluster_approved_content_slice.json -text whitespace=cr-at-eol
 tool/data_provenance/manifests/h153_cluster_approved_content_slice.json text eol=lf
+tool/data_provenance/manifests/h156_cluster_approved_content_slice.json -text whitespace=cr-at-eol

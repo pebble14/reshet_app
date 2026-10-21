@@ -1441,3 +1441,17 @@ Meaning replacement12·기존 meaning approval2·word note replacement13·relati
 Work SHA `ab1d645fa6a8d16a23092b7356c2a42e002c913a1f24ad3d9d1fadede84fc7f5` → `dca6192915e5eb92d9303a61c4af55a457af3461170ab377c4611ed83dc78080`. Seed SHA `a7e0d6a50a3ab6b520c3bf7532b2780cfd6418709d9739a451eb4ce5493fbdb1` 불변. Manifest SHA `bd151ba1965af22600212aa02d5e03c628e0a0e8471b0bd1ca279e96f2ccb664`, 승인 원문 SHA `66fcd355ad9d604bc1cedf0aa4632849de1938611ca53bb74f1441fb4758fec1`. 공식 snapshot·result·manifest 사본은 `data/backups/approved_content_batch/20261021T071619512172Z/`에 보존한다.
 
 표준 semantic_progress JSON·CSV·Markdown 생성 및 57검증과 공식 renderer 대조가 통과했다. 전체14,298 중 explicit_approved424→438·unapproved13,868→13,854·hold6·anomaly113이며 CORE14만 승인 상태로 전환됐다. H410·비대상 row·canonical relation index는 불변이다. Snapshot identity `93b21ada6347587444d1d48d183ce6fcf2d71b68c23c76bd3dc13d1dbfb69b4a`.
+
+## H156 클러스터 최신 의미·비고·관계 승인 — 2026-10-21
+
+[h156_cluster_approved_content_slice.json](../../tool/data_provenance/manifests/h156_cluster_approved_content_slice.json)은 format v5 batch RESHET-EC-H156-CLUSTER-APPROVED-CONTENT-SLICE다. 사용자 승인한 CORE8의 의미·비고와 파생 관계2교체·의미 유사 관계1추가를 반영했다. H156은 타작하다, H577은 아!와 간청·호소 비고, H1758은 타작하다/짓밟다, H4994는 부디/자다. 앞선 H157–H160 추천을 유지하고 새 word hold·확정 어원 관계·표현·schema·seed·앱 코드 변경은 없다. 정확한 최종값·비고 전문·관계·근거·대안·불확실성은 [결정 기록](../semantic_decisions/h156_cluster_approved_content_slice.md) 및 README 색인을 참조한다.
+
+공식 dry-run은 임시 사본 적용·undo 및 원본 DB 불변 확인에 성공했다. 기존 applicator 테스트31건이 통과한 뒤 live apply했다. 의미 교체5·기존 의미 승인3·비고8·관계 추가1·관계 교체2이며, history group 1792573951907626의 ID6484–6499 총16건(word update13·relation create1·relation update2, undone0)을 확인했다.
+
+독립 SQL63조회·137검증에서 전체13테이블·DDL·적용 전 byte 백업·공식 snapshot을 비교했다. 승인 projection·history·해당 sequence 외 차이 없음, integrity ok·FK0·sidecar0이다. seed·기존 표현·원본 연구42파일·hold ledger·applicator·테스트는 불변이다.
+
+Work SHA dca6192915e5eb92d9303a61c4af55a457af3461170ab377c4611ed83dc78080 → f701e3cb874c8c3f0b56841513e75c3b7c101535a2ace3e307c96c11c55196ab. Seed SHA a7e0d6a50a3ab6b520c3bf7532b2780cfd6418709d9739a451eb4ce5493fbdb1 불변. Manifest SHA 7ba482d1473942d4ea73b54e3e96d336551f85f4ec2c9f81f63f0d4ed39fdfc0, 승인 원문 SHA 1df2bc3e2e19df27c435eda8851f264ce7059f6b7b086f3dced038a59221cb07. 공식 snapshot·result·manifest 사본은 data/backups/approved_content_batch/20261021T091230637582Z/에 있다. Snapshot schema cookie1369와 source1368의 차이는 기존 VACUUM INTO 계약이며 전체 DDL·데이터는 적용 전 백업과 일치한다.
+
+표준 semantic_progress JSON·CSV·Markdown은 공식 도구로 함께 생성했다. 48검증과 공식 renderer byte 대조에서 CORE8만 unapproved→explicit_approved로 바뀌었다. 승인438→446·미승인13,854→13,846·hold6·anomaly113·전체14,298이다. 비대상 row와 canonical lexical index는 불변이며 snapshot identity는 46e4b10bc0e952122e20830c831ba1887b494eb3719b07fde4ebe57bf0e74d0b다. 신규 manifest 경로의 -text 속성과 정확한 재staging으로 적용 당시 CRLF bytes를 Git index에도 보존했다.
+
+DB는 Git 미추적 로컬 자산이다. seed 교체·앱 배포·schema·앱 코드·의존성·UI 변경은 없으므로 전체 빌드와 UI 수동 테스트는 N/A다. 원본 연구·추천·자동 discovery는 보존하고 외부 00_applied_content.json 및 00_applied_content.md에 후속 적용 결과를 구분해 기록한다.
