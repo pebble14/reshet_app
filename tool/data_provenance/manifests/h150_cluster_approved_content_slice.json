@@ -1,0 +1,60 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H150-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-21 H150 다릭·H1871 화폐 단위 meaning·비고, 관계 비생성, DB·문서·Git·작업 branch 정리 승인; data/backups/approved_content_batch/h150_approval_20261021/00_user_approval.json",
+    "document_sha256": "a31bd733ccedb58402e2735a962e12979f850bea72c7e5f44444eada425ec091"
+  },
+  "target": {
+    "expected_work_sha256": "c7f4d41c93067d16229bc56f438f43a938724654e9c8c81c321ddff924c87b01",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0150_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "다릭[페르시아 화폐]"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "다릭[페르시아 금화(金貨)]"
+        }
+      ]
+    },
+    {
+      "word_id": "H1871_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "다릭 금화"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "화폐(貨幣) 단위(單位)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0150_0000",
+      "before": null,
+      "after": "스 8:27에서는 금잔의 중량·가치를 다릭 단위로 나타내는 용법으로 이해된다. 이 화폐의 고대 페르시아어 명칭과 정확한 발음은 미확정이다."
+    },
+    {
+      "word_id": "H1871_0000",
+      "before": null,
+      "after": "Strong은 페르시아계 어휘로 설명하면서 ‘드라크마 또는 주화’로 풀이한다. 성경에서는 금의 양을 나타내는 화폐 단위로 쓰인다. 그리스계 드라크마로 보는 해석과 페르시아 금화 다릭으로 보는 해석이 있으며, 정확한 화폐의 동일시와 차용 경로는 불확실하다."
+    }
+  ],
+  "relation_creates": [],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}

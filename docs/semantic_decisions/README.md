@@ -112,6 +112,7 @@
 | H133 아드마다·아드마타 | 동일 인명 병기·비고1, 관계 비생성·hold 없음 | `active` | 높음 | 2026-10-20 | [기록](h133_cluster_approved_content_slice.md) |
 | H143·H144 아달월 | 아달·아다르 월명2·비고2·무방향 대응1, 어원 추정 보존·hold 없음 | `active` | 높음 | 2026-10-20 | [기록](h143_cluster_approved_content_slice.md) |
 | H149 충실한 이행 부사 | 충실히(忠實히) 단일 의미·문맥 비고, 관계 비생성·hold 없음·어원 불확실성 보존 | `active` | 높음 | 2026-10-21 | [기록](h149_cluster_approved_content_slice.md) |
+| H150·H1871 화폐 단위 | H150 다릭·H1871 화폐 단위, 비고2·화폐 동일시 불확실성 보존·관계 비생성 | `active` | 높음 | 2026-10-21 | [기록](h150_cluster_approved_content_slice.md) |
 
 ## 열람 및 후속 판단 원칙
 
