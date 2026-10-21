@@ -1,0 +1,473 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H153-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-21 H153 CORE14 최신 의미·비고·관계13 및 DB·문서·Git·이번 작업 브랜치 정리 승인; data/backups/approved_content_batch/h153_approval_20261021/00_user_approval.json",
+    "document_sha256": "66fcd355ad9d604bc1cedf0aa4632849de1938611ca53bb74f1441fb4758fec1"
+  },
+  "target": {
+    "expected_work_sha256": "ab1d645fa6a8d16a23092b7356c2a42e002c913a1f24ad3d9d1fadede84fc7f5",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0153_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "팔, 능력"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "힘"
+        }
+      ]
+    },
+    {
+      "word_id": "H1872_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "팔 arm"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "팔"
+        }
+      ]
+    },
+    {
+      "word_id": "H2220_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "팔, 어깨, 힘"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "팔"
+        },
+        {
+          "seq": 2,
+          "meaning": "앞다리"
+        },
+        {
+          "seq": 3,
+          "meaning": "힘"
+        },
+        {
+          "seq": 4,
+          "meaning": "군대(軍隊)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2221_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "파종, 뿌려진 것"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "뿌린 것"
+        }
+      ]
+    },
+    {
+      "word_id": "H2232_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "씨를 뿌리다 sow"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "씨를 뿌리다"
+        },
+        {
+          "seq": 2,
+          "meaning": "씨를 맺다"
+        },
+        {
+          "seq": 3,
+          "meaning": "임신하다(妊娠하다)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2233_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "씨, 씨 뿌리기, 자손, 소산"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "씨"
+        },
+        {
+          "seq": 2,
+          "meaning": "자손(子孫)"
+        },
+        {
+          "seq": 3,
+          "meaning": "정액(精液)"
+        },
+        {
+          "seq": 4,
+          "meaning": "씨 뿌림"
+        }
+      ]
+    },
+    {
+      "word_id": "H2234_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "씨, 종자, 자손"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "자손(子孫)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2235_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "채소(류)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "채소(菜蔬)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3157_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "이스르엘 Jezreel"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "이스르엘·이즈레엘 (인, 지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3158_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "이스르엘 사람 Jezreelite(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "이스르엘 사람·이즈레엘 사람"
+        }
+      ]
+    },
+    {
+      "word_id": "H3159_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "이스르엘 여자 Jezreelitess"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "이스르엘 여자·이즈레엘 여자"
+        }
+      ]
+    },
+    {
+      "word_id": "H4218_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "씨 뿌려진 들이나 밭"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "씨 뿌린 밭"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0153_0000",
+      "before": null,
+      "after": "본뜻은 팔이며, 유일한 성경 용례인 스 4:23에서는 유다 사람들의 공사를 억제하는 힘을 가리킨다. 신체의 팔을 직접 가리키는 별도 성경 용례는 확인되지 않는다."
+    },
+    {
+      "word_id": "H0154_0000",
+      "before": null,
+      "after": "바산 왕 옥과 관련된 성읍 7회와 납달리의 성읍 1회에 쓰인다. Strong은 H153 자체가 아니라 그에 상응하는 형태에서 이름을 풀이하며 강한이라는 어원 해석을 제시한다. 이 어원 풀이와 지명 자체의 식별을 구별한다."
+    },
+    {
+      "word_id": "H0248_0000",
+      "before": null,
+      "after": "욥 31:22에서는 사람의 팔, 렘 32:21에서는 하나님의 구원 활동을 형상화한 팔에 쓰인다."
+    },
+    {
+      "word_id": "H2220_0000",
+      "before": null,
+      "after": "팔은 사람의 신체 부위와 하나님의 행동을 형상화한 표현에 쓰이고, 앞다리는 제물 짐승의 부위를 가리킨다. 힘은 신체적 능력뿐 아니라 권세·영향력·도움·군사력을 포함한다. 단 11:15·22·31에서는 그 힘을 행사하는 군대를 가리킨다. 사 9:20의 팔/자식, 호 11:3의 팔의 소유자 등 독법 차이는 일반 의미와 구별한다. Strong은 H2232에서 유래했다고 설명하지만 어원이 불분명하다는 참고 사전의 견해도 있다."
+    },
+    {
+      "word_id": "H2221_0000",
+      "before": null,
+      "after": "레 11:37에서는 뿌릴 씨, 사 61:11에서는 동산에 뿌려진 식물을 가리킨다. 씨를 뿌리는 행위만 뜻하는 파종으로 한정하지 않는다."
+    },
+    {
+      "word_id": "H2232_0000",
+      "before": null,
+      "after": "씨를 뿌리다는 소금을 흩뿌리는 일과 선악의 행위, 백성을 심거나 씨처럼 흩어 뿌리는 비유에도 쓰인다. 슥 10:9의 흩으려니와는 백성을 여러 민족 가운데 씨처럼 뿌린다는 표현이다. 창 1장은 식물이 씨를 맺는 것을, 레 12:2와 민 5:28은 임신을 표현한다. 시 97:11은 마소라 본문의 뿌려진 빛과 LXX 등에서 솟는 빛으로 전하는 독법을 구별한다."
+    },
+    {
+      "word_id": "H2233_0000",
+      "before": null,
+      "after": "씨는 식물의 종자뿐 아니라 수확한 곡식·소출을 가리키기도 한다. 자손 용법은 한 자녀, 후손 집단, 혈통·종족을 포괄하며 보통 단수 집합명사다. 민 24:7은 식물의 씨/자손, 민 5:28은 정액/잉태할 자손으로 해석할 여지가 있다. 말 2:3의 마소라 본문은 씨/자손으로 전하지만 LXX는 어깨로 전하므로 독법 차이를 구별한다."
+    },
+    {
+      "word_id": "H2234_0000",
+      "before": null,
+      "after": "단 2:43의 사람의 씨는 사람들의 후손·혈통이 섞이는 표현이다. 정확한 집단과 결합 방식에는 해석 차이가 있으므로 특정 왕조의 혼인 동맹 하나로 단정하지 않는다. 식물 종자를 가리키는 성경 용례는 확인되지 않는다."
+    },
+    {
+      "word_id": "H2235_0000",
+      "before": null,
+      "after": "단 1:12의 זֵרֹעִים과 1:16의 זֵרְעֹנִים은 같은 식물성 먹거리 어휘의 다른 복수형이다. KJV의 pulse처럼 콩류 등을 포함할 수 있으며 정확한 식품 범위를 현대의 특정 채식 식단과 동일시하지 않는다."
+    },
+    {
+      "word_id": "H3157_0000",
+      "before": null,
+      "after": "이스르엘은 한국어 성경 관용명이고 이즈레엘은 Strong 전사와 기존 한글 음역을 참고한 표기로, 특정 시대의 실제 발음을 확정하지 않는다. 이름은 H2232와 H410의 합성으로 하나님이 씨를 뿌리신다를 풀이한다. 두 인물과 지명·골짜기에 쓰이며 호세아에서는 심판과 회복을 나타내는 말놀이를 이룬다."
+    },
+    {
+      "word_id": "H3158_0000",
+      "before": null,
+      "after": "이스르엘 출신이나 주민을 나타내는 남성형 지칭어다. 성경의 8회 모두 나봇의 출신을 나타낸다. 이스르엘은 한국어 성경 관용 표기이고 이즈레엘은 기초 이름 H3157의 원문 기반 근사 표기를 함께 보인 것으로, 특정 시대의 실제 발음을 확정하지 않는다."
+    },
+    {
+      "word_id": "H3159_0000",
+      "before": null,
+      "after": "H3158의 여성형이며, 성경의 5회 모두 아히노암의 이스르엘 출신을 나타낸다. 이스르엘은 한국어 성경 관용 표기이고 이즈레엘은 기초 이름 H3157의 원문 기반 근사 표기를 함께 보인 것으로, 특정 시대의 실제 발음을 확정하지 않는다."
+    },
+    {
+      "word_id": "H4218_0000",
+      "before": null,
+      "after": "사 19:7의 나일 주변에 씨 뿌린 땅이나 그곳의 작물을 가리킨다. KJV는 뿌린 것, 새번역은 강변에 심은 나무로 옮기므로 특정 곡물이나 수종 하나로 한정하지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0153_0000",
+      "word_id_2": "H1872_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "철자 변이; 어느 형태가 역사적으로 먼저인지 확정하지 않음",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; H153 CORE14 승인 연구"
+    },
+    {
+      "word_id_1": "H1872_0000",
+      "word_id_2": "H2220_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "아람어·히브리어 팔 어휘의 동계 대응; 차용 방향 비확정",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; H153 CORE14 승인 연구"
+    },
+    {
+      "word_id_1": "H0248_0000",
+      "word_id_2": "H2220_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "동일 히브리어 팔 어휘의 형태 변이",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; H153 CORE14 승인 연구"
+    },
+    {
+      "word_id_1": "H2220_0000",
+      "word_id_2": "H2232_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong from을 보존하되 local 사전의 어원 불명 견해 때문에 가설로 권장",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; H153 CORE14 승인 연구"
+    },
+    {
+      "word_id_1": "H2221_0000",
+      "word_id_2": "H2232_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "씨 뿌리다 → 뿌린 것",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; H153 CORE14 승인 연구"
+    },
+    {
+      "word_id_1": "H2232_0000",
+      "word_id_2": "H2233_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "씨 뿌리다 → 씨",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; H153 CORE14 승인 연구"
+    },
+    {
+      "word_id_1": "H2233_0000",
+      "word_id_2": "H2234_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "히브리어·아람어 자손 어휘의 동계 대응; 식물 의미까지 동일시하지 않음",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; H153 CORE14 승인 연구"
+    },
+    {
+      "word_id_1": "H2232_0000",
+      "word_id_2": "H2235_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "씨 뿌리다 → 식용 식물",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; H153 CORE14 승인 연구"
+    },
+    {
+      "word_id_1": "H2232_0000",
+      "word_id_2": "H3157_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "이름의 동사 구성 요소",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; H153 CORE14 승인 연구"
+    },
+    {
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H3157_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "이름의 신명 구성 요소; H410 meaning 독립 승인은 포함하지 않음",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; H153 CORE14 승인 연구"
+    },
+    {
+      "word_id_1": "H3157_0000",
+      "word_id_2": "H3158_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "지명 → 남성 출신형; 혈연 부족명으로 단정하지 않음",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; H153 CORE14 승인 연구"
+    },
+    {
+      "word_id_1": "H3158_0000",
+      "word_id_2": "H3159_0000",
+      "category_code": "morphological",
+      "relation_type": "inflected",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "동일 gentilic 형용사의 여성 굴절형; 별도 파생 명사와 구별",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; H153 CORE14 승인 연구"
+    },
+    {
+      "word_id_1": "H2232_0000",
+      "word_id_2": "H4218_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "씨 뿌리다 → 씨 뿌린 밭",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; H153 CORE14 승인 연구"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": [
+    {
+      "word_id": "H0154_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "에드레이 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0248_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "팔"
+        }
+      ]
+    }
+  ]
+}
