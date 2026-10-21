@@ -1466,3 +1466,11 @@ DB는 Git 미추적 로컬 자산이다. seed 교체·앱 배포·schema·앱 �
 Work SHA `f701e3cb874c8c3f0b56841513e75c3b7c101535a2ace3e307c96c11c55196ab` → `5a7421976c3e72d798daea06aacf36d7842a0759a59e506694595c16b4f587a7`. Seed SHA `a7e0d6a50a3ab6b520c3bf7532b2780cfd6418709d9739a451eb4ce5493fbdb1` 불변. Manifest SHA `e3c8357159718df57dc09a010925014e31f76ee5f7f3140b822217ff1c209a4e`, 승인 원문 SHA `46908a9d0d6fed62404dcb528540e0d9a23bbc8bc597faa3b371dc71bd9ec4ce`다. 신규 manifest 경로의 text/eol=lf 속성으로 적용 bytes와 Git index가 일치한다.
 
 표준 progress3종·독립19검증·renderer 대조에서 두 대상만 승인되어446→448·미승인13,846→13,844·hold6·anomaly113·전체14,298이다. 비대상14,296행과 canonical lexical index는 불변이며 snapshot identity는 `18dc19a1682a868d17685ea04e898688b4a87ce3bbdaf636a7f04fed13029616`다. DB는 미추적 로컬 자산이다. 원본 연구와 자동 discovery를 유지하며 외부 적용 receipt를 별도로 기록한다. Seed 교체·앱 배포·전체 빌드·UI 수동 테스트는 N/A다.
+
+## H162 클러스터 최신 의미·비고·관계 승인 — 2026-10-21
+
+[h162_cluster_approved_content_slice.json](../../tool/data_provenance/manifests/h162_cluster_approved_content_slice.json)은 CORE17의 의미 교체12·기존 의미 승인5·비고13·신규 관계11을 반영한다. H338 재칼과 식별 이견, H255 야생 동물·H344 매의 범위, H1888 단일 의미 및 H1945 부름 표현의 최신 추천을 채택했다. 약한 source 관계7은 비생성, H183·H3863과 hub 분기는 승인 대상 제외, 기존 hold6은 유지한다. 최종값·출처·대안·불확실성은 [active 결정 기록](../semantic_decisions/h162_cluster_approved_content_slice.md)을 따른다.
+
+공식 dry-run·undo·원본 불변과 applicator 테스트31건을 확인한 뒤 live apply했다. History group1792590601761999 / ID6505–6540, 신규 관계7978–7988이다. 독립 SQL54조회·213검증에서 전체13테이블·DDL·byte 백업·snapshot을 대조해 승인 delta 외 불변, integrity ok·FK0·sidecar0·seed 불변을 확인했다. 원문·음역·발음·품사·언어·schema·앱 코드와 비대상 데이터를 유지한다. 적용 증거는 `data/backups/approved_content_batch/h162_approval_20261021/`, 공식 receipt는 `data/backups/approved_content_batch/20261021T135000477072Z/result.json`이다.
+
+Work SHA `7dc485d7a300912a5a5478d4c6fc8664c496d3dee8620a71104f5876cce21aab`, seed SHA `a7e0d6a50a3ab6b520c3bf7532b2780cfd6418709d9739a451eb4ce5493fbdb1`. 표준 progress3종은 17개만 신규 승인, 비대상14,281행 exact 불변이며 승인465·hold6·미승인13,827·anomaly113·전체14,298이다. DB는 Git 미추적 로컬 자산이고 manifest·문서만 Git으로 재현한다.
