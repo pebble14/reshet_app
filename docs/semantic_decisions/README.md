@@ -117,6 +117,7 @@
 | H156 클러스터 | CORE8 타작·사랑·호소, H577 아!·H4994 부디/자 및 파생2·의미유사1 관계 | `active` | 높음 | 2026-10-21 | [기록](h156_cluster_approved_content_slice.md) |
 | H161 클러스터 | 오핫·오하드와 에훗·에후드 인명 병기·비고 및 가설 공통 어근 관계1 | `active` | 높음 | 2026-10-21 | [기록](h161_cluster_approved_content_slice.md) |
 | H162 클러스터 | CORE17 감탄사·지시 조사·동물명·인명 및 관계11, H338 재칼·H1888 단일 의미·불확실성 보존 | `active` | 높음 | 2026-10-21 | [기록](h162_cluster_approved_content_slice.md) |
+| H163 아하와 지명 | 기존 단일 의미 승인·비고 추가, 강·지점 식별과 외래 기원 추정 보존·관계 비생성·hold 없음 | `active` | 높음 | 2026-10-21 | [기록](h163_cluster_approved_content_slice.md) |
 
 ## 열람 및 후속 판단 원칙
 
