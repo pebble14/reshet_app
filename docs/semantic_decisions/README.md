@@ -115,6 +115,7 @@
 | H150·H1871 화폐 단위 | H150 다릭·H1871 화폐 단위, 비고2·화폐 동일시 불확실성 보존·관계 비생성 | `active` | 높음 | 2026-10-21 | [기록](h150_cluster_approved_content_slice.md) |
 | H153 클러스터 | CORE14 팔·힘·군대·씨·이스르엘 의미·비고 및 관계13, 권세는 힘에 포함·표기 병기 | `active` | 높음 | 2026-10-21 | [기록](h153_cluster_approved_content_slice.md) |
 | H156 클러스터 | CORE8 타작·사랑·호소, H577 아!·H4994 부디/자 및 파생2·의미유사1 관계 | `active` | 높음 | 2026-10-21 | [기록](h156_cluster_approved_content_slice.md) |
+| H161 클러스터 | 오핫·오하드와 에훗·에후드 인명 병기·비고 및 가설 공통 어근 관계1 | `active` | 높음 | 2026-10-21 | [기록](h161_cluster_approved_content_slice.md) |
 
 ## 열람 및 후속 판단 원칙
 

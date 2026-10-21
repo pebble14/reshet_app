@@ -1,0 +1,73 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H161-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-21 H161·H164 의미·비고·가설 공통 어근 관계1건, 검증 후 DB·문서·Git·브랜치 정리 승인; data/backups/approved_content_batch/h161_approval_20261021/00_user_approval.json",
+    "document_sha256": "46908a9d0d6fed62404dcb528540e0d9a23bbc8bc597faa3b371dc71bd9ec4ce"
+  },
+  "target": {
+    "expected_work_sha256": "f701e3cb874c8c3f0b56841513e75c3b7c101535a2ace3e307c96c11c55196ab",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0161_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "오핫 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "오핫·오하드 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0164_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "에훗 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "에훗·에후드 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0161_0000",
+      "before": null,
+      "after": "시므온의 아들 이름(창 46:10; 출 6:15). ‘오핫’은 한국어 성경 관용 표기, ‘오하드’는 원문 אֹהַד의 교재식 읽기에 따른 한글 근사다. Strong은 ‘하나가 되다’를 뜻하는 미사용 어근에서 온 이름으로 풀이하며, ‘하나 됨’은 이 이름의 어원 풀이이다."
+    },
+    {
+      "word_id": "H0164_0000",
+      "before": null,
+      "after": "‘에훗’은 한국어 성경 관용 표기, ‘에후드’는 원문 אֵהוּד의 교재식 읽기에 따른 한글 근사다. 사사기에서는 게라의 아들인 사사(士師), 대상 7:10에서는 빌한의 아들 이름이다. Strong은 H161과 같은 어원에서 나온 이름으로 ‘연합된’이라고 풀이하지만, 로컬 참고 사전은 ‘나는 감사(찬양)하리라’라는 다른 풀이를 제시한다. 이름의 정확한 어원은 확정하지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0161_0000",
+      "word_id_2": "H0164_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong은 H164를 H161에 제시된 어원과 연결한다. H161의 미사용 어근을 공유한다는 분석이며, H161 인명에서 H164 인명으로 직접 파생되었다는 뜻은 아니다. 로컬 참고 사전의 H164 어원 풀이가 달라 공통 어근 관계는 가설로 둔다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml, H161/H164 source; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; 사용자 승인한 가설 공통 어근 분석"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}
