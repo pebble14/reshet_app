@@ -1,0 +1,256 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H166-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-22 H166 CORE8 최신 천막 단일 의미·비고·관계9 및 단계별 검증 후 DB·문서·Git·브랜치 정리 승인; data/backups/approved_content_batch/h166_approval_20261022/00_user_approval.json",
+    "document_sha256": "f1ac65e8acbd56ef28f5dfb9455bcc5e35806a13aa498ce17a3c340aeb1cf02c"
+  },
+  "target": {
+    "expected_work_sha256": "8e796fbb40bd35d6e05a8bffa584a0390f3881c3d36957cfda588208d4371d65",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0167_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "장막을 치다(옮기다)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "천막(天幕)을 치고 살다"
+        }
+      ]
+    },
+    {
+      "word_id": "H0168_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "장막, 거치"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "천막(天幕)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0171_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "오홀리압 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "오홀리압·오홀리-아브 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0173_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "오홀리바마 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "오홀리바마·오홀리-바마 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0167_0000",
+      "before": null,
+      "after": "천막을 치고 거주하는 활동을 가리킨다. 창세기 13:12, 18에서는 천막을 옮겨 거처를 정하는 동작으로도 옮기며, 이사야 13:20에서는 천막을 치는 행위가 드러난다. 이동과 자리잡기는 문맥의 차이로 보존하고 별도의 제거하다라는 일반 의미로 확대하지 않는다."
+    },
+    {
+      "word_id": "H0168_0000",
+      "before": null,
+      "after": "기존 성경 번역의 장막에 해당하며, 일반 거주용 천막과 성소의 천막·덮개에도 쓰인다. 나무 골조나 가죽 덮개를 포함한다고 천막의 범위에서 제외되지 않는다. 귀가 문맥에서는 집·거처로 옮기기도 하고, 가문·집단을 가리키는 비유·환유에도 쓰인다. 사사기 19:9는 실제 천막을 배제하는 근거가 아니다. 에스겔 41:1은 성전 구조 문맥의 표현으로 정확한 지시 대상과 본문 해석을 확정하지 않는다. Strong의 H166 파생 설명은 사전의 어원 풀이로 보존하며 빛나다를 이 명사의 별도 뜻으로 추가하지 않는다."
+    },
+    {
+      "word_id": "H0170_0000",
+      "before": null,
+      "after": "에스겔 23장에서 사마리아를 여성으로 의인화한 상징적 이름이다. Strong은 H168의 여성형처럼 보이지만 실제로는 그녀의 천막을 뜻하는 형태로 풀이한다. KJV 23:4의 주석은 His tent라고 하여 차이가 있으므로 이름 풀이를 독립 meaning으로 삼지 않는다."
+    },
+    {
+      "word_id": "H0171_0000",
+      "before": null,
+      "after": "단 지파 아히사막의 아들로 성막 제작에 참여한 인물이다. 관용 표기 오홀리압과 H168·H1의 구성 경계를 드러낸 분석 표기 오홀리-아브를 병기한다. Strong은 아버지의 천막으로 풀이한다. 분석 표기는 특정 시대의 실제 발음을 재구한 것이 아니다."
+    },
+    {
+      "word_id": "H0172_0000",
+      "before": null,
+      "after": "에스겔 23:4에서 예루살렘을 가리키는 여성 상징명이며 Strong은 유다의 상징적 이름으로 설명한다. Strong의 나의 천막이 그녀 안에 있다라는 풀이를 비고로 보존한다. H170과 비슷하게 설명했다는 사전 참조만으로 두 이름을 같은 단어나 형태 변이로 확정하지 않는다."
+    },
+    {
+      "word_id": "H0173_0000",
+      "before": null,
+      "after": "에서의 아내를 가리키는 용례 6개와 족장 목록의 이름 2개(창세기 36:41; 역대상 1:52)가 있다. 족장 목록의 이름을 에서의 아내와 동일 인물로 단정하지 않는다. Strong은 H168·H1116의 구성으로 높은 곳의 천막이라고 풀이한다. 관용 표기와 분석 표기 오홀리-바마를 병기하며 바마를 언제나 제의적 산당으로 한정하지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0166_0000",
+      "word_id_2": "H0168_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "H168: from H166; tent as conspicuous from a distance — 사용자가 승인한 천막 계열의 어휘 관계이며, 이름 전체의 번역이나 현대 역사언어학의 독립 검증을 확정하지 않는다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; H166 CORE8 승인 연구"
+    },
+    {
+      "word_id_1": "H0167_0000",
+      "word_id_2": "H0168_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "H167: a denominative from H168 — 사용자가 승인한 천막 계열의 어휘 관계이며, 이름 전체의 번역이나 현대 역사언어학의 독립 검증을 확정하지 않는다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; H166 CORE8 승인 연구"
+    },
+    {
+      "word_id_1": "H0168_0000",
+      "word_id_2": "H0169_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "H169: the same as H168 — 사용자가 승인한 천막 계열의 어휘 관계이며, 이름 전체의 번역이나 현대 역사언어학의 독립 검증을 확정하지 않는다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; H166 CORE8 승인 연구"
+    },
+    {
+      "word_id_1": "H0168_0000",
+      "word_id_2": "H0170_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "H170: in form a feminine of H168, but in fact for ...; from H168 — 사용자가 승인한 천막 계열의 어휘 관계이며, 이름 전체의 번역이나 현대 역사언어학의 독립 검증을 확정하지 않는다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; H166 CORE8 승인 연구"
+    },
+    {
+      "word_id_1": "H0168_0000",
+      "word_id_2": "H0171_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "H171: from H168 and H1 — 사용자가 승인한 천막 계열의 어휘 관계이며, 이름 전체의 번역이나 현대 역사언어학의 독립 검증을 확정하지 않는다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; H166 CORE8 승인 연구"
+    },
+    {
+      "word_id_1": "H0001_0000",
+      "word_id_2": "H0171_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "H171: from H168 and H1 — 사용자가 승인한 천막 계열의 어휘 관계이며, 이름 전체의 번역이나 현대 역사언어학의 독립 검증을 확정하지 않는다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; H166 CORE8 승인 연구"
+    },
+    {
+      "word_id_1": "H0168_0000",
+      "word_id_2": "H0172_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "H172: from H168; my tent is in her — 사용자가 승인한 천막 계열의 어휘 관계이며, 이름 전체의 번역이나 현대 역사언어학의 독립 검증을 확정하지 않는다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; H166 CORE8 승인 연구"
+    },
+    {
+      "word_id_1": "H0168_0000",
+      "word_id_2": "H0173_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "H173: from H168 and H1116 — 사용자가 승인한 천막 계열의 어휘 관계이며, 이름 전체의 번역이나 현대 역사언어학의 독립 검증을 확정하지 않는다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; H166 CORE8 승인 연구"
+    },
+    {
+      "word_id_1": "H0173_0000",
+      "word_id_2": "H1116_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "H173: from H168 and H1116 — 사용자가 승인한 천막 계열의 어휘 관계이며, 이름 전체의 번역이나 현대 역사언어학의 독립 검증을 확정하지 않는다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; H166 CORE8 승인 연구"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": [
+    {
+      "word_id": "H0166_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "빛나다"
+        }
+      ]
+    },
+    {
+      "word_id": "H0169_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "오헬 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0170_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "오홀라 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0172_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "오홀리바 (인)"
+        }
+      ]
+    }
+  ]
+}
