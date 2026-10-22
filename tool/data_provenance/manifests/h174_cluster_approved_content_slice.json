@@ -1,0 +1,68 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H174-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-22 H174·G250 침향 단일 의미·추천 비고·기존 inferred 관계 유지 및 DB·문서·Git·브랜치 정리 승인; data/backups/approved_content_batch/h174_approval_20261022/00_user_approval.json",
+    "document_sha256": "1b4b6908190a63eaf672092a7371e0c43cf27f58345a92e01b6529e32538e9ce"
+  },
+  "target": {
+    "expected_work_sha256": "105089085700b0f7fa1489eb4c40f61bf41c971d3aee6c42479ced378e306050",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0174_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "알로에"
+        },
+        {
+          "seq": 2,
+          "meaning": "침향(으로 한글 성경에는 번역됨)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "침향(沈香)"
+        }
+      ]
+    },
+    {
+      "word_id": "G0250_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "알로에"
+        },
+        {
+          "seq": 2,
+          "meaning": "침향"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "침향(沈香)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0174_0000",
+      "before": null,
+      "after": "향기 나는 목재와 이를 얻는 나무를 가리키며, Strong은 ‘aloe wood (i.e. sticks)’로 설명한다. 민 24:6에서는 나무를, 시 45:8·잠 7:17·아 4:14에서는 향료를 가리킨다. 정확한 식물 종은 확정하지 않으며 현대의 알로에 식물과 곧바로 동일시하지 않는다. 민 24:6의 LXX는 ‘천막들’로 옮기지만 이를 별도 meaning이나 H0168과의 어원 관계로 확정하지 않는다."
+    },
+    {
+      "word_id": "G0250_0000",
+      "before": null,
+      "after": "요 19:39에서 몰약과 함께 매장에 사용된 향료를 가리키며, 한국어 성경의 관용 번역명은 ‘침향’이다. Strong은 ‘aloes (the gum)’으로 설명한다. 정확한 식물 종과 제형은 확정하지 않으며, H0174의 향목과 완전히 같은 물질이거나 히브리어에서 직접 차용된 말이라고 단정하지 않는다."
+    }
+  ],
+  "relation_creates": [],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}

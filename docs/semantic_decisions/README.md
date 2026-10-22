@@ -120,6 +120,7 @@
 | H163 아하와 지명 | 기존 단일 의미 승인·비고 추가, 강·지점 식별과 외래 기원 추정 보존·관계 비생성·hold 없음 | `active` | 높음 | 2026-10-21 | [기록](h163_cluster_approved_content_slice.md) |
 | H165 장소 의문 클러스터 | CORE11 최신 단일/복수 의미·구문 비고·관계7, 허브 제외·hold 없음 | `active` | 높음 | 2026-10-22 | [기록](h165_cluster_approved_content_slice.md) |
 | H166 천막 클러스터 | CORE8 단일 의미·비고6·관계9, 천막 대표어·삿19:9 해석 한계·신규 hold 없음 | `active` | 높음 | 2026-10-22 | [기록](h166_cluster_approved_content_slice.md) |
+| H174·G250 침향 | 단일 의미·비고2, 기존 inferred 관계 유지·신규 hold 없음 | `active` | 높음 | 2026-10-22 | [기록](h174_cluster_approved_content_slice.md) |
 
 ## 열람 및 후속 판단 원칙
 
