@@ -1,0 +1,437 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H180-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-22 H180 CORE15 최신 물길·소산 보완안 및 DB·문서·Git·이번 작업 브랜치 정리 승인; data/backups/approved_content_batch/h180_approval_20261022/00_user_approval.json",
+    "document_sha256": "1e451413607687596bb52c02e07ca69479e317db5930cbbb0a480c1b7dada4c9"
+  },
+  "target": {
+    "expected_work_sha256": "e63c0297e0034ef99f3a08add2f4eb01dd3ea2de35f5871e2a3f5c5e2d83b923",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0180_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "시내, 강"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "물길"
+        }
+      ]
+    },
+    {
+      "word_id": "H0944_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "산물, 토막"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "소산(所産)"
+        },
+        {
+          "seq": 2,
+          "meaning": "나무토막"
+        }
+      ]
+    },
+    {
+      "word_id": "H0945_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "불월, 8월"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "불 (월)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2981_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "(땅의) 산물, 열매"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "소산(所産)"
+        },
+        {
+          "seq": 2,
+          "meaning": "재산(財産)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2986_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "가져오다, 이끌다, 인도하다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "옮기다"
+        },
+        {
+          "seq": 2,
+          "meaning": "이끌다"
+        }
+      ]
+    },
+    {
+      "word_id": "H2987_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "가져가다(오다), 옮기다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "옮기다"
+        }
+      ]
+    },
+    {
+      "word_id": "H2988_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "시내, 개울"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "물길"
+        }
+      ]
+    },
+    {
+      "word_id": "H2989_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "야발 Jabal(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "야발 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2990_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "진물이 흐르는, 고름이 나오는"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "진물이 나는"
+        }
+      ]
+    },
+    {
+      "word_id": "H3104_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "수양의 뿔, 나팔"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "뿔나팔"
+        },
+        {
+          "seq": 2,
+          "meaning": "희년(禧年)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3105_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "시내, 강"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "물길"
+        }
+      ]
+    },
+    {
+      "word_id": "H3106_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "유발 Jubal(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "유발 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3999_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "홍수"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "홍수(洪水)"
+        }
+      ]
+    },
+    {
+      "word_id": "H8398_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "세계 World"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "세계(世界)"
+        }
+      ]
+    },
+    {
+      "word_id": "H8423_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "두발가인 Tubalcain"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "두발가인·투발-카인 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0180_0000",
+      "before": null,
+      "after": "다니엘 8장에서 을래의 물길을 가리킨다. 강 또는 수로로 옮길 수 있으며, 확보된 그리스어 참고본문의 문(門) 독법은 히브리어 본문과 구별한다."
+    },
+    {
+      "word_id": "H0944_0000",
+      "before": null,
+      "after": "Strong은 땅 등에서 나는 소산로 풀이한다. 욥기에서는 짐승의 먹이가 되는 산의 소산, 이사야에서는 우상으로 만든 나무 한 토막을 가리킨다."
+    },
+    {
+      "word_id": "H0945_0000",
+      "before": null,
+      "after": "고대 이스라엘 달력의 여덟째 달 이름이다. 현대 양력 8월을 뜻하지 않는다. Strong은 H944의 비 의미와 연결하지만, 그 의미는 H944의 확인된 두 용례에 나타나지 않는다."
+    },
+    {
+      "word_id": "H2981_0000",
+      "before": null,
+      "after": "주로 땅과 나무에서 나는 소산을 가리킨다. 욥기 20:28에서는 집안의 소산이 집안의 재산을 가리키는 확장 용법으로 쓰인다."
+    },
+    {
+      "word_id": "H2986_0000",
+      "before": null,
+      "after": "확인된 용례는 히필·호팔형으로 사물이나 사람을 옮기거나 이끄는 것을 나타낸다. Strong의 흐르다는 어근 풀이이며 독립 용례로 확인되지 않는다. 욥기 21:30은 진노의 날로 이끌림과 그날의 재앙에서 벗어남으로 해석이 갈린다."
+    },
+    {
+      "word_id": "H2990_0000",
+      "before": null,
+      "after": "Strong은 진물이 나는 부스럼으로 풀이한다. 레위기 22:22의 제물 짐승의 흠을 가리키며, 종기·혹·사마귀로 이해하는 번역도 있어 정확한 병변의 종류는 확정하기 어렵다."
+    },
+    {
+      "word_id": "H3104_0000",
+      "before": null,
+      "after": "출애굽기 19장과 여호수아 6장에서는 뿔나팔과 그 신호, 레위기와 민수기에서는 해방과 토지 회복의 해인 희년을 가리킨다. 여호수아 6:5의 요벨의 뿔은 숫양의 뿔이라는 분석도 가능하다. Strong의 H2986 어원 연결은 추정이다."
+    },
+    {
+      "word_id": "H3106_0000",
+      "before": null,
+      "after": "Strong은 이름을 물길과 연결하지만, 참고사전에는 기쁜 소리·환희라는 다른 풀이도 있다. 인명 식별과 이름의 어원 해석을 구별한다."
+    },
+    {
+      "word_id": "H3999_0000",
+      "before": null,
+      "after": "창세기 6–11장에서는 노아의 홍수를 가리킨다. 시편 29:10은 그 홍수의 회상 또는 홍수 위에 왕으로 계신다는 표현으로 읽힌다. Strong은 H2986과 연결하지만 어원 설명은 자료마다 다르다."
+    },
+    {
+      "word_id": "H8398_0000",
+      "before": null,
+      "after": "사람이 사는 땅과 그 전체를 가리키며, 심판 문맥에서는 그곳의 주민까지 포함한다. 특정 지역을 염두에 둔 문맥에서도 쓰인다."
+    },
+    {
+      "word_id": "H8423_0000",
+      "before": null,
+      "after": "두발가인은 한국어 성경의 관용 표기이며, 투발-카인은 원문의 두 이름 요소 사이 경계를 드러낸 분석 표기다. 가인의 후손이라는 어원은 Strong에서도 추정이며, 본문의 금속 가공 직업 묘사를 이름의 확정 뜻으로 삼지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0180_0000",
+      "word_id_2": "H2986_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong source: or (shortened) אֻבָל ; from [[H2986]] (in the sense of H2988); 비유보적 canonical from/for/the same as/corresponding to를 관계 구조로 해석한 사용자 승인 후보. 역사 언어학의 새 증명을 뜻하지 않음",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; 2026-10-22 H180 CORE15 사용자 승인"
+    },
+    {
+      "word_id_1": "H2981_0000",
+      "word_id_2": "H2986_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong source: from [[H2986]]; 비유보적 canonical from/for/the same as/corresponding to를 관계 구조로 해석한 사용자 승인 후보. 역사 언어학의 새 증명을 뜻하지 않음",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; 2026-10-22 H180 CORE15 사용자 승인"
+    },
+    {
+      "word_id_1": "H2986_0000",
+      "word_id_2": "H2987_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong source: (Aramaic) corresponding to [[H2986]]; 비유보적 canonical from/for/the same as/corresponding to를 관계 구조로 해석한 사용자 승인 후보. 역사 언어학의 새 증명을 뜻하지 않음",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; 2026-10-22 H180 CORE15 사용자 승인"
+    },
+    {
+      "word_id_1": "H2986_0000",
+      "word_id_2": "H2988_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong source: from [[H2986]]; 비유보적 canonical from/for/the same as/corresponding to를 관계 구조로 해석한 사용자 승인 후보. 역사 언어학의 새 증명을 뜻하지 않음",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; 2026-10-22 H180 CORE15 사용자 승인"
+    },
+    {
+      "word_id_1": "H2986_0000",
+      "word_id_2": "H2990_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong source: from [[H2986]]; 비유보적 canonical from/for/the same as/corresponding to를 관계 구조로 해석한 사용자 승인 후보. 역사 언어학의 새 증명을 뜻하지 않음",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; 2026-10-22 H180 CORE15 사용자 승인"
+    },
+    {
+      "word_id_1": "H2986_0000",
+      "word_id_2": "H3105_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong source: from [[H2986]]; 비유보적 canonical from/for/the same as/corresponding to를 관계 구조로 해석한 사용자 승인 후보. 역사 언어학의 새 증명을 뜻하지 않음",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; 2026-10-22 H180 CORE15 사용자 승인"
+    },
+    {
+      "word_id_1": "H2986_0000",
+      "word_id_2": "H3106_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong source: from [[H2986]]; stream; 비유보적 canonical from/for/the same as/corresponding to를 관계 구조로 해석한 사용자 승인 후보. 역사 언어학의 새 증명을 뜻하지 않음",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; 2026-10-22 H180 CORE15 사용자 승인"
+    },
+    {
+      "word_id_1": "H2986_0000",
+      "word_id_2": "H8398_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong source: from [[H2986]]; 비유보적 canonical from/for/the same as/corresponding to를 관계 구조로 해석한 사용자 승인 후보. 역사 언어학의 새 증명을 뜻하지 않음",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; 2026-10-22 H180 CORE15 사용자 승인"
+    },
+    {
+      "word_id_1": "H2988_0000",
+      "word_id_2": "H2989_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong source: the same as [[H2988]]; 비유보적 canonical from/for/the same as/corresponding to를 관계 구조로 해석한 사용자 승인 후보. 역사 언어학의 새 증명을 뜻하지 않음",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; 2026-10-22 H180 CORE15 사용자 승인"
+    },
+    {
+      "word_id_1": "H0944_0000",
+      "word_id_2": "H2981_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong source: for [[H2981]]; 비유보적 canonical from/for/the same as/corresponding to를 관계 구조로 해석한 사용자 승인 후보. 역사 언어학의 새 증명을 뜻하지 않음",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; 2026-10-22 H180 CORE15 사용자 승인"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}

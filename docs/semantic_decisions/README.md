@@ -125,6 +125,8 @@
 
 | H176 클러스터 | CORE12 의미·비고, 파생·합성 관계11·신규 hold 없음 | `active` | 높음 | 2026-10-22 | [기록](h176_cluster_approved_content_slice.md) |
 
+| H180 클러스터 | CORE15 의미·비고, 물길·소산 보완·관계10·신규 hold 없음 | `active` | 높음 | 2026-10-22 | [기록](h180_cluster_approved_content_slice.md) |
+
 ## 열람 및 후속 판단 원칙
 
 1. 새 제안을 만들기 전에 관련 Strong이 이 색인에 있는지 확인한다.
