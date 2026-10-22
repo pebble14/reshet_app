@@ -123,6 +123,8 @@
 | H174·G250 침향 | 단일 의미·비고2, 기존 inferred 관계 유지·신규 hold 없음 | `active` | 높음 | 2026-10-22 | [기록](h174_cluster_approved_content_slice.md) |
 | H175·G2 아론 이름 | 공통 아론·아하론 meaning·비고2, 직접 음역 관계 교체1·hold 없음 | `active` | 높음 | 2026-10-22 | [기록](h175_cluster_approved_content_slice.md) |
 
+| H176 클러스터 | CORE12 의미·비고, 파생·합성 관계11·신규 hold 없음 | `active` | 높음 | 2026-10-22 | [기록](h176_cluster_approved_content_slice.md) |
+
 ## 열람 및 후속 판단 원칙
 
 1. 새 제안을 만들기 전에 관련 Strong이 이 색인에 있는지 확인한다.

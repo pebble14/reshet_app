@@ -1,0 +1,394 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H176-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-22 H176 CORE12 최신 의미·비고·관계11 및 DB·문서·Git·이번 작업 브랜치 정리 승인; data/backups/approved_content_batch/h176_approval_20261022/00_user_approval.json",
+    "document_sha256": "a17be4d42c974a1f42ee16a4c72d66bebcb9df2970add8ed3b7ca4995cd1ea62"
+  },
+  "target": {
+    "expected_work_sha256": "64a943b21162e7a216d181af6ae6dcb07a8a6accae2bc025b6ea32d238cfe019",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0176_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "혹은, ~인지"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "또는"
+        },
+        {
+          "seq": 2,
+          "meaning": "만일(萬一)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0177_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "우엘 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "우엘·우-엘 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0183_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "바라다, 소원하다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "바라다"
+        }
+      ]
+    },
+    {
+      "word_id": "H0185_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "욕구, 욕망"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "바람"
+        }
+      ]
+    },
+    {
+      "word_id": "H0194_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "만일, 아마"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "혹시(或是)"
+        },
+        {
+          "seq": 2,
+          "meaning": "만일(萬一)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0339_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "거주지, 해안, 섬"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "섬"
+        },
+        {
+          "seq": 2,
+          "meaning": "해안(海岸)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0385_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "이다말 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "이다말·이-타마르 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3970_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "욕망, 소원"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "바람"
+        }
+      ]
+    },
+    {
+      "word_id": "H6914_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "기브롯 핫다아와 Kibroth-hattaavah"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "기브롯 핫다아와·키브로트-핫타아와 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H8378_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "욕구, 욕망, 갈망"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "바람"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0176_0000",
+      "before": null,
+      "after": "둘 이상의 대상이나 경우를 대안으로 나누어 잇는다. 질문에서는 “~인지”, 부정문에서는 “~도”, 대안 문맥에서는 “그렇지 않으면”으로 옮길 수 있으며, 나열에서 “그리고·또한”처럼 번역되기도 한다. “만일”은 주로 다른 경우를 추가하거나 일부 문맥에서 “혹 ~하면”이라는 가정을 도입하는 용법이다. Strong는 H0185와의 연결을 presumed로, 잠언 31:4의 “바람” 해석을 probably로 제시한다. 그 절의 Ketiv או(H0176)와 Qere אֵי(H0335)를 구분하며, 추정된 “바람”을 일반 접속사 의미로 확정하지 않는다."
+    },
+    {
+      "word_id": "H0177_0000",
+      "before": null,
+      "after": "에스라 10:34에 나오는 인명이다. “우엘”은 한국어 성경의 관용 표기이고 “우-엘”은 Strong가 제시한 H0176·H0410의 구성 경계를 드러내는 분석 표기이다. 이름의 “하나님의 바람”은 어원 풀이이며, H0176 접속사의 일반 meaning을 뜻하지 않는다. 붙임표는 이 이름의 원문에 있는 구두점을 옮긴 것이 아니다."
+    },
+    {
+      "word_id": "H0183_0000",
+      "before": null,
+      "after": "바라는 대상은 음식·소유·다른 사람의 아름다움부터 하나님과 그 거처까지 다양하다. “탐내다”나 “사모하다”는 대상과 문맥에 따른 번역이며, 이 동사 자체를 부정적인 욕망으로 제한하지 않는다."
+    },
+    {
+      "word_id": "H0185_0000",
+      "before": null,
+      "after": "먹고 싶은 마음, 어떤 곳으로 가고자 하는 뜻, 성적 욕구, 행하려는 뜻을 가리킨다. 부정적인 탐욕에만 한정되지 않으며, 호세아 10:10에서는 하나님이 행하고자 하시는 뜻에 사용된다."
+    },
+    {
+      "word_id": "H0189_0000",
+      "before": null,
+      "after": "민수기 31:8과 여호수아 13:21에 나오는 미디안의 통치자이다. Strong는 H0183과의 연결과 이름의 “바라는”이라는 풀이를 probably로 제시하므로 확정된 어원으로 다루지 않는다."
+    },
+    {
+      "word_id": "H0194_0000",
+      "before": null,
+      "after": "불확실한 가능성을 제시하며 희망·우려·의심을 모두 나타낼 수 있다. 문맥에 따라 “아마”, “~일지도”, 조건을 도입하는 “혹 ~하면”으로 옮긴다. 긍정 내용과 부정 내용 모두를 가정할 수 있으며, 창세기 24:5·39의 부정은 뒤따르는 לֹא가 표시한다. 민수기 22:33은 전통적으로 “만일 피하지 않았다면”이라는 반대 조건으로 이해되지만 마소라 본문은 אוּלַי로 표기하고 별도 부정어가 없으며, BDB는 לוּלֵי로 읽을 것을 제안한다. Strong의 if not 설명과 이 절의 본문 해석 문제를 보존하되 부정 조건을 일반 meaning으로 확정하지 않는다."
+    },
+    {
+      "word_id": "H0199_0000",
+      "before": null,
+      "after": "앞말과 다른 내용을 강하게 내세우는 대조·정정의 말이다. 문맥에 따라 “그러나 참으로”처럼 확신을 강조하며, 맹세나 강조 진술을 도입하기도 한다. 대조와 확언의 강세가 겹치는 용법을 포함하고, “참으로”를 별도 meaning으로 분리하지 않는다. Strong의 H0194와의 형태 연결은 apparently라는 추정 표현을 포함한다."
+    },
+    {
+      "word_id": "H0339_0000",
+      "before": null,
+      "after": "섬과 해안 지방, 문맥에 따라 그곳 주민이나 먼 나라들을 가리킨다. 이사야 42:15의 강을 섬으로 만든다는 표현에는 물이 말라 드러나는 땅의 영상이 있으며 “마른 땅”으로 풀이할 여지도 있다. Strong의 “거주할 만한 곳”은 어원적 설명과 구분하고, 일반적인 거주지를 독립 meaning으로 확정하지 않는다."
+    },
+    {
+      "word_id": "H0385_0000",
+      "before": null,
+      "after": "아론의 아들인 제사장 이다말과 그의 가문을 가리킨다. “이다말”은 한국어 성경의 관용 표기이고 “이-타마르”는 Strong가 제시한 H0339·H8558의 구성 경계를 드러내는 분석 표기이다. “종려나무의 해안·지역”은 이름의 어원 풀이이며 별도 meaning이 아니다. 붙임표는 이 인명의 원문 구두점을 옮긴 것이 아니다."
+    },
+    {
+      "word_id": "H3970_0000",
+      "before": null,
+      "after": "시편 140:8[히브리어 본문 140:9]에서는 악인이 이루려는 바람을 가리킨다. LXX는 기도자의 “나의 바람”을 언급하는 다른 문장 구조를 보이지만, 이를 별도 어휘 의미로 나누지는 않는다."
+    },
+    {
+      "word_id": "H6914_0000",
+      "before": null,
+      "after": "광야 여정의 지명으로, 민수기 11:34는 탐욕을 낸 백성을 그곳에 묻었다는 명명 설명을 전한다. “기브롯 핫다아와”는 한국어 성경의 관용 표기이며 “키브로트-핫타아와”는 H6913의 복수 연계형과 정관사 및 H8378의 구성을 드러내는 원문 기반 분석 표기이다. 붙임표는 구성 경계를 표시한 분석 기호이며, 확인한 다섯 용례의 두 이름 요소 사이에 원문 마케프는 없다. Strong 표제의 공백과 원문 expression은 보존한다. 이름의 “탐욕의 무덤들”은 어원 풀이로 둔다."
+    },
+    {
+      "word_id": "H8378_0000",
+      "before": null,
+      "after": "좋고 나쁜 대상을 원하는 마음을 두루 가리키며, 문맥에 따라 그 마음의 내용이나 바라는 대상, 욕구를 불러일으키는 것을 가리키기도 한다. 창세기 3:6은 눈에 탐스러운 것이라는 용법을 보이며, 시편 78:29와 잠언 10:24 등에는 바라던 것을 받거나 바람이 이루어지는 문맥이 있다. 욥기 33:20은 “바라는 음식”이라는 명사구에서 תַּאֲוָה가 바람을 나타낸다고 분석할 수 있어, 그 단어 자체를 음식·별미의 뜻으로 확정하지 않는다. 잠언 19:22는 사람의 바람·남에게서 바라는 것·사모할 만함으로 읽는 번역이 갈리므로 특정 해석을 일반 meaning으로 고정하지 않는다. 사무엘상 2:16은 OSHB에서 H8378로 태그되지만 형태는 동사로 기록되고 로컬 원전분해는 H0183을 제시하므로, 그 1회를 명사 의미의 근거로 사용하지 않는다. 같은 철자의 H8379 “경계”는 별도 어휘로 구분한다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0176_0000",
+      "word_id_2": "H0177_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 qualifier 없는 명시적 단어 형성 분석을 보존한다. 구성요소·기초어에서 합성어·파생어로 향하는 의미 방향이다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; 2026-10-22 H176 CORE12 승인"
+    },
+    {
+      "word_id_1": "H0176_0000",
+      "word_id_2": "H0194_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 qualifier 없는 명시적 단어 형성 분석을 보존한다. 구성요소·기초어에서 합성어·파생어로 향하는 의미 방향이다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; 2026-10-22 H176 CORE12 승인"
+    },
+    {
+      "word_id_1": "H0177_0000",
+      "word_id_2": "H0410_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 qualifier 없는 명시적 단어 형성 분석을 보존한다. 구성요소·기초어에서 합성어·파생어로 향하는 의미 방향이다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; 2026-10-22 H176 CORE12 승인"
+    },
+    {
+      "word_id_1": "H0183_0000",
+      "word_id_2": "H0185_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 qualifier 없는 명시적 단어 형성 분석을 보존한다. 구성요소·기초어에서 합성어·파생어로 향하는 의미 방향이다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; 2026-10-22 H176 CORE12 승인"
+    },
+    {
+      "word_id_1": "H0183_0000",
+      "word_id_2": "H0339_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 qualifier 없는 명시적 단어 형성 분석을 보존한다. 구성요소·기초어에서 합성어·파생어로 향하는 의미 방향이다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; 2026-10-22 H176 CORE12 승인"
+    },
+    {
+      "word_id_1": "H0183_0000",
+      "word_id_2": "H3970_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 qualifier 없는 명시적 단어 형성 분석을 보존한다. 구성요소·기초어에서 합성어·파생어로 향하는 의미 방향이다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; 2026-10-22 H176 CORE12 승인"
+    },
+    {
+      "word_id_1": "H0183_0000",
+      "word_id_2": "H8378_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 qualifier 없는 명시적 단어 형성 분석을 보존한다. 구성요소·기초어에서 합성어·파생어로 향하는 의미 방향이다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; 2026-10-22 H176 CORE12 승인"
+    },
+    {
+      "word_id_1": "H0339_0000",
+      "word_id_2": "H0385_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 qualifier 없는 명시적 단어 형성 분석을 보존한다. 구성요소·기초어에서 합성어·파생어로 향하는 의미 방향이다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; 2026-10-22 H176 CORE12 승인"
+    },
+    {
+      "word_id_1": "H6914_0000",
+      "word_id_2": "H8378_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 qualifier 없는 명시적 단어 형성 분석을 보존한다. 구성요소·기초어에서 합성어·파생어로 향하는 의미 방향이다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; 2026-10-22 H176 CORE12 승인"
+    },
+    {
+      "word_id_1": "H0385_0000",
+      "word_id_2": "H8558_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 qualifier 없는 명시적 단어 형성 분석을 보존한다. 구성요소·기초어에서 합성어·파생어로 향하는 의미 방향이다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; 2026-10-22 H176 CORE12 승인"
+    },
+    {
+      "word_id_1": "H6913_0000",
+      "word_id_2": "H6914_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 qualifier 없는 명시적 단어 형성 분석을 보존한다. 구성요소·기초어에서 합성어·파생어로 향하는 의미 방향이다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; 2026-10-22 H176 CORE12 승인"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": [
+    {
+      "word_id": "H0189_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "에위 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0199_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "그러나"
+        }
+      ]
+    }
+  ]
+}
