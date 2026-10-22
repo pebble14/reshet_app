@@ -1,0 +1,40 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H184-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-22 H184 후속 표시하다·경계 문맥 분리 추천 및 DB·문서·Git·이번 작업 브랜치 정리 승인; data/backups/approved_content_batch/h184_approval_20261022/00_user_approval.json",
+    "document_sha256": "5dd08a721eee3c3e8fb45a9eabc66d4dea2cc3e124456823ae8f0fb0cbccb0e7"
+  },
+  "target": {
+    "expected_work_sha256": "41160168d5f14ae7496e8e3327e728e8d4ba98ecf43e7f2c47bb0bbda60e4535",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0184_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "표시하다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "표시하다(標示하다)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0184_0000",
+      "before": null,
+      "after": "민수기 34:10에서는 동쪽 경계의 경로를 정해 표시하는 뜻으로 쓰인다. 같은 철자의 H0183 ‘바라다’와는 별도 어휘로 구분한다."
+    }
+  ],
+  "relation_creates": [],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}
