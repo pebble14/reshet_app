@@ -129,6 +129,7 @@
 | H184 표시 동사 | 표시하다(標示하다)와 경계 문맥 구분·비고1·관계 생성 없음 | `active` | 높음 | 2026-10-22 | [기록](h184_cluster_approved_content_slice.md) |
 | H186·H5813·H5810 클러스터 | 인명 병기·강하다 단일 의미·비고3·파생1, 어원·용례 분석 차이 보존 | `active` | 높음 | 2026-10-22 | [기록](h186_cluster_approved_content_slice.md) |
 | H187 우살·우잘 | 단일 고유명 meaning·비고, 겔27:19 독법 차이·어원·위치 미확정 보존·관계 비생성·hold 없음 | `active` | 높음 | 2026-10-22 | [기록](h187_cluster_approved_content_slice.md) |
+| H191 클러스터 | H191·H196 어리석은 및 H200 어리석음 통일·비고·파생1·공통 어근1·경쟁 해석 보존·hold 없음 | `active` | 높음 | 2026-10-22 | [기록](h191_cluster_approved_content_slice.md) |
 
 ## 열람 및 후속 판단 원칙
 

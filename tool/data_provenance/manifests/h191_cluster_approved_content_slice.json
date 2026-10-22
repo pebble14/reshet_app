@@ -1,0 +1,100 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H191-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-22 H191·H196 어리석은 및 H200 어리석음 통일·비고·관계와 DB·문서·Git·작업 브랜치 정리 승인; data/backups/approved_content_batch/h191_approval_20261022/00_user_approval.json",
+    "document_sha256": "8926c9cc3a8b725046b5638e74910bf03bb438406a389a853123e66ef4ccf4d9"
+  },
+  "target": {
+    "expected_work_sha256": "419adfde3371b7dcf542f460f22b4339ca6e550bbdc2532c4dabe7e28485fc2a",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0191_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "미련한"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "어리석은"
+        }
+      ]
+    },
+    {
+      "word_id": "H0200_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "어리석음, 우매함"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "어리석음"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0191_0000",
+      "before": null,
+      "after": "주로 지혜(智慧)와 훈계(訓戒)를 거부하는 어리석음을 나타내며, ‘어리석은 자’를 가리키는 쓰임이 많다. 이사야 35:8은 이들이 길을 잃지 않는다는 번역과 그 길로 다니지 못한다는 번역이 갈린다. 호세아 9:7은 예언자(豫言者)에 대한 비난(非難)으로 읽는 번역도 있어, 그 사람의 실제 성격을 이 말만으로 확정하지 않는다."
+    },
+    {
+      "word_id": "H0196_0000",
+      "before": null,
+      "after": "스가랴 11:15–17에서는 양 떼를 돌보지 않는 목자(牧者)의 모습이 드러나므로, 단순히 솜씨가 서툴다는 뜻으로만 제한하지 않는다."
+    },
+    {
+      "word_id": "H0200_0000",
+      "before": null,
+      "after": "태도나 말과 행동으로 드러나는 어리석음을 가리키며, 잠언 14:1에서는 집을 허무는 여자로 그려진다. 잠언 14:24의 첫 단어를 소유(所有)나 능력(能力)으로 읽는 견해(見解)도 있으나, 현재 확보된 근거만으로 별도 의미를 확정하기는 어렵다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0191_0000",
+      "word_id_2": "H0196_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong H196 source: from H191; H191에서 H196으로 향하는 파생 방향을 기록한다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; 2026-10-22 H191 군집 사용자 승인"
+    },
+    {
+      "word_id_1": "H0191_0000",
+      "word_id_2": "H0200_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong H200 source: from the same as H191; 공통 어근을 기록하며 H191 어형에서 H200이 직접 파생됐다고 단정하지 않는다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; 2026-10-22 H191 군집 사용자 승인"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": [
+    {
+      "word_id": "H0196_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "어리석은"
+        }
+      ]
+    }
+  ]
+}
