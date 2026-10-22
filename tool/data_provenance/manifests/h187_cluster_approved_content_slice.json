@@ -1,0 +1,40 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H187-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-22 H187 meaning·비고·관계 비생성·hold 없음 및 DB·문서·Git·작업 브랜치 정리 승인; data/backups/approved_content_batch/h187_approval_20261022/00_user_approval.json",
+    "document_sha256": "31d685c5dc05997291be8aa18ec6bd243c5738824b82e57df48eadcda38b263b"
+  },
+  "target": {
+    "expected_work_sha256": "abef9e6cbae885058bce747bf74f6295970c7f3272104aa08293005d4fa9067d",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0187_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "우살 (인, 지)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "우살·우잘 (인, 지)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0187_0000",
+      "before": null,
+      "after": "우살은 한국어 성경 관용 표기이고 우잘은 원문 형태를 비교하기 위한 교재식 한글 근사다. 창 10:27·대상 1:21에서는 욕단의 아들 이름이다. 겔 27:19를 OSHB는 전치사와 고유명사로 분석하며 새번역은 ‘우잘에서’로 옮긴다. 개역 계열의 ‘길쌈하는 실’, KJV의 ‘오가다’ 등 다른 독법도 있다. 어원과 이 지명의 정확한 위치는 확정하지 않는다."
+    }
+  ],
+  "relation_creates": [],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}
