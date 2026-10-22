@@ -1,0 +1,97 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H186-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-22 H186·H5813·H5810 최신 의미·비고·파생 관계 및 DB·문서·Git·이번 작업 브랜치 정리 승인; data/backups/approved_content_batch/h186_approval_20261022/00_user_approval.json",
+    "document_sha256": "7b6fdf4ecbc6533cf41ef8d9ea47a0debbfea617b465b1569209ec4586bf3b7c"
+  },
+  "target": {
+    "expected_work_sha256": "7d479eb153a6a8fb3df17edc7a52daff7960ab1523160e52e2a5752bf534a9b7",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0186_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "우새 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "우새·우자이 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5813_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "웃시 Uzzi(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "웃시·우시·웃지 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5810_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "강하다"
+        },
+        {
+          "seq": 2,
+          "meaning": "이기다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "강하다(強하다)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0186_0000",
+      "before": null,
+      "after": "우새는 한국어 성경 관용 표기이며 우자이는 원문 형태의 교재식 한글 근사다. 느 3:25에서 발랄의 아버지로 나온다. Strong은 H5813의 변이 가능성을 제시하지만 확정된 어원은 아니다."
+    },
+    {
+      "word_id": "H5813_0000",
+      "before": null,
+      "after": "웃시·우시는 한국어 성경 관용 표기이며 웃지는 원문을 비교하기 위한 교재식 한글 근사 표기다. 여러 동명 인물에게 쓰인다. 대상 7:7은 우시, 스 7:4는 웃시엘로 옮기지만 스 7:4의 원문은 עֻזִּי(H5813)이며 별도 이름 עֻזִּיאֵל(H5816)과 구별한다."
+    },
+    {
+      "word_id": "H5810_0000",
+      "before": null,
+      "after": "‘이기다’는 강함이 대항 관계에서 드러나는 용법이다. 문맥과 구문에 따라 강해지다·강하게 하다로 옮긴다. ‘얼굴을 강하게 하다’는 뻔뻔한 태도의 관용 표현이다. 사 30:2와 시 52:7(히브리어 본문 52:9)은 사전별로 עוּז와의 어휘 분석 차이가 있어 일반적인 힘·강함 용례와 구별하여 검토한다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H5810_0000",
+      "word_id_2": "H5813_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong H5813은 H5810에서의 파생을 명시한다. H0186의 변이 가능성 및 H5816의 별도 이름 식별은 이 관계에 포함하지 않는다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; H5813 from H5810; 2026-10-22 H186 CORE3 사용자 승인"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}
