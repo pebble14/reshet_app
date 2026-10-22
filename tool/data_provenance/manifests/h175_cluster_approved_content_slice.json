@@ -1,0 +1,86 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H175-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-22 H175·G2 최신 아론·아하론 의미·비고·직접 음역 관계 및 DB·문서·Git·브랜치 정리 승인; data/backups/approved_content_batch/h175_approval_20261022/00_user_approval.json",
+    "document_sha256": "b427c3d9be6df8a2e2483ef55033d80070920dc0aaf74643b14f8c14b831eabe"
+  },
+  "target": {
+    "expected_work_sha256": "c7c39c98739337dfa6caec01b52d59d5c81504bc07384b802c07d7e269505359",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0175_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아론"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아론·아하론 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "G0002_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아론"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아론·아하론 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0175_0000",
+      "before": null,
+      "after": "‘아론’은 한국어 성경의 관용 표기이고 ‘아하론’은 אַהֲרוֹן과 사전 음역을 반영한 원문 기반 근사 표기이다. 모세의 형을 가리키며, 일부 문맥에서는 그 이름으로 제사장 가계를 나타낸다. 이름의 어원은 불확실하다."
+    },
+    {
+      "word_id": "G0002_0000",
+      "before": "히브리어 단어 H175 אַהֲרוֹן(아하론)의 헬라어 음역",
+      "after": "히브리어 인명 H175 אַהֲרוֹן의 헬라어 음역이다. 의미란의 ‘아론’은 한국어 성경의 관용 표기이고 ‘아하론’은 원천인 히브리어 이름을 반영한다. 헬라어 자체의 교재식 음역은 ‘아아론’이다. 자손·반차 문맥에서는 아론의 제사장 계통을 나타낸다."
+    }
+  ],
+  "relation_creates": [],
+  "supersedes": [],
+  "relation_replacements": [
+    {
+      "relation_id": 3,
+      "word_id_1": "G0002_0000",
+      "word_id_2": "H0175_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "transliteration",
+        "relation_type": "direct_transliteration",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "Strong G2는 H175의 Hebrew origin을 명시하며 두 항목은 모세의 형 아론을 가리킨다. 방향은 히브리어 이름에서 헬라어 음역으로 향한다. 이름 자체의 더 이른 어원은 이 관계로 확정하지 않는다.",
+        "source": "RESHET-EC-H175-CLUSTER-H0175-G0002"
+      }
+    }
+  ],
+  "meaning_approvals": []
+}
