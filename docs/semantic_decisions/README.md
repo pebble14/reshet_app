@@ -132,6 +132,7 @@
 | H191 클러스터 | H191·H196 어리석은 및 H200 어리석음 통일·비고·파생1·공통 어근1·경쟁 해석 보존·hold 없음 | `active` | 높음 | 2026-10-22 | [기록](h191_cluster_approved_content_slice.md) |
 
 | H192 메로다크 이름 계열 | H192·H1255·H4757·H4781 관용명·원문 근사 병기·비고4·형태 변이1·신규 hold 없음 | `active` | 높음 | 2026-10-23 | [기록](h192_cluster_approved_content_slice.md) |
+| H193 클러스터 | CORE25 최신 의미·비고19·형성/변이/공통 어근 관계28·H354 사슴·H440 가문 사람·신규 hold 없음 | `active` | 높음 | 2026-10-23 | [기록](h193_cluster_approved_content_slice.md) |
 
 ## 열람 및 후속 판단 원칙
 
