@@ -1,0 +1,113 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H192-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-23 H192 메로다크 이름 계열 meaning·비고4·변이관계1 및 DB·문서·Git·작업 브랜치 정리 승인; data/backups/approved_content_batch/h192_approval_20261023/00_user_approval.json",
+    "document_sha256": "d5e34da88359e28e02dd8768a5e80a506aad4e9765ebf6f72513ddb470fcf863"
+  },
+  "target": {
+    "expected_work_sha256": "4525081ee72dd83a5d43bcbf66e52a62727fd64667687bfd6d342310c63b410f",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0192_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "에윌므로닥 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "에윌므로닥·에윌-메로다크 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H1255_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "브로닥발라단 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "부로닥발라단·베로다크-발라단 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H4757_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "므로닥 발라단 Melodachbaladan"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "므로닥발라단·메로다크-발라단 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H4781_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "므로닥 Marduk"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "므로닥·메로다크·마르둑 (신명)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0192_0000",
+      "before": null,
+      "after": "아카드어 이름 Amēl-Marduk로도 알려진 바빌로니아 왕이다. Strong은 아람어에서 온 이름으로 설명하며, ‘아마 메로닥의 군사(軍士)’라는 풀이를 제시한다. 참고사전의 ‘마르두크의 사람’ 풀이와는 구별하며, H191 ‘어리석은’에서 나온 이름으로 단정하지 않는다."
+    },
+    {
+      "word_id": "H1255_0000",
+      "before": null,
+      "after": "열왕기하 20:12에 나오는 바빌로니아 왕으로, 이사야 39:1의 므로닥발라단(H4757)과 같은 사람이다. 본문에서 그의 아버지로 나오는 발라단(H1081)과 구별한다."
+    },
+    {
+      "word_id": "H4757_0000",
+      "before": null,
+      "after": "이사야 39:1에 나오는 바빌로니아 왕으로, 열왕기하 20:12의 부로닥발라단(H1255)과 같은 사람이다. Strong 표제어 מְרֹאדַךְ בַּלְאָדָן과 본문의 מְרֹדַךְ בַּלְאֲדָן 사이에는 철자·모음 차이가 있다."
+    },
+    {
+      "word_id": "H4781_0000",
+      "before": null,
+      "after": "바빌론에서 섬기던 신 Marduk을 가리킨다. 예레미야 50:2에서는 벨과 나란히 나오며, 바빌론의 무너짐과 함께 그 신과 신상(神像)이 꺾이는 모습을 말한다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H1255_0000",
+      "word_id_2": "H4757_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong H1255 source: a variation of H4757; 왕하 20:12와 사 39:1의 같은 왕 이름에서 나타나는 b/m 형태 변이를 기록하며 발생 방향은 확정하지 않는다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; 2026-10-23 H192 이름 계열 사용자 승인"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}
