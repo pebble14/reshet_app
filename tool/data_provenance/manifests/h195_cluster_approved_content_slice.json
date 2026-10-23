@@ -1,0 +1,40 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H195-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-23 H195 의미·비고 및 DB·문서·Git·작업 브랜치 정리 사용자 승인; data/backups/approved_content_batch/h195_approval_20261023/00_user_approval.json",
+    "document_sha256": "808e56eb7abe625b4171b35ee4020fcd2123fd3ef991f3339115d63692d16d76"
+  },
+  "target": {
+    "expected_work_sha256": "ff3612994450d582580f9c9633a9e724d870de7475ff5c3d5d669033ce738e04",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0195_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "을래 (지)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "을래·울라이 (지)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0195_0000",
+      "before": null,
+      "after": "엘람 지방 수산 부근의 강 이름이다. ‘을래’는 한국어 성경의 관용 표기이고 ‘울라이’는 히브리어 표기를 따른 근사 표기이다. Strong은 페르시아계 이름으로 설명하며, 이름 자체의 뜻은 확정하지 않는다."
+    }
+  ],
+  "relation_creates": [],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}
