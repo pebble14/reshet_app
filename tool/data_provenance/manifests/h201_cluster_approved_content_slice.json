@@ -1,0 +1,421 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H201-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-23 H201 클러스터 최종 수정·DB·문서·Git·이번 작업 브랜치 정리 사용자 승인; data/backups/approved_content_batch/h201_approval_20261023/00_user_approval.json",
+    "document_sha256": "90bb671d250b3ad784bad1453a049467cc7b29bfee176502b745f94fd31dc71f"
+  },
+  "target": {
+    "expected_work_sha256": "8accb0c564ff4693bc234b808217e5c87ef7cc81312dd9bb75d7c2772ce614eb",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0201_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "오말 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "오말·오마르 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0534_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "꼭대기, 정상"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "꼭대기"
+        }
+      ]
+    },
+    {
+      "word_id": "H0559_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "말하다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "말하다"
+        },
+        {
+          "seq": 2,
+          "meaning": "자랑하다"
+        }
+      ]
+    },
+    {
+      "word_id": "H0561_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "말씀, 명령"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "말"
+        }
+      ]
+    },
+    {
+      "word_id": "H0562_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "말, 시, 언약"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "말"
+        }
+      ]
+    },
+    {
+      "word_id": "H0564_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "임멜 (인, 지)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "임멜·임메르 (인, 지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0565_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "말, 말씀, 목소리"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "말"
+        }
+      ]
+    },
+    {
+      "word_id": "H0566_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "이므리 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "이므리·임리 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0567_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아모리 족속"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아모리 사람·에모리 사람"
+        }
+      ]
+    },
+    {
+      "word_id": "H0568_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아마랴 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아마랴·아마르-야·아마르-야후 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3982_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "말, 명령"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "명령(命令)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3983_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "말, 명령"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "명령(命令)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0201_0000",
+      "before": null,
+      "after": "오말은 한국어 성경의 관용 표기이며, 오마르는 אוֹמָר와 Strong 전사를 따른 근사 표기이다. 에서의 손자이자 엘리바스의 아들이다. Strong의 ‘말이 많은’은 H559에 연결한 이름 풀이로 구분한다."
+    },
+    {
+      "word_id": "H0534_0000",
+      "before": null,
+      "after": "사 17:6은 나무의 가장 높은 가지를 가리킨다. 사 17:9는 수풀·꼭대기 해석과 히위·아모리 사람들의 성읍 해석이 갈린다. Strong의 H559 어원 연결은 apparently로 한정된 추정으로 남긴다."
+    },
+    {
+      "word_id": "H0559_0000",
+      "before": null,
+      "after": "칼형의 일반 발화에는 마음속으로 말하는 생각·의도와 문맥상 명령·약속·주장이 포함된다. 니팔형은 말해지거나 불리는 기능을 한다. 신 26:17–18의 히필형은 여호와를 자기 하나님으로, 이스라엘을 자기 백성으로 선언하여 받아들이는 문맥이며, LXX의 선택하다 해석도 남아 있다. 이 선언 기능은 말하다에 포함한다. 시 94:4의 히트파엘형은 자기를 높여 뽐내는 자랑·자만을 가리킨다. 사 61:6에서 이 단어는 봉사자로 불리는 부분에 해당한다."
+    },
+    {
+      "word_id": "H0560_0000",
+      "before": null,
+      "after": "문맥에 따라 말하여 알리거나 지시·명령하는 기능을 포함한다."
+    },
+    {
+      "word_id": "H0561_0000",
+      "before": null,
+      "after": "사람의 말과 하나님의 말씀을 아우른다. 욥 20:29에서는 하나님이 말로 정한 몫을 가리킨다. 창 49:21은 아름다운 말·소리, 암사슴의 재롱, 식물의 아름다운 성장 등으로 해석이 갈린다."
+    },
+    {
+      "word_id": "H0562_0000",
+      "before": null,
+      "after": "발화와 그 내용을 가리킨다. 욥 22:28에서는 말로 정한 내용, 시 68:11에서는 주께서 내리신 말씀·명령, 시 77:8에서는 약속하신 말로 이해된다. 합 3:9의 구문과 번역은 불확실하다."
+    },
+    {
+      "word_id": "H0563_0000",
+      "before": null,
+      "after": "Strong의 H560 어원 연결은 perhaps와 bringing forth라는 설명이 붙은 추정으로 남긴다."
+    },
+    {
+      "word_id": "H0564_0000",
+      "before": null,
+      "after": "임멜은 한국어 성경의 관용 표기이며, 임메르는 אִמֵּר의 자음 중복을 드러낸 근사 표기이다. 인명·가문 용례와 스 2:59·느 7:61의 귀환 출신지를 구분한다. 지명의 정확한 위치는 미확인이다. Strong의 말이 많은과 로컬 사전의 그는 말했다는 이름 풀이 차이로 보존한다."
+    },
+    {
+      "word_id": "H0565_0000",
+      "before": null,
+      "after": "하나님의 말씀이 중심이지만 사람의 발언도 포함한다. 약속·명령과 사 29:4의 나직한 말소리는 문맥상 기능이다. 창 4:23·사 28:23·32:9에서 목소리와 병행하는 말의 내용을 구분한다."
+    },
+    {
+      "word_id": "H0566_0000",
+      "before": null,
+      "after": "이므리는 한국어 성경의 관용 표기이며, 임리는 אִמְרִי의 자음 배열을 따른 근사 표기이다. 대상 9:4와 느 3:2의 서로 다른 인물을 구분한다."
+    },
+    {
+      "word_id": "H0567_0000",
+      "before": null,
+      "after": "아모리는 한국어 성경의 관용 표기이며, 에모리는 אֱמֹרִי와 Strong 전사를 따른 근사 표기이다. 집단과 구성원을 함께 가리키며 겔 16:3·45는 예루살렘을 향한 비유적 혈통 설명이다. H559와의 연결은 probably와 미등재 인명을 거친다는 조건이 붙은 추정으로 남긴다."
+    },
+    {
+      "word_id": "H0568_0000",
+      "before": null,
+      "after": "아마랴는 한국어 성경의 관용 표기이다. 아마르-야·아마르-야후는 H559와 신명 요소의 합성 구조를 보이는 분석 표기이며, 두 원문 형태를 반영한다. Strong은 야께서 말씀하셨다, 곧 약속하셨다로 풀이한다. 이 분석 표기는 기록 당대의 실제 발음을 확정한 것이 아니다."
+    },
+    {
+      "word_id": "H3983_0000",
+      "before": null,
+      "after": "권위 있게 전한 말로서 H3982와 같은 대표 의미를 사용한다. 스 6:9는 제사장들이 전한 필요사항·요구이고, 단 4:14(통상 4:17)는 거룩한 이들의 결정에 따른 말이다. H3982보다 약한 지시라는 고정된 의미 대립을 두지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0201_0000",
+      "word_id_2": "H0559_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 from 559; talkative; 형성 설명에 근거한다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; OSHB; 2026-10-23 H201 클러스터 사용자 승인"
+    },
+    {
+      "word_id_1": "H0559_0000",
+      "word_id_2": "H0561_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 from 559; 형성 설명에 근거한다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; OSHB; 2026-10-23 H201 클러스터 사용자 승인"
+    },
+    {
+      "word_id_1": "H0559_0000",
+      "word_id_2": "H0564_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 from 559; talkative; 형성 설명에 근거한다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; OSHB; 2026-10-23 H201 클러스터 사용자 승인"
+    },
+    {
+      "word_id_1": "H0559_0000",
+      "word_id_2": "H3982_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 from 559; 형성 설명에 근거한다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; OSHB; 2026-10-23 H201 클러스터 사용자 승인"
+    },
+    {
+      "word_id_1": "H0564_0000",
+      "word_id_2": "H0566_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 from 564; 형성 설명에 근거한다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; OSHB; 2026-10-23 H201 클러스터 사용자 승인"
+    },
+    {
+      "word_id_1": "H0559_0000",
+      "word_id_2": "H0568_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 or prolonged אֲמַרְיָהוּ; from 559 and 3050; Jah has said (i.e. promised); 형성 설명에 근거한다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; OSHB; 2026-10-23 H201 클러스터 사용자 승인"
+    },
+    {
+      "word_id_1": "H0568_0000",
+      "word_id_2": "H3050_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 or prolonged אֲמַרְיָהוּ; from 559 and 3050; Jah has said (i.e. promised); 형성 설명에 근거한다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; OSHB; 2026-10-23 H201 클러스터 사용자 승인"
+    },
+    {
+      "word_id_1": "H0559_0000",
+      "word_id_2": "H0560_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 (Aramaic) corresponding to 559 형성 설명에 근거한다. 언어 간 대응을 기록하며 차용 방향을 확정하지 않는다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; OSHB; 2026-10-23 H201 클러스터 사용자 승인"
+    },
+    {
+      "word_id_1": "H3982_0000",
+      "word_id_2": "H3983_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 (Aramaic) corresponding to 3982 형성 설명에 근거한다. 언어 간 대응을 기록하며 차용 방향을 확정하지 않는다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; OSHB; 2026-10-23 H201 클러스터 사용자 승인"
+    },
+    {
+      "word_id_1": "H0561_0000",
+      "word_id_2": "H0562_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 the same as 561 형성 설명에 근거한다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; OSHB; 2026-10-23 H201 클러스터 사용자 승인"
+    },
+    {
+      "word_id_1": "H0561_0000",
+      "word_id_2": "H0565_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 or אֶמְרָה; feminine of 561, and meaning the same 형성 설명에 근거한다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; OSHB; 2026-10-23 H201 클러스터 사용자 승인"
+    }
+  ],
+  "relation_replacements": [],
+  "meaning_approvals": [
+    {
+      "word_id": "H0560_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "말하다"
+        }
+      ]
+    },
+    {
+      "word_id": "H0563_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "어린 양"
+        }
+      ]
+    }
+  ],
+  "supersedes": []
+}
