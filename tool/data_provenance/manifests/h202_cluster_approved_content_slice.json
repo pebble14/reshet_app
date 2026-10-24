@@ -1,0 +1,460 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H202-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-24 H202 클러스터 최종 추천 및 DB·문서·Git·브랜치 정리 사용자 승인; data/backups/approved_content_batch/h202_approval_20261024/00_user_approval.json",
+    "document_sha256": "b58d1ec1a79044501c0e9b7d386d40b27ab46ef66bb5de42b00fbccb7b5abb83"
+  },
+  "target": {
+    "expected_work_sha256": "afc0b488d24162eb138118c664c8c58c572b3cee0143143e544c1dce3fbdd58f",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0202_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "기력, 재산, 부"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "힘"
+        },
+        {
+          "seq": 2,
+          "meaning": "재물(財物)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0205_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "헛됨, 불행"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "죄악(罪惡)"
+        },
+        {
+          "seq": 2,
+          "meaning": "고통(苦痛)"
+        },
+        {
+          "seq": 3,
+          "meaning": "헛됨"
+        },
+        {
+          "seq": 4,
+          "meaning": "우상(偶像)"
+        }
+      ]
+    },
+    {
+      "word_id": "H1007_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "벧아웬 (지)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "벧아웬·베트-아웬 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H1126_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "베노니 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "베노니·벤-오니 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H1951_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "쉽다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "쉽게 여기다"
+        }
+      ]
+    },
+    {
+      "word_id": "H1952_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "재물, 충분, 족함"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "재물(財物)"
+        },
+        {
+          "seq": 2,
+          "meaning": "충분함(充分함)"
+        }
+      ]
+    },
+    {
+      "word_id": "H8383_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "수고, 노고, 고생"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "수고"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0202_0000",
+      "before": null,
+      "after": "힘과 기력을 나타내며, 장자·생식 능력의 문맥과 하나님의 큰 힘에도 쓰인다. 욥 20:10과 호 12:9(일반 12:8)에서는 재물을 가리킨다. H3581·H6109와 구별하여 번역할 때 기력·기운을 우선 검토하되, 이 표현들이 H202만의 배타적 의미는 아니다. Strong은 H205와 같은 기반일 가능성을 제시하지만 BDB는 별도 어근군으로 구별한다. H1952와는 재물 뜻이 유사하나 직접 파생이나 단순 이형으로 확정하지 않는다. 잠 11:7은 현재 OSHB에서 H205로 태깅되지만 BDB에는 H202의 힘 해석이 있다."
+    },
+    {
+      "word_id": "H0203_0000",
+      "before": null,
+      "after": "민 16:1에 나오는 르우벤 자손 벨렛의 아들이다. 같은 한국어 이름으로 적는 이집트 지명 온(H0204)과 구별한다."
+    },
+    {
+      "word_id": "H0204_0000",
+      "before": null,
+      "after": "창 41:45, 41:50, 46:20에 나오는 이집트 도시로, 보디베라가 이곳의 제사장으로 언급된다. Strong은 이집트어 기원으로 설명한다. 로컬 사전의 H0202와 같은 어원이라는 설명은 이와 충돌하므로 채택하지 않는다. 겔 30:17의 아웬(H0206)과 관련해 참조되지만 이 참조 자체가 어원 관계를 뜻하지는 않는다."
+    },
+    {
+      "word_id": "H0205_0000",
+      "before": null,
+      "after": "고통과 해악, 악한 행위, 헛됨과 우상적 대상에 걸쳐 쓰이며 문맥에서 서로 겹칠 수 있다. Strong의 사용되지 않는 어근에 대한 설명은 추정이다. BDB는 H202와 별도 어근군으로 구별하고 H8383을 같은 군에 둔다. H5999와의 고통·수고 문맥 병행은 의미상의 연결이다. 잠 11:7의 אוֹנִים은 OSHB의 H205 태그와 BDB의 H202 해석이 다르다. H1007·H1126 같은 이름에서는 해당 구성과 문맥에 맞추어 뜻을 풀이한다. 신 26:14와 호 9:4에서는 상중의 슬픔, 사 66:3에서는 우상을 가리킨다. 호 10:8은 OSHB에서 H0205로 태깅하지만 지명 아웬으로 읽는 해석을 H0206·H1007 문맥과 함께 보존하며 태그를 임의로 옮기지 않는다."
+    },
+    {
+      "word_id": "H0206_0000",
+      "before": null,
+      "after": "Strong은 이 이름을 세 장소에 쓰인 경멸적 호칭으로 설명한다. 현재 OSHB의 H0206 출현은 겔 30:17과 암 1:5의 2회이며, 호 10:8은 H0205로 분류한다. 겔 30:17의 이집트 온과 암 1:5의 아웬 골짜기를 같은 장소로 합치지 않는다. H0204·H1007을 보라는 사전 참조를 파생 관계로 바꾸지 않는다."
+    },
+    {
+      "word_id": "H0208_0000",
+      "before": null,
+      "after": "창 36:23·대상 1:40의 소발의 아들과 대상 2:26·2:28의 여라므엘 가문 인물에게 쓰인 이름이다. 같은 이름을 가진 두 인물을 하나로 합치지 않는다."
+    },
+    {
+      "word_id": "H1007_0000",
+      "before": null,
+      "after": "벧아웬은 개역 계열의 관용 표기이고, 베트-아웬은 בֵּית와 אָוֶן의 합성 경계를 보인 분석 표기이다. 특정 시대의 실제 발음을 확정하지 않는다. 여호수아·사무엘상의 지리 문맥 4회와 호세아의 벧엘을 비꼬는 문맥 3회를 구분하며, 모든 벧아웬을 벧엘과 같은 장소로 처리하지 않는다. 이름의 헛됨·죄악 관련 뜻풀이는 지명 자체의 독립 의미로 늘리지 않는다."
+    },
+    {
+      "word_id": "H1126_0000",
+      "before": null,
+      "after": "베노니는 한국어 성경 관용 표기이고, 벤-오니는 בֶּן과 אוֹנִי의 경계를 보인 분석 표기이다. 창 35:18에서 죽어 가는 라헬이 아들에게 붙인 이름이며, 아버지는 베냐민이라 부른다. Strong과 문맥은 나의 슬픔의 아들이라는 풀이를 뒷받침한다. 합성 관계의 둘째 요소는 H0205로 제시되며, 모양이 비슷하다는 이유로 H0202로 바꾸지 않는다."
+    },
+    {
+      "word_id": "H1951_0000",
+      "before": null,
+      "after": "신 1:41의 Hiphil 활용형에서 산지로 올라가는 일을 쉽게 여기는 뜻으로 사용된다. 경솔하게 나아갔다는 문맥 해석과 KJV의 준비되었다는 풀이를 구분한다. Strong과 BDB는 H1952와 연결하지만, 재물이 삶을 쉽게 한다는 의미 발달 설명은 가설이다."
+    },
+    {
+      "word_id": "H1952_0000",
+      "before": null,
+      "after": "재물을 뜻하며 잠 30:15–16에서는 충분하다·족하다는 감탄적 표현에 사용된다. 시 44:13(일반 44:12)에서는 매매 대가의 문맥이다. Strong은 H1951과 같은 기반을 제시하고 H202의 재물 뜻을 참조한다. 공통 기반이라는 사전적 분류와 구체적인 의미 발달 가설을 구분하며, H202의 직접 파생어 또는 단순 철자 변이로 확정하지 않는다."
+    },
+    {
+      "word_id": "H8383_0000",
+      "before": null,
+      "after": "Strong은 H205에서의 파생으로 설명하고 BDB도 같은 어근군에 둔다. 겔 24:12에는 복수형 תְּאֻנִים만 나타나며, 제거되지 않는 녹을 둘러싼 수고의 문맥이다. 헛수고는 문맥 풀이로 볼 수 있다. KJV는 거짓으로 옮기며, 문장 해석과 본문 상태에 이견이 있어 의미를 과도하게 확정하지 않는다. Strong의 단수 표제어와 실제 복수 활용형을 구별한다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0202_0000",
+      "word_id_2": "H0203_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 same as/from the same as가 공통 기반을 명시한다. 본문 참조 방향을 파생 방향으로 바꾸지 않고 undirected로 제안한다.",
+      "source": "Open Scriptures HebrewStrong.xml 21c9add13bc727d3a951361778e97e3ff7afd1ce; OSHB; 2026-10-24 H202 클러스터 사용자 승인"
+    },
+    {
+      "word_id_1": "H0205_0000",
+      "word_id_2": "H0206_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 same as/from the same as가 공통 기반을 명시한다. 본문 참조 방향을 파생 방향으로 바꾸지 않고 undirected로 제안한다.",
+      "source": "Open Scriptures HebrewStrong.xml 21c9add13bc727d3a951361778e97e3ff7afd1ce; OSHB; 2026-10-24 H202 클러스터 사용자 승인"
+    },
+    {
+      "word_id_1": "H1951_0000",
+      "word_id_2": "H1952_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 from the same as H1951과 BDB의 어근 배열에 근거한 공통 기반 관계. 재물이 삶을 쉽게 한다는 구체적 의미 발달 설명은 가설로 구별한다.",
+      "source": "Open Scriptures HebrewStrong.xml 21c9add13bc727d3a951361778e97e3ff7afd1ce; OSHB; 2026-10-24 H202 클러스터 사용자 승인"
+    },
+    {
+      "word_id_1": "H0202_0000",
+      "word_id_2": "H0207_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 prolonged from/from이 명시한 형태 형성 방향이다.",
+      "source": "Open Scriptures HebrewStrong.xml 21c9add13bc727d3a951361778e97e3ff7afd1ce; OSHB; 2026-10-24 H202 클러스터 사용자 승인"
+    },
+    {
+      "word_id_1": "H0205_0000",
+      "word_id_2": "H8383_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong은 H8383을 H205에서의 파생으로 설명하며 BDB도 같은 어근군에 둔다. 고통·수고 의미의 연결이며 H205의 모든 의미를 상속한다는 뜻은 아니다. 겔 24:12의 문장·본문 해석 이견은 보존한다.",
+      "source": "Open Scriptures HebrewStrong.xml 21c9add13bc727d3a951361778e97e3ff7afd1ce; OSHB; 2026-10-24 H202 클러스터 사용자 승인"
+    },
+    {
+      "word_id_1": "H0207_0000",
+      "word_id_2": "H0209_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 a variation of에 따른 형태 변이. 같은 인물·장소라는 의미는 아니다.",
+      "source": "Open Scriptures HebrewStrong.xml 21c9add13bc727d3a951361778e97e3ff7afd1ce; OSHB; 2026-10-24 H202 클러스터 사용자 승인"
+    },
+    {
+      "word_id_1": "H0208_0000",
+      "word_id_2": "H0209_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 a variation of에 따른 형태 변이. 같은 인물·장소라는 의미는 아니다.",
+      "source": "Open Scriptures HebrewStrong.xml 21c9add13bc727d3a951361778e97e3ff7afd1ce; OSHB; 2026-10-24 H202 클러스터 사용자 승인"
+    },
+    {
+      "word_id_1": "H1004_0000",
+      "word_id_2": "H1007_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong에 명시된 합성 구성 요소에서 합성어로 향하는 관계. 구성 요소의 별도 meaning 승인/수정은 이번 범위에 포함하지 않는다.",
+      "source": "Open Scriptures HebrewStrong.xml 21c9add13bc727d3a951361778e97e3ff7afd1ce; OSHB; 2026-10-24 H202 클러스터 사용자 승인"
+    },
+    {
+      "word_id_1": "H0205_0000",
+      "word_id_2": "H1007_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong에 명시된 합성 구성 요소에서 합성어로 향하는 관계. 구성 요소의 별도 meaning 승인/수정은 이번 범위에 포함하지 않는다.",
+      "source": "Open Scriptures HebrewStrong.xml 21c9add13bc727d3a951361778e97e3ff7afd1ce; OSHB; 2026-10-24 H202 클러스터 사용자 승인"
+    },
+    {
+      "word_id_1": "H1121_0000",
+      "word_id_2": "H1126_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong에 명시된 합성 구성 요소에서 합성어로 향하는 관계. 구성 요소의 별도 meaning 승인/수정은 이번 범위에 포함하지 않는다.",
+      "source": "Open Scriptures HebrewStrong.xml 21c9add13bc727d3a951361778e97e3ff7afd1ce; OSHB; 2026-10-24 H202 클러스터 사용자 승인"
+    },
+    {
+      "word_id_1": "H0205_0000",
+      "word_id_2": "H1126_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong에 명시된 합성 구성 요소에서 합성어로 향하는 관계. 구성 요소의 별도 meaning 승인/수정은 이번 범위에 포함하지 않는다.",
+      "source": "Open Scriptures HebrewStrong.xml 21c9add13bc727d3a951361778e97e3ff7afd1ce; OSHB; 2026-10-24 H202 클러스터 사용자 승인"
+    },
+    {
+      "word_id_1": "H0202_0000",
+      "word_id_2": "H1952_0000",
+      "category_code": "semantic",
+      "relation_type": "similar",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "재물 의미에 한정한 유사성. Strong의 in the sense of H202 및 BDB 비교에 근거하며 직접 파생이나 철자 변이로 확정하지 않는다.",
+      "source": "OSHB/WLC; Strong; BDB; 2026-10-24 H202 후속 의미 유사 관계 사용자 승인"
+    },
+    {
+      "word_id_1": "H0202_0000",
+      "word_id_2": "H3581_0000",
+      "category_code": "semantic",
+      "relation_type": "similar",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "힘·기력 의미의 유사성. 창 49:3, 욥 40:16, 사 40:26·29에서 함께 쓰인다. H3581의 파충류 의미는 제외하며 원어의 배타적 의미 차이를 가정하지 않는다.",
+      "source": "OSHB/WLC; Strong; BDB; 2026-10-24 H202 후속 의미 유사 관계 사용자 승인"
+    },
+    {
+      "word_id_1": "H0202_0000",
+      "word_id_2": "H6109_0000",
+      "category_code": "semantic",
+      "relation_type": "similar",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "사 40:29에서 기력·힘의 의미가 대응한다. 어원 관계나 전 용례의 상호 대체 가능성을 뜻하지 않는다.",
+      "source": "OSHB/WLC; Strong; BDB; 2026-10-24 H202 후속 의미 유사 관계 사용자 승인"
+    },
+    {
+      "word_id_1": "H3581_0000",
+      "word_id_2": "H6109_0000",
+      "category_code": "semantic",
+      "relation_type": "similar",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "사 40:29의 힘 의미 병행에 근거한다. H3581의 파충류 의미는 제외하며 공통 어근이나 완전한 동의어로 확정하지 않는다.",
+      "source": "OSHB/WLC; Strong; BDB; 2026-10-24 H202 후속 의미 유사 관계 사용자 승인"
+    },
+    {
+      "word_id_1": "H0205_0000",
+      "word_id_2": "H5999_0000",
+      "category_code": "semantic",
+      "relation_type": "similar",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "고통·해악 뜻의 유사성. 욥 15:35, 시 7:15(일반 7:14) 등의 동시 출현·병행에 근거하며 공통 어원 관계는 아니다.",
+      "source": "OSHB/WLC; Strong; BDB; 2026-10-24 H202 후속 의미 유사 관계 사용자 승인"
+    },
+    {
+      "word_id_1": "H1952_0000",
+      "word_id_2": "H6239_0000",
+      "category_code": "semantic",
+      "relation_type": "similar",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "재물 뜻의 유사성. 시 112:3과 잠 8:18의 병행에 근거하며 공통 어원 관계는 아니다.",
+      "source": "OSHB/WLC; Strong; BDB; 2026-10-24 H202 후속 의미 유사 관계 사용자 승인"
+    }
+  ],
+  "relation_replacements": [],
+  "meaning_approvals": [
+    {
+      "word_id": "H0203_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "온 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0204_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "온 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0206_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "아웬 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0207_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "오노 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0208_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "오남 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0209_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "오난 (인)"
+        }
+      ]
+    }
+  ],
+  "supersedes": []
+}
