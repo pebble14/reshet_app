@@ -137,6 +137,7 @@
 | H197 클러스터·H361 후속 | CORE12 의미·비고, H361 현관·주랑 보완, H490 건축 공간 풀이 보존, H492 관용 기능, 관계10·신규 hold 없음 | `active` | 높음 | 2026-10-23 | [기록](h197_cluster_approved_content_slice.md) |
 | H201 클러스터 | CORE14 의미15개·비고13건·관계11건, H559 2의미·H564 인지명 통합·H3982/H3983 명령 | `active` | 높음 | 2026-10-23 | [기록](h201_cluster_approved_content_slice.md) |
 | H202 클러스터 | CORE13 의미18개·비고11건·관계17건, 번역 구별 대안·어원 보류·의미 유사 관계 | `active` | 높음 | 2026-10-24 | [기록](h202_cluster_approved_content_slice.md) |
+| H210·H211 이름 클러스터 | 우바스·우파즈와 오빌·오피르 단일 의미·비고2, 금 환유·본문 대안 보존·관계 비생성·hold 없음 | `active` | 높음 | 2026-10-24 | [기록](h210_cluster_approved_content_slice.md) |
 
 
 ## 열람 및 후속 판단 원칙
