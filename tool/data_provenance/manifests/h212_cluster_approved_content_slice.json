@@ -1,0 +1,34 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H212-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-25 H212 바퀴 단일 의미 및 DB·문서·Git·작업 브랜치 정리 사용자 승인; data/backups/approved_content_batch/h212_approval_20261025/00_user_approval.json",
+    "document_sha256": "a71a0ddea3a3be87354b33a8989bc216356db67ae6e8c41f7e6b0afb526eb4b3"
+  },
+  "target": {
+    "expected_work_sha256": "f62903af4af9d1672e528be0bc382f34c154786f54cdd33d3cb9e9e22af1bfb3",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0212_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "바퀴, 수레바퀴"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "바퀴"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [],
+  "relation_creates": [],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}
