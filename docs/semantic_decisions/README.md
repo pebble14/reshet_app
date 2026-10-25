@@ -139,6 +139,7 @@
 | H202 클러스터 | CORE13 의미18개·비고11건·관계17건, 번역 구별 대안·어원 보류·의미 유사 관계 | `active` | 높음 | 2026-10-24 | [기록](h202_cluster_approved_content_slice.md) |
 | H210·H211 이름 클러스터 | 우바스·우파즈와 오빌·오피르 단일 의미·비고2, 금 환유·본문 대안 보존·관계 비생성·hold 없음 | `active` | 높음 | 2026-10-24 | [기록](h210_cluster_approved_content_slice.md) |
 | H212 바퀴 | 바퀴 단일 의미·비고 NULL 유지, 관계 비생성·hold 없음 | `active` | 높음 | 2026-10-25 | [기록](h212_cluster_approved_content_slice.md) |
+| H213 재촉·서두름과 좁음 | 의미2개·몰아붙임/מִן 구문 비고, 관계 비생성·hold 없음 | `active` | 높음 | 2026-10-25 | [기록](h213_cluster_approved_content_slice.md) |
 
 
 ## 열람 및 후속 판단 원칙

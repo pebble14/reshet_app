@@ -1,0 +1,44 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H213-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-25 H213 의미2개·몰아붙임/מִן 구문 보완 비고 및 DB·문서·Git·작업 브랜치 정리 사용자 승인; data/backups/approved_content_batch/h213_approval_20261025/00_user_approval.json",
+    "document_sha256": "18dc20e117b82b1f6508a99d7d90d6fc33d23d604d2f1e34848dd6d3318eb183"
+  },
+  "target": {
+    "expected_work_sha256": "c87e45ee26246359d862972705973c836856c327f3d29096360cb65750df6e5e",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0213_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "재촉하다, 서두르다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "재촉하다, 서두르다"
+        },
+        {
+          "seq": 2,
+          "meaning": "좁다"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0213_0000",
+      "before": null,
+      "after": "타인을 몰아붙이거나 재촉하는 뜻과 스스로 서두르는 뜻으로 쓰인다. 사 22:4에서는 위로하려고 애쓰거나 몰아붙이는 문맥이다. מִן과 결합하면 서둘러 떠나다·물러나다로 풀이되며, 렘 17:16은 이 구문으로 설명되기도 한다. 이 구절에는 뒤따르는 말의 모음 읽기를 달리하여 재앙을 재촉하지 않았다고 옮기는 해석도 있다. ‘물러나다’는 별도 의미로 분리하지 않고 이 구문과 문장 해석의 차이로 보존한다."
+    }
+  ],
+  "relation_creates": [],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}
