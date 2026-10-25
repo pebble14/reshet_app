@@ -1,0 +1,113 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H214-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-25 H214 저장·창고·에셀 클러스터 추가 어원 검토 후 의미3·비고3·가설 파생2 및 DB·문서·Git·브랜치 정리 사용자 승인; data/backups/approved_content_batch/h214_approval_20261025/00_user_approval.json",
+    "document_sha256": "87fd3e0b7b02a81d95d59825a22ce7bd58e252e94897f5a216e9c5eb6bd6a08a"
+  },
+  "target": {
+    "expected_work_sha256": "84d78b2f9a05377237653a06ff8a6839174a97561e94a5514e7ed4f490cc5c11",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0214_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "보물, 창고"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "창고(倉庫)"
+        },
+        {
+          "seq": 2,
+          "meaning": "재물(財物)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0686_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "쌓아두다, 저장하다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "쌓아 두다"
+        },
+        {
+          "seq": 2,
+          "meaning": "창고(倉庫)를 맡기다"
+        }
+      ]
+    },
+    {
+      "word_id": "H0687_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "에셀 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "에셀·에체르 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0214_0000",
+      "before": null,
+      "after": "금·은 같은 보물과 식량·기름·포도주 등 모아 둔 물자를 가리키며, 이를 보관하는 곳에도 쓰인다. 문맥에 따라 보물·비축물·곳간·보고·병기창 등으로 옮긴다. 자연현상을 두는 하나님의 창고나 여호와 경외를 보배에 견주는 비유에도 쓰인다. Strong은 H686에서의 파생을 제시하지만 Klein은 어원을 미확정으로 다룬다."
+    },
+    {
+      "word_id": "H0686_0000",
+      "before": null,
+      "after": "재물이나 물자를 모아 두는 말로, 수동형은 ‘쌓아 두어지다’라는 뜻이다. 암 3:10은 폭력·약탈을 쌓는다는 표현이며 그로 얻은 재물의 축적을 가리킨다는 해석도 있다. 느 13:13의 현행 마소라 본문은 H214를 바탕으로 한 ‘창고를 맡기다’ 용법으로 풀이한다. 이 절에는 ‘명령하다’ 계열 형태로 읽자는 본문비평 제안도 있다."
+    },
+    {
+      "word_id": "H0687_0000",
+      "before": null,
+      "after": "세일의 아들로 기록된 호리 족속의 족장. ‘에셀’은 성경 관용 표기, ‘에체르’는 원문 אצר의 자음 대응을 드러낸 근사 표기다. Strong과 Gesenius는 이름을 ‘보물’로 풀이하지만 BDB는 ‘언약’이라는 대안도 제시한다. 이름의 어원은 미확정이며, עזר 계열의 다른 ‘에셀’과 구별된다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0214_0000",
+      "word_id_2": "H0686_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 from H686 설명을 보존한다. Klein은 H214의 어원을 미확정으로 다루고 H686의 가능한 파생형으로 제시하므로 가설 파생 관계로 승인한다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; Klein Dictionary, אצר / אוֹצָר, Carta Jerusalem 1987; 2026-10-25 H214 클러스터 사용자 승인"
+    },
+    {
+      "word_id_1": "H0686_0000",
+      "word_id_2": "H0687_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 from H686; treasure;와 Gesenius의 보물 풀이를 보존한다. BDB의 언약 대안이 남아 있어 가설 파생 관계로 승인한다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; Gesenius Hebrew and Chaldee Lexicon; Brown-Driver-Briggs, אֵצֶר; 2026-10-25 H214 클러스터 사용자 승인"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}
