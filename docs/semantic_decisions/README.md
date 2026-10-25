@@ -141,7 +141,7 @@
 | H212 바퀴 | 바퀴 단일 의미·비고 NULL 유지, 관계 비생성·hold 없음 | `active` | 높음 | 2026-10-25 | [기록](h212_cluster_approved_content_slice.md) |
 | H213 재촉·서두름과 좁음 | 의미2개·몰아붙임/מִן 구문 비고, 관계 비생성·hold 없음 | `active` | 높음 | 2026-10-25 | [기록](h213_cluster_approved_content_slice.md) |
 | H214 저장·창고·에셀 클러스터 | CORE3 의미·비고, 가설 파생2·느13:13 본문비평 유보·hold 없음 | `active` | 높음 | 2026-10-25 | [기록](h214_cluster_approved_content_slice.md) |
-
+| H215 빛·불·들 및 관련 이름 클러스터 | CORE20 의미26개·비고19·관계20, 가문 소속·관용/원문 표기 병기·본문 불확실성 보존·hold 없음 | `active` | 높음 | 2026-10-25 | [기록](h215_cluster_approved_content_slice.md) |
 
 ## 열람 및 후속 판단 원칙
 

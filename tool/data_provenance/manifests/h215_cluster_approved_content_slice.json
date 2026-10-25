@@ -1,0 +1,760 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H215-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-25 H215 빛·불·들 이름군 CORE20 V3 의미·비고·관계20 및 DB·문서·Git·브랜치 정리 사용자 승인; data/backups/approved_content_batch/h215_approval_20261025/00_user_approval.json",
+    "document_sha256": "66b18eb63ee93d08783090a62dae4d5ede8fe7b253be32a3ecfad8e948ce6446"
+  },
+  "target": {
+    "expected_work_sha256": "2412a9ee7e51f86606b8452531e8a133ac16721f83ddb9284994e2b46659bbed",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0215_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "비추다/밝히다"
+        },
+        {
+          "seq": 2,
+          "meaning": "빛나다"
+        },
+        {
+          "seq": 3,
+          "meaning": "불태우다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "빛나다"
+        },
+        {
+          "seq": 2,
+          "meaning": "비추다"
+        },
+        {
+          "seq": 3,
+          "meaning": "불붙이다"
+        }
+      ]
+    },
+    {
+      "word_id": "H0217_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "불(길)"
+        },
+        {
+          "seq": 2,
+          "meaning": "동방/동쪽"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "불"
+        },
+        {
+          "seq": 2,
+          "meaning": "동쪽"
+        }
+      ]
+    },
+    {
+      "word_id": "H0218_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "우르 (인, 지)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "우르·울 (인, 지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0219_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "빛, 채소"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "빛"
+        },
+        {
+          "seq": 2,
+          "meaning": "풀"
+        }
+      ]
+    },
+    {
+      "word_id": "H0222_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "우리엘 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "우리엘·우리-엘 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0223_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "우리아/우리야"
+        },
+        {
+          "seq": 2,
+          "meaning": "뜻풀이: 여호와는 나의 빛/여호와는 나의 불꽃, 여호와의 빛/여호와의 불꽃"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "우리아·우리야·우리-야·우리-야후 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2971_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "야일"
+        },
+        {
+          "seq": 2,
+          "meaning": "뜻풀이: 그가 깨우치신다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "야일·야이르 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2972_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "야일 사람 Jairite"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "야일·야이르 가문(家門) 사람"
+        }
+      ]
+    },
+    {
+      "word_id": "G2383_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "야이로[그가 깨우치신다]"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "야이로·이아이로스·야이르 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "G3774_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "우리야"
+        },
+        {
+          "seq": 2,
+          "meaning": "[뜻풀이: 여호와는 나의 빛/여호와는 나의 불꽃, 여호와의 빛/여호와의 불꽃]"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "우리야·우리-야·우리-야후 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3974_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "빛, 발광체"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "빛나는 것"
+        },
+        {
+          "seq": 2,
+          "meaning": "빛"
+        }
+      ]
+    },
+    {
+      "word_id": "H7704_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "들, 밭, 전원, 토지, 땅"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "들"
+        },
+        {
+          "seq": 2,
+          "meaning": "밭"
+        }
+      ]
+    },
+    {
+      "word_id": "H7707_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "스데울 Shedeur"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "스데울·셰데우르 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H7708_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "싯딤 Siddim"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "싯딤 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H7709_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "들, 밭 field"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "밭"
+        }
+      ]
+    },
+    {
+      "word_id": "H8309_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "들, 밭 field"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "들"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0215_0000",
+      "before": null,
+      "after": "빛이 나거나 밝아지는 것과 빛을 비추어 밝히는 것을 함께 가리킨다. 날이 밝음, 눈이 밝아짐, 얼굴을 비추는 호의와 깨달음에도 쓰인다. 사 27:11과 말 1:10에서는 불을 붙이는 행위를 가리키므로 단순한 조명에만 한정하지 않는다."
+    },
+    {
+      "word_id": "H0216_0000",
+      "before": null,
+      "after": "낮과 새벽의 빛, 해·달·별과 번개가 내는 빛을 가리키며 얼굴의 밝음, 생명, 호의와 인도 등을 나타내는 비유에도 쓰인다. 사 18:4의 표현은 KJV에서 풀로 옮겨지지만 한국어 역본의 일광, LXX 절 문맥과 현행 원문 분류는 빛 해석을 지지한다."
+    },
+    {
+      "word_id": "H0217_0000",
+      "before": null,
+      "after": "주로 불이나 불꽃을 가리킨다. 사 24:15의 복수형은 빛이 떠오르는 동쪽으로 해석되지만 KJV는 불 속에서로, 그 여백은 골짜기로 옮긴다. 이 한 용례의 해석 차이를 보존한다."
+    },
+    {
+      "word_id": "H0218_0000",
+      "before": null,
+      "after": "갈대아 우르는 네 용례의 지명이고, 대상 11:35의 같은 표제어는 엘리발의 아버지로서 한국어 성경에서 울로 표기된다. Strong의 H217과 같다는 설명은 보존하되 지명의 실제 어원을 히브리어 불로 확정하지 않는다."
+    },
+    {
+      "word_id": "H0219_0000",
+      "before": null,
+      "after": "기본 의미는 빛의 밝음이며 형통과 기쁨의 비유에도 쓰인다. 식물을 가리키는 별도 용법도 있어 풀로 제시한다. 왕하 4:39에서는 먹을 풀을 구하는 문맥이고 사 26:19의 이슬 수식은 빛과 풀 해석이 갈린다. 특정 식물의 종이나 식용성을 어원만으로 확정하지 않는다."
+    },
+    {
+      "word_id": "H0222_0000",
+      "before": null,
+      "after": "우리엘은 한국어 성경의 관용 표기이며 우리-엘은 H217과 H410으로 설명되는 이름의 구성 경계를 보여 주는 분석 표기이다. Strong은 하나님의 불꽃으로, 참고 사전은 하나님은 나의 빛이라는 풀이도 제시한다. 이를 별도 meaning으로 늘리거나 특정 시대의 발음으로 확정하지 않는다."
+    },
+    {
+      "word_id": "H0223_0000",
+      "before": null,
+      "after": "우리아와 우리야는 같은 히브리어 이름의 한국어 성경 관용 표기이다. 우리-야와 우리-야후는 H217과 H3050의 구성을 보여 주는 분석 표기이며 긴 형태는 렘 26:20·21·23에 나온다. Strong의 야의 불꽃과 참고 자료의 여호와는 나의 빛이라는 풀이를 구분하며 뜻풀이를 별도 meaning으로 저장하지 않는다."
+    },
+    {
+      "word_id": "H0224_0000",
+      "before": null,
+      "after": "제사장이 하나님의 뜻을 묻는 데 사용하는 명칭이다. 출 28:30과 레 8:8은 흉패 안에 두는 것을 말하지만 재료·형태·작동 방식이나 실제 발광 여부를 확정하지 않는다. Strong은 H217의 복수형으로 빛들이라 풀이한다."
+    },
+    {
+      "word_id": "H2971_0000",
+      "before": null,
+      "after": "야일은 한국어 성경 관용 표기이고 야이르는 יָאִיר의 원문 기반 근사 표기이다. 같은 이름의 두 표기를 한 meaning에 병기한다. Strong은 H215에서 온 이름으로 밝히는 이라 풀이하며 G2383을 이 원천 이름에 연결한다. 대상 20:5의 יָעִיר는 H3265로 분류되어 이 항목의 아홉 출현에 합산하지 않는다. 표기는 특정 시대의 정확한 실제 발음이나 동명 인물들의 동일성을 확정하지 않는다."
+    },
+    {
+      "word_id": "H2972_0000",
+      "before": null,
+      "after": "야일·야이르(H2971)의 후손이나 그 가문에 속한 사람을 가리키는 소속형이다. 가문 사람이라는 풀이가 두 이름 표기에 공통으로 걸린다. Strong은 H2971에서 나온 부칭형으로 설명하고 야일의 후손이라는 뜻을 명시한다. 삼하 20:26에서는 이라를 수식한다. 어느 동명의 야일과 이어지는지, 구체적인 계보가 무엇인지는 본문만으로 확정하지 않는다. 여기서 가문은 후손·계통·소속의 풀이이며 특정한 역사적 가문 조직의 실재나 범위를 별도로 입증했다는 뜻은 아니다."
+    },
+    {
+      "word_id": "G2383_0000",
+      "before": null,
+      "after": "야이로는 한국어 성경 관용 표기이고, 이아이로스는 헬라어 기록형의 발음에 대한 근사 표기이며, 야이르는 Strong이 H2971에 연결한 히브리어 원천 이름의 표기이다. 세 표기는 한 인명의 식별·원문 비교를 위한 것으로 별도 의미를 세 개로 나누지 않는다. 신약 두 용례의 표면형은 Ἰάϊρος이며 Strong 표제는 Ἰάειρος, 발음 안내는 ee-ah'-i-ros이다. 팔레스타인 자료에서 αει가 αϊ의 [ai] 계열 음가를 드러내는 사례와 구별 부호가 있는 αϊ를 고려하면 이아에이로스보다 이아이로스가 더 적절한 근사라는 판단을 뒷받침할 수 있다. 이 근사는 정확한 1세기 갈릴리 개인 발음의 직접 증거가 아니다. 그리스어형을 그리스어 구사 외지인만의 편의상 명칭으로 한정할 근거도 없으며, 셈어·그리스어 이중언어 환경에서 사용되었을 가능성이 있다. 두 용례는 서술자의 이름 기록이므로 가족과 이웃이 실제로 어느 언어형으로 불렀는지 확정하지 않는다."
+    },
+    {
+      "word_id": "G3774_0000",
+      "before": null,
+      "after": "우리야는 한국어 성경 관용 표기이다. 우리-야와 우리-야후는 H223에 확인되는 원천 히브리어 이름의 단형과 장형의 구성 경계를 나타내며 그리스어 내부의 합성 분석이 아니다. Οὐρίας와 그 음역은 해당 표현·음역 필드에 보존한다. 우리-야후는 원천 이름군의 장형이며 마 1:6이나 그 절의 헷 사람 본인의 히브리어 이름에서 직접 확인된 장형이라는 뜻은 아니다."
+    },
+    {
+      "word_id": "H3974_0000",
+      "before": null,
+      "after": "빛을 내거나 비추는 대상과 빛 자체 또는 밝음을 함께 가리킨다. 해·달·하늘의 빛나는 것과 성막의 조명, 얼굴과 눈의 밝음에 쓰인다. H216의 빛과 의미 범위가 겹치며 물체와 추상의 배타적 두 범주로 구분하지 않는다. 빛나는 것은 자체 발광 여부를 현대 과학적으로 한정하는 표현이 아니다."
+    },
+    {
+      "word_id": "H3975_0000",
+      "before": null,
+      "after": "Strong과 BDB는 빛이 드는 개구부나 틈이라는 기본 풀이를 제시하고 H215의 빛 계열과 연결한다. 사 11:8에서는 독사의 굴이나 그 입구의 문맥이다. 단어 전체의 뜻을 독사 굴에만 한정하지 않는다. 후대 미슈나의 동족형 מָאוֹר가 채광구에 쓰이는 점은 참고하되 이 성경 어휘와 시대·형태가 동일하다고 단정하지 않는다. BDB에 기록된 눈동자 대안과 정확한 어원은 미확정으로 남긴다."
+    },
+    {
+      "word_id": "H7704_0000",
+      "before": null,
+      "after": "도시·집 밖의 열린 땅, 들짐승의 서식 공간과 넓은 지방을 가리키며, 경작하거나 소유·매매하는 밭도 가리킨다. 두 한국어 표현의 경계는 문맥에 따라 겹친다. Strong의 שָׂדַי형과 שַׁדַּי(H7706)는 구별하며 참고 사전의 H7706 파생 설명을 그대로 확정하지 않는다."
+    },
+    {
+      "word_id": "H7707_0000",
+      "before": null,
+      "after": "민수기의 엘리술의 아버지 이름이다. 스데울은 한국어 성경 관용 표기이고 셰데우르는 שְׁדֵיאוּר의 원문 기반 교재식 근사 표기이다. 특정 시대의 실제 음가를 확정한 표기는 아니다. Strong은 H7704와 같은 어근 및 H217의 구성으로 빛을 펼치는 이라 풀이하지만, 참고 사전은 H7699를 언급해 첫 요소의 어원 근거가 충돌한다. 첫 요소의 정확한 어원과 합성 경계를 확정하지 않으므로 분석적 붙임표는 넣지 않는다."
+    },
+    {
+      "word_id": "H7708_0000",
+      "before": null,
+      "after": "창 14장의 골짜기 이름이다. Strong은 H7704와 같은 어근의 복수형으로 평평한 곳들이라 풀이하고, 참고 사전은 H7702를 언급하므로 어근 연결은 가설로 구분한다. 정확한 지리 범위는 별도로 확정하지 않는다."
+    },
+    {
+      "word_id": "H7709_0000",
+      "before": null,
+      "after": "기본 의미는 경작하는 들이나 밭이다. 사 37:27은 번역에서 시든 곡식의 문맥으로 이해되지만, 왕하 19:26의 שְׁדֵפָה(H7711)와의 관계 및 본문 자체가 문제된다. 이 한 용례에서 시든 곡식이 이 어휘의 독립 의미로 확립되었다고 판단하지 않는다. Strong의 blasted 용법은 문맥·본문 해석 정보로 보존한다. 렘 31:40에서는 Qere 형태이며 같은 자리의 Ketiv H8309도 별도로 보존한다."
+    },
+    {
+      "word_id": "H8309_0000",
+      "before": null,
+      "after": "Strong은 열린 땅을 뜻하는 common으로 정의하고 field 용법을 제시한다. 렘 31:40의 Ketiv שרמות에 대응하며 같은 자리의 Qere는 שדמות(H7709)이다. 어휘 자체를 경작된 밭으로만 한정하지 않는다. Strong의 아마 철자 오류라는 설명은 가능성으로 보존하며 공유 소유 제도나 확정 오기로 단정하지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0215_0000",
+      "word_id_2": "H0216_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 source 파생 표현과 실제 표제 형태·용례를 함께 근거로 함.",
+      "source": "RESHET-EC-H215-CLUSTER-H0215-H0216"
+    },
+    {
+      "word_id_1": "H0215_0000",
+      "word_id_2": "H3974_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 source 파생 표현과 실제 표제 형태·용례를 함께 근거로 함.",
+      "source": "RESHET-EC-H215-CLUSTER-H0215-H3974"
+    },
+    {
+      "word_id_1": "H0215_0000",
+      "word_id_2": "H3975_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 source 파생 표현과 실제 표제 형태·용례를 함께 근거로 함.",
+      "source": "RESHET-EC-H215-CLUSTER-H0215-H3975"
+    },
+    {
+      "word_id_1": "H0216_0000",
+      "word_id_2": "H0219_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 source 파생 표현과 실제 표제 형태·용례를 함께 근거로 함.",
+      "source": "RESHET-EC-H215-CLUSTER-H0216-H0219"
+    },
+    {
+      "word_id_1": "H0217_0000",
+      "word_id_2": "H0221_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 source 파생 표현과 실제 표제 형태·용례를 함께 근거로 함.",
+      "source": "RESHET-EC-H215-CLUSTER-H0217-H0221"
+    },
+    {
+      "word_id_1": "H0217_0000",
+      "word_id_2": "H0224_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시적 from·feminine of·plural of·patronymically from 및 실제 형태·용례를 함께 근거로 함. H224는 특수 명칭으로 어휘화된 복수형이므로 단순 일반 복수 굴절만을 뜻하지 않음.",
+      "source": "RESHET-EC-H215-CLUSTER-H0217-H0224"
+    },
+    {
+      "word_id_1": "H2971_0000",
+      "word_id_2": "H2972_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시된 source 파생 표현과 실제 표제 형태·용례를 함께 근거로 함.",
+      "source": "RESHET-EC-H215-CLUSTER-H2971-H2972"
+    },
+    {
+      "word_id_1": "H0217_0000",
+      "word_id_2": "H0222_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "원문 entry의 두 구성 요소와 이름 형태를 근거로 함. 이름 문장 전체의 번역·주어 관계까지 확정하는 것은 아님.",
+      "source": "RESHET-EC-H215-CLUSTER-H0217-H0222"
+    },
+    {
+      "word_id_1": "H0222_0000",
+      "word_id_2": "H0410_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "원문 entry의 두 구성 요소와 이름 형태를 근거로 함. 이름 문장 전체의 번역·주어 관계까지 확정하는 것은 아님.",
+      "source": "RESHET-EC-H215-CLUSTER-H0410-H0222"
+    },
+    {
+      "word_id_1": "H0217_0000",
+      "word_id_2": "H7707_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "원문 entry의 두 구성 요소와 이름 형태를 근거로 함. 이름 문장 전체의 번역·주어 관계까지 확정하는 것은 아님.",
+      "source": "RESHET-EC-H215-CLUSTER-H0217-H7707"
+    },
+    {
+      "word_id_1": "H7704_0000",
+      "word_id_2": "H7707_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from the same as H7704는 field라는 명사에서의 직접 파생이 아니라 unused spreading root 연결이다. 첫 요소와 참고 사전 H7699가 충돌하므로 가설·무방향으로 한정한다.",
+      "source": "RESHET-EC-H215-CLUSTER-H7704-H7707"
+    },
+    {
+      "word_id_1": "H7704_0000",
+      "word_id_2": "H7708_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "plural from the same as H7704; flats라는 연결은 유지하되 참고 사전 H7702와의 어근 분석 차이 때문에 가설로 제안한다.",
+      "source": "RESHET-EC-H215-CLUSTER-H7704-H7708"
+    },
+    {
+      "word_id_1": "H7704_0000",
+      "word_id_2": "H7709_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "apparently from을 그대로 보존한다. 일반 밭 용례 5건은 의미 연결을 지지하지만 형태 및 사37:27의 본문 문제 때문에 확정 관계로 승격하지 않는다.",
+      "source": "RESHET-EC-H215-CLUSTER-H7704-H7709"
+    },
+    {
+      "word_id_1": "H7709_0000",
+      "word_id_2": "H8309_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "같은 자리에 놓인 Ketiv/Qere 대응은 직접 확인된 본문 사실이다. 그러나 서로 다른 두 표제어를 동일 어휘의 형태 이형으로 확정하는 판단에는 Strong의 probably orthographical error라는 불확실성이 남는다. 본문 variant와 lexical variant의 확실성을 구별해 morphological/variant/hypothesized/undirected로 낮춘다.",
+      "source": "RESHET-EC-H215-CLUSTER-H7709-H8309"
+    }
+  ],
+  "relation_replacements": [
+    {
+      "relation_id": 3225,
+      "word_id_1": "H0215_0000",
+      "word_id_2": "H0217_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "명시된 source 파생 표현과 실제 표제 형태·용례를 함께 근거로 함.",
+        "source": "RESHET-EC-H215-CLUSTER-H0215-H0217"
+      }
+    },
+    {
+      "relation_id": 3738,
+      "word_id_1": "H0215_0000",
+      "word_id_2": "H2971_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "명시된 source 파생 표현과 실제 표제 형태·용례를 함께 근거로 함.",
+        "source": "RESHET-EC-H215-CLUSTER-H0215-H2971"
+      }
+    },
+    {
+      "relation_id": 3226,
+      "word_id_1": "H0217_0000",
+      "word_id_2": "H0223_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "원문 entry의 두 구성 요소와 이름 형태를 근거로 함. 이름 문장 전체의 번역·주어 관계까지 확정하는 것은 아님.",
+        "source": "RESHET-EC-H215-CLUSTER-H0217-H0223"
+      }
+    },
+    {
+      "relation_id": 6366,
+      "word_id_1": "H0223_0000",
+      "word_id_2": "H3050_0000",
+      "before": {
+        "category_code": null,
+        "relation_type": null,
+        "status_code": "inferred",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "",
+        "source": "WORD_TABLE.관련2"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "원문 entry의 두 구성 요소와 이름 형태를 근거로 함. 이름 문장 전체의 번역·주어 관계까지 확정하는 것은 아님.",
+        "source": "RESHET-EC-H215-CLUSTER-H3050-H0223"
+      }
+    },
+    {
+      "relation_id": 3739,
+      "word_id_1": "G2383_0000",
+      "word_id_2": "H2971_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "transliteration",
+        "relation_type": "direct_transliteration",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "Greek canonical strongs_derivation의 Hebrew-origin 명시 참조와 동일 이름 용례를 근거로 함. 다른 언어의 전승 어미까지 동일 철자라는 뜻은 아님.",
+        "source": "RESHET-EC-H215-CLUSTER-H2971-G2383"
+      }
+    },
+    {
+      "relation_id": 3227,
+      "word_id_1": "G3774_0000",
+      "word_id_2": "H0223_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "transliteration",
+        "relation_type": "direct_transliteration",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "Greek canonical strongs_derivation의 Hebrew-origin 명시 참조와 동일 이름 용례를 근거로 함. 다른 언어의 전승 어미까지 동일 철자라는 뜻은 아님.",
+        "source": "RESHET-EC-H215-CLUSTER-H0223-G3774"
+      }
+    }
+  ],
+  "meaning_approvals": [
+    {
+      "word_id": "H0216_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "빛"
+        }
+      ]
+    },
+    {
+      "word_id": "H0221_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "우리 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0224_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "우림"
+        }
+      ]
+    },
+    {
+      "word_id": "H3975_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "빛 구멍"
+        }
+      ]
+    }
+  ],
+  "supersedes": []
+}
