@@ -1,0 +1,127 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H229-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-26 H229 V1 추천안; DB·문서·Git·이번 작업 branch 로컬·원격 정리 사용자 승인; data/backups/approved_content_batch/h229_approval_20261026/00_user_approval.json",
+    "document_sha256": "0d252ee6f3a3ef3e337c5687f382aab2679646083edf86a4786f26bdab95f78b"
+  },
+  "target": {
+    "expected_work_sha256": "ca96cc7afa291895fb594c3df8d72cae2ae97f2587ce609b5f05ee748b4117d4",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0229_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "에스배 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "에스배·에즈바이 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0231_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "히솝(풀)[시리아오레가노]"
+        },
+        {
+          "seq": 2,
+          "meaning": "우슬초"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "히솝풀·우슬초"
+        }
+      ]
+    },
+    {
+      "word_id": "G5301_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "히솝(풀)[시리아오레가노]"
+        },
+        {
+          "seq": 2,
+          "meaning": "우슬초"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "히솝풀·우슬초"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0229_0000",
+      "before": null,
+      "after": "대상 11:37에서 나아래의 아버지인 인명을 가리킨다. 에스배는 한국어 성경의 관용 표기이고 에즈바이는 אֶזְבַּי의 교재식 읽기를 따른 한글 근사다. Strong은 H231에서 유래했을 가능성과 ‘히솝과 같은’이라는 풀이를 제시하지만, 참고사전은 ‘빛나는, 아름다운’으로 풀이한다. 이름의 어원은 확정하지 않으며 이 풀이를 별도 의미나 인물의 성격으로 보지 않는다. 삼하 23:35의 평행 명단과의 이름 대응은 미확정이다."
+    },
+    {
+      "word_id": "H0231_0000",
+      "before": null,
+      "after": "성경에서 우슬초로 옮긴 히솝류 식물이다. 출 12:22와 레 14장·민 19장에서는 피나 물을 묻혀 뿌리거나 정결 의식의 재료로 쓰이고, 왕상 4:33에서는 담에 자라는 작은 식물로, 시 51:7에서는 정결을 구하는 비유에 쓰인다. 시리아오레가노(Origanum syriacum)가 대표적인 식별 후보이나 정확한 현대 식물 종은 확정하지 않는다. 한국의 우슬(牛膝), 곧 쇠무릎(Achyranthes japonica)과 이름만으로 동일시하지 않는다. Strong은 외래 기원일 가능성을 제시하며 정확한 기원과 차용 경로는 미확정이다."
+    },
+    {
+      "word_id": "G5301_0000",
+      "before": null,
+      "after": "히브리어 אֵזוֹב(H231)에 대응하는 성경의 히솝류 식물명이다. 요 19:29에서는 신 포도주를 적신 해면을 받치는 줄기나 가지로, 히 9:19에서는 피를 뿌리는 의식의 재료로 쓰인다. 시리아오레가노(Origanum syriacum)가 대표적인 식별 후보이나 각 본문의 정확한 식물 종은 미확정이다. Strong의 외래 기원 설명과 히브리어 참조는 보존하되 직접 차용의 언어·경로·방향은 확정하지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0229_0000",
+      "word_id_2": "H0231_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong은 H229를 ‘probably from H231; hyssop-like’로 설명한다. 확정된 파생이 아닌 이름 어원 가설이며, 참고사전의 ‘빛나는, 아름다운’ 풀이와의 차이를 보존한다. 인물의 성격이나 식물과의 실제 관련성을 단정하지 않는다.",
+      "source": "RESHET-EC-H229-CLUSTER-H231-H229"
+    }
+  ],
+  "relation_replacements": [
+    {
+      "relation_id": 3132,
+      "word_id_1": "G5301_0000",
+      "word_id_2": "H0231_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "translation",
+        "relation_type": "literal_translation",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "אֵזוֹב에 대한 ὕσσωπος의 어휘 번역 대응이다. Strong의 H231 참조, BDB의 LXX 대응 설명 및 확보 LXX의 해당 구약 10절을 수동 대조한 문맥을 근거로 한다. LXX는 provenance·license 미검증 human reference이며 자동 정렬 자료가 아니다. 직접 차용 경로나 모든 용례의 현대 식물 종 동일성을 확정하지 않는다.",
+        "source": "RESHET-EC-H229-CLUSTER-H231-G5301"
+      }
+    }
+  ],
+  "meaning_approvals": [],
+  "supersedes": []
+}
