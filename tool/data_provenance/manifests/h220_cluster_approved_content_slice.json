@@ -1,0 +1,508 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H220-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-26 H220 CORE17 R1+R2 및 H739 아리엘 해석 비고 보존; DB·문서·Git·브랜치 정리 사용자 승인; data/backups/approved_content_batch/h220_approval_20261026/00_user_approval.json",
+    "document_sha256": "e03110fef21fc6cbf7e18bdfeaf88a1ed78ec535e551ab678a8f1b96dd8a060b"
+  },
+  "target": {
+    "expected_work_sha256": "01e83183f7160df61b61f52ca2a7f4077450e4ec7afd4ceb07f243f2eda72d6a",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0220_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "마굿간, 우리"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "우리"
+        }
+      ]
+    },
+    {
+      "word_id": "H0723_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "외양간"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "우리"
+        }
+      ]
+    },
+    {
+      "word_id": "H0717_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "뜯다, 따다, 모으다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "거두다"
+        }
+      ]
+    },
+    {
+      "word_id": "H0727_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "상자, 궤"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "궤(櫃)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0738_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "사자(獅子, lion)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "사자(獅子)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0739_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아리엘, 용사"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "용사(勇士)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0744_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "사자(獅子, lion)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "사자(獅子)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0745_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아리에 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아리에·아르예 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3833_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "사자, 암사자"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "사자(獅子)"
+        },
+        {
+          "seq": 2,
+          "meaning": "암사자"
+        }
+      ]
+    },
+    {
+      "word_id": "H0691_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "용사"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "용사(勇士)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0740_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아리엘 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아리엘 (인, 지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0741_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아리엘"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "제단(祭壇)의 화덕"
+        }
+      ]
+    },
+    {
+      "word_id": "H2025_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "제단의 노"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "제단(祭壇)의 화덕"
+        }
+      ]
+    },
+    {
+      "word_id": "H1034_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "벧 르바옷 (지)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "벧르바옷·베트-레바오트 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3822_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "르바옷 Lebaoth"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "르바옷·레바오트 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0692_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아렐리 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아렐리·아르엘리 (인)"
+        },
+        {
+          "seq": 2,
+          "meaning": "아렐리·아르엘리 가문(家門) 사람"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0220_0000",
+      "before": null,
+      "after": "가축을 가두어 두는 곳을 뜻한다. 유일한 용례인 대하 32:28에서는 양 떼의 우리를 가리키지만, 말이나 양 한 종류만을 어휘의 뜻으로 한정하지 않는다. Strong은 H723과 자음 순서가 바뀐 형태로 설명한다. BDB는 두 형태를 함께 다루며 이 절의 끝부분에 대한 다른 읽기도 제시하지만, 현재 본문과 한국어 번역이 보여 주는 우리라는 대표 의미를 바꾸지는 않는다."
+    },
+    {
+      "word_id": "H0723_0000",
+      "before": null,
+      "after": "가축을 두는 우리나 축사를 가리킨다. 왕상 5:6(한국어·KJV 4:26)과 대하 9:25에서는 말의 외양간, 대하 32:28에서는 온갖 가축을 두는 곳이다. BDB는 구유·먹이 자리로 풀이하며 말의 수를 셀 때의 환유 가능성도 논한다. Strong은 H717에서 먹이는 뜻으로 유래했다고 설명하지만, H717의 실제 두 용례에 먹이다라는 뜻이 직접 확인되지는 않는다. H220과 형태·의미가 대응한다."
+    },
+    {
+      "word_id": "H0717_0000",
+      "before": null,
+      "after": "열매나 식물에서 얻는 것을 따거나 모아 거두는 동사다. 시 80:13(한국어·KJV 80:12)에서는 포도나무에서 따 가는 것, 아 5:1에서는 몰약을 거두는 데 쓰인다. 뜯다·따다·모으다는 이 두 용례를 풀어 쓴 표현이며 별도 의미로 나누지 않는다. Strong이 H723·H727·H738의 어원 설명에 덧붙인 먹임·모음·폭력의 뜻을 이 동사의 실제 출현 의미로 추가하지 않는다."
+    },
+    {
+      "word_id": "H0727_0000",
+      "before": null,
+      "after": "물건을 담아 두는 상자를 가리킨다. 202개 canonical 토큰 중 195개는 언약궤 문맥, 6개는 헌금을 담는 궤, 창 50:26의 1개는 시신을 넣는 관이다. 용도가 다른 같은 상자 의미로 정리하며 언약·돈·장례 기능을 별도 의미로 늘리지 않는다. 삼상 14:18의 두 토큰은 현재 히브리 본문에서 궤이나 확보된 LXX는 에봇을 말한다. 이는 다른 본문 읽기이며 H727에 에봇 뜻을 추가할 근거가 아니다. Strong의 H717 모음에서 유래했다는 설명은 확정된 역사 어원과 구별한다."
+    },
+    {
+      "word_id": "H0738_0000",
+      "before": null,
+      "after": "사자를 가리키며 실제 동물, 사자 형상, 인물·집단·하나님의 행동을 사자에 빗댄 표현에 쓰인다. 새끼·젊음·암수는 다른 단어나 문맥이 보완하며 모두를 별도 의미로 만들지 않는다. 삼하 23:20과 애 3:10의 Ketiv/Qere가 각각 같은 Strong의 두 토큰으로 보존되어 총 81개이며 non-Ketiv는 79개다. 사 21:8에는 사자와 파수꾼을 둘러싼 본문 읽기 차이가 있다. Strong의 usage에 있는 pierce (from the margin)는 본문 이형·난외 읽기와 관련되므로 찌르다라는 독립 의미를 추가하지 않는다. 관련 시 22:17(한국어 22:16)의 OSHB 원시 lemma는 k/3738 a이므로 이번 H738의 81토큰에 합산하거나 자동 재배정하지 않는다. H717의 폭력에서 유래했다는 설명은 실제 어원 확정과 구별한다."
+    },
+    {
+      "word_id": "H0690_0000",
+      "before": null,
+      "after": "대상 7:38에 나오는 예델의 아들 이름이다. 한국어 성경 관용명과 채택한 교재식 근사가 아라로 같아 한 번만 적는다. Strong은 probably for H738이라 하여 사자와 연결하고 로컬 사전은 강력한이라는 풀이를 추정하지만, 어느 설명도 실제 인물의 성격이나 확정된 이름 뜻으로 삼지 않는다."
+    },
+    {
+      "word_id": "H0739_0000",
+      "before": null,
+      "after": "사자처럼 용맹한 전사를 가리키는 것으로 풀이된다. 삼하 23:20과 대상 11:22의 같은 사건을 전하는 두 병행 기사에만 나온다. Strong은 사자(H738)와 엘(H410)의 결합으로 설명한다. 히브리어 본문에는 아들들이라는 단어가 직접 없지만, OSHB는 고유명사로 분석하고 한국어 번역들과 확보 LXX 사무엘 본문은 모압 사람 아리엘의 아들 둘로 읽는다. 인명 아리엘은 유력한 경쟁 해석이다. 제단의 화덕이라는 대안도 제기되지만, 전투 문맥에서는 용사라는 풀이를 대표 의미로 채택한다."
+    },
+    {
+      "word_id": "H0744_0000",
+      "before": null,
+      "after": "히브리어 H738과 대응하는 아람어 사자 명사다. 단 6장에서는 사자굴의 실제 사자들 9토큰, 단 7:4에서는 환상의 짐승을 사자에 비유한 1토큰으로 쓰인다. 단 6장의 한국어 절 번호는 source-native 번호보다 하나 작아 별도로 수동 대조했다. 두 언어의 대응은 직접 차용 방향을 확정한다는 뜻이 아니다."
+    },
+    {
+      "word_id": "H0745_0000",
+      "before": null,
+      "after": "왕하 15:25의 이름이다. 아리에는 한국어 성경 관용 표기, 아르예는 등록된 אַרְיֵה를 교재식으로 읽은 한글 근사다. 르의 모음은 한글 자음군 근사를 위한 것이며 셰와가 언제나 으로 발음된다는 규칙을 뜻하지 않는다. Strong은 H738 사자와 같은 말로 설명한다. 본문의 관사가 붙은 형태와 인물 식별에는 BDB가 지적한 본문상 어려움이 있으므로 구체적인 직책·명명 동기까지 확정하지 않는다."
+    },
+    {
+      "word_id": "H3833_0000",
+      "before": null,
+      "after": "H3833은 לָבִיא, 겔 19:2의 לְבִיָּא, 관련 복수형들을 한 번호로 묶는다. לְבִיָּא는 여성 단수 명사이며 어미가 새끼를 기르는 문맥에서도 암사자가 분명하다. 반면 기본형 לָבִיא는 BDB가 사자로 풀이하고 여성 암사자 용법의 가능성을 제시하면서도 확실하지 않다고 밝힌다. OSHB는 기본형 11토큰을 공성 단수로 분석한다. 나 2:13(한국어 2:12)의 복수형은 가족과 먹이 문맥에서 암사자들로 이해되지만, 여성 복수형 어미만으로 동물의 실제 성별을 언제나 확정할 수는 없다. 한국어의 다수 암사자 번역은 모두 여성형 활용이기 때문이 아니라 이 어휘의 전통적 해석과 시의 병행 표현을 반영한다. 모든 용례를 암컷으로 한정하지 않는다. Strong의 원래 암사자라는 설명과 BDB의 유보는 자료 간 차이로 보존한다."
+    },
+    {
+      "word_id": "H0691_0000",
+      "before": null,
+      "after": "사 33:7의 אֶרְאֶלָּם을 용맹한 이들의 집합으로 읽는 전통적인 대표 풀이이다. Strong과 확보된 한국어·KJV 자료는 용사로 옮기지만, BDB는 형태와 뜻을 불확실하게 보고 사절·지명 관련 독법 등 여러 분석을 소개한다. 확보된 LXX도 두려움을 말하는 다른 문장을 전한다. 용사를 현재 대표 의미로 제안하되, 유일한 용례의 정확한 형태·의미 해석은 미해결로 남긴다. Strong의 H739 probably for도 확정 파생으로 바꾸지 않는다."
+    },
+    {
+      "word_id": "H0740_0000",
+      "before": null,
+      "after": "스 8:16에서는 사람 이름, 사 29:1·2·7에서는 예루살렘의 별칭이다. 관용명과 교재식 근사가 아리엘로 같아 한 번만 적는다. 사 29:2 후반은 이름과 제단의 화덕을 겹쳐 읽는 말놀이 가능성이 있어 그 토큰의 정확한 이름·일반명사 배정은 미해결이다. 사자와 엘의 결합 또는 제단 화덕과 관련된 설명을 이름의 확정된 어원으로 단정하지 않으며, 이를 이유로 별도의 일반명사 meaning을 추가하지 않는다. 아리-엘 같은 분석적 붙임표는 이번에는 meaning에 넣지 않고 경쟁 분석과 함께 비고에서 다룬다."
+    },
+    {
+      "word_id": "H0741_0000",
+      "before": null,
+      "after": "겔 43:15-16에서 제물을 태우는 제단 상부의 연소 부분을 가리킨다. 제단 전체나 따로 옮기는 화로보다는 제단에 속한 화덕으로 풀이한다. 확보 새번역 자료의 제단 화덕이라는 표현과 BDB의 altar-hearth 풀이가 이를 뒷받침한다. H2025와 같은 제단 상부를 설명하므로 같은 한국어 의미를 사용하되 두 형태의 정확한 어원 관계는 확정하지 않는다. Strong 표제와 Ketiv/Qere 자료는 보존하며 아리엘이라는 사람 이름으로 분류하지 않는다. 현재 canonical profile의 3토큰에는 43:16의 Ketiv와 Qere가 함께 포함되어 독립적인 세 본문 자리가 아니다."
+    },
+    {
+      "word_id": "H2025_0000",
+      "before": null,
+      "after": "유일한 canonical 용례인 겔 43:15에서 높이가 네 규빗인 제단의 상부 연소 구조를 가리킨다. 이어지는 H741은 이 상부에서 솟는 뿔과 12규빗 정방형의 연소 면을 설명한다. Strong은 산(H2022)과 엘(H410)의 결합을 하나님의 산으로 풀이하지만, 이를 실제 산을 가리키는 독립 meaning으로 추가하지 않는다. BDB는 H741로 연결하고 NAS 사전은 다른 읽기로 설명한다. 따라서 두 어휘를 모두 제단의 화덕으로 추천하되, H2025는 몸체이고 H741은 표면이라는 배타적 어휘 차이나 정확한 철자 변화 과정이 확정되었다고 말하지 않는다. H740의 아리엘은 다른 용례의 고유명사로 기능한다."
+    },
+    {
+      "word_id": "H1034_0000",
+      "before": null,
+      "after": "수 19:6의 시므온 지파 성읍이다. 벧르바옷은 한국어 성경 관용 표기이며 베트-레바오트는 בֵּית와 לְבָאוֹת의 교재식 읽기 및 합성 경계를 드러낸 분석 표기다. Strong은 집(H1004)과 H3833의 복수형을 결합하여 암사자들의 집으로 풀이한다. H3822 르바옷과 같은 곳으로 보는 설명은 유력하지만 정확한 위치와 이름의 장단형 관계를 확정하지 않는다."
+    },
+    {
+      "word_id": "H3822_0000",
+      "before": null,
+      "after": "수 15:32의 유다 남부 성읍 이름이다. 르바옷은 한국어 성경 관용명, 레바오트는 등록된 לְבָאוֹת의 교재식 한글 근사다. Strong은 H3833의 여성 복수형인 암사자들에서 온 지명으로 설명한다. 수 19:6의 벧르바옷(H1034)과 같은 곳으로 보는 설명을 보존하되 실제 위치와 장단형의 역사적 방향은 미확정이다. 확보 개역개정·개역한글 자료는 르바옷을 15:31 끝에 배치하므로 15:32의 자동 marker 부재를 원문 누락으로 해석하지 않는다."
+    },
+    {
+      "word_id": "H0692_0000",
+      "before": null,
+      "after": "창 46:16과 민 26:17의 첫 형태는 갓의 아들 이름이며, 민 26:17의 관사가 붙은 הָאַרְאֵלִי는 그 가문에 속한 사람들을 집합적으로 나타내는 소속형이다. 아렐리는 관용명, 아르엘리는 등록된 אַרְאֵלִי의 교재식 한글 근사이며 같은 이름의 표기를 가운데점으로 병기한다. 가문 사람은 두 표기에 공통으로 걸린다. 민 26:17의 가족·가문 명사 H4940과 이 소속형의 기능은 구별한다. Strong의 H691에서 유래한 영웅적이라는 이름 풀이는 실제 인물의 성격을 확정하지 않으며 어원 관계는 가설로 제한한다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0220_0000",
+      "word_id_2": "H0723_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 by transposition for, אורה/ארוה의 자음 순서 차이와 실제 가축 수용 장소 의미가 함께 대응한다. 역사적인 변화 방향은 확정하지 않는다.",
+      "source": "RESHET-EC-H220-CLUSTER-H0220-H0723"
+    },
+    {
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H2025_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "H2022와 같은 합성어 가설의 두 번째 구성 요소이다. CONTEXT H410의 일반 meaning 승인·수정과는 별개다.",
+      "source": "RESHET-EC-H220-CLUSTER-H0410-H2025"
+    },
+    {
+      "word_id_1": "H0691_0000",
+      "word_id_2": "H0692_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 from과 형태·이름/소속형 분석이 연결을 지지하지만 H691의 불명확한 형태·뜻 및 비교 사전의 uncertain derivation 때문에 가설로 제한한다.",
+      "source": "RESHET-EC-H220-CLUSTER-H0691-H0692"
+    },
+    {
+      "word_id_1": "H0738_0000",
+      "word_id_2": "H0744_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "같은 אַרְיֵה/אֲרִי 어휘 기반의 히브리어·아람어 대응을 Strong·BDB의 형태와 양 언어 실제 용례로 확인했다. H717의 특정 동사 어원이나 직접 차용 방향을 승인하는 관계가 아니다.",
+      "source": "RESHET-EC-H220-CLUSTER-H0738-H0744"
+    },
+    {
+      "word_id_1": "H0738_0000",
+      "word_id_2": "H0745_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "the same as H738; lion과 등록된 동일 형태의 고유명사 용법을 연결한다. 실제 명명 동기와 인물의 용맹함을 확정하지 않는다.",
+      "source": "RESHET-EC-H220-CLUSTER-H0738-H0745"
+    },
+    {
+      "word_id_1": "H0738_0000",
+      "word_id_2": "H3833_0000",
+      "category_code": "semantic",
+      "relation_type": "similar",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "두 어휘의 전체 용례에서 사자라는 의미가 겹친다. H3833의 암사자 특정 용법을 지우지 않으며 compare를 어원 파생·공통 어근으로 승격하지 않는다.",
+      "source": "RESHET-EC-H220-CLUSTER-H0738-H3833"
+    },
+    {
+      "word_id_1": "H0741_0000",
+      "word_id_2": "H2025_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 more probably an orthographical variation과 같은 겔43:15–16 문맥을 근거로 한 후보이다. 대안 어원과 지시 부분의 차이를 보존하고 변이 방향을 확정하지 않는다.",
+      "source": "RESHET-EC-H220-CLUSTER-H0741-H2025"
+    },
+    {
+      "word_id_1": "H1004_0000",
+      "word_id_2": "H1034_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from H1004 and the plural of H3833 및 실제 בית לבאות 구성을 확인했다. H1004의 독립 meaning 승인은 포함하지 않는다.",
+      "source": "RESHET-EC-H220-CLUSTER-H1004-H1034"
+    },
+    {
+      "word_id_1": "H1034_0000",
+      "word_id_2": "H3822_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "같은 남부 지명 목록·공통 이름 요소와 로컬 사전의 동일시가 장단형 가능성을 지지한다. compare/See also만으로 확정하지 않고 위치·동일성·방향은 미확정으로 남긴다.",
+      "source": "RESHET-EC-H220-CLUSTER-H1034-H3822"
+    },
+    {
+      "word_id_1": "H1034_0000",
+      "word_id_2": "H3833_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "H3833의 여성 복수형이 בית와 결합한 지명의 구성 요소다.",
+      "source": "RESHET-EC-H220-CLUSTER-H1034-H3833"
+    },
+    {
+      "word_id_1": "H2022_0000",
+      "word_id_2": "H2025_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 하르+엘 분석을 보존하되 H741과의 대안 형태 분석·제단 전문 용어의 어원 불확실성을 반영한다. 산이라는 독립 meaning을 H2025에 추가하지 않는다.",
+      "source": "RESHET-EC-H220-CLUSTER-H2022-H2025"
+    },
+    {
+      "word_id_1": "H3822_0000",
+      "word_id_2": "H3833_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "명시적인 여성 복수형이 독립 지명으로 어휘화되었다. 단순 굴절형만의 별도 단어를 신설하는 것이 아니다.",
+      "source": "RESHET-EC-H220-CLUSTER-H3822-H3833"
+    }
+  ],
+  "relation_replacements": [],
+  "meaning_approvals": [
+    {
+      "word_id": "H0690_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "아라 (인)"
+        }
+      ]
+    }
+  ],
+  "supersedes": []
+}
