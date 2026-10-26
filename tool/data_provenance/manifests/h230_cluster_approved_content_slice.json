@@ -1,0 +1,40 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H230-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-26 H230 추천 r1; DB·문서·Git·이번 작업 branch 정리 사용자 승인; data/backups/approved_content_batch/h230_approval_20261026/00_user_approval.json",
+    "document_sha256": "9e454f2fe704982dc43886f129570a604c93f7b6a4ff262d74132d2004566993"
+  },
+  "target": {
+    "expected_work_sha256": "98bd347fbf4bf0896c19196605f1cd3c41f8f666c37d3ec4fe4ad2cba7801bbf",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0230_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "가버리다, 떠나다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "확고하다(確固하다)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0230_0000",
+      "before": null,
+      "after": "아람어 형용사로, 단 2:5·8에서는 왕의 말이나 결정이 확고히 정해져 있음을 나타낸다. ‘명령을 내리다’는 구문 전체의 번역이다. KJV와 일부 고대 번역은 ‘떠났다’로 옮기며, ‘이미 공표되어 알려졌다’라는 대안 분석도 있다. 이 단어만으로 왕이 꿈을 잊었다고 단정하지 않는다. Strong은 어원을 불확실하다고 하며, 페르시아어 차용설도 확정하지 않는다."
+    }
+  ],
+  "relation_creates": [],
+  "relation_replacements": [],
+  "meaning_approvals": [],
+  "supersedes": []
+}

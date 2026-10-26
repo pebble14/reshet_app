@@ -147,6 +147,7 @@
 | H227·H233 시간·상황 지시 부사 클러스터 | 그때·그러면 각1의미·비고2·가설적 이형 관계1, 렘11:15 미해결 보존·신규 hold 없음 | `active` | 높음 | 2026-10-26 | [기록](h227_cluster_approved_content_slice.md) |
 | H228 가열 동사 | 뜨겁게 하다 단일 의미·비고1, 능동·수동 통합·관계 비생성·hold 없음 | `active` | 높음 | 2026-10-26 | [기록](h228_cluster_approved_content_slice.md) |
 | H229 에스배·히솝 식물명 클러스터 | 인명 병기·식물명1의미 통합·비고3, 가설 파생1·번역 대응 교체1·종 식별 유보·hold 없음 | `active` | 높음 | 2026-10-26 | [기록](h229_cluster_approved_content_slice.md) |
+| H230 확고함 | 확고하다(確固하다) 단일 의미·비고1, 떠남·공표 대안 보존·관계 비생성·hold 없음 | `active` | 높음 | 2026-10-26 | [기록](h230_cluster_approved_content_slice.md) |
 
 ## 열람 및 후속 판단 원칙
 
