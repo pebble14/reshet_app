@@ -145,6 +145,7 @@
 | H220 우리·궤·사자 및 관련 이름 클러스터 | CORE17 의미19개·비고17·관계12, H739 용사/아리엘 비고·H741/H2025 화덕·H3833 성별 구분·hold 없음 | `active` | 높음 | 2026-10-26 | [기록](h220_cluster_approved_content_slice.md) |
 | H225 동의·표징·도래 및 엘리아다 클러스터 | 의미7·비고7·관계6(확정4·가설2), H2978 입구·진입 통로 설명·H184 기존 승인 유지·신규 hold 없음 | `active` | 높음 | 2026-10-26 | [기록](h225_cluster_approved_content_slice.md) |
 | H227·H233 시간·상황 지시 부사 클러스터 | 그때·그러면 각1의미·비고2·가설적 이형 관계1, 렘11:15 미해결 보존·신규 hold 없음 | `active` | 높음 | 2026-10-26 | [기록](h227_cluster_approved_content_slice.md) |
+| H228 가열 동사 | 뜨겁게 하다 단일 의미·비고1, 능동·수동 통합·관계 비생성·hold 없음 | `active` | 높음 | 2026-10-26 | [기록](h228_cluster_approved_content_slice.md) |
 
 ## 열람 및 후속 판단 원칙
 

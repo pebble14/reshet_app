@@ -1,0 +1,40 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H228-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-26 H228 추천 R1; DB·문서·Git·이번 작업 branch 정리 사용자 승인; data/backups/approved_content_batch/h228_approval_20261026/00_user_approval.json",
+    "document_sha256": "eda992e4963bab3c3dac50bb73a7b3388f8060431b8898d071f03f1ec1d886c5"
+  },
+  "target": {
+    "expected_work_sha256": "a99d0a9c76cd5cb3556ccc19cd648ca392b4db69ee6e380be090c64fbcf94e31",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0228_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "뜨겁다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "뜨겁게 하다"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0228_0000",
+      "before": null,
+      "after": "Strong은 불붙이다와 그에 함축된 뜨겁게 하다로 풀이한다. 단 3:19의 두 부정사는 화덕을 달구는 행위를, 3:22의 수동분사는 달구어져 뜨거운 상태를 나타낸다. Strong은 אֲזָה도 같은 항목의 형태로 제시한다."
+    }
+  ],
+  "relation_creates": [],
+  "relation_replacements": [],
+  "meaning_approvals": [],
+  "supersedes": []
+}
