@@ -143,6 +143,7 @@
 | H214 저장·창고·에셀 클러스터 | CORE3 의미·비고, 가설 파생2·느13:13 본문비평 유보·hold 없음 | `active` | 높음 | 2026-10-25 | [기록](h214_cluster_approved_content_slice.md) |
 | H215 빛·불·들 및 관련 이름 클러스터 | CORE20 의미26개·비고19·관계20, 가문 소속·관용/원문 표기 병기·본문 불확실성 보존·hold 없음 | `active` | 높음 | 2026-10-25 | [기록](h215_cluster_approved_content_slice.md) |
 | H220 우리·궤·사자 및 관련 이름 클러스터 | CORE17 의미19개·비고17·관계12, H739 용사/아리엘 비고·H741/H2025 화덕·H3833 성별 구분·hold 없음 | `active` | 높음 | 2026-10-26 | [기록](h220_cluster_approved_content_slice.md) |
+| H225 동의·표징·도래 및 엘리아다 클러스터 | 의미7·비고7·관계6(확정4·가설2), H2978 입구·진입 통로 설명·H184 기존 승인 유지·신규 hold 없음 | `active` | 높음 | 2026-10-26 | [기록](h225_cluster_approved_content_slice.md) |
 
 ## 열람 및 후속 판단 원칙
 

@@ -1,0 +1,233 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H225-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-26 H225 CORE8 추천과 H2978 입구·진입 통로 후속 설명; DB·문서·Git·브랜치 정리 사용자 승인; data/backups/approved_content_batch/h225_approval_20261026/00_user_approval.json",
+    "document_sha256": "333b53eb034ccd89609bab2d2c17241d6dc61bc4c2eda1c59072d9c6e0cf792b"
+  },
+  "target": {
+    "expected_work_sha256": "b774526a6a2e32dda93d580a874723d53e9a86fb20a5ffbd87c62d90ecb27a36",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0225_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "동의하다, 찬성하다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "동의하다(同意하다)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0226_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "표시, 표징, 징조, 표적"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "표징(表徵)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0448_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "엘리아다 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엘리아다·엘리-아타 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0852_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "이적, 표적, 기사"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "표징(表徵)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0857_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "오다, 돌아오다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "오다"
+        }
+      ]
+    },
+    {
+      "word_id": "H0858_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "오다, 돌아오다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "오다"
+        }
+      ]
+    },
+    {
+      "word_id": "H2978_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "입구, 현관 entrance"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "입구(入口)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0225_0000",
+      "before": null,
+      "after": "니팔형으로 제안이나 조건을 받아들여 동의하는 뜻이다. 창세기 34장의 허락하다·말대로 하다는 같은 동의 행위를 문맥에 맞게 옮긴 것이다. Strong은 본래 오다에서 동의의 뜻을 설명하지만, 확인된 네 용례는 모두 동의 문맥이다. H0857 오다와의 어원 관계는 확정하지 않는다."
+    },
+    {
+      "word_id": "H0226_0000",
+      "before": null,
+      "after": "어떤 사실을 가리키거나 확인하게 하는 표시를 뜻한다. 식별 표식, 언약의 표, 보증·증거, 기념물, 군기의 기호, 예언의 징조와 기적적 표적을 포괄하며, 초자연적 기적이나 참된 예언의 증거로만 한정되지 않는다. Strong은 H0225와의 파생을 추정하지만 HebGrkKo와 NAS는 H0184 계열을 제시하므로 어원은 확정하지 않는다."
+    },
+    {
+      "word_id": "H0448_0000",
+      "before": null,
+      "after": "엘리아다는 한국어 성경의 관용명이고 엘리-아타는 אֱלִיאָתָה의 히브리어 교재식 읽기를 근사하여 구성 경계를 보인 표기다. 역대상 25:4의 형태와 25:27의 축약형 אֱלִיָּתָה(엘리야타)는 같은 이름이다. 헤만의 아들로 스무째 음악 봉사조에 속한다. Strong은 H0410과 H0225에 연결해 God of (his) consent로 풀이하지만, NAS·HebGrkKo는 H0410과 H0857의 구성으로, BDB는 하나님이 오셨다로 풀이한다. 뒤의 풀이를 우선하되 어원은 확정하지 않는다. 특정 시대의 정확한 호명이나 이름을 붙인 동기를 재현한 표기는 아니다."
+    },
+    {
+      "word_id": "H0852_0000",
+      "before": null,
+      "after": "H0226 표징에 대응하는 아람어 명사다. 확인된 세 용례는 모두 하나님이 행하신 표징을 놀라운 일과 함께 말한다. 이적·표적으로도 번역되지만, 히브리어 표징과 본질적으로 다른 강도의 별도 의미로 나누지 않는다. Strong의 여성명사 분류와 달리 본문은 남성 복수형을 보인다."
+    },
+    {
+      "word_id": "H0857_0000",
+      "before": null,
+      "after": "사람·하나님·짐승이 오거나 시간·재앙·통치 등이 이르는 데 쓰인다. 사역형은 오게 하다로, 대상에 따라 물을 가져오다·짐승을 데려오다로 옮긴다. 여성 복수 분사는 장차 올 일들을 가리키며 별개의 미래 명사로 나누지 않는다. 돌아오다는 귀환 문맥이나 함께 쓰인 돌아서다의 표현을 반영한 번역이며 이 동사 자체가 언제나 귀환을 뜻하지는 않는다. Strong의 H0225와의 연결은 어원 가설로 구분한다."
+    },
+    {
+      "word_id": "H0858_0000",
+      "before": null,
+      "after": "히브리어 H0857 오다에 대응하는 아람어 동사다. 기본형은 오다, 사역형은 오게 하다로서 사람을 데려오거나 물건을 가져오는 데 쓰이며 수동형은 데려와지거나 가져와지는 것을 나타낸다. 이 활용 차이만으로 독립 의미를 늘리지 않고, 돌아오다를 모든 용례의 기본 뜻으로 삼지 않는다."
+    },
+    {
+      "word_id": "H2978_0000",
+      "before": null,
+      "after": "안으로 들어가는 부분이나 진입 통로를 가리킨다. 에스겔 40:15 한 위치의 Ketiv יאתון과 Qere אִיתוֹן이 OSHB 정경 프로필에서 두 토큰으로 수집된다. 사전 표제 יְאִתוֹן과 두 본문 표기를 구별한다. 같은 절 뒤의 현관·주랑은 별도 어휘 H0197 אֻלָם이므로 현관을 이 항목의 별도 의미로 추가하지 않는다. Strong은 H0857에서의 파생으로 설명한다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0225_0000",
+      "word_id_2": "H0857_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "note": "Strong의 collateral to H225 contraction 연결을 어원 가설로 보존한다. H225의 동의와 H857의 오다를 같은 실제 sense로 합치거나 직접 파생 방향을 확정하지 않는다.",
+      "source": "HebrewStrong.xml H857 source; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H0226_0000",
+      "word_id_2": "H0852_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "note": "동일한 표징 어휘의 히브리어·아람어 대응형이다. 직접 차용 방향을 확정하지 않는다.",
+      "source": "HebrewStrong.xml H852 source: corresponding to H226; same pinned commit; OSHB three sign contexts",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H0448_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "note": "인명의 신명 구성 요소이다. 뒤 요소의 경쟁 어원과 구별하며 H410 meaning의 독립 승인을 포함하지 않는다.",
+      "source": "HebrewStrong.xml H448 source; HebGrkKo H448; NAS H448; same pinned commit",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H0857_0000",
+      "word_id_2": "H0858_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "note": "오다 어휘의 히브리어·아람어 대응형이다. source-reference 화살표로 차용·파생 방향을 확정하지 않는다.",
+      "source": "HebrewStrong.xml H858 source: corresponding to H857; same pinned commit; OSHB complete occurrences",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H0857_0000",
+      "word_id_2": "H2978_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "note": "Strong의 from H857 파생 설명과 들어오는 곳이라는 명사 기능에 근거한다. Ketiv/Qere를 별도 어휘나 독립 두 출현으로 바꾸지 않으며 정확한 역사적 형성 단계까지 입증하는 것은 아니다.",
+      "source": "HebrewStrong.xml H2978 source; same pinned commit; OSHB Ezek.40.15; BDB entrance entry reference-only",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H0448_0000",
+      "word_id_2": "H0857_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "hypothesized",
+      "direction_code": "w2_to_w1",
+      "note": "NAS·HebGrkKo의 el + athah 분석 및 BDB의 하나님이 오셨다 풀이에 근거한 우선 어원 가설이다. Strong은 H225와의 구성을 제시하므로 확정 관계로 올리지 않는다.",
+      "source": "HebGrkKo H448; NAS H448; BDB H448; reference-only competing analysis; https://biblehub.com/hebrew/448.htm",
+      "description": null,
+      "relation_group_id": null
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}
