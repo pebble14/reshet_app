@@ -1,0 +1,73 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H227-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-26 H227 CORE2 추천 r1; DB·문서·Git·이번 작업 branch 정리 사용자 승인; data/backups/approved_content_batch/h227_approval_20261026/00_user_approval.json",
+    "document_sha256": "12abe0ed9c779d42210724df9f12a057ce8edcf657af6370aaa939151e255e2d"
+  },
+  "target": {
+    "expected_work_sha256": "bf00d5c478365d3f6b3ef4fe9aee77b9a54515adb393bcc240fa7d977e022607",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0227_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "그 때에, 그 후에"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "그때·그러면"
+        }
+      ]
+    },
+    {
+      "word_id": "H0233_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "그 때에"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "그때·그러면"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0227_0000",
+      "before": null,
+      "after": "앞서 제시된 때나 상황을 받아 그 시점의 일이나 그 경우에 따르는 내용을 잇는 지시 부사다. 과거·미래의 ‘그때(에)·이에’와 조건·가정의 ‘그러면·그렇다면’을 포괄한다. מִן과 결합한 מֵאָז·מִן־אָז는 ‘그때부터·예로부터’로 옮기며, ‘부터’는 전치사에서 온다. ‘그 후에·그제야·이제·반드시·그래도’ 등은 문맥과 주변 어구를 반영한 번역이므로 각각을 별도 뜻으로 나누지 않는다. Strong는 장소 지시도 적지만 확보한 성경 용례에서 독립된 장소 의미는 확인되지 않았다. 렘 11:15는 문장 해석이 불확실하다."
+    },
+    {
+      "word_id": "H0233_0000",
+      "before": null,
+      "after": "אָז(H227)와 같은 시간·상황 지시 범위의 부사다. 성경에서는 시 124:3–5에 세 번 나오며, 1–2절의 ‘여호와께서 우리 편이 아니셨다면’을 받아 ‘그때는·그랬다면’으로 결과를 잇는다. 반복은 그 시의 대조를 강조하지만 별도의 더 강한 뜻을 확정하지 않는다. Strong는 H227에서의 유래를 probably로, BDB는 방언형 가능성을 추정하므로 정확한 형성 과정은 확정하지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0227_0000",
+      "word_id_2": "H0233_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "note": "אָז(H227)와 אֲזַי(H233)는 같은 시간·상황 지시 범위를 공유한다. Strong의 H233은 probably from H227, BDB는 probably a dialectic form으로 설명하므로 구체적인 형성 경로와 방향을 확정하지 않는 가설적 이형 관계다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml H233 (21c9add13bc727d3a951361778e97e3ff7afd1ce); Brown–Driver–Briggs אֲזַי entry, Bible Hub, 2026-10-26 열람",
+      "description": null,
+      "relation_group_id": null
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}
