@@ -1,0 +1,180 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H235-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-27 H235 CORE6 최신 r2 수정·H5799 명칭 승인/hold 비설정 및 DB·문서·Git·이번 branch 정리 사용자 승인; data/backups/approved_content_batch/h235_approval_20261027/00_user_approval.json",
+    "document_sha256": "645faa0446de5e511ad6e623b74933a68c44f493372d6d59986f96c3b9c62b28"
+  },
+  "target": {
+    "expected_work_sha256": "5cad2469e7a2947a09b2bb3d71dd5577b3202dca4e2f3be79fed06ff93c6bf7a",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0235_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "돌아다니다, 고갈되다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "가다"
+        },
+        {
+          "seq": 2,
+          "meaning": "다하다"
+        }
+      ]
+    },
+    {
+      "word_id": "H0236_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "가다, 떠나다, 여행하다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "가다"
+        }
+      ]
+    },
+    {
+      "word_id": "H0237_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "에셀 (지)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "에셀·에젤 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5795_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "암 염소, 염소"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "암염소"
+        },
+        {
+          "seq": 2,
+          "meaning": "염소털"
+        }
+      ]
+    },
+    {
+      "word_id": "H5799_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아사셀 Azazel"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아사셀·아자젤"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0235_0000",
+      "before": null,
+      "after": "히브리어 이동 동사로, 떠나가거나 이리저리 다니는 용법과 힘·양식·물 등이 다하여 없어지는 용법이 있다. 겔 27:19의 형태를 Strong의 usage와 일부 참고자료는 H235에 연결하지만, OSHB는 H187 우살로 분석한다. 이 구절의 ‘길쌈하는 실’ 독법을 H235의 확정 의미나 여섯 번째 정본 용례로 추가하지 않는다."
+    },
+    {
+      "word_id": "H0236_0000",
+      "before": null,
+      "after": "H235와 대응하는 아람어 이동 동사다. 문맥에 따라 가다·떠나다·돌아가다로 옮기며, 여행 자체를 별도 의미로 나누지 않는다. 단 6:19–20은 OSHB의 절 번호이고 한국어 성경·KJV의 6:18–19에 해당한다."
+    },
+    {
+      "word_id": "H0237_0000",
+      "before": null,
+      "after": "에셀은 한국어 성경 관용 표기이고 에젤은 표제어의 교재식 한글 근사다. 삼상 20:19에서 다윗이 머물도록 지정된 바위의 명칭으로 읽는다. Strong은 H235에서 나온 ‘떠남’으로 풀이하지만, 지시 표현이나 다른 본문으로 읽는 견해도 있어 명칭과 어원을 확정하지 않는다."
+    },
+    {
+      "word_id": "H5795_0000",
+      "before": null,
+      "after": "기본적으로 암염소를 가리키는 여성명사다. 복수형은 문맥에 따라 염소류를 묶어 가리키며, 숫염소·새끼 염소 구문에서는 다른 구성어가 성별·나이를 나타낸다. 재료 문맥에서는 염소털을 뜻한다. Strong의 H5810 파생 설명은 비교 셈어의 염소 어휘와 구별한다."
+    },
+    {
+      "word_id": "H5796_0000",
+      "before": null,
+      "after": "H5795에 대응하는 아람어 여성명사다. 스 6:17에서 숫염소를 나타내는 말과 결합한다. 구문 전체가 수컷을 가리킨다는 사실만으로 이 단어 자체의 암염소 의미가 사라진다고 단정하지 않는다."
+    },
+    {
+      "word_id": "H5799_0000",
+      "before": null,
+      "after": "아사셀은 한국어 성경 관용 표기이고 아자젤은 원문 형태의 교재식 한글 근사다. 레 16장에서 죄를 지운 염소를 광야로 보내는 의식과 관련된다. 그 지시 대상과 어원에는 견해 차이가 있으며, 광야의 존재를 가리키는 이름·장소·제거 개념 등으로 해석된다. Strong의 ‘염소(H5795)+가다(H235)’ 분석도 확정된 어원으로 취급하지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0235_0000",
+      "word_id_2": "H0236_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "note": "히브리어와 아람어의 대응 이동 동사다. Strong의 the same as를 차용 방향이나 굴절 관계로 바꾸지 않는다.",
+      "description": null,
+      "relation_group_id": null,
+      "source": "Open Scriptures HebrewLexicon HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; OSHB 및 H0235-r2-20261027 연구/본문 경쟁 분석 대조; 2026-10-27 사용자 승인"
+    },
+    {
+      "word_id_1": "H0235_0000",
+      "word_id_2": "H0237_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "note": "Strong의 H235에서 나온 떠남이라는 설명을 보존한다. 삼상20:19의 명칭 독법과 다른 본문·지시 표현 분석이 경쟁하므로 확정 파생으로 표시하지 않는다.",
+      "description": null,
+      "relation_group_id": null,
+      "source": "Open Scriptures HebrewLexicon HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; OSHB 및 H0235-r2-20261027 연구/본문 경쟁 분석 대조; 2026-10-27 사용자 승인"
+    },
+    {
+      "word_id_1": "H5795_0000",
+      "word_id_2": "H5796_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "note": "히브리어·아람어 염소 어휘의 언어별 대응이다. corresponding to는 차용 방향의 증명이 아니다.",
+      "description": null,
+      "relation_group_id": null,
+      "source": "Open Scriptures HebrewLexicon HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; OSHB 및 H0235-r2-20261027 연구/본문 경쟁 분석 대조; 2026-10-27 사용자 승인"
+    }
+  ],
+  "relation_replacements": [],
+  "meaning_approvals": [
+    {
+      "word_id": "H5796_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "암염소"
+        }
+      ]
+    }
+  ],
+  "supersedes": []
+}
