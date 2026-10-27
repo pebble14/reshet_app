@@ -104,3 +104,4 @@ tool/data_provenance/manifests/h230_cluster_approved_content_slice.json -text wh
 tool/data_provenance/manifests/h232_cluster_approved_content_slice.json text eol=lf
 tool/data_provenance/manifests/h234_cluster_approved_content_slice.json text eol=lf
 tool/data_provenance/manifests/h235_cluster_approved_content_slice.json text eol=lf
+tool/data_provenance/manifests/h238_cluster_approved_content_slice.json text eol=lf

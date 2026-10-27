@@ -1,0 +1,462 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H238-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-27 H238 CORE14 R1/R2 최종 meaning·비고·관계 및 DB·문서·Git·이번 branch 정리 사용자 승인; data/backups/approved_content_batch/h238_approval_20261027/00_user_approval.json",
+    "document_sha256": "04637f115320095c74d0943b4cb34ead7ef9a09d70eb1da8e959a8b4867e0b9b"
+  },
+  "target": {
+    "expected_work_sha256": "15cf33252266e35704b5a6c5188c5724fe50b2c171b0728ae2036e09e280bca4",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0239_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "조사하다, 입증하다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "헤아리다"
+        }
+      ]
+    },
+    {
+      "word_id": "H0240_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "도구, 연장"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "장비(裝備)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0242_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "우센세에라 (지)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "우센세에라·웃젠-셰에라 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0243_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아스놋 다볼 (지)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아스놋다볼·아즈노트-타보르 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0244_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "오스니 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "오스니·오즈니 (인)"
+        },
+        {
+          "seq": 2,
+          "meaning": "오스니·오즈니 가문(家門) 사람"
+        }
+      ]
+    },
+    {
+      "word_id": "H0245_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아사냐 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아사냐·아잔-야 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2970_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "야아사냐 Jaazaniah(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "야아사냐·야아사니야·야아잔-야·야아잔-야후 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3153_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "여사냐 Jezaniah(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "여사냐·예잔-야·예잔-야후 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3976_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "천칭, 저울"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "저울"
+        }
+      ]
+    },
+    {
+      "word_id": "H3977_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "천칭, 저울"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "저울"
+        }
+      ]
+    },
+    {
+      "word_id": "H7609_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "세에라 Sheerah"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "세에라·셰에라 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H8396_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "다볼 Tabor(지)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "다볼·타보르 (지)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0238_0000",
+      "before": null,
+      "after": "주로 귀를 기울여 듣는 행위에 쓰이며, 사람의 말과 가르침을 듣는 것, 하나님이 기도를 들으심, 실제 청각을 함께 가리킨다. 문맥상 순종이나 호의적인 응답이 수반될 수 있으나 그것을 항상 뜻하지는 않는다. 귀(H241)에서 나온 동사로 설명되며, Strong의 펼치다와 손으로 귀를 넓힌다는 설명은 어원 풀이로 구별한다."
+    },
+    {
+      "word_id": "H0239_0000",
+      "before": null,
+      "after": "전 12:9에서 잠언을 깊이 살피고 검토하는 행위를 가리킨다. 저울로 무게를 다는 행위에 빗댄 숙고로 풀이되며 저울(H3976)과 연결된다. Strong은 H238과의 어원적 관련성을 제시하지만 듣다 동사와 역사적으로 같은 어근인지는 확정하지 않는다."
+    },
+    {
+      "word_id": "H0240_0000",
+      "before": null,
+      "after": "신 23:13(OSHB 23:14)의 군대 진영에서 휴대하는 장비를 가리킨다. 무기류를 포함한 군용 장비 전반으로 보는 풀이와 허리띠·칼집을 매다는 끈 등 특정 장구로 보는 해석이 있다. 작은 삽이나 말뚝으로 옮기는 יָתֵד는 별도 단어이며, 이 명사의 정확한 품목과 어원은 확정하지 않는다."
+    },
+    {
+      "word_id": "H0241_0000",
+      "before": null,
+      "after": "사람과 동물의 귀를 가리키며, 하나님의 들으심을 사람의 귀에 빗대어 표현하기도 한다. 귀에 말하다는 듣도록 전함을, 귀를 드러내거나 열다는 알리거나 알아듣게 함을 나타낼 수 있다. 이런 구문과 청각·순종의 환유는 귀라는 뜻에 포함한다."
+    },
+    {
+      "word_id": "H0242_0000",
+      "before": null,
+      "after": "우센세에라는 한국어 성경 관용명이고, 웃젠-셰에라는 אֻזֵּן שֶׁאֱרָה의 교재식 읽기와 두 이름 요소를 드러낸 한글 근사다. 대상 7:24에서 세에라가 세운 성읍으로 나온다. 세에라의 몫이라는 풀이가 있으나 첫 요소를 듣다(H238) 또는 무게를 달다(H239)와 연결하는 분석은 구별하며 확정하지 않는다."
+    },
+    {
+      "word_id": "H0243_0000",
+      "before": null,
+      "after": "아스놋다볼은 한국어 성경 관용명이고, 아즈노트-타보르는 אַזְנוֹת תָּבוֹר의 교재식 근사와 이름 구성 경계를 보인 표기다. 수 19:34의 납달리 경계 지명이다. 다볼의 봉우리들이라는 풀이와 귀의 지형적 비유가 비교되지만, 첫 요소의 정확한 어원과 지형은 확정하지 않는다."
+    },
+    {
+      "word_id": "H0244_0000",
+      "before": null,
+      "after": "오스니는 한국어 성경 관용명이고 오즈니는 אָזְנִי의 교재식 읽기에 따른 한글 근사다. 민 26:16의 첫 형태는 갓 계열 선조 이름이고, 관사가 붙은 둘째 형태는 그 가문 소속을 나타내는 형용사다. 이름은 귀(H241)와 연결되지만 빠른 귀나 내가 들음이라는 풀이를 그 인물의 실제 성격으로 단정하지 않는다. 창 46:16의 에스본과 이름 대응이 비교되나 형성 과정은 확정하지 않는다."
+    },
+    {
+      "word_id": "H0245_0000",
+      "before": null,
+      "after": "아사냐는 한국어 성경 관용명이고 아잔-야는 אֲזַנְיָה의 교재식 근사와 합성 경계를 보인 표기다. 듣다(H238)와 신명 요소 야(H3050)의 합성 이름으로, 야께서 들으셨다 등으로 풀이한다. 느 10:9(OSHB 10:10)에서 레위인 예수아의 아버지로 나온다."
+    },
+    {
+      "word_id": "H2970_0000",
+      "before": null,
+      "after": "야아사냐와 왕하 25:23의 야아사니야는 한국어 성경 관용명이다. 야아잔-야와 야아잔-야후는 יַאֲזַנְיָה 및 장형 יַאֲזַנְיָהוּ의 교재식 근사와 합성 경계를 보인다. 듣다(H238)와 야(H3050)를 포함한 이름이며 여러 인물에게 쓰인다. 단형과 장형이 모두 실제 본문에 나타나지만 모든 인물에게 두 형태가 각각 확인된 것은 아니다."
+    },
+    {
+      "word_id": "H3153_0000",
+      "before": null,
+      "after": "여사냐는 한국어 성경 관용명이고 예잔-야와 예잔-야후는 사전이 제시하는 단형·장형의 교재식 한글 근사와 신명 요소의 경계를 보인 표기다. 이름 끝의 야·야후는 신명 요소로 분석하며, H2970과의 구체적 축약 과정 및 각 용례의 인물 동일성 문제와 구별한다. 렘 40:8과 42:1에 나오며, 렘 42:1의 호사야의 아들과 렘 43:2의 아사랴의 관계 및 본문 차이는 미확정으로 남긴다."
+    },
+    {
+      "word_id": "H3976_0000",
+      "before": null,
+      "after": "무게를 다는 저울을 가리키며 히브리어 성경에서는 쌍수형으로 쓰인다. 물건과 은의 무게를 다는 실제 저울뿐 아니라 고통과 사람의 가치를 달아 보는 비유에도 쓰인다. 잠 16:11과 사 40:12의 접시저울·막대저울 등 번역 차이만으로 어휘의 뜻을 한 기종에 한정하지 않는다. H239의 저울질하다와 연결된다."
+    },
+    {
+      "word_id": "H3977_0000",
+      "before": null,
+      "after": "히브리어 저울(H3976)에 대응하는 아람어 어휘다. 단 5:27에서는 왕을 저울에 달아 부족함을 드러내는 비유로 쓰인다. 이 문맥의 심판 결과를 저울과 별개의 뜻으로 나누지 않는다."
+    },
+    {
+      "word_id": "H7609_0000",
+      "before": null,
+      "after": "세에라는 한국어 성경 관용명이고 셰에라는 שֶׁאֱרָה의 교재식 읽기에 따른 한글 근사다. 대상 7:24에서 에브라임의 딸이자 아래·윗 벧호론과 우센세에라를 세운 여성으로 소개된다. 혈연이나 여성 친족(H7608)과의 어원 연결은 사전 풀이로 남기며 이름을 일반명사 뜻으로 바꾸지 않는다."
+    },
+    {
+      "word_id": "H8396_0000",
+      "before": null,
+      "after": "다볼은 한국어 성경 관용명이고 타보르는 תָּבוֹר의 교재식 읽기에 따른 한글 근사다. 산, 성읍 및 삼상 10:3의 다볼 상수리나무 지점에 쓰이는 이름이다. 삿 8:18과 수 19:22의 지점들을 모두 같은 장소로 확정하지 않는다. Strong의 부서진 지역이라는 풀이와 아람어 H8406 대응 어근 연결은 어원 설명으로 구별하며 직접 차용을 단정하지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0238_0000",
+      "word_id_2": "H0241_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "note": "H238은 귀(H241)에서 나온 denominative 동사라는 명시적 설명과 본문 사용을 채택한다. 원자료의 반대 방향 from 설명을 자동으로 별도 생성하지 않는다.",
+      "description": null,
+      "relation_group_id": null,
+      "source": "Open Scriptures HebrewLexicon HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; OSHB 및 H0238 R1/R2 연구·관련 BDB 대조; 2026-10-27 사용자 승인"
+    },
+    {
+      "word_id_1": "H0239_0000",
+      "word_id_2": "H3976_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "note": "Strong from 239와 무게를 재는 저울의 형태·뜻이 일치한다.",
+      "description": null,
+      "relation_group_id": null,
+      "source": "Open Scriptures HebrewLexicon HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; OSHB 및 H0238 R1/R2 연구·관련 BDB 대조; 2026-10-27 사용자 승인"
+    },
+    {
+      "word_id_1": "H3976_0000",
+      "word_id_2": "H3977_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "note": "corresponding to는 히브리어/아람어 대응과 공통 어근을 지지하지만 차용 방향을 입증하지 않는다. H201의 언어별 root_shared 선례와 일치한다.",
+      "description": null,
+      "relation_group_id": null,
+      "source": "Open Scriptures HebrewLexicon HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; OSHB 및 H0238 R1/R2 연구·관련 BDB 대조; 2026-10-27 사용자 승인"
+    },
+    {
+      "word_id_1": "H0241_0000",
+      "word_id_2": "H0244_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "note": "귀에서 형성된 이름과 그 이름의 소속형이다. 인명과 소속형이 같은 word_id이므로 self relation은 만들지 않는다.",
+      "description": null,
+      "relation_group_id": null,
+      "source": "Open Scriptures HebrewLexicon HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; OSHB 및 H0238 R1/R2 연구·관련 BDB 대조; 2026-10-27 사용자 승인"
+    },
+    {
+      "word_id_1": "H0238_0000",
+      "word_id_2": "H0245_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "note": "from 238 and 3050; heard by Jah의 동사 구성 요소다.",
+      "description": null,
+      "relation_group_id": null,
+      "source": "Open Scriptures HebrewLexicon HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; OSHB 및 H0238 R1/R2 연구·관련 BDB 대조; 2026-10-27 사용자 승인"
+    },
+    {
+      "word_id_1": "H0245_0000",
+      "word_id_2": "H3050_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "note": "from 238 and 3050의 신명 구성 요소다. H3050의 독립 meaning 승인을 뜻하지 않는다.",
+      "description": null,
+      "relation_group_id": null,
+      "source": "Open Scriptures HebrewLexicon HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; OSHB 및 H0238 R1/R2 연구·관련 BDB 대조; 2026-10-27 사용자 승인"
+    },
+    {
+      "word_id_1": "H0238_0000",
+      "word_id_2": "H2970_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "note": "from 238 and 3050; heard of Jah의 동사 구성 요소다.",
+      "description": null,
+      "relation_group_id": null,
+      "source": "Open Scriptures HebrewLexicon HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; OSHB 및 H0238 R1/R2 연구·관련 BDB 대조; 2026-10-27 사용자 승인"
+    },
+    {
+      "word_id_1": "H2970_0000",
+      "word_id_2": "H3050_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "note": "from 238 and 3050의 신명 구성 요소다. H3050의 독립 meaning 승인을 뜻하지 않는다.",
+      "description": null,
+      "relation_group_id": null,
+      "source": "Open Scriptures HebrewLexicon HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; OSHB 및 H0238 R1/R2 연구·관련 BDB 대조; 2026-10-27 사용자 승인"
+    },
+    {
+      "word_id_1": "H0242_0000",
+      "word_id_2": "H7609_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "note": "Strong의 두 구성 요소 설명과 대상7:24의 인명·복합 지명이 같은 둘째 요소를 확인한다.",
+      "description": null,
+      "relation_group_id": null,
+      "source": "Open Scriptures HebrewLexicon HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; OSHB 및 H0238 R1/R2 연구·관련 BDB 대조; 2026-10-27 사용자 승인"
+    },
+    {
+      "word_id_1": "H0243_0000",
+      "word_id_2": "H8396_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "note": "복합 지명 둘째 요소 Tabor가 원문에서 직접 확인된다.",
+      "description": null,
+      "relation_group_id": null,
+      "source": "Open Scriptures HebrewLexicon HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; OSHB 및 H0238 R1/R2 연구·관련 BDB 대조; 2026-10-27 사용자 승인"
+    },
+    {
+      "word_id_1": "H3696_0000",
+      "word_id_2": "H8396_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "note": "기슬롯다볼의 둘째 구성 요소 Tabor다. source wording의 feminine plural of는 H3689에 걸리므로 H8396의 plural 관계로 저장하지 않는다. H3696 독립 meaning은 이번에 제안하지 않는다.",
+      "description": null,
+      "relation_group_id": null,
+      "source": "Open Scriptures HebrewLexicon HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; OSHB 및 H0238 R1/R2 연구·관련 BDB 대조; 2026-10-27 사용자 승인"
+    },
+    {
+      "word_id_1": "H2970_0000",
+      "word_id_2": "H3153_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "note": "Strong은 Compare 및 probably for라고 한정한다. 왕하25:23과 렘40:8의 마아가 사람 아들 병행이 단축 이름의 연결을 지지하나 모든 인물의 동일성을 확정하지 않는다.",
+      "description": null,
+      "relation_group_id": null,
+      "source": "Open Scriptures HebrewLexicon HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; OSHB 및 H0238 R1/R2 연구·관련 BDB 대조; 2026-10-27 사용자 승인"
+    },
+    {
+      "word_id_1": "H7608_0000",
+      "word_id_2": "H7609_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "note": "Strong은 the same as H7608이라고 설명한다. 여성 친족 명사와 여성 이름의 연결 후보로 보존하되 실제 모음형의 차이와 어원 불확실성을 남긴다.",
+      "description": null,
+      "relation_group_id": null,
+      "source": "Open Scriptures HebrewLexicon HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; OSHB 및 H0238 R1/R2 연구·관련 BDB 대조; 2026-10-27 사용자 승인"
+    },
+    {
+      "word_id_1": "H0241_0000",
+      "word_id_2": "H0243_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "note": "Aznoth의 명사 형태와 BDB의 peaks of Tabor?를 근거로 귀의 지형 비유를 검토한다. Strong이 제시한 H238 동사와 경쟁하는 첫 요소 분석이므로 가설로 한정한다.",
+      "description": null,
+      "relation_group_id": null,
+      "source": "Open Scriptures HebrewLexicon HebrewStrong.xml; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; OSHB 및 H0238 R1/R2 연구·관련 BDB 대조; 2026-10-27 사용자 승인"
+    }
+  ],
+  "relation_replacements": [],
+  "meaning_approvals": [
+    {
+      "word_id": "H0238_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "듣다"
+        }
+      ]
+    },
+    {
+      "word_id": "H0241_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "귀"
+        }
+      ]
+    }
+  ],
+  "supersedes": []
+}

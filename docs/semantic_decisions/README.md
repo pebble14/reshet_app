@@ -151,6 +151,7 @@
 | H232 허리띠·결박구·불 계열 클러스터 | CORE5 meaning5·비고5·관계2, 수갑의 형태 불확실성·사슬 의미 보존·hold 없음 | `active` | 높음 | 2026-10-27 | [기록](h232_cluster_approved_content_slice.md) |
 | H234 기념·기억·남성 및 인명 클러스터 | CORE14 meaning18행·비고14·신규관계9·교체3, G2197 원천 이름 병기·관계4쌍 보류·신규 hold 없음 | `active` | 높음 | 2026-10-27 | [기록](h234_cluster_approved_content_slice.md) |
 | H235 이동·염소·아사셀 클러스터 | CORE6 meaning8행·비고6·신규관계3(확정2·가설1), H5795/H5796 암염소 보존·H5799 명칭 승인·hold 없음 | `active` | 높음 | 2026-10-27 | [기록](h235_cluster_approved_content_slice.md) |
+| H238 듣다·귀·저울·고유명사 클러스터 | CORE14 meaning15행·비고14·신규관계14(확정11·가설3), H239 헤아리다·H240 장비·H3153 붙임표 보충·hold 없음 | `active` | 높음 | 2026-10-27 | [기록](h238_cluster_approved_content_slice.md) |
 
 ## 열람 및 후속 판단 원칙
 
