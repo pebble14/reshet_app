@@ -1,0 +1,505 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H234-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-27 H234 CORE14 R1 + G2197 원천 이름 병기 최종 수정 및 DB·문서·Git·브랜치 정리 사용자 승인; data/backups/approved_content_batch/h234_approval_20261027/00_user_approval.json",
+    "document_sha256": "de805c1910169e3a45c45cb1bb0db876160134edb1ba785e520e1dbea17d033a"
+  },
+  "target": {
+    "expected_work_sha256": "2dfed1ce6d8e8ac54c7ffba25fee6123f17512eab434e301934cbf21651b6d79",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0234_0000",
+      "before": [
+        {
+          "meaning": "기념물",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "기념 제물(紀念祭物)"
+        }
+      ]
+    },
+    {
+      "word_id": "H1798_0000",
+      "before": [
+        {
+          "meaning": "수양",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "숫양"
+        }
+      ]
+    },
+    {
+      "word_id": "H1799_0000",
+      "before": [
+        {
+          "meaning": "기록, 비망록",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "기록(記錄)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2138_0000",
+      "before": [
+        {
+          "meaning": "수컷",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "남성(男性), 수컷"
+        }
+      ]
+    },
+    {
+      "word_id": "H2139_0000",
+      "before": [
+        {
+          "meaning": "삭굴 Zaccur",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "삭굴·작쿠르 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2142_0000",
+      "before": [
+        {
+          "meaning": "기억하다/상기하다",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "기억하다(記憶하다)"
+        },
+        {
+          "seq": 2,
+          "meaning": "언급하다(言及하다)"
+        },
+        {
+          "seq": 3,
+          "meaning": "기록관(記錄官)"
+        },
+        {
+          "seq": 4,
+          "meaning": "기념 제물(紀念祭物)로 바치다"
+        }
+      ]
+    },
+    {
+      "word_id": "H2143_0000",
+      "before": [
+        {
+          "meaning": "기억, 기념물",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "기억(記憶)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2144_0000",
+      "before": [
+        {
+          "meaning": "세겔 Zacher(인)",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "세겔·제케르 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2145_0000",
+      "before": [
+        {
+          "meaning": "남성, 숫컷",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "남성(男性), 수컷"
+        }
+      ]
+    },
+    {
+      "word_id": "H2146_0000",
+      "before": [
+        {
+          "meaning": "기념(물), 생각나게 하는 것, 기억, 회상",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "생각나게 하는 것"
+        },
+        {
+          "seq": 2,
+          "meaning": "기억(記憶)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2147_0000",
+      "before": [
+        {
+          "meaning": "시그리 Zichri",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "시그리·지크리 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2148_0000",
+      "before": [
+        {
+          "meaning": "스가랴",
+          "seq": 1
+        },
+        {
+          "meaning": "뜻풀이: 여호와께서 기억하셨다",
+          "seq": 2
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "스가랴·스가리야·제카르-야·제카르-야후 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3108_0000",
+      "before": [
+        {
+          "meaning": "요사갈 Jazacar(인)",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "요사갈·요-자카르 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "G2197_0000",
+      "before": [
+        {
+          "meaning": "사가랴/스가랴[여호와께서 기억하셨다]",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "사가랴·스가랴·제카르-야 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0234_0000",
+      "before": null,
+      "after": "제물을 하나님 앞에서 기억하게 하는 몫으로 제단에서 불사르는 부분을 가리키는 제의 용어다. 곡물 제물에서 떼어 낸 부분뿐 아니라 진설병 위에 놓은 유향에도 쓰인다(레 24:7). 죄를 기억하게 하는 질투의 제물에도 쓰이므로(민 5:26), 즐거운 기념이나 일반적인 기념물로만 한정하지 않는다. זָכַר(H2142, 기억하다)에서 형성된 말로 설명된다."
+    },
+    {
+      "word_id": "H1798_0000",
+      "before": null,
+      "after": "성경 아람어의 말이다. 에스라 6:9·17, 7:17의 세 용례에서는 수소·어린양과 구별되는 숫양을 가리킨다. 히브리어 זָכָר(H2145, 남성·수컷)에 대응하는 동계어로 설명되지만, 이 표제어의 실제 용례에 사람을 가리키는 뜻을 추가하지 않는다."
+    },
+    {
+      "word_id": "H1799_0000",
+      "before": null,
+      "after": "성경 아람어의 말이다. 에스라 4:15에서는 역대 사실을 적은 기록들을, 6:2에서는 두루마리에 적힌 문서의 기록을 가리킨다. 두 절에 세 토큰이 있으며, 이를 두 번의 출현으로 축약하지 않는다. 히브리어 זִכָּרוֹן(H2146)에 대응하는 동계어로 설명된다."
+    },
+    {
+      "word_id": "H2138_0000",
+      "before": null,
+      "after": "남성 또는 수컷을 나타내는 זָכָר(H2145)의 이형으로 설명된다. 성경의 네 용례는 모두 접미사가 붙은 형태이며 사람을 가리킨다. 출 23:17·34:23, 신 16:16에서는 절기에 나아오는 남성들을, 신 20:13에서는 성읍의 남성들을 가리킨다. 사전의 기억하다(H2142)의 수동분사라는 어원 설명은 기억하다와 남성의 역사적 연결이 불분명하므로 확정된 뜻으로 풀이하지 않는다."
+    },
+    {
+      "word_id": "H2139_0000",
+      "before": null,
+      "after": "여러 사람의 이름이다. 삭굴은 한국어 성경 관용명이고, 작쿠르는 זַכּוּר를 옮긴 교재식 한글 근사다. זָכַר(H2142, 기억하다)와 연결되는 이름으로 Strong은 mindful로 설명한다. 이를 인물의 성격이나 별도 일반 의미로 확정하지 않는다. 스 8:14에서는 Qere가 וְזַכּוּר(H2139)이고 Ketiv가 וְזַבּוּד(H2072)이며, 한국어 번역의 사붓은 이 본문 차이와 함께 읽어야 한다."
+    },
+    {
+      "word_id": "H2142_0000",
+      "before": null,
+      "after": "기본적으로 기억하거나 마음에 두는 것을 뜻하며, 잊었던 사실의 회상뿐 아니라 현재·미래를 유념하는 문맥에도 쓰인다. 수동형의 기억되다와 사역형의 생각나게 하다는 이 의미의 문법적 실현으로 본다. 말로 언급하거나 이름을 부르는 용례에서는 고백·찬송·호소가 문맥상 수반될 수 있다. הַמַּזְכִּיר 등은 왕실의 관직명인 기록관으로 쓰이며, 정확한 직무를 현대의 기록 업무에만 한정하지 않는다. 사 66:3에서는 유향을 기념 제물로 바치는 제의 행위를 가리킨다. 출 34:19의 תִּזָּכָר는 Strong의 남성 관련 denominative 설명과 다른 읽기 제안이 충돌하는 용례이므로 별도 의미를 확정하지 않는다. 시 77:12와 겔 16:22·43의 Ketiv/Qere는 원자료대로 구별한다. 기억하다와 남성(H2145)의 역사적 어원 연결은 확정하지 않는다."
+    },
+    {
+      "word_id": "H2143_0000",
+      "before": null,
+      "after": "사람·사건·이름이 기억되고 전해지는 것을 나타내며, 공적 기억과 후대의 기억도 포함한다. 출 3:15와 호 12:6처럼 하나님의 이름을 기억하고 부르는 문맥에도 쓰인다. H2146과 의미가 겹치므로 추상적 기억과 물리적 기념물이라는 고정 대립을 만들지 않는다. 호 14:8(한국어 성경 14:7)의 포도주 문맥에서는 향기와 명성·기억의 풀이가 갈리므로 일반 의미의 독립 반례로 단정하거나 향기·명성을 추가 의미로 확정하지 않는다. 사 26:14의 LXX 참고 본문에는 남성을 가리키는 표현이 있으나, 이를 현재 히브리어 표제어의 남성 의미로 합치지 않는다."
+    },
+    {
+      "word_id": "H2144_0000",
+      "before": null,
+      "after": "세겔은 한국어 성경 관용명이고, 제케르는 Strong 표제형 זֶכֶר의 교재식 한글 근사다. 대상 8:31의 실제 본문은 וָזָכֶר이며 표제형과 모음이 다르다. 대상 9:37의 병행 계보 같은 자리에는 스가랴(H2148)가 나온다. Strong은 H2143과 같은 말이라고 설명하지만, 병행 인물 표기만으로 H2148의 확정된 축약형·파생 방향을 세우지 않는다. 기억이라는 어원 설명은 이름 풀이이며 별도 일반 의미가 아니다."
+    },
+    {
+      "word_id": "H2145_0000",
+      "before": null,
+      "after": "성별을 나타내는 말로 사람의 남성과 동물의 수컷을 모두 가리킨다. 성경의 82개 토큰 가운데 67개는 사람, 15개는 동물 문맥이다. 명사·형용사 용법, 연령, 제의·인구 조사·전쟁 등의 문맥 차이를 독립 의미로 나누지 않는다. זָכוּר(H2138) 및 아람어 דְּכַר(H1798)와 대응한다. Strong의 기억하다(H2142)에서 유래했다는 설명은 역사적 연결이 불분명하므로 확정된 어원 관계로 등록하지 않는다."
+    },
+    {
+      "word_id": "H2146_0000",
+      "before": null,
+      "after": "생각나게 하거나 기억을 남기는 사물·행위·날·소리·말·기록 등을 포괄한다. 하나님 앞에 이름이나 일을 기억하게 하는 제의 문맥과 후대 사람들에게 기억을 남기는 문맥이 모두 있다. 물리적 기념물이나 즐거운 기념에 한정하지 않으며, 죄를 기억하게 하는 제물에도 쓰인다(민 5:15·18). 기록을 나타내는 문맥은 생각나게 하는 것의 서면 실현으로 본다. 전 1:11의 두 토큰과 2:16에서는 후대에 남는 기억을 가리킨다. 느 2:20의 공동체 기억·자격, 욥 13:12의 기억할 말, 사 57:8의 구체적 대상은 해석 차이를 비고에 남긴다. 아람어 דִּכְרוֹן(H1799)과 대응한다."
+    },
+    {
+      "word_id": "H2147_0000",
+      "before": null,
+      "after": "여러 사람의 이름이다. 시그리는 한국어 성경 관용명이고, 지크리는 זִכְרִי의 교재식 한글 근사다. Strong은 זָכַר(H2142)에서 형성되어 기억할 만한이라는 뜻으로 설명한다. 이를 인물의 성격이나 나의 기억이라는 확정된 접미사 풀이로 바꾸지 않는다. 일부 계보에서 삭굴·삽디와 같은 인물을 가리킬 가능성은 인물 식별 문제다. 특히 삽디(H2067)는 선물 계열 H2065와 연결되므로 인물의 병행 표기만으로 기억하다 어근과의 동일 어근 관계를 만들지 않는다."
+    },
+    {
+      "word_id": "H2148_0000",
+      "before": null,
+      "after": "스가랴와 스가리야는 한국어 성경의 관용명이며, 제카르-야와 제카르-야후는 זְכַרְיָה와 זְכַרְיָהוּ의 교재식 한글 근사다. 붙임표는 기억하다와 신명 요소의 분석 경계를 나타낸다. Strong은 זָכַר(H2142)와 יָהּ(H3050)의 결합으로 설명하며, 여호와께서 기억하셨다는 전통적인 이름 풀이를 제시한다. 이 풀이는 인명 자체와 구별하여 비고에 둔다. 여러 인물의 이름이며 인물 수만큼 의미를 나누지 않는다. 스 5:1·6:14는 아람어 문맥의 같은 이름이다. 정확한 고대 발음이나 모든 셰와의 고정 음가를 복원한 표기는 아니다."
+    },
+    {
+      "word_id": "H3108_0000",
+      "before": null,
+      "after": "요사갈은 한국어 성경 관용명이고, 요-자카르는 Strong 표제형 יוֹזָכָר의 교재식 한글 근사다. Strong은 여호와(H3068)와 기억하다(H2142)의 결합으로 설명한다. 그러나 OSHB 왕하 12:22(한국어 성경 12:21)는 וְיוֹזָבָד라는 표기에 lemma H3108을 붙이며, 이 위치에는 Ketiv/Qere 표지가 없다. 표제형·본문 표기·lemma 매핑의 차이를 그대로 보존한다. 대하 24:26의 병행 본문에는 זָבָד(H2066)가 나온다. 이를 근거로 H3107 등의 다른 Strong에 재배정하거나 표제어를 수정하지 않으며, 구성요소와의 확정 관계 등록은 자료 차이를 해소할 때까지 보류한다."
+    },
+    {
+      "word_id": "G2197_0000",
+      "before": null,
+      "after": "히브리어 인명 H2148 זְכַרְיָה의 그리스어식 표기다. ‘사가랴·스가랴’는 한국어 성경 관용명이고, ‘제카르-야’는 원천 이름의 구성을 보여 주는 분석 표기다. 그리스어 자체의 교재식 음역은 ‘자카리아스’이며 음역란에 보존한다. ‘여호와께서 기억하셨다’는 전통적인 이름 풀이로, 별도 의미로 세지 않는다. 원천 이름 H2148에는 זְכַרְיָהוּ(제카르-야후)라는 장형도 있으나, G2197의 각 용례가 그 장형에서 직접 전승되었다고 확정하지 않는다. 11개 용례 가운데 9개는 세례자 요한 가문의 이름 문맥이며, 눅 1:59는 아기에게 아버지의 이름을 붙이려는 문맥이다. 마 23:35와 눅 11:51은 죽임당한 스가랴를 언급한다. 마태의 바라갸의 아들과 대하 24:20의 여호야다의 아들 사이의 인물 식별 문제는 확정하지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0234_0000",
+      "word_id_2": "H2142_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "note": "Strong은 H2142에서 형성되었다고 설명한다. 실제 용례는 불살라 바치는 기념 부분이다.",
+      "source": "정본 Strong XML; 원문 용례 및 외부 H0234-r1 연구 대조",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H2139_0000",
+      "word_id_2": "H2142_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "note": "Strong의 H2142 from 및 mindful이라는 전통 이름 풀이에 근거한다. 스 8:14의 Ketiv/Qere 차이는 별도 본문 문제다.",
+      "source": "정본 Strong XML; 원문 용례 및 외부 H0234-r1 연구 대조",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H2142_0000",
+      "word_id_2": "H2143_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "note": "Strong은 H2142에서 형성되었다고 설명한다. 기억·기억되는 이름의 명사이며 호 14:8의 구체 풀이에는 이견이 있다.",
+      "source": "정본 Strong XML; 원문 용례 및 외부 H0234-r1 연구 대조",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H2142_0000",
+      "word_id_2": "H2146_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "note": "Strong은 H2142에서 형성되었다고 설명한다. 기억하게 하는 장치·행위·기록과 남는 기억에 쓰인다.",
+      "source": "정본 Strong XML; 원문 용례 및 외부 H0234-r1 연구 대조",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H2142_0000",
+      "word_id_2": "H2147_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "note": "Strong의 H2142 from 및 memorable이라는 전통 이름 풀이에 근거한다. 다른 계보의 인물 동일성은 이 관계의 근거가 아니다.",
+      "source": "정본 Strong XML; 원문 용례 및 외부 H0234-r1 연구 대조",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H2138_0000",
+      "word_id_2": "H2145_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "note": "H2138은 성경에서 접미사형으로 나타나는 H2145의 male 이형으로 설명된다.",
+      "source": "정본 Strong XML; 원문 용례 및 외부 H0234-r1 연구 대조",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H1798_0000",
+      "word_id_2": "H2145_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "note": "Strong의 Aramaic corresponding to H2145 설명에 근거한 동계 대응이다. 이 아람어 표제어의 실제 세 용례는 숫양이다.",
+      "source": "정본 Strong XML; 원문 용례 및 외부 H0234-r1 연구 대조",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H1799_0000",
+      "word_id_2": "H2146_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "note": "Strong의 Aramaic corresponding to H2146 설명에 근거한 동계 대응이며 차용 방향은 확정하지 않는다.",
+      "source": "정본 Strong XML; 원문 용례 및 외부 H0234-r1 연구 대조",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H2143_0000",
+      "word_id_2": "H2144_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "note": "Strong은 H2144를 H2143과 같은 말이라고 설명한다. 인명 형성과 차용의 직접 방향은 확정하지 않는다.",
+      "source": "정본 Strong XML; 원문 용례 및 외부 H0234-r1 연구 대조",
+      "description": null,
+      "relation_group_id": null
+    }
+  ],
+  "relation_replacements": [
+    {
+      "relation_id": 3582,
+      "word_id_1": "H2142_0000",
+      "word_id_2": "H2148_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "note": "H2142와 H3050의 결합으로 설명되는 이름이다. 전통 풀이 여호와께서 기억하셨다는 비고 정보다.",
+        "source": "정본 Strong XML; 원문 용례 및 외부 H0234-r1 연구 대조",
+        "description": null,
+        "relation_group_id": null
+      }
+    },
+    {
+      "relation_id": 6506,
+      "word_id_1": "H2148_0000",
+      "word_id_2": "H3050_0000",
+      "before": {
+        "category_code": null,
+        "relation_type": null,
+        "status_code": "inferred",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "",
+        "source": "WORD_TABLE.관련2"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "note": "Strong이 H2142와 함께 H3050을 H2148의 구성요소로 제시한다.",
+        "source": "정본 Strong XML; 원문 용례 및 외부 H0234-r1 연구 대조",
+        "description": null,
+        "relation_group_id": null
+      }
+    },
+    {
+      "relation_id": 3583,
+      "word_id_1": "G2197_0000",
+      "word_id_2": "H2148_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "transliteration",
+        "relation_type": "direct_transliteration",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "note": "G2197은 H2148에서 온 헬라어 이름 표기로 설명된다. 개별 인물의 역사적 동일성을 이 관계로 확정하지 않는다.",
+        "source": "정본 Strong XML; 원문 용례 및 외부 H0234-r1 연구 대조",
+        "description": null,
+        "relation_group_id": null
+      }
+    }
+  ],
+  "meaning_approvals": [],
+  "supersedes": []
+}

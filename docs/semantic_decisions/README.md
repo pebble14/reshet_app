@@ -149,6 +149,7 @@
 | H229 에스배·히솝 식물명 클러스터 | 인명 병기·식물명1의미 통합·비고3, 가설 파생1·번역 대응 교체1·종 식별 유보·hold 없음 | `active` | 높음 | 2026-10-26 | [기록](h229_cluster_approved_content_slice.md) |
 | H230 확고함 | 확고하다(確固하다) 단일 의미·비고1, 떠남·공표 대안 보존·관계 비생성·hold 없음 | `active` | 높음 | 2026-10-26 | [기록](h230_cluster_approved_content_slice.md) |
 | H232 허리띠·결박구·불 계열 클러스터 | CORE5 meaning5·비고5·관계2, 수갑의 형태 불확실성·사슬 의미 보존·hold 없음 | `active` | 높음 | 2026-10-27 | [기록](h232_cluster_approved_content_slice.md) |
+| H234 기념·기억·남성 및 인명 클러스터 | CORE14 meaning18행·비고14·신규관계9·교체3, G2197 원천 이름 병기·관계4쌍 보류·신규 hold 없음 | `active` | 높음 | 2026-10-27 | [기록](h234_cluster_approved_content_slice.md) |
 
 ## 열람 및 후속 판단 원칙
 
