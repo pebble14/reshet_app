@@ -1,0 +1,149 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H232-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-27 H232 R1 및 H246 최종 채팅 수정; DB·문서·Git·이번 작업 branch 정리 사용자 승인; data/backups/approved_content_batch/h232_approval_20261027/00_user_approval.json",
+    "document_sha256": "cd9f97069526d948faa0610769d638e4c1344dda344875312cf2e2ebfc51ba58"
+  },
+  "target": {
+    "expected_work_sha256": "2a48feb4e49908021380e1c874781618b6d721c295eba5175097a35ccdd09175",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0232_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "허리띠, 천"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "허리띠"
+        }
+      ]
+    },
+    {
+      "word_id": "H0246_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "사슬, 속박"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "수갑(手匣)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0247_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "띠를 띠다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "두르다·동여매다"
+        }
+      ]
+    },
+    {
+      "word_id": "H2131_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "섬광, 불꽃"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "불꽃·횃불"
+        },
+        {
+          "seq": 2,
+          "meaning": "사슬"
+        }
+      ]
+    },
+    {
+      "word_id": "H2187_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "(껑충) 뛰다, 뛰어오르다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "뛰어오르다"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0232_0000",
+      "before": null,
+      "after": "허리에 두르는 띠로, 가죽으로 만든 것과 베로 만든 것을 함께 가리킨다. 사 11:5에서는 공의와 신실함을 띠에 빗댄다. 욥 12:18은 포승이나 종의 허리옷으로 해석되어 구체적인 용도가 불확실하다. 참고 사전과 형태·용례는 H247과의 연결을 지지하지만 Strong 원자료의 H246 참조는 다른 설명으로 구별하여 보존한다."
+    },
+    {
+      "word_id": "H0246_0000",
+      "before": null,
+      "after": "포로의 손에 채우는 결박구를 가리킨다. 구체적인 모양과 잠금 방식은 본문만으로 확정할 수 없다."
+    },
+    {
+      "word_id": "H0247_0000",
+      "before": null,
+      "after": "띠나 옷을 몸에 둘러 여미는 것을 바탕으로, 허리를 동여 준비하거나 힘·기쁨을 갖추는 비유에 쓰인다. 욥 30:18에서는 옷깃처럼 몸을 휘감는 표현이며 무엇이 주어인지는 해석이 갈린다. 사 50:11의 마소라 본문은 불꽃을 둘러 두르는 표현을 사용한다. 일부 사전의 불을 밝히다는 다른 읽기 제안이므로 현행 본문의 독립 의미로 추가하지 않는다."
+    },
+    {
+      "word_id": "H2131_0000",
+      "before": null,
+      "after": "불꽃이나 불붙은 물체를 가리키는 용례 3회와 포로 등을 묶는 사슬을 가리키는 용례 4회가 있다. 불 계열은 횃불이나 불붙은 화살 등으로 옮기기도 하지만 구체적인 물체는 확정하기 어렵다. Strong은 H2187에서 유래한 것으로 설명하지만 BDB는 불 계열의 어근을 불확실하다고 보고 사슬 계열을 구별한다. 두 의미를 하나의 확정된 어원으로 묶지 않는다."
+    },
+    {
+      "word_id": "H2187_0000",
+      "before": null,
+      "after": "신 33:22에서 사자 새끼에 빗댄 단이 바산에서 뛰어나오는 데 쓰인다. Strong의 발을 모았다가 앞으로 뛴다는 설명은 동작의 이미지로 보존하며 발을 모으다를 별도 의미로 두지 않는다. H2131의 불 계열과의 어원 연결은 불확실하므로 확정 관계로 만들지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0246_0000",
+      "word_id_2": "H2131_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "note": "Strong은 H246을 H2131의 이형으로 설명한다. 이 관계는 H2131의 사슬 의미에 한정하며 불꽃 의미의 파생을 주장하지 않는다.",
+      "source": "Open Scriptures HebrewStrong H246 source; BDB H246 및 H2131의 사슬 항목",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H0232_0000",
+      "word_id_2": "H0247_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "note": "허리에 두르는 H232를 H247과 연결하는 사전의 파생 설명과 형태·용례를 근거로 한다. Strong 원자료의 H246 참조와 구별하며 그 원자료를 고치지 않는다.",
+      "source": "HebGrkKo H232; NAS Exhaustive Concordance H232; OSHB 2Kgs.1.8; BDB H247",
+      "description": null,
+      "relation_group_id": null
+    }
+  ],
+  "relation_replacements": [],
+  "meaning_approvals": [],
+  "supersedes": []
+}
