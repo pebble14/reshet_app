@@ -1,0 +1,473 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H249-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-27 H249 CORE11 R1/R2 최종 meaning·비고·관계 및 DB·문서·Git·이번 branch 정리 사용자 승인; data/backups/approved_content_batch/h249_approval_20261027/00_user_approval.json",
+    "document_sha256": "1d2bfbf4c51fc23192b5a606ea42e45334ad9ed286987631068731e919c55096"
+  },
+  "target": {
+    "expected_work_sha256": "e7434a19193c1641b3f0076e7e78311414eac37e9bb1c0046b54d6f214f3660f",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0249_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "본토인"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "본토인(本土人)"
+        },
+        {
+          "seq": 2,
+          "meaning": "본토(本土)에서 자란 나무"
+        }
+      ]
+    },
+    {
+      "word_id": "H0250_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "에스라 사람"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "예스라 사람·에스라인·세라·제라흐 가문(家門) 사람"
+        }
+      ]
+    },
+    {
+      "word_id": "H2224_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "비추다"
+        },
+        {
+          "seq": 2,
+          "meaning": "떠오르다"
+        },
+        {
+          "seq": 3,
+          "meaning": "일어나다"
+        },
+        {
+          "seq": 4,
+          "meaning": "나타나다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "돋다"
+        }
+      ]
+    },
+    {
+      "word_id": "H2225_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "비춤"
+        },
+        {
+          "seq": 2,
+          "meaning": "떠오름"
+        },
+        {
+          "seq": 3,
+          "meaning": "나타남"
+        },
+        {
+          "seq": 4,
+          "meaning": "밝아짐"
+        },
+        {
+          "seq": 5,
+          "meaning": "여명"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "빛이 돋음"
+        }
+      ]
+    },
+    {
+      "word_id": "H2226_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "세라"
+        },
+        {
+          "seq": 2,
+          "meaning": "뜻풀이: 비춤, 밝아짐, 여명"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "세라·제라흐 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2227_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "세라의 후손들 zarhites"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "세라·제라흐 가문(家門) 사람"
+        }
+      ]
+    },
+    {
+      "word_id": "H2228_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "스라히야 Zerahiah"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "스라히야·제라흐-야 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3155_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "이스라 사람 Izrahite"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "이스라 사람·세라·제라흐 가문(家門) 사람"
+        }
+      ]
+    },
+    {
+      "word_id": "H3156_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "이스라히야 Izrahiah(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "이스라히야·예스라히야·이즈라흐-야 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H4217_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "해 뜨는 곳, 동쪽"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "해 돋는 쪽(동쪽)"
+        }
+      ]
+    },
+    {
+      "word_id": "G2196_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "세라[비춤, 밝아짐, 여명]"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "세라·자라·제라흐 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0249_0000",
+      "before": null,
+      "after": "본토에서 난 사람을 주로 가리키며, 거류민과 같은 권리·의무를 말하는 문맥에도 쓰인다. 시 37:35에서는 제 땅에서 자라 무성한 나무를 가리킨다. Strong은 돋다(H2224)의 springing up과 연결하여 그 땅에서 돋아난 존재라는 어원적 이미지를 제시한다. 이는 전통적인 어원 설명이며, H2224의 현재 성경 용례 전체를 출생이나 식물의 자생으로 해석하는 근거는 아니다. 나무의 특정 수종은 확정하지 않는다."
+    },
+    {
+      "word_id": "H0250_0000",
+      "before": null,
+      "after": "에단과 헤만에게 붙는 소속·계통 호칭이다. 예스라 사람과 에스라인은 한국어 성경의 관용형이고, 세라·제라흐 가문 사람은 Strong과 BDB가 제시하는 구체적인 뜻풀이를 드러낸다. Strong 정본은 H2226에서 나온 부칭형으로, BDB는 세라의 가문에 속함으로 설명한다. 이 뜻풀이와 대상 2:6의 에단·헤만이 다른 본문의 인물들과 모두 동일인인지의 문제는 구별한다. 시편의 LXX 참고 표제는 이스라엘 사람으로 풀이하며, 이것만으로 H249에서의 파생을 확정하지 않는다. 에즈라히는 אֶזְרָחִי 전체를 읽은 교재식 근사이며, 그 표기 자체가 별도 선조나 출신 성읍의 실재를 입증하지 않는다."
+    },
+    {
+      "word_id": "H2224_0000",
+      "before": null,
+      "after": "해가 떠오르는 것과 빛·하나님의 영광이 밝게 드러나는 것에 쓰인다. 대하 26:19에서는 피부병 증상이 이마에 돋아나는 것을 가리킨다. 왕하 3:22는 떠오른 해가 물에 비치는 국면을 강조한다. 파생 명사 H2225의 빛이 돋음과 방향 명사 H4217의 해 돋는 쪽을 같은 한국어 어휘로 연결하여 설명한다. 한국어 돋다의 식욕·식물 등 모든 용법을 히브리어에 부여하지 않으며, H249의 springing up은 Strong의 어원 설명으로 구별한다."
+    },
+    {
+      "word_id": "H2225_0000",
+      "before": null,
+      "after": "돋다(H2224)에서 형성된 남성 명사로, 빛이 떠오르거나 밝게 드러나는 것을 가리킨다. 사 60:3에서는 시온에 돋는 빛의 광채를 말한다. 같은 절의 נגה가 광채를 나타내므로 두 단어의 역할을 구별한다. 돋다와 그 작용을 나타내는 명사의 연결을 드러내되, 빛과 무관한 일반적 출현까지 넓히거나 실제 새벽 시간에만 한정하지 않는다."
+    },
+    {
+      "word_id": "H2226_0000",
+      "before": null,
+      "after": "여러 남성의 이름이다. 세라는 한국어 성경 관용명이고 제라흐는 זֶרַח의 교재식 한글 근사다. Strong은 빛의 떠오름(H2225)과 같은 말로 설명하지만, 그 어원 풀이를 별도 일반 의미나 모든 인물의 성격·작명 동기로 저장하지 않는다. 창 38:30 등 세 본문의 זָרַח 모음형은 표제형과 구별하여 보존한다. 에돔·레위 계보의 동명 인물들을 모두 동일인으로 확정하지 않는다."
+    },
+    {
+      "word_id": "H2227_0000",
+      "before": null,
+      "after": "세라·제라흐(H2226)의 후손이나 그 가문에 속한 사람을 나타내는 소속형이다. 민 26:13은 시므온 계열이고, 민 26:20·수 7:17·대상 27:11·13은 유다 계열이다. 모든 세라 가문을 동일 혈통 집단으로 합치지 않는다. 전체 히브리어 소속형의 교재식 읽기는 자르히이며, meaning은 기존 가문 표기 관행에 따라 기반 이름과 소속 기능을 함께 드러낸다."
+    },
+    {
+      "word_id": "H2228_0000",
+      "before": null,
+      "after": "스라히야는 한국어 성경 관용명이고 제라흐-야는 זְרַחְיָה의 교재식 한글 근사와 신명 요소의 경계를 드러낸 표기다. Strong은 빛의 떠오름(H2225)과 야(H3050)의 결합으로 설명하며 야께서 돋으셨다라는 이름 풀이를 제시한다. BDB의 동사 문장 풀이와 명사 H2225를 직접 모체로 삼는 분석은 구별한다. 제사장 계보와 스 8:4의 인물 식별을 모두 하나로 확정하지 않으며, 정확한 고대 발음을 복원한 표기가 아니다."
+    },
+    {
+      "word_id": "H3155_0000",
+      "before": null,
+      "after": "대상 27:8에서 삼훗을 수식하는 소속·계통 호칭이다. 이스라 사람은 한국어 성경 관용형이며, 세라·제라흐 가문 사람은 Strong이 제시하는 후손·소속자 풀이를 드러낸다. Strong은 H250의 변형으로 설명한다. 그러나 BDB의 마지막 י 보충과 H2227 소속형과의 동일시에는 본문 교정 제안이 포함되므로, 구체적인 형성 과정과 실제 계보는 확정하지 않는다. 이즈라흐는 현재 표제 יִזְרָח를 읽은 교재식 근사이며, 별도 선조나 지명을 입증하는 인명·지명으로 제시하지 않는다. 현재 원문의 철자에 없는 י를 보충하지 않는다."
+    },
+    {
+      "word_id": "H3156_0000",
+      "before": null,
+      "after": "이스라히야는 대상 7:3, 예스라히야는 느 12:42의 한국어 성경 관용명이다. 이즈라흐-야는 יִזְרַחְיָה의 교재식 근사와 신명 요소 경계를 보인 표기다. 돋다(H2224)와 야(H3050)의 결합으로, Strong은 야께서 빛나실 것이다라고 풀이한다. 이 풀이를 별도 일반 의미나 인물의 운명으로 저장하지 않는다. 같은 이름이 여러 사람에게 쓰인 사실과 H2228 이름의 형성 차이를 구별한다."
+    },
+    {
+      "word_id": "H4217_0000",
+      "before": null,
+      "after": "해가 돋는 쪽이라는 뜻의 방향 명사로 동쪽을 가리킨다. 동쪽 지역·동쪽으로의 이동·동쪽에서 옴과 방향형 מִזְרָחָה를 함께 포괄한다. 돋다(H2224)와의 연결을 meaning에서도 드러내며, 괄호의 동쪽은 같은 방향을 식별하는 말로 별도 sense가 아니다. 시 50:1·113:3·말 1:11의 해 돋는 데서 해 지는 데까지는 동서의 넓은 범위로 주 배정하되, 하루의 전 범위를 떠올리는 구문 해석 가능성을 비고에 보존한다."
+    },
+    {
+      "word_id": "G2196_0000",
+      "before": null,
+      "after": "마 1:3에서 유다와 다말의 아들 세라를 가리키는 그리스어 이름이다. 세라는 한국어 성경 관용명, 자라는 그리스어 기록형의 교재식 한글 근사, 제라흐는 히브리어 원천 이름 H2226의 근사다. 자라는 실제 그리스어 기록형을 비교하는 데 쓰며 당대 특정인의 정확한 구어 호명을 확정한 표기가 아니다. Strong XML의 표제 Ζαρά, TAGNT 본문 및 현재 DB의 Ζάρα 악센트 차이는 자료별로 보존한다. 빛이 돋음이라는 원천 이름의 어원 설명은 인명 자체와 구별한다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0249_0000",
+      "word_id_2": "H2224_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from H2224 (in the sense of springing up) — 전통 어원은 보존하되 H2224의 실제 18용례에는 식물 자생 뜻이 없고 역사적 연결의 독립 증거가 제한됨.",
+      "source": "정본 Strong XML; HebrewStrong commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; Greek Strong dd6758b82f46b620804a8ea677d715844679eea1; OSHB/TAGNT 및 H0249 R1/R2 연구·BDB 대조; 2026-10-27 사용자 승인"
+    },
+    {
+      "word_id_1": "H2224_0000",
+      "word_id_2": "H3156_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from H2224 and H3050; Jah will shine — 동사 요소와 신명 요소가 확인된다.",
+      "source": "정본 Strong XML; HebrewStrong commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; Greek Strong dd6758b82f46b620804a8ea677d715844679eea1; OSHB/TAGNT 및 H0249 R1/R2 연구·BDB 대조; 2026-10-27 사용자 승인"
+    },
+    {
+      "word_id_1": "H2224_0000",
+      "word_id_2": "H4217_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from H2224 — 해가 돋는 방향이라는 형태·74용례의 방향 의미가 일치한다.",
+      "source": "정본 Strong XML; HebrewStrong commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; Greek Strong dd6758b82f46b620804a8ea677d715844679eea1; OSHB/TAGNT 및 H0249 R1/R2 연구·BDB 대조; 2026-10-27 사용자 승인"
+    },
+    {
+      "word_id_1": "H2225_0000",
+      "word_id_2": "H2226_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "the same as H2225 — 보통명사와 이름의 같은 형태·어근을 보존한다. 직접 명명 동기와 파생 방향은 단정하지 않는다.",
+      "source": "정본 Strong XML; HebrewStrong commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; Greek Strong dd6758b82f46b620804a8ea677d715844679eea1; OSHB/TAGNT 및 H0249 R1/R2 연구·BDB 대조; 2026-10-27 사용자 승인"
+    },
+    {
+      "word_id_1": "H2225_0000",
+      "word_id_2": "H2228_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from H2225 and H3050; Jah has risen — 명시 source는 H2225지만 전통 이름 풀이는 동사 문장이다. z-r-h 요소와 야 경계의 확실성, 정확한 모체 선택을 구별한다.",
+      "source": "정본 Strong XML; HebrewStrong commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; Greek Strong dd6758b82f46b620804a8ea677d715844679eea1; OSHB/TAGNT 및 H0249 R1/R2 연구·BDB 대조; 2026-10-27 사용자 승인"
+    },
+    {
+      "word_id_1": "H3050_0000",
+      "word_id_2": "H3156_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from H2224 and H3050; Jah will shine — 야 구성 요소. H3050 독립 meaning 승인을 포함하지 않는다.",
+      "source": "정본 Strong XML; HebrewStrong commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; Greek Strong dd6758b82f46b620804a8ea677d715844679eea1; OSHB/TAGNT 및 H0249 R1/R2 연구·BDB 대조; 2026-10-27 사용자 승인"
+    },
+    {
+      "word_id_1": "H0250_0000",
+      "word_id_2": "H2226_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "patronymic from H2226 — Strong/BDB의 세라 소속형 풀이를 보존하되 시편 LXX의 이스라엘 사람 풀이와 역사적 계보 문제를 지우지 않는다.",
+      "source": "정본 Strong XML; HebrewStrong commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; Greek Strong dd6758b82f46b620804a8ea677d715844679eea1; OSHB/TAGNT 및 H0249 R1/R2 연구·BDB 대조; 2026-10-27 사용자 승인"
+    },
+    {
+      "word_id_1": "H2226_0000",
+      "word_id_2": "H2227_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "patronymically from H2226 — 민 26의 이름+가문 소속형과 실제 종족 문맥이 직접 뒷받침한다.",
+      "source": "정본 Strong XML; HebrewStrong commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; Greek Strong dd6758b82f46b620804a8ea677d715844679eea1; OSHB/TAGNT 및 H0249 R1/R2 연구·BDB 대조; 2026-10-27 사용자 승인"
+    },
+    {
+      "word_id_1": "H2228_0000",
+      "word_id_2": "H3050_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "from H2225 and H3050; Jah has risen — 야 구성 요소는 첫 요소의 정확한 모체 선택과 별개로 확인된다.",
+      "source": "정본 Strong XML; HebrewStrong commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; Greek Strong dd6758b82f46b620804a8ea677d715844679eea1; OSHB/TAGNT 및 H0249 R1/R2 연구·BDB 대조; 2026-10-27 사용자 승인"
+    },
+    {
+      "word_id_1": "H0250_0000",
+      "word_id_2": "H3155_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "a variation for H250 — 동일시에는 BDB의 본문 보충 제안이 개입하므로 가설로 한정한다. 방향은 미확정이므로 무방향.",
+      "source": "정본 Strong XML; HebrewStrong commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; Greek Strong dd6758b82f46b620804a8ea677d715844679eea1; OSHB/TAGNT 및 H0249 R1/R2 연구·BDB 대조; 2026-10-27 사용자 승인"
+    }
+  ],
+  "relation_replacements": [
+    {
+      "relation_id": 3178,
+      "word_id_1": "H2224_0000",
+      "word_id_2": "H2225_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "from H2224 — 동사와 빛의 떠오름 명사의 형태·의미가 일치한다.",
+        "source": "정본 Strong XML; HebrewStrong commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; Greek Strong dd6758b82f46b620804a8ea677d715844679eea1; OSHB/TAGNT 및 H0249 R1/R2 연구·BDB 대조; 2026-10-27 사용자 승인"
+      }
+    },
+    {
+      "relation_id": 3180,
+      "word_id_1": "G2196_0000",
+      "word_id_2": "H2226_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "transliteration",
+        "relation_type": "direct_transliteration",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "of Hebrew origin (H2226) — 마 1:3과 창 38:30의 유다·다말의 같은 이름 전승을 확인한다.",
+        "source": "정본 Strong XML; HebrewStrong commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; Greek Strong dd6758b82f46b620804a8ea677d715844679eea1; OSHB/TAGNT 및 H0249 R1/R2 연구·BDB 대조; 2026-10-27 사용자 승인"
+      }
+    },
+    {
+      "relation_id": 3179,
+      "word_id_1": "H2224_0000",
+      "word_id_2": "H2226_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "etymological",
+        "relation_type": "root_shared",
+        "status_code": "asserted",
+        "direction_code": "undirected",
+        "description": null,
+        "relation_group_id": null,
+        "note": "기존 legacy 관계; H2226 the same as H2225, H2225 from H2224 — 명시적인 직접 파생을 가정하지 않고 z-r-h 공통 어근으로 기존 관계를 정돈한다.",
+        "source": "정본 Strong XML; HebrewStrong commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; Greek Strong dd6758b82f46b620804a8ea677d715844679eea1; OSHB/TAGNT 및 H0249 R1/R2 연구·BDB 대조; 2026-10-27 사용자 승인"
+      }
+    }
+  ],
+  "meaning_approvals": [],
+  "supersedes": []
+}
