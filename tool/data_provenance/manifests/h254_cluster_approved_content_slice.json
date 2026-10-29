@@ -1,0 +1,40 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H254-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "2026-10-29 H254 R1 및 DB·문서·Git·브랜치 정리 사용자 승인; data/backups/approved_content_batch/h254_approval_20261029/00_user_approval.json",
+    "document_sha256": "c08a03c9ac9ba948da93fd5e1cf15e89ab28416a29e8eea4759ba0312a0a2a06"
+  },
+  "target": {
+    "expected_work_sha256": "b5baa3174508420f0b5e40fcc080cfb8d7ab755b1d0351b99285e91cc7618dbe",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0254_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "화로"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "화로(火爐)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0254_0000",
+      "before": null,
+      "after": "불을 담아 난방 등에 쓰는 기구다. 렘 36:22–23에서는 왕 앞에 놓여 있고 두루마리를 태우는 데 쓰이며, 불 자체는 אֵשׁ(H784)로 따로 표현된다. 어원은 불명확하며 BDB는 이집트어 차용설을 제시한다. 사전의 여성명사 분류와 OSHB의 남성 단수 분석은 구별해 보존한다."
+    }
+  ],
+  "relation_creates": [],
+  "relation_replacements": [],
+  "meaning_approvals": [],
+  "supersedes": []
+}

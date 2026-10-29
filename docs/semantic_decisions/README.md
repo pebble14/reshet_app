@@ -156,6 +156,8 @@
 
 | H251 클러스터·H91 가문 표기 | CORE36·H91 의미 정리·비고35·신규관계55, H301·H3505 유지·hold 없음 | `active` | 높음 | 2026-10-29 | [기록](h251_cluster_approved_content_slice.md) |
 
+| H254 화로 | 화로(火爐) 1의미·비고1, 관계 비생성·hold 없음 | `active` | 높음 | 2026-10-29 | [기록](h254_cluster_approved_content_slice.md) |
+
 ## 열람 및 후속 판단 원칙
 
 1. 새 제안을 만들기 전에 관련 Strong이 이 색인에 있는지 확인한다.
