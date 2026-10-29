@@ -154,6 +154,8 @@
 | H238 듣다·귀·저울·고유명사 클러스터 | CORE14 meaning15행·비고14·신규관계14(확정11·가설3), H239 헤아리다·H240 장비·H3153 붙임표 보충·hold 없음 | `active` | 높음 | 2026-10-27 | [기록](h238_cluster_approved_content_slice.md) |
 | H249 본토·돋다·세라 가문 클러스터 | CORE11 meaning12행·비고11·신규관계10·교체3(확정9·가설4), 가문 소속 풀이·돋다 일관성·hold 없음 | `active` | 높음 | 2026-10-27 | [기록](h249_cluster_approved_content_slice.md) |
 
+| H251 클러스터·H91 가문 표기 | CORE36·H91 의미 정리·비고35·신규관계55, H301·H3505 유지·hold 없음 | `active` | 높음 | 2026-10-29 | [기록](h251_cluster_approved_content_slice.md) |
+
 ## 열람 및 후속 판단 원칙
 
 1. 새 제안을 만들기 전에 관련 Strong이 이 색인에 있는지 확인한다.

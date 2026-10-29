@@ -12,7 +12,11 @@
 - 승인 원문·적용 전 byte 백업·검증: `data/backups/approved_content_batch/h89_approval_20261016/`
 - 공식 snapshot·result·manifest 사본: `data/backups/approved_content_batch/20261016T014727086038Z/`
 
-## 최종 결정
+## 현재 H91 후속 결정 — 2026-10-29
+
+H91 meaning은 `아각·아가그 가문(家門) 사람`으로 표기 정리했다. 기존 비고·관계·혈통 관련 제한은 유지한다. H89·H90은 변경하지 않는다. [H251·H91 후속 결정](h251_cluster_approved_content_slice.md)이 H91 meaning에 한하여 기존 batch 승인을 대체한다. 아래 적용 기록은 2026-10-16의 값이다.
+
+## 2026-10-16 결정
 
 사용자는 H91의 가문 풀이와 기반 인명 병기를 포함한 최신 추천안을 채택하고 DB·문서·필요한 파일·Git 게시와 이상 없는 경우 이번 작업 브랜치 정리까지 승인했다. 다음 세 meaning은 각각 seq1, sense1이다.
 
