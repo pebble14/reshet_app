@@ -1737,3 +1737,9 @@ Work SHA `e7434a19193c1641b3f0076e7e78311414eac37e9bb1c0046b54d6f214f3660f` → 
 [h258_cluster_approved_content_slice.json](../../tool/data_provenance/manifests/h258_cluster_approved_content_slice.json)은 R2 전체와 R3의 H6247·H6241 보충을 반영한다. CORE25개 의미30행(교체24·유지승인1), 비고25, 관계18(확정15·가설3), 실제쓰기67건이다. Word hold 추가 없이 관계보류5·비생성3을 유지한다. H258은 하나로 모이다를 대표안으로 선택하되 경쟁 분석을 보존하고, H6247은 판형을 고정하지 않는 가공물(加工物), H6241은 에바의10분의1 단위로 승인했다. 정확한 값·대안·미해결은 [결정 기록](../semantic_decisions/h258_cluster_approved_content_slice.md)과 README 색인을 따른다.
 
 공식 dry-run·undo·원본 불변, live apply1회, 적용 후 단독 테스트31개와 전13테이블 독립 검증을 통과했다. 첫 테스트와 live apply의 실행 중첩으로 인한 teardown 실패는 결정 기록에 명시했다. 승인 projection·history67건 외 비대상·DDL 불변, integrity ok·FK0·seed 불변이다. 표준 progress 승인737→762·미승인13555→13530, hold6·anomaly113·전체14298 및 비대상14273행은 불변이다. 백업·독립 검증은 data/backups/approved_content_batch/h258_approval_20261029/, 공식 receipt는 data/backups/approved_content_batch/20261029T072743234763Z/result.json에 있다. Work DB는 미추적 로컬 자산이며 원문·음역·발음·schema·seed 배포·앱 UI 변경은 없다.
+
+## H260 습지 풀 의미·비고 승인 — 2026-10-29
+
+[h260_cluster_approved_content_slice.json](../../tool/data_provenance/manifests/h260_cluster_approved_content_slice.json)은 H0260의 의미를 `습지(濕地) 풀` 1행으로 정리하고 승인 비고1건을 추가한다. 관계·hold 변경은 없다. 선택 이유·주요 대안·식물 종과 어원·호13:15 대안 독법의 한계는 [결정 기록](../semantic_decisions/h260_cluster_approved_content_slice.md)을 따른다.
+
+공식 dry-run·undo·원본 불변, 기존 테스트31개, live apply1회와 전체13테이블·DDL 독립 대조를 통과했다. 승인 projection·history2행 외 비대상 데이터 불변, integrity ok·FK0·sidecar 없음·seed 불변이다. History group `1793261701308814`, IDs7344–7345. 표준 progress 승인762→763·미승인13530→13529, hold6·anomaly113 유지, 비대상14297행 불변. 백업·검증은 `data/backups/approved_content_batch/h260_approval_20261029/`, 공식 receipt는 `data/backups/approved_content_batch/20261029T081459899413Z/result.json`이다. Work DB는 미추적 로컬 자산이며 앱 UI·원문·음역·발음·schema·seed 배포 변경은 없다.

@@ -168,3 +168,5 @@
 5. 로컬 연구 산출물 이름은 상세 근거를 찾기 위한 식별자다. 연구 산출물은 Git tracked authority가 아니며 다른 checkout에 존재하지 않을 수 있다.
 
 | H118 아달리야·아달랴 | 동일 인명 병기·비고, 관계 비생성·hold 없음 | `active` | 높음 | 2026-10-19 | [기록](h118_cluster_approved_content_slice.md) |
+
+| H260 습지 풀 | 의미1·비고1, 관계 비생성·hold 없음 | `active` | 높음 | 2026-10-29 | [기록](h260_cluster_approved_content_slice.md) |

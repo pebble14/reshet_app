@@ -1,0 +1,40 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H260-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "data\\backups\\approved_content_batch\\h260_approval_20261029\\00_user_approval.json",
+    "document_sha256": "2160d3101e20444fee186cd05f3a0053b5cf3c158655a2312da0bacf9b442959"
+  },
+  "target": {
+    "expected_work_sha256": "2390663a17ad0bd16fb767fc8f34449d1ffa68d726d19bda90f547c50534e2b0",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0260_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "갈대, 골풀"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "습지(濕地) 풀"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0260_0000",
+      "before": null,
+      "after": "갈대·골풀처럼 물가나 습지에 자라는 풀을 집합적으로 가리키며, 특정 식물 종으로 한정하지 않는다. 창 41:2·18에서는 나일강가에서 풀이 자란 곳을 가리켜 ‘갈밭’으로 옮길 수 있고, 욥 8:11에서는 물 없이는 자라지 못하는 풀로 나온다. BDB와 이집트어 사전은 이집트어와의 관련을 제시하지만, Strong은 어원을 불확실하며 아마 이집트어에서 왔을 것으로 설명한다."
+    }
+  ],
+  "relation_creates": [],
+  "relation_replacements": [],
+  "meaning_approvals": [],
+  "supersedes": []
+}
