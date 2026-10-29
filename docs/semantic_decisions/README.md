@@ -106,6 +106,7 @@
 | 기타 고대 언어 정비 | 고대 페르시아어·아카드어·우가릿어 전량 3단어의 표현·의미·비고 | `active` | 학술 읽기·재구 읽기·한정기호와 불확실성 구분, 상업 재배포 가능한 원천과 참고용 자료 분리 | 2026-10-10 | [기록](other_ancient_languages_approved_content_slice.md) |
 | H115 클러스터 | 아도라임·장엄함 CORE11, 앗다르·아드람멜레크 병기, 비고11·관계10 | `active` | 높음 | 2026-10-19 | [기록](h115_cluster_approved_content_slice.md) |
 | H116 시간·서사 부사 | 그때·이에 1 sense·비고1, 관계 비생성·hold 없음 | `active` | 높음 | 2026-10-19 | [기록](h116_cluster_approved_content_slice.md) |
+| H258 연결 어휘군 | CORE25·의미30행·관계18 | `active` | 높음 | 2026-10-29 | [기록](h258_cluster_approved_content_slice.md) |
 
 | H119 클러스터 | CORE22 의미·비고·관계20, H726 아람 사람 및 Ketiv/Qere 설명·신규 hold 없음 | `active` | 높음 | 2026-10-19 | [기록](h119_cluster_approved_content_slice.md) |
 
