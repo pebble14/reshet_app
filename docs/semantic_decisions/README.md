@@ -172,3 +172,5 @@
 | H260 습지 풀 | 의미1·비고1, 관계 비생성·hold 없음 | `active` | 높음 | 2026-10-29 | [기록](h260_cluster_approved_content_slice.md) |
 
 | H262 클러스터 | 전달·하와·마을9개 의미·비고, 관계8·H3265 누락 행 보완 분리 | `active` | 높음 | 2026-10-30 | [기록](h262_cluster_approved_content_slice.md) |
+
+| H268 뒤·이후 연결군 | CORE17 중 신규15 승인·H315 유지·H318 hold, 신규관계13 | `active` | 높음 | 2026-10-30 | [기록](h268_cluster_approved_content_slice.md) |

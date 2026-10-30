@@ -1747,3 +1747,8 @@ Work SHA `e7434a19193c1641b3f0076e7e78311414eac37e9bb1c0046b54d6f214f3660f` → 
 ## H262 전달·하와·마을 클러스터 승인 — 2026-10-30
 
 [h262_cluster_approved_content_slice.json](../../tool/data_provenance/manifests/h262_cluster_approved_content_slice.json)은 최신 v2에 따라 기존9개 의미·비고와 관계8개(신규7·교체1)를 반영한다. 정확한 값과 이유·대안·H3265 분리 경계는 [결정 기록](../semantic_decisions/h262_cluster_approved_content_slice.md)을 따른다. 공식 dry-run·undo·테스트31개·live apply1회 후 전13테이블 독립58검증이 통과했다. 승인 범위 밖·DDL 불변, integrity ok·FK0·sidecar 없음·seed 불변이다. 진행표 승인763→772·미승인13529→13520, hold6·anomaly113 유지. 백업·검증은 `data/backups/approved_content_batch/h262_approval_20261030/`, 공식 receipt는 `data/backups/approved_content_batch/20261030T010506683594Z/result.json`이다. 원어·음역·발음·schema·앱 UI·seed 배포 변경은 없다.
+
+## H268 뒤·이후 연결군 승인 — 2026-10-30
+
+[승인 manifest](../../tool/data_provenance/manifests/h268_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h268_cluster_approved_content_slice.md)에 R3의 의미·비고·관계와 선택 이유를 기록했다. 신규15개 승인, H315 exact 유지, H318 hold를 반영했다.
+공식 dry-run·undo 원본 SHA 불변, applicator 기존 테스트31개 통과 후 live apply1회. 의미교체14·값유지승인1·비고15·신규관계13, 실제 history42행. 전12테이블·DDL 독립 대조에서 승인 범위 외 불변, integrity ok·FK0·sidecar 없음·seed SHA 불변을 확인했다. History group `1793328401725168`. Work SHA `1f810cb548335c7e7a2e71804462606059843dcb862c9d70f967fec46b1eaa4b`. 백업·검증은 `data/backups/approved_content_batch/h268_approval_20261030/`에 보존한다.

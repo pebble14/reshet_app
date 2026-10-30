@@ -1,0 +1,504 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H268-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "data\\backups\\approved_content_batch\\h268_approval_20261030\\00_user_approval.json",
+    "document_sha256": "d8c8ac3bfd970ab66d82bb3bee550588e86e6ab8f4a4ce8fbe1f959bf037089d"
+  },
+  "target": {
+    "expected_work_sha256": "5c04debf7fc8db0d1ec0beb34ba438382a1bcbdf1794fd15815f30f92f4909a7",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0268_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "뒤쪽으로, 뒤로"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "뒤"
+        },
+        {
+          "seq": 2,
+          "meaning": "서쪽(西쪽)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0309_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "지체하다, 머무르다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "지체하다(遲滯하다)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0310_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "뒤에, 후에"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "뒤에"
+        }
+      ]
+    },
+    {
+      "word_id": "H0311_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "뒤에, 후에"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "후에(後에)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0312_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "다른, 다음의"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "다른"
+        },
+        {
+          "seq": 2,
+          "meaning": "다음의"
+        }
+      ]
+    },
+    {
+      "word_id": "H0313_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아헬 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아헬·아헤르 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0314_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "뒤의, 후에"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "뒤의"
+        },
+        {
+          "seq": 2,
+          "meaning": "마지막의"
+        },
+        {
+          "seq": 3,
+          "meaning": "서쪽(西쪽)의"
+        }
+      ]
+    },
+    {
+      "word_id": "H0316_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아하헬 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아하헬·아하르헬 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0319_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "끝, 결말"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "끝"
+        },
+        {
+          "seq": 2,
+          "meaning": "앞날"
+        },
+        {
+          "seq": 3,
+          "meaning": "자손(子孫)"
+        },
+        {
+          "seq": 4,
+          "meaning": "나머지"
+        }
+      ]
+    },
+    {
+      "word_id": "H0320_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "마지막, 끝"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "앞날"
+        }
+      ]
+    },
+    {
+      "word_id": "H0321_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "다른, 또 다른"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "다른"
+        }
+      ]
+    },
+    {
+      "word_id": "H0322_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "뒤로, 뒤를 향해"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "뒤로"
+        }
+      ]
+    },
+    {
+      "word_id": "H4279_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "내일, 장래의, 후일에"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "내일(來日)"
+        },
+        {
+          "seq": 2,
+          "meaning": "후일(後日)"
+        }
+      ]
+    },
+    {
+      "word_id": "H4283_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "내일, 다음날, 이튿날"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "이튿날"
+        }
+      ]
+    }
+  ],
+  "meaning_approvals": [
+    {
+      "word_id": "H0317_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "다른"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0268_0000",
+      "before": null,
+      "after": "앞과 대비되는 뒤쪽·뒷부분을 기본으로 하며 등이나 엉덩이, 뒤로 향함과 물러남을 문맥에 따라 나타낸다. 사 41:23·42:23에서는 시간상 뒤에 올 때를 가리킨다. 동쪽을 앞에 두는 방위 설정에서는 서쪽을 나타내며 사 9:12(OSHB 9:11)가 그 용례이다. 욥 23:8은 앞뒤 방향으로 옮기거나 동서 방위로 해석한다. 겔 2:10의 바깥 면과 시 78:66의 뒤쪽 타격·후퇴 해석은 공간 의미에 포함한다. 잠 29:11의 בְּאָחוֹר는 화를 뒤로 억누름과 나중까지 참음의 분석이 갈린다. 참고 사전들은 H309 어근과 연결하지만 고정 Strong XML의 파생 번호는 인명 H299를 지시하는 충돌이 있어 그대로 관계 근거로 채택하지 않는다."
+    },
+    {
+      "word_id": "H0309_0000",
+      "before": null,
+      "after": "뒤에 남거나 늦어지는 것을 기본으로 하며 오래 머물다·지체하다·미루다·늦추다로 옮긴다. 창 24:56에서는 사람을 더 붙잡아 지체시키는 것이고, 창 32:4에서는 계속 머문 것이다. 술자리에 오래 머무르거나 늦게 눕는 구문을 독립된 음주·수면 의미로 만들지 않는다. 삼하 20:5에서 OSHB가 H309에 배정한 것은 케레이며 케티브는 H3186이다. 원전분해 자료는 두 읽기를 H3186으로 표기하므로 별도 용례로 합산하지 않는다."
+    },
+    {
+      "word_id": "H0310_0000",
+      "before": null,
+      "after": "공간에서 뒤에 있음과 뒤따름, 시간에서 어떤 때나 일 다음을 나타내는 부사·전치사·접속사로 쓰이며, 삼하 2:23에서는 창의 뒷부분을 가리키는 명사적 용법이 있다. 사람·신·욕망의 뒤를 따르는 구문은 추종·지지·지향을, מֵאַחֲרֵי와 떠남 동사의 결합은 따르던 데서 벗어남을 나타낸다. 이미 일어난 일을 근거로 삼는 문맥에서는 ‘~하였으므로’로 옮길 수 있지만 이 인과 해석을 모든 용례의 기본 뜻으로 삼지 않는다. KJV의 자손·나머지 풀이는 문맥과 생략된 대상을 구별한다. 창 16:13, 느 5:15, 슥 2:8은 구문·본문 해석이 미해결이다. 시 73:24, 잠 28:23과 시 49:13·욥 21:33의 공간·시간 연결에도 해석 여지가 있다. OSHB 718개 token에는 삼하 23:9와 느 3:30·31의 케티브·케레 세 쌍이 함께 포함된다."
+    },
+    {
+      "word_id": "H0311_0000",
+      "before": null,
+      "after": "히브리어 H310에 대응하는 아람어 전치사이다. 현행 세 용례는 모두 시간적 뒤를 나타낸다. 단 2:29·45의 אַחֲרֵי דְנָה는 이 뒤에 일어날 일을, 단 7:24는 앞선 왕들 뒤에 일어남을 가리킨다. 대응 형태라는 사실만으로 직접 차용 방향이나 히브리어 항목의 모든 용법을 확정하지 않는다."
+    },
+    {
+      "word_id": "H0312_0000",
+      "before": null,
+      "after": "이미 언급되거나 비교되는 것과 구별되는 다른 사람·사물·추가된 것을 나타내는 형용사이며 홀로 쓰이면 다른 사람이나 남을 가리킬 수 있다. 새 마음·다른 신·남의 밭 등의 구체적인 대상이나 평가를 독립 의미로 늘리지 않는다. 창 17:21, 왕하 6:29, 시 109:13, 욜 1:3에서는 시간적으로 뒤따르는 다음 해·날·세대를 가리킨다. 삿 2:10은 H312의 다른 세대와 H310의 그들 뒤에가 함께 나타나며 다른 세대와 뒤이은 세대의 성격이 겹친다. Strong은 H309와 연결하고 BDB는 본래 뒤에 오는 것이라는 설명을 제시한다. 이 연결은 어원적 이해를 돕지만 실제 용법의 다른을 지체나 뒤처짐으로 바꾸거나 다른과 다음의의 역사적 선후관계를 확정하는 근거로 삼지 않는다."
+    },
+    {
+      "word_id": "H0313_0000",
+      "before": null,
+      "after": "대상 7:12의 인명으로 제시한다. 아헬은 한국어 성경 관용명이고 아헤르는 אַחֵר의 교재식 읽기를 한글로 근사한 것이다. Strong은 H312와 같은 형태로 설명하지만 이름의 어원과 계보상 동일 인물 식별은 확정하지 않는다. BDB가 제시하는 일반 형용사 ‘다른’의 해석과 단을 직접 부르지 않았다는 가설도 있으며, LXX에는 Αερ 형태가 보이되 계보 문장은 마소라 본문과 다르다. 이를 아하라·아히람 등과 자동 동일시하거나 이름 뜻을 별도 일반 의미로 추가하지 않는다."
+    },
+    {
+      "word_id": "H0314_0000",
+      "before": null,
+      "after": "공간이나 시간에서 뒤에 오는 것을 나타내며 문맥에 따라 상대적인 뒤·나중과 맨 마지막을 구별한다. 창 33:2의 배치와 삼상 29:2의 후미, 출 4:8의 뒤이은 표징, 후대의 세대와 마지막 날·말을 모두 포함한다. 신 11:24·34:2, 욜 2:20, 슥 14:8에서는 동쪽을 앞에 두는 방향 설정에 따라 서쪽을 나타낸다. 욥 18:20은 서쪽 사람들과 후대 사람들의 해석이 갈린다. 학 2:9에서 나중의 성전인지 성전의 나중 영광인지, 단 11:29에서 전후 비교가 어떻게 구성되는지는 구문과 문맥의 문제로 남긴다. 히브리어 형용사의 수식 기능과 부사·명사적으로 쓰인 형태를 구별한다."
+    },
+    {
+      "word_id": "H0316_0000",
+      "before": null,
+      "after": "대상 4:8에서 하룸의 아들이며 그 가문들이 언급되는 인명이다. 아하헬은 한국어 성경 관용명이고 아하르헬은 אֲחַרְחֵל의 교재식 읽기를 한글로 근사한 것이다. Strong은 H310과 H2426을 연결하여 성벽 또는 방어시설 뒤에 있음으로 풀이하지만 BDB는 어원과 뜻을 불확실하게 본다. 참고 사전의 ‘다음의 주인’은 고정 원자료의 구성 설명과 다르다. 내부 경계와 이름의 문장적 뜻을 확정하지 않아 붙임표를 쓰지 않는다. LXX의 해당 계보는 이름과 구성에 차이가 있어 어원이나 정확한 호명의 확인으로 사용하지 않는다."
+    },
+    {
+      "word_id": "H0317_0000",
+      "before": null,
+      "after": "아람어에서 ‘다른’을 나타내는 여성형 형용사이며 H321의 남성형과 대응한다. 단 2:39의 나라, 단 7장의 짐승과 뿔에 수식어 또는 명사적으로 쓰인다. 문법적 여성형을 실제 대상의 성별이나 별도 의미로 바꾸지 않는다. 단 2:39에 두 번 나오며 현행 OSHB 집계는 모두 여섯 token이다."
+    },
+    {
+      "word_id": "H0319_0000",
+      "before": null,
+      "after": "뒤에 오는 부분이라는 연결을 바탕으로 공간이나 기간의 끝, 인생의 말기와 일의 결말, 앞으로의 때, 자손과 남은 부분·사람들을 가리킨다. 잠언에서 좋은 앞날을 보장하는 문맥을 별도 ‘보상’ 의미로 고정하지 않는다. בְּאַחֲרִית הַיָּמִים는 뒤에 올 날들이나 마지막 때를 뜻하며 구체적인 시점은 문맥에서 판단한다. 시 37:37·38의 앞날과 자손, 암 4:2의 자손과 남은 자 해석은 갈린다. 겔 23:25의 남은 신체 부분과 남은 사람이라는 구체적 대상도 구별하되 모두 ‘나머지’의 범위에 둔다. 일반적인 끝·앞날을 항상 세계의 종말로 제한하지 않는다."
+    },
+    {
+      "word_id": "H0320_0000",
+      "before": null,
+      "after": "히브리어 H319에 대응하는 아람어 여성명사이다. 유일한 용례인 단 2:28의 בְּאַחֲרִית יוֹמַיָּא는 뒤에 올 날들이나 마지막 때의 일을 가리킨다. 이 문맥에서 앞날을 대표 의미로 제시하며 구체적인 종말 시점은 이 단어 하나로 확정하지 않는다. 히브리어 항목의 자손·나머지 용법을 아람어에서도 확인된 것처럼 추가하지 않는다."
+    },
+    {
+      "word_id": "H0321_0000",
+      "before": null,
+      "after": "아람어에서 ‘다른’을 나타내는 남성형 형용사이며 H317의 여성형과 대응한다. 다른 백성·신·왕을 수식하고 홀로 쓰여 다른 사람을 가리키기도 한다. 단 2:11에서는 부정·예외 구문 전체가 신들 외에 아무도 없다는 뜻을 이루므로 ‘아무도’를 이 형용사 자체의 독립 의미로 삼지 않는다. 현행 OSHB는 다섯 token이며 다른 판본이나 BDB의 단 4:5 대안 읽기를 여기에 합산하지 않는다."
+    },
+    {
+      "word_id": "H0322_0000",
+      "before": null,
+      "after": "H268에서 늘어난 형태의 방향 부사이며 뒤로 향하는 이동이나 자세를 나타낸다. 창 9:23에는 두 번 나오며 뒷걸음과 얼굴을 반대로 둔 자세를 함께 표현한다. 왕상 18:37의 ‘다시 돌이킴’은 동사와 문맥이 더하는 뜻으로, 회개하거나 하나님에게서 돌아섬의 구체적인 해석을 이 부사 하나로 확정하지 않는다. 그림자에 관한 왕하 20:10·11과 사 38:8도 같은 방향 의미에 포함한다."
+    },
+    {
+      "word_id": "H4279_0000",
+      "before": null,
+      "after": "말하는 시점을 기준으로 오늘의 다음 날인 내일을 기본으로 하며, 창 30:33·출 13:14·신 6:20·수 4:6·21·22:24·27·28에서는 특정되지 않은 후일을 나타낸다. 출 9:18의 내일 이맘때와 출 19:10의 오늘과 내일처럼 하루 뒤를 지정하는 용법을 막연한 나중으로 넓히지 않는다. 실제 다음 날과 자손 시대의 후일은 문맥으로 구별하며 창 30:33에는 두 해석의 여지가 있다. Strong은 H309에서의 파생을 probably로 제시하지만 BDB는 앞쪽·앞으로의 때와 관련된 경쟁 어원을 제시한다. 내일과 후일이라는 의미는 승인할 수 있으나 H309와의 파생 관계는 확정하지 않는다."
+    },
+    {
+      "word_id": "H4283_0000",
+      "before": null,
+      "after": "어떤 날에 이어지는 다음 날, 곧 이튿날을 나타내는 여성명사이다. 서술된 사건 다음 날이나 특정 절기 다음 날을 가리키며 문맥에 따라 내일로 옮길 수도 있다. 레 23장의 안식일과 민 33:3·수 5:11의 유월절 다음 날에서도 ‘하루 뒤’의 뜻을 보존하고 단순한 ‘~후에’로 넓히지 않는다. Strong의 feminine from the same as H4279는 공통된 기반을 가리키며 H4279 명사에서의 직접 파생을 자동 확정하지 않는다. 삼상 30:17의 לְמָחֳרָתָם 어형과 전투 시간 구문, BDB가 소개한 본문 수정 제안은 구별하고 원문이나 용례 수를 바꾸지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0268_0000",
+      "word_id_2": "H0309_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "HebGrkKo exact entry와 NAS가 H309 원천을 명시한다. 고정 XML의 H299 참조를 고친 edge로 가장하지 않고 별도 비교 사전 provenance를 사용한다.",
+      "source": "RESHET-EC-H268-CLUSTER-H0309-H0268"
+    },
+    {
+      "word_id_1": "H0268_0000",
+      "word_id_2": "H0322_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "prolonged from H268; 늘어난 방향 부사 형태.",
+      "source": "RESHET-EC-H268-CLUSTER-H0268-H0322"
+    },
+    {
+      "word_id_1": "H0309_0000",
+      "word_id_2": "H0310_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "고정 source의 from 및 실제 형태·문법·용례를 대조한 어휘 형성 관계. 현대 의미를 어원 뜻으로 제한하거나 역사적 중간 단계를 모두 확정하는 관계는 아니다.",
+      "source": "RESHET-EC-H268-CLUSTER-H0309-H0310"
+    },
+    {
+      "word_id_1": "H0309_0000",
+      "word_id_2": "H0312_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "고정 source의 from 및 실제 형태·문법·용례를 대조한 어휘 형성 관계. 현대 의미를 어원 뜻으로 제한하거나 역사적 중간 단계를 모두 확정하는 관계는 아니다.",
+      "source": "RESHET-EC-H268-CLUSTER-H0309-H0312"
+    },
+    {
+      "word_id_1": "H0309_0000",
+      "word_id_2": "H0314_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "고정 source의 from 및 실제 형태·문법·용례를 대조한 어휘 형성 관계. 현대 의미를 어원 뜻으로 제한하거나 역사적 중간 단계를 모두 확정하는 관계는 아니다.",
+      "source": "RESHET-EC-H268-CLUSTER-H0309-H0314"
+    },
+    {
+      "word_id_1": "H0310_0000",
+      "word_id_2": "H0319_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "고정 source의 from 및 실제 형태·문법·용례를 대조한 어휘 형성 관계. 현대 의미를 어원 뜻으로 제한하거나 역사적 중간 단계를 모두 확정하는 관계는 아니다.",
+      "source": "RESHET-EC-H268-CLUSTER-H0310-H0319"
+    },
+    {
+      "word_id_1": "H0311_0000",
+      "word_id_2": "H0317_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "고정 source의 from 및 실제 형태·문법·용례를 대조한 어휘 형성 관계. 현대 의미를 어원 뜻으로 제한하거나 역사적 중간 단계를 모두 확정하는 관계는 아니다.",
+      "source": "RESHET-EC-H268-CLUSTER-H0311-H0317"
+    },
+    {
+      "word_id_1": "H0311_0000",
+      "word_id_2": "H0320_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "고정 source의 from 및 실제 형태·문법·용례를 대조한 어휘 형성 관계. 현대 의미를 어원 뜻으로 제한하거나 역사적 중간 단계를 모두 확정하는 관계는 아니다.",
+      "source": "RESHET-EC-H268-CLUSTER-H0311-H0320"
+    },
+    {
+      "word_id_1": "H0311_0000",
+      "word_id_2": "H0321_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "고정 source의 from 및 실제 형태·문법·용례를 대조한 어휘 형성 관계. 현대 의미를 어원 뜻으로 제한하거나 역사적 중간 단계를 모두 확정하는 관계는 아니다.",
+      "source": "RESHET-EC-H268-CLUSTER-H0311-H0321"
+    },
+    {
+      "word_id_1": "H0310_0000",
+      "word_id_2": "H0311_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Aramaic corresponding to / the same as. 대응·공통 기반을 표시하고 역사적 직접 차용 방향은 확정하지 않는다.",
+      "source": "RESHET-EC-H268-CLUSTER-H0310-H0311"
+    },
+    {
+      "word_id_1": "H0319_0000",
+      "word_id_2": "H0320_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Aramaic corresponding to / the same as. 대응·공통 기반을 표시하고 역사적 직접 차용 방향은 확정하지 않는다.",
+      "source": "RESHET-EC-H268-CLUSTER-H0319-H0320"
+    },
+    {
+      "word_id_1": "H0317_0000",
+      "word_id_2": "H0321_0000",
+      "category_code": "morphological",
+      "relation_type": "inflected",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "BDB/NAS 여성형 설명과 5개 남성/6개 여성형 용례를 대조한 성 굴절 관계. 의미 강도·가치 차이가 아니다.",
+      "source": "RESHET-EC-H268-CLUSTER-H0321-H0317"
+    },
+    {
+      "word_id_1": "H4279_0000",
+      "word_id_2": "H4283_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "feminine from the same as H4279. 공통 기반을 보존하되 그 명사에서의 직접 파생으로 바꾸지 않는다.",
+      "source": "RESHET-EC-H268-CLUSTER-H4279-H4283"
+    }
+  ],
+  "relation_replacements": [],
+  "supersedes": []
+}
