@@ -1758,3 +1758,9 @@ Work SHA `e7434a19193c1641b3f0076e7e78311414eac37e9bb1c0046b54d6f214f3660f` → 
 [승인 manifest](../../tool/data_provenance/manifests/h280_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h280_cluster_approved_content_slice.md)에 최신 대표어 통일안을 반영했다. H280·H2420 수수께끼, H2330 수수께끼를 내다, H4240 므히다·메히다 (인) 각1 sense와 비고4·새 무방향 관계2를 승인했다. H284·기존 관계·hold·expression·schema·seed는 불변이다.
 
 공식 dry-run·undo·원본 불변, 테스트31개, live apply1회 및 전체 테이블·DDL 독립29검증을 통과했다. history8행, integrity ok·FK0·sidecar 없음·seed SHA 불변이며 진행표 승인797→801·미승인13494→13490·hold7·anomaly113이다. 백업·승인·독립 검증은 data/backups/approved_content_batch/h280_approval_20261030/에 보존했다. 원문·음역·발음·언어·앱 UI·배포 seed 변경은 없다.
+
+## H303 알랍·기름·젖 연결군 승인 — 2026-10-30
+
+[승인 manifest](../../tool/data_provenance/manifests/h303_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h303_cluster_approved_content_slice.md)에 최신안을 반영했다. CORE7 의미8행·비고7·신규관계5(확정1·가설4), 관계후보2보류·새 hold 없음이다. H2459는 기름/가장 좋은 부분, H2464는 풍자향(楓子香)·갈바눔 수지(樹脂)를 채택했다.
+
+공식 dry-run19건·undo·원본 불변·테스트31개·live apply1회 후 전체13테이블/DDL 독립 대조를 통과했다. 비대상·expression 불변, integrity ok·FK0·sidecar 없음·seed 불변이다. History group1793349010500562, history7453–7471·relation8274–8278. 표준 progress 승인801→808·미승인13490→13483, hold7·anomaly113 유지 및 비대상14291행 불변이다. 검증은 data/backups/approved_content_batch/h303_approval_20261030/, 공식 receipt는 data/backups/approved_content_batch/20261030T083009084851Z/result.json에 보존했다. 앱 UI·schema·원문·음역·발음·seed 배포 변경은 없다.

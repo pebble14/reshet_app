@@ -177,3 +177,5 @@
 | H270 잡음·소유 연결군 | CORE10 meaning14행·비고10·신규관계9·교체2, H270 의미 재분할·G881 원천 이름 병기·신규 hold 없음 | `active` | 높음 | 2026-10-30 | [기록](h270_cluster_approved_content_slice.md) |
 
 | H280 수수께끼 연결군 | 신규4개 의미·비고4·무방향 관계2, H284 유지·H4240 어원 관계 보류·hold 없음 | `active` | 높음 | 2026-10-30 | [기록](h280_cluster_approved_content_slice.md) |
+
+| H303 알랍·기름·젖 연결군 | CORE7 meaning8행·비고7·관계5(확정1·가설4), 풍자향 병기·관계2보류·hold 없음 | `active` | 높음 | 2026-10-30 | [기록](h303_cluster_approved_content_slice.md) |

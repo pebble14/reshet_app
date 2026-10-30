@@ -110,3 +110,5 @@ tool/data_provenance/manifests/h249_cluster_approved_content_slice.json text eol
 tool/data_provenance/manifests/h254_cluster_approved_content_slice.json -text
 tool/data_provenance/manifests/h260_cluster_approved_content_slice.json -text whitespace=cr-at-eol
 tool/data_provenance/manifests/h262_cluster_approved_content_slice.json -text whitespace=cr-at-eol
+
+tool/data_provenance/manifests/h303_cluster_approved_content_slice.json -text whitespace=cr-at-eol

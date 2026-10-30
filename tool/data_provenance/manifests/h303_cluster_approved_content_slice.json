@@ -1,0 +1,225 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H303-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h303_approval_20261030/00_user_approval.json",
+    "document_sha256": "2a76fbf6f28bb38afe087f8d6adffeb1dd3d1db83fb294df74fb90d6c1e48f96"
+  },
+  "target": {
+    "expected_work_sha256": "b43fb4cd3ed4b41ed345e006e63f15ce577b623f4dd4d26b537c3b5b2c47125f",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0303_0000",
+      "before": [
+        {
+          "meaning": "알랍 (지)",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "알랍·아흘라브 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2459_0000",
+      "before": [
+        {
+          "meaning": "지방, 지방질 fat",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "기름"
+        },
+        {
+          "seq": 2,
+          "meaning": "가장 좋은 부분(部分)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2460_0000",
+      "before": [
+        {
+          "meaning": "헬렙 Heleb(인)",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "헬렙·헬레브 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2461_0000",
+      "before": [
+        {
+          "meaning": "젖, 우유, 치즈",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "젖"
+        }
+      ]
+    },
+    {
+      "word_id": "H2462_0000",
+      "before": [
+        {
+          "meaning": "헬바 Helbah(지)",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "헬바 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2463_0000",
+      "before": [
+        {
+          "meaning": "헬본 Helbon(지)",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "헬본 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2464_0000",
+      "before": [
+        {
+          "meaning": "풍자향",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "풍자향(楓子香)·갈바눔 수지(樹脂)"
+        }
+      ]
+    }
+  ],
+  "meaning_approvals": [],
+  "word_note_replacements": [
+    {
+      "word_id": "H0303_0000",
+      "before": null,
+      "after": "알랍은 한국어 성경 관용명이고 아흘라브는 원문 형태의 교재식 한글 근사다. 삿 1:31에서 아셀 지파가 주민을 몰아내지 못한 성읍이다. Strong은 H2459와 같은 어근에 연결하여 비옥함으로 풀이하지만, 실제 명명 유래와 현대 위치는 확정하지 않는다."
+    },
+    {
+      "word_id": "H2459_0000",
+      "before": null,
+      "after": "사람과 짐승의 몸에 있는 기름, 특히 제물에서 떼어 내는 기름을 가리킨다. 기름진 부분을 좋고 풍성한 몫으로 나타내는 비유적 용법이 있어, 땅의 소산·곡물·기름·포도주 등의 가장 좋은 부분을 뜻하기도 한다. 문맥에 따라 풍성한 음식이나 무감각하고 완고한 마음의 이미지로도 쓰인다. 겔 34:3의 현행 마소라 본문은 기름으로 읽지만 젖으로 읽는 전승과 해석도 있다. 시 17:10·73:7의 세부 문장 해석과 시 119:70의 LXX 표현 차이는 구별해 보존한다."
+    },
+    {
+      "word_id": "H2460_0000",
+      "before": null,
+      "after": "헬렙은 한국어 성경 관용명이고 헬레브는 חֵלֶב의 교재식 한글 근사다. 삼하 23:29에 나오는 느도바 사람 바아나의 아들로 다윗의 용사 중 한 사람이다. 병행 명단의 헬렛(대상 11:30) 및 군장 명단의 헬대(대상 27:15)와 비교된다. Strong은 H2459의 지방과 연결하지만 이름 이형과 경쟁 분석이 있어 확정 어원으로 단정하지 않는다."
+    },
+    {
+      "word_id": "H2461_0000",
+      "before": null,
+      "after": "사람과 소·양·염소 등의 젖을 가리키며, 마시는 우유와 발효·응고시킨 젖은 문맥에 따라 구별한다. 삼상 17:18의 젖의 덩이라는 구 전체는 치즈를, 삼상 7:9의 젖의 어린 양이라는 표현은 젖 먹는 새끼를 가리킨다. 젖과 꿀이 흐르는 땅 등의 표현에서는 풍요를 나타내고 흰빛·양육·생명 형성의 비유에도 쓰인다. 욥 21:24는 젖그릇이나 몸의 상태로 해석이 갈리고 지방으로 이해하는 전승도 있어 세부 독법을 확정하지 않는다."
+    },
+    {
+      "word_id": "H2462_0000",
+      "before": null,
+      "after": "헬바는 한국어 성경 관용명과 원문 형태의 교재식 한글 근사가 겹치는 표기다. 삿 1:31에서 아셀 지파가 가나안 주민을 몰아내지 못한 성읍이다. Strong은 H2459의 여성형으로 보고 비옥함으로 풀이한다. 실제 명명 동기와 현대 위치는 확정하지 않는다."
+    },
+    {
+      "word_id": "H2463_0000",
+      "before": null,
+      "after": "헬본은 한국어 성경 관용명과 원문 형태의 교재식 한글 근사가 겹치는 표기다. 겔 27:18에서 다메섹이 두로와 거래한 포도주의 산지로 나온다. Strong은 H2459에서 나와 열매가 풍성한 곳으로 풀이하지만, 정확한 명명 유래는 확정하지 않는다."
+    },
+    {
+      "word_id": "H2464_0000",
+      "before": null,
+      "after": "한국어 성경에서 풍자향으로 옮기는 갈바눔(galbanum)이다. 페룰라속(Ferula)의 일부 식물에서 나오는 진을 채취해 굳힌 향료용 고무수지이며, 출 30:34에서는 분향 재료로 쓰인다. 고대에 사용한 원료의 정확한 공급 식물 종은 확정하지 않는다. Strong은 H2459의 기름과 연결하지만, Klein은 H2461의 젖에서 나온 젖 같은 수액이라는 어원일 가능성을 제시한다. 직접적인 파생 경로는 미확정이다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0303_0000",
+      "word_id_2": "H2459_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong은 H2459와 같은 어근에 연결해 비옥함으로 풀이한다. 역사적 명명 유래는 미확정이다.",
+      "source": "HebrewStrong.xml H303 source; BDB H303 비판적 대조; 사용자 최신안 승인 2026-10-30"
+    },
+    {
+      "word_id_1": "H2459_0000",
+      "word_id_2": "H2461_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 같은 어근 설명을 따른 가설이다. 지방과 젖은 별도 의미·모음형이며 파생 방향과 역사적 연결은 확정하지 않는다.",
+      "source": "HebrewStrong.xml H2461 source; Klein חָלָב 및 חֵֽלֶב 해당 항목; 사용자 최신안 승인 2026-10-30"
+    },
+    {
+      "word_id_1": "H2459_0000",
+      "word_id_2": "H2462_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong이 H2459의 여성형으로 설명한 지명 형성 관계다. 실제 이름 부여 동기와 현대 위치는 미확정이다.",
+      "source": "HebrewStrong.xml H2462 source; HebGrkKo H2462; 사용자 최신안 승인 2026-10-30"
+    },
+    {
+      "word_id_1": "H2459_0000",
+      "word_id_2": "H2463_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong은 H2459에서 나와 열매가 풍성한 곳이라는 풀이를 제시한다. 직접적인 역사적 명명 경로는 미확정이다.",
+      "source": "HebrewStrong.xml H2463 source; HebGrkKo H2463; BDB H2463; 사용자 최신안 승인 2026-10-30"
+    },
+    {
+      "word_id_1": "H2461_0000",
+      "word_id_2": "H2464_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Klein이 젖(H2461)에서 나온 젖 같은 수액이라는 추정 어원을 제시한다. Strong의 H2459 지방 연결과 다른 가설이며 확정 파생은 아니다.",
+      "source": "Klein Dictionary חֶלְבְּנָה rid H00603 (Sefaria public dictionary API 해당 항목); HebGrkKo H2464 대조; 사용자 최신안 승인 2026-10-30"
+    }
+  ],
+  "relation_replacements": [],
+  "supersedes": []
+}
