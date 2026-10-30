@@ -1752,3 +1752,9 @@ Work SHA `e7434a19193c1641b3f0076e7e78311414eac37e9bb1c0046b54d6f214f3660f` → 
 
 [승인 manifest](../../tool/data_provenance/manifests/h268_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h268_cluster_approved_content_slice.md)에 R3의 의미·비고·관계와 선택 이유를 기록했다. 신규15개 승인, H315 exact 유지, H318 hold를 반영했다.
 공식 dry-run·undo 원본 SHA 불변, applicator 기존 테스트31개 통과 후 live apply1회. 의미교체14·값유지승인1·비고15·신규관계13, 실제 history42행. 전12테이블·DDL 독립 대조에서 승인 범위 외 불변, integrity ok·FK0·sidecar 없음·seed SHA 불변을 확인했다. History group `1793328401725168`. Work SHA `1f810cb548335c7e7a2e71804462606059843dcb862c9d70f967fec46b1eaa4b`. 백업·검증은 `data/backups/approved_content_batch/h268_approval_20261030/`에 보존한다.
+
+## H280 수수께끼 연결군 승인 — 2026-10-30
+
+[승인 manifest](../../tool/data_provenance/manifests/h280_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h280_cluster_approved_content_slice.md)에 최신 대표어 통일안을 반영했다. H280·H2420 수수께끼, H2330 수수께끼를 내다, H4240 므히다·메히다 (인) 각1 sense와 비고4·새 무방향 관계2를 승인했다. H284·기존 관계·hold·expression·schema·seed는 불변이다.
+
+공식 dry-run·undo·원본 불변, 테스트31개, live apply1회 및 전체 테이블·DDL 독립29검증을 통과했다. history8행, integrity ok·FK0·sidecar 없음·seed SHA 불변이며 진행표 승인797→801·미승인13494→13490·hold7·anomaly113이다. 백업·승인·독립 검증은 data/backups/approved_content_batch/h280_approval_20261030/에 보존했다. 원문·음역·발음·언어·앱 UI·배포 seed 변경은 없다.

@@ -175,3 +175,5 @@
 
 | H268 뒤·이후 연결군 | CORE17 중 신규15 승인·H315 유지·H318 hold, 신규관계13 | `active` | 높음 | 2026-10-30 | [기록](h268_cluster_approved_content_slice.md) |
 | H270 잡음·소유 연결군 | CORE10 meaning14행·비고10·신규관계9·교체2, H270 의미 재분할·G881 원천 이름 병기·신규 hold 없음 | `active` | 높음 | 2026-10-30 | [기록](h270_cluster_approved_content_slice.md) |
+
+| H280 수수께끼 연결군 | 신규4개 의미·비고4·무방향 관계2, H284 유지·H4240 어원 관계 보류·hold 없음 | `active` | 높음 | 2026-10-30 | [기록](h280_cluster_approved_content_slice.md) |

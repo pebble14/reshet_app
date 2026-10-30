@@ -1,0 +1,114 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H280-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h280_approval_20261030/00_user_approval.json",
+    "document_sha256": "6db412c27531526a41382aa8ebb77e2ea7793ecb5a3c07f10496a978257a94e3"
+  },
+  "target": {
+    "expected_work_sha256": "1b0aea25b7b0b4a08d527bf6122c80b351b76cde750e62815869545e7c84adfe",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H2420_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "수수께끼, 알기 어려운 말이나 문제"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "수수께끼"
+        }
+      ]
+    },
+    {
+      "word_id": "H4240_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "므히다 Mehida"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "므히다·메히다 (인)"
+        }
+      ]
+    }
+  ],
+  "meaning_approvals": [
+    {
+      "word_id": "H0280_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "수수께끼"
+        }
+      ]
+    },
+    {
+      "word_id": "H2330_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "수수께끼를 내다"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0280_0000",
+      "before": null,
+      "after": "놀이로 내는 문제에 한정되지 않고 뜻을 밝혀야 하는 알기 어려운 말도 가리키는 아람어 명사이며 히브리어 H2420과 대응한다. 단 5:12의 אֲחִידָן은 복수형으로, 수수께끼를 밝히는 행위와 그 대상을 구별한다. 같은 절 뒤의 매듭들을 뜻하는 별도 명사와 혼동하지 않는다. Strong과 BDB는 여성명사로, OSHB는 실제 토큰을 남성복수로 분석하므로 문법 성의 자료 차이는 남겨 둔다."
+    },
+    {
+      "word_id": "H2330_0000",
+      "before": null,
+      "after": "네 용례 모두 수수께끼를 목적어로 하여 그것을 내거나 제시하는 행위를 가리킨다. 삿 14장의 문제 제시와 겔 17:2의 비유적 이야기 제시를 함께 포함하며, 풀다나 답하다의 의미는 아니다. Strong의 매듭을 묶다는 어원적 설명과 BDB의 H2420에서 나온 명사 파생 동사 분석을 구별한다. 현재 네 용례에서는 실제 끈의 매듭을 묶는 독립 의미가 확인되지 않는다."
+    },
+    {
+      "word_id": "H2420_0000",
+      "before": null,
+      "after": "듣거나 읽는 사람이 뜻이나 답을 밝혀야 하는 알기 어려운 말이나 문제를 가리킨다. 삼손의 수수께끼, 스바 여왕의 질문, 지혜의 함축적 말과 예언의 비유·풍자에 쓰이며 놀이용 문제에만 한정되지 않는다. 단 8:23의 수수께끼들을 이해하는 왕은 문맥에서 속임수나 흉계에 능한 인물로 해석되지만, 이것이 별도 어휘 의미인지 구문의 문맥적 풀이인지는 확정하지 않는다. Strong은 H2330에서 나온 명사로, BDB는 H2330을 이 명사에서 나온 동사로 설명하므로 역사적 파생 방향은 구별하여 남겨 둔다. OSHB 시 49:5는 한국어 성경과 KJV의 시 49:4에 해당한다."
+    },
+    {
+      "word_id": "H4240_0000",
+      "before": null,
+      "after": "스 2:52와 느 7:54의 성전 봉사자 귀환 명단에서 므히다의 자손들이라는 표현에 쓰이는 기반 인명이다. 므히다는 한국어 성경 관용명이며 메히다는 מְחִידָא의 교재식 읽기를 한글로 근사한 표기이다. Strong은 H2330과 연결하여 결합으로 풀이하지만, 한국어 참고 사전의 유명한·고상한 풀이와 다르고 어원은 미확정으로 남긴다. 이름 자체와 자손들이라는 별도 표현을 구별한다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0280_0000",
+      "word_id_2": "H2420_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "어휘 대응과 같은 의미 범위를 보존한다. 차용 방향이나 직접 음역 관계는 입증하지 않는다.",
+      "source": "RESHET-EC-H280-CLUSTER; 고정 Strong·OSHB 및 R2 사용자 승인 2026-10-30"
+    },
+    {
+      "word_id_1": "H2330_0000",
+      "word_id_2": "H2420_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "실제4회 동사-명사의 공기와 형태·의미 연관은 분명하다. 역사적 파생 방향의 충돌 때문에 유방향 derived는 채택하지 않는다.",
+      "source": "RESHET-EC-H280-CLUSTER; 고정 Strong·OSHB 및 R2 사용자 승인 2026-10-30"
+    }
+  ],
+  "relation_replacements": [],
+  "supersedes": []
+}
