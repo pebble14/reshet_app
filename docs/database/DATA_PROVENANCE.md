@@ -1743,3 +1743,7 @@ Work SHA `e7434a19193c1641b3f0076e7e78311414eac37e9bb1c0046b54d6f214f3660f` → 
 [h260_cluster_approved_content_slice.json](../../tool/data_provenance/manifests/h260_cluster_approved_content_slice.json)은 H0260의 의미를 `습지(濕地) 풀` 1행으로 정리하고 승인 비고1건을 추가한다. 관계·hold 변경은 없다. 선택 이유·주요 대안·식물 종과 어원·호13:15 대안 독법의 한계는 [결정 기록](../semantic_decisions/h260_cluster_approved_content_slice.md)을 따른다.
 
 공식 dry-run·undo·원본 불변, 기존 테스트31개, live apply1회와 전체13테이블·DDL 독립 대조를 통과했다. 승인 projection·history2행 외 비대상 데이터 불변, integrity ok·FK0·sidecar 없음·seed 불변이다. History group `1793261701308814`, IDs7344–7345. 표준 progress 승인762→763·미승인13530→13529, hold6·anomaly113 유지, 비대상14297행 불변. 백업·검증은 `data/backups/approved_content_batch/h260_approval_20261029/`, 공식 receipt는 `data/backups/approved_content_batch/20261029T081459899413Z/result.json`이다. Work DB는 미추적 로컬 자산이며 앱 UI·원문·음역·발음·schema·seed 배포 변경은 없다.
+
+## H262 전달·하와·마을 클러스터 승인 — 2026-10-30
+
+[h262_cluster_approved_content_slice.json](../../tool/data_provenance/manifests/h262_cluster_approved_content_slice.json)은 최신 v2에 따라 기존9개 의미·비고와 관계8개(신규7·교체1)를 반영한다. 정확한 값과 이유·대안·H3265 분리 경계는 [결정 기록](../semantic_decisions/h262_cluster_approved_content_slice.md)을 따른다. 공식 dry-run·undo·테스트31개·live apply1회 후 전13테이블 독립58검증이 통과했다. 승인 범위 밖·DDL 불변, integrity ok·FK0·sidecar 없음·seed 불변이다. 진행표 승인763→772·미승인13529→13520, hold6·anomaly113 유지. 백업·검증은 `data/backups/approved_content_batch/h262_approval_20261030/`, 공식 receipt는 `data/backups/approved_content_batch/20261030T010506683594Z/result.json`이다. 원어·음역·발음·schema·앱 UI·seed 배포 변경은 없다.
