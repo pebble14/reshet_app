@@ -1,0 +1,400 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H270-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "data\\backups\\approved_content_batch\\h270_approval_20261030\\00_user_approval.json",
+    "document_sha256": "4e0cd01e7d9682c7ecd24ad1ded20f2d0fb7a1532b0fd39c963ce7b03d58c2ec"
+  },
+  "target": {
+    "expected_work_sha256": "1f810cb548335c7e7a2e71804462606059843dcb862c9d70f967fec46b1eaa4b",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0270_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "붙잡다/움켜쥐다[가지다, 얻다]"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "잡다"
+        },
+        {
+          "seq": 2,
+          "meaning": "차지하다"
+        },
+        {
+          "seq": 3,
+          "meaning": "고정하다(固定하다)"
+        },
+        {
+          "seq": 4,
+          "meaning": "뽑다"
+        },
+        {
+          "seq": 5,
+          "meaning": "가리다"
+        }
+      ]
+    },
+    {
+      "word_id": "H0271_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아하스"
+        },
+        {
+          "seq": 2,
+          "meaning": "뜻풀이: 그가 붙잡았다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아하스·아하즈 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0272_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "소유, 재산"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "소유(所有)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0273_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아흐새 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아흐새·아흐자이 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0274_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아하시야 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아하시야·아하즈-야·아하즈-야후 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0275_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아훗삼 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아훗삼·아훗잠 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0276_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아훗삿 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아훗삿·아훗자트 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3059_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "여호아하스 Jehoahaz"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "여호아하스·요아하스·예호-아하즈 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3099_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "여호아하스, 요하스"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "여호아하스·요아하스·요-아하즈 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "G0881_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아하스[그가 붙잡았다]"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아하스·아하즈 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0270_0000",
+      "before": null,
+      "after": "기본적으로 대상을 잡아 붙드는 것을 뜻하며, 두려움·고통에 사로잡힘이나 길·태도를 놓지 않음, 무기를 잡고 다룸에도 쓰인다. 니팔에서는 땅을 소유로 차지하며, 건축 부재·휘장을 붙여 고정하거나 지탱하고 문에 빗장을 거는 용법도 있다. 민 31:30·47과 대상 24:6의 수동분사는 여럿 가운데 뽑힌 몫·집안을 나타낸다. 욥 26:9의 피엘은 구름으로 가림을 뜻하나, 대상의 보좌·보름달 해석은 갈린다. 왕상 6:10은 부착과 목재로 덮음, 겔 41:6은 고정·지탱하는 분사와 지지물로 보는 분석의 차이가 있다."
+    },
+    {
+      "word_id": "H0271_0000",
+      "before": null,
+      "after": "유다 왕과 미가의 아들에게 쓰이는 이름이다. 아하스는 한국어 성경의 관용명이고 아하즈는 אָחָז의 교재식 한글 근사다. Strong은 H270에서 유래한 소유자라는 풀이를, BDB는 그가 잡았다는 풀이와 여호아하스의 단축형이라는 설명을 제시한다. 어원 풀이를 별도 일반 의미나 인물의 성격으로 확정하지 않는다."
+    },
+    {
+      "word_id": "H0272_0000",
+      "before": null,
+      "after": "자기 몫으로 확보하여 가진 것을 뜻하며, 주로 토지·집·세습 재산에 쓰인다. H270의 붙잡음과 연결되지만 빼앗아 얻은 것만을 뜻하지 않는다. 레 25:45–46에서는 종이 된 사람들에게, 겔 44:28에서는 하나님이 제사장들의 소유라는 비유에 쓰이므로 땅이나 물건만으로 제한하지 않는다."
+    },
+    {
+      "word_id": "H0273_0000",
+      "before": null,
+      "after": "느 11:13의 제사장 계보에 나오는 아맛새의 조부다. 아흐새는 한국어 성경의 관용명이고 아흐자이는 אַחְזַי의 교재식 한글 근사다. Strong은 H270에서 나온 잡는 자로 풀이하지만 BDB와 참고 사전은 아하시야 이름군 및 야가 잡았다는 분석과 연결한다. 신명 요소와 정확한 축약 경로가 확정되지 않아 분석적 붙임표를 넣지 않는다."
+    },
+    {
+      "word_id": "H0274_0000",
+      "before": null,
+      "after": "이스라엘의 아합의 아들과 유다의 여호람의 아들에게 쓰이는 이름이다. 아하시야는 한국어 성경의 관용명이며 아하즈-야와 장형 아하즈-야후는 אֲחַזְיָה·אֲחַזְיָהוּ의 근사와 H270·H3050 구성 경계를 드러낸다. 두 형태 모두 두 왕에게 실제로 확인되며, 야가 잡았다는 어원 설명을 별도 meaning으로 두지 않는다. 붙임표는 분석 기호다. 대하 22:2의 나이와 판본 차이는 이름의 의미와 구별한다."
+    },
+    {
+      "word_id": "H0275_0000",
+      "before": null,
+      "after": "대상 4:6에서 아스훌과 나아라의 아들로 등장한다. 아훗삼은 한국어 성경의 관용명이고 아훗잠은 אֲחֻזָּם의 교재식 한글 근사다. Strong은 H270과 연결하여 붙잡음으로, BDB와 참고 사전은 소유자로 풀이한다. 이름 풀이의 차이를 보존하며 별도 일반 의미나 확인되지 않은 합성 경계로 만들지 않는다. 자음 중복 정보는 원문과 음역에 보존한다."
+    },
+    {
+      "word_id": "H0276_0000",
+      "before": null,
+      "after": "창 26:26에서 아비멜렉과 함께 이삭을 찾아온 동행인이다. 아훗삿은 한국어 성경의 관용명이고 아훗자트는 אֲחֻזַּת의 교재식 한글 근사다. Strong은 H272의 변형으로 연결하여 소유로 풀이하지만 본문에서는 독립 인명으로 기능한다. 일반 명사의 연계형이나 소유라는 별도 meaning으로 합치지 않는다."
+    },
+    {
+      "word_id": "H3059_0000",
+      "before": null,
+      "after": "예후의 아들인 이스라엘 왕, 요시야의 아들인 유다 왕, 유다 왕 여호람의 아들에게 쓰인다. 여호아하스와 요아하스는 실제 한국어 성경 표기이며, 예호-아하즈는 יְהוֹאָחָז의 교재식 근사와 신명 요소·H270의 구성 경계를 드러낸다. 요아하스는 장형 본문인 대하 25:25에도 확인된다. Strong의 H3068·H270 연결과 야훼가 잡았다는 풀이를 보존하되 당대 신명의 정확한 발음으로 단정하지 않는다. 대하 21:17·25:23에서 아하시야를 가리키는 것과 모든 동명이인의 동일성을 구별한다."
+    },
+    {
+      "word_id": "H3099_0000",
+      "before": null,
+      "after": "H3059의 축약된 이름 형태다. 네 용례는 예후의 아들, 요아의 아버지, 요시야의 아들이라는 서로 다른 세 인물을 가리킨다. 여호아하스와 요아하스는 한국어 성경 표기이고 요-아하즈는 יוֹאָחָז의 교재식 근사와 축약 신명 요소·이름 구성의 분석 표기다. Strong의 두 사람이라는 설명 및 참고 사전의 이스라엘 왕으로만 한정하는 설명을 전체 본문에 적용하지 않는다."
+    },
+    {
+      "word_id": "G0881_0000",
+      "before": null,
+      "after": "히브리어 인명 H271 אָחָז의 그리스어식 표기이며, 마 1:9에서 유다 왕 아하스를 가리켜 두 번 나온다. 아하스는 한국어 성경의 관용명이고 아하즈는 원천인 히브리어 이름의 교재식 한글 근사다. 그리스어 Ἀχάζ 자체의 교재식 읽기 아카즈는 음역란에 보존한다. 그가 붙잡았다는 원천 이름의 전통적인 풀이로서 별도 의미로 세지 않는다. 두 token의 대격·주격 기능과 일부 판본의 Ἄχας 이형은 별도 인물이나 의미로 나누지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0270_0000",
+      "word_id_2": "H0272_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "여성 수동분사에서 명사로 어휘화되었으며, 본문 n-f와 소유 용법을 보존한다. 단순 굴절형으로 합치지 않는다.",
+      "source": "RESHET-EC-H270-CLUSTER-H0270-H0272"
+    },
+    {
+      "word_id_1": "H0270_0000",
+      "word_id_2": "H0273_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "원자료 from은 보존한다. BDB·참고 사전의 신명적 축약 분석과 경쟁하므로 정확한 단어 형성 경로는 가설로 제한한다. H3050과 직접 합성은 생성하지 않는다.",
+      "source": "RESHET-EC-H270-CLUSTER-H0270-H0273"
+    },
+    {
+      "word_id_1": "H0270_0000",
+      "word_id_2": "H0274_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "H270과 신명 요소의 결합을 기록하며 이름의 실제 부여 동기를 단정하지 않는다.",
+      "source": "RESHET-EC-H270-CLUSTER-H0270-H0274"
+    },
+    {
+      "word_id_1": "H0274_0000",
+      "word_id_2": "H3050_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "야·야후 이름 구성 요소. H3050의 독립 의미나 신명의 역사적 발음 승인과 구별한다.",
+      "source": "RESHET-EC-H270-CLUSTER-H3050-H0274"
+    },
+    {
+      "word_id_1": "H0270_0000",
+      "word_id_2": "H0275_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "H270 어근과의 연결은 공유되지만 붙잡음·소유자 풀이 차이는 비고에 보존한다.",
+      "source": "RESHET-EC-H270-CLUSTER-H0270-H0275"
+    },
+    {
+      "word_id_1": "H0272_0000",
+      "word_id_2": "H0276_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "원문 variation of를 보존하되 일반명사의 단순 철자 이형이 아닌 독립 인명으로의 형성을 derived로 표현한다. inflected로 저장하지 않는다.",
+      "source": "RESHET-EC-H270-CLUSTER-H0272-H0276"
+    },
+    {
+      "word_id_1": "H0270_0000",
+      "word_id_2": "H3059_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "신명 요소와 H270의 이름 구성. 단순 reference 화살표와 의미 방향을 구별한다.",
+      "source": "RESHET-EC-H270-CLUSTER-H0270-H3059"
+    },
+    {
+      "word_id_1": "H3059_0000",
+      "word_id_2": "H3068_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "신명의 예호- 구성 요소를 기록하며 독립 신명 meaning·발음은 이번 승인 대상이 아니다.",
+      "source": "RESHET-EC-H270-CLUSTER-H3068-H3059"
+    },
+    {
+      "word_id_1": "H3059_0000",
+      "word_id_2": "H3099_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Compare 단독으로 확정하지 않는다. 반대쪽의 명시적 a form of와 예호-/요- 형태 대응·같은 왕들의 용례를 함께 근거로 삼는다.",
+      "source": "RESHET-EC-H270-CLUSTER-H3059-H3099"
+    }
+  ],
+  "relation_replacements": [
+    {
+      "relation_id": 3161,
+      "word_id_1": "H0270_0000",
+      "word_id_2": "H0271_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "Strong은 H270에서 파생으로 명시한다. 이름 뜻과 역사적 단축 설명은 비고에서 구별한다.",
+        "source": "RESHET-EC-H270-CLUSTER-H0270-H0271"
+      }
+    },
+    {
+      "relation_id": 3162,
+      "word_id_1": "G0881_0000",
+      "word_id_2": "H0271_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "transliteration",
+        "relation_type": "direct_transliteration",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "원천 히브리어에서 헬라어 이름으로의 음역. 마 1:9의 계보와 일치한다.",
+        "source": "RESHET-EC-H270-CLUSTER-H0271-G0881"
+      }
+    }
+  ],
+  "meaning_approvals": [],
+  "supersedes": []
+}
