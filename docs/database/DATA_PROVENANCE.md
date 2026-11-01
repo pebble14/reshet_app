@@ -1794,3 +1794,7 @@ Work SHA `e7434a19193c1641b3f0076e7e78311414eac37e9bb1c0046b54d6f214f3660f` → 
 ### H326·H327 의미·비고 승인 — 2026-11-01
 
 [승인 manifest](../../tool/data_provenance/manifests/h326_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h326_cluster_approved_content_slice.md)에 R1 사용자 승인안을 반영했다. 하아하스다리·아하쉬타리 (인), 왕(王)의 각1 sense·비고2·관계 비생성·hold 없음이다. 공식 dry-run·undo·원본 불변, 테스트31개·live apply1회 및 전체13테이블/DDL 독립 대조 통과. 승인 meaning2·비고2·history4행·해당 sequence 외 불변, integrity ok·FK0·sidecar0·seed 불변이다. History group1793533671970149, ID7521–7524. 표준 progress 승인829→831·미승인13463→13461·hold6·anomaly113·비대상14296행 불변. 백업·검증은 data/backups/approved_content_batch/h326_approval_20261101/, receipt는 data/backups/approved_content_batch/20261101T114750497824Z/result.json에 보존했다. 원문·음역·발음·언어·schema·앱 UI·seed 배포 변경 없음.
+
+## H328 부사·주술 명사 승인 — 2026-11-01
+
+[승인 manifest](../../tool/data_provenance/manifests/h328_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h328_cluster_approved_content_slice.md)에 천천히 / 부드럽게 / 주술사(呪術師), 비고1건, 관계 비생성·새 hold 없음을 기록했다. 사19:3의 사람/영 경쟁 독법과 추정 어원은 미해결로 보존한다. 공식 dry-run·undo·원본 불변, 적용기31개 테스트, live apply1회와13테이블·DDL 독립 검증을 통과했다. History2행(group1793537567218341), integrity ok·FK0·sidecar0·seed 불변. 진행표 승인831→832·미승인13461→13460, hold6·anomaly113 유지. 상세 승인·백업·검증은 data/backups/approved_content_batch/h328_approval_20261101/, 공식 receipt는 data/backups/approved_content_batch/20261101T125245257994Z/result.json에 있다. 앱·UX·원문·음역·발음·schema·배포 seed 변경 없음.

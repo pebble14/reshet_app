@@ -1,0 +1,48 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H328-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h328_approval_20261101/00_user_approval.json",
+    "document_sha256": "8e5086cab01bba5119204fa5380c53512a638c1417e6e81598db0990e3bcfcb2"
+  },
+  "target": {
+    "expected_work_sha256": "29440547a40f5db945471e1a3a2157546073bcf773b774fb2f226c0d7a5ae5aa",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0328_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "천천히, 부드럽게"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "천천히"
+        },
+        {
+          "seq": 2,
+          "meaning": "부드럽게"
+        },
+        {
+          "seq": 3,
+          "meaning": "주술사(呪術師)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0328_0000",
+      "before": null,
+      "after": "움직임·흐름이 급하거나 거칠지 않은 모습과 사람·말을 부드럽게 대하는 태도를 나타낸다. 왕상 21:27의 ‘풀이 죽어’는 아합의 낮아진 행동을 문맥에서 풀어쓴 표현이다. 욥 15:11에는 ‘은밀하게’라는 해석도 있다. 사 19:3의 남성 복수형은 주문을 중얼거리는 주술사로 풀이하지만 ‘죽은 이의 영’으로 보는 견해도 있다. 작은 소리의 주문에서 주술사의 뜻이 생겼다는 설명은 추정 어원이며, H331에서 파생되었다는 설명도 확정하지 않는다."
+    }
+  ],
+  "relation_creates": [],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}
