@@ -179,3 +179,5 @@
 | H280 수수께끼 연결군 | 신규4개 의미·비고4·무방향 관계2, H284 유지·H4240 어원 관계 보류·hold 없음 | `active` | 높음 | 2026-10-30 | [기록](h280_cluster_approved_content_slice.md) |
 
 | H303 알랍·기름·젖 연결군 | CORE7 meaning8행·비고7·관계5(확정1·가설4), 풍자향 병기·관계2보류·hold 없음 | `active` | 높음 | 2026-10-30 | [기록](h303_cluster_approved_content_slice.md) |
+
+| H307 악메다 지명 | meaning1·비고1, 관용명·교재식 근사 병기·관계 비생성·hold 없음 | `active` | 높음 | 2026-11-01 | [기록](h307_cluster_approved_content_slice.md) |

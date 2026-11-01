@@ -1,0 +1,40 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H307-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h307_approval_20261101/00_user_approval.json",
+    "document_sha256": "490d02b7f7557122e733bb18fa67548f7693e2199f711ae7d0a0de2bf1fb0e39"
+  },
+  "target": {
+    "expected_work_sha256": "612efce19effd4ec7ee8309167990da0448eaa6742994a249114b9e7310c9195",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0307_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "악메다 (지)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "악메다·아흐메타 (지)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0307_0000",
+      "before": null,
+      "after": "악메다는 한국어 성경 관용명이고 아흐메타는 아람어 본문 표기의 교재식 한글 근사다. 메대의 도시 엑바타나(Ecbatana), 오늘날 이란의 하마단을 가리키며 페르시아 왕들의 여름 거처로 알려져 있다. 스 6:2에서는 고레스의 성전 재건 조서가 기록된 두루마리가 발견된 곳이다. Strong은 페르시아계 기원으로 설명한다. 이란어계 원천 지명은 보통 ‘모이는 곳’으로 풀이되지만, 본래 명명 동기는 확정하지 않는다. KJV 난외주에는 ‘상자 안에서’라는 대안이 있으나 여기서는 지명으로 이해한다."
+    }
+  ],
+  "relation_creates": [],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}
