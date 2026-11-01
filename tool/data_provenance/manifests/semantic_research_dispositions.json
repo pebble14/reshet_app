@@ -64,16 +64,6 @@
         "reshet_research_output/H0054_cluster_20261012_b5a87078/00_cluster_summary.md"
       ],
       "reopen_condition": "OSHB의 Strong 부착·형태 분석과 Strong/BDB 항목 정체성을 본문 단위에서 정리하거나 사용자가 채택 분석을 명시적으로 결정할 때 재검토한다. 자동 Strong 재태깅이나 표제 교정으로 해소하지 않는다."
-    },
-    {
-      "strong_number": "H0318",
-      "status": "hold",
-      "reason": "단4:5(OSHB)/4:8(한국어)의 유일한 어형·구문이 부사 마침내인지 다른 읽기의 형용사인지 미해결이다. 미검토가 아니라 검토 후 lexical identity·문법 기능 판단 보류이다.",
-      "evidence_refs": [
-        "docs/semantic_decisions/h268_cluster_approved_content_slice.md",
-        "reshet_research_output/H268_cluster_20261030_5c04debf/07_meaning_reassessment_R3.md"
-      ],
-      "reopen_condition": "비교 아람어 용례, 채택한 비평판의 본문·장치, 형태·구문 연구가 기능을 실질적으로 밝히거나 사용자가 전통 독법을 한계와 함께 명시적으로 채택할 때. 동일한 증거의 반복 집계만으로 자동 재개하지 않는다."
     }
   ]
 }

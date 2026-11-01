@@ -1,0 +1,40 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H318-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h318_approval_20261101/00_user_approval.json",
+    "document_sha256": "6637e770e47afd78cd53afb9d27c2582e0debefba84b4d35f6c4a5d5bef85130"
+  },
+  "target": {
+    "expected_work_sha256": "33ad858047a43e64b483d6b64d21de5b1ea6c413a67e4411168e20f62a5d9b06",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0318_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "마지막의, 최후의"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "마침내"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0318_0000",
+      "before": null,
+      "after": "단 4:5(OSHB, 한국어 성경 4:8)에서 עַד와 결합하여 순서의 끝에 이르는 때, 곧 마침내를 나타내는 전통 독법을 따른다. 단독 부사의 일반적 용법은 확인되지 않는다. Strong은 H317에서의 파생을 제시하지만 CAL은 עַד אָחֳרֵין을 시간 부사구로 다루며, 이집트 아람어의 עַל אחרן 나중에·마침내와 비교한다. BDB는 어형·구문을 의심하며 또 다른 이로 읽는 대안을 논의한다. 다른 사본의 אחרן과 헬라어 전승의 차이는 별도로 남기고, 현행 OSHB의 אחרין을 H321 용례로 바꾸거나 합산하지 않는다. 세부 어원과 H317의 직접 파생 관계는 확정하지 않는다."
+    }
+  ],
+  "meaning_approvals": [],
+  "relation_creates": [],
+  "relation_replacements": [],
+  "supersedes": []
+}

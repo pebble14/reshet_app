@@ -1,10 +1,12 @@
 # H268 뒤·이후 연결군 승인 결정
 
-- 상태: `active`
+- 상태: `partially_superseded`
 - 승인일: 2026-10-30
 - 복원 수준: 높음
 - 승인 기준: R3 전체. DB·문서·검증·커밋·작업 브랜치 게시·main ff-only 병합과 push·양쪽 작업 브랜치 정리를 사용자 승인.
 - Authority: [승인 manifest](../../tool/data_provenance/manifests/h268_cluster_approved_content_slice.json). 상세 연구는 외부 H268_cluster_20261030_5c04debf의 R1·R2·R3에 보존.
+
+H318 hold 부분만 [H318 후속 결정](h318_cluster_approved_content_slice.md)으로 대체되었다. 나머지 의미·비고·관계 결정은 유효하다. 아래는 당시 결정의 보존 기록이다.
 
 ## 최종 의미·비고
 

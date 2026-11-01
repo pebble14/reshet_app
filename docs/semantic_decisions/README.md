@@ -173,7 +173,7 @@
 
 | H262 클러스터 | 전달·하와·마을9개 의미·비고, 관계8·H3265 누락 행 보완 분리 | `active` | 높음 | 2026-10-30 | [기록](h262_cluster_approved_content_slice.md) |
 
-| H268 뒤·이후 연결군 | CORE17 중 신규15 승인·H315 유지·H318 hold, 신규관계13 | `active` | 높음 | 2026-10-30 | [기록](h268_cluster_approved_content_slice.md) |
+| H268 뒤·이후 연결군 | CORE17 중 신규15 승인·H315 유지·H318 hold, 신규관계13 | `partially_superseded` | 높음 | 2026-10-30 | [기록](h268_cluster_approved_content_slice.md) |
 | H270 잡음·소유 연결군 | CORE10 meaning14행·비고10·신규관계9·교체2, H270 의미 재분할·G881 원천 이름 병기·신규 hold 없음 | `active` | 높음 | 2026-10-30 | [기록](h270_cluster_approved_content_slice.md) |
 
 | H280 수수께끼 연결군 | 신규4개 의미·비고4·무방향 관계2, H284 유지·H4240 어원 관계 보류·hold 없음 | `active` | 높음 | 2026-10-30 | [기록](h280_cluster_approved_content_slice.md) |
@@ -183,3 +183,5 @@
 | H307 악메다 지명 | meaning1·비고1, 관용명·교재식 근사 병기·관계 비생성·hold 없음 | `active` | 높음 | 2026-11-01 | [기록](h307_cluster_approved_content_slice.md) |
 
 | H308 아하스배 인명 | meaning1·비고1, 관용명·교재식 근사 병기·관계 비생성·hold 없음 | `active` | 높음 | 2026-11-01 | [기록](h308_cluster_approved_content_slice.md) |
+
+| H318 시간 부사 | 마침내 1의미·비고·hold 해제, 관계 비생성·기존 승인 유지 | `active` | 높음 | 2026-11-01 | [기록](h318_cluster_approved_content_slice.md) |
