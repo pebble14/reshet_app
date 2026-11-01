@@ -1,0 +1,40 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H325-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h325_approval_20261101/00_user_approval.json",
+    "document_sha256": "950b453e15a830080d3d4950aa867ee5e67dc6e547269f18f82d86b50974e977"
+  },
+  "target": {
+    "expected_work_sha256": "d66371088c9a7db92275d3db0e5536eddc9c9764f5095df827e2cd990e2a5f25",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0325_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아하수에로 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아하수에로·아하쉬웨로쉬 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0325_0000",
+      "before": null,
+      "after": "아하수에로는 한국어 성경 관용명이고 아하쉬웨로쉬는 기존 교재식 w 계열 읽기에 따른 히브리어 표기의 한글 근사다. 페르시아계 왕명으로, 에스더서와 스 4:6에서는 일반적으로 크세르크세스 1세로 이해한다. 단 9:1에서는 메대 사람 다리오의 아버지로 나오므로 같은 인물로 단정하지 않는다. 고대 페르시아어 Xšayāršā에 대응하는 이름으로 보지만 세부 어원 풀이와 정확한 전승 경로는 확정하지 않는다. Strong은 왕의 칭호로 설명하나 여기서는 인명으로 처리한다. 에 10:1의 짧은 철자 Ketiv와 일반형 Qere는 같은 이름의 읽기 차이로 구별한다. LXX 참고본문의 에스더서는 아르타크세르크세스라는 이름을 사용한다."
+    }
+  ],
+  "relation_creates": [],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}

@@ -187,3 +187,5 @@
 | H318 시간 부사 | 마침내 1의미·비고·hold 해제, 관계 비생성·기존 승인 유지 | `active` | 높음 | 2026-11-01 | [기록](h318_cluster_approved_content_slice.md) |
 
 | H323 태수 관직명 연결군 | H323·H324 각1의미·비고2·무방향 관계1·hold 없음 | `active` | 높음 | 2026-11-01 | [기록](h323_cluster_approved_content_slice.md) |
+
+| H325 아하수에로 인명 | 관용명·교재식 근사 병기1의미·비고1, 관계 비생성·hold 없음 | `active` | 높음 | 2026-11-01 | [기록](h325_cluster_approved_content_slice.md) |
