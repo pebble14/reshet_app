@@ -1782,3 +1782,7 @@ Work SHA `e7434a19193c1641b3f0076e7e78311414eac37e9bb1c0046b54d6f214f3660f` → 
 ### H318 시간 부사 의미·비고 및 hold 해제 — 2026-11-01
 
 [승인 manifest](../../tool/data_provenance/manifests/h318_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h318_cluster_approved_content_slice.md)에 마침내 1의미·비고1·H318 hold 해제를 반영했다. 기존 CORE16·관계13 및 관계 보류·비생성 결정은 유지하며 관계 행 변경0이다. 공식 dry-run·undo·원본 불변, 테스트31개·live apply1회 및 전체 테이블/DDL 독립 대조 통과. History group1793510494585349, history2행. Integrity ok·FK0·sidecar0·seed 불변. 표준 progress 승인825→826·hold7→6·미승인13466·anomaly113 유지. 백업·검증은 data/backups/approved_content_batch/h318_approval_20261101/, receipt는 data/backups/approved_content_batch/20261101T052131869959Z/result.json이다. H268 기록의 H318 hold 부분만 partially_superseded로 표시했다. 원문·음역·발음·언어·schema·seed·UI 변경은 없다.
+
+### H323 태수 관직명 연결군 승인 — 2026-11-01
+
+[승인 manifest](../../tool/data_provenance/manifests/h323_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h323_cluster_approved_content_slice.md)에 H323·H324 각 태수(太守) 1의미·비고2·무방향 관계1(ID8285)을 반영했다. 공식 dry-run·undo·원본 불변·테스트31개·live apply1회 및 전체13테이블/DDL 독립 대조 통과. 승인 meaning·비고·관계·history5행 및 해당 sequence 외 변경 없음. Integrity ok·FK0·sidecar0·seed 불변. History group1793526788520437, ID7514–7518. 표준 progress 승인826→828·미승인13466→13464·hold6·anomaly113 유지. 검증·백업은 data/backups/approved_content_batch/h323_approval_20261101/, receipt는 data/backups/approved_content_batch/20261101T095307100991Z/result.json이다. 원문·음역·발음·언어·schema·앱 UI·seed 배포 변경 없음.

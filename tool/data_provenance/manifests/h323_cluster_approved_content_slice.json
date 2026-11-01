@@ -1,0 +1,73 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H323-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h323_approval_20261101/00_user_approval.json",
+    "document_sha256": "09e233b22f95a7726f5fd4414b188cc31c760165d0263332f91f4105b0121201"
+  },
+  "target": {
+    "expected_work_sha256": "2ddb474aa9814e10ffc8d5b00610bfe4a228cbe69fe95dc2407b4a59da6fc3ce",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0323_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "총독, 태수"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "태수(太守)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0324_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "총독, 태수"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "태수(太守)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0323_0000",
+      "before": null,
+      "after": "왕을 대신해 지방을 다스리는 페르시아계 관직명인 사트라프를 가리킨다. 태수는 이 관직의 한국어 대응어이며, 한국어 성경에서는 문맥과 번역본에 따라 총독·대신·관원 등으로 옮긴다. ‘나라를 지키는 자’라는 고대 이란계 어원 풀이는 관직명의 배경 설명이다. 아람어 H324와 같은 관직명의 언어별 대응형이지만 직접 차용 방향은 확정하지 않는다."
+    },
+    {
+      "word_id": "H0324_0000",
+      "before": null,
+      "after": "히브리어 H323과 같은 페르시아계 관직명의 아람어 대응형으로, 왕을 대신해 지방을 다스리는 관원을 가리킨다. 다니엘에서는 총독·고관·방백 등으로 옮기며, 느부갓네살과 다리오 통치 문맥에 쓰인다. 문맥마다 구체적인 관할 규모와 서열이 같다고 단정하지 않는다. Strong의 prince는 여기서 지방 통치 관원을 가리키며 왕자라는 의미로 해석하지 않는다. ‘나라를 지키는 자’라는 고대 이란계 어원 풀이는 관직명의 배경 설명이다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0323_0000",
+      "word_id_2": "H0324_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "같은 페르시아계 관직명(사트라프)의 히브리어·아람어 대응형이다. Strong H324의 corresponding to H323과 두 언어의 표제·문맥이 대응을 뒷받침한다. root_shared는 공통 어휘 기원을 나타내며 생산적인 히브리어 어근이나 두 언어 사이의 직접 차용·파생 방향을 확정하지 않는다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml, H323 source/meaning; H324 source; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}
