@@ -191,3 +191,4 @@
 | H325 아하수에로 인명 | 관용명·교재식 근사 병기1의미·비고1, 관계 비생성·hold 없음 | `active` | 높음 | 2026-11-01 | [기록](h325_cluster_approved_content_slice.md) |
 | H326·H327 비교군 | 식별명칭 병기·왕의 형용사 의미2·비고2, 관계 비생성·hold 없음 | `active` | 높음 | 2026-11-01 | [기록](h326_cluster_approved_content_slice.md) |
 | H328 의미·비고 | H0328 | active | 높음 | 2026-11-01 | [결정 기록](h328_cluster_approved_content_slice.md) |
+| H329 의미·지명·비고 | H0329 | active | 높음 | 2026-11-01 | [결정 기록](h329_cluster_approved_content_slice.md) |

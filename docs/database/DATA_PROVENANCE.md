@@ -1798,3 +1798,7 @@ Work SHA `e7434a19193c1641b3f0076e7e78311414eac37e9bb1c0046b54d6f214f3660f` → 
 ## H328 부사·주술 명사 승인 — 2026-11-01
 
 [승인 manifest](../../tool/data_provenance/manifests/h328_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h328_cluster_approved_content_slice.md)에 천천히 / 부드럽게 / 주술사(呪術師), 비고1건, 관계 비생성·새 hold 없음을 기록했다. 사19:3의 사람/영 경쟁 독법과 추정 어원은 미해결로 보존한다. 공식 dry-run·undo·원본 불변, 적용기31개 테스트, live apply1회와13테이블·DDL 독립 검증을 통과했다. History2행(group1793537567218341), integrity ok·FK0·sidecar0·seed 불변. 진행표 승인831→832·미승인13461→13460, hold6·anomaly113 유지. 상세 승인·백업·검증은 data/backups/approved_content_batch/h328_approval_20261101/, 공식 receipt는 data/backups/approved_content_batch/20261101T125245257994Z/result.json에 있다. 앱·UX·원문·음역·발음·schema·배포 seed 변경 없음.
+
+## H329 가시나무·아닷 지명 승인 — 2026-11-01
+
+[승인 manifest](../../tool/data_provenance/manifests/h329_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h329_cluster_approved_content_slice.md)에 가시나무 / 아닷·아타드 (지), 비고1건, 관계 비생성·hold 없음을 반영했다. 수종·추정 어원·시편 구문·정확한 위치는 미확정으로 보존한다. 공식 dry-run·undo·원본 불변, 적용기31개 테스트, live apply1회와 전체13테이블·DDL 독립 대조 통과. History2행(group 1793539802658310), integrity ok·FK0·sidecar0·seed 불변. 표준 progress 승인832→833·미승인13460→13459·hold6·anomaly113 및 비대상14297행 불변. 상세 승인·백업·검증은 data/backups/approved_content_batch/h329_approval_20261101/, receipt는 data/backups/approved_content_batch/20261101T132959743953Z/result.json이다. 앱·UX·원문·음역·발음·언어·schema·배포 seed 변경 없음.

@@ -1,0 +1,44 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H329-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h329_approval_20261101/00_user_approval.json",
+    "document_sha256": "abd3e3d9c43160ce46e7bd69af890c954d79b68ed89ea2329456daf9c0899ef6"
+  },
+  "target": {
+    "expected_work_sha256": "a2d865cbc3aec0a672c8ee460f41635c9ec5077b11249b86ee1708ca3f039954",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0329_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "가시나무, 아닷"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "가시나무"
+        },
+        {
+          "seq": 2,
+          "meaning": "아닷·아타드 (지)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0329_0000",
+      "before": null,
+      "after": "가시가 많은 식물을 가리키며 정확한 종은 미확정이다. Strong은 특히 갈매나무류(buckthorn)로 풀이하지만, Astragalus속의 가시 관목류를 제안한 전문 연구도 있다. 삿 9:14–15에서는 왕으로 추대되는 나무로 의인화되며, 시 58:9(히브리어 절 번호 58:10)는 보통 땔감 문맥으로 이해하지만 구문과 본문 해석에 이견이 있다. 창 50:10–11의 아닷은 야곱의 장례 행렬이 머문 타작마당과 관련된 지명이며 정확한 위치는 확정하지 않는다. ‘타작마당’은 גֹּרֶן(H1637)의 뜻이다. 아닷은 한국어 성경 관용명이고 아타드는 אָטָד의 교재식 읽기를 한글로 근사한 표기다. Strong의 ‘찌르다 또는 단단히 고정하다’라는 미사용 어근 연결은 추정이다."
+    }
+  ],
+  "relation_creates": [],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}
