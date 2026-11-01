@@ -1764,3 +1764,9 @@ Work SHA `e7434a19193c1641b3f0076e7e78311414eac37e9bb1c0046b54d6f214f3660f` → 
 [승인 manifest](../../tool/data_provenance/manifests/h303_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h303_cluster_approved_content_slice.md)에 최신안을 반영했다. CORE7 의미8행·비고7·신규관계5(확정1·가설4), 관계후보2보류·새 hold 없음이다. H2459는 기름/가장 좋은 부분, H2464는 풍자향(楓子香)·갈바눔 수지(樹脂)를 채택했다.
 
 공식 dry-run19건·undo·원본 불변·테스트31개·live apply1회 후 전체13테이블/DDL 독립 대조를 통과했다. 비대상·expression 불변, integrity ok·FK0·sidecar 없음·seed 불변이다. History group1793349010500562, history7453–7471·relation8274–8278. 표준 progress 승인801→808·미승인13490→13483, hold7·anomaly113 유지 및 비대상14291행 불변이다. 검증은 data/backups/approved_content_batch/h303_approval_20261030/, 공식 receipt는 data/backups/approved_content_batch/20261030T083009084851Z/result.json에 보존했다. 앱 UI·schema·원문·음역·발음·seed 배포 변경은 없다.
+
+## H306 보석·일생·꿈·황급함 연결군 승인 — 2026-11-01
+
+[승인 manifest](../../tool/data_provenance/manifests/h306_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h306_cluster_approved_content_slice.md)에 사용자 최종안을 반영했다. CORE15의 의미17행·비고15·신규관계6(확정4·가설2), 관계후보7보류·원천 참조 오류1미승인·새 hold 없음이다.
+
+공식 dry-run36건·undo·원본 SHA 불변, 적용기 테스트31개, live apply1회 및 전체13테이블·DDL 독립 대조를 통과했다. 의미15·비고15·신규관계6·history36 및 해당 sequence 외 차이 없음. Integrity ok·FK0·sidecar0·seed 불변. History group1793504970329859, history7472–7507, relation8279–8284. 공식 progress JSON·CSV·Markdown을 함께 갱신하여 대상15개의 승인·meaning·비고 exact 일치를 확인했다. 승인808→823·미승인13483→13468, hold7·anomaly113 유지. Work SHA 612efce19effd4ec7ee8309167990da0448eaa6742994a249114b9e7310c9195. 독립 검증·백업은 data/backups/approved_content_batch/h306_approval_20261101/, 공식 receipt는 data/backups/approved_content_batch/20261101T034928865386Z/result.json에 보존했다. 앱 코드·UX·schema·expression·음역·발음·seed 배포 변경과 UI 테스트는 N/A다.

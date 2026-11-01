@@ -1,0 +1,401 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H306-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h306_approval_20261101/00_user_approval.json",
+    "document_sha256": "17f7aa7949c83eb6d8c46467fb7e551a37bff4764832aaf606d10b85babf7fd2"
+  },
+  "target": {
+    "expected_work_sha256": "3d9ee5b1e66e6c710c2f8a65192b105b05a6edadb0dbd12fd270ce94054b4d47",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0306_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "자수정"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "자수정(紫水晶)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2465_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "생의 시간, 세상"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "일생(一生)"
+        },
+        {
+          "seq": 2,
+          "meaning": "세상(世上)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2466_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "헬렛 Heled(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "헬렛·헬레드 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2467_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "족제비 weasel"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "족제비"
+        }
+      ]
+    },
+    {
+      "word_id": "H2468_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "훌다 Huldah(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "훌다 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2469_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "헬대 Heldai(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "헬대·헬다이 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2472_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "꿈 dream"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "꿈"
+        }
+      ]
+    },
+    {
+      "word_id": "H2492_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "건강하다, 꿈꾸다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "꿈꾸다"
+        },
+        {
+          "seq": 2,
+          "meaning": "튼튼하다"
+        }
+      ]
+    },
+    {
+      "word_id": "H2493_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "꿈 dream"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "꿈"
+        }
+      ]
+    },
+    {
+      "word_id": "H2494_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "헬렘 Helem(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "헬렘 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2495_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "맛이 없는 식물, 쇠비름"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "쇠비름"
+        }
+      ]
+    },
+    {
+      "word_id": "H2496_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "부싯돌, 바위"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "부싯돌"
+        }
+      ]
+    },
+    {
+      "word_id": "H2648_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "서두르다, 당황하다, 놀라다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "황급하다(遑急하다)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2649_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "서두름, 두려움, 도피"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "황급함(遑急함)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5161_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "느헬람 사람"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "느헬람 사람·네헬람 사람"
+        }
+      ]
+    }
+  ],
+  "meaning_approvals": [],
+  "word_note_replacements": [
+    {
+      "word_id": "H0306_0000",
+      "before": null,
+      "after": "정확한 광물 동정이 미확정인 고대 보석명으로, 전통적으로 자수정으로 옮긴다. 출28:19·39:12에서 흉배의 셋째 줄에 박는다. LXX의 amethystos는 이 전통을 뒷받침하지만 현대 광물 종을 최종 입증하지 않는다. 다른 광물 동정과 꿈/강건함 계열의 경쟁 어원은 미확정이다."
+    },
+    {
+      "word_id": "H2465_0000",
+      "before": null,
+      "after": "사람이 살아가는 기간인 일생을 가리키며, 사람이 살아가는 이 세상을 뜻하기도 한다. 욥 11:17·시 39:6·89:48은 삶의 기간을, 시 17:14·49:2는 사람이 사는 세상을 가리킨다. 시편의 절 번호는 히브리어 본문 기준이며 번역본에서는 각각 39:5·89:47·49:1 등에 해당한다. 세상은 지구라는 물리적 천체로 한정하지 않는다. 빠르게 미끄러진다는 어근 설명과 동물명 H2467의 공통 어근은 확정하지 않는다."
+    },
+    {
+      "word_id": "H2466_0000",
+      "before": null,
+      "after": "헬렛은 한국어 성경 관용명이고 헬레드는 חֵלֶד의 교재식 읽기에 따른 한글 근사다. 대상 11:30의 느도바 사람 바아나의 아들이며 다윗의 용사 명단에 나온다. 병행 명단의 헬렙·헬레브(H2460, 삼하 23:29) 및 헬대·헬다이(H2469, 대상 27:15)와 비교된다. Strong은 H2465와 같은 말로 연결하지만 이름의 어원과 이형의 형성 과정은 확정하지 않는다."
+    },
+    {
+      "word_id": "H2467_0000",
+      "before": null,
+      "after": "레 11:29에 한 번 나오는 동물명이다. 여기서는 전통적인 번역에 따라 족제비로 옮긴다. 정확한 동물 동정은 불확실하며 두더지 또는 두더지쥐로 보는 견해도 있다. H2468 훌다는 이 말의 여성형으로 설명되지만, 인명의 어원만으로 동물 종이나 실제 명명 동기를 확정하지 않는다."
+    },
+    {
+      "word_id": "H2468_0000",
+      "before": null,
+      "after": "훌다는 한국어 성경 관용명과 חֻלְדָּה의 교재식 한글 근사가 겹치는 표기다. 왕하 22:14와 대하 34:22에 나오는 요시야 시대의 여예언자이다. Strong은 동물명 H2467의 여성형으로 설명한다. 이 형태 관계를 인물의 성격이나 실제 명명 동기의 확정으로 보지 않는다. 자음 ד의 다게쉬를 무조건 중복 자음이나 된소리로 바꾸지 않는다."
+    },
+    {
+      "word_id": "H2469_0000",
+      "before": null,
+      "after": "헬대는 한국어 성경 관용명이고 헬다이는 חֶלְדַּי의 교재식 한글 근사다. 대상 27:15의 느도바 출신 지휘관과 슥 6:10의 귀환자가 이 이름으로 나온다. 전자는 헬렛·헬레드(H2466) 및 헬렙·헬레브(H2460)와, 후자는 슥 6:14의 헬렘(H2494)과 비교된다. 두 인물을 같은 사람으로 합치지 않는다. Strong은 H2466에서의 파생과 세속적임을 제시하지만 참고사전의 기반어 연결도 달라 확정 어원으로 보지 않는다."
+    },
+    {
+      "word_id": "H2472_0000",
+      "before": null,
+      "after": "잠자는 동안 경험하는 꿈이다. 일반적인 꿈과 하나님의 소통 수단인 꿈, 거짓이라고 비판받는 꿈을 모두 포함하며 계시나 거짓이라는 성격은 문맥이 정한다. 창 37:19의 꿈꾸는 자는 꿈의 주인이라는 구 전체의 표현이고, 렘 27:9에서는 꿈으로 그것을 말하는 사람을 가리키는 환유가 나타난다. 아람어 H2493과 뜻이 대응한다. 창 37:6의 명사형은 현행 OSHB에서 H2492로 태깅되어 있어 H2472의 canonical 집계에 임의로 합산하지 않는다."
+    },
+    {
+      "word_id": "H2492_0000",
+      "before": null,
+      "after": "같은 형태와 Strong 번호 아래 꿈꾸다 계열과 몸이 건강하고 튼튼하다 계열이 함께 기록된다. BDB와 Klein은 이를 별도 어근 항목으로 다룬다. 실제 용례의 두 뜻은 확인되지만 역사적 파생 관계는 확정하지 않는다. 욥39:4는 새끼의 강건함, 사38:16은 건강을 회복시켜 달라는 사역형이다. R1의 창37:6 명사 태깅 충돌 및 렘29:8·시126:1의 해석 차이는 그대로 보존한다."
+    },
+    {
+      "word_id": "H2493_0000",
+      "before": null,
+      "after": "성경 아람어의 꿈을 뜻하며 히브리어 H2472와 대응한다. 다니엘서에서 왕과 다니엘의 꿈 및 그 내용을 전달하거나 해석하는 문맥에 쓰인다. 본문에서 계시의 매체가 되어도 단어 자체를 신적 계시로 좁히지 않는다. Strong의 H2492에 대응하는 어근 설명은 언어 간 공통 기반을 나타내며 히브리어에서 직접 차용했다는 방향을 확정하지 않는다. 같은 철자의 인명 H2494와 구별한다."
+    },
+    {
+      "word_id": "H2494_0000",
+      "before": null,
+      "after": "헬렘은 한국어 성경 관용명과 חֵלֶם의 교재식 한글 근사가 겹치는 표기다. 슥 6:14에서 포로에서 귀환한 인물로 나오며 6:10의 헬대·헬다이(H2469)와 비교된다. 새번역은 다른 읽기를 따라 헬대로 옮기고 히브리어 헬렘을 각주에 보존한다. Strong의 꿈과 BDB의 힘이라는 이름 풀이가 달라 어느 하나를 확정 어원이나 별도 meaning으로 삼지 않는다."
+    },
+    {
+      "word_id": "H2495_0000",
+      "before": null,
+      "after": "욥 6:6에 한 번 나오는 말로, 끈끈한 즙이 있는 식물명이라는 해석에 따라 쇠비름으로 옮긴다. 식물명인지와 정확한 식물 종의 동정은 불확실하며 달걀 관련 어휘로 보는 해석도 있다. 흰자위는 이 단어 단독보다 רִיר חַלָּמוּת 구 전체에 해당하는 번역이다. 본문의 맛없음은 비유 문맥의 설명이며 쇠비름의 일반적인 식물학적 성질로 단정하지 않는다."
+    },
+    {
+      "word_id": "H2496_0000",
+      "before": null,
+      "after": "부싯돌 또는 그처럼 단단한 돌을 가리킨다. 신 8:15·32:13에서는 반석과 결합하고, 욥 28:9·시 114:8에서는 단단한 암석으로, 사 50:7에서는 얼굴을 굳게 하는 비유로 쓰인다. 한국어 번역의 차돌·굳은 바위와 현대의 특정 광물 분류를 곧바로 동일시하지 않는다. 단단함이나 결연함을 별도 추상 의미로 늘리지 않는다. Strong의 H2492에서 왔을 것이라는 어원과 BDB의 별도 어근 분석은 확정되지 않았다."
+    },
+    {
+      "word_id": "H2648_0000",
+      "before": null,
+      "after": "급박한 상황에서 마음이나 행동이 황급한 상태를 나타낸다. 문맥에 따라 급히 움직이거나 서두르다, 놀라 동요하거나 다급해하다로 옮긴다. 단순한 이동 속도나 가벼운 놀람으로 제한하지 않으며 모든 용례에 공포를 필수로 덧붙이지 않는다. 왕하7:15의 Ketiv/Qere는 각각 별도 source token으로 보존되어 9개 절·10토큰이다. H2649는 같은 어근에서 나온 상태 명사다."
+    },
+    {
+      "word_id": "H2649_0000",
+      "before": null,
+      "after": "황급한 상태나 행동의 급박함을 나타내는 명사다. 출12:11에서는 유월절 음식을 먹는 방식, 신16:3에서는 이집트를 떠난 방식, 사52:12에서는 쫓겨 나오듯 떠나는 모습과 대조된다. 두려움·급한 도피를 동반할 수 있지만 도피만으로 뜻을 좁히지 않는다. H2648 어근에서 파생한 것으로 분석한다. Strong의 H2468 참조는 형태·어휘와 맞지 않는 원천 참조로 구별해 보존한다."
+    },
+    {
+      "word_id": "H5161_0000",
+      "before": null,
+      "after": "느헬람 사람은 한국어 성경의 관용 표기이며 네헬람 사람은 기반 이름의 원문 형태를 드러내면서 소속 기능을 한국어 사람으로 옮긴 표현이다. 렘 29:24·31·32에서 스마야에게 붙는 소속·계통 명칭이다. 기반 대상이 지역인지 가문·선조인지 확정되지 않아 출생지나 혈통을 특정하지 않는다. 네헬람은 원어 소속형에서 기반 이름을 구분해 옮긴 표기로, 독립적으로 확인된 지명이나 선조 이름이라는 뜻은 아니다. 표제어 전체 נֶחֱלָמִי의 교재식 읽기는 네헬라미다. 렘 29:32의 그의 자손은 스마야의 자손이며 이 소속 명칭의 유래를 입증하지 않는다. Strong의 꿈 어근 연결은 추정이므로 꿈꾸는 자라는 뜻풀이로 대체하지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "word_id_1": "H2472_0000",
+      "word_id_2": "H2492_0000",
+      "description": null,
+      "relation_group_id": null,
+      "note": "H2492의 꿈꾸다 의미에서 H2472 꿈 명사의 파생. 건강·강건함 의미에서 나왔다는 주장은 아님.",
+      "source": "Strong H2472 source; HebGrkKo H2472 exact entry; BDB H2472/H2492; OSHB 전체 용례"
+    },
+    {
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "word_id_1": "H2492_0000",
+      "word_id_2": "H2493_0000",
+      "description": null,
+      "relation_group_id": null,
+      "note": "히브리어 꿈꾸다 계열과 아람어 꿈의 공통 기반. H2472와의 뜻 대응을 포함하되 직접 차용을 주장하지 않음.",
+      "source": "Strong H2493 source; BDB H2493의 Biblical Hebrew חֲלוֹם, root II חלם 참조; HebGrkKo H2493"
+    },
+    {
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "word_id_1": "H2469_0000",
+      "word_id_2": "H2494_0000",
+      "description": null,
+      "relation_group_id": null,
+      "note": "슥 6:10의 헬대와 6:14의 헬렘을 비교하는 가설적 이름 이형. 대상 27:15의 다른 헬대까지 같은 인물이라고 주장하지 않음.",
+      "source": "Strong H2494 usage Compare H2469; BDB H2469/H2494; 새번역 슥6:14 각주; MT 슥6:10·14"
+    },
+    {
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "word_id_1": "H2466_0000",
+      "word_id_2": "H2469_0000",
+      "description": null,
+      "relation_group_id": null,
+      "note": "다윗 용사/지휘관 명단의 헬렛과 헬대에 대한 가설적 이름 이형. 슥6:10의 귀환자를 같은 인물로 합치지 않음.",
+      "source": "Strong H2469 source; BDB H2469; KJV 대상27:15 margin; active H303 decision and H2460 current note"
+    },
+    {
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "word_id_1": "H2467_0000",
+      "word_id_2": "H2468_0000",
+      "description": null,
+      "relation_group_id": null,
+      "note": "동물명 H2467과 여성형 인명 H2468의 어휘 형성 관계. 실제 명명 동기·정확한 동물 종은 미확정.",
+      "source": "Strong H2468 source; HebGrkKo H2468 exact entry; BDB H2467/H2468; MT 두 인명 용례"
+    },
+    {
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "word_id_1": "H2648_0000",
+      "word_id_2": "H2649_0000",
+      "description": null,
+      "relation_group_id": null,
+      "note": "별도 비교사전 및 실제 형태에 근거한 파생. Strong XML의 raw H2468 참조는 원자료 오류로 분리 보존.",
+      "source": "HebGrkKo H2649 exact entry; NAS Exhaustive Concordance H2649 word origin chaphaz; BDB H2648/H2649; OSHB 10+3 토큰"
+    }
+  ],
+  "relation_replacements": [],
+  "supersedes": []
+}
