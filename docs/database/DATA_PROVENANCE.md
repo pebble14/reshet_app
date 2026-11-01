@@ -1790,3 +1790,7 @@ Work SHA `e7434a19193c1641b3f0076e7e78311414eac37e9bb1c0046b54d6f214f3660f` → 
 ### H325 아하수에로 인명 승인 — 2026-11-01
 
 [승인 manifest](../../tool/data_provenance/manifests/h325_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h325_cluster_approved_content_slice.md)에 아하수에로·아하쉬웨로쉬 (인) 1의미·비고1을 반영했다. 관계·hold 변경 없음. 공식 dry-run·undo·원본 불변, 적용기 테스트31개·live apply1회 및 전체13테이블/DDL 독립 대조 통과. 승인 meaning·비고·history2행·해당 sequence 외 불변, integrity ok·FK0·sidecar0·seed 불변이다. History group1793531793382643, ID7519–7520. 표준 progress 승인828→829·미승인13464→13463·hold6·anomaly113 및 비대상14297행 불변. 백업·검증은 data/backups/approved_content_batch/h325_approval_20261101/, receipt는 data/backups/approved_content_batch/20261101T111630712828Z/result.json에 보존했다. 원문·음역·발음·언어·schema·앱 UI·seed 배포 변경 없음.
+
+### H326·H327 의미·비고 승인 — 2026-11-01
+
+[승인 manifest](../../tool/data_provenance/manifests/h326_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h326_cluster_approved_content_slice.md)에 R1 사용자 승인안을 반영했다. 하아하스다리·아하쉬타리 (인), 왕(王)의 각1 sense·비고2·관계 비생성·hold 없음이다. 공식 dry-run·undo·원본 불변, 테스트31개·live apply1회 및 전체13테이블/DDL 독립 대조 통과. 승인 meaning2·비고2·history4행·해당 sequence 외 불변, integrity ok·FK0·sidecar0·seed 불변이다. History group1793533671970149, ID7521–7524. 표준 progress 승인829→831·미승인13463→13461·hold6·anomaly113·비대상14296행 불변. 백업·검증은 data/backups/approved_content_batch/h326_approval_20261101/, receipt는 data/backups/approved_content_batch/20261101T114750497824Z/result.json에 보존했다. 원문·음역·발음·언어·schema·앱 UI·seed 배포 변경 없음.

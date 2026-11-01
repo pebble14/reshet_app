@@ -1,0 +1,60 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H326-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h326_approval_20261101/00_user_approval.json",
+    "document_sha256": "cdc7c6ed72b12b43473874dd255aa4a36f031faedd8abf2e0790ead73be52d9b"
+  },
+  "target": {
+    "expected_work_sha256": "c9fc95b1d6552d185bf3d7c095e56b798a93c5e255053f7f6c5d00bb2ba2e28b",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0326_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "하아하스타리 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "하아하스다리·아하쉬타리 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0327_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "왕의 (일에 쓰는)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "왕(王)의"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0326_0000",
+      "before": null,
+      "after": "하아하스다리는 한국어 성경 관용명이고 아하쉬타리는 관사를 제외한 히브리어 표제어의 교재식 한글 근사다. 대상 4:6에서 아스훌과 나아라의 계보에 나온다. 본문에는 관사 הָ가 붙으며, 개인 이름인지 소속을 나타내는 호칭인지 확정하기 어렵다. Strong은 페르시아계 어원을 추정하여 전령(傳令)으로 풀이하고, BDB는 소속형 형태와 ‘왕의’라는 풀이의 가능성을 제시한다. 실제 직책·집단과 이름의 본뜻, H327과의 어원 관계는 확정하지 않는다."
+    },
+    {
+      "word_id": "H0327_0000",
+      "before": null,
+      "after": "에 8:10·14에서 전령들이 타는 말에 붙는, 관사를 동반한 남성 복수형이다. 여기서는 ‘왕의’라는 형용사로 이해하며 ‘왕의 일에 쓰는’은 이 문맥의 풀이이다. Strong은 페르시아어 기원으로 보고 노새로 정의하고 KJV는 낙타로 옮기지만, BDB는 ‘왕의’라는 형용사 분석을 제시한다. 동물의 종류를 별도 뜻으로 확정하지 않는다. 정확한 페르시아어 원형과 H326과의 어원 관계는 미확정이다."
+    }
+  ],
+  "relation_creates": [],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}
