@@ -1,0 +1,40 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H308-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h308_approval_20261101/00_user_approval.json",
+    "document_sha256": "d830b38ec3fe03d538d29cfd82d57563e905e60df5cfde3c3ddadc8f2b3054e0"
+  },
+  "target": {
+    "expected_work_sha256": "f5b340dc47163d46b61fbb9d7b2e2f4c940673f40823078750c1bdec4682266c",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0308_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아하스배 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아하스배·아하스바이 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0308_0000",
+      "before": null,
+      "after": "아하스배는 한국어 성경 관용명이고 아하스바이는 히브리어 표기의 교재식 한글 근사다. 삼하 23:34에서 다윗의 용사 엘리벨렛의 아버지로 나온다. 이름의 어원과 구성 요소는 불확실하다. 대상 11:35의 평행 명단에는 엘리발의 아버지 울이 나오며, KJV 난외주도 아하스배를 대안으로 제시한다. 다만 두 이름을 확정된 이명이나 형태 변이로 동일시하지 않는다."
+    }
+  ],
+  "relation_creates": [],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}

@@ -1774,3 +1774,7 @@ Work SHA `e7434a19193c1641b3f0076e7e78311414eac37e9bb1c0046b54d6f214f3660f` → 
 ## H307 악메다 지명 승인 — 2026-11-01
 
 [승인 manifest](../../tool/data_provenance/manifests/h307_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h307_cluster_approved_content_slice.md)에 사용자 최종안을 반영했다. 의미1행은 악메다·아흐메타 (지), 비고1건 추가, 관계·hold 변경 없음이다. 공식 dry-run·undo·원본 불변, 적용기 테스트31개와 live apply1회 후 전체13테이블·DDL 독립 대조를 통과했다. 승인된 meaning·비고·history2건 및 해당 sequence 외 변경 없음, integrity ok·FK0·sidecar 없음·seed 불변이다. History group1793505921537144, ID7508–7509. 공식 progress 승인823→824·미승인13468→13467, hold7·anomaly113 및 비대상14297행 불변. 백업·독립 검증은 data/backups/approved_content_batch/h307_approval_20261101/, 공식 receipt는 data/backups/approved_content_batch/20261101T040520011778Z/result.json에 보존했다. 앱 구현·UX·schema·원문·음역·발음·언어·seed 배포 변경과 UI 테스트는 N/A다.
+
+### H308 아하스배 의미·비고 승인 — 2026-11-01
+
+[승인 manifest](../../tool/data_provenance/manifests/h308_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h308_cluster_approved_content_slice.md)에 사용자 최종안을 반영했다. 아하스배·아하스바이 (인) 한 sense·비고1, 관계·hold 변경 없음. 공식 dry-run·undo·원본 불변, 테스트31개·live apply1회와 전체13테이블/DDL 독립 대조 통과. 승인 meaning·비고·history2행·해당 sequence 외 불변, integrity ok·FK0·sidecar 없음·seed 불변이다. History group1793507109159119, ID7510–7511. 표준 progress 승인824→825·미승인13467→13466, hold7·anomaly113 유지. 백업·검증은 data/backups/approved_content_batch/h308_approval_20261101/, receipt는 data/backups/approved_content_batch/20261101T042507737681Z/result.json에 보존했다. 앱 구현·UI·schema·expression·seed 배포 변경은 N/A다.
