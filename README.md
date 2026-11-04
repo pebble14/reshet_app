@@ -6,6 +6,16 @@ Reshet은 성경 원어 단어를 Strong 번호, 표기, 음역, 발음, 의미�
 
 프로젝트 소개는 [Reshet 안내 페이지](https://github.com/pebble14/reshet-info/blob/main/README.md)에서 확인할 수 있다.
 
+## Windows 공개 베타 다운로드
+
+[Reshet 1.0.0-beta.1 — Windows x64 배포 페이지](https://github.com/pebble14/reshet_app/releases/tag/v1.0.0-beta.1)
+
+- [Windows 앱 ZIP 다운로드](https://github.com/pebble14/reshet_app/releases/download/v1.0.0-beta.1/Reshet-1.0.0-beta.1-windows-x64.zip): 일반 사용자는 이 파일 하나만 받으면 된다. 데이터 버전 `2026.11.04`의 DB가 포함되어 있다.
+- 압축을 완전히 풀고 `study.exe`를 실행한다. DLL과 `data` 폴더를 함께 둔다. 실행 파일은 코드 서명되지 않은 베타다.
+- 기존 사용자 DB는 자동으로 덮어쓰지 않는다. 새 제공 데이터를 쓰려면 외부 백업 후 앱의 `제공 데이터로 전체 교체`를 선택한다. 기존 편집 내용과 병합되지 않는다.
+- [별도 DB ZIP](https://github.com/pebble14/reshet_app/releases/download/v1.0.0-beta.1/Reshet-data-2026.11.04.zip)은 데이터만 필요한 개발자·연구자용 선택 다운로드다.
+- 배포 페이지의 `SHA256SUMS.txt`로 파일을 확인할 수 있다. GitHub의 `Source code` 압축 파일은 실행 프로그램이 아니다.
+
 ## 주요 기능
 
 - Strong 번호와 표기·음역·발음·의미 기반 단어 검색
@@ -57,7 +67,7 @@ Repository와 데이터 경계의 세부 계약은 [Repository Data Boundary Pol
 - 소스와 문서 열람, 의존성 설치는 DB 없이 가능하다.
 - 전체 앱 실행과 일부 integration/runtime 테스트에는 별도로 준비된 seed/work DB가 필요하다.
 - Windows·Android build에는 `pubspec.yaml`에 asset으로 선언된 `data/reshet_seed.db`가 필요하다.
-- 공식 DB 배포 파일은 게시가 완료되면 [프로젝트 소개](https://github.com/pebble14/reshet-info/blob/main/README.md)에서 안내한다. 입수한 공식 seed는 `data/reshet_seed.db`로 준비한다. 기존 DB가 있으면 먼저 백업하고, 개인 작업 DB를 배포 DB로 임의 덮어쓰지 않는다.
+- 공식 DB는 위 공개 베타의 별도 DB ZIP으로 제공한다. 입수한 공식 seed는 `data/reshet_seed.db`로 준비한다. 기존 DB가 있으면 먼저 백업하고, 개인 작업 DB를 배포 DB로 임의 덮어쓰지 않는다.
 
 현재 DB 계약은 [SCHEMA](docs/database/SCHEMA.md)에서 확인한다.
 
@@ -80,7 +90,7 @@ Reshet의 소스코드를 활용했습니다.
 
 Reshet가 권리를 가진 데이터 기여분은 [CC BY 4.0](docs/legal/data_license.md)으로 제공한다. 수정·재배포·상업적 이용을 허용하며 수정판의 동일조건배포나 DB·소스 공개를 요구하지 않는다. 출처·라이선스와 변경 사실을 안내해야 한다. 외부 원자료의 조건은 유지하며 DB 전체를 단일 CC BY 자료로 안내하지 않는다.
 
-현재 데이터 provenance 정리와 공개 Strong 원천을 통한 선택적 재검증이 진행 중이며, e-Sword 모듈 파일은 저장소와 배포물에 포함하지 않는다. DB 파일은 계속 Git에서 제외하며 실제 다운로드 경로는 배포가 완료되면 안내한다.
+현재 데이터 provenance 정리와 공개 Strong 원천을 통한 선택적 재검증이 진행 중이며, e-Sword 모듈 파일은 저장소와 배포물에 포함하지 않는다. DB 파일은 계속 Git에서 제외하며 다운로드 경로는 위 공개 베타 안내를 따른다.
 
 확인된 출처, 재배포 경계와 향후 데이터 입력 기준은 [데이터 출처와 재배포 경계](docs/database/DATA_PROVENANCE.md)를 따른다.
 

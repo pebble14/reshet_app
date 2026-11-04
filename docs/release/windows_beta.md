@@ -7,7 +7,8 @@
 - 공식 prepare/promote 절차로 발음 보류 11개·RMAC 정책을 적용하고 후보에서 편집 이력 7,521건을 제거했다. 기존 seed는 자동 백업했다.
 - 앱·프로그램 정보 버전은 `1.0.0+3`이다. Android 업데이트와 버전 표시를 맞추기 위해 Windows도 다시 빌드했다.
 - 배포 후보: Git 제외 `build/common_release_20261104/public/`. 원본 백업·검증 보고서는 상위 비공개 폴더에 보관하며 배포하지 않는다.
-- 사용자가 새 Windows 빌드의 정상 작동을 확인했다고 보고했다. 확인 주체는 사용자이며 Codex가 직접 수행한 UI 테스트는 아니다. GitHub Release 게시는 별도 승인된 절차로 진행한다.
+- 사용자가 새 Windows 빌드의 정상 작동을 확인했다고 보고했다. 확인 주체는 사용자이며 Codex가 직접 수행한 UI 테스트는 아니다.
+- 사용자 승인 후 [Windows 공개 베타](https://github.com/pebble14/reshet_app/releases/tag/v1.0.0-beta.1)를 게시했다. 태그 `v1.0.0-beta.1`은 소스 커밋 `7de2567c66dbb8647890605501e49363a5147dc8`에 고정됐다. Windows 앱 ZIP·DB ZIP·Windows 전용 `SHA256SUMS.txt`를 첨부했다. Android AAB와 비공개 백업·보고서는 첨부하지 않았다.
 
 이 문서는 Windows x64 ZIP과 별도 데이터 다운로드를 준비하는 배포 절차다. 실제 게시·기존 저장소의 이력 정리·공개 전환은 검토한 산출물과 사용자 승인 범위에서 진행한다.
 
