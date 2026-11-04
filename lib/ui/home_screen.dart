@@ -77,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
   static const Duration _strongJumpDebounceDuration = Duration(
     milliseconds: 300,
   );
-  static const String _aboutVersion = '1.0.0+2';
+  static const String _aboutVersion = '1.0.0+3';
   static const String _firstRunBrandIntroSeenKey = 'first_run_brand_intro_seen';
 
   final ScrollController _listScrollController = ScrollController();
