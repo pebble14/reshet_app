@@ -6,6 +6,12 @@ Reshet은 성경 원어 단어를 Strong 번호, 표기, 음역, 발음, 의미�
 
 프로젝트 소개는 [Reshet 안내 페이지](https://github.com/pebble14/reshet-info/blob/main/README.md)에서 확인할 수 있다.
 
+## 소개 영상
+
+[성경 원어, 뜻에서 관계로 | Reshet Windows 공개 베타](https://youtu.be/dnk0g0TkheQ)
+
+36초 영상으로 단어의 뜻과 관계 그래프를 탐색하는 모습을 살펴보세요.
+
 ## Windows 공개 베타 다운로드
 
 [Reshet 1.0.0-beta.1 — Windows x64 배포 페이지](https://github.com/pebble14/reshet_app/releases/tag/v1.0.0-beta.1)
