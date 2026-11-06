@@ -14,13 +14,11 @@ const _sparseWordId = 'T925D_SPARSE';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  late String repoRootPath;
   late String sourceWorkDbPath;
   Directory? isolatedRoot;
 
   setUpAll(() async {
-    repoRootPath = Directory.current.path;
-    sourceWorkDbPath = p.join(repoRootPath, 'data', 'reshet_work.db');
+    sourceWorkDbPath = p.join(Directory.current.path, 'data', 'reshet_work.db');
 
     expect(File(sourceWorkDbPath).existsSync(), isTrue);
     await DatabaseService.closeDatabase();
@@ -31,7 +29,9 @@ void main() {
     await DatabaseService.closeDatabase();
     WordGraphDataCache.clear();
     isolatedRoot = await _createIsolatedWorkspace(sourceWorkDbPath);
-    Directory.current = isolatedRoot!.path;
+    DatabaseService.setDataRootOverrideForTest(
+      p.join(isolatedRoot!.path, 'data'),
+    );
 
     final db = await DatabaseService.openDatabaseFile();
     await _insertWord(
@@ -49,7 +49,7 @@ void main() {
       strongNumber: 'h00042',
       spelling: '대표 표기',
       transliteration: '대표 음역',
-      meaning: ' 대표 의미 ',
+      meaning: ' 아비엘 · 아비-엘 (인) ',
     );
     await _insertWord(
       db,
@@ -66,7 +66,7 @@ void main() {
   tearDown(() async {
     await DatabaseService.closeDatabase();
     WordGraphDataCache.clear();
-    Directory.current = repoRootPath;
+    DatabaseService.setDataRootOverrideForTest(null);
 
     if (isolatedRoot != null && isolatedRoot!.existsSync()) {
       await _deleteIsolatedWorkspace(isolatedRoot!);
@@ -117,12 +117,25 @@ void main() {
         _expectLineText(tester, _fullWordId, 'strong', 'H42');
         _expectLineText(tester, _fullWordId, 'spelling', '대표 표기');
         _expectLineText(tester, _fullWordId, 'transliteration', '대표 음역');
-        _expectLineText(tester, _fullWordId, 'meaning', '대표 의미');
+        _expectLineText(
+          tester,
+          _fullWordId,
+          'meaning',
+          '아비엘\u2009·\u2009아비-엘 (인)',
+        );
 
         final languageText = tester.widget<Text>(
           _lineFinder(_fullWordId, 'language'),
         );
         expect(languageText.data, isNot('T'));
+        for (final role in ['strong', 'meaning']) {
+          final text = tester.widget<Text>(_lineFinder(_fullWordId, role));
+          expect(text.style!.fontWeight, FontWeight.w600);
+        }
+        final labelColumn = tester.widget<Column>(
+          _lodFinder(_fullWordId, PeripheralNodeLodLevel.lod3),
+        );
+        expect(labelColumn.children.whereType<SizedBox>().single.height, 2);
 
         _expectLineText(tester, _sparseWordId, 'language', '희소 언어');
         _expectLineText(tester, _sparseWordId, 'spelling', _sparseWordId);
@@ -403,9 +416,6 @@ Future<void> _insertWord(
     'id': id,
     '\uC5B8\uC5B4': language,
     '\uC2A4\uD2B8\uB871\uB118\uBC84': strongNumber,
-    '\uD45C\uAE301': spelling,
-    '\uC74C\uC5ED1': transliteration,
-    '\uC758\uBBF81': meaning,
   });
   if (spelling.trim().isNotEmpty) {
     await db.insert('word_expression_set', {
@@ -414,6 +424,13 @@ Future<void> _insertWord(
       'is_representative': 1,
       'spelling': spelling,
       'transliteration': transliteration,
+    });
+  }
+  if (meaning.trim().isNotEmpty) {
+    await db.insert('word_meaning_set', {
+      'word_id': id,
+      'seq': 1,
+      'meaning': meaning,
     });
   }
 }

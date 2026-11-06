@@ -117,6 +117,7 @@ PyVis-like interaction은 이 layout/viewport 경계 위에서 별도 단계로 
 - Center와 peripheral은 동일한 정보량일 필요가 없다. Center는 peripheral 3단계 LOD와 독립된 고정 정보량을 유지하며 zoom별 정보량 전환을 하지 않는다.
 - Center node의 중요성은 더 큰 크기, 중심 위치, 강조색, 선택·중심 affordance로 유지한다.
 - Peripheral LOD 2·3의 language는 실제 DB 표시값을 최상단에 두며, LOD 3은 representative transliteration과 primary meaning을 추가한다.
+- Center와 LOD 3에서 Strong과 primary meaning은 언어·음역보다 굵게 표시한다. meaning의 가운데점 양옆에는 노드 표시용 좁은 여백을 두고, 음역과 meaning이 모두 있을 때 두 줄 사이에도 여백을 더한다.
 - Center node와 mobile selected-node preview의 정보량은 peripheral LOD에 연동하지 않는다.
 - Center 전체의 visual cap `V` 적용, border의 실효 화면 scale `E` 기준 보정, center label 역보정 비적용 책임은 4.1절을 그대로 따른다.
 

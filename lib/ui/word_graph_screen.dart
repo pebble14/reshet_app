@@ -3414,6 +3414,14 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     }
   }
 
+  static final _nodeMeaningMiddleDot = RegExp(
+    r'[\p{Zs}\t]*·[\p{Zs}\t]*',
+    unicode: true,
+  );
+
+  static String _formatNodeMeaning(String meaning) =>
+      meaning.replaceAll(_nodeMeaningMiddleDot, '\u2009·\u2009');
+
   Widget _buildCenterNode(
     GraphCenterWordDisplayItem displayItem, {
     required _GraphVisualState visualState,
@@ -3421,10 +3429,6 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     final graphForeground = _graphVisualPalette.objectForeground;
     final language = displayItem.language.trim();
     final strongNumber = displayItem.displayStrongNumber.trim();
-    final metadata = [
-      if (language.isNotEmpty) language,
-      if (strongNumber.isNotEmpty) strongNumber,
-    ].join(' · ');
     final representativeSpelling = displayItem.representativeSpelling.trim();
     final spelling = representativeSpelling.isNotEmpty
         ? representativeSpelling
@@ -3453,10 +3457,21 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       children.add(child);
     }
 
-    if (metadata.isNotEmpty) {
+    if (language.isNotEmpty || strongNumber.isNotEmpty) {
       addNodeText(
-        Text(
-          metadata,
+        Text.rich(
+          TextSpan(
+            text: language,
+            children: [
+              if (strongNumber.isNotEmpty) ...[
+                if (language.isNotEmpty) const TextSpan(text: ' · '),
+                TextSpan(
+                  text: strongNumber,
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+              ],
+            ],
+          ),
           key: ValueKey<String>(
             'graph-center-node-line:${displayItem.wordId}:metadata',
           ),
@@ -3507,16 +3522,20 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     if (meaning.isNotEmpty) {
       addNodeText(
         Text(
-          meaning,
+          _formatNodeMeaning(meaning),
           key: ValueKey<String>(
             'graph-center-node-line:${displayItem.wordId}:meaning',
           ),
           textAlign: TextAlign.center,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: TextStyle(fontSize: 11, color: graphForeground),
+          style: TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+            color: graphForeground,
+          ),
         ),
-        gap: 4,
+        gap: transliteration.isNotEmpty ? 6 : 4,
       );
     }
 
@@ -3763,6 +3782,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
       fontWeight: secondaryLabelFontWeight,
       color: _graphVisualPalette.objectForeground,
     );
+    final isLod3 = _peripheralNodeLod == PeripheralNodeLodLevel.lod3;
+    final emphasizedLabelStyle = isLod3
+        ? secondaryLabelStyle.copyWith(fontWeight: FontWeight.w600)
+        : secondaryLabelStyle;
 
     Widget buildLabelLine(String role, String value, TextStyle style) {
       return Text(
@@ -3787,18 +3810,24 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         if (languageLabel.isNotEmpty)
           buildLabelLine('language', languageLabel, secondaryLabelStyle),
         if (strongIdentityLabel.isNotEmpty)
-          buildLabelLine('strong', strongIdentityLabel, secondaryLabelStyle),
+          buildLabelLine('strong', strongIdentityLabel, emphasizedLabelStyle),
         if (spellingLabel.isNotEmpty)
           buildLabelLine('spelling', spellingLabel, primaryLabelStyle),
-        if (_peripheralNodeLod == PeripheralNodeLodLevel.lod3) ...[
+        if (isLod3) ...[
           if (transliterationLabel.isNotEmpty)
             buildLabelLine(
               'transliteration',
               transliterationLabel,
               secondaryLabelStyle,
             ),
-          if (primaryMeaningLabel.isNotEmpty)
-            buildLabelLine('meaning', primaryMeaningLabel, secondaryLabelStyle),
+          if (primaryMeaningLabel.isNotEmpty) ...[
+            if (transliterationLabel.isNotEmpty) const SizedBox(height: 2),
+            buildLabelLine(
+              'meaning',
+              _formatNodeMeaning(primaryMeaningLabel),
+              emphasizedLabelStyle,
+            ),
+          ],
         ],
       ],
     ];

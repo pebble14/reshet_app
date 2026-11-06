@@ -16,13 +16,11 @@ const _pronunciation = '표시하면 안 되는 발음';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  late String repoRootPath;
   late String sourceWorkDbPath;
   Directory? isolatedRoot;
 
   setUpAll(() async {
-    repoRootPath = Directory.current.path;
-    sourceWorkDbPath = p.join(repoRootPath, 'data', 'reshet_work.db');
+    sourceWorkDbPath = p.join(Directory.current.path, 'data', 'reshet_work.db');
 
     expect(File(sourceWorkDbPath).existsSync(), isTrue);
     await DatabaseService.closeDatabase();
@@ -33,13 +31,15 @@ void main() {
     await DatabaseService.closeDatabase();
     WordGraphDataCache.clear();
     isolatedRoot = await _createIsolatedWorkspace(sourceWorkDbPath);
-    Directory.current = isolatedRoot!.path;
+    DatabaseService.setDataRootOverrideForTest(
+      p.join(isolatedRoot!.path, 'data'),
+    );
   });
 
   tearDown(() async {
     await DatabaseService.closeDatabase();
     WordGraphDataCache.clear();
-    Directory.current = repoRootPath;
+    DatabaseService.setDataRootOverrideForTest(null);
 
     if (isolatedRoot != null && isolatedRoot!.existsSync()) {
       await _deleteIsolatedWorkspace(isolatedRoot!);
@@ -61,7 +61,7 @@ void main() {
           '헬라어 · G42',
           'φέρω',
           '페로',
-          '나르다',
+          '나르다\u2009·\u2009옮기다',
         ]);
         expect(
           find.descendant(
@@ -95,6 +95,15 @@ void main() {
         final meaning = tester.widget<Text>(
           _lineFinder(_fullWordId, 'meaning'),
         );
+        final strongSpan =
+            (metadata.textSpan! as TextSpan).children!.last as TextSpan;
+        final labelColumn = tester.widget<Column>(
+          _semanticAnchorFinder(_fullWordId),
+        );
+        expect(strongSpan.text, 'G42');
+        expect(strongSpan.style!.fontWeight, FontWeight.w600);
+        expect(meaning.style!.fontWeight, FontWeight.w600);
+        expect(labelColumn.children.whereType<SizedBox>().last.height, 6);
         expect(
           spelling.style!.fontSize,
           greaterThan(metadata.style!.fontSize!),
@@ -130,7 +139,16 @@ void main() {
 
         await _disposeRuntimeApp(tester);
         await _pumpGraph(tester, centerWordId: _strongOnlyWordId);
-        expect(_centerTextValues(tester, _strongOnlyWordId), ['H7', 'אב']);
+        expect(_centerTextValues(tester, _strongOnlyWordId), [
+          'H7',
+          'אב',
+          '아버지',
+        ]);
+        expect(_lineFinder(_strongOnlyWordId, 'transliteration'), findsNothing);
+        final labelColumn = tester.widget<Column>(
+          _semanticAnchorFinder(_strongOnlyWordId),
+        );
+        expect(labelColumn.children.whereType<SizedBox>().last.height, 4);
 
         await _disposeRuntimeApp(tester);
         await _pumpGraph(tester, centerWordId: _blankWordId);
@@ -152,7 +170,12 @@ void main() {
       'keeps center identity fixed while peripheral LOD follows raw scale',
       (tester) async {
         await _pumpGraph(tester, centerWordId: _fullWordId);
-        const expectedCenterLines = ['헬라어 · G42', 'φέρω', '페로', '나르다'];
+        const expectedCenterLines = [
+          '헬라어 · G42',
+          'φέρω',
+          '페로',
+          '나르다\u2009·\u2009옮기다',
+        ];
 
         expect(_centerTextValues(tester, _fullWordId), expectedCenterLines);
         _expectPeripheralLod(_languageOnlyWordId, PeripheralNodeLodLevel.lod1);
@@ -230,7 +253,10 @@ List<String> _centerTextValues(WidgetTester tester, String wordId) {
         matching: find.byType(Text),
       )
       .evaluate()
-      .map((element) => (element.widget as Text).data ?? '')
+      .map((element) {
+        final text = element.widget as Text;
+        return text.data ?? text.textSpan!.toPlainText();
+      })
       .toList(growable: false);
 }
 
@@ -353,7 +379,7 @@ Future<void> _insertPhase25FFixtures(dynamic db) async {
     spelling: 'φέρω',
     transliteration: '페로',
     pronunciation: _pronunciation,
-    meaning: '나르다',
+    meaning: '나르다·옮기다',
   );
   await _insertWord(
     db,
@@ -370,7 +396,7 @@ Future<void> _insertPhase25FFixtures(dynamic db) async {
     strongNumber: 'h00007',
     spelling: 'אב',
     transliteration: '',
-    meaning: '',
+    meaning: '아버지',
   );
   await _insertWord(
     db,
@@ -400,10 +426,6 @@ Future<void> _insertWord(
     'id': id,
     '언어': language,
     '스트롱넘버': strongNumber,
-    '표기1': spelling,
-    '음역1': transliteration,
-    '발음1': pronunciation,
-    '의미1': meaning,
   });
   if (spelling.trim().isNotEmpty) {
     await db.insert('word_expression_set', {
@@ -415,6 +437,13 @@ Future<void> _insertWord(
           ? null
           : transliteration,
       'pronunciation': pronunciation.trim().isEmpty ? null : pronunciation,
+    });
+  }
+  if (meaning.trim().isNotEmpty) {
+    await db.insert('word_meaning_set', {
+      'word_id': id,
+      'seq': 1,
+      'meaning': meaning,
     });
   }
 }
