@@ -14,12 +14,12 @@ Reshet은 성경 원어 단어를 Strong 번호, 표기, 음역, 발음, 의미�
 
 ## Windows 공개 베타 다운로드
 
-[Reshet 1.0.0-beta.1 — Windows x64 배포 페이지](https://github.com/pebble14/reshet_app/releases/tag/v1.0.0-beta.1)
+[Reshet 1.0.0-beta.2 — Windows x64 배포 페이지](https://github.com/pebble14/reshet_app/releases/tag/v1.0.0-beta.2)
 
-- [Windows 앱 ZIP 다운로드](https://github.com/pebble14/reshet_app/releases/download/v1.0.0-beta.1/Reshet-1.0.0-beta.1-windows-x64.zip): 일반 사용자는 이 파일 하나만 받으면 된다. 데이터 버전 `2026.11.04`의 DB가 포함되어 있다.
+- [Windows 앱 ZIP 다운로드](https://github.com/pebble14/reshet_app/releases/download/v1.0.0-beta.2/Reshet-1.0.0-beta.2-windows-x64.zip): 일반 사용자는 이 파일 하나만 받으면 된다. 데이터 버전 `2026.11.04`의 DB가 포함되어 있다.
 - 압축을 완전히 풀고 `study.exe`를 실행한다. DLL과 `data` 폴더를 함께 둔다. 실행 파일은 코드 서명되지 않은 베타다.
 - 기존 사용자 DB는 자동으로 덮어쓰지 않는다. 새 제공 데이터를 쓰려면 외부 백업 후 앱의 `제공 데이터로 전체 교체`를 선택한다. 기존 편집 내용과 병합되지 않는다.
-- [별도 DB ZIP](https://github.com/pebble14/reshet_app/releases/download/v1.0.0-beta.1/Reshet-data-2026.11.04.zip)은 데이터만 필요한 개발자·연구자용 선택 다운로드다.
+- [별도 DB ZIP](https://github.com/pebble14/reshet_app/releases/download/v1.0.0-beta.2/Reshet-data-2026.11.04.zip)은 데이터만 필요한 개발자·연구자용 선택 다운로드다.
 - 배포 페이지의 `SHA256SUMS.txt`로 파일을 확인할 수 있다. GitHub의 `Source code` 압축 파일은 실행 프로그램이 아니다.
 
 ## 주요 기능
