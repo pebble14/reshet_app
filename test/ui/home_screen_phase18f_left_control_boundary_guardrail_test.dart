@@ -65,7 +65,7 @@ void main() {
       );
       largeRetargetRequestSource = _sourceBetween(
         homeSource,
-        'void _showWordInLargeScreenExplorerPane(String wordId) {',
+        'void _showWordInLargeScreenExplorerPane(',
         'void _showWordNavigationUnavailableSnackBar() {',
       );
       smallWidthBranch = _sourceBetween(

@@ -68,6 +68,147 @@ void main() {
 
   group('Phase 20-C transient search result surface runtime guardrail', () {
     testWidgets(
+      'large-screen search returns to the Rail word after changing graph center',
+      (tester) async {
+        const adamWordId = 'H0120_0000';
+        const adamNameWordId = 'H0121_0000';
+        _setSurfaceSize(tester, const Size(1440, 1000));
+        await tester.pumpWidget(const MaterialApp(home: HomeScreen()));
+        final rail = _strongRailListFinder();
+        final explorer = find.byType(WordExplorerScreen);
+        final graph = find.byType(WordGraphScreen);
+        final detail = find.byType(WordInfoPanel);
+        bool showsGraphCenter(String wordId) => find
+            .byKey(ValueKey('graph-center-node:$wordId'))
+            .evaluate()
+            .isNotEmpty;
+        String detailStrong() => detail.evaluate().isEmpty
+            ? ''
+            : formatWordDisplayStrong(
+                tester
+                        .widget<WordInfoPanel>(detail)
+                        .displayItem
+                        .displayStrongNumber ??
+                    '',
+              );
+
+        await _pumpUntil(
+          tester,
+          () => rail.evaluate().isNotEmpty,
+          reason: 'Strong Rail must load before jumping to H120.',
+        );
+        final strongField = find.widgetWithText(TextField, 'Strong/스트롱');
+        await tester.enterText(strongField, 'H120');
+        await _pumpStrongJumpAnimation(tester);
+        await tester.tap(
+          find.descendant(of: rail, matching: find.text('H120')),
+        );
+
+        final adamNameNode = find.byKey(
+          const ValueKey('graph-peripheral-node:$adamNameWordId'),
+        );
+        await _pumpUntil(
+          tester,
+          () =>
+              showsGraphCenter(adamWordId) &&
+              detailStrong() == 'H120' &&
+              adamNameNode.hitTestable().evaluate().isNotEmpty,
+          reason:
+              'Rail selection must open H120 with H121 visible in the graph.',
+        );
+        final explorerElement = tester.element(explorer);
+        await tester.tap(adamNameNode);
+        final centerAction = find.byKey(
+          const Key('selected-node-center-action'),
+        );
+        await _pumpUntil(
+          tester,
+          () =>
+              centerAction.hitTestable().evaluate().isNotEmpty &&
+              detailStrong() == 'H121',
+          reason: 'Selecting H121 must expose the graph center action.',
+        );
+        await tester.tap(centerAction);
+        await _pumpUntil(
+          tester,
+          () => showsGraphCenter(adamNameWordId) && detailStrong() == 'H121',
+          reason:
+              'Graph center action must open H121 in the existing Explorer.',
+        );
+
+        final searchField = find.widgetWithText(TextField, '검색 (표기·음역·의미·스트롱)');
+        final candidate = find.byKey(
+          const ValueKey('large-screen-transient-search-result-$adamWordId'),
+        );
+        await tester.enterText(searchField, '아담');
+
+        Future<void> selectAdamResult() async {
+          await tester.tap(find.byTooltip('검색'));
+          await _pumpUntil(
+            tester,
+            () => candidate.evaluate().isNotEmpty,
+            reason: 'The integrated search must show the H120 result for 아담.',
+          );
+          expect(showsGraphCenter(adamNameWordId), isTrue);
+          await tester.tap(candidate);
+          await tester.pump();
+          expect(_transientSurfaceFinder(), findsNothing);
+          await _pumpUntil(
+            tester,
+            () => showsGraphCenter(adamWordId) && detailStrong() == 'H120',
+            reason: 'Selecting H120 must update both the graph and the detail.',
+          );
+          expect(tester.element(explorer), same(explorerElement));
+        }
+
+        await selectAdamResult();
+
+        final back = find.descendant(
+          of: graph,
+          matching: find.widgetWithIcon(IconButton, Icons.arrow_back),
+        );
+        final forward = find.descendant(
+          of: graph,
+          matching: find.widgetWithIcon(IconButton, Icons.arrow_forward),
+        );
+        await tester.tap(back);
+        await _pumpUntil(
+          tester,
+          () =>
+              showsGraphCenter(adamNameWordId) &&
+              tester.widget<IconButton>(forward).onPressed != null,
+          reason: 'History must return to H121 and offer forward navigation.',
+        );
+        expect(tester.widget<IconButton>(back).onPressed, isNotNull);
+        await tester.tap(forward);
+        await _pumpUntil(
+          tester,
+          () => showsGraphCenter(adamWordId),
+          reason: 'History must go forward to the H120 search result.',
+        );
+
+        await tester.tap(back);
+        await _pumpUntil(
+          tester,
+          () => showsGraphCenter(adamNameWordId),
+          reason: 'The previous graph center must remain available.',
+        );
+        await selectAdamResult();
+
+        await tester.tap(
+          find.descendant(of: rail, matching: find.text('H121')),
+        );
+        await _pumpUntil(
+          tester,
+          () => showsGraphCenter(adamNameWordId) && detailStrong() == 'H121',
+          reason: 'Strong Rail must still open H121 after search navigation.',
+        );
+        expect(tester.element(explorer), isNot(same(explorerElement)));
+        await _disposeRuntimeApp(tester);
+      },
+    );
+
+    testWidgets(
       'large-screen submit, dismiss, Strong, clear, and candidate tap keep boundaries',
       (tester) async {
         _setSurfaceSize(tester, const Size(1440, 1000));
@@ -208,22 +349,41 @@ void main() {
           reason: 'H2 submit must show a selectable transient candidate.',
         );
 
-        await tester.tap(_transientCandidateTiles().first);
+        final railPosition = tester
+            .state<ScrollableState>(_scrollableInside(_strongRailListFinder()))
+            .position;
+        final railOffsetBeforeSelection = railPosition.pixels;
+        await tester.tap(
+          find.byKey(
+            const Key('large-screen-transient-search-result-H0002_0000'),
+          ),
+        );
+        final detail = find.byType(WordInfoPanel);
         await _pumpUntil(
           tester,
           () =>
-              find.byType(WordExplorerScreen).evaluate().length == 1 &&
-              tester.widget<WordExplorerScreen>(explorerFinder).initialWordId !=
-                  initialExplorer.initialWordId,
+              find
+                  .byKey(const Key('graph-center-node:H0002_0000'))
+                  .evaluate()
+                  .isNotEmpty &&
+              detail.evaluate().isNotEmpty,
           reason:
               'explicit transient candidate tap must retarget the Explorer.',
         );
 
         expect(_transientSurfaceFinder(), findsNothing);
         expect(
-          tester.element(explorerFinder),
-          isNot(same(initialExplorerElement)),
+          formatWordDisplayStrong(
+            tester
+                    .widget<WordInfoPanel>(detail)
+                    .displayItem
+                    .displayStrongNumber ??
+                '',
+          ),
+          'H2',
         );
+        expect(tester.element(explorerFinder), same(initialExplorerElement));
+        expect(railPosition.pixels, railOffsetBeforeSelection);
 
         await _disposeRuntimeApp(tester);
       },

@@ -243,12 +243,12 @@ void main() {
       () {
         expect(
           transientSurfaceSource,
-          contains('_showWordInLargeScreenExplorerPane(wordId);'),
+          contains('_showWordInLargeScreenExplorerPane('),
         );
         expect(
           _appearsBefore(
             transientSurfaceSource,
-            '_showWordInLargeScreenExplorerPane(wordId);',
+            '_showWordInLargeScreenExplorerPane(',
             '_dismissLargeScreenTransientSearchResultSurface();',
           ),
           isTrue,

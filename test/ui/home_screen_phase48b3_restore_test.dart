@@ -224,11 +224,18 @@ void main() {
       p.join(Directory.current.path, 'lib', 'ui', 'home_screen.dart'),
     ).readAsStringSync();
 
-    expect(source, contains('_restoreGeneration++;'));
+    final refreshAfterRestore = source.substring(
+      source.indexOf('Future<void> _refreshAfterRestore()'),
+      source.indexOf('Future<void> _undoLastChange()'),
+    );
+    expect(
+      refreshAfterRestore,
+      contains('_largeScreenExplorerMountGeneration++;'),
+    );
     expect(
       source,
       matches(
-        RegExp(r"'\$_restoreGeneration:'\s*'\$_largeScreenExplorerWordId'"),
+        RegExp(r'key: ValueKey\(\s*_largeScreenExplorerMountGeneration,?\s*\)'),
       ),
     );
   });

@@ -93,7 +93,8 @@ class _HomeScreenState extends State<HomeScreen> {
   String _largeScreenExplorerWordId = _largeScreenDefaultExplorerWordId;
   String? _passiveSelectedStrongWordId;
   String? _passiveSelectedDisplayStrongNumber;
-  int _restoreGeneration = 0;
+  int _largeScreenExplorerMountGeneration = 0;
+  int _largeScreenSearchSelectionRevision = 0;
 
   bool get _isDatabaseMaintenanceInProgress => _isBackingUp || _isRestoring;
 
@@ -697,7 +698,7 @@ class _HomeScreenState extends State<HomeScreen> {
       _passiveSelectedStrongWordId = null;
       _passiveSelectedDisplayStrongNumber = null;
       _largeScreenExplorerWordId = nextExplorerWordId;
-      _restoreGeneration++;
+      _largeScreenExplorerMountGeneration++;
       _defaultStrongListFuture = _createDefaultStrongListFuture();
     });
   }
@@ -1182,19 +1183,29 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _showWordInLargeScreenExplorerPane(String wordId) {
+  void _showWordInLargeScreenExplorerPane(
+    String wordId, {
+    bool fromSearchResult = false,
+  }) {
     final normalizedWordId = wordId.trim();
     if (normalizedWordId.isEmpty) {
       _showWordNavigationUnavailableSnackBar();
       return;
     }
 
-    if (_largeScreenExplorerWordId == normalizedWordId) return;
+    if (!fromSearchResult && _largeScreenExplorerWordId == normalizedWordId) {
+      return;
+    }
 
     setState(() {
       _largeScreenExplorerWordId = normalizedWordId;
       _passiveSelectedStrongWordId = null;
       _passiveSelectedDisplayStrongNumber = null;
+      if (fromSearchResult) {
+        _largeScreenSearchSelectionRevision++;
+      } else {
+        _largeScreenExplorerMountGeneration++;
+      }
     });
   }
 
@@ -1334,7 +1345,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                 overflow: TextOverflow.ellipsis,
                               ),
                         onTap: () {
-                          _showWordInLargeScreenExplorerPane(wordId);
+                          _showWordInLargeScreenExplorerPane(
+                            wordId,
+                            fromSearchResult: true,
+                          );
                           _dismissLargeScreenTransientSearchResultSurface();
                         },
                       );
@@ -1769,11 +1783,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                           flex: 6,
                                           child: WordExplorerScreen(
                                             key: ValueKey(
-                                              '$_restoreGeneration:'
-                                              '$_largeScreenExplorerWordId',
+                                              _largeScreenExplorerMountGeneration,
                                             ),
                                             initialWordId:
                                                 _largeScreenExplorerWordId,
+                                            searchSelectionRevision:
+                                                _largeScreenSearchSelectionRevision,
                                             onSelectedStrongWordChanged:
                                                 _handleExplorerSelectedStrongWordChanged,
                                           ),

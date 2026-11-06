@@ -107,7 +107,7 @@ void main() {
     test('keeps candidate tap as the only Explorer retarget path', () {
       expect(
         transientSurfaceSource,
-        contains('_showWordInLargeScreenExplorerPane(wordId);'),
+        contains('_showWordInLargeScreenExplorerPane('),
       );
       expect(
         transientSurfaceSource,
@@ -116,7 +116,7 @@ void main() {
       expect(
         _appearsBefore(
           transientSurfaceSource,
-          '_showWordInLargeScreenExplorerPane(wordId);',
+          '_showWordInLargeScreenExplorerPane(',
           '_dismissLargeScreenTransientSearchResultSurface();',
         ),
         isTrue,

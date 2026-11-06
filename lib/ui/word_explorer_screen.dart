@@ -179,12 +179,16 @@ resolveExplorerBootstrapCenterTooltipDisplayForTesting({
 
 class WordExplorerScreen extends StatefulWidget {
   final String initialWordId;
+
+  /// 같은 [initialWordId]를 다시 선택한 경우에도 검색 결과 선택을 구분한다.
+  final int searchSelectionRevision;
   final void Function(String wordId, String displayStrongNumber)?
   onSelectedStrongWordChanged;
 
   const WordExplorerScreen({
     super.key,
     required this.initialWordId,
+    this.searchSelectionRevision = 0,
     this.onSelectedStrongWordChanged,
   });
 
@@ -231,6 +235,18 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
     _refreshHistoryNavigationAvailability();
     _restoreGraphPaneFraction();
     _initializeExplorerBootstrap();
+  }
+
+  @override
+  void didUpdateWidget(covariant WordExplorerScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.searchSelectionRevision != oldWidget.searchSelectionRevision) {
+      _selectWord(
+        widget.initialWordId,
+        changeCenterWord: true,
+        syncStrongRail: false,
+      );
+    }
   }
 
   String? _normalizeReadOnlyProjectionWordId(String? wordId) {
@@ -600,6 +616,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
   Future<void> _selectWord(
     String selectedWordId, {
     bool changeCenterWord = false,
+    bool syncStrongRail = true,
   }) async {
     final selectionRequestToken = ++_selectionRequestToken;
     final normalizedSelectedWordId = selectedWordId.trim();
@@ -655,10 +672,12 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
           );
         }
       });
-      _notifySelectedStrongWordChanged(
-        selectedWordId: normalizedSelectedWordId,
-        selectedDisplayItem: selectedDisplayItem,
-      );
+      if (syncStrongRail) {
+        _notifySelectedStrongWordChanged(
+          selectedWordId: normalizedSelectedWordId,
+          selectedDisplayItem: selectedDisplayItem,
+        );
+      }
     } catch (e) {
       if (!mounted || selectionRequestToken != _selectionRequestToken) return;
 
@@ -692,6 +711,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
   }
 
   Future<void> _initializeExplorerBootstrap() async {
+    final selectionRequestToken = _selectionRequestToken;
     final initialWordId = widget.initialWordId.trim();
     if (initialWordId.isEmpty) {
       if (!mounted) return;
@@ -711,7 +731,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
       final selectedDisplayItem = await _loadSplitViewDisplayItem(
         initialWordId,
       );
-      if (!mounted) return;
+      if (!mounted || selectionRequestToken != _selectionRequestToken) return;
 
       final resolvedCenterDisplaySeed =
           _resolveExplorerBootstrapCenterDisplaySeed(
@@ -739,7 +759,7 @@ class _WordExplorerScreenState extends State<WordExplorerScreen> {
         selectedWordId: resolvedSelectedWordId,
       );
     } catch (e) {
-      if (!mounted) return;
+      if (!mounted || selectionRequestToken != _selectionRequestToken) return;
 
       setState(() {
         _detailError = '탐색 초기 정보를 불러오지 못했습니다. $e';
