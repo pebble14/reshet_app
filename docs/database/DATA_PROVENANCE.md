@@ -1814,3 +1814,9 @@ Work SHA `e7434a19193c1641b3f0076e7e78311414eac37e9bb1c0046b54d6f214f3660f` → 
 [승인 manifest](../../tool/data_provenance/manifests/h331_cluster_approved_content_slice.json)에 H0331의 `막다` 한 뜻과 비고를 반영했다. 관계 비생성과 hold 미설정을 채택했다. 성전 창의 구조와 시편 형태 분류 차이는 [결정 기록](../semantic_decisions/h331_cluster_approved_content_slice.md)에 남겼다.
 
 공식 dry-run과 undo, 적용기 테스트 31개, live apply 1회, 전체 13개 테이블과 DDL의 독립 대조를 통과했다. History group `1793979628533266`에 ID 7531과 7532를 기록했다. 작업 DB·seed·백업·공식 스냅샷의 integrity는 `ok`이고 외래 키 위반과 sidecar는 0개다. 적용 전후 seed SHA가 일치한다. 표준 진행표는 승인 834→835, 미승인 13,458→13,457, hold 6, anomaly 113이며 비대상 14,297행이 일치한다. 승인·백업·검증은 `data/backups/approved_content_batch/h331_approval_20261107/`, 공식 receipt는 `data/backups/approved_content_batch/20261106T154025641704Z/result.json`에 보존했다.
+
+## H332 연결 어휘군 승인 — 2026-11-07
+
+[승인 manifest](../../tool/data_provenance/manifests/h332_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h332_cluster_approved_content_slice.md)에 H0332 기존 의미 승인, 의미 교체 2건, 비고 3건, 파생 관계 2건을 기록했다. H0332의 ‘묶다’는 BDB 어근 풀이로 비고에 남겼다.
+
+공식 dry-run·undo와 적용기 테스트 31개, 작업 DB 적용 및 독립 대조를 통과했다. History group `1794007374208822`에 7행이 추가됐다. 작업 DB 무결성은 `ok`, FK 위반·sidecar는 0건이며 seed SHA가 일치했다. 공식 진행표의 승인 항목은 835→838, 미승인은 13,457→13,454이고 hold 6건과 anomaly 113건은 동일하다. 비대상 14,295행을 대조했다.

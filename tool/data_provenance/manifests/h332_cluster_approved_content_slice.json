@@ -1,0 +1,100 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H332-CLUSTER-APPROVED-CONTENT-SLICE",
+  "target": {
+    "expected_work_sha256": "c62a5c056b906b4537f1ec71f2cd66961d540f0ed7158e3413cccb9a649533e6",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0333_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아델 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아델·아테르 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0334_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "닫힌, 장애가 있는"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "왼손잡이인"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0332_0000",
+      "before": null,
+      "after": "시 69:15(히브리어 69:16)에서 화자는 웅덩이가 입을 닫아 자신을 가두지 않게 해 달라고 간구한다. BDB는 이 어근의 풀이에 ‘묶다’도 제시한다. 이 동사의 성경 용례에서 직접 확인되는 뜻은 ‘닫다’다."
+    },
+    {
+      "word_id": "H0333_0000",
+      "before": null,
+      "after": "아델은 한국어 성경 관용명이고 아테르는 אָטֵר의 교재식 한글 근사다. 히스기야와 연결된 귀환 가문과 성전 문지기 가문, 언약에 인친 백성의 지도자 명단에 나오는 이름이다. Strong은 ‘몸에 손상을 입은’, BDB는 ‘묶는 사람?’이라는 어원 풀이를 제시한다."
+    },
+    {
+      "word_id": "H0334_0000",
+      "before": null,
+      "after": "두 용례(삿 3:15, 20:16)에서 ‘오른손 쓰임이 제한된’으로 풀이되는 표현에 쓰인다. 에훗은 왼손으로 칼을 뽑는다(삿 3:21). 칠십인역은 두 곳을 ‘양손을 능숙하게 쓰는’으로 옮긴다. 오른손의 상태와 왼손 사용의 경위는 본문에서 확정하기 어렵다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0332_0000",
+      "word_id_2": "H0333_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong은 H332에서 파생한 이름으로 보며 이름의 어원 풀이는 자료마다 다르다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml H333; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce"
+    },
+    {
+      "word_id_1": "H0332_0000",
+      "word_id_2": "H0334_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong은 H332에서 파생한 형용사로 본다. 사사기의 두 용례에서는 오른손에 관한 표현에 쓰인다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml H334; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": [
+    {
+      "word_id": "H0332_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "닫다"
+        }
+      ]
+    }
+  ],
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h332_approval_20261107/00_user_approval.json",
+    "document_sha256": "c9f8250fcc6de11fed99bf42006092c4359d014c9632ee037a6c51c97aaba4a9"
+  }
+}
