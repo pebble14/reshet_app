@@ -92,6 +92,8 @@ PyVis-like interaction은 이 layout/viewport 경계 위에서 별도 단계로 
 - 관계 chip은 `S >= 1.15`의 visible zoom 구간에서 parallel offset이 적용된 실제 visible edge segment 위 또는 매우 가까운 위치에 배치한다. Obstacle 회피는 edge와의 시각적 소속성을 해치지 않는 제한 범위에서 수행하며, 충돌 면적을 조금 줄이기 위해 chip을 edge에서 멀리 분리하지 않는다.
 - 관계 chip은 relation detail popup을 여는 clickable control이며, 기존 popup 진입 경로를 유지한다.
 - `S < 1.15`에서 관계 chip을 숨기는 zoom-out visibility 정책은 유지한다.
+- 관계선 모양은 `WORD_RELATION.status_code`를 따른다. 확정은 실선, 가설·이견·불확실은 파선, 미정·기존 데이터 기반·부정됨 및 미설정·미정의 상태는 점선이다. 한 선에 여러 상태가 묶이면 점선, 파선, 실선 순으로 적용한다. `+N more` 안내 연결은 실선이다.
+- 관계 칩은 관계 유형을 표시한다. 부정된 관계에는 유형명 뒤에 `부정됨`을, 다른 상태와 함께 묶인 관계에는 `부정됨 포함`을 표시한다.
 - 방향 edge는 기존 arrowhead로 표현하며, 관계 chip에 별도 방향 배지를 추가하지 않는다.
 - 관계 chip의 상태 배지는 화살표가 없는 edge 상태를 구분하기 위한 보조 표시다. `미정`은 direction이 확인되지 않았거나 unknown인 관계, `무향`은 방향 없는 관계, `혼합`은 여러 relation direction이 하나의 visual edge에 섞인 상태를 뜻한다. 이 표시는 relation 데이터 재해석이나 status/provenance 변경이 아니다.
 - 현재 선택 대상이 중심이 아닌 일반 단어 노드이면 선택 context action surface에 “이 단어를 중심으로 보기” action을 제공한다. 이 action은 기존 center 변경 경로를 명시적으로 노출하며, camera translation만 변경하는 “선택 노드 중앙 맞춤”과 달리 graph semantic center를 선택 단어로 전환한다.

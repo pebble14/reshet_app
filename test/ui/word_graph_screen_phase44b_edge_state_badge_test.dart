@@ -37,6 +37,62 @@ void main() {
       expect(edgeStateBadgeLabelForTesting('mixed'), '혼합');
     });
 
+    testWidgets('관계 상태에 따라 실선, 파선, 점선을 그린다', (tester) async {
+      await _pumpGraph(tester, _FakeWordRepository(_graphData()));
+      await tester.pumpAndSettle();
+
+      final painterFinder = find.byKey(
+        const ValueKey<String>('graph-edge-lines'),
+      );
+      final paintWidget = tester.widget<CustomPaint>(painterFinder);
+      final paintBox = tester.renderObject<RenderBox>(painterFinder);
+      final canvas = TestRecordingCanvas();
+      paintWidget.painter!.paint(canvas, paintBox.size);
+
+      final center = paintBox.globalToLocal(
+        tester.getCenter(
+          find.byKey(
+            const ValueKey<String>('graph-center-node:$_centerWordId'),
+          ),
+        ),
+      );
+      Offset vectorToTarget(String wordId) =>
+          paintBox.globalToLocal(tester.getCenter(_nodeFinder(wordId))) -
+          center;
+
+      final firstSegments = canvas.invocations
+          .map((entry) => entry.invocation)
+          .where((call) => call.memberName == #drawLine)
+          .map(
+            (call) => (
+              start: call.positionalArguments[0] as Offset,
+              end: call.positionalArguments[1] as Offset,
+            ),
+          )
+          .where((line) => (line.start - center).distance < 0.01)
+          .map((line) => line.end - line.start)
+          .toList();
+      double firstSegmentLength(String wordId) {
+        final targetVector = vectorToTarget(wordId);
+        final targetDirection = targetVector / targetVector.distance;
+        return firstSegments.singleWhere((segment) {
+          final segmentDirection = segment / segment.distance;
+          return (segmentDirection - targetDirection).distance < 0.01;
+        }).distance;
+      }
+
+      expect(
+        firstSegmentLength(_outgoingWordId),
+        closeTo(vectorToTarget(_outgoingWordId).distance, 0.01),
+      );
+      final dash = firstSegmentLength(_incomingWordId);
+      expect(dash, lessThan(vectorToTarget(_incomingWordId).distance));
+      expect(firstSegmentLength(_undirectedWordId), lessThan(dash));
+      expect(firstSegmentLength(_unknownWordId), lessThan(dash));
+
+      await _disposeRuntimeApp(tester);
+    });
+
     testWidgets('방향 edge chip은 배지 없이 유지하고 비방향 edge만 상태 배지를 표시한다', (
       tester,
     ) async {
@@ -123,6 +179,7 @@ void main() {
         greaterThan(canvas.color.computeLuminance()),
       );
       expect(badgeColor, isNot(chipColor));
+      expect(bodyText.data, contains('부정됨'));
       expect(bodyText.style?.color?.computeLuminance(), lessThan(0.5));
       expect(badgeText.style?.color?.computeLuminance(), lessThan(0.5));
 
@@ -547,6 +604,7 @@ VisibleWordGraphData _graphData() {
         directionCode: 'w2_to_w1',
         centerRelativeDirection: 'incoming',
         relationType: 'compound',
+        statusCode: 'hypothesized',
         description: 'Phase44B incoming detail',
       ),
       _edgeInfo(
@@ -555,6 +613,7 @@ VisibleWordGraphData _graphData() {
         directionCode: 'undirected',
         centerRelativeDirection: 'undirected',
         relationType: 'approx_transliteration',
+        statusCode: 'inferred',
         description: 'Phase44B undirected detail',
       ),
       _edgeInfo(
@@ -563,6 +622,7 @@ VisibleWordGraphData _graphData() {
         directionCode: 'unknown',
         centerRelativeDirection: 'unknown',
         relationType: 'conventional_transliteration',
+        statusCode: 'rejected',
         description: 'Phase44B unknown detail',
       ),
     ],
@@ -619,6 +679,7 @@ WordRelationEdgeInfo _edgeInfo({
   required String directionCode,
   required String centerRelativeDirection,
   required String relationType,
+  String statusCode = 'asserted',
   required String description,
 }) {
   return WordRelationEdgeInfo(
@@ -632,7 +693,7 @@ WordRelationEdgeInfo _edgeInfo({
     categoryLabel: '번역',
     relationType: relationType,
     relationTypeLabel: '번역',
-    statusCode: 'asserted',
+    statusCode: statusCode,
     description: description,
   );
 }

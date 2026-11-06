@@ -505,20 +505,24 @@ resolveEdgeChipPlacementForTesting({
   );
 }
 
-_GraphEdgeSemanticStyle _edgeSemanticStyleForRelationType(
-  String? relationType,
+_GraphEdgeSemanticStyle _edgeStyleForRelationStatuses(
+  Iterable<String?> statusCodes,
 ) {
-  final normalized = (relationType ?? '').trim().toLowerCase();
-
-  switch (normalized) {
-    case 'semantic':
-      return _GraphEdgeSemanticStyle.dashed;
-    case 'related':
-    case 'root-related':
-      return _GraphEdgeSemanticStyle.dotted;
-    default:
-      return _GraphEdgeSemanticStyle.solid;
+  var style = _GraphEdgeSemanticStyle.solid;
+  for (final statusCode in statusCodes) {
+    switch ((statusCode ?? '').trim().toLowerCase()) {
+      case 'asserted':
+        break;
+      case 'hypothesized':
+      case 'disputed':
+      case 'uncertain':
+        style = _GraphEdgeSemanticStyle.dashed;
+        break;
+      default:
+        return _GraphEdgeSemanticStyle.dotted;
+    }
   }
+  return style;
 }
 
 _GraphEdgeVisualPriority _edgeVisualPriorityFor({
@@ -871,7 +875,7 @@ class _GraphEdgeLayout {
   final Offset start;
   final Offset end;
   final Color color;
-  final String? relationType;
+  final _GraphEdgeSemanticStyle strokeStyle;
   final _GraphEdgeDirectionSummary directionSummary;
   final bool touchesCenter;
 
@@ -882,7 +886,7 @@ class _GraphEdgeLayout {
     required this.start,
     required this.end,
     required this.color,
-    required this.relationType,
+    required this.strokeStyle,
     required this.directionSummary,
     required this.touchesCenter,
   });
@@ -2315,6 +2319,9 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                                     width: layout.layoutSpaceSize.width,
                                     height: layout.layoutSpaceSize.height,
                                     child: CustomPaint(
+                                      key: const ValueKey<String>(
+                                        'graph-edge-lines',
+                                      ),
                                       size: layout.layoutSpaceSize,
                                       painter: _GraphLinePainter(
                                         layout: layout,
@@ -4851,6 +4858,10 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     required GraphViewData viewData,
     required Map<String, Offset> positionedNodes,
   }) {
+    final placeholderNodeIds = <String>{
+      for (final node in viewData.nodes)
+        if (node.isPlaceholderMoreNode) node.id,
+    };
     final groupedEdges = <String, List<GraphEdge>>{};
     for (final edge in viewData.edges) {
       groupedEdges
@@ -4874,10 +4885,19 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         if (start == null || end == null) {
           continue;
         }
-        final primaryEdgeInfo = _primaryEdgeInfoForEdge(edge.id);
-        final directionSummary = _directionSummaryForEdges(
-          _edgeInfosForEdge(edge.id),
-        );
+        final edgeInfos = _edgeInfosForEdge(edge.id);
+        final primaryEdgeInfo = edgeInfos.isEmpty ? null : edgeInfos.first;
+        final isPlaceholder =
+            placeholderNodeIds.contains(edge.sourceId) ||
+            placeholderNodeIds.contains(edge.targetId);
+        final strokeStyle = isPlaceholder
+            ? _GraphEdgeSemanticStyle.solid
+            : _edgeStyleForRelationStatuses(
+                edgeInfos.isEmpty
+                    ? [edge.statusCode]
+                    : edgeInfos.map((info) => info.statusCode),
+              );
+        final directionSummary = _directionSummaryForEdges(edgeInfos);
         final touchesCenter =
             edge.sourceId == viewData.centerNodeId ||
             edge.targetId == viewData.centerNodeId;
@@ -4899,7 +4919,7 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
             start: shiftedStart,
             end: shiftedEnd,
             color: _colorForCategory(primaryEdgeInfo?.categoryCode),
-            relationType: primaryEdgeInfo?.relationType ?? edge.relationType,
+            strokeStyle: strokeStyle,
             directionSummary: directionSummary,
             touchesCenter: touchesCenter,
           ),
@@ -5116,8 +5136,19 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
         continue;
       }
       final edgeInfos = _edgeInfosForEdge(edgeLayout.edgeId);
-      final label = _labelForEdgeGroup(edgeInfos).trim();
+      var label = _labelForEdgeGroup(edgeInfos).trim();
       if (label.isEmpty) continue;
+      final rejectedCount = edgeInfos
+          .where(
+            (info) =>
+                (info.statusCode ?? '').trim().toLowerCase() == 'rejected',
+          )
+          .length;
+      if (rejectedCount > 0) {
+        label = rejectedCount == edgeInfos.length
+            ? '$label · 부정됨'
+            : '$label · 부정됨 포함';
+      }
       final stateBadge = _edgeStateBadgeForSummary(edgeLayout.directionSummary);
 
       // 중심 -> 주변 방향 벡터
@@ -5397,14 +5428,6 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     return List<WordRelationEdgeInfo>.unmodifiable(
       _edgeInfosByEdgeId[edgeId] ?? const <WordRelationEdgeInfo>[],
     );
-  }
-
-  WordRelationEdgeInfo? _primaryEdgeInfoForEdge(String edgeId) {
-    final edgeInfos = _edgeInfosByEdgeId[edgeId];
-    if (edgeInfos == null || edgeInfos.isEmpty) {
-      return null;
-    }
-    return edgeInfos.first;
   }
 
   WordRelationEdgeInfo? _primaryEdgeInfoForNode(String nodeId) {
@@ -7749,9 +7772,6 @@ class _GraphLinePainter extends CustomPainter {
         isFocusedEdge: isFocusedEdge,
         touchesCenter: edgeLayout.touchesCenter,
       );
-      final edgeStyle = _edgeSemanticStyleForRelationType(
-        edgeLayout.relationType,
-      );
       final double strokeWidth;
       final double alpha;
 
@@ -7794,7 +7814,7 @@ class _GraphLinePainter extends CustomPainter {
         edgeLayout.start,
         edgeLayout.end,
         paint,
-        edgeStyle,
+        edgeLayout.strokeStyle,
         safeSceneScale,
       );
       _drawDirectionIndicator(
