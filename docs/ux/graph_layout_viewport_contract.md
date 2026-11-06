@@ -98,6 +98,7 @@ PyVis-like interaction은 이 layout/viewport 경계 위에서 별도 단계로 
 - 일반 단어 노드의 첫 탭은 선택, detail 갱신, 필요한 depth-2 expansion을 수행한다. 같은 노드 재탭은 선택을 유지하며 graph semantic center 변경이나 새 graph route push를 수행하지 않는다.
 - `+N more` hidden placeholder는 숨겨진 관계 또는 노드를 더 표시하는 button semantics와 시각적 action affordance를 제공한다. 탭은 기존 expansion/reveal 정책을 그대로 사용하며, 확장된 source의 “확장 접기” action과 한 쌍을 이룬다.
 - 현재 선택 노드에 표시 가능한 관계가 하나 이상 있으면 graph 우하단에 compact한 “관계 보기” launcher가 표시된다. 관계가 1건이면 바로 해당 관계로 진입하고, 복수이면 popup menu에서 관계를 선택한다. 표시 가능한 관계가 없으면 launcher를 표시하지 않는다.
+- 관계 선택 팝업은 항목 제목에 관련 단어의 대표 표기와 등록된 Strong 번호를 표시한다. 같은 제목을 가진 항목에 서로 다른 대표 의미가 있으면 해당 의미를 보조 줄에 표시한다. 제목과 보조 줄이 같은 항목에 서로 다른 언어 값이 있으면 제목에 언어를 붙인다.
 - Mobile selected-node preview와 기존 full-detail route 연결은 구현되어 있다.
 
 ### 6.2 Graph와 detail의 역할 경계

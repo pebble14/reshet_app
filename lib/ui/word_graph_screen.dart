@@ -2690,10 +2690,13 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
               unawaited(_openSelectedNodeRelationEntry(relationEntries[index]));
             },
             itemBuilder: (context) {
+              final labels = _selectedNodeRelationMenuLabels(relationEntries);
+              final subtitleStyle = Theme.of(context).textTheme.bodySmall;
               return List<PopupMenuEntry<int>>.generate(
                 relationEntries.length,
                 (index) {
                   final entry = relationEntries[index];
+                  final label = labels[index];
                   return PopupMenuItem<int>(
                     value: index,
                     child: SizedBox(
@@ -2703,15 +2706,24 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            _selectedNodeRelationEntryTitle(entry),
+                            label.title,
                             style: const TextStyle(fontWeight: FontWeight.w600),
                           ),
+                          if (label.meaning.isNotEmpty) ...[
+                            const SizedBox(height: 2),
+                            Text(
+                              label.meaning,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: subtitleStyle,
+                            ),
+                          ],
                           const SizedBox(height: 4),
                           Text(
                             _selectedNodeRelationEntrySubtitle(entry),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
-                            style: Theme.of(context).textTheme.bodySmall,
+                            style: subtitleStyle,
                           ),
                         ],
                       ),
@@ -5651,8 +5663,65 @@ class _WordGraphScreenState extends State<WordGraphScreen> {
     return _relationTextForInfo(info).phrase;
   }
 
-  String _selectedNodeRelationEntryTitle(_SelectedNodeRelationEntry entry) {
-    return _wordDisplayName(entry.otherWordId);
+  List<({String title, String meaning})> _selectedNodeRelationMenuLabels(
+    List<_SelectedNodeRelationEntry> entries,
+  ) {
+    final labels = entries.map(_selectedNodeRelationEntryLabel).toList();
+    final meaningsByTitle = <String, Set<String>>{};
+    for (final label in labels) {
+      if (label.meaning.isNotEmpty) {
+        (meaningsByTitle[label.title] ??= <String>{}).add(label.meaning);
+      }
+    }
+
+    final labelsWithVisibleMeaning = [
+      for (final label in labels)
+        (
+          title: label.title,
+          meaning: (meaningsByTitle[label.title]?.length ?? 0) > 1
+              ? label.meaning
+              : '',
+          language: label.language,
+        ),
+    ];
+    final languagesByLabel = <(String, String), Set<String>>{};
+    for (final label in labelsWithVisibleMeaning) {
+      if (label.language.isNotEmpty) {
+        final key = (label.title, label.meaning);
+        (languagesByLabel[key] ??= <String>{}).add(label.language);
+      }
+    }
+
+    return labelsWithVisibleMeaning
+        .map((label) {
+          final languages = languagesByLabel[(label.title, label.meaning)];
+          final title =
+              label.language.isNotEmpty && (languages?.length ?? 0) > 1
+              ? '${label.title} · ${label.language}'
+              : label.title;
+          return (title: title, meaning: label.meaning);
+        })
+        .toList(growable: false);
+  }
+
+  ({String title, String meaning, String language})
+  _selectedNodeRelationEntryLabel(_SelectedNodeRelationEntry entry) {
+    final wordId = entry.otherWordId.trim();
+    final label = _graphWordLabelsById[wordId];
+    final displayName = _wordDisplayName(wordId);
+    final strongNumber =
+        (label?.displayStrongNumber ??
+                _graphWordsById[wordId]?.fallbackStrongNumber ??
+                '')
+            .trim();
+    final title = strongNumber.isEmpty || displayName == strongNumber
+        ? displayName
+        : '$displayName · $strongNumber';
+    return (
+      title: title,
+      meaning: label?.primaryMeaning.trim() ?? '',
+      language: label?.language.trim() ?? '',
+    );
   }
 
   String _selectedNodeRelationEntrySubtitle(_SelectedNodeRelationEntry entry) {
