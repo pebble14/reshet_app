@@ -1808,3 +1808,9 @@ Work SHA `e7434a19193c1641b3f0076e7e78311414eac37e9bb1c0046b54d6f214f3660f` → 
 [승인 manifest](../../tool/data_provenance/manifests/h330_cluster_approved_content_slice.json)에 H0330의 `실` 1의미와 비고 1건을 반영했다. 관계는 비생성, hold는 미설정이다. 잠언 7:16의 깔개 번역과 섬유·어원 불확실성은 [결정 기록](../semantic_decisions/h330_cluster_approved_content_slice.md)에 남겼다.
 
 공식 dry-run과 undo, 적용기 테스트 31개, live apply 1회 및 전체 13개 테이블·DDL의 독립 대조를 통과했다. history group `1793976108371649`에 ID 7529–7530을 기록했다. 작업 DB·seed·백업·공식 스냅샷의 integrity는 `ok`이며 FK 위반과 sidecar는 0개다. 적용 전후 seed SHA는 일치한다. 표준 진행표는 승인 833→834, 미승인 13,459→13,458, hold 6, anomaly 113이며 비대상 14,297행이 일치한다. 승인·백업·검증은 `data/backups/approved_content_batch/h330_approval_20261106/`, 공식 receipt는 `data/backups/approved_content_batch/20261106T144145149499Z/result.json`에 보존했다.
+
+## H331 막다 의미·비고 승인 — 2026-11-07
+
+[승인 manifest](../../tool/data_provenance/manifests/h331_cluster_approved_content_slice.json)에 H0331의 `막다` 한 뜻과 비고를 반영했다. 관계 비생성과 hold 미설정을 채택했다. 성전 창의 구조와 시편 형태 분류 차이는 [결정 기록](../semantic_decisions/h331_cluster_approved_content_slice.md)에 남겼다.
+
+공식 dry-run과 undo, 적용기 테스트 31개, live apply 1회, 전체 13개 테이블과 DDL의 독립 대조를 통과했다. History group `1793979628533266`에 ID 7531과 7532를 기록했다. 작업 DB·seed·백업·공식 스냅샷의 integrity는 `ok`이고 외래 키 위반과 sidecar는 0개다. 적용 전후 seed SHA가 일치한다. 표준 진행표는 승인 834→835, 미승인 13,458→13,457, hold 6, anomaly 113이며 비대상 14,297행이 일치한다. 승인·백업·검증은 `data/backups/approved_content_batch/h331_approval_20261107/`, 공식 receipt는 `data/backups/approved_content_batch/20261106T154025641704Z/result.json`에 보존했다.

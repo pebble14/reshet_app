@@ -1,0 +1,40 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H331-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h331_approval_20261107/00_user_approval.json",
+    "document_sha256": "db149b0c94f5025f1d6ff7f20473ac9357076b481c26bdb8c58a150c0524813d"
+  },
+  "target": {
+    "expected_work_sha256": "13b5be803fa893a59df91f68ec7b58dc18c0e134c78eea50fcf7f9d6d4f2bf1c",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0331_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "닫다, 막다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "막다"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0331_0000",
+      "before": null,
+      "after": "귀를 막거나 입술을 다무는 데 쓰인다. 성전 창에 쓰인 수동분사는 창이 막혀 있거나 트인 부분이 좁아진 상태를 가리킨다. 창을 어느 정도, 어떤 방식으로 막았는지는 분명하지 않다."
+    }
+  ],
+  "relation_creates": [],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}
