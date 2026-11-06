@@ -1802,3 +1802,9 @@ Work SHA `e7434a19193c1641b3f0076e7e78311414eac37e9bb1c0046b54d6f214f3660f` → 
 ## H329 가시나무·아닷 지명 승인 — 2026-11-01
 
 [승인 manifest](../../tool/data_provenance/manifests/h329_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h329_cluster_approved_content_slice.md)에 가시나무 / 아닷·아타드 (지), 비고1건, 관계 비생성·hold 없음을 반영했다. 수종·추정 어원·시편 구문·정확한 위치는 미확정으로 보존한다. 공식 dry-run·undo·원본 불변, 적용기31개 테스트, live apply1회와 전체13테이블·DDL 독립 대조 통과. History2행(group 1793539802658310), integrity ok·FK0·sidecar0·seed 불변. 표준 progress 승인832→833·미승인13460→13459·hold6·anomaly113 및 비대상14297행 불변. 상세 승인·백업·검증은 data/backups/approved_content_batch/h329_approval_20261101/, receipt는 data/backups/approved_content_batch/20261101T132959743953Z/result.json이다. 앱·UX·원문·음역·발음·언어·schema·배포 seed 변경 없음.
+
+## H330 실 의미·비고 승인 — 2026-11-06
+
+[승인 manifest](../../tool/data_provenance/manifests/h330_cluster_approved_content_slice.json)에 H0330의 `실` 1의미와 비고 1건을 반영했다. 관계는 비생성, hold는 미설정이다. 잠언 7:16의 깔개 번역과 섬유·어원 불확실성은 [결정 기록](../semantic_decisions/h330_cluster_approved_content_slice.md)에 남겼다.
+
+공식 dry-run과 undo, 적용기 테스트 31개, live apply 1회 및 전체 13개 테이블·DDL의 독립 대조를 통과했다. history group `1793976108371649`에 ID 7529–7530을 기록했다. 작업 DB·seed·백업·공식 스냅샷의 integrity는 `ok`이며 FK 위반과 sidecar는 0개다. 적용 전후 seed SHA는 일치한다. 표준 진행표는 승인 833→834, 미승인 13,459→13,458, hold 6, anomaly 113이며 비대상 14,297행이 일치한다. 승인·백업·검증은 `data/backups/approved_content_batch/h330_approval_20261106/`, 공식 receipt는 `data/backups/approved_content_batch/20261106T144145149499Z/result.json`에 보존했다.

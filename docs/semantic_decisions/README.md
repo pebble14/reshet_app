@@ -26,6 +26,7 @@
 
 | 결정 단위 | 대상 | 상태 | 복원 수준 | 최초 적용일 | 기록 |
 |---|---|---|---|---|---|
+| H330 실 의미·비고 | H0330 | `active` | 높음 | 2026-11-06 | [기록](h330_cluster_approved_content_slice.md) |
 | P2 승인 배치 | H2020, H5005, H6306, H6772와 파생 관계 | `partially_superseded` | 제한적 | 2026-08-10 | [기록](p2_approved_content_slice.md) |
 | H1672·H1674 | 걱정하다·걱정 | `active` | 중간 | 2026-08-13 | [기록](h1672_h1674_approved_content_slice.md) |
 | 첫 5-Strong 배치 | H1618, H4200, H4461, H5807, H6378 | `partially_superseded` | 제한적 | 2026-08-13 | [기록](first_semantic_batch_approved_content_slice.md) |
