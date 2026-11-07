@@ -26,6 +26,7 @@
 
 | 결정 단위 | 대상 | 상태 | 복원 수준 | 최초 적용일 | 기록 |
 |---|---|---|---|---|---|
+| H336 연결 어휘군 | H0336·H0348·G2403·H0350 | `active` | 높음 | 2026-11-07 | [기록](h336_cluster_approved_content_slice.md) |
 | H332 연결 어휘군 | H0332·H0333·H0334 | `active` | 높음 | 2026-11-07 | [기록](h332_cluster_approved_content_slice.md) |
 | H331 막다 의미·비고 | H0331 | `active` | 높음 | 2026-11-07 | [기록](h331_cluster_approved_content_slice.md) |
 | H330 실 의미·비고 | H0330 | `active` | 높음 | 2026-11-06 | [기록](h330_cluster_approved_content_slice.md) |

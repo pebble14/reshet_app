@@ -1820,3 +1820,7 @@ Work SHA `e7434a19193c1641b3f0076e7e78311414eac37e9bb1c0046b54d6f214f3660f` → 
 [승인 manifest](../../tool/data_provenance/manifests/h332_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h332_cluster_approved_content_slice.md)에 H0332 기존 의미 승인, 의미 교체 2건, 비고 3건, 파생 관계 2건을 기록했다. H0332의 ‘묶다’는 BDB 어근 풀이로 비고에 남겼다.
 
 공식 dry-run·undo와 적용기 테스트 31개, 작업 DB 적용 및 독립 대조를 통과했다. History group `1794007374208822`에 7행이 추가됐다. 작업 DB 무결성은 `ok`, FK 위반·sidecar는 0건이며 seed SHA가 일치했다. 공식 진행표의 승인 항목은 835→838, 미승인은 13,457→13,454이고 hold 6건과 anomaly 113건은 동일하다. 비대상 14,295행을 대조했다.
+
+## H336 연결 어휘군 승인 — 2026-11-07
+
+H0336 의미 유지 승인 1건, 의미 교체 3건, 비고 4건, 관계 신규 2건과 교체 1건을 적용했다. 원자료와 결정 근거는 [H336 결정 기록](../semantic_decisions/h336_cluster_approved_content_slice.md)에 연결했다. 적용 전 snapshot은 로컬 `data/backups/approved_content_batch/20261107T000910054949Z/snapshot.db`이며 seed SHA는 적용 전후 일치한다.

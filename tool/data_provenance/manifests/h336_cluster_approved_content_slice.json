@@ -1,0 +1,146 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H336-CLUSTER-APPROVED-CONTENT-SLICE",
+  "target": {
+    "expected_work_sha256": "bf6d0c232261e75c3be381b2eb2b6a04d9092ebf14cb43a4c1626dcea3f49fd1",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0348_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "이세벨"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "이세벨·이제벨 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "G2403_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "이세벨"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "이세벨·이제벨 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0350_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "이가봇 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "이가봇·이-카보드 (인)"
+        }
+      ]
+    }
+  ],
+  "meaning_approvals": [
+    {
+      "word_id": "H0336_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "아니"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0336_0000",
+      "before": null,
+      "after": "다른 말에 앞서 부정하는 말이다. 욥기 22:30의 אִי־נָקִי는 ‘죄 없는 사람이 아닌 이’로 읽을 수 있다. KJV의 ‘섬’ 해석과 새번역·칠십인역의 ‘죄 없는 사람’ 해석도 전해진다."
+    },
+    {
+      "word_id": "H0348_0000",
+      "before": null,
+      "after": "‘이세벨’은 한국어 성경의 관용명이고 ‘이제벨’은 히브리어 교재식 근사다. 시돈 왕 엣바알의 딸이자 아합의 아내다. Strong은 אִי와 스불(זְבֻל)을 연결하고, 페니키아어 이름을 ‘군주(바알)는 어디에 있는가?’로 읽는 견해도 있다. 이름의 형성 과정은 미확정이다."
+    },
+    {
+      "word_id": "G2403_0000",
+      "before": null,
+      "after": "‘이세벨’은 한국어 성경 관용명이고 ‘이제벨’은 원천 히브리어 이름의 교재식 근사다. 계시록 2:20에서는 아합의 아내 이세벨을 빗대어 두아디라의 자칭 예언자를 이렇게 부른 것으로 읽힌다. 그 인물의 실제 이름은 미확인이다."
+    },
+    {
+      "word_id": "H0350_0000",
+      "before": null,
+      "after": "‘이가봇’은 한국어 성경 관용명이고 ‘이-카보드’는 히브리어 철자와 두 요소의 경계를 살린 교재식 근사다. 비느하스의 아들로, 사무엘상 4:21–22는 이름을 이스라엘에서 떠난 영광(榮光)과 연결한다. 첫 요소에는 ‘영광이 없다’, ‘영광이 어디에 있는가’ 등의 풀이가 있다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0350_0000",
+      "word_id_2": "H3519_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "이름의 כָבוֹד는 명명 구절의 ‘이스라엘에서 떠난 영광’과 연결된다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml H0350 (21c9add13bc727d3a951361778e97e3ff7afd1ce); OSHB 1Sam.4.21–22"
+    },
+    {
+      "word_id_1": "H0336_0000",
+      "word_id_2": "H0350_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 ‘영광이 없다’ 풀이에 따른 첫 요소 후보이다. 의문 풀이 및 다른 이름 전승도 있다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml H0350 (21c9add13bc727d3a951361778e97e3ff7afd1ce); OSHB 1Sam.4.21–22; 새번역 삼상 4:21 주석"
+    }
+  ],
+  "relation_replacements": [
+    {
+      "relation_id": 2346,
+      "word_id_1": "G2403_0000",
+      "word_id_2": "H0348_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "transliteration",
+        "relation_type": "direct_transliteration",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "히브리어 이세벨 이름을 옮긴 헬라어 형태다. 계 2:20에서는 그 이름을 두아디라의 인물에게 사용한다.",
+        "source": "MorphGNT Strong G2403 (dd6758b82f46b620804a8ea677d715844679eea1); LXX 1Kgs 16:31; TAGNT Rev.2.20"
+      }
+    }
+  ],
+  "supersedes": [],
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h336_approval_20261107/00_user_approval.json",
+    "document_sha256": "cb5b4948cf6278c22d15762ca7db3e549928b4f3084cedd7e9bfb3f329254d8c"
+  }
+}
