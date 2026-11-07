@@ -26,6 +26,7 @@
 
 | 결정 단위 | 대상 | 상태 | 복원 수준 | 최초 적용일 | 기록 |
 |---|---|---|---|---|---|
+| H369 연결 어휘군 | H0369 뜻·비고, H0371 비고, 반의·이형 관계 | `active` | 높음 | 2026-11-08 | [기록](h369_cluster_approved_content_slice.md) |
 | H366 연결 어휘군 | H0366·H0367·H0368 | `active` | 높음 | 2026-11-07 | [기록](h366_cluster_approved_content_slice.md) |
 | H336 연결 어휘군 | H0336·H0348·G2403·H0350 | `active` | 높음 | 2026-11-07 | [기록](h336_cluster_approved_content_slice.md) |
 | H332 연결 어휘군 | H0332·H0333·H0334 | `active` | 높음 | 2026-11-07 | [기록](h332_cluster_approved_content_slice.md) |
@@ -124,7 +125,7 @@
 | H161 클러스터 | 오핫·오하드와 에훗·에후드 인명 병기·비고 및 가설 공통 어근 관계1 | `active` | 높음 | 2026-10-21 | [기록](h161_cluster_approved_content_slice.md) |
 | H162 클러스터 | CORE17 감탄사·지시 조사·동물명·인명 및 관계11, H338 재칼·H1888 단일 의미·불확실성 보존 | `active` | 높음 | 2026-10-21 | [기록](h162_cluster_approved_content_slice.md) |
 | H163 아하와 지명 | 기존 단일 의미 승인·비고 추가, 강·지점 식별과 외래 기원 추정 보존·관계 비생성·hold 없음 | `active` | 높음 | 2026-10-21 | [기록](h163_cluster_approved_content_slice.md) |
-| H165 장소 의문 클러스터 | CORE11 최신 단일/복수 의미·구문 비고·관계7, 허브 제외·hold 없음 | `active` | 높음 | 2026-10-22 | [기록](h165_cluster_approved_content_slice.md) |
+| H165 장소 의문 클러스터 | CORE11 최신 단일/복수 의미·구문 비고·관계7, 허브 제외·hold 없음 | `partially_superseded` | 높음 | 2026-10-22 | [기록](h165_cluster_approved_content_slice.md) |
 | H166 천막 클러스터 | CORE8 단일 의미·비고6·관계9, 천막 대표어·삿19:9 해석 한계·신규 hold 없음 | `active` | 높음 | 2026-10-22 | [기록](h166_cluster_approved_content_slice.md) |
 | H174·G250 침향 | 단일 의미·비고2, 기존 inferred 관계 유지·신규 hold 없음 | `active` | 높음 | 2026-10-22 | [기록](h174_cluster_approved_content_slice.md) |
 | H175·G2 아론 이름 | 공통 아론·아하론 meaning·비고2, 직접 음역 관계 교체1·hold 없음 | `active` | 높음 | 2026-10-22 | [기록](h175_cluster_approved_content_slice.md) |

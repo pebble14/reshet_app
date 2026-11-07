@@ -1,0 +1,70 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H369-CLUSTER-APPROVED-CONTENT-SLICE",
+  "target": {
+    "expected_work_sha256": "df9f3cff0882c635b9cd4e4ab30242e2ed4e3d9ce37edca4cd44d2b2292773e1",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0369_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아닌, 없는"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "없다"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0369_0000",
+      "before": null,
+      "after": "독립형 אַיִן·אָיִן과 연계형 אֵין으로 쓰인다. 존재·소재·소유를 부정하며, 명사 술어나 분사와 결합해 ‘~이 아니다’, ‘~하지 않다’로도 옮긴다. 명사적으로는 ‘없음’을 나타내며, 비교나 결과 구문에서는 ‘없는 것과 같다’, ‘아무것도 아닌 상태가 되다’로 옮길 수 있다. אִם־אַיִן은 ‘그렇지 않으면’을, 시편 73:2의 כְּאַיִן은 ‘~할 뻔하다’를 나타낸다. Strong은 ‘존재하지 않다’라는 어근을 상정한다. 예레미야 30:7의 מֵאַיִן은 ‘같은 날이 없다’와 ‘어디에서 같은 날을 찾겠는가’의 두 풀이가 가능하다. 이사야 41:24의 같은 형태는 마소라 본문에서 ‘아무것도 아닌 것’으로 읽을 수 있으며 칠십인역은 ‘어디서’로 옮긴다."
+    },
+    {
+      "word_id": "H0371_0000",
+      "before": "사무엘상 21:8(히브리어 절 번호 21:9)의 부정의문문에서 “창이나 칼이 없느냐”라는 물음에 쓰인다. Strong의 “is it not?”라는 설명과 OSHB의 부정어 태그를 구분하여 보존한다.",
+      "after": "사무엘상 21:8(히브리어 절 번호 21:9)에서 창이나 칼의 유무를 묻는다. Strong은 부정의문으로 풀이하고 OSHB는 אִין을 부정 표지로 태깅한다. 개역 계열은 ‘없나이까’로, 칠십인역은 ‘있는지’로 옮긴다. Strong은 H0369의 단축형으로 추정한다. BDB는 אֵין의 불규칙형을 우선 검토하면서 방언 의문사일 가능성도 제시한다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0369_0000",
+      "word_id_2": "H3426_0000",
+      "category_code": "lexical",
+      "relation_type": "antonym",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "존재·소재·소유 구문에서 אֵין은 יֵשׁ의 부정 대응어다. 출 17:7, 민 13:20, 삼상 21:5에서 양쪽을 직접 대조할 수 있다.",
+      "source": "OSHB Exod.17.7, Num.13.20, 1Sam.21.5, Eccl.4.8; BDB II. אַיִן; Naudé·Miller-Naudé·Wilson 2022 §2"
+    },
+    {
+      "word_id_1": "H0369_0000",
+      "word_id_2": "H0371_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong은 אִין을 H0369의 단축형으로 추정한다. BDB는 אֵין의 불규칙형을 우선 검토한다. 삼상 21:9의 유무 의문과 시 135:17의 אֵין יֶשׁ가 비교되며, 칠십인역의 긍정형 질문과 방언 의문사 가능성을 함께 고려해 무방향 이형 가설로 둔다.",
+      "source": "Open Scriptures HebrewLexicon HebrewStrong.xml H371 (21c9add13bc727d3a951361778e97e3ff7afd1ce); OSHB 1Sam.21.9, Ps.135.17; BDB אִין; Swete 1 Kingdoms 21"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": [],
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h369_approval_20261108/00_user_approval.json",
+    "document_sha256": "e639e71e4c0d780fb038bd9b265a3278b7a627dcf25539cd21a3bba08f7290b6"
+  }
+}

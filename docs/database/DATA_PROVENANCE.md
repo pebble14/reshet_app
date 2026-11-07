@@ -1830,3 +1830,9 @@ H0336 의미 유지 승인 1건, 의미 교체 3건, 비고 4건, 관계 신규 
 [승인 manifest](../../tool/data_provenance/manifests/h366_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h366_cluster_approved_content_slice.md)에 의미 3건, 비고 3건, 가설 관계 2건(ID 8290·8291)을 기록했다. H0367은 출 15:16에서 H6343과 이루는 병렬을 비고에 보존했고, H0368은 ‘엠·에밈 족속(族屬)’으로 승인했다.
 
 공식 dry-run·undo와 적용기 테스트 31개, 작업 DB의 13개 테이블·DDL 독립 대조를 통과했다. 이력 그룹 `1794060469421202`의 8행과 비대상 데이터 일치를 확인했다. 작업 DB 무결성은 `ok`, FK 위반과 sidecar는 0건이며 seed SHA가 일치했다. 진행표에서 승인 842→845, 미승인 13,450→13,447을 확인했다. Hold 6건, anomaly 113건과 비대상 14,295행은 일치했다.
+
+## H369 연결 어휘군 승인 — 2026-11-08
+
+[승인 manifest](../../tool/data_provenance/manifests/h369_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h369_cluster_approved_content_slice.md)에 H0369의 뜻 `없다`, H0369·H0371 비고, H0369와 H3426의 반의 관계(ID 8292) 및 H0371과의 이형 가설(ID 8293)을 기록했다.
+
+공식 dry-run·undo와 적용기 테스트 31개를 통과했고, 실제 DB 적용 후 13개 테이블·DDL을 독립 대조했다. 이력 그룹 `1794064630206999`에 5행(ID 7558–7562)을 기록했다. 작업 DB와 seed의 무결성은 `ok`이며 FK 위반과 sidecar는 0건이다. Seed SHA-256은 적용 전후 일치한다. 진행표는 승인 845→846, 미승인 13,447→13,446, hold 6, anomaly 113이고 비대상 14,296행이 일치했다.
