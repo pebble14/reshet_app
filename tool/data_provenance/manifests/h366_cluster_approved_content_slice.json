@@ -1,0 +1,105 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H366-CLUSTER-APPROVED-CONTENT-SLICE",
+  "target": {
+    "expected_work_sha256": "5601deea9b66cf3b2d971dd0877ec3ae93b7c2ce9392ec1496ab72222a4318dd",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0366_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "무서운, 당당한"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "두렵게 하는"
+        }
+      ]
+    },
+    {
+      "word_id": "H0367_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "무서움, 두려움"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "두려움"
+        }
+      ]
+    },
+    {
+      "word_id": "H0368_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "엠 족속"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엠·에밈 족속(族屬)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0366_0000",
+      "before": null,
+      "after": "하박국 1:7에서는 갈대아 군대가 일으키는 공포를, 아가 6:4·10에서는 보는 이를 압도하는 여인의 위엄을 나타낸다. 아가의 두 용례는 여성형 אֲיֻמָּה다. Strong은 성경에 독립형이 확인되지 않는 ‘겁을 주다’ 어근을 상정한다."
+    },
+    {
+      "word_id": "H0367_0000",
+      "before": null,
+      "after": "위협을 느낄 때의 두려움을 나타내며, 죽음이 닥칠 때의 공포에도 쓰인다. 출애굽기 15:16에서는 פַּחַד(H6343)와 나란히 쓰여 열방을 사로잡은 두려움을 강조한다. 출애굽기 23:27의 ‘위엄’과 잠언 20:2의 ‘진노’는 하나님이나 왕이 남에게 일으키는 두려움과 관련된다. 예레미야 50:38에서는 두려움을 일으키는 우상을 가리키는 것으로 읽을 수 있다. Strong은 H0366과 같은 어근에 연결한다."
+    },
+    {
+      "word_id": "H0368_0000",
+      "before": null,
+      "after": "창세기 14:5의 ‘엠’과 신명기 2:10–11의 ‘에밈’은 같은 집단의 이름이다. ‘에밈’은 히브리어 교재식 한글 근사이기도 하다. 신명기는 모압 땅에 앞서 살던 이들을 르바임으로 여겼고 모압 사람들이 에밈이라 불렀다고 전한다. Strong은 H0367의 복수형으로 설명한다. 이름을 ‘두려움을 일으키는 이들’로 풀이할 수 있으나 이름의 기원은 미확정이다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0366_0000",
+      "word_id_2": "H0367_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong은 H0367을 H0366과 같은 어근에 연결한다. 두 어휘는 두려움의 의미를 공유하며 성경에서 그 어근의 독립형은 확인되지 않는다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml H367 및 BDB의 אָיֹם·אֵימָה 항목"
+    },
+    {
+      "word_id_1": "H0367_0000",
+      "word_id_2": "H0368_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong은 민족명 H0368을 H0367의 복수형으로 본다. 욥기 20:25의 보통명사와 신명기 2:10–11의 민족명은 철자가 겹친다. 이름의 유래는 미확정이다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml H368 및 OSHB 욥기 20:25·신명기 2:10–11, BDB의 אֵימִים 항목"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": [],
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h366_approval_20261107/00_user_approval.json",
+    "document_sha256": "8fedd53d6082cea2321ecfde579aa0c7c318e974d82b09ac90c9e6fac4a01546"
+  }
+}

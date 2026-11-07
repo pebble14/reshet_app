@@ -1824,3 +1824,9 @@ Work SHA `e7434a19193c1641b3f0076e7e78311414eac37e9bb1c0046b54d6f214f3660f` → 
 ## H336 연결 어휘군 승인 — 2026-11-07
 
 H0336 의미 유지 승인 1건, 의미 교체 3건, 비고 4건, 관계 신규 2건과 교체 1건을 적용했다. 원자료와 결정 근거는 [H336 결정 기록](../semantic_decisions/h336_cluster_approved_content_slice.md)에 연결했다. 적용 전 snapshot은 로컬 `data/backups/approved_content_batch/20261107T000910054949Z/snapshot.db`이며 seed SHA는 적용 전후 일치한다.
+
+## H366 연결 어휘군 승인 — 2026-11-07
+
+[승인 manifest](../../tool/data_provenance/manifests/h366_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h366_cluster_approved_content_slice.md)에 의미 3건, 비고 3건, 가설 관계 2건(ID 8290·8291)을 기록했다. H0367은 출 15:16에서 H6343과 이루는 병렬을 비고에 보존했고, H0368은 ‘엠·에밈 족속(族屬)’으로 승인했다.
+
+공식 dry-run·undo와 적용기 테스트 31개, 작업 DB의 13개 테이블·DDL 독립 대조를 통과했다. 이력 그룹 `1794060469421202`의 8행과 비대상 데이터 일치를 확인했다. 작업 DB 무결성은 `ok`, FK 위반과 sidecar는 0건이며 seed SHA가 일치했다. 진행표에서 승인 842→845, 미승인 13,450→13,447을 확인했다. Hold 6건, anomaly 113건과 비대상 14,295행은 일치했다.
