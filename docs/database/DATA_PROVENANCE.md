@@ -1864,3 +1864,9 @@ H0336 의미 유지 승인 1건, 의미 교체 3건, 비고 4건, 관계 신규 
 [승인 manifest](../../tool/data_provenance/manifests/h384_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h384_cluster_approved_content_slice.md)에 `이디엘·이티-엘 (인)`, 비고 1건, H0410 확정 합성(ID 8309)과 H0854 가설 합성(ID 8310)을 기록했다.
 
 사본 적용·undo와 적용기 테스트 31개를 통과했다. 이력 그룹 `1794125650556269`의 4행과 비대상 데이터·DDL을 독립 대조했다. Work DB SHA-256은 `e929e7cfa0bec54bacb6dbc39140bb76183c2cd898b8f7edc0722976a7f52891`이다. 무결성 `ok`, FK 위반·sidecar 0건이며 seed 해시는 적용 전후 일치했다. 표준 진행표의 승인 수는 869→870이고 비대상 14,297행이 일치했다.
+
+## H0386 지속·견고함 어휘군 승인 — 2026-11-08
+
+[승인 manifest](../../tool/data_provenance/manifests/h386_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h386_cluster_approved_content_slice.md)에 뜻 교체 3건, H0860 기존 뜻 명시 승인, 비고 4건과 관계 2건을 기록했다. H0386–H0387은 공통 기반 가설(ID 8311), H0386→H0388은 복수형 월명 파생(ID 8312)이다.
+
+공식 dry-run·undo와 적용기 테스트 31개를 통과했다. 실제 적용 후 이력 그룹 `1794132225306397`의 9행, 전체 13개 테이블·DDL, 적용 전 백업과 공식 snapshot을 대조했다. 무결성은 `ok`이고 FK 위반과 sidecar는 0건이다. Seed 해시는 적용 전후 일치했다. 표준 진행표에서 승인 870→874와 비대상 14,294행 일치를 확인했다.

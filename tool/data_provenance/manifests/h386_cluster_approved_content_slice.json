@@ -1,0 +1,124 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H386-CLUSTER-APPROVED-CONTENT-SLICE",
+  "target": {
+    "expected_work_sha256": "e929e7cfa0bec54bacb6dbc39140bb76183c2cd898b8f7edc0722976a7f52891",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0386_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "끊이지 않는, 영원한"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "끊이지 않는"
+        },
+        {
+          "seq": 2,
+          "meaning": "굳건한"
+        }
+      ]
+    },
+    {
+      "word_id": "H0387_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "에단 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "에단·에탄 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0388_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "에다님 월"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "에다님·에타님 (월)"
+        }
+      ]
+    }
+  ],
+  "meaning_approvals": [
+    {
+      "word_id": "H0860_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "암나귀"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0386_0000",
+      "before": null,
+      "after": "흐름이나 상태가 쉽게 끊어지거나 무너지지 않고 이어지는 성질을 나타낸다. 물줄기에는 ‘끊이지 않는’, 활과 거처에는 ‘굳건한’으로 드러난다. 출 14:27에서는 바다가 평소 상태로 돌아오는 데 쓰이고, 욥 12:19에서는 복수형이 권세를 가진 사람들을 가리킨다. 비교되는 고전 아랍어 w-t-n은 물이 끊이지 않거나 사물이 한자리에 굳게 머무는 데 쓰인다. 히브리어 어원의 전승 경로는 미확정이다. 욥 33:19의 지속되는 고통은 글자본문에 따른 풀이이며, 신 21:4의 골짜기, 잠 13:15의 길과 렘 49:19·50:44의 처소는 해석이 갈린다."
+    },
+    {
+      "word_id": "H0387_0000",
+      "before": null,
+      "after": "‘에단’은 한국어 성경 관용명이고 ‘에탄’은 히브리어 표제의 교재식 한글 근사다. 예스라 사람 에단, 세라의 아들 에단, 게르손 계열 레위인, 므라리 계열의 음악 담당 레위인을 가리키는 용례가 있다. 왕상 4:31과 대상 2:6의 인물 목록은 일부 겹치지만 동일 인물인지는 확정되지 않는다. Strong은 같은 형태의 형용사 H0386과 연결하여 오래 지속된다는 뜻으로 풀이한다."
+    },
+    {
+      "word_id": "H0388_0000",
+      "before": null,
+      "after": "‘에다님’은 한국어 성경 관용명이고 ‘에타님’은 히브리어의 교재식 한글 근사다. 왕상 8:2에 나오는 일곱째 달의 이름이며 후대의 티쉬리월에 대응한다. Strong과 BDB는 H0386의 복수형과 연결하여 ‘늘 흐르는 물줄기들’로 풀이한다. 페니키아 비문에도 같은 월명이 보이지만 실제 명명 동기는 확정하기 어렵다."
+    },
+    {
+      "word_id": "H0860_0000",
+      "before": null,
+      "after": "여성명사로 암나귀를 뜻한다. 창 12:16과 45:23에서는 수나귀와 대조되고, 창 49:11과 슥 9:9에서는 새끼의 어미를 가리킨다. 발람 이야기처럼 성별을 따로 드러낼 필요가 없는 문맥에서는 ‘나귀’로 옮기기도 한다. Strong은 온순함과 인내를 근거로 H0386과 같은 어근을 추정한다. 아카드어 atānu 등 비교 셈어에는 암나귀를 뜻하는 대응형이 있으며, H0386과의 연결은 미확정이다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0386_0000",
+      "word_id_2": "H0387_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "같은 형태의 형용사와 인명이다. Strong은 지속성의 뜻으로 연결하며, HALOT는 공통 기반을 가능성으로 제시한다. 명명 동기와 형성 방향은 미확정이다.",
+      "source": "Open Scriptures HebrewLexicon H387 source, commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; HALOT 463"
+    },
+    {
+      "word_id_1": "H0386_0000",
+      "word_id_2": "H0388_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "H0386의 복수 형태가 정관사와 함께 일곱째 달의 이름으로 쓰인다. 이 분류는 형태와 월명의 연결을 보존하며 구체적인 명명 동기는 미확정이다.",
+      "source": "Open Scriptures HebrewLexicon H388 source, commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; OSHB 1Kgs.8.2, Mic.6.2"
+    }
+  ],
+  "relation_replacements": [],
+  "supersedes": [],
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h386_approval_20261108/00_user_approval.json",
+    "document_sha256": "7e9fb54f0b4284563e7bd74ceff8ce8048deaeb9a929303bddfd80fe03b237b4"
+  }
+}
