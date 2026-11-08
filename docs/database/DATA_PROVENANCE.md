@@ -1870,3 +1870,9 @@ H0336 의미 유지 승인 1건, 의미 교체 3건, 비고 4건, 관계 신규 
 [승인 manifest](../../tool/data_provenance/manifests/h386_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h386_cluster_approved_content_slice.md)에 뜻 교체 3건, H0860 기존 뜻 명시 승인, 비고 4건과 관계 2건을 기록했다. H0386–H0387은 공통 기반 가설(ID 8311), H0386→H0388은 복수형 월명 파생(ID 8312)이다.
 
 공식 dry-run·undo와 적용기 테스트 31개를 통과했다. 실제 적용 후 이력 그룹 `1794132225306397`의 9행, 전체 13개 테이블·DDL, 적용 전 백업과 공식 snapshot을 대조했다. 무결성은 `ok`이고 FK 위반과 sidecar는 0건이다. Seed 해시는 적용 전후 일치했다. 표준 진행표에서 승인 870→874와 비대상 14,294행 일치를 확인했다.
+
+## H0389 한정·확언·대조 어휘군 승인 — 2026-11-08
+
+[승인 manifest](../../tool/data_provenance/manifests/h389_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h389_cluster_approved_content_slice.md)에 뜻·비고 각 2건과 H0389↔H0403의 무방향 의미 유사 관계(ID 8313)를 기록했다.
+
+공식 사본 적용·되돌리기와 적용기 테스트 31개를 통과했다. 이력 그룹 `1794144038897730`의 5행과 13개 테이블·DDL, 적용 전 백업과 공식 snapshot을 독립 대조했다. 무결성은 `ok`이고 FK 위반과 sidecar는 0건이다. Seed 해시는 적용 전후 일치했다. 표준 진행표에서 승인 874→876과 비대상 14,296행 일치를 확인했다.

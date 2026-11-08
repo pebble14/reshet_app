@@ -1,0 +1,85 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H389-CLUSTER-APPROVED-CONTENT-SLICE",
+  "target": {
+    "expected_work_sha256": "93c35f60ae933c6f731cd23ab1093dd41259da58d5638969fb683b36b957e8a3",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0389_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "확실히, 오직"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "다만"
+        },
+        {
+          "seq": 2,
+          "meaning": "참으로"
+        },
+        {
+          "seq": 3,
+          "meaning": "그러나"
+        }
+      ]
+    },
+    {
+      "word_id": "H0403_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "진실로, 참으로"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "참으로"
+        },
+        {
+          "seq": 2,
+          "meaning": "그러나"
+        }
+      ]
+    }
+  ],
+  "meaning_approvals": [],
+  "word_note_replacements": [
+    {
+      "word_id": "H0389_0000",
+      "before": null,
+      "after": "대상이나 조건을 ‘~만, 다만’으로 한정한다(창 7:23, 욥 2:6). 앞말에서 생기는 기대를 뒤집을 때는 ‘그러나, 도리어’로 쓰인다(왕하 23:26, 사 14:15, 43:24). 화자의 판단을 힘주어 제시하며 정황에 근거한 추정은 ‘아무래도 …인 듯하다’로 옮길 수 있다(삿 3:24). 창 27:30과 삿 7:19에서는 부정사 절대형과 함께 ‘막 ~한’ 시점을 나타내고, 신 16:15에서는 ‘온전히’로 상태를 강조한다. 욥 30:24의 독법은 미결이다. Strong은 אָכֵן(H0403)과의 친연성을 제시한다. 어원과 파생 방향은 미확정이다."
+    },
+    {
+      "word_id": "H0403_0000",
+      "before": null,
+      "after": "새로 깨달은 사실이나 화자의 판단을 힘주어 말한다(창 28:16, 출 2:14). 앞선 생각이나 기대와 다른 실상을 힘주어 제시할 때 ‘그러나 실은’으로 옮길 수 있다(욥 32:8, 시 66:19, 사 49:4, 습 3:7). 왕상 11:2는 마소라 본문의 확언, 별도 접속 용법, 칠십인역에 따른 방지 목적의 독법이 갈린다. Strong은 כּוּן(H3559)에서의 파생을 제시하고 כֵּן(H3651)을 비교하며, BDB는 אַךְ(H0389)에서 형성되었을 가능성을 제시한다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0389_0000",
+      "word_id_2": "H0403_0000",
+      "category_code": "semantic",
+      "relation_type": "similar",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "두 불변사는 화자가 판단을 힘주어 내세우거나 앞선 기대와 다른 사실을 강조할 때 쓰인다. 습 3:7에서는 앞의 H0389가 기대를, 뒤의 H0403이 실제 행동을 부각한다. Strong은 친연성을 제시하며 공통 어근과 파생 방향은 미확정이다.",
+      "source": "Open Scriptures HebrewLexicon H389 source (21c9add13bc727d3a951361778e97e3ff7afd1ce) / OSHB Gen.26.9, Gen.28.16, Zeph.3.7 / BDB אָכֵן"
+    }
+  ],
+  "relation_replacements": [],
+  "supersedes": [],
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h389_approval_20261108/00_user_approval.json",
+    "document_sha256": "e0be5da8b24b8f6051d294b765be423575267b5c9e2bccedc91ba30206b91c47"
+  }
+}

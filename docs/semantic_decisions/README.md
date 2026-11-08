@@ -26,6 +26,7 @@
 
 | 결정 단위 | 대상 | 상태 | 복원 수준 | 최초 적용일 | 기록 |
 |---|---|---|---|---|---|
+| H389 한정·확언·대조 어휘군 | H0389·H0403 뜻·비고, 관계 1건 | `active` | 높음 | 2026-11-08 | [기록](h389_cluster_approved_content_slice.md) |
 | H386 지속·견고함 어휘군 | H0386·H0387·H0388·H0860 뜻·비고, 관계 2건 | `active` | 높음 | 2026-11-08 | [기록](h386_cluster_approved_content_slice.md) |
 | H384 이디엘 | 이디엘·이티-엘 뜻·비고, 합성 관계 2건 | `active` | 높음 | 2026-11-08 | [기록](h384_cluster_approved_content_slice.md) |
 | H383 연결 어휘군 | 5개 표제어 뜻·비고, 관계 3건 | `active` | 높음 | 2026-11-08 | [기록](h383_cluster_approved_content_slice.md) |
