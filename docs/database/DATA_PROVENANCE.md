@@ -1858,3 +1858,9 @@ H0336 의미 유지 승인 1건, 의미 교체 3건, 비고 4건, 관계 신규 
 공식 dry-run·undo와 적용기 테스트 31개를 통과했다. 작업 DB SHA-256은 `7d8e6c65e0b303362954fceaf85b81bc5ec58faee964e77deefc742c2550c5de`다. 이력 그룹 `1794123435487894`의 12행, 13개 테이블과 DDL, 적용 전 백업·공식 snapshot을 대조했다. 무결성은 `ok`, FK 위반과 sidecar는 0건이며 seed 해시는 일치했다.
 
 표준 진행표 snapshot은 `0b405361199598dea01040e3ac067e42624d77d15244d51f7aa99675ea215e31`다. 승인 864→869, 미승인 13,428→13,423이며 hold 6건, anomaly 113건과 비대상 14,293행이 일치했다.
+
+## H0384 이디엘 승인 — 2026-11-08
+
+[승인 manifest](../../tool/data_provenance/manifests/h384_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h384_cluster_approved_content_slice.md)에 `이디엘·이티-엘 (인)`, 비고 1건, H0410 확정 합성(ID 8309)과 H0854 가설 합성(ID 8310)을 기록했다.
+
+사본 적용·undo와 적용기 테스트 31개를 통과했다. 이력 그룹 `1794125650556269`의 4행과 비대상 데이터·DDL을 독립 대조했다. Work DB SHA-256은 `e929e7cfa0bec54bacb6dbc39140bb76183c2cd898b8f7edc0722976a7f52891`이다. 무결성 `ok`, FK 위반·sidecar 0건이며 seed 해시는 적용 전후 일치했다. 표준 진행표의 승인 수는 869→870이고 비대상 14,297행이 일치했다.

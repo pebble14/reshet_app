@@ -1,0 +1,65 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H384-CLUSTER-APPROVED-CONTENT-SLICE",
+  "target": {
+    "expected_work_sha256": "7d8e6c65e0b303362954fceaf85b81bc5ec58faee964e77deefc742c2550c5de",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0384_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "이디엘 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "이디엘·이티-엘 (인)"
+        }
+      ]
+    }
+  ],
+  "meaning_approvals": [],
+  "word_note_replacements": [
+    {
+      "word_id": "H0384_0000",
+      "before": null,
+      "after": "느헤미야 11:7의 베냐민 계보에 나오는 인명이다. 잠언 30:1의 마소라 본문에서는 아굴의 말을 받는 이 이름이 두 번 나오며, 자음의 분절과 모음을 달리해 ‘하나님, 저는 지쳤습니다’로 읽는 해석도 있다. ‘이디엘’은 성경 관용명이고 ‘이티-엘’은 이름 끝의 אֵל(하나님)을 드러낸 교재식 표기다. 첫 요소를 אֵת(H0854)의 인칭형과 연결하면 ‘하나님이 나와 함께 계신다’는 이름 풀이가 된다. Strong은 H0837과 H0410을 추정하여 ‘하나님이 오셨다’로 풀이하지만 H0837을 첫 요소로 볼 형태 근거는 약하다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0384_0000",
+      "word_id_2": "H0410_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "אֵל은 이름 끝의 신명 요소다. 첫 요소의 분석은 견해가 갈린다.",
+      "source": "Strong H0384; BDB H0384; Gesenius, Ithiel"
+    },
+    {
+      "word_id_1": "H0384_0000",
+      "word_id_2": "H0854_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "hypothesized",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "첫 요소를 אִתִּי(H0854, 나와 함께)에 연결하는 가설이다. 이름의 철자 및 ת의 다게쉬에 차이가 있다.",
+      "source": "BDB H0384, H0854; Gesenius, Ithiel; OSHB Judg.16.15; HebGrkKo H384"
+    }
+  ],
+  "relation_replacements": [],
+  "supersedes": [],
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h384_approval_20261108/00_user_approval.json",
+    "document_sha256": "47334dd99eb7bdddd22748f6fff84169a450c04297a33281b905769626149a9c"
+  }
+}
