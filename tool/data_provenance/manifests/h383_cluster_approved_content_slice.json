@@ -1,0 +1,178 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H383-CLUSTER-APPROVED-CONTENT-SLICE",
+  "target": {
+    "expected_work_sha256": "9303ecd021edd0c45967d14ff5905879d7142500059a2f4030285600f96b75bd",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0383_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "있다, 이다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "있다"
+        }
+      ]
+    },
+    {
+      "word_id": "H3426_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "있다"
+        },
+        {
+          "seq": 2,
+          "meaning": "있음/있는 것[존재, 소유]"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "있다"
+        },
+        {
+          "seq": 2,
+          "meaning": "재물(財物)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3448_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "이새"
+        },
+        {
+          "seq": 2,
+          "meaning": "뜻풀이: 여호와는 계신다/여호와의 예물"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "이새·이샤이 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "G2421_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "이새[여호와는 계신다/여호와의 예물]"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "이새·이샤이 (인)"
+        }
+      ]
+    }
+  ],
+  "meaning_approvals": [
+    {
+      "word_id": "H0786_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "있다"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0383_0000",
+      "before": null,
+      "after": "성경 아람어의 존재 표지로 존재·소재·소유를 나타내며, 히브리어 יֵשׁ(H3426)에 대응한다. לָא와 결합하면 ‘없다’가 되고, 인칭 접미형은 분사나 형용사와 결합해 그 사람의 상태나 행위를 나타낸다. 다니엘 2:26의 ‘할 수 있느냐’에서 능력은 כָּהֵל이 나타낸다. 다니엘 3:17은 조건의 범위를 어떻게 잡느냐에 따라 ‘그렇다면’, ‘하나님이 계시면’, ‘하나님이 구하실 수 있다면’으로 달리 풀이된다."
+    },
+    {
+      "word_id": "H3426_0000",
+      "before": null,
+      "after": "존재·소재·소유를 긍정하고, 의문과 조건에도 쓰인다. 인칭 접미형은 분사와 결합해 그 사람의 행위나 상태를 나타낸다. 민수기 9:20–21의 וְיֵשׁ אֲשֶׁר는 ‘~할 때가 있다’를 나타낸다. 잠언 8:21에서는 ‘물려주다’의 목적어인 명사로 재물을 가리킨다. 존재 용법은 아람어 אִיתַי(H0383)에 대응하고 히브리어 אַיִן·אֵין(H0369)과 대조된다."
+    },
+    {
+      "word_id": "H0786_0000",
+      "before": null,
+      "after": "사무엘하 14:19의 맹세에서 אִם אִשׁ가 방향을 나타내는 부정사와 결합해 ‘돌이킬 길이 없다’는 뜻을 낸다. 미가 6:10의 הַאִשׁ는 마소라 본문에서 ‘있느냐’로 풀이되며, 칠십인역의 해당 자리에는 πῦρ(불)가 나온다. BDB는 두 형태를 יֵשׁ(H3426) 항목에서 다룬다."
+    },
+    {
+      "word_id": "H3448_0000",
+      "before": null,
+      "after": "오벳의 아들이자 다윗의 아버지다. ‘이새’는 한국어 성경 관용명이고 ‘이샤이’는 히브리어 교재식 근사다. 역대상 2:13의 אִישַׁי도 같은 사람을 가리킨다. Strong은 יֵשׁ(H3426)와 어원을 공유한다고 보고, BDB가 인용한 יֵשׁ יָהּ(‘야께서 계신다’)는 추정이다. ‘여호와의 예물’ 풀이에 필요한 이름의 구성도 확정되지 않았다."
+    },
+    {
+      "word_id": "G2421_0000",
+      "before": null,
+      "after": "다윗의 아버지 이새를 가리키는 그리스어 음역이다. ‘이에싸이’는 Ἰεσσαί의 교재식 근사이며, 원천 히브리어 이름 יִשַׁי(H3448)의 근사는 ‘이샤이’다. 로마서 15:12의 ‘이새의 뿌리’는 칠십인역 이사야 11:10을 인용한 것이다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0383_0000",
+      "word_id_2": "H3426_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "성경 아람어 אִיתַי와 히브리어 יֵשׁ는 동계의 긍정 존재 표지다. 두 언어에서 소재·소유 구문에도 쓰인다.",
+      "source": "Strong H0383; BDB H0383, H3426; Suchard 2023 초록, doi:10.10520/ejc-semlang_v49_n2_a5"
+    },
+    {
+      "word_id_1": "H0786_0000",
+      "word_id_2": "H3426_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "BDB는 삼하 14:19의 אִשׁ와 미 6:10의 הַאִשׁ를 יֵשׁ 항목에 포함한다. 미 6:10의 칠십인역에는 ‘불’ 읽기가 남아 있어 이형 관계는 가설로 둔다.",
+      "source": "Strong H0786; BDB H3426; OSHB 및 LXX 2Sam.14.19, Mic.6.10"
+    }
+  ],
+  "relation_replacements": [
+    {
+      "relation_id": 3189,
+      "word_id_1": "G2421_0000",
+      "word_id_2": "H3448_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "transliteration",
+        "relation_type": "direct_transliteration",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "오벳의 아들이자 다윗의 아버지인 יִשַׁי가 그리스어 Ἰεσσαί로 전해진다. 룻 4:22와 마 1:5–6, 사 11:10과 롬 15:12에서 같은 이름과 전승을 확인할 수 있다.",
+        "source": "Greek Strong G2421; OSHB Ruth.4.22, Isa.11.10; TAGNT Matt.1.5–6, Rom.15.12; LXX Isa.11.10"
+      }
+    }
+  ],
+  "supersedes": [],
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h383_approval_20261108/00_user_approval.json",
+    "document_sha256": "f5f17264b01df205356c3b2ba7ea0602f3f95714e55f35e59d77f6a5d81283d6"
+  }
+}

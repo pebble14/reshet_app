@@ -1850,3 +1850,11 @@ H0336 의미 유지 승인 1건, 의미 교체 3건, 비고 4건, 관계 신규 
 공식 dry-run·undo와 적용기 테스트 31개를 통과했다. 이력 그룹 `1794119566054005`의 50행(ID 7565–7614)을 검증했고 적용 전 백업·공식 snapshot과 13개 테이블·DDL을 독립 대조했다. 작업 DB SHA-256은 `9303ecd021edd0c45967d14ff5905879d7142500059a2f4030285600f96b75bd`이며 seed SHA-256은 적용 전후 일치한다. 무결성은 `ok`, FK 위반과 sidecar는 0건이다. 적용 receipt는 로컬 `data/backups/approved_content_batch/20261108T063242993900Z/result.json`에 있다.
 
 표준 진행표의 정본 14,298개 가운데 승인은 847→864, 미승인은 13,445→13,428이다. Hold 6건, anomaly 113건과 비대상 14,281행이 일치했다. JSON·CSV·Markdown의 공통 snapshot은 `b9d2ebdacda1176d926ca57133c4ad8cdc3fd592443288189eec23533d0dad80`다.
+
+## H0383 연결 어휘군 승인 — 2026-11-08
+
+[승인 manifest](../../tool/data_provenance/manifests/h383_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h383_cluster_approved_content_slice.md)에 뜻 교체 4건, 기존 뜻 승인 1건, 비고 5건, 관계 신규 2건(ID 8307·8308) 및 교체 1건(ID 3189)을 기록했다. H0383은 `있다`, H3426은 `있다`와 `재물(財物)`, H3448과 G2421은 각각 `이새·이샤이 (인)`으로 승인했다.
+
+공식 dry-run·undo와 적용기 테스트 31개를 통과했다. 작업 DB SHA-256은 `7d8e6c65e0b303362954fceaf85b81bc5ec58faee964e77deefc742c2550c5de`다. 이력 그룹 `1794123435487894`의 12행, 13개 테이블과 DDL, 적용 전 백업·공식 snapshot을 대조했다. 무결성은 `ok`, FK 위반과 sidecar는 0건이며 seed 해시는 일치했다.
+
+표준 진행표 snapshot은 `0b405361199598dea01040e3ac067e42624d77d15244d51f7aa99675ea215e31`다. 승인 864→869, 미승인 13,428→13,423이며 hold 6건, anomaly 113건과 비대상 14,293행이 일치했다.
