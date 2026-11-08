@@ -1842,3 +1842,11 @@ H0336 의미 유지 승인 1건, 의미 교체 3건, 비고 4건, 관계 신규 
 [승인 manifest](../../tool/data_provenance/manifests/h374_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h374_cluster_approved_content_slice.md)에 한 뜻 `에바`와 비고를 기록했다. 그릇 용법과 성경 본문·후대 유대 전승의 환산 두 줄을 비고에 두었다. 관계 및 hold 변경은 0건이다.
 
 공식 dry-run·undo와 적용기 테스트 31개를 통과했다. 작업 DB 적용 후 13개 테이블·DDL을 독립 대조했다. 이력 그룹 `1794101610058109`에 7563–7564 두 행이 추가됐다. 무결성은 `ok`, FK 위반과 sidecar는 0건이며 seed 해시는 일치했다. 표준 진행표는 승인 846→847, 미승인 13,446→13,445, hold 6, anomaly 113이다. 비대상 14,297행이 일치했다. 앱 UI 검증은 콘텐츠 적용 범위에서 N/A다.
+
+## H0376 연결 어휘군 승인 — 2026-11-08
+
+[승인 manifest](../../tool/data_provenance/manifests/h376_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h376_cluster_approved_content_slice.md)에 뜻·비고 각 17건과 관계 신규 13건(ID 8294–8306) 및 교체 3건(ID 2921·3946·3947)을 기록했다. H0377은 `용기(勇氣)를 내다`, H0605는 `쇠약하다(衰弱하다)`, `낫기 어렵다`를 채택했다. 새 단어 단위 hold는 0건이다.
+
+공식 dry-run·undo와 적용기 테스트 31개를 통과했다. 이력 그룹 `1794119566054005`의 50행(ID 7565–7614)을 검증했고 적용 전 백업·공식 snapshot과 13개 테이블·DDL을 독립 대조했다. 작업 DB SHA-256은 `9303ecd021edd0c45967d14ff5905879d7142500059a2f4030285600f96b75bd`이며 seed SHA-256은 적용 전후 일치한다. 무결성은 `ok`, FK 위반과 sidecar는 0건이다. 적용 receipt는 로컬 `data/backups/approved_content_batch/20261108T063242993900Z/result.json`에 있다.
+
+표준 진행표의 정본 14,298개 가운데 승인은 847→864, 미승인은 13,445→13,428이다. Hold 6건, anomaly 113건과 비대상 14,281행이 일치했다. JSON·CSV·Markdown의 공통 snapshot은 `b9d2ebdacda1176d926ca57133c4ad8cdc3fd592443288189eec23533d0dad80`다.

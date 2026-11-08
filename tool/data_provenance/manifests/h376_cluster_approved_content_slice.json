@@ -1,0 +1,637 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H376-CLUSTER-APPROVED-CONTENT-SLICE",
+  "target": {
+    "expected_work_sha256": "0a98980fd2dc4e582251f8a3d800bbf91ee62d9f8512c06336271ddcb9371620",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0376_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "사람"
+        },
+        {
+          "seq": 2,
+          "meaning": "남자/수컷"
+        },
+        {
+          "seq": 3,
+          "meaning": "각각"
+        },
+        {
+          "seq": 4,
+          "meaning": "누구든지"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "사람"
+        },
+        {
+          "seq": 2,
+          "meaning": "남자(男子)"
+        },
+        {
+          "seq": 3,
+          "meaning": "남편(男便)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0377_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "남자답게 행동하다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "용기(勇氣)를 내다"
+        }
+      ]
+    },
+    {
+      "word_id": "H0378_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "이스보셋 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "이스보셋·이쉬-보셰트 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0379_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "이스홋 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "이스훗·이스홋·이쉬-호드 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0380_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "눈동자"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "눈동자"
+        },
+        {
+          "seq": 2,
+          "meaning": "한가운데"
+        }
+      ]
+    },
+    {
+      "word_id": "H0381_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "용사"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "용사(勇士)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0382_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "돕 사람"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "돕·토브 사람"
+        }
+      ]
+    },
+    {
+      "word_id": "H0582_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "사람/인간/인류"
+        },
+        {
+          "seq": 2,
+          "meaning": "남자"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "사람"
+        }
+      ]
+    },
+    {
+      "word_id": "H0583_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "에노스"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "에노스·에노쉬 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0605_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "병들다"
+        },
+        {
+          "seq": 2,
+          "meaning": "지독한"
+        },
+        {
+          "seq": 3,
+          "meaning": "고칠 수 없는/불치의"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "쇠약하다(衰弱하다)"
+        },
+        {
+          "seq": 2,
+          "meaning": "낫기 어렵다"
+        }
+      ]
+    },
+    {
+      "word_id": "H0606_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "사람, 인류"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "사람"
+        }
+      ]
+    },
+    {
+      "word_id": "H0792_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "에스바알 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "에스바알·에쉬-바알 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0802_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "여자, 부인"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "여자(女子)"
+        },
+        {
+          "seq": 2,
+          "meaning": "아내"
+        }
+      ]
+    },
+    {
+      "word_id": "H2897_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "돕 Tob"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "돕·토브 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3798_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "기들리스 chitlish"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "기들리스·키틀리쉬 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5389_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아내들, 부인들"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아내들"
+        }
+      ]
+    },
+    {
+      "word_id": "G1800_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "에노스"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "에노스·에노쉬 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0376_0000",
+      "before": null,
+      "after": "개인이나 집단의 한 사람을 가리킨다. 출신·소속·직무를 나타내는 말과 결합하며, 여자와 대비되는 남자 및 혼인 관계의 남편도 가리킨다. 집단의 구성원을 하나씩 지시하는 대명사적 용법에서는 ‘각각’이나 ‘서로’로 옮기며, 사람 이외의 대상에도 쓰인다. 조건문과 부정문에서는 ‘누구든지’ 또는 ‘아무도’로 옮길 수 있다. 창 7:2의 אִישׁ וְאִשְׁתּוֹ는 짐승의 수컷과 암컷을 짝지어 가리킨다. 복수는 주로 אֲנָשִׁים 계열이고 אִישִׁים도 나온다. Strong은 אֱנוֹשׁ과의 축약 관계 및 별개 어근 가능성을 제시한다."
+    },
+    {
+      "word_id": "H0377_0000",
+      "before": null,
+      "after": "이사야 46:8에서 앞서 말한 일을 기억하고 용기를 내라는 권면으로 읽는다. Strong과 Gesenius는 אִישׁ(H0376)에서 파생된 말로 보아 ‘장부답게 행동하다’로 풀이한다. 삼상 4:9와 왕상 2:2에도 ‘남자가 되어라’는 명사 구문이 굳셈을 권하는 말과 함께 나온다. BDB가 전하는 별개 어근 분석에서는 ‘굳게 서다’로 읽을 수 있다. 칠십인역은 탄식으로 옮긴다. 정확한 어근은 미확정이다."
+    },
+    {
+      "word_id": "H0378_0000",
+      "before": null,
+      "after": "‘이스보셋’은 한국어 성경 관용명이고 ‘이쉬-보셰트’는 אִישׁ과 בֹּשֶׁת의 경계를 보이는 교재식 근사다. 사울의 아들이자 이스라엘 왕으로, 대상 8:33과 9:39에서는 에스바알(H0792)로 나온다. Strong은 ‘수치의 사람’으로 풀이한다. 바알 계열과 보셰트 계열의 두 이름이 병행하며 이름 형태가 달라진 시점과 동기는 미확정이다."
+    },
+    {
+      "word_id": "H0379_0000",
+      "before": null,
+      "after": "‘이스훗’은 개역 계열, ‘이스홋’은 새번역의 관용명이다. ‘이쉬-호드’는 אִישׁ과 הוֹד를 나누어 보이는 교재식 근사다. 대상 7:18의 함몰레겟 아들이다. Strong은 위엄이나 영예를 지닌 사람이라는 뜻으로 풀이한다."
+    },
+    {
+      "word_id": "H0380_0000",
+      "before": null,
+      "after": "신 32:10·시 17:8·잠 7:2에서는 눈동자를 가리킨다. Strong은 눈동자에 비친 작은 사람의 형상에서 비롯된 축소형으로 설명한다. ‘한가운데’ 용법은 잠 7:9의 밤과 잠 20:20의 어둠에 나타나며 깊은 밤이나 짙은 어둠을 묘사한다. 잠 20:20에는 אִישׁוֹן에 해당하는 기록형과 אֱשׁוּן으로 읽는 전승이 있다."
+    },
+    {
+      "word_id": "H0381_0000",
+      "before": null,
+      "after": "‘용맹한 사람’을 뜻하는 אִישׁ과 חַיִל의 표현이다. 삼하 23:20에는 חַי(살아 있는)로 적고 חַיִל(힘·용맹)로 읽는 전승이 있으며, 대상 11:22의 병행 본문에는 חַיִל이 적혀 있다. 두 구절에서 OSHB는 구성 단어를 따로 태그한다. 브나야 계보에서 용맹의 수식 대상을 두고 번역이 갈린다."
+    },
+    {
+      "word_id": "H0382_0000",
+      "before": null,
+      "after": "삼하 10:6·8의 אִישׁ טוֹב는 돕 지역 사람들을 집합적으로 가리킨다. 돕은 성경 관용 지명이고 토브는 טוֹב의 교재식 근사다. OSHB는 ‘사람’(H0376)과 ‘돕’(H2897)을 따로 태그하며, KJV와 LXX는 한 이름처럼 옮긴다."
+    },
+    {
+      "word_id": "H0582_0000",
+      "before": null,
+      "after": "개인, 사람들의 집합, 사람 일반을 가리킨다. 욥기와 시편에서는 하나님과 인간을 대비하거나 삶의 유한함을 드러내기도 한다. H0120과 같은 문맥에서 사람을 나타낼 수 있고, אִישׁ의 복수형 אֲנָשִׁים과 형태상 관련된다. OSHB는 이 복수형을 H0376으로 태그한다. Strong의 H0605 파생 설명과 두 단어를 구분하는 사전 분석이 갈린다."
+    },
+    {
+      "word_id": "H0583_0000",
+      "before": null,
+      "after": "셋의 아들이자 게난의 아버지다. ‘에노스’는 한국어 성경 관용명이고 ‘에노쉬’는 אֱנוֹשׁ의 교재식 근사다. Strong은 ‘사람’을 뜻하는 보통명사 H0582와 같은 형태로 설명한다. 칠십인역과 눅 3:38에는 그리스어 Ἐνώς로 전해진다."
+    },
+    {
+      "word_id": "H0605_0000",
+      "before": null,
+      "after": "병이 들어 몸이나 기력이 쇠약해지는 뜻이다. 삼하 12:15에서는 아이가 몹시 앓는 동사형으로 쓰인다. אָנוּשׁ 계열 분사는 낫기 어려운 상처나 고통을 가리키며, 렘 15:18과 미 1:9에서는 고칠 길이 없다는 뜻이 두드러진다. 고통·마음·재앙의 날에도 비유적으로 쓰인다. Strong은 사람을 뜻하는 H0582를 이 동사와 연결하지만 BDB는 두 어근을 구별한다."
+    },
+    {
+      "word_id": "H0606_0000",
+      "before": null,
+      "after": "아람어 명사로, 개인과 사람들 및 사람 일반을 가리킨다. 조건문에서는 ‘누구든지’로 옮길 수 있다. 단 7:13의 ‘인자 같은 이’에서 ‘사람’은 בַּר(아들)과 결합한다. 히브리어 אֱנוֹשׁ(H0582)에 대응한다."
+    },
+    {
+      "word_id": "H0792_0000",
+      "before": null,
+      "after": "‘에스바알’은 한국어 성경 관용명이고 ‘에쉬-바알’은 히브리어 이름의 교재식 근사와 구성 경계를 보이는 표기다. 대상 8:33·9:39의 사울 아들이며 삼하 2–4장의 이스보셋(H0378)과 같은 인물이다. Strong은 ‘바알의 사람’으로 풀이한다. 바알 요소는 분명하고 첫 요소와 אִישׁ의 정확한 역사적 연결은 추정이다."
+    },
+    {
+      "word_id": "H0802_0000",
+      "before": null,
+      "after": "여자와 아내를 가리키며 복수는 주로 נָשִׁים 계열이다. 여럿 가운데 한 대상을 짚는 분배·상호 구문에서는 여성이나 문법상 여성인 대상을 가리키며 ‘각각’ 또는 ‘서로’로 옮긴다. 룻 1:8의 두 며느리와 출 26:3의 성막 휘장이 그 예다. 창 7:2에서는 짝을 이룬 짐승의 암컷을 가리킨다. 창 2:23의 אִישׁ과 성별상 대응하며, 두 단어의 역사적 파생 관계에는 여러 설명이 있다."
+    },
+    {
+      "word_id": "H2897_0000",
+      "before": null,
+      "after": "‘돕’은 한국어 성경 관용명이고 ‘토브’는 טוֹב의 교재식 근사다. 삿 11장에서는 입다가 거주한 땅으로, 삼하 10장에서는 용병을 보낸 지역으로 나온다. Strong은 ‘좋다’를 뜻하는 H2896과 같은 형태로 보며 요단 동쪽에 있었을 가능성을 제시한다. 정확한 위치와 지명 형성 경위는 미확정이다."
+    },
+    {
+      "word_id": "H3798_0000",
+      "before": null,
+      "after": "‘기들리스’는 한국어 성경 관용명이고 ‘키틀리쉬’는 כִּתְלִישׁ의 교재식 근사다. 수 15:40의 유다 성읍으로 정확한 위치는 미확정이다. Strong은 ‘벽’(H3796)과 ‘사람’(H0376)의 결합으로 설명한다. 그리스어 전승의 표기가 다양하며 히브리어 이름의 내부 경계는 추정이다."
+    },
+    {
+      "word_id": "H5389_0000",
+      "before": null,
+      "after": "아람어 여성 복수 어휘다. 단 6:25(한국어 성경 6:24)의 소유형은 ‘그들의 아내들’이다. 히브리어 אִשָּׁה(H0802)의 복수 נָשִׁים과 비교된다. Strong은 H0606의 불규칙 여성 복수로 설명한다."
+    },
+    {
+      "word_id": "G1800_0000",
+      "before": null,
+      "after": "눅 3:38에 나오는 셋의 아들이다. ‘에노스’는 한국어 성경 관용명이며 그리스어 Ἐνώς의 교재식 근사와 일치한다. ‘에노쉬’는 원천 히브리어 이름 אֱנוֹשׁ(H0583)의 교재식 근사다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0376_0000",
+      "word_id_2": "H0802_0000",
+      "category_code": "semantic",
+      "relation_type": "contrast",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "창 2:23에서 남자와 여자가 대응한다. 두 어휘의 역사적 파생에는 여러 설명이 있다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml H0376·H0802 (21c9add13bc727d3a951361778e97e3ff7afd1ce); OSHB Gen.2.23"
+    },
+    {
+      "word_id_1": "H0376_0000",
+      "word_id_2": "H0378_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "이스보셋의 첫 요소 אִישׁ이다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml H0378 (21c9add13bc727d3a951361778e97e3ff7afd1ce); OSHB 2Sam.2.8"
+    },
+    {
+      "word_id_1": "H0378_0000",
+      "word_id_2": "H1322_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "이스보셋의 둘째 요소 בֹּשֶׁת(수치)다. 바알 계열 이름과의 관계 및 명명 경위는 미확정이다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml H0378 (21c9add13bc727d3a951361778e97e3ff7afd1ce); OSHB 2Sam.2.8"
+    },
+    {
+      "word_id_1": "H0376_0000",
+      "word_id_2": "H0379_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "이스훗의 첫 요소 אִישׁ이다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml H0379 (21c9add13bc727d3a951361778e97e3ff7afd1ce); OSHB 1Chr.7.18"
+    },
+    {
+      "word_id_1": "H0379_0000",
+      "word_id_2": "H1935_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "이스훗의 둘째 요소 הוֹד(위엄·영예)다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml H0379 (21c9add13bc727d3a951361778e97e3ff7afd1ce); OSHB 1Chr.7.18"
+    },
+    {
+      "word_id_1": "H0376_0000",
+      "word_id_2": "H0380_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong은 축소형으로 보고 눈동자에 비친 작은 사람의 형상과 연결한다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml H0380 (21c9add13bc727d3a951361778e97e3ff7afd1ce); OSHB Deut.32.10; Ps.17.8; Prov.7.2"
+    },
+    {
+      "word_id_1": "H0120_0000",
+      "word_id_2": "H0582_0000",
+      "category_code": "semantic",
+      "relation_type": "similar",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "사람 일반을 가리키는 두 뜻이 겹친다. 사 13:12와 시 8:5에서 두 어휘가 병행한다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml H0582 (21c9add13bc727d3a951361778e97e3ff7afd1ce); OSHB Isa.13.12; Ps.8.5"
+    },
+    {
+      "word_id_1": "H0582_0000",
+      "word_id_2": "H0606_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "히브리어와 아람어의 אנש 계열 명사로 모두 사람을 가리킨다. 차용 방향은 미확정이다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml H0606 (21c9add13bc727d3a951361778e97e3ff7afd1ce); OSHB Ps.8.5; Dan.7.13"
+    },
+    {
+      "word_id_1": "H0376_0000",
+      "word_id_2": "H0792_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong은 첫 요소를 사람과 연결한다. אֶשׁ와 אִישׁ의 정확한 역사적 연결은 추정이다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml H0792 (21c9add13bc727d3a951361778e97e3ff7afd1ce); OSHB 1Chr.8.33; 9.39"
+    },
+    {
+      "word_id_1": "H0792_0000",
+      "word_id_2": "H1168_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "에스바알의 둘째 요소 בַּעַל이다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml H0792 (21c9add13bc727d3a951361778e97e3ff7afd1ce); OSHB 1Chr.8.33; 9.39"
+    },
+    {
+      "word_id_1": "H2896_0000",
+      "word_id_2": "H2897_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "‘좋다’와 지명 돕의 형태는 같다. 지명 형성 경위는 미확정이다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml H2897 (21c9add13bc727d3a951361778e97e3ff7afd1ce); OSHB Judg.11.3; 11.5; 2Sam.10.6; 10.8"
+    },
+    {
+      "word_id_1": "H0376_0000",
+      "word_id_2": "H3798_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong이 제시한 지명 후반의 사람 요소다. 이름의 내부 경계는 추정이다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml H3798 (21c9add13bc727d3a951361778e97e3ff7afd1ce); OSHB Josh.15.40"
+    },
+    {
+      "word_id_1": "H3796_0000",
+      "word_id_2": "H3798_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong이 제시한 지명 전반의 벽 요소다. 이름의 내부 경계는 추정이다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml H3798 (21c9add13bc727d3a951361778e97e3ff7afd1ce); OSHB Josh.15.40; Song.2.9"
+    }
+  ],
+  "relation_replacements": [
+    {
+      "relation_id": 2921,
+      "word_id_1": "H0376_0000",
+      "word_id_2": "H0582_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "semantic",
+        "relation_type": "similar",
+        "status_code": "asserted",
+        "direction_code": "undirected",
+        "description": null,
+        "relation_group_id": null,
+        "note": "두 어휘 모두 사람 일반을 가리킨다. אֲנָשִׁים 형태에서도 접점이 있으며 단수의 축약 관계는 추정이다.",
+        "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml H0376·H0582 (21c9add13bc727d3a951361778e97e3ff7afd1ce); OSHB Isa.13.12; Ps.8.5"
+      }
+    },
+    {
+      "relation_id": 3946,
+      "word_id_1": "H0582_0000",
+      "word_id_2": "H0583_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "사람을 뜻하는 보통명사와 같은 형태가 셋의 아들 이름으로 쓰인다.",
+        "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml H0583 (21c9add13bc727d3a951361778e97e3ff7afd1ce); OSHB Gen.4.26; 5.6–11"
+      }
+    },
+    {
+      "relation_id": 3947,
+      "word_id_1": "G1800_0000",
+      "word_id_2": "H0583_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "transliteration",
+        "relation_type": "direct_transliteration",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "셋의 아들 אֱנוֹשׁ를 칠십인역과 눅 3:38에서 Ἐνώς로 전한다.",
+        "source": "MorphGNT Strong G1800 (dd6758b82f46b620804a8ea677d715844679eea1); OSHB Gen.4.26; 5.6–11; LXX Gen.5.6–11; TAGNT Luke.3.38"
+      }
+    }
+  ],
+  "supersedes": [],
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h376_approval_20261108/00_user_approval.json",
+    "document_sha256": "89f5fc5dd8a025ce905db84981f657e7b01231195be7aac30c5c932bbc29eefa"
+  },
+  "meaning_approvals": []
+}
