@@ -1,0 +1,44 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H374-CLUSTER-APPROVED-CONTENT-SLICE",
+  "target": {
+    "expected_work_sha256": "9b6ee9c6df1657d9d999ac105cde5e8652d8593d4f9017f1928d03a5b21a24dc",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0374_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "에바"
+        },
+        {
+          "seq": 2,
+          "meaning": "1 에바 = 1 밧/바트 = 3 스아 = 10 오멜 = 18 갑"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "에바"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0374_0000",
+      "before": null,
+      "after": "곡식이나 가루 같은 마른 물질의 부피를 재는 단위다. 그 양을 재는 그릇도 에바라고 부른다. 스가랴 5:6–10에서는 여인이 들어가고 입구가 납으로 덮이는 그릇을 가리킨다.\n\n- 성경 본문　1 에바 = 10 오멜 = 1 밧(바트) = 1/10 호멜 (출 16:36, 겔 45:11)\n- 후대 유대 전승　1 에바 = 3 스아 = 18 갑 (라시의 출 16:36 주석)\n\n이집트어의 건량 단위 이름에서 유래했다는 견해가 있으며, 리터 환산은 추정이다."
+    }
+  ],
+  "relation_creates": [],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": [],
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h374_approval_20261108/00_user_approval.json",
+    "document_sha256": "d0af26cc2d22e15769ceac2b82f7b48bcc76ff26de447de9f5290434fad2588f"
+  }
+}

@@ -26,6 +26,7 @@
 
 | 결정 단위 | 대상 | 상태 | 복원 수준 | 최초 적용일 | 기록 |
 |---|---|---|---|---|---|
+| H374 에바 | H0374 뜻·비고 | `active` | 높음 | 2026-11-08 | [기록](h374_cluster_approved_content_slice.md) |
 | H369 연결 어휘군 | H0369 뜻·비고, H0371 비고, 반의·이형 관계 | `active` | 높음 | 2026-11-08 | [기록](h369_cluster_approved_content_slice.md) |
 | H366 연결 어휘군 | H0366·H0367·H0368 | `active` | 높음 | 2026-11-07 | [기록](h366_cluster_approved_content_slice.md) |
 | H336 연결 어휘군 | H0336·H0348·G2403·H0350 | `active` | 높음 | 2026-11-07 | [기록](h336_cluster_approved_content_slice.md) |
