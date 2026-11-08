@@ -1,0 +1,40 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H390-CLUSTER-APPROVED-CONTENT-SLICE",
+  "target": {
+    "expected_work_sha256": "27d2b34fa5b1cf9c8ba3d096b21f3edaf41cbfdceafaaa84fe0dc5f7ab7d6dfb",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0390_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "악갓 (지)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "악갓·아카드 (지)"
+        }
+      ]
+    }
+  ],
+  "meaning_approvals": [],
+  "word_note_replacements": [
+    {
+      "word_id": "H0390_0000",
+      "before": null,
+      "after": "창세기 10:10에서 니므롯 왕국의 초기 중심지로 열거된 시날 땅의 도시다. 일반적으로 사르곤 왕조의 수도였던 아카드와 같은 도시로 보며, 정확한 유적 위치는 미확정이다. 개역개정·개역한글·새번역은 ‘악갓’, 천주교 성경은 ‘아카드’, 공동번역은 ‘아깟’으로 적는다. Strong의 ‘요새’ 풀이는 ‘강하게 하다’라는 뜻의 미사용 어근을 가정한 것이며, 이름의 어원은 미확정이다."
+    }
+  ],
+  "relation_creates": [],
+  "relation_replacements": [],
+  "supersedes": [],
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h390_approval_20261108/00_user_approval.json",
+    "document_sha256": "b0a69d401e991b1788a9c642766ead788acdf40ef4349ba8ed1c7ac8335585a4"
+  }
+}
