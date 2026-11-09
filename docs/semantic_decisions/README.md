@@ -26,6 +26,7 @@
 
 | 결정 단위 | 대상 | 상태 | 복원 수준 | 최초 적용일 | 기록 |
 |---|---|---|---|---|---|
+| H406 농부 | H0406 뜻·비고, G1092 직접 번역 관계 1건 | `active` | 높음 | 2026-11-09 | [기록](h406_cluster_approved_content_slice.md) |
 | H404 압박 어휘군 | H0404·H0405 뜻·비고, 가설 파생 관계 1건 | `active` | 높음 | 2026-11-09 | [기록](h404_cluster_approved_content_slice.md) |
 | H397 아기스 | H0397 뜻·비고 | `active` | 높음 | 2026-11-09 | [기록](h397_cluster_approved_content_slice.md) |
 | H396 먹다·먹을 것 어휘군 | 10개 표제어 뜻·비고, 관계 8건 | `active` | 높음 | 2026-11-09 | [기록](h396_cluster_approved_content_slice.md) |

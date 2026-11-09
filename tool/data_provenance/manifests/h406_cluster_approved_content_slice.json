@@ -1,0 +1,53 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H406-CLUSTER-APPROVED-CONTENT-SLICE",
+  "target": {
+    "expected_work_sha256": "d6380d63096584c7dc882c07f195f5bca0fdc2e66cda52b9640a1b5778eb7236",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0406_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "농부"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "농부(農夫)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0406_0000",
+      "before": null,
+      "after": "밭을 일구어 작물을 기르는 사람을 가리킨다. 예레미야 51:23에서는 멍엣소와 함께 나오며, 토지 소유 여부는 문맥에서 판단한다. 수메르어 engar와 이어지는 아카드어 ikkāru에서 빌려온 말로 보는 견해가 유력하다. Strong은 ‘파다’를 뜻하는 미사용 어근에서 왔다고 설명한다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "G1092_0000",
+      "word_id_2": "H0406_0000",
+      "category_code": "translation",
+      "relation_type": "literal_translation",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "칠십인역은 예레미야 14:4, 38:24(MT 31:24), 28:23(MT 51:23), 요엘 1:11, 아모스 5:16의 אִכָּר를 γεωργός의 굴절형으로 옮긴다. 이 관계는 해당 다섯 구절의 번역 대응을 기록한다. 이사야 61:5는 ἀροτήρ로 옮겼으며, 역대하 26:10에는 해당 명사의 직접 대응어가 없다.",
+      "source": "RESHET-EC-H406-CLUSTER-H406-G1092"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": [],
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h406_approval_20261109/00_user_approval.json",
+    "document_sha256": "2ae6b30dfe876b944ecc815a85e89b8e5777fba10c0956594434702bf8f944a8"
+  }
+}
