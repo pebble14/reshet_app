@@ -1882,3 +1882,9 @@ H0336 의미 유지 승인 1건, 의미 교체 3건, 비고 4건, 관계 신규 
 [승인 manifest](../../tool/data_provenance/manifests/h390_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h390_cluster_approved_content_slice.md)에 `악갓·아카드 (지)`와 비고를 기록했다. 관계와 hold는 각각 추가 0건이다.
 
 공식 사본 적용·되돌리기와 적용기 테스트 31개를 통과했다. 이력 그룹 `1794149175408410`의 2행과 비대상 데이터·DDL을 독립 대조했다. 무결성은 `ok`이고 FK 위반과 sidecar는 0건이다. Seed 해시는 적용 전후 일치했다. 표준 진행 현황에서 승인 876→877과 비대상 14,297행의 일치를 확인했다.
+
+## H0391 거짓·신뢰 어휘군 승인 — 2026-11-09
+
+[승인 manifest](../../tool/data_provenance/manifests/h391_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h391_cluster_approved_content_slice.md)에 뜻 교체 8건, 비고 8건, 관계 6건을 기록했다. H0391의 승인 뜻은 `미덥지 않은`이다. H3576은 `거짓말하다`, `기대(期待)를 저버리다` 순으로 기록했다. 고유명사 네 항목은 승인한 병기 표현을 적용했다. 새 관계 ID는 8314–8319이며 신규 단어 hold는 0건이다.
+
+공식 사본 적용·되돌리기와 적용기 테스트 31개를 통과했다. 이력 그룹 `1794184331783337`의 22행, 적용 전 백업과 공식 snapshot, 전체 13개 테이블과 DDL을 독립 대조했다. 무결성은 `ok`이며 FK 위반과 sidecar는 0건이다. Seed 해시는 적용 전후 일치했다. 표준 진행 현황에서 승인 877→885와 비대상 14,290행의 일치를 확인했다.

@@ -1,0 +1,257 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H391-CLUSTER-APPROVED-CONTENT-SLICE",
+  "target": {
+    "expected_work_sha256": "f94459c7057aa53ac8f92fde9cc5c0697f5c4cce401bbef41717a9f407484365",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0391_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "거짓된, 속이는"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "미덥지 않은"
+        }
+      ]
+    },
+    {
+      "word_id": "H0392_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "악십 (지)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "악십·아크지브 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3538_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "거짓된, 허위의"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "거짓된"
+        }
+      ]
+    },
+    {
+      "word_id": "H3576_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "거짓말하다, 거짓말쟁이다."
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "거짓말하다"
+        },
+        {
+          "seq": 2,
+          "meaning": "기대(期待)를 저버리다"
+        }
+      ]
+    },
+    {
+      "word_id": "H3577_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "거짓말, 허위, 사기"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "거짓"
+        }
+      ]
+    },
+    {
+      "word_id": "H3578_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "고세바 Cozeba"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "고세바·코제바 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3579_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "고스비Cozbi"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "고스비·코즈비 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3580_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "거십 Chezib"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "거십·케지브 (지)"
+        }
+      ]
+    }
+  ],
+  "meaning_approvals": [],
+  "word_note_replacements": [
+    {
+      "word_id": "H0391_0000",
+      "before": null,
+      "after": "믿고 의지할 만하지 않은 성질을 나타낸다. 렘 15:18에서는 물이 일정하지 않은 시내를 빗댄다. 미 1:14에서는 악십(אַכְזִיב)과 말놀이를 이루며, 그 집들이 이스라엘 왕들의 기대를 저버리게 됨을 나타낸다. 미가에서도 마른 물길의 비유를 읽는 견해가 있다. Strong과 HALOT는 כזב 어근과 연결한다."
+    },
+    {
+      "word_id": "H0392_0000",
+      "before": null,
+      "after": "악십은 개역개정·개역한글·새번역의 관용명이고, 천주교 성경의 악집과 히브리어 교재식 근사 아크지브가 대응한다. 유다 저지대의 성읍(수 15:44, 미 1:14)과 아셀의 해안 성읍(수 19:29, 삿 1:31)은 동명이다. 유다의 악십은 거십·고세바와 같은 곳으로 보는 견해가 있으나 식별은 미확정이다. 미 1:14는 אַכְזָב와의 말놀이를 보인다. Strong과 HALOT가 제시하는 마른 물길과 이름의 연결은 어원설이다."
+    },
+    {
+      "word_id": "H3538_0000",
+      "before": null,
+      "after": "단 2:9의 כִדְבָה는 꾸며 낸 말(מִלָּה)을 수식하는 여성 단수형으로 읽힌다. ‘거짓말’이라는 명사가 동격으로 놓였다는 분석도 있다. 아람어 כ־ד־ב는 히브리어 כ־ז־ב에 대응하는 동족 어근이다."
+    },
+    {
+      "word_id": "H3576_0000",
+      "before": null,
+      "after": "거짓을 말하거나, 믿고 바라던 바를 이루어 주지 못한다는 뜻이다. 사 58:11에서는 샘물이 끊기지 않음을, 합 2:3에서는 묵시가 헛되이 끝나지 않음을 나타낸다. 합 2:3은 묵시가 ‘거짓말하지 않는다’고도 읽힌다. 욥 41:1(한국어 41:9)의 니팔형은 리워야단을 잡으리라는 기대가 헛것으로 드러났음을 표현한다. 잠 30:6과 욥 24:25에서는 각각 거짓을 말한 사람으로 드러남과 거짓을 말했음을 입증하는 데 쓰인다. 삿 16:10·13에서 이 번호로 태그된 כְּזָבִים은 문법상 ‘거짓말들’이라는 명사(H3577)다."
+    },
+    {
+      "word_id": "H3577_0000",
+      "before": null,
+      "after": "H3576의 어근에서 나온 남성 명사다. 거짓말과 거짓 증언, 거짓 점괘를 비롯해 믿을 수 없는 대상도 가리킨다. 사 28:15·17의 피난처와 잠 23:3의 음식은 문맥이 가리키는 대상이다. 암 2:4에서는 조상들이 따르던 거짓된 것이 거짓 신을 가리킬 수 있다."
+    },
+    {
+      "word_id": "H3578_0000",
+      "before": null,
+      "after": "고세바는 개역개정·개역한글·새번역의 관용명이다. 코제바는 천주교 성경 표기이자 대상 4:22의 히브리어 본문형 כֹזֵבָא를 따른 교재식 근사다. 공동번역은 고제바로 적는다. 유다의 셀라 계보에 고세바 사람들이 나오며 거십 및 유다의 악십과 같은 곳으로 보는 견해가 있다. Strong은 이 이름을 כזב 어근에 연결하며, HALOT는 물길이 말라 물을 댈 수 없다는 풀이를 제시한다."
+    },
+    {
+      "word_id": "H3579_0000",
+      "before": null,
+      "after": "고스비는 개역개정·개역한글·새번역의 관용명이다. 코즈비는 천주교 성경 표기이자 민 25:15·18의 히브리어 본문형 כָּזְבִּי에 따른 교재식 근사다. 공동번역은 고즈비로 적는다. 미디안 수장 수르의 딸이다. Strong은 ‘거짓’ 어근과 연결하지만, HALOT는 아카드어의 매력과 풍요를 나타내는 어군 및 인명과 비교한다. 이름의 원래 뜻은 미확정이다."
+    },
+    {
+      "word_id": "H3580_0000",
+      "before": null,
+      "after": "거십은 개역개정·개역한글·새번역의 관용명이고, 케지브는 כְּזִיב의 교재식 근사다. 천주교 성경은 크집, 공동번역은 그집으로 적는다. 창 38:5에서 셀라가 태어날 때 나오는 지명이다. 마소라 본문은 그곳에 있던 주어를 남성으로, 칠십인역은 여성으로 표현한다. 거십을 유다의 악십·고세바와 같은 곳으로 보는 견해와 כזב 어근에 연결하는 어원설이 있다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0391_0000",
+      "word_id_2": "H3576_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "כזב 어근과 연결된 형용사다. 렘 15:18의 믿을 수 없는 물길과 미 1:14의 기대 불충족이 그 쓰임을 보여 준다.",
+      "source": "Strong H391, HALOT אַכְזָב·כזב I, BDB H391"
+    },
+    {
+      "word_id_1": "H0391_0000",
+      "word_id_2": "H0392_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong과 HALOT가 지명을 믿을 수 없는 물길에서 풀이한다. 미 1:14의 말놀이는 확인되며 이름이 생긴 과정은 미확정이다.",
+      "source": "Strong H392, HALOT אַכְזִיב, OSHB Mic.1.14"
+    },
+    {
+      "word_id_1": "H3538_0000",
+      "word_id_2": "H3576_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "아람어 כ־ד־ב와 히브리어 כ־ז־ב의 동족 관계다.",
+      "source": "Strong H3538, BDB H3538·H3576, HALOT כזב I"
+    },
+    {
+      "word_id_1": "H3576_0000",
+      "word_id_2": "H3577_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "같은 כזב 어근의 동사와 남성 명사이며 두 형태가 잠 14:5와 겔 13:19에 함께 나온다.",
+      "source": "Strong H3577, HALOT כזב I·כָּזָב, OSHB Prov.14.5·Ezek.13.19"
+    },
+    {
+      "word_id_1": "H0392_0000",
+      "word_id_2": "H3580_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "유다의 악십과 거십을 한 성읍의 이형으로 보는 가설이다. H0392의 아셀 성읍은 별개다.",
+      "source": "BDB H392·H3580, HALOT כְּזִיב, OSHB Josh.15.44·Gen.38.5, LXX Josh.15.44"
+    },
+    {
+      "word_id_1": "H3578_0000",
+      "word_id_2": "H3580_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "고세바 사람들과 거십은 모두 유다의 셀라와 연결되며 같은 지명의 이형일 가능성이 있다.",
+      "source": "OSHB 1Chr.4.21–22·Gen.38.5, BDB H3578·H3580, Zissu·Gass"
+    }
+  ],
+  "relation_replacements": [],
+  "supersedes": [],
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h391_approval_20261109/00_user_approval.json",
+    "document_sha256": "29f26f119b9f079c415bf399c4c72b9d9f527fbd72508b19520b9e46321fd10f"
+  }
+}
