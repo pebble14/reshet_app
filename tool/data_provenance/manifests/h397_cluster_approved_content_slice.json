@@ -1,0 +1,40 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H397-CLUSTER-APPROVED-CONTENT-SLICE",
+  "target": {
+    "expected_work_sha256": "6d28e44493d109d7add3c738053134ae7a7f01a59184d9efddb039e451c092a5",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0397_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아기스 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아기스·아키쉬 (인)"
+        }
+      ]
+    }
+  ],
+  "meaning_approvals": [],
+  "word_note_replacements": [
+    {
+      "word_id": "H0397_0000",
+      "before": null,
+      "after": "‘아기스’는 개역개정·개역한글·새번역의 관용명이고 ‘아키쉬’는 히브리어 본문형 אָכִישׁ의 교재식 근사다. 천주교 성경은 ‘아키스’로 적는다. 사무엘상의 가드 왕은 마옥의 아들로, 열왕기상 2:39–40의 가드 왕은 마아가의 아들로 나온다. 두 기록의 왕이 같은 인물인지는 분명하지 않다. 시편 34편 표제는 다윗이 미친 체한 일화를 떠올리게 하며 아비멜렉이라는 이름을 쓴다. 기원전 7세기 에그론 왕의 비문에도 같은 자음의 이름 ʾkyš가 보인다. 이름의 어원은 미확정이다."
+    }
+  ],
+  "relation_creates": [],
+  "relation_replacements": [],
+  "supersedes": [],
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h397_approval_20261109/00_user_approval.json",
+    "document_sha256": "a8beab51ca137868d31e097173b10f91931ec4af0c601b8bac89e0e8e228909b"
+  }
+}
