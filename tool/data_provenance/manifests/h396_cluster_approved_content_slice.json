@@ -1,0 +1,329 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H396-CLUSTER-APPROVED-CONTENT-SLICE",
+  "target": {
+    "expected_work_sha256": "b81846c5f87ef227617e69e53c5532f1b0bbf60676a5c854c17454e4caa04c2d",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0396_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "음식, 식사"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "먹을 것"
+        }
+      ]
+    },
+    {
+      "word_id": "H0398_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "먹다, 삼키다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "먹다"
+        },
+        {
+          "seq": 2,
+          "meaning": "먹어 없애다"
+        }
+      ]
+    },
+    {
+      "word_id": "H0399_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "먹다, 삼키다, 중상하다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "먹다"
+        },
+        {
+          "seq": 2,
+          "meaning": "먹어 없애다"
+        }
+      ]
+    },
+    {
+      "word_id": "H0400_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "음식물, 양식"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "먹을 것"
+        }
+      ]
+    },
+    {
+      "word_id": "H0401_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "우갈 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "우갈·우칼 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0402_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "음식물, 땔감"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "먹을 것"
+        },
+        {
+          "seq": 2,
+          "meaning": "땔감"
+        }
+      ]
+    },
+    {
+      "word_id": "H3978_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "음식(물), 양식, 열매"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "먹을 것"
+        }
+      ]
+    },
+    {
+      "word_id": "H3979_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "도살용 칼"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "칼"
+        }
+      ]
+    },
+    {
+      "word_id": "H3980_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "연료 fuel"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "땔감"
+        }
+      ]
+    },
+    {
+      "word_id": "H4361_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "음식, 양식"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "먹을 것"
+        }
+      ]
+    }
+  ],
+  "meaning_approvals": [],
+  "word_note_replacements": [
+    {
+      "word_id": "H0396_0000",
+      "before": null,
+      "after": "왕상 19:8에서 엘리야가 먹고 힘을 얻은 음식이다. אָכַל(H0398)에서 나온 여성 명사로, 그때 먹은 한 끼를 가리키는 것으로도 읽힌다."
+    },
+    {
+      "word_id": "H0398_0000",
+      "before": null,
+      "after": "사람과 짐승이 먹는 일과, 불·칼·재앙 등이 먹듯이 대상을 없애는 일에 쓰인다. 전리품이나 재산을 ‘먹다’는 이를 생활에 쓰거나 그 혜택을 누린다는 비유다(신 20:14, 전 6:2). 수동형은 ‘먹히다’나 ‘타 없어지다’, 히필은 ‘먹이다’나 ‘누리게 하다’ 등으로 나타난다. 겔 42:5에서는 회랑이 윗방의 공간을 차지해 방이 좁아지는 모습을 표현한다. 삼하 22:39와 겔 43:8의 어형은 כָּלָה(H3615)로도 분석되며, 겔 21:33에는 כּוּל로 보는 분석이 있다."
+    },
+    {
+      "word_id": "H0399_0000",
+      "before": null,
+      "after": "히브리어 אָכַל(H0398)에 대응하는 아람어 동사다. 단 7:23에서는 넷째 나라가 온 땅을 집어삼킨다는 파괴의 비유다. 단 3:8과 6:25(한국어 성경 6:24)에서는 קַרְצֵי 계열 표현과 결합해 ‘고발하다’라는 관용구를 이룬다."
+    },
+    {
+      "word_id": "H0400_0000",
+      "before": null,
+      "after": "사람의 먹을 것과 저장 곡식, 짐승의 먹이에 두루 쓰인다. 룻 2:14의 ‘식사 때’는 לְעֵת הָאֹכֶל 전체 표현이다. 출 12:4와 16:16·18·21의 ‘먹을 분량’은 동사 H0398의 부정사로도 분석된다. 욥 20:21은 OSHB의 Strong 태그가 H0400이며 형태 태그는 동사 부정사다."
+    },
+    {
+      "word_id": "H0401_0000",
+      "before": null,
+      "after": "잠 30:1의 마소라 본문을 인명으로 읽을 때 아굴의 말을 받는 사람이다. 우갈은 한국어 성경 관용명이고 우칼은 אֻכָל의 교재식 근사다. Strong은 אֻכָּל을 이형으로 제시하며, אָכַל(H0398)에서 ‘먹힌’으로 풀이하는 어원을 추정한다. 고대 역본과 본문 연구에는 끝부분을 ‘그치다’ 또는 ‘힘이 없다’ 등 동사구로 읽는 견해가 있다."
+    },
+    {
+      "word_id": "H0402_0000",
+      "before": null,
+      "after": "본문에서는 모두 לְאָכְלָה 형태다. 사람과 짐승이 먹을 것, 짐승에게 넘겨진 먹잇감, 불에 던져질 땔감에 쓰인다. 겔 23:37의 자녀 제사는 우상에게 먹을 것으로 바치는 표현이며, 칠십인역은 불을 통한 제사를 명시한다. אֹכֶל(H0400)의 여성형 또는 אָכַל(H0398)의 부정사 계열로 분석된다."
+    },
+    {
+      "word_id": "H3978_0000",
+      "before": null,
+      "after": "אָכַל(H0398)에서 나온 명사로 사람과 짐승이 먹는 것을 가리킨다. 나무를 묘사할 때는 먹을 수 있는 열매에, 새와 짐승에게 주어진 시체는 먹잇감에 해당한다. 삿 14:14에서는 ‘먹는 자’인 H0398의 분사와 나란히 쓰인다."
+    },
+    {
+      "word_id": "H3979_0000",
+      "before": null,
+      "after": "창 22:6·10에서는 제물로 잡는 데 쓰려던 칼, 삿 19:29에서는 시신을 자르는 데 쓰인 칼이다. 잠 30:14는 가난한 사람을 해치는 이들의 어금니를 이 칼에 빗댄다. Strong은 אָכַל(H0398)에서 나온 이름으로 보고 먹는 데 쓰는 도구로 풀이한다."
+    },
+    {
+      "word_id": "H3980_0000",
+      "before": null,
+      "after": "사 9:4·18(한국어 성경 9:5·19)에서 전쟁의 물품과 백성이 불에 태워질 땔감으로 그려진다. 두 용례 모두 ‘불의 땔감’ 구조다. Strong은 אָכַל(H0398)에서 ‘불에 먹히는 것’으로 이어진 형태로 풀이한다."
+    },
+    {
+      "word_id": "H4361_0000",
+      "before": null,
+      "after": "왕상 5:25(한국어 성경 5:11)에서 솔로몬이 히람의 집안에 먹을거리로 공급한 밀에 쓰인다. אָכַל(H0398) 계열의 여성 명사다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0396_0000",
+      "word_id_2": "H0398_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "먹는 동사에서 나온 음식·끼니의 여성 명사다.",
+      "source": "Strong H0396, HALOT אכילה"
+    },
+    {
+      "word_id_1": "H0398_0000",
+      "word_id_2": "H0399_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "히브리어와 아람어에 대응하는 אכל 어근이다.",
+      "source": "Strong H0399, OSHB Dan.7.5·23"
+    },
+    {
+      "word_id_1": "H0398_0000",
+      "word_id_2": "H0400_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "먹는 동사 계열의 먹을 것 명사다.",
+      "source": "Strong H0400, HALOT אֹכֶל"
+    },
+    {
+      "word_id_1": "H0398_0000",
+      "word_id_2": "H3978_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "삿 14:14는 먹는 자와 먹을 것을 같은 어근으로 대비한다.",
+      "source": "Strong H3978, OSHB Judg.14.14"
+    },
+    {
+      "word_id_1": "H0398_0000",
+      "word_id_2": "H3979_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "먹다 계열의 칼 명사다.",
+      "source": "Strong H3979, BDB/HALOT מַאֲכֶלֶת, OSHB Prov.30.14"
+    },
+    {
+      "word_id_1": "H0398_0000",
+      "word_id_2": "H3980_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "불에 먹히는 대상을 땔감으로 나타낸 명사다.",
+      "source": "Strong H3980, OSHB Isa.9.4·18"
+    },
+    {
+      "word_id_1": "H0398_0000",
+      "word_id_2": "H4361_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "먹다 계열에서 집안에 공급하는 양식을 가리킨다.",
+      "source": "Strong H4361, BDB מַכֹּלֶת, OSHB 1Kgs.5.25"
+    },
+    {
+      "word_id_1": "H0400_0000",
+      "word_id_2": "H0402_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "두 먹을 것 명사는 אכל 어근을 공유한다. 직접 여성형 형성과 부정사 계열의 두 분석이 있다.",
+      "source": "HALOT אֹכֶל·אׇכְלָה, HebGrkKo H402"
+    }
+  ],
+  "relation_replacements": [],
+  "supersedes": [],
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h396_approval_20261109/00_user_approval.json",
+    "document_sha256": "3c5f67721eb2d88bbfae9f7a5a3911ac03e75666fd99b099bcda5d5120049430"
+  }
+}
