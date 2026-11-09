@@ -26,6 +26,7 @@
 
 | 결정 단위 | 대상 | 상태 | 복원 수준 | 최초 적용일 | 기록 |
 |---|---|---|---|---|---|
+| H393 잔인함 어휘군 | H0393·H0394·H0395 뜻·비고, 관계 2건 | `active` | 높음 | 2026-11-09 | [기록](h393_cluster_approved_content_slice.md) |
 | H391 거짓·신뢰 어휘군 | H0391·H0392·H3538·H3576–H3580 뜻·비고, 관계 6건 | `active` | 높음 | 2026-11-09 | [기록](h391_cluster_approved_content_slice.md) |
 | H390 악갓·아카드 | H0390 뜻·비고 | `active` | 높음 | 2026-11-08 | [기록](h390_cluster_approved_content_slice.md) |
 | H389 한정·확언·대조 어휘군 | H0389·H0403 뜻·비고, 관계 1건 | `active` | 높음 | 2026-11-08 | [기록](h389_cluster_approved_content_slice.md) |

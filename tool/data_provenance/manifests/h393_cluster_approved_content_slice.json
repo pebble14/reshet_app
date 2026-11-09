@@ -1,0 +1,105 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H393-CLUSTER-APPROVED-CONTENT-SLICE",
+  "target": {
+    "expected_work_sha256": "3047bf9192e6d26f92d7c09c180c1e20fdba7ee0600015fe3e0036b8c68468c5",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0393_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "잔인한, 포악한"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "잔인한(殘忍한)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0394_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "잔인한, 잔혹한"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "잔인한(殘忍한)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0395_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "잔인함"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "잔인함(殘忍함)"
+        }
+      ]
+    }
+  ],
+  "meaning_approvals": [],
+  "word_note_replacements": [
+    {
+      "word_id": "H0393_0000",
+      "before": null,
+      "after": "욥 30:21과 애 4:3에서는 인정 없이 모질게 대하는 성질을 나타낸다. 신 32:33에서는 독사의 독이 몹시 독함을 나타낸다. 욥 41:2(한국어 성경 41:10)는 리워야단을 깨울 만큼 사나운 자 또는 담대한 자로 읽힌다. Strong은 ‘모질게 대하다’ 정도의 뜻을 가진 미사용 어근을 상정한다."
+    },
+    {
+      "word_id": "H0394_0000",
+      "before": null,
+      "after": "H0393에서 파생된 형용사로, 사람이나 집단의 무자비함과 징계·심판의 모진 성격을 나타낸다. 잠 5:9와 11:17에서는 ‘잔인한 자’로 쓰인다. 렘 30:14는 마소라 본문의 연계형에 따라 ‘잔인한 자의 징계’로 읽을 수 있으며 ‘잔인한 징계’라는 읽기도 있다."
+    },
+    {
+      "word_id": "H0395_0000",
+      "before": null,
+      "after": "H0394에서 파생된 여성 명사다. 잠 27:4에서는 ‘분노의 잔인함’으로 쓰이며, 넘치는 물에 빗댄 진노와 나란히 놓인다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0393_0000",
+      "word_id_2": "H0394_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "אַכְזָר를 기반으로 형용사 접미사 -î가 결합한 형태다.",
+      "source": "Open Scriptures Hebrew Bible Project, HebrewStrong.xml H394 source / Qumran-Digital אכזר v1.0.0"
+    },
+    {
+      "word_id_1": "H0394_0000",
+      "word_id_2": "H0395_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "אַכְזָרִי에 대응하는 여성 추상 명사다.",
+      "source": "Open Scriptures Hebrew Bible Project, HebrewStrong.xml H395 source / BDB כזר"
+    }
+  ],
+  "relation_replacements": [],
+  "supersedes": [],
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h393_approval_20261109/00_user_approval.json",
+    "document_sha256": "e610804ab141bb47e0b35d7dfdc97b5dbedb9d85cd7fef9cd1822fe82e079758"
+  }
+}
