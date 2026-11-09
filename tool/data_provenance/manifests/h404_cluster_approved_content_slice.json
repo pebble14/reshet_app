@@ -1,0 +1,73 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H404-CLUSTER-APPROVED-CONTENT-SLICE",
+  "target": {
+    "expected_work_sha256": "3bfa97eb871ef69e681f2181a7defa59c22cae4c2f641c7e32c4c4712bbabbbe",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0404_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "독촉하다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "압박하다(壓迫하다)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0405_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "압력, 위엄"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "압박(壓迫)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0404_0000",
+      "before": null,
+      "after": "누르듯 힘을 가하는 뜻이다. 잠언 16:26에서는 일꾼의 입, 곧 허기가 그를 일하도록 몰아세운다. Strong은 ‘짐을 진 듯 굽다’를 어근의 바탕 뜻으로 추정한다."
+    },
+    {
+      "word_id": "H0405_0000",
+      "before": null,
+      "after": "욥기 33:7에서 엘리후는 자신의 압박이 욥을 짓누르지 않을 것이라고 말한다. Strong은 אָכַף(H0404)에서 파생된 명사로 본다. 칠십인역은 ‘내 손’으로 옮겼으며, 욥기 13:21과 비교해 כַּף(손)로 읽거나 그 이형으로 보는 견해가 있다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0404_0000",
+      "word_id_2": "H0405_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong은 אֶכֶף를 אָכַף에서 파생된 명사로 설명한다. 공통 자음과 압박의 뜻이 이를 뒷받침한다. 욥기 33:7을 “내 손”으로 해석하는 견해가 있어 파생은 가설로 둔다.",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml H405 (21c9add13bc727d3a951361778e97e3ff7afd1ce) / BDB 38쪽 / HALOT אכף 항목"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": [],
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h404_approval_20261109/00_user_approval.json",
+    "document_sha256": "92ae77126790763b0b856726bffa35e6152dcd2d1377c06fd431b919c6d068a6"
+  }
+}

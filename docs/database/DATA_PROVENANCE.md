@@ -1906,3 +1906,9 @@ H0336 의미 유지 승인 1건, 의미 교체 3건, 비고 4건, 관계 신규 
 [승인 manifest](../../tool/data_provenance/manifests/h397_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h397_cluster_approved_content_slice.md)에 `아기스·아키쉬 (인)` 한 뜻과 비고를 반영했다. 관계와 단어 hold는 각각 추가 0건이다.
 
 공식 사본 적용·되돌리기와 적용기 테스트 31개를 통과했다. 이력 그룹 `1794217690300007`의 2행, 공식 스냅샷, DB 13개 테이블과 DDL을 독립 대조했다. Seed SHA-256은 적용 전후 일치했다. 공식 진행 현황에서 명시 승인이 898건에서 899건으로 늘었고 비대상 14,297행은 일치했다.
+
+## H0404·H0405 압박 어휘군 승인 — 2026-11-09
+
+[승인 manifest](../../tool/data_provenance/manifests/h404_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h404_cluster_approved_content_slice.md)에 H0404 `압박하다(壓迫하다)`, H0405 `압박(壓迫)`과 각 비고를 기록했다. H0404 → H0405의 가설 파생 관계 ID는 8330이다. 신규 단어 hold는 0건이다.
+
+공식 사본 적용·되돌리기와 적용기 테스트 31개를 통과했다. 이력 그룹 `1794222453507452`의 5행, 공식 스냅샷과 DB 13개 테이블을 독립 대조했다. Work·seed 무결성은 `ok`이며 FK 위반과 sidecar는 0건이다. Seed SHA-256은 전후 일치했다. 표준 진행 현황에서 명시 승인이 899건에서 901건으로 늘었고 비대상 14,296행은 일치했다.
