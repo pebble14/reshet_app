@@ -211,3 +211,5 @@
 | H326·H327 비교군 | 식별명칭 병기·왕의 형용사 의미2·비고2, 관계 비생성·hold 없음 | `active` | 높음 | 2026-11-01 | [기록](h326_cluster_approved_content_slice.md) |
 | H328 의미·비고 | H0328 | active | 높음 | 2026-11-01 | [결정 기록](h328_cluster_approved_content_slice.md) |
 | H329 의미·지명·비고 | H0329 | active | 높음 | 2026-11-01 | [결정 기록](h329_cluster_approved_content_slice.md) |
+
+| H407 악삽·주술 어휘군 | H0407·H3784·H3785·H3786 의미·비고, 가설 파생1·공통 어근2·hold 없음 | active | 높음 | 2026-11-12 | [결정 기록](h407_cluster_approved_content_slice.md) |

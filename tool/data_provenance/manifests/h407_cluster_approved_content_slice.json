@@ -1,0 +1,137 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H407-CLUSTER-APPROVED-CONTENT-SLICE",
+  "target": {
+    "expected_work_sha256": "32173f0a3bdabf7254734c4986dbaff675e5e27702d3db0e58abc5010bec352b",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0407_0000",
+      "before": [
+        {
+          "meaning": "악삽 (지)",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "악삽·아크샤프 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3784_0000",
+      "before": [
+        {
+          "meaning": "마법(술)을 행하다",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "주술(呪術)을 부리다"
+        }
+      ]
+    },
+    {
+      "word_id": "H3785_0000",
+      "before": [
+        {
+          "meaning": "마술, 요술",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "주술(呪術)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3786_0000",
+      "before": [
+        {
+          "meaning": "마술사, 요술사",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "주술사(呪術師)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0407_0000",
+      "before": null,
+      "after": "악삽은 한국어 성경 관용명이고 아크샤프는 אַכְשָׁף의 히브리어 교재식 읽기를 한글로 근사한 표기다. 여호수아 11:1과 12:20에는 그 왕이, 19:25에는 아셀 지파의 성읍으로 나온다. Strong은 주술을 뜻하는 H3784와 연결해 ‘매혹’으로 풀이하지만, 이름의 확정 어원이나 실제 명명 동기로 단정하지 않는다. 이 한글 표기는 정확한 고대 발음의 복원을 뜻하지 않는다."
+    },
+    {
+      "word_id": "H3784_0000",
+      "before": null,
+      "after": "주술을 행하는 행위를 뜻하며 성경에서는 피엘형으로 쓰인다. 여섯 용례 중 다섯은 분사로서 행위자를, 대하 33:6은 행위 자체를 가리킨다. 출 22:18(히브리어 절 번호 22:17)의 분사는 여성 단수형이다. 점술·징조 해석·주문 관련 어휘와 함께 쓰이며 의미가 겹칠 수 있으나, 특정한 수법으로 구분할 자료는 부족하다. Strong의 ‘주문을 속삭이다’라는 설명만으로 실제 행위를 속삭임에 한정하지 않는다. H3785·H3786과 같은 어휘군이며, BDB의 명사 유래 동사 분석과 구별하여 역사적 파생 방향은 확정하지 않는다."
+    },
+    {
+      "word_id": "H3785_0000",
+      "before": null,
+      "after": "성경에서는 남성 복수형으로만 쓰이며 주술 행위나 술법을 가리킨다. 사 47:9·12와 미 5:12(히브리어 절 번호 5:11)는 주술의 사용을 말하고, 왕하 9:22와 나 3:4는 사람과 민족을 유혹하고 타락시키는 힘에 빗댄 표현으로도 읽힌다. 다른 술법 어휘와 의미가 겹칠 수 있으나 그것들 모두의 총칭으로 확정하지 않는다. 동족 아카드어 kišpū는 해로운 주술과 연결되지만 히브리어의 모든 용례를 가해 목적의 저주술로 제한하지 않는다. H3784·H3786과 같은 어휘군이며 역사적 파생 방향은 미확정이다."
+    },
+    {
+      "word_id": "H3786_0000",
+      "before": null,
+      "after": "주술을 행하는 사람을 뜻하는 남성 명사다. 렘 27:9에서 소유 접미사가 붙은 복수형 ‘너희 주술사들’로 나오며, 바벨론 왕을 섬기지 않을 것이라고 말하는 이들의 목록에 포함된다. H3784의 명사적 분사와 의미가 겹치지만 별도 명사 표제어다. 함께 나오는 점술가·술객 등과 어떤 수법이나 직무로 구분되었는지는 확정하지 않는다. H3784·H3785와 같은 어휘군이며 역사적 파생 방향은 미확정이다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0407_0000",
+      "word_id_2": "H3784_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w2_to_w1",
+      "note": "Strong은 H0407을 H3784에서 유래한 이름으로 설명한다. NAS는 어원을 불확실하게 보므로 직접 파생은 가설로 기록한다. 주술이라는 어원 풀이를 지명의 별도 meaning이나 실제 명명 동기로 확정하지 않는다.",
+      "source": "Open Scriptures HebrewLexicon H407 source, 21c9add13bc727d3a951361778e97e3ff7afd1ce; NAS Exhaustive Concordance H407",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H3784_0000",
+      "word_id_2": "H3785_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "note": "같은 כשׁף 어휘군의 동사와 주술을 뜻하는 명사다. Strong의 동사 어근에서의 from 설명과 BDB의 명사 유래 피엘 동사 분석을 구별하여 역사적 직접 파생 방향은 확정하지 않는다.",
+      "source": "Open Scriptures HebrewLexicon H3784/H3785, 21c9add13bc727d3a951361778e97e3ff7afd1ce; BDB כִּשֵּׁף / כֶּשֶׁף",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H3784_0000",
+      "word_id_2": "H3786_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "note": "같은 כשׁף 어휘군의 동사와 행위자 명사다. 의미와 어근의 연결은 분명하지만 성경의 명사 유래 동사 분석과 구별하여 역사적 직접 파생 방향은 확정하지 않는다.",
+      "source": "Open Scriptures HebrewLexicon H3784/H3786, 21c9add13bc727d3a951361778e97e3ff7afd1ce; BDB כִּשֵּׁף / כַּשָּׁף",
+      "description": null,
+      "relation_group_id": null
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": [],
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h407_approval_20261112/00_user_approval.json",
+    "document_sha256": "dba029d5bfc4269096fafbb0a0fc5454b20e3d9ce79d861363f3e00f76fed583"
+  }
+}
