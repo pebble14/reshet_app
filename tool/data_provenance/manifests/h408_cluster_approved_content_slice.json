@@ -1,0 +1,220 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H408-CLUSTER-APPROVED-CONTENT-SLICE",
+  "target": {
+    "expected_work_sha256": "69273bf1e63cf7fe42fc3245730a958aa33b4d38078fd2be4f67126abd9290a3",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0408_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아니다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아니"
+        }
+      ]
+    },
+    {
+      "word_id": "H0409_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아니다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아니"
+        }
+      ]
+    },
+    {
+      "word_id": "H0432_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "만일 ~이면, 비록 ~라도"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "~라면"
+        }
+      ]
+    },
+    {
+      "word_id": "H0457_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "헛된, 우상"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "헛됨"
+        },
+        {
+          "seq": 2,
+          "meaning": "우상(偶像)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0510_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "군대"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "군대(軍隊)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0516_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "알다스헷"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "알다스헷·알-타쉬헤트"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0408_0000",
+      "before": null,
+      "after": "주로 미완료형·단축형 동사와 결합해 ‘~하지 말라’, ‘~하지 않기를’이라는 금지·간청·소망을 나타낸다. 동사 없이 ‘아니, 그러지 마라’로 쓰이고 명사 앞에서 대상을 부정하며, 시적 문맥에서는 단정·예고로도 옮긴다. 욥기 24:25의 לְאַל은 명사적으로 ‘아무것도 아닌 것, 헛됨’을 나타낸다. 잠언 12:28의 אַל־מָוֶת은 마소라 본문에서 ‘죽음이 없음’이며 다른 본문 전통의 해석은 다르다. 사무엘상 27:10은 장소 의문과 부정의문 독법이 갈리고, 예레미야 51:3은 전치사 אֶל과 부정어 אַל의 읽기 및 Strong 부착이 엇갈린다. Strong은 לֹא(H3808)와 akin to로 연결하지만 역사적 파생은 확정하지 않는다."
+    },
+    {
+      "word_id": "H0409_0000",
+      "before": null,
+      "after": "히브리어 H0408에 대응하는 성경 아람어의 부정어다. 다니엘 2:24·4:19(히브리어 절 번호 4:16)·5:10에서 미완료형과 결합해 금지나 진정시키는 권유를 나타낸다. 두 언어의 대응은 직접 차용 방향을 확정한다는 뜻이 아니다."
+    },
+    {
+      "word_id": "H0432_0000",
+      "before": null,
+      "after": "가정이나 반사실적 조건을 도입한다. 에스더 7:4은 ‘노비로 팔렸더라면’, 전도서 6:6은 ‘비록 이천 년을 산다 해도’라는 양보 조건으로 쓰인다. Strong은 H0408에서의 유래를 probably로 추정하나, BDB는 다른 조건 입자와 לוּ(H3863)의 결합으로 분석한다. 어원은 확정하지 않는다."
+    },
+    {
+      "word_id": "H0434_0000",
+      "before": null,
+      "after": "예레미야 14:14의 케티브(기록형) אלול에 해당하며, 케레(낭독형)는 אֱלִיל(H0457)이다. 거짓 예언·점술과 함께 언급된 헛되거나 쓸모없는 것을 가리킨다. 같은 본문 위치의 다른 읽기이며 월명 엘룰(H0435)과 구별한다."
+    },
+    {
+      "word_id": "H0457_0000",
+      "before": null,
+      "after": "헛됨·쓸모없음을 나타내며, 특히 거짓 신이나 신상을 낮잡아 ‘헛된 것들’, 곧 우상으로 부른다. 욥기 13:4과 스가랴 11:17에서는 사람의 무익함에, 예레미야 14:14의 케레에서는 거짓 예언의 헛됨에 쓰인다. Strong은 H0408에서의 유래를 apparently로 제시하지만 어원은 불확실하다. BDB는 다른 셈어의 ‘약하다’ 계열과 비교하고, ‘우상’ 용법이 본래 별개 어원이었을 가능성도 거론한다. H0408과의 역사적 파생은 확정하지 않는다."
+    },
+    {
+      "word_id": "H0510_0000",
+      "before": null,
+      "after": "잠언 30:31에만 나오며, 왕과 함께 있는 군대를 가리킨다는 BDB 풀이를 대표로 둔다. Strong은 H0408과 H6965로 분석해 ‘맞서 일어남이 없음’으로 추정하며 KJV·개역 계열도 왕에게 대항할 수 없다는 뜻으로 옮긴다. 두 풀이는 서로 다른 확정 뜻이 아니라 같은 구절의 경쟁 해석이다. 어원과 문구의 정확한 분석은 확정되지 않았다."
+    },
+    {
+      "word_id": "H0516_0000",
+      "before": null,
+      "after": "시편 57·58·59·75편 표제에 나오는 표현이다. אַל(H0408)과 שחת(H7843)의 히필형이 이루는 ‘멸하지 말라’라는 금지·간청 문구다. ‘알다스헷’은 성경 관용 표기이고 ‘알-타쉬헤트’는 교재식 읽기에 따른 한글 근사이며, 붙임표는 두 단어의 경계를 드러낸다. 가락 이름이나 노래의 첫 구절을 가리킨다는 풀이가 있으나 구체적인 연주 방식과 원래 노래는 확인되지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0408_0000",
+      "word_id_2": "H0409_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml H409 source; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; Brown-Driver-Briggs H409.",
+      "note": "성경 히브리어와 아람어의 같은 부정 입자 대응이다. Strong의 corresponding to는 참조 방향이며 직접 차용 방향은 확정하지 않는다.",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H0408_0000",
+      "word_id_2": "H3808_0000",
+      "category_code": "semantic",
+      "relation_type": "similar",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml H408 source; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; Brown-Driver-Briggs H408/H3808; OSHB Lev.19.4, Ps.121.3-4 (3d15126fb1ef74867fc1434be1942e837932691f).",
+      "note": "두 부정어의 의미가 겹친다. 기능 차이를 보존하며 akin to만으로 공통 어근이나 파생을 확정하지 않는다.",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H0434_0000",
+      "word_id_2": "H0457_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml H434 source; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; Brown-Driver-Briggs H434/H457; OSHB Jer.14.14 Ketiv/Qere (3d15126fb1ef74867fc1434be1942e837932691f).",
+      "note": "렘14:14 같은 위치의 케티브/케레 대응 및 Strong for·BDB id quod를 표현한다. 일반적인 자유 변이나 역사적 파생 방향을 주장하지 않는다.",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H0408_0000",
+      "word_id_2": "H0516_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml H516 source; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; OSHB Ps.57.1/58.1/59.1/75.1 (3d15126fb1ef74867fc1434be1942e837932691f).",
+      "note": "부정어 אַל이 시편 표제 문구의 첫 요소다.",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H0516_0000",
+      "word_id_2": "H7843_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "source": "Open Scriptures HebrewLexicon, HebrewStrong.xml H516 source; commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; OSHB Ps.57.1/58.1/59.1/75.1 and Deut.9.26 (3d15126fb1ef74867fc1434be1942e837932691f).",
+      "note": "שחת의 히필 동사형이 문구의 둘째 요소다. 저장 pair는 H0516<H7843, 의미 방향은 H7843→H0516이다.",
+      "description": null,
+      "relation_group_id": null
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": [
+    {
+      "word_id": "H0434_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "헛된 것"
+        }
+      ]
+    }
+  ],
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h408_approval_20261112/00_user_approval.json",
+    "document_sha256": "c61d3e033edc83a990e9094489bd7220e65b7b100c57f1993c08bd125f2856d6"
+  }
+}

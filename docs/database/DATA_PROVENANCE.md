@@ -1925,3 +1925,8 @@ H0336 의미 유지 승인 1건, 의미 교체 3건, 비고 4건, 관계 신규 
 [승인 manifest](../../tool/data_provenance/manifests/h407_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h407_cluster_approved_content_slice.md)에 의미4·비고4·관계3을 반영했다. H0407은 악삽·아크샤프, H3784·H3785·H3786은 주술 계열 대표어와 추가 비교 r2의 비고를 채택했다. 관계 ID8332–8334, 신규 hold 없음이다.
 
 공식 dry-run·undo·원본 불변 및 적용기31개 테스트 후 live apply1회. 이력 그룹1794444685512515의11행, 전체 테이블·DDL 독립 대조에서 승인 변경과 기대 sequence 외 불변을 확인했다. Work·seed integrity ok·FK0·sidecar0, seed SHA 불변이다. 공식 progress 승인902→906·미승인13390→13386, hold6·anomaly113 유지 및 비대상14294행을 확인했다.
+
+
+## H0408 부정 표현 어휘군 승인 — 2026-11-12
+
+[승인 manifest](../../tool/data_provenance/manifests/h408_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h408_cluster_approved_content_slice.md)에 meaning 교체6·유지 승인1·비고7·관계5(ID8335–8339)를 반영했다. 추정 어원4쌍 비생성, 신규 hold 없음이다. 공식 dry-run·undo·원본 불변·적용기31테스트 후 live apply1회, 이력 그룹1794447860757011의18행·전체 테이블·DDL·비대상 불변을 검증했다. Work·seed integrity ok·FK0·sidecar0·seed SHA 불변, progress 승인906→913·미승인13386→13379·hold6·anomaly113·비대상14291행 불변이다.
