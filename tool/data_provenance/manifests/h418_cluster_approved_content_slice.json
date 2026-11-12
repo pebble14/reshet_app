@@ -1,0 +1,73 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H418-CLUSTER-APPROVED-CONTENT-SLICE",
+  "target": {
+    "expected_work_sha256": "e988f8c829086ecfca7dfd84cfcb5339dea2b8d7f32fb8982192b6b0af316ede",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0418_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "백단목"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "알굼나무"
+        }
+      ]
+    },
+    {
+      "word_id": "H0484_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "백단목들"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "알묵나무"
+        }
+      ]
+    }
+  ],
+  "meaning_approvals": [],
+  "word_note_replacements": [
+    {
+      "word_id": "H0418_0000",
+      "before": null,
+      "after": "알굼이라 부르는 나무와 그 목재를 가리키며, 한국어 성경에서는 백단목(白檀木)으로 번역한다. 이 관용 번역만으로 현대의 백단 수종을 확정하지 않는다. 본문에는 남성 복수형만 나타난다. 대하 2:8(히브리어 절 번호 2:7)은 레바논에서 보내 달라는 요청, 9:10–11은 반입과 건축·악기 제작을 다룬다. Strong은 H0484의 자음 전위형으로 설명한다. 같은 목재명의 이형이라는 분석과 서로 다른 수종이라는 분석이 갈리며, 정확한 수종과 어원은 미확정이다."
+    },
+    {
+      "word_id": "H0484_0000",
+      "before": null,
+      "after": "알묵이라 부르는 나무와 그 목재를 가리키며, 한국어 성경에서는 백단목(白檀木)으로 번역한다. 이 관용 번역만으로 현대의 백단 수종을 확정하지 않는다. 본문에는 남성 복수형만 나타나며, 왕상 10:11–12에서 오빌로부터 운반해 온 목재를 성전·왕궁의 구조물과 악기에 사용한다. Strong은 외래어 기원과 sandalwood 식별을 추정으로 제시한다. 아카드어 elammakku·우가릿어 almg와 비교하는 연구가 있으나 차용 경로와 정확한 수종은 미확정이다. H0418과 같은 목재명의 이형인지도 이견이 있다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0418_0000",
+      "word_id_2": "H0484_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "note": "Strong H0418의 by transposition for H0484와 H0484의 Compare H0418, 왕상 10:11–12와 대하 9:10–11의 병행 기사를 근거로 한 형태 이형 가설이다. 서로 다른 수종이라는 분석도 있어 동일 목재·수종 및 역사적 발생 방향은 확정하지 않는다.",
+      "source": "Open Scriptures HebrewLexicon 21c9add13bc727d3a951361778e97e3ff7afd1ce H0418/H0484; OSHB 3d15126fb1ef74867fc1434be1942e837932691f; BDB H418/H484; Naudé 외 2023 §2; 2026-11-12 사용자 승인",
+      "description": null,
+      "relation_group_id": null
+    }
+  ],
+  "relation_replacements": [],
+  "supersedes": [],
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h418_approval_20261112/00_user_approval.json",
+    "document_sha256": "868b983a7d53dbf38045ef79ac4f9138a541cae6cca0d0bc28d89c1782261a74"
+  }
+}

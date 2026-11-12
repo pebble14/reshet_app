@@ -1938,3 +1938,8 @@ H0336 의미 유지 승인 1건, 의미 교체 3건, 비고 4건, 관계 신규 
 ## H0415·H0416 야곱의 엘 복합 명칭 승인 — 2026-11-12
 
 [승인 manifest](../../tool/data_provenance/manifests/h415_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h415_cluster_approved_content_slice.md)에 의미2·비고2·확정 구성관계5(ID8348–8352)를 반영했다. 신규 hold는 없다. 공식 dry-run·undo·원본 불변·적용기31테스트 후 live apply1회, 이력 그룹1794481571734379의9행과 전체13테이블·DDL·비대상·기존 이력 불변을 독립 검증했다. Work·seed·snapshot integrity ok·FK0·sidecar0, seed SHA 불변이다. 공식 progress 승인933→935·미승인13359→13357·hold6·anomaly113이며 비대상14296행은 동일하다.
+
+
+## H0418·H0484 목재 명칭 승인 — 2026-11-12
+
+[승인 manifest](../../tool/data_provenance/manifests/h418_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h418_cluster_approved_content_slice.md)에 의미2·비고2·가설 이형관계1(ID8353)을 반영했다. 신규 hold는 없다. 공식 dry-run·undo·원본 불변·적용기31테스트 후 live apply1회, 이력 그룹1794484383878840의5행과 전체13테이블·DDL·비대상·기존 이력 보존을 독립 검증했다. Work·seed integrity ok·FK0·sidecar0, seed 불변이다. 표준 progress 승인935→937·미승인13357→13355·hold6·anomaly113, 비대상14296행은 동일하다. 원문·음역·발음·언어·schema·seed 배포·앱/UI는 변경하지 않았다.
