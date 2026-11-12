@@ -1,0 +1,169 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H413-CLUSTER-APPROVED-CONTENT-SLICE",
+  "target": {
+    "expected_work_sha256": "073fcb06a2f0496ccdf93d986e40279d98050dc2b3c9cd6422acd9d78f7dcc29",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0413_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "~에, ~관하여"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "~로, ~에게"
+        },
+        {
+          "seq": 2,
+          "meaning": "~에, ~곁에"
+        },
+        {
+          "seq": 3,
+          "meaning": "~에 관하여"
+        },
+        {
+          "seq": 4,
+          "meaning": "~에 더하여, ~와 함께"
+        },
+        {
+          "seq": 5,
+          "meaning": "~에 따라"
+        },
+        {
+          "seq": 6,
+          "meaning": "~ 때문에·~을 위하여"
+        }
+      ]
+    },
+    {
+      "word_id": "H0454_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "엘료에내 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엘료에내·에료에내·엘여호에내·엘-예호-에나이·엘-요-에나이 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0462_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "엘리에내 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엘리에내·엘리에나이 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "G2069_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "에슬리"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "에슬리·헤슬리 (인)"
+        }
+      ]
+    }
+  ],
+  "meaning_approvals": [],
+  "word_note_replacements": [
+    {
+      "word_id": "H0413_0000",
+      "before": null,
+      "after": "사람·장소로 향한 움직임과 도달점, 말·행동·마음이 향하는 대상을 나타낸다. 문맥에 따라 ‘~안으로’, ‘~까지’, 적대적 대상에는 ‘~에 맞서’로 옮기며, 위치·근접, 관련 대상, 첨가·동반, 기준, 까닭·동기에도 쓰인다. 다른 전치사와 결합하고 일부 용례는 עַל과 겹친다. Strong의 표제 אֵל과 본문의 주된 אֶל, 접미형 אֵלַי·אֵלָיו 등은 원자료대로 구별한다. 사사기 19:23과 예레미야 51:3에는 부정어 אַל과 전치사 אֶל의 읽기·Strong 부착 문제가 있고, 욥기 5:5의 구문은 불확실하다."
+    },
+    {
+      "word_id": "H0454_0000",
+      "before": null,
+      "after": "엘료에내·에료에내는 단축형 계열, 엘여호에내는 장형의 한국어 성경 관용 표기다. 엘-예호-에나이와 엘-요-에나이는 각각 אֶלְיְהוֹעֵינַי와 אֶלְיוֹעֵינַי의 교재식 한글 근사이며, 붙임표는 전치사 אֶל, 신명 요소 예호/요, ‘나의 눈’ עֵינַי의 분석 경계를 드러낸다. Strong과 BDB는 ‘나의 눈은 여호와를 향한다’로 풀이한다. 장형은 역대상 26:3과 에스라 8:4에, 단축형은 나머지 본문에 나온다. 여러 이스라엘 사람의 이름이며 동명이인을 모두 같은 인물로 보거나 이름 풀이를 각 사람의 실제 신앙 태도로 단정하지 않는다."
+    },
+    {
+      "word_id": "H0462_0000",
+      "before": null,
+      "after": "엘리에내는 성경 관용 표기이고 엘리에나이는 אֱלִיעֵינַי의 교재식 한글 근사다. 역대상 8:20의 베냐민 계보에 나오는 인명이다. Strong은 H0454의 축약형으로 추정하지만 정확한 형성과 어원은 확정되지 않았다. H0454와 같은 인물로 취급하거나 그 이름의 풀이를 이 이름의 확정된 형태 분석으로 그대로 옮기지 않는다."
+    },
+    {
+      "word_id": "G2069_0000",
+      "before": null,
+      "after": "누가복음 3:25의 예수 계보에 나오는 인명이다. 에슬리는 성경 관용 표기이고 헤슬리는 거친숨표를 가진 Ἑσλί의 교재식 한글 근사다. Strong 표제 Ἐσλί와 정본 본문 Ἑσλὶ의 숨표 차이를 구별한다. Strong은 히브리어 계통의 이름으로 보고 H0454와의 연결을 추정하지만 그 파생과 구체적인 히브리어 원형은 확정하지 않는다. Strong의 1852년 계보 연구는 역대상 3:23–24의 엘료에내를 누가복음 3:25의 에슬리와 같은 인물로 추정한다. 이는 계보를 대응시키는 가설이며, 두 이름 사이의 음운 변화나 직접 음역 관계를 입증하지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0413_0000",
+      "word_id_2": "H0454_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "H0454의 첫 요소 אֶל은 ~을 향하여라는 전치사 H0413이다. 신명 H0410의 엘과 구별한다. 이름 전체는 나의 눈은 여호와를 향한다는 문장적 구성으로 풀이된다.",
+      "source": "Open Scriptures HebrewStrong.xml H454, commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; BDB H454"
+    },
+    {
+      "word_id_1": "H0454_0000",
+      "word_id_2": "H3068_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "H0454의 장형 예호와 단축형 요는 H3068 계열의 신명 요소다. 구성 관계이며 당시 신명의 실제 발음이나 인물의 신앙 태도를 확정하지 않는다.",
+      "source": "Open Scriptures HebrewStrong.xml H454, commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; BDB H454"
+    },
+    {
+      "word_id_1": "H0454_0000",
+      "word_id_2": "H5869_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "H0454의 עֵינַי는 H5869 눈의 나의 눈이라는 형태다. 이름의 구성 관계이며 샘이라는 다른 의미를 이 이름에 적용하지 않는다.",
+      "source": "Open Scriptures HebrewStrong.xml H454, commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; BDB H454"
+    },
+    {
+      "word_id_1": "H0454_0000",
+      "word_id_2": "H0462_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong은 H0462를 H0454의 축약형으로 probably contracted for라고 추정한다. 가설적 형태 관계이며 역사적 축약과 동일 인물의 이름이라는 주장을 확정하지 않는다.",
+      "source": "Open Scriptures HebrewStrong.xml H462, commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; LXX human reference 1Chronicles 8:20 (supporting context only, provenance/license unverified)"
+    }
+  ],
+  "relation_replacements": [],
+  "supersedes": [],
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h413_approval_20261112/00_user_approval.json",
+    "document_sha256": "e25dc8f2bb05ebf1561a1e2c6517e74d335e16404b9ee24966dc9c323c1b4023"
+  }
+}
