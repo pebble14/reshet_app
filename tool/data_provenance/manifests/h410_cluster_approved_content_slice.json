@@ -1,0 +1,349 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H410-CLUSTER-APPROVED-CONTENT-SLICE",
+  "target": {
+    "expected_work_sha256": "4ec0d1a25dd3bcc50fd427ed457844fb945b4bcef3b04f7bae1ff1c78a48692c",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "G1682_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "엘로이/엘리[나의 하나님]"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "나의 하나님"
+        }
+      ]
+    },
+    {
+      "word_id": "G2241_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "나의 신/나의 하나님"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "나의 하나님"
+        }
+      ]
+    },
+    {
+      "word_id": "H0410_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "신"
+        },
+        {
+          "seq": 2,
+          "meaning": "하나님"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "신(神)"
+        },
+        {
+          "seq": 2,
+          "meaning": "하나님"
+        },
+        {
+          "seq": 3,
+          "meaning": "힘"
+        },
+        {
+          "seq": 4,
+          "meaning": "강한 자"
+        }
+      ]
+    },
+    {
+      "word_id": "H0417_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "우박"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "우박(雨雹)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0426_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "신"
+        },
+        {
+          "seq": 2,
+          "meaning": "하나님"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "신(神)"
+        },
+        {
+          "seq": 2,
+          "meaning": "하나님"
+        }
+      ]
+    },
+    {
+      "word_id": "H0430_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "신들"
+        },
+        {
+          "seq": 2,
+          "meaning": "하나님"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "신(神)"
+        },
+        {
+          "seq": 2,
+          "meaning": "하나님"
+        },
+        {
+          "seq": 3,
+          "meaning": "신적 존재(神的存在)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0433_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "신"
+        },
+        {
+          "seq": 2,
+          "meaning": "하나님"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "신(神)"
+        },
+        {
+          "seq": 2,
+          "meaning": "하나님"
+        }
+      ]
+    },
+    {
+      "word_id": "H1378_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "수정 crystal"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "수정(水晶)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "G1682_0000",
+      "before": null,
+      "after": "아람어의 나의 하나님이라는 부름말을 헬라어로 음역하여 기록한 표현이다. 막 15:34에서 두 번 나오며 같은 절이 그 뜻을 풀이한다. 개역개정·개역한글은 엘리, 새번역은 엘로이로 적는다. 이 판본별 관용 표기와 G2241의 히브리어 계열 엘리를 구별한다. Strong 표제의 ἐλοΐ와 정본 TAGNT lemma ἐλωΐ의 철자 차이는 각각의 원자료대로 보존한다."
+    },
+    {
+      "word_id": "G2241_0000",
+      "before": null,
+      "after": "히브리어 אֵלִי, 곧 H410에 나의라는 1인칭 단수 소유 접미사가 붙은 형태를 헬라어로 음역한 부름말이다. 마 27:46에서 두 번 나오며 시 22:1을 인용한다. 같은 절은 이를 나의 하나님으로 풀이한다. G1682 엘로이와 뜻은 대응하지만 원천 언어형과 음역 표기는 구별한다."
+    },
+    {
+      "word_id": "H0410_0000",
+      "before": null,
+      "after": "여러 신과 이스라엘의 하나님을 가리키며, 인명·지명에서는 엘이라는 신명 요소로도 쓰인다. 창 31:29, 신 28:32, 느 5:5, 잠 3:27, 미 2:1의 손과 결합한 구문은 행할 수 있는 힘·능력을 나타낸다. 욥 41:25와 겔 32:21에서는 강한 자들을 가리킨다. 시 29:1·89:6의 신의 아들들은 천상적 존재들로도 이해되며, 시 36:6·80:10의 하나님의 산·백향목은 뛰어남을 강조하여 옮길 수 있다. 사 57:5의 복수형은 신들·우상과 큰 나무 해석이 갈린다. Strong은 H352의 축약형으로 설명하지만, 힘 관련 전통 어원과 신명 계열의 정확한 역사적 형성은 구별한다. 미 2:1의 확보 LXX는 하나님께 손을 들지 않았다는 다른 독법을 전한다."
+    },
+    {
+      "word_id": "H0417_0000",
+      "before": null,
+      "after": "겔 13:11·13 및 38:22에서 우박의 돌들이라는 표현으로 쓰이며 큰 우박 덩이를 가리킨다. Strong은 H410 엘과 H1378 가비쉬의 합성으로 설명하고 큰 진주 같은 우박으로 풀이한다. 일부 축약 사전에는 신의 진주라는 어원적 풀이도 있어 함께 참고할 수 있다. 가비쉬를 수정으로 이해하면 신의 수정이라는 해설도 검토할 수 있지만, 이는 확인된 독립 의미가 아니라 합성 분석에 따른 설명이다. BDB의 아랍어 석고 명칭 비교와 Gesenius의 얼음 및 아랍어 기원 가능성 등 경쟁 분석이 있어 정확한 어원은 가설로 남긴다."
+    },
+    {
+      "word_id": "H0426_0000",
+      "before": "아람어",
+      "after": "히브리어 H433에 대응하는 아람어 명사이다. 이스라엘의 하나님과 다른 신을 가리키며 단수형과 실제 복수형 אֱלָהִין 등이 쓰인다. 단 3:12·18의 케티브 복수형과 케레 단수형을 구별한다. 단 3:25의 신들의 아들이라는 표현과 4·5장의 거룩한 신들에 관한 말은 구체적 존재의 식별 및 하나님을 가리키는 번역과의 해석 차이를 포함한다. 히브리어와의 대응이 직접 차용 방향을 확정하지는 않는다."
+    },
+    {
+      "word_id": "H0430_0000",
+      "before": null,
+      "after": "형태는 복수이며 실제 여러 신을 가리키지만, 한 분의 하나님과 다곤·아스다롯 같은 단일 신에게도 쓰인다. 여신은 이 범위의 여성 신이다. 하나님을 가리킬 때 대체로 단수 호응을 보이나 창 20:13·35:7 등에는 복수 호응도 있다. 삼상 28:13에서는 땅에서 올라오는 신령한 존재를 가리킨다. 모세에게 신적 권위를 부여한 출 4:16·7:1은 비유적 적용이다. 출 21:6·22:8~9·28, 시 8:5·45:6·82편·138:1에는 하나님·신적 존재·재판관 등의 해석 차이가 있어 천사나 재판관 하나로 고정하지 않는다. 하나님의 것이라는 구문이 뛰어남을 강조하여 옮겨지는 경우도 있다. H433과 단복수 형태 관계를 보이나, H433에서 먼저 생겼는지 또는 단수형이 복수형에서 역으로 형성되었는지의 역사적 분석은 구별한다."
+    },
+    {
+      "word_id": "H0433_0000",
+      "before": null,
+      "after": "주로 시문, 특히 욥기에 쓰이는 신·하나님 명사이다. Strong은 H410의 아마도 늘어난 강조형으로 설명하지만, BDB는 H430에서 유추하여 만들어진 단수형일 가능성을 제시한다. 이 역사적 형성 문제와 H430과의 단복수 형태 대응을 구별한다. 왕하 17:31의 케티브 אלה는 H433, 케레 אֱלֹהֵי는 H430으로 구분된다. 욥 12:6의 끝부분은 하나님이 손에 주셨다는 해석과 신을 자기 손에 두었다는 해석이 경쟁한다."
+    },
+    {
+      "word_id": "H1378_0000",
+      "before": null,
+      "after": "욥 28:18에서 지혜와 견줄 수 없는 귀한 재료를 가리킨다. Strong과 BDB는 수정으로 풀이하지만 개역개정은 벽옥, KJV는 진주로 옮겨 정확한 물질의 식별은 미확정이다. Strong은 얼음과 닮은 모습으로 설명하며, H417을 이 말과 H410의 합성으로 풀이한다. 수정·진주와 얼음의 외관상 연관을 참고할 수 있으나, 색과 투명도는 본문에 직접 명시되지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H0417_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 from H410 and H1378; 큰 진주 비유를 보존하되 BDB의 비교 어원과 정확한 첫 요소 분석의 한계를 반영.",
+      "source": "Strong HebrewLexicon 21c9add13bc727d3a951361778e97e3ff7afd1ce; MorphGNT dd6758b82f46b620804a8ea677d715844679eea1; OSHB/TAGNT; BDB; 2026-11-12 H410 사용자 승인"
+    },
+    {
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H0433_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "probably prolonged (emphatic) from. 역사적 확정 어원이 아니며 H430에서의 역형성설과 함께 보존.",
+      "source": "Strong HebrewLexicon 21c9add13bc727d3a951361778e97e3ff7afd1ce; MorphGNT dd6758b82f46b620804a8ea677d715844679eea1; OSHB/TAGNT; BDB; 2026-11-12 H410 사용자 승인"
+    },
+    {
+      "word_id_1": "H0417_0000",
+      "word_id_2": "H1378_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "hypothesized",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "같은 합성어 가설의 둘째 구성 요소. H1378의 crystal 및 pearl usage와 우박의 실제 의미를 구별하며 H1378 독립 승인은 포함하지 않는다.",
+      "source": "Strong HebrewLexicon 21c9add13bc727d3a951361778e97e3ff7afd1ce; MorphGNT dd6758b82f46b620804a8ea677d715844679eea1; OSHB/TAGNT; BDB; 2026-11-12 H410 사용자 승인"
+    },
+    {
+      "word_id_1": "H0430_0000",
+      "word_id_2": "H0433_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "plural of. 독립 표제로 어휘화된 복수형의 공시적 단어 형성 대응이다. 역사적 최초 생성 순서를 확정하지 않는다. H113→H136 선례와 대조.",
+      "source": "Strong HebrewLexicon 21c9add13bc727d3a951361778e97e3ff7afd1ce; MorphGNT dd6758b82f46b620804a8ea677d715844679eea1; OSHB/TAGNT; BDB; 2026-11-12 H410 사용자 승인"
+    }
+  ],
+  "relation_replacements": [
+    {
+      "relation_id": 3830,
+      "word_id_1": "G1682_0000",
+      "word_id_2": "H0426_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "transliteration",
+        "relation_type": "direct_transliteration",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "H426의 1인칭 단수 소유 접미사 형태를 그리스 문자로 기록한 표현. H426의 표제 기본형 자체만의 단순 음역이라는 뜻은 아니다.",
+        "source": "Strong HebrewLexicon 21c9add13bc727d3a951361778e97e3ff7afd1ce; MorphGNT dd6758b82f46b620804a8ea677d715844679eea1; OSHB/TAGNT; BDB; 2026-11-12 H410 사용자 승인"
+      }
+    },
+    {
+      "relation_id": 2105,
+      "word_id_1": "G2241_0000",
+      "word_id_2": "H0410_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "transliteration",
+        "relation_type": "direct_transliteration",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "H410의 소유 접미사형 אֵלִי를 헬라어로 음역한 표현. 시22:2 MT 및 마27:46을 대조.",
+        "source": "Strong HebrewLexicon 21c9add13bc727d3a951361778e97e3ff7afd1ce; MorphGNT dd6758b82f46b620804a8ea677d715844679eea1; OSHB/TAGNT; BDB; 2026-11-12 H410 사용자 승인"
+      }
+    },
+    {
+      "relation_id": 3828,
+      "word_id_1": "H0426_0000",
+      "word_id_2": "H0433_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "etymological",
+        "relation_type": "root_shared",
+        "status_code": "asserted",
+        "direction_code": "undirected",
+        "description": null,
+        "relation_group_id": null,
+        "note": "(Aramaic) corresponding to. BDB의 대응 명사 및 원문 아람어 형태가 동계 대응을 지지한다. 직접 차용 방향은 부여하지 않는다.",
+        "source": "Strong HebrewLexicon 21c9add13bc727d3a951361778e97e3ff7afd1ce; MorphGNT dd6758b82f46b620804a8ea677d715844679eea1; OSHB/TAGNT; BDB; 2026-11-12 H410 사용자 승인"
+      }
+    }
+  ],
+  "meaning_approvals": [],
+  "supersedes": [],
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h410_approval_20261112/00_user_approval.json",
+    "document_sha256": "89dd7d4e6fff49db261ecf9c00be42140646dbcc38995e4635736fc8750a7fd8"
+  }
+}

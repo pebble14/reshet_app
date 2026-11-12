@@ -26,6 +26,7 @@
 
 | 결정 단위 | 대상 | 상태 | 복원 수준 | 최초 적용일 | 기록 |
 |---|---|---|---|---|---|
+| H410 신명·우박 어휘군 | 8개 뜻·비고, 관계 신규4·교체3, H417/H1378 R3 | `active` | 높음 | 2026-11-12 | [기록](h410_cluster_approved_content_slice.md) |
 | H408 부정 표현 어휘군 | 7개 뜻·비고, 관계5건·추정 어원4쌍 비생성 | `active` | 높음 | 2026-11-12 | [기록](h408_cluster_approved_content_slice.md) |
 | H406 농부 | H0406 뜻·비고, G1092 직접 번역 관계 1건 | `active` | 높음 | 2026-11-09 | [기록](h406_cluster_approved_content_slice.md) |
 | H404 압박 어휘군 | H0404·H0405 뜻·비고, 가설 파생 관계 1건 | `active` | 높음 | 2026-11-09 | [기록](h404_cluster_approved_content_slice.md) |
