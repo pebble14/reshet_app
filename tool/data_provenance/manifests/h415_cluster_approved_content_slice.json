@@ -1,0 +1,121 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H415-CLUSTER-APPROVED-CONTENT-SLICE",
+  "target": {
+    "expected_work_sha256": "4821bc2235611f57f9af67c30c30a58631daccee6cf0744a3cde827f63d2fad5",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0415_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "이스라엘의 전능하신 하나님"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엘엘로헤이스라엘·엘-엘로헤-이스라엘"
+        }
+      ]
+    },
+    {
+      "word_id": "H0416_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "엘벧엘"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엘벧엘·엘베델·엘-베트-엘 (지)"
+        }
+      ]
+    }
+  ],
+  "meaning_approvals": [],
+  "word_note_replacements": [
+    {
+      "word_id": "H0415_0000",
+      "before": null,
+      "after": "창세기 33:20에서 야곱이 세겜 부근에 세운 제단에 붙인 이름이다. 엘엘로헤이스라엘은 성경 관용 표기이며, 엘-엘로헤-이스라엘은 אֵל·אֱלֹהֵי·יִשְׂרָאֵל의 구성 경계를 드러낸 교재식 한글 근사다. ‘하나님, 곧 이스라엘의 하나님’ 또는 ‘엘은 이스라엘의 하나님’으로 풀이할 수 있다. אֱלֹהֵי는 H430의 연계형이다. Strong의 ‘이스라엘의 강한 하나님’과 확보 한국어 사전의 ‘이스라엘의 전능하신 하나님’은 이름 풀이로 참고하되, 별도의 일반명사 의미로 두지 않는다. 확보 LXX는 제단 명칭을 음역하지 않고 이스라엘의 하나님을 부르는 행위로 표현한다."
+    },
+    {
+      "word_id": "H0416_0000",
+      "before": null,
+      "after": "창세기 35:7에서 야곱이 벧엘에 제단을 세운 뒤 그곳에 붙인 이름이다. 엘벧엘은 개역 계열, 엘베델은 새번역의 관용 표기이며, 엘-베트-엘은 אֵל과 בֵּית־אֵל의 결합 및 벧엘 이름 내부 구성을 드러낸 교재식 한글 근사다. 이름은 ‘벧엘의 하나님’으로 풀이되며 벧엘 자체와 구별한다. 창세기 31:13의 같은 구성은 하나님을 가리키는 칭호 문맥이다. 확보 LXX 창세기 35:7은 장소 이름을 Βαιθηλ로 전하여 히브리어 본문의 첫 אֵל 요소와 차이가 있다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H0415_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "H0410는 H0415 명칭의 구성 요소다. 실제 히브리어 구성 관계이며 이름 풀이의 세부 통사·역사적 최초 형성·LXX 독법을 확정하지 않는다.",
+      "source": "Open Scriptures HebrewLexicon 21c9add13bc727d3a951361778e97e3ff7afd1ce H0415 source; OSHB 3d15126fb1ef74867fc1434be1942e837932691f Gen.33.20; 2026-11-12 사용자 승인"
+    },
+    {
+      "word_id_1": "H0415_0000",
+      "word_id_2": "H0430_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "H0430는 H0415 명칭의 구성 요소다. 실제 히브리어 구성 관계이며 이름 풀이의 세부 통사·역사적 최초 형성·LXX 독법을 확정하지 않는다.",
+      "source": "Open Scriptures HebrewLexicon 21c9add13bc727d3a951361778e97e3ff7afd1ce H0415 source; OSHB 3d15126fb1ef74867fc1434be1942e837932691f Gen.33.20; 2026-11-12 사용자 승인"
+    },
+    {
+      "word_id_1": "H0415_0000",
+      "word_id_2": "H3478_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "H3478는 H0415 명칭의 구성 요소다. 실제 히브리어 구성 관계이며 이름 풀이의 세부 통사·역사적 최초 형성·LXX 독법을 확정하지 않는다.",
+      "source": "Open Scriptures HebrewLexicon 21c9add13bc727d3a951361778e97e3ff7afd1ce H0415 source; OSHB 3d15126fb1ef74867fc1434be1942e837932691f Gen.33.20; 2026-11-12 사용자 승인"
+    },
+    {
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H0416_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "H0410는 H0416 명칭의 구성 요소다. 실제 히브리어 구성 관계이며 이름 풀이의 세부 통사·역사적 최초 형성·LXX 독법을 확정하지 않는다.",
+      "source": "Open Scriptures HebrewLexicon 21c9add13bc727d3a951361778e97e3ff7afd1ce H0416 source; OSHB 3d15126fb1ef74867fc1434be1942e837932691f Gen.35.7; 2026-11-12 사용자 승인"
+    },
+    {
+      "word_id_1": "H0416_0000",
+      "word_id_2": "H1008_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "H1008는 H0416 명칭의 구성 요소다. 실제 히브리어 구성 관계이며 이름 풀이의 세부 통사·역사적 최초 형성·LXX 독법을 확정하지 않는다.",
+      "source": "Open Scriptures HebrewLexicon 21c9add13bc727d3a951361778e97e3ff7afd1ce H0416 source; OSHB 3d15126fb1ef74867fc1434be1942e837932691f Gen.35.7; 2026-11-12 사용자 승인"
+    }
+  ],
+  "relation_replacements": [],
+  "supersedes": [],
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h415_approval_20261112/00_user_approval.json",
+    "document_sha256": "337896f9b9baf0550338af7d96c70bb64f51572b14fb1db51f9a93a2255ad9f4"
+  }
+}

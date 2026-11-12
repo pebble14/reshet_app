@@ -1934,3 +1934,7 @@ H0336 의미 유지 승인 1건, 의미 교체 3건, 비고 4건, 관계 신규 
 ## H0410 신명·우박 어휘군 승인 — 2026-11-12
 
 [승인 manifest](../../tool/data_provenance/manifests/h410_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h410_cluster_approved_content_slice.md)에 meaning8·비고8·관계 신규4(ID8340–8343)·교체3(ID3830·2105·3828)을 반영했다. H417/H1378은 최신 R3 비고, 나머지는 R1을 채택했고 신규 hold는 없다. 기존8036 및 CONTEXT 승인을 유지했다. 공식 dry-run·undo·원본 불변·적용기31테스트 후 live apply1회, 이력 그룹1794466235143396의23행과 전체13테이블·DDL·비대상·기존 history 보존을 독립 검증했다. Work·seed·백업·snapshot integrity ok·FK0·sidecar0·seed SHA 불변, progress 승인913→921·미승인13379→13371·hold6·anomaly113이다.
+
+## H0415·H0416 야곱의 엘 복합 명칭 승인 — 2026-11-12
+
+[승인 manifest](../../tool/data_provenance/manifests/h415_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h415_cluster_approved_content_slice.md)에 의미2·비고2·확정 구성관계5(ID8348–8352)를 반영했다. 신규 hold는 없다. 공식 dry-run·undo·원본 불변·적용기31테스트 후 live apply1회, 이력 그룹1794481571734379의9행과 전체13테이블·DDL·비대상·기존 이력 불변을 독립 검증했다. Work·seed·snapshot integrity ok·FK0·sidecar0, seed SHA 불변이다. 공식 progress 승인933→935·미승인13359→13357·hold6·anomaly113이며 비대상14296행은 동일하다.
