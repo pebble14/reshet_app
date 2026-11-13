@@ -1943,3 +1943,8 @@ H0336 의미 유지 승인 1건, 의미 교체 3건, 비고 4건, 관계 신규 
 ## H0418·H0484 목재 명칭 승인 — 2026-11-12
 
 [승인 manifest](../../tool/data_provenance/manifests/h418_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h418_cluster_approved_content_slice.md)에 의미2·비고2·가설 이형관계1(ID8353)을 반영했다. 신규 hold는 없다. 공식 dry-run·undo·원본 불변·적용기31테스트 후 live apply1회, 이력 그룹1794484383878840의5행과 전체13테이블·DDL·비대상·기존 이력 보존을 독립 검증했다. Work·seed integrity ok·FK0·sidecar0, seed 불변이다. 표준 progress 승인935→937·미승인13357→13355·hold6·anomaly113, 비대상14296행은 동일하다. 원문·음역·발음·언어·schema·seed 배포·앱/UI는 변경하지 않았다.
+
+
+## H0419 사랑·친족·용기·식물·인명 승인 — 2026-11-13
+
+[승인 manifest](../../tool/data_provenance/manifests/h419_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h419_cluster_approved_content_slice.md)에 R2·G1138 사용자 수정안을 반영했다. CORE16 meaning23행·비고16·신규관계16·기존ID2332 교체1, 새 hold 없음. Dry-run·undo·적용기31테스트 후 live apply1회 및 history49행·비대상·DDL 보존을 독립 검증했다. Progress 승인937→953·hold6·미승인13339·anomaly113. 원문·음역·발음·schema·seed·앱/UI는 보존했다.

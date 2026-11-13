@@ -1,0 +1,587 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H419-CLUSTER-APPROVED-CONTENT-SLICE",
+  "target": {
+    "expected_work_sha256": "00cc86125a093391b654fcdbb0d60c15e06ff86f0b7ef5f74d0b5f4f34c4247a",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "G1138_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "다윗"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "다윗·다비드 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0419_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "엘닷 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엘닷·엘-다드 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0449_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "엘리닷 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엘리닷·엘리-다드 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H1717_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "가슴 breast"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "젖가슴"
+        }
+      ]
+    },
+    {
+      "word_id": "H1730_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "가장 사랑하는 자, 사랑, 아저씨, 삼촌"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "사랑하는 이"
+        },
+        {
+          "seq": 2,
+          "meaning": "사랑"
+        },
+        {
+          "seq": 3,
+          "meaning": "백숙부(伯叔父)"
+        }
+      ]
+    },
+    {
+      "word_id": "H1731_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "단지, 솥, 바구니"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "솥"
+        },
+        {
+          "seq": 2,
+          "meaning": "바구니"
+        }
+      ]
+    },
+    {
+      "word_id": "H1732_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "다윗"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "다윗·다위드 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H1733_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아주머니, 숙모, 고모"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "고모(姑母)"
+        },
+        {
+          "seq": 2,
+          "meaning": "백숙모(伯叔母)"
+        }
+      ]
+    },
+    {
+      "word_id": "H1734_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "도도 Dodo"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "도도·도대 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H1735_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "도다와후 Dodavah"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "도다와후 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H1736_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "합환채"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "합환채(合歡菜)"
+        },
+        {
+          "seq": 2,
+          "meaning": "바구니"
+        }
+      ]
+    },
+    {
+      "word_id": "H1737_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "도대 Dodai"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "도대·도다이 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3033_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "사랑하는, 사랑스러운"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "사랑하는 것"
+        }
+      ]
+    },
+    {
+      "word_id": "H3039_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "사랑하는 be loved"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "사랑받는"
+        },
+        {
+          "seq": 2,
+          "meaning": "사랑스러운"
+        },
+        {
+          "seq": 3,
+          "meaning": "사랑"
+        }
+      ]
+    },
+    {
+      "word_id": "H3040_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "여디다 Jedidah"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "여디다·예디다 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3041_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "여디디야 Jedidiah"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "여디디야·예디데-야 (인)"
+        }
+      ]
+    }
+  ],
+  "meaning_approvals": [],
+  "word_note_replacements": [
+    {
+      "word_id": "G1138_0000",
+      "before": null,
+      "after": "히브리어 다윗(H1732)의 이름을 헬라어로 옮긴 것이다. ‘다윗’은 한국어 성경 관용명, ‘다비드’는 Strong 표제 Δαβίδ의 교재식 한글 근사다. 자료의 lemma 목록에는 Δαυείδ와 Δαυίδ도 있으며, 이번 canonical 신약 본문 59개 token은 Δαυίδ 계열이다. 히브리어 원천 이름의 근사는 ‘다위드’다. 자손·왕위·뿌리·열쇠 및 히브리서 4:7의 저자·시편 지칭은 해당 이름의 문맥적 사용이며 별도 뜻으로 나누지 않는다."
+    },
+    {
+      "word_id": "H0419_0000",
+      "before": null,
+      "after": "민수기 11:26–27에서 메닷과 함께 진영에 머물며 예언한 장로의 이름이다. 엘(신명 요소)과 사랑 계열의 요소를 결합한 이름으로, 전통적으로 ‘하나님께서 사랑하셨다’로 풀이한다. ‘엘닷’은 한국어 성경 관용명이고 ‘엘-다드’는 구성 경계를 보여 주는 교재식 한글 근사다. 엘리닷(H0449)과 이름의 어근은 연결되지만 두 이름의 인물을 동일인으로 확정하지 않는다."
+    },
+    {
+      "word_id": "H0449_0000",
+      "before": null,
+      "after": "민수기 34:21의 기슬론의 아들로, 베냐민 지파를 대표하여 땅 분배에 참여한 인물이다. 엘닷(H0419)과 같은 어근의 이름으로 설명되지만 동일인이라는 뜻은 아니다. 이름 풀이에는 ‘그의 사랑의 하나님’과 ‘하나님께서 사랑하셨다’가 있어 구문의 세부 해석을 확정하지 않는다. ‘엘리닷’은 관용명, ‘엘리-다드’는 엘 계열 요소와 사랑 계열 요소의 경계를 보여 주는 교재식 한글 근사다."
+    },
+    {
+      "word_id": "H1717_0000",
+      "before": null,
+      "after": "젖가슴을 가리키며 문맥에 따라 젖꼭지에 초점이 놓일 수 있다. 성경의 확인된 네 용례는 여성 또는 여성으로 의인화된 대상에 쓰인다. 일반적인 흉부 전체를 뜻하는 말로 확대하지 않지만, 후기 히브리어에는 남성의 젖가슴을 가리키는 용례도 있어 여성에게만 쓸 수 있는 단어로 단정하지 않는다. 유아 발화에서 생긴 말이라는 어원 설명이 있으며, 사랑 계열 H1730과의 직접 역사 관계는 확정하지 않는다."
+    },
+    {
+      "word_id": "H1730_0000",
+      "before": null,
+      "after": "사랑하는 사람, 사랑과 애무, 아버지의 형제인 백숙부를 가리키는 명사다. 복수형의 사랑 용법에는 친밀한 사랑의 표현과 성애가 포함된다. ‘가장’이라는 최상급이나 ‘사랑하다’라는 동사 의미를 자체적으로 포함하지 않는다. ‘백숙부의 아들’이라는 구문은 사촌을 가리키지만 이를 단어 자체의 별도 뜻으로 합치지 않는다. 예레미야 32:12와 아모스 6:10의 친족 범위는 단정하지 않는다. 친족어와 애정어는 비교 셈어 자료에서도 확인되지만 어느 뜻이 먼저 생겨 다른 뜻으로 발전했는지는 확정하지 않는다. 미사용 어근 ‘끓다’라는 전통 설명을 입증된 의미의 출발점으로 삼지 않는다."
+    },
+    {
+      "word_id": "H1731_0000",
+      "before": null,
+      "after": "음식을 끓이는 솥과 물건을 담아 나르는 바구니를 가리키는 용기명이다. 비교 셈어 자료에도 솥을 뜻하는 대응어가 있다. 성경에서는 사무엘상 2:14, 역대하 35:13, 욥기 41:12에 솥, 열왕기하 10:7, 시편 81:7, 예레미야 24:2에 바구니 용법이 확인된다. 재료와 세부 형태는 단어만으로 고정하지 않는다. 예레미야 24:1의 H1736과는 바구니 용법에 한정하여 연결된다. 사랑 계열 H1730에서 파생했다고 확정하지 않는다."
+    },
+    {
+      "word_id": "H1732_0000",
+      "before": null,
+      "after": "이스라엘 왕 다윗의 이름이다. 히브리어 철자 דוד와 דויד가 함께 전해지며, ‘다윗’은 한국어 성경 관용명이고 ‘다위드’는 마소라 표기의 교재식 한글 근사다. 다윗의 집·왕위·성 및 시편 표제나 후대의 다윗을 말하는 문맥도 이름의 사용으로 구분하며 별도 보통명사 뜻을 만들지 않는다. 이름은 사랑 계열과 연결하여 풀이되지만 ‘사랑하는’ 또는 ‘사랑받는 이’라는 정확한 역사적 어원은 확정하지 않는다. 헬라어 이름 G1138과 연결된다."
+    },
+    {
+      "word_id": "H1733_0000",
+      "before": null,
+      "after": "아버지의 자매인 고모와 아버지 형제의 아내인 백숙모를 가리키는 친족 명사다. 출애굽기 6:20은 고모, 레위기 18:14와 20:20은 백숙모 용법이다. H1730의 여성형에서 성립했으나 실제 두 친족 관계를 구분한다. 출애굽기 6:20의 칠십인역은 다른 친족 관계를 전하므로 마소라 본문의 어휘 뜻과 구분한다. 후기나 현대 히브리어의 더 넓은 호칭 범위를 성경의 확인된 뜻으로 자동 확대하지 않는다."
+    },
+    {
+      "word_id": "H1734_0000",
+      "before": null,
+      "after": "여러 인물이 공유하는 이름이다. 사사기 10:1의 인물은 돌라의 할아버지이며, 사무엘하 23장과 역대상 11장에는 용사들의 아버지 이름으로 나온다. ‘도도’는 관용명과 마소라 표기의 교재식 근사가 같고, ‘도대’는 한국어 성경의 일부 본문에서 쓰는 이름 변형이다. 사무엘하 23:9의 Ketiv와 Qere는 같은 본문 자리의 대안 읽기이며 별개의 인물로 세지 않는다. 사랑 계열과의 어원 연결은 가능하지만 정확한 이름 풀이와 도다이(H1737)와의 인물 동일성은 확정하지 않는다."
+    },
+    {
+      "word_id": "H1735_0000",
+      "before": null,
+      "after": "역대하 20:37에 나오는 엘리에셀의 아버지다. ‘도다와후’는 한국어 성경 관용명과 마소라 표기의 교재식 한글 근사가 같아 한 번만 적는다. 전통적으로 사랑 계열 요소와 야 신명 요소를 결합하여 ‘야의 사랑’으로 풀이한다. 전승된 철자·모음과 고대 번역의 형태가 달라 다른 철자를 선호하는 학설도 있으므로 이름을 임의 교정하거나 합성 경계와 역사적 발음을 확정하지 않는다."
+    },
+    {
+      "word_id": "H1736_0000",
+      "before": null,
+      "after": "합환채는 창세기 30장과 아가 7:14에 나오는 식물로, 칠십인역과 영어 성경은 맨드레이크 계열로 옮긴다. 사랑·출산의 연상으로 이름이 생겼다는 어원설이 있으나 정확한 역사 어원과 식물 종을 확정하지 않는다. ‘합환채(合歡菜)’는 한국어 성경의 관용 식물명이며 이름과 문화적 믿음만으로 약효를 입증하지 않는다. 예레미야 24:1에서는 식물이 아니라 무화과를 담은 바구니를 뜻하며 H1731과 연결된다. 두 용법이 같은 Strong 번호에 실렸다는 사실을 동일한 역사 어원의 증명으로 보지 않는다."
+    },
+    {
+      "word_id": "H1737_0000",
+      "before": null,
+      "after": "역대상 27:4에서 군대의 둘째 반열을 맡은 인물의 이름이다. ‘도대’는 한국어 성경 관용명, ‘도다이’는 마소라 표기의 교재식 한글 근사다. 도도(H1734)와 이름의 이형으로 연결되지만 모든 동명 인물의 동일성을 뜻하지 않는다. H1736과 형태가 비슷하다는 전통 사전의 설명을 합환채에서 이 인명이 파생했다는 사실로 확정하지 않는다."
+    },
+    {
+      "word_id": "H3033_0000",
+      "before": null,
+      "after": "사랑 계열에서 형성된 여성 명사이며, 예레미야 12:7에서는 하나님께서 사랑하시는 백성을 가리킨다. 명사 형성의 기반인 애정과 그 애정을 받는 대상이라는 실제 사용을 구분한다. 성경의 확인된 문맥에서는 사랑의 대상을 나타내므로 ‘사랑하는 것’으로 적는다. 형용사 ‘사랑스러운’이나 동사 ‘사랑하다’로 풀이하지 않는다."
+    },
+    {
+      "word_id": "H3039_0000",
+      "before": null,
+      "after": "주로 사랑을 받아 소중히 여겨지는 상태를 나타내는 형용사이며, 사랑받는 사람을 명사적으로 가리킬 수도 있다. 시편 84:2에서는 거처의 사랑스러움을 나타낸다. 시편 45:1의 표제에 쓰인 형태는 사랑의 노래를 나타내는 추상적 용법 또는 관련 명사 형성으로 분석하며, ‘사랑하는 이를 위한 노래’라는 해석도 가능하다. H1730과 의미 영역이 겹치지만 두 말의 직접 파생 순서나 사랑의 강도 차이를 확정하지 않는다. 사랑을 뜻하는 비교 셈어 계열과 연결된다."
+    },
+    {
+      "word_id": "H3040_0000",
+      "before": null,
+      "after": "열왕기하 22:1에 나오는 요시야의 어머니이며 보스갓 출신 아다야의 딸이다. H3039의 여성형에서 성립한 이름으로 ‘사랑받는 이’라는 이름 풀이를 가진다. ‘여디다’는 한국어 성경 관용명, ‘예디다’는 마소라 표기를 바탕으로 한 교재식 한글 근사다. 이름의 어원 풀이를 별도 보통명사 뜻으로 추가하지 않는다."
+    },
+    {
+      "word_id": "H3041_0000",
+      "before": null,
+      "after": "사무엘하 12:25에서 나단을 통하여 솔로몬에게 붙인 이름이다. 사랑받음을 나타내는 H3039 계열 요소와 야 신명 요소를 결합하여 ‘야께 사랑받는 이’로 풀이하며, 바로 앞 문맥의 하나님의 사랑하심과 연결된다. ‘여디디야’는 한국어 성경 관용명, ‘예디데-야’는 구성 경계를 보이는 교재식 한글 근사다. 중간 셰와의 읽기는 채택한 교육용 읽기의 선택이며 시대별 실제 발음을 하나로 확정하지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H0419_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "note": "H0419의 엘 신명 구성 요소는 H0410과 연결된다. 정확한 역사적 이름 문장 전체를 확정하는 뜻은 아니다.",
+      "source": "정본 Strong XML·OSHB·TAGNT; BDB; R2 비교언어 연구; 2026-11-13 사용자 승인",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H0419_0000",
+      "word_id_2": "H1730_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "note": "H0419의 사랑 계열 구성 요소는 H1730 계열과 연결된다. 독립 명사의 한국어 뜻을 이름 구문에 기계적으로 대입하지 않는다.",
+      "source": "정본 Strong XML·OSHB·TAGNT; BDB; R2 비교언어 연구; 2026-11-13 사용자 승인",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H0419_0000",
+      "word_id_2": "H0449_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "note": "두 이름은 같은 어근으로 설명된다. 한 이름에서 다른 이름으로의 직접 파생이나 인물 동일성을 확정하지 않는다.",
+      "source": "정본 Strong XML·OSHB·TAGNT; BDB; R2 비교언어 연구; 2026-11-13 사용자 승인",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H1730_0000",
+      "word_id_2": "H1732_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "note": "다윗 이름과 사랑 계열의 공통 어원을 가설로 연결한다. 정확한 역사적 이름 풀이와 형성 과정은 확정하지 않는다.",
+      "source": "정본 Strong XML·OSHB·TAGNT; BDB; R2 비교언어 연구; 2026-11-13 사용자 승인",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H1730_0000",
+      "word_id_2": "H1733_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "note": "H1733은 H1730의 여성형에서 성립한 독립 친족 명사로, 아버지의 자매와 아버지 형제의 아내를 가리킨다.",
+      "source": "정본 Strong XML·OSHB·TAGNT; BDB; R2 비교언어 연구; 2026-11-13 사용자 승인",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H1730_0000",
+      "word_id_2": "H1734_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "note": "도도 이름을 사랑 계열에서 형성된 것으로 가설 연결한다. 접미형 풀이와 신명 가능성 등 경쟁 분석이 있어 역사적 파생을 확정하지 않는다.",
+      "source": "정본 Strong XML·OSHB·TAGNT; BDB; R2 비교언어 연구; 2026-11-13 사용자 승인",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H1730_0000",
+      "word_id_2": "H1735_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "note": "도다와후의 사랑 계열 구성 요소를 가설로 연결한다. 전승 철자·모음과 교정안의 차이 때문에 세부 합성 구조는 확정하지 않는다.",
+      "source": "정본 Strong XML·OSHB·TAGNT; BDB; R2 비교언어 연구; 2026-11-13 사용자 승인",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H1730_0000",
+      "word_id_2": "H3039_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "note": "사랑 계열 명사와 사랑받음을 나타내는 형용사의 공통 어원을 가설로 연결한다. 어느 단어에서 다른 단어가 직접 파생했는지 확정하지 않는다.",
+      "source": "정본 Strong XML·OSHB·TAGNT; BDB; R2 비교언어 연구; 2026-11-13 사용자 승인",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H1731_0000",
+      "word_id_2": "H1736_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "note": "예레미야 24:1–2의 바구니 용법에 한정한 형태 이형 관계다. H1736의 합환채라는 식물 뜻이 솥이나 바구니에서 파생했다고 주장하지 않는다.",
+      "source": "정본 Strong XML·OSHB·TAGNT; BDB; R2 비교언어 연구; 2026-11-13 사용자 승인",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H1735_0000",
+      "word_id_2": "H3050_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "hypothesized",
+      "direction_code": "w2_to_w1",
+      "note": "도다와후의 야 신명 구성 요소를 가설로 연결한다. 전승 철자·모음과 교정안의 차이 때문에 세부 합성 구조는 확정하지 않는다.",
+      "source": "정본 Strong XML·OSHB·TAGNT; BDB; R2 비교언어 연구; 2026-11-13 사용자 승인",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H3033_0000",
+      "word_id_2": "H3039_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "note": "H3033은 H3039에서 형성된 명사로, 예레미야 12:7에서는 사랑의 대상을 가리킨다.",
+      "source": "정본 Strong XML·OSHB·TAGNT; BDB; R2 비교언어 연구; 2026-11-13 사용자 승인",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H3039_0000",
+      "word_id_2": "H3040_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "note": "H3040은 사랑받음을 나타내는 H3039의 여성형에서 성립한 고유명사다. 이름의 어원 풀이를 별도 보통명사 뜻으로 만들지 않는다.",
+      "source": "정본 Strong XML·OSHB·TAGNT; BDB; R2 비교언어 연구; 2026-11-13 사용자 승인",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H3039_0000",
+      "word_id_2": "H3041_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "note": "여디디야 이름의 사랑받음 구성 요소는 H3039 계열과 연결되며 사무엘하 12:24–25 문맥이 이름 풀이를 뒷받침한다.",
+      "source": "정본 Strong XML·OSHB·TAGNT; BDB; R2 비교언어 연구; 2026-11-13 사용자 승인",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H3041_0000",
+      "word_id_2": "H3050_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "note": "여디디야 이름의 야 신명 구성 요소는 H3050과 연결된다. 이름 전체는 ‘야께 사랑받는 이’로 풀이된다.",
+      "source": "정본 Strong XML·OSHB·TAGNT; BDB; R2 비교언어 연구; 2026-11-13 사용자 승인",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H1734_0000",
+      "word_id_2": "H1737_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "note": "도도와 도다이는 이름의 형태 이형으로 연결된다. 파생의 역사적 방향이나 모든 동명 인물의 동일성을 뜻하지 않는다.",
+      "source": "정본 Strong XML·OSHB·TAGNT; BDB; R2 비교언어 연구; 2026-11-13 사용자 승인",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H1730_0000",
+      "word_id_2": "H1736_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "note": "H1736의 합환채라는 식물명에 한정하여 사랑 계열과의 공통 어원을 가설로 연결한다. 바구니 뜻에는 적용하지 않으며 약효나 정확한 역사 어원을 확정하지 않는다.",
+      "source": "정본 Strong XML·OSHB·TAGNT; BDB; R2 비교언어 연구; 2026-11-13 사용자 승인",
+      "description": null,
+      "relation_group_id": null
+    }
+  ],
+  "relation_replacements": [
+    {
+      "relation_id": 2332,
+      "word_id_1": "G1138_0000",
+      "word_id_2": "H1732_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "note": null,
+        "source": "WORD_TABLE.관련1",
+        "description": null,
+        "relation_group_id": null
+      },
+      "after": {
+        "category_code": "transliteration",
+        "relation_type": "direct_transliteration",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "note": "G1138은 히브리어 다윗 이름 H1732의 헬라어 음역이다. Strong 표제의 Δαβίδ와 canonical 신약 본문의 Δαυίδ를 같은 전승 이름의 철자로 구분한다.",
+        "source": "정본 Strong XML·OSHB·TAGNT; BDB; R2 비교언어 연구; 2026-11-13 사용자 승인",
+        "description": null,
+        "relation_group_id": null
+      }
+    }
+  ],
+  "supersedes": [],
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h419_approval_20261113/00_user_approval.json",
+    "document_sha256": "073ae8090444ceeb6760bf1c83a68e3dc26cbe815a54bdd15fdfee1f8d4b0b5b"
+  }
+}

@@ -218,3 +218,5 @@
 | H407 악삽·주술 어휘군 | H0407·H3784·H3785·H3786 의미·비고, 가설 파생1·공통 어근2·hold 없음 | active | 높음 | 2026-11-12 | [결정 기록](h407_cluster_approved_content_slice.md) |
 
 | H415·H416 야곱의 엘 복합 명칭 | H0415·H0416 의미·비고·구성관계5, hold 없음 | active | 높음 | 2026-11-12 | [결정 기록](h415_cluster_approved_content_slice.md) |
+
+| H419 사랑·친족·용기·식물·인명 클러스터 | CORE16 의미23행·비고16·신규관계16·교체1, R2 및 G1138 수정 반영, hold 없음 | active | 높음 | 2026-11-13 | [결정 기록](h419_cluster_approved_content_slice.md) |
