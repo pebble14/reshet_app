@@ -1,0 +1,40 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H435-CLUSTER-APPROVED-CONTENT-SLICE",
+  "target": {
+    "expected_work_sha256": "6a8f972655b7d33b0e5a89a78363934faea6b64a21f933badc00a010689e8e79",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0435_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "엘룰월"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엘룰 (월)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0435_0000",
+      "before": null,
+      "after": "‘엘룰’은 한국어 성경의 관용 표기이자 히브리어 אֱלוּל의 교재식 읽기를 옮긴 한글 근사다. 니산월을 첫째로 세는 달력의 여섯째 달이며, 양력으로 대체로 8~9월 무렵에 해당한다. 느헤미야 6:15에서는 성벽 공사를 마친 달이다. 아카드어 월명 Elūlu 계열과 연결되지만, 궁극적 어원 뜻과 정확한 차용 경로는 확정하지 않는다. 예레미야 14:14의 H0434 ‘헛된 것’과 구별한다."
+    }
+  ],
+  "relation_creates": [],
+  "relation_replacements": [],
+  "meaning_approvals": [],
+  "supersedes": [],
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h435_approval_20261113/00_user_approval.json",
+    "document_sha256": "6805cd01a6c9e20bb012906c88fe53e45665aad2e82805ac3742ae364330290f"
+  }
+}

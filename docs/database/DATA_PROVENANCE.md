@@ -1953,3 +1953,8 @@ H0336 의미 유지 승인 1건, 의미 교체 3건, 비고 4건, 관계 신규 
 ## H0420 엘다아 인명 승인 — 2026-11-13
 
 [승인 manifest](../../tool/data_provenance/manifests/h420_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h420_cluster_approved_content_slice.md)에 의미1·비고1·합성관계2(ID8370–8371, 확정1·가설1)를 반영했다. 공식 dry-run·undo·원본 불변·적용기31테스트·live apply1회·독립 전체 테이블/DDL 검증 통과. 이력 그룹1794535103993463의4행(ID7853–7856), seed 불변·integrity ok·FK0·sidecar0. 진행표 승인953→954·미승인13339→13338·hold6·anomaly113 및 비대상14297행 불변. 원문·음역·발음·schema·UI 변경 없음. 상세 receipt와 독립 검증은 결정 기록에 연결했다.
+
+
+## H0435 엘룰월 승인 — 2026-11-13
+
+[승인 manifest](../../tool/data_provenance/manifests/h435_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h435_cluster_approved_content_slice.md)에 의미1·비고1을 반영했다. 관계 비생성·신규 hold 없음. 공식 dry-run·undo·원본 불변·적용기31테스트 및 live apply1회 후 독립13테이블·DDL·비대상·history2행 검증을 통과했다. Work·seed·snapshot integrity ok·FK0·sidecar0, seed 불변. Progress 승인960→961·미승인13332→13331·hold6·anomaly113이며 비대상14,297행은 동일하다. 원문·음역·발음·언어·schema·앱/UI 변경 없음.
