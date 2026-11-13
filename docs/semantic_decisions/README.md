@@ -222,3 +222,5 @@
 | H419 사랑·친족·용기·식물·인명 클러스터 | CORE16 의미23행·비고16·신규관계16·교체1, R2 및 G1138 수정 반영, hold 없음 | active | 높음 | 2026-11-13 | [결정 기록](h419_cluster_approved_content_slice.md) |
 
 | H420 엘다아 인명 | H0420 의미1·비고1·합성관계2(확정1·가설1), hold 없음 | active | 높음 | 2026-11-13 | [결정 기록](h420_cluster_approved_content_slice.md) |
+
+| H421 슬픔·맹세·저주 연결군 | CORE6 의미9행·비고6·관계3(확정2·가설1), H451 성서 용법 명시·hold 없음 | active | 높음 | 2026-11-13 | [결정 기록](h421_cluster_approved_content_slice.md) |
