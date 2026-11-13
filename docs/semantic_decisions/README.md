@@ -226,3 +226,5 @@
 | H420 엘다아 인명 | H0420 의미1·비고1·합성관계2(확정1·가설1), hold 없음 | active | 높음 | 2026-11-13 | [결정 기록](h420_cluster_approved_content_slice.md) |
 
 | H421 슬픔·맹세·저주 연결군 | CORE6 의미9행·비고6·관계3(확정2·가설1), H451 성서 용법 명시·hold 없음 | active | 높음 | 2026-11-13 | [결정 기록](h421_cluster_approved_content_slice.md) |
+
+| H442 알루스 지명 | H0442 의미1·비고1·관계 비생성·hold 없음 | active | 높음 | 2026-11-13 | [결정 기록](h442_cluster_approved_content_slice.md) |

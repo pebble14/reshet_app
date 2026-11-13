@@ -1,0 +1,40 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H442-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h442_approval_20261113/00_user_approval.json",
+    "document_sha256": "bd74050a1e1a9a83133ca9407f8e163909d79a342f81e737e06d85459feff5b4"
+  },
+  "target": {
+    "expected_work_sha256": "3161ba621e15c6417b0246e767aedeca5a580864bf53820fa05df5959227aa37",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0442_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "알루스 (지)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "알루스·알루쉬 (지)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0442_0000",
+      "before": null,
+      "after": "출애굽 여정에서 돕가와 르비딤 사이에 머문 광야 야영지다(민 33:13–14). 알루스는 한국어 성경 관용명이고 알루쉬는 히브리어 표제 אָלוּשׁ의 교재식 읽기에 따른 한글 근사다. Strong은 어원을 미상으로 둔다. 참고 사전에는 ‘나는 (빵을) 반죽할 것이다’라는 풀이가 있고, Gesenius는 탈무드에 따른 ‘사람들의 무리’라는 해석을 소개하지만 어느 쪽도 이 지명의 확정된 본뜻으로 채택하지 않는다. 정확한 위치는 현재 자료로 확정할 수 없다."
+    }
+  ],
+  "relation_creates": [],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}
