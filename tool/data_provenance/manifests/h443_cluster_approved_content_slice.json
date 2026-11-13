@@ -1,0 +1,646 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H443-CLUSTER-APPROVED-CONTENT-SLICE",
+  "target": {
+    "expected_work_sha256": "ed5789a8068ff1ace2987ba1ea57c8e14fd22bb36d72659248117b0a068c0ab5",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0443_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "엘사밧 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엘사밧·엘-자바드 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2064_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "주다/수여하다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "주다"
+        }
+      ]
+    },
+    {
+      "word_id": "H2065_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "준 것[선물]"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "선물(膳物)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2066_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "사밧 Zabad"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "사밧·시밧·자바드 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2067_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "삽디"
+        },
+        {
+          "seq": 2,
+          "meaning": "뜻풀이: 선물"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "삽디·자브디 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2068_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "삽디엘"
+        },
+        {
+          "seq": 2,
+          "meaning": "뜻풀이: 신의 선물, 하나님의 선물"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "삽디엘·자브디-엘 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2069_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "스바댜"
+        },
+        {
+          "seq": 2,
+          "meaning": "뜻풀이: 여호와께서 주셨다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "스바댜·제바드-야·제바드-야후 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2071_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "사붓 Zabud"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "사붓·자부드 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2072_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "사붓 Zabbud(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "사붓·잡부드 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2080_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "스비다 Zebidah"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "스비다·제비다 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3075_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "여호사밧(2)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "여호사밧·여호사바드·예호-자바드 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3107_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "요사밧 Joshaphat"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "요사밧·요-자바드 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5990_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "암미사밧 Ammizabad"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "암미사밧·암미-자바드 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "G2199_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "세베대"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "세베대·제베다이오스 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0443_0000",
+      "before": null,
+      "after": "갓 지파의 다윗 용사(대상 12:12, MT 12:13)와 고라 계열 문지기 가문의 인물(대상 26:7)의 이름이다. 엘사밧은 성경 관용명, 엘-자바드는 교재식 읽기로 H0410 엘과 H2064 주다의 구성 경계를 보인 표기다. 이름은 하나님이 주셨다로 풀이한다. 확보한 LXX 참고자료는 대상 12:13에서 ελιαζερ, 26:7에서 ελζαβαδ를 전하며 이 차이를 정규화하거나 원래 이름의 확정 판정으로 삼지 않는다."
+    },
+    {
+      "word_id": "H2064_0000",
+      "before": null,
+      "after": "창 30:20에서 하나님이 레아에게 좋은 선물을 주셨다는 말에 쓰인다. 사전의 confer·bestow·endow는 주거나 베풀어 주는 뜻이며, 수여하다·부여하다는 설명으로 둘 수 있다. 같은 절의 H2065는 주어진 선물이다. 뒤의 함께 살다·존중하다에 해당하는 동사는 H2082로 이 어휘의 뜻이 아니다. Strong XML usage의 endure는 실제 확보 KJV의 endued와 다르며 견디다라는 뜻의 근거로 삼지 않는다."
+    },
+    {
+      "word_id": "H2065_0000",
+      "before": null,
+      "after": "창 30:20의 남성 단수 명사로 좋은 선물이라는 목적어에 쓰인다. H2064 주다와 연결되며 레아가 아들을 얻은 것을 하나님이 주신 선물로 말한다. KJV의 dowry는 해당 문맥의 번역이며 혼수만을 뜻하는 독립 의미로 제한하지 않는다. 이 절은 H2082 및 스불론 H2074와 연결되는 이름 설명의 말놀이로 읽을 수 있으나, 서로 동일 어근이거나 이름의 역사적 어원이 확정되었다는 뜻은 아니다."
+    },
+    {
+      "word_id": "H2066_0000",
+      "before": null,
+      "after": "유다·에브라임 계보, 다윗의 용사, 요아스 암살자 및 귀환자 명단에 나오는 여러 사람의 이름이다. 사밧과 시밧은 한국어 성경 표기이며 자바드는 זָבָד의 교재식 근사다. H2064와 연결되며 Strong의 주는 자, BDB의 그가 주셨다 또는 선물이라는 풀이가 있다. 대하 24:26과 왕하 12:21(MT 12:22)의 평행은 H3108 요사갈 및 해당 본문의 표기·lemma 차이와 구별하여 보존하며 H3107로 재배정하지 않는다."
+    },
+    {
+      "word_id": "H2067_0000",
+      "before": null,
+      "after": "아간의 조상, 베냐민 계보, 다윗의 포도주 관리인 및 아삽 계열 계보에 쓰이는 인명이다. 삽디는 성경 관용명, 자브디는 זַבְדִּי의 교재식 근사이며 묵음 셰와 뒤 ד의 약한 다게쉬를 자음 중복으로 늘리지 않는다. H2065 선물 계열에서 형성된 이름이다. 나의 선물·나에게 주어진 선물 또는 신명 축약을 포함한 세부 풀이에는 견해 차이가 있다. 대상 2:6의 시므리 및 대상 9:15의 시그리와의 평행은 인물 식별 문제로, 기억하다 어근과의 동일 어근 관계를 확정하지 않는다."
+    },
+    {
+      "word_id": "H2068_0000",
+      "before": null,
+      "after": "대상 27:2의 야소브암의 아버지와 느 11:14의 감독을 가리킨다. 삽디엘은 관용명, 자브디-엘은 זַבְדִּיאֵל의 교재식 읽기와 엘 앞의 구성 경계를 보인 표기이다. Strong은 H2065와 H0410의 합성으로 하나님의 선물, BDB는 나의 선물은 하나님으로 풀이한다. 이 문장 분석 차이는 비고에 남기며 별도 보통명사 meaning으로 두지 않는다. 느 11:14의 하그돌림의 아들·큰 자들의 아들이라는 번역 차이로 계보를 확대 확정하지 않는다."
+    },
+    {
+      "word_id": "H2069_0000",
+      "before": null,
+      "after": "스바댜는 한국어 성경 관용명이며 제바드-야·제바드-야후는 זְבַדְיָה·זְבַדְיָהוּ의 어근과 신명 요소를 표시한 교재식 근사다. Strong은 H2064와 H3050의 합성으로 야께서 주셨다고 풀이한다. 정본 단형 6토큰, 장형 3토큰이며 장형은 대상 26:2와 대하 17:8·19:11에 나온다. 이름군의 장단형을 모든 개인에게 직접 확인된 두 형태로 취급하지 않는다. 스 8:8의 선조 שפטיה와 개인 זְבַדְיָה는 한국어 이름이 같게 옮겨져도 서로 다른 어휘이다."
+    },
+    {
+      "word_id": "H2071_0000",
+      "before": null,
+      "after": "왕상 4:5에서 나단의 아들인 솔로몬의 신하이자 왕의 벗으로 기록된 인물이다. 사붓은 관용명, 자부드는 זָבוּד의 교재식 근사다. H2064에서 주어진·부여받은이라는 수동형 계열의 이름 풀이와 연결되며, 같은 한국어 관용명을 가진 H2072 잡부드와 구별한다. 대상 2:36의 사밧 H2066과 아버지 이름이 같다는 사실만으로 동일인이라고 확정하지 않는다."
+    },
+    {
+      "word_id": "H2072_0000",
+      "before": null,
+      "after": "스 8:14의 비그왜 자손 귀환자 이름으로, 케티브 ו/זבוד H2072와 케레 וְ/זַכּוּר H2139를 구별한다. 사붓은 한국어 성경 관용명, 잡부드는 Strong 표제 זַבּוּד의 교재식 읽기이다. 실제 케티브는 무모음 자음 표기이므로 Strong의 모음과 ב 중복을 본문 직접 확인값으로 보지 않는다. Strong은 H2071의 한 형태로 설명하며 두 사전 표제의 형태 대응을 인정할 수 있지만 정확한 초기 모음화나 두 인물의 동일성을 확정하는 것은 아니다."
+    },
+    {
+      "word_id": "H2080_0000",
+      "before": null,
+      "after": "루마 출신 브다야의 딸이며 여호야김의 어머니 이름(왕하 23:36)이다. 스비다는 한국어 성경 관용명, 제비다는 Strong 표제 זְבִידָה의 교재식 읽기, 제붓다는 케레 זְבוּדָּה의 교재식 근사다. 케티브 זבידה와 케레는 같은 위치의 대안 읽기이며 정본 2토큰은 독립된 두 등장을 뜻하지 않는다. Strong은 H2064 선물 계열의 여성형으로 설명한다. 제붓다의 ㅅ 받침과 다음 ㄷ은 ד 중복을 허용 받침 안에서 근사한 것이며 정확한 역사적 발음 재구가 아니다."
+    },
+    {
+      "word_id": "H3075_0000",
+      "before": null,
+      "after": "여호사밧과 여호사바드는 한국어 성경 관용 표기, 예호-자바드는 יְהוֹזָבָד의 교재식 읽기와 구성 경계를 보인 표기이다. H3068 신명 요소와 H2064 주다의 합성으로 여호와께서 주셨다는 전통 풀이가 있다. 요아스 암살자, 오벳에돔의 아들 문지기 및 베냐민 군대 장관의 이름에 쓰인다. 예호는 이 합성어에 표시된 앞 요소의 읽기이며 신명 전체의 원래 발음을 확정하지 않는다. 심판하다 계열 H3092 여호사밧과 구별하며 H3107 요-자바드와의 장단형 관계로 서로 다른 인물들을 합치지 않는다."
+    },
+    {
+      "word_id": "H3107_0000",
+      "before": null,
+      "after": "요사밧은 한국어 성경 관용명, 요-자바드는 יוֹזָבָד의 교재식 근사와 분석 표기이다. H3075 예호-자바드의 단축형으로 설명되며 여호와께서 주셨다는 이름군에 속한다. 정본 10토큰은 모두 인명이며 대상 12:20(MT12:21)에는 같은 형태의 이름이 두 번 나온다. 심판하다 계열 H3146·H3092의 요사밧·여호사밧과 어근이 다르므로 기존 Joshaphat와 대상 15:24의 제사장 사례를 H3107의 근거로 채택하지 않는다. 왕하 12:22 MT의 표기 יוֹזָבָד는 lemma H3108이므로 이 단어의 출현에 추가하지 않는다."
+    },
+    {
+      "word_id": "H5990_0000",
+      "before": null,
+      "after": "대상 27:6의 브나야의 아들 이름이다. 암미사밧은 한국어 성경 관용명, 암미-자바드는 עַמִּיזָבָד의 교재식 근사이며 확인된 구성 경계를 보인 표기이다. Strong은 H5971과 H2064의 합성으로 people of endowment라고 풀이하고, BDB와 HebGrkKo는 나의 친족이 주셨다는 풀이를 제시한다. 첫 요소와 주다 어근의 연결은 보존하되 정확한 문장 뜻·신명적 해석과 이름 부여 동기는 확정하지 않는다."
+    },
+    {
+      "word_id": "G2199_0000",
+      "before": null,
+      "after": "신약에서 야고보와 요한의 아버지 세베대를 가리키는 남성 인명이다. 세베대는 한국어 성경 관용명, 제베다이오스는 Ζεβεδαῖος의 그리스어 교재식 읽기의 근사다. 정본 12토큰은 속격 11·대격 1이며 표제 기본형을 보존한다. Strong은 히브리어 계통으로 H2067을 compare하고, Thayer는 H2067 계열과 H2069 계열의 경쟁 설명을 제시한다. 주다·선물과 관련된 이름군으로 검토하되 특정 히브리어 형태에서 직접 음역되었다고 확정하지 않으며 어원 풀이를 별도 meaning으로 저장하지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H0443_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "엘은 엘-자바드의 첫 신명 요소다. Strong from H410 and H2064 및 BDB God has given을 근거로 하며 LXX의 일부 다른 이름 표기는 별도 본문 문제다.",
+      "source": "Canonical Strong XML; OSHB; BDB 해당 항목"
+    },
+    {
+      "word_id_1": "H0443_0000",
+      "word_id_2": "H2064_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "주다 어근은 엘-자바드의 둘째 구성 요소다. 전체 이름은 하나님이 주셨다로 풀이하며 주다 자체의 의미와 인명은 구별한다.",
+      "source": "Canonical Strong XML; OSHB; BDB 해당 항목"
+    },
+    {
+      "word_id_1": "H2064_0000",
+      "word_id_2": "H2066_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong from H2064 및 BDB의 선물 계열 이름 풀이에 근거한다. giver/he hath given/a gift의 세부 풀이 차이는 인명 비고에 보존한다.",
+      "source": "Canonical Strong XML; OSHB; BDB 해당 항목"
+    },
+    {
+      "word_id_1": "H2064_0000",
+      "word_id_2": "H2071_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong from H2064 및 BDB bestowed에 근거하는 주어진·부여받은 수동형 계열 인명이다.",
+      "source": "Canonical Strong XML; OSHB; BDB 해당 항목"
+    },
+    {
+      "word_id_1": "H2071_0000",
+      "word_id_2": "H2072_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong a form of H2071에 근거한 사전 표제 간 형태 대응이다. H2072 케티브는 무모음 זבוד이며 זַבּוּד의 모음·중복이 본문에서 입증되었다는 뜻이나 두 인물의 동일성 주장이 아니다.",
+      "source": "Canonical Strong XML; OSHB; BDB 해당 항목"
+    },
+    {
+      "word_id_1": "H2064_0000",
+      "word_id_2": "H2080_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong feminine from H2064이며 선물 계열 여성 인명의 형성이다. Ketiv זבידה와 Qere זְבוּדָּה의 정확한 초기 모음화·읽기는 별도로 남긴다.",
+      "source": "Canonical Strong XML; OSHB; BDB 해당 항목"
+    },
+    {
+      "word_id_1": "H2064_0000",
+      "word_id_2": "H3075_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong from H3068 and H2064의 주다 구성 요소다. 여호사밧·여호사바드의 신명 인명과 심판하다 계열 H3092를 구별한다.",
+      "source": "Canonical Strong XML; OSHB; BDB 해당 항목"
+    },
+    {
+      "word_id_1": "H3068_0000",
+      "word_id_2": "H3075_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "예호-자바드의 첫 신명 요소이며 원자료의 from H3068을 보존한다. 합성어에 표시된 예호 읽기가 H3068 전체의 원래 발음을 확정하지 않는다.",
+      "source": "Canonical Strong XML; OSHB; BDB 해당 항목"
+    },
+    {
+      "word_id_1": "H3075_0000",
+      "word_id_2": "H3107_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong a form of H3075와 역방향 Compare, BDB의 합동 표제에 근거한 예호-자바드·요-자바드의 장단형 대응이다. 연대상 최초 생성 순서나 동명이인들의 동일성을 단정하지 않는다.",
+      "source": "Canonical Strong XML; OSHB; BDB 해당 항목"
+    },
+    {
+      "word_id_1": "H2064_0000",
+      "word_id_2": "H5990_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong from H5971 and H2064에서 주다 어근을 둘째 요소로 보존한다. 전체 이름의 people of endowment와 my kinsman hath bestowed 풀이 차이는 비고에 둔다.",
+      "source": "Canonical Strong XML; OSHB; BDB 해당 항목"
+    },
+    {
+      "word_id_1": "H5971_0000",
+      "word_id_2": "H5990_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "암미-자바드의 첫 요소다. Strong의 H5971 연결과 BDB 친족 풀이를 보존하되 H5971 독립 meaning이나 신명적 해석 전체를 이번에 승인하지 않는다.",
+      "source": "Canonical Strong XML; OSHB; BDB 해당 항목"
+    }
+  ],
+  "relation_replacements": [
+    {
+      "relation_id": 3147,
+      "word_id_1": "H2064_0000",
+      "word_id_2": "H2065_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "Strong from H2064 및 창30:20의 동사와 명사 목적어의 결합에 근거한 주다→선물 파생이다.",
+        "source": "Canonical Strong XML; OSHB; BDB 해당 항목"
+      }
+    },
+    {
+      "relation_id": 3148,
+      "word_id_1": "H2065_0000",
+      "word_id_2": "H2067_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "Strong from H2065이며 선물 계열의 인명 형성이다. 접미사 -i의 정확한 풀이와 인물 계보의 평행은 이 연결과 구별한다.",
+        "source": "Canonical Strong XML; OSHB; BDB 해당 항목"
+      }
+    },
+    {
+      "relation_id": 3149,
+      "word_id_1": "H2065_0000",
+      "word_id_2": "H2068_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "Strong from H2065 and H410이며 자브디-엘의 선물 계열 첫 요소다. gift of God와 my gift is God의 문장 분석 차이를 단일 확정 뜻으로 강제하지 않는다.",
+        "source": "Canonical Strong XML; OSHB; BDB 해당 항목"
+      }
+    },
+    {
+      "relation_id": 6346,
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H2068_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련2"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "자브디-엘의 둘째 엘 요소다. 전체 이름의 소유구문·명사문 분석 차이와 별개로 구성 요소가 지지된다.",
+        "source": "Canonical Strong XML; OSHB; BDB 해당 항목"
+      }
+    },
+    {
+      "relation_id": 3150,
+      "word_id_1": "H2064_0000",
+      "word_id_2": "H2069_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "Strong from H2064 and H3050 및 본문의 제바드-야·제바드-야후에 근거한다. 실제 단형·장형은 서로 다른 인물의 용례를 구분한다.",
+        "source": "Canonical Strong XML; OSHB; BDB 해당 항목"
+      }
+    },
+    {
+      "relation_id": 6347,
+      "word_id_1": "H2069_0000",
+      "word_id_2": "H3050_0000",
+      "before": {
+        "category_code": null,
+        "relation_type": null,
+        "status_code": "inferred",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "",
+        "source": "WORD_TABLE.관련2"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "제바드-야와 제바드-야후의 신명 요소다. H3050의 독립 의미나 다른 신명 인명들의 승인은 포함하지 않는다.",
+        "source": "Canonical Strong XML; OSHB; BDB 해당 항목"
+      }
+    },
+    {
+      "relation_id": 3151,
+      "word_id_1": "G2199_0000",
+      "word_id_2": "H2067_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "etymological",
+        "relation_type": "root_shared",
+        "status_code": "hypothesized",
+        "direction_code": "undirected",
+        "description": null,
+        "relation_group_id": null,
+        "note": "Strong of Hebrew origin (compare H2067), BDB의 자브디 계열 및 Thayer 설명에 따른 이름군 연결 가설이다. H2069 원형설과 경쟁하므로 특정 히브리어 형태의 직접 음역으로 확정하지 않는다.",
+        "source": "Strong G2199 strongs_derivation (compare H2067); BDB H2067; Thayer G2199"
+      }
+    },
+    {
+      "relation_id": 6348,
+      "word_id_1": "G2199_0000",
+      "word_id_2": "H2069_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련2"
+      },
+      "after": {
+        "category_code": "etymological",
+        "relation_type": "root_shared",
+        "status_code": "hypothesized",
+        "direction_code": "undirected",
+        "description": null,
+        "relation_group_id": null,
+        "note": "HebGrkKo G2199와 Thayer의 H2069 계열 대안에 근거한 이름군 연결 가설이다. H2067 계열설과 경쟁하며 두 번의 독립 차용을 뜻하지 않는다. Canonical Strong에는 이 pair의 직접 edge가 없다.",
+        "source": "HebGrkKo G2199 (reference-only); Thayer G2199 (others for זְבַדְיָה)"
+      }
+    }
+  ],
+  "meaning_approvals": [],
+  "supersedes": [],
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h443_approval_20261113/00_user_approval.json",
+    "document_sha256": "3d94993c7d9d3bdc7885f3bab7ab09f19f0b075a94274f5525f0eda5eb8d7e07"
+  }
+}
