@@ -1972,3 +1972,8 @@ H0336 의미 유지 승인 1건, 의미 교체 3건, 비고 4건, 관계 신규 
 ### H443 주다·선물 이름군 승인 — 2026-11-13
 
 [승인 manifest](../../tool/data_provenance/manifests/h443_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h443_cluster_approved_content_slice.md)에 CORE14의 의미·비고 및 관계19건(신규11·교체8, 확정17·가설2)을 반영했다. H2080은 스비다·제비다 (인)이며 제붓다는 비고에만 보존한다. 신규 hold 없음. 공식 dry-run·undo·원본 불변·적용기31테스트·live apply1회 후 사용자 테이블12개·DDL·비대상·기존 이력·신규 history47행을 독립 검증했다. Work·seed·백업 integrity ok·FK0·sidecar0, seed 불변. Progress 승인969→983·미승인13323→13309·hold6·anomaly113, 비대상14284행 불변. 원문·음역·발음·언어·schema·앱/UI 변경 없음.
+
+
+### H444 도덕적 타락 의미 승인 — 2026-11-13
+
+[승인 manifest](../../tool/data_provenance/manifests/h444_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h444_cluster_approved_content_slice.md)에 `타락하다(墮落하다)` 한 의미와 비고를 반영했다. 관계 비생성·신규 hold 없음. 공식 dry-run·undo·원본 불변·적용기31테스트·live apply1회 후 전체13테이블·DDL·비대상·history2행을 독립 검증했다. Work·seed·백업·snapshot integrity ok·FK0·sidecar0, seed 불변. Snapshot의 schema cookie 차이는 공식 receipt 계약대로 구별했다. Progress 승인983→984·미승인13309→13308·hold6·anomaly113. 원문·음역·발음·언어·schema·앱/UI 변경 없음.

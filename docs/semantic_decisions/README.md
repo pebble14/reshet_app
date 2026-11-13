@@ -26,6 +26,7 @@
 
 | 결정 단위 | 대상 | 상태 | 복원 수준 | 최초 적용일 | 기록 |
 |---|---|---|---|---|---|
+| H444 도덕적 타락 | H0444 의미1·비고1, 관계 비생성·hold 없음 | `active` | 높음 | 2026-11-13 | [기록](h444_cluster_approved_content_slice.md) |
 | H443 주다·선물 이름군 | CORE14 의미·비고·관계19(확정17·가설2), H2080 케레 근사는 비고만·hold 없음 | `active` | 높음 | 2026-11-13 | [기록](h443_cluster_approved_content_slice.md) |
 | H441 연결 어휘군 | CORE7 의미12행·비고7·관계8(확정4·가설4), 씨족·사역 기능 보존·hold 없음 | `active` | 높음 | 2026-11-13 | [기록](h441_cluster_approved_content_slice.md) |
 | H435 엘룰월 | H0435 의미·비고, 관계 비생성·hold 없음 | `active` | 높음 | 2026-11-13 | [기록](h435_cluster_approved_content_slice.md) |

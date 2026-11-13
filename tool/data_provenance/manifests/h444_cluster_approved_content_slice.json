@@ -1,0 +1,40 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H444-CLUSTER-APPROVED-CONTENT-SLICE",
+  "target": {
+    "expected_work_sha256": "df8d473e3c5efcbf089df44d2dfe92d3c226132412ed1e8e274e3b822857daa4",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0444_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "타락하다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "타락하다(墮落하다)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0444_0000",
+      "before": null,
+      "after": "성경의 세 용례는 모두 니팔형으로, 사람이 도덕적으로 부패하거나 더러워진 상태를 나타낸다. 시편 14:3과 53:3(히브리어 절 번호 53:4)은 선을 행하지 않는 사람들의 상태를, 욥기 15:16은 악을 물 마시듯 행하는 사람을 묘사한다. BDB는 우유가 시어지는 아랍어 표현을 비교하지만, 성경 히브리어에서 음식이 시어지거나 썩는 별도 용례가 확인된 것은 아니다."
+    }
+  ],
+  "relation_creates": [],
+  "relation_replacements": [],
+  "meaning_approvals": [],
+  "supersedes": [],
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h444_approval_20261113/00_user_approval.json",
+    "document_sha256": "db1c1a5a9fce1e314ae40dea8a5fca22f3e4215be0efab8d85c705b76592da47"
+  }
+}
