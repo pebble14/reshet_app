@@ -1958,3 +1958,7 @@ H0336 의미 유지 승인 1건, 의미 교체 3건, 비고 4건, 관계 신규 
 ## H0435 엘룰월 승인 — 2026-11-13
 
 [승인 manifest](../../tool/data_provenance/manifests/h435_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h435_cluster_approved_content_slice.md)에 의미1·비고1을 반영했다. 관계 비생성·신규 hold 없음. 공식 dry-run·undo·원본 불변·적용기31테스트 및 live apply1회 후 독립13테이블·DDL·비대상·history2행 검증을 통과했다. Work·seed·snapshot integrity ok·FK0·sidecar0, seed 불변. Progress 승인960→961·미승인13332→13331·hold6·anomaly113이며 비대상14,297행은 동일하다. 원문·음역·발음·언어·schema·앱/UI 변경 없음.
+
+## H441 연결 어휘군 승인 반영 — 2026-11-13
+
+[승인 manifest](../../tool/data_provenance/manifests/h441_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h441_cluster_approved_content_slice.md)에 CORE7의 의미12행·비고7·신규관계8건(확정4·가설4)을 반영했다. 신규 hold 없음. 공식 dry-run·undo·원본 불변·적용기31테스트와 live apply1회 후 독립13테이블·DDL·비대상·history22행 검증을 통과했다. Work·seed·snapshot integrity ok·FK0·sidecar0, seed 불변. Progress 승인961→968·미승인13331→13324·hold6·anomaly113. 원문·음역·발음·언어·schema·앱/UI 변경 없음. 상세 수동 참고자료 보충과 표제 join 오류의 한계는 결정 기록에 남겼다.

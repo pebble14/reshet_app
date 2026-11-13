@@ -1,0 +1,277 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H441-CLUSTER-APPROVED-CONTENT-SLICE",
+  "target": {
+    "expected_work_sha256": "aae14d19c2c673e07ae43cd13e4bfeba0b248e516df42274c0acbb15783afcf5",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0441_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "족장, 유순한"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "우두머리"
+        },
+        {
+          "seq": 2,
+          "meaning": "가까운 벗"
+        },
+        {
+          "seq": 3,
+          "meaning": "순한"
+        },
+        {
+          "seq": 4,
+          "meaning": "소"
+        }
+      ]
+    },
+    {
+      "word_id": "H0502_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "배우다, 가르치다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "배우다"
+        }
+      ]
+    },
+    {
+      "word_id": "H0503_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "천천으로 번성하다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "수천으로 불어나다"
+        }
+      ]
+    },
+    {
+      "word_id": "H0504_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "소"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "소"
+        },
+        {
+          "seq": 2,
+          "meaning": "씨족(氏族)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0505_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "천, 1000"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "천(千)"
+        },
+        {
+          "seq": 2,
+          "meaning": "씨족(氏族)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0506_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "천, 1000"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "천(千)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0507_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "엘렙 (지)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엘렙·엘레프 (지)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0441_0000",
+      "before": null,
+      "after": "에돔·호리 족속과 유다의 우두머리를 가리키며, 족장·지도자로 옮긴다. 창세기 36장에서는 우두머리의 이름으로 그 집단을 가리킨다는 풀이와 족속 자체로 읽는 번역도 있다. 가까운 벗에는 배우자와 친밀한 관계를 맺은 상대가 포함된다. 렘 11:19는 순한 어린양, 시 144:14는 소를 가리킨다. 렘 13:21은 친구와 지배자, 슥 9:7과 12:5–6은 마소라 모음에 따른 우두머리와 모음을 달리 읽은 씨족 해석이 갈리며, 시 144:14에도 소와 우두머리의 해석 차이가 있다. Strong은 전체를 H502와 연결하지만, BDB는 우두머리 용법을 H505의 집단 명칭에서 온 말로 구분한다. 두 설명을 모든 용법의 단일한 확정 어원으로 합치지 않는다."
+    },
+    {
+      "word_id": "H0502_0000",
+      "before": null,
+      "after": "칼형은 남의 길이나 행동을 배우는 데 쓰이고(잠 22:25), 피엘형은 배우게 하는 것, 곧 가르치는 기능을 한다(욥 15:5; 33:33; 35:11). 욥 15:5는 죄악이 입을 가르친다는 비유이며, KJV의 발하다는 별도 일반 의미로 두지 않는다. Strong의 함께 어울리다는 어원 설명으로 구분한다."
+    },
+    {
+      "word_id": "H0503_0000",
+      "before": null,
+      "after": "H505의 천에서 만들어진 동사로, 시 144:13에서 양 떼가 새끼를 많이 낳아 수천을 이루는 모습을 나타낸다. 바로 뒤 수만으로 늘어나다는 별도 동사 H7231이 담당한다. 정확히 천 배가 된다는 비율이나 천만 전체를 이 단어의 의미로 고정하지 않는다."
+    },
+    {
+      "word_id": "H0504_0000",
+      "before": null,
+      "after": "주로 밭을 갈거나 번식하는 소를 가리키며 암수 어느 한쪽에 한정되지 않는다. 삿 6:15의 אַלְפִּי는 나의 씨족을 뜻한다. 이 용례는 OSHB와 Strong H504에는 포함되지만 BDB와 원전분해는 H505의 집단 용법으로 다루므로, 소와 씨족을 한 의미로 합치지 않는다. H502의 길들임·익숙함에서 왔다는 어원 설명은 확정하지 않는다."
+    },
+    {
+      "word_id": "H0505_0000",
+      "before": null,
+      "after": "기본은 1,000이며, 큰 수·많음을 강조하는 과장이나 수사적 표현에도 쓰인다. 천 명 단위의 군사·행정 집단을 가리킬 수 있고, 지파 아래의 씨족·친족 집단을 나타내기도 하므로 모든 집단 용례를 정확히 천 명으로 계산하지 않는다. 천부장에서 우두머리라는 뜻은 함께 쓰인 다른 말이 담당한다. H504의 소와 연결하고 소 머리 모양 글자의 숫자값에서 유래했다고 설명한 Strong의 어원 이야기는 역사적으로 확정하지 않는다."
+    },
+    {
+      "word_id": "H0506_0000",
+      "before": null,
+      "after": "히브리어 H505에 대응하는 아람어 수사다. 단 5:1의 천과 단 7:10의 천의 천에 쓰이며, 수많은 수행원이라는 문맥이 수사 자체를 무한이라는 별도 뜻으로 바꾸지는 않는다. 단 7:10의 אלפים은 Ketiv, אַלְפִין은 Qere로 같은 자리의 두 읽기다."
+    },
+    {
+      "word_id": "H0507_0000",
+      "before": null,
+      "after": "수 18:28에 나오는 베냐민 지파의 성읍이다. 엘렙은 한국어 성경 관용명, 엘레프는 표제 אֶלֶף의 교재식 읽기에 따른 한글 근사다. 본문의 הָאֶלֶף에는 관사가 붙어 있다. Strong은 H505와 같은 말로 보지만, 이름을 천으로 풀이할지 집단·씨족과 연결할지와 정확한 위치는 확정하지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0441_0000",
+      "word_id_2": "H0502_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "note": "Strong H441 source: from H502. 익숙함·순함·벗의 용법에 한정한다. 우두머리 전체의 단일 어원이라는 뜻은 아니다.",
+      "source": "Open Scriptures HebrewStrong 21c9add; BDB 해당 entry; HebGrkKo reference-only",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H0502_0000",
+      "word_id_2": "H0504_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "note": "Strong H504 source: from H502. 길들임에서 소라는 설명은 BDB의 소/천 분리와 비교언어 자료만으로 역사적 파생을 확정할 수 없어 가설로 한정한다.",
+      "source": "Open Scriptures HebrewStrong 21c9add; BDB 해당 entry; HebGrkKo reference-only",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H0504_0000",
+      "word_id_2": "H0505_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "note": "Strong H505 source: prop, the same as H504. 소-천의 역사적 연결과 글자 숫자값 설명을 확정하지 않는다. 씨족 용법의 Strong 배정 차이도 보존한다.",
+      "source": "Open Scriptures HebrewStrong 21c9add; BDB 해당 entry; HebGrkKo reference-only",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H0503_0000",
+      "word_id_2": "H0505_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "note": "Strong H503 source: denominative from H505; BDB도 천에서 형성된 히필 동사로 분석한다.",
+      "source": "Open Scriptures HebrewStrong 21c9add; BDB 해당 entry; HebGrkKo reference-only",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H0505_0000",
+      "word_id_2": "H0506_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "note": "Strong H506 source: corresponding to H505. 같은 천 수사의 언어별 대응이며 차용 방향은 입증하지 않는다.",
+      "source": "Open Scriptures HebrewStrong 21c9add; BDB 해당 entry; HebGrkKo reference-only",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H0505_0000",
+      "word_id_2": "H0507_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "note": "Strong H507 source: the same as H505. BDB는 II אֶלֶף의 집단 용법과 비교한다. 동일 형태·관련 어원 후보만 보존하고 직접 파생 방향·이름 뜻은 확정하지 않는다.",
+      "source": "Open Scriptures HebrewStrong 21c9add; BDB 해당 entry; HebGrkKo reference-only",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H0441_0000",
+      "word_id_2": "H0505_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w2_to_w1",
+      "note": "BDB H441 II는 H505 집단 명칭에서 나온 우두머리로 분석하고 HebGrkKo도 이를 제시한다. Strong의 단일 H502 계통 설명과 달라 우두머리 용법에 한정한 가설로 권장한다. 자동 발견 6 edge 밖의 추가 근거 후보다.",
+      "source": "Open Scriptures HebrewStrong 21c9add; BDB 해당 entry; HebGrkKo reference-only",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H0441_0000",
+      "word_id_2": "H0504_0000",
+      "category_code": "semantic",
+      "relation_type": "similar",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "note": "BDB H441 I.3은 소 용법을 I אֶלֶף(H504)와 같은 뜻으로 설명한다. 두 표제어 전체의 동의어·같은 어원이라는 주장은 아니다. 자동 발견 6 edge 밖의 추가 의미 대응 후보다.",
+      "source": "Open Scriptures HebrewStrong 21c9add; BDB 해당 entry; HebGrkKo reference-only",
+      "description": null,
+      "relation_group_id": null
+    }
+  ],
+  "relation_replacements": [],
+  "meaning_approvals": [],
+  "supersedes": [],
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h441_approval_20261113/00_user_approval.json",
+    "document_sha256": "79271c33e8795e9b4f8afb4e144cbebd1e13e1d0c0424c7eaf5d7afb385ba859"
+  }
+}
