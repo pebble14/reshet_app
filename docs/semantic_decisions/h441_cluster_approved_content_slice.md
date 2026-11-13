@@ -104,6 +104,6 @@ H505의 OSHB 시60:2는 표제인데 raw packet이 번역 본문60:2를 잘못 �
 - Work SHA: aae14d19c2c673e07ae43cd13e4bfeba0b248e516df42274c0acbb15783afcf5 → 3161ba621e15c6417b0246e767aedeca5a580864bf53820fa05df5959227aa37
 - Seed SHA: a7e0d6a50a3ab6b520c3bf7532b2780cfd6418709d9739a451eb4ce5493fbdb1 불변
 - Progress: 승인961→968·미승인13331→13324·hold6·anomaly113. JSON/CSV/Markdown renderer 일치 및 대상7의 최종 뜻·비고·명시 승인 상태를 확인했다.
-- Progress snapshot: 37b72a362e4f2093e8428a2af1183853b2f4d56a794ab0a6bc1f81c4116c26dd
-- Manifest byte SHA: 50b08aceaf2b5aabd1512123a6eba3b5af658545264d0fa26d0ad169ee6ee042. 적용 사본·tracked blob·worktree byte 보존을 위한 -text metadata를 사용한다.
+- Progress snapshot: d1b66d10726f040ef8ab3d644932a02fa303a02ade2e6829ec795fb1c290c7df
+- Manifest byte SHA: 50b08aceaf2b5aabd1512123a6eba3b5af658545264d0fa26d0ad169ee6ee042. 적용 사본은 CRLF 바이트로 보존한다. Git 정규화 후 최종 tracked blob·worktree SHA는 2414397c5738da6920e4959f1413ff9c4fd5657ac143b5e92446a99e8f95870e이며, CRLF→LF 외 차이가 없고 JSON 내용이 정확히 같음을 확인했다. 최종 파일 바이트 기준으로 progress를 다시 생성했으며 DB는 재적용하지 않았다. -text metadata는 최종 바이트 보존에 사용한다.
 - 앱·UX·schema·seed 교체·배포 변경이 없어 UI 테스트는 N/A다.
