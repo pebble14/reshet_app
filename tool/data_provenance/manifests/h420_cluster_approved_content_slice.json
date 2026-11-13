@@ -1,0 +1,65 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H420-CLUSTER-APPROVED-CONTENT-SLICE",
+  "target": {
+    "expected_work_sha256": "0971146d1f8f50ebf693931dbbbd39a6e7db6b5aa65da19b2348f99a9f1bcead",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0420_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "엘다아 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엘다아·엘-다아 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0420_0000",
+      "before": null,
+      "after": "창 25:4와 대상 1:33에서 미디안의 아들, 곧 아브라함과 그두라의 손자를 가리킨다. ‘엘다아’는 한국어 성경 관용명과 교재식 한글 근사가 겹치는 표기이며, ‘엘-다아’는 신명 요소 엘과 뒤 요소의 경계를 보여 주는 분석 표기다. 붙임표는 원문 마케프를 뜻하지 않는다. Strong은 H410과 H3045의 결합으로 보아 ‘지식의 하나님’으로 풀이하지만, BDB는 아랍어 ‘부르다’와 비교하며 ‘하나님께서 부르셨다?’라는 대안을 제시한다. 엘 요소는 분명하나 뒤 요소의 정확한 어원은 확정하지 않는다. 확보된 LXX 참고자료는 창 25:4에서 ελραγα, 대상 1:33에서 ελδαα로 달라, 이를 별도 인명이나 확정된 원발음으로 삼지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H0420_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "note": "신명 요소 엘과 뒤 요소가 결합한 인명이다. 경쟁 어원은 뒤 요소의 기원에 관한 것이며 엘 요소의 식별은 일치한다.",
+      "source": "RESHET-EC-H420-CLUSTER-H0410-H0420",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H0420_0000",
+      "word_id_2": "H3045_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "hypothesized",
+      "direction_code": "w2_to_w1",
+      "note": "Strong은 H410과 H3045에서 온 이름으로 보아 지식의 하나님으로 풀이한다. BDB는 아랍어 부르다와 비교한 하나님께서 부르셨다?를 제안하므로, 알다 어근의 구성 관계는 가설로 기록한다. 어근의 구체적인 변형 경로는 확정하지 않는다.",
+      "source": "RESHET-EC-H420-CLUSTER-H3045-H0420",
+      "description": null,
+      "relation_group_id": null
+    }
+  ],
+  "relation_replacements": [],
+  "meaning_approvals": [],
+  "supersedes": [],
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h420_approval_20261113/00_user_approval.json",
+    "document_sha256": "fe9618ed7701ec6569fb4cf6ee527adf79f01f62217cb8f8dcac7bb6ee6a92bb"
+  }
+}
