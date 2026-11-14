@@ -1986,3 +1986,7 @@ H0336 의미 유지 승인 1건, 의미 교체 3건, 비고 4건, 관계 신규 
 ### H447 엘리엘 이름 승인 — 2026-11-14
 
 [승인 manifest](../../tool/data_provenance/manifests/h447_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h447_cluster_approved_content_slice.md)에 의미1·비고1·확정 합성관계1(ID8422)을 반영했다. 신규 hold 없음. 공식 dry-run·undo·원본 불변·적용기31테스트 및 live apply1회 후 사용자 테이블12개·DDL·기존 이력·비대상 데이터와 sequence 기대 증분만을 독립 검증했다. History group1794617587871397의3행, integrity ok·FK0·sidecar없음·seed SHA불변이다. Progress 승인1017→1018·미승인13275→13274·hold6·anomaly113 유지. 원문·음역·발음·언어·schema·앱/UI는 변경하지 않았다.
+
+### H450·H1182 이름 승인 — 2026-11-14
+
+[승인 manifest](../../tool/data_provenance/manifests/h450_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h450_cluster_approved_content_slice.md)에 의미2·비고2·합성4·무방향 이름형1(ID8423–8427)을 반영했다. 공식 dry-run·undo·원본 불변·적용기31테스트 및 live apply1회 후 사용자 테이블12개·DDL·비대상·기존 이력·기대 sequence 변화를 독립 검증했다. History group1794622911343765의9행, integrity ok·FK0·sidecar없음·seed 불변. Progress 승인1018→1020·미승인13274→13272·hold6·anomaly113. 이름형 대응은 다윗 아들 문맥에 한정하고 원문·음역·발음·언어·schema·앱/UI는 보존했다.
