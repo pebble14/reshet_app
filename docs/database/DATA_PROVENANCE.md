@@ -1982,3 +1982,7 @@ H0336 의미 유지 승인 1건, 의미 교체 3건, 비고 4건, 관계 신규 
 ### H446 엘리압 이름 승인 — 2026-11-14
 
 [승인 manifest](../../tool/data_provenance/manifests/h446_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h446_cluster_approved_content_slice.md)에 의미1·비고1·확정 구성관계2(ID8420–8421)를 반영했다. 신규 hold 없음. 공식 dry-run·undo·원본 불변·적용기31테스트 및 live apply1회 후 사용자 테이블12개·DDL·기존 이력·비대상 데이터와 기대 sequence 증분을 독립 검증했다. History group1794615758897931의4행, integrity ok·FK0·sidecar없음·seed SHA불변이다. Progress 승인1016→1017·미승인13276→13275·hold6·anomaly113. 원문·음역·발음·언어·schema·앱/UI는 변경하지 않았다.
+
+### H447 엘리엘 이름 승인 — 2026-11-14
+
+[승인 manifest](../../tool/data_provenance/manifests/h447_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h447_cluster_approved_content_slice.md)에 의미1·비고1·확정 합성관계1(ID8422)을 반영했다. 신규 hold 없음. 공식 dry-run·undo·원본 불변·적용기31테스트 및 live apply1회 후 사용자 테이블12개·DDL·기존 이력·비대상 데이터와 sequence 기대 증분만을 독립 검증했다. History group1794617587871397의3행, integrity ok·FK0·sidecar없음·seed SHA불변이다. Progress 승인1017→1018·미승인13275→13274·hold6·anomaly113 유지. 원문·음역·발음·언어·schema·앱/UI는 변경하지 않았다.
