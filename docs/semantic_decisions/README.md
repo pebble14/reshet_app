@@ -26,6 +26,7 @@
 
 | 결정 단위 | 대상 | 상태 | 복원 수준 | 최초 적용일 | 기록 |
 |---|---|---|---|---|---|
+| H452 엘리야 이름군 | H0452·G2243 의미·비고, 관계교체3·hold 없음, G2243 원천 경계 보존 | active | 높음 | 2026-11-14 | [결정 기록](h452_cluster_approved_content_slice.md) |
 | H447 엘리엘 이름 | H0447 의미1·비고1·확정 합성관계1, hold 없음 | active | 높음 | 2026-11-14 | [결정 기록](h447_cluster_approved_content_slice.md) |
 | H446 엘리압 이름 | H0446 의미1·비고1·확정 구성관계2, hold 없음 | active | 높음 | 2026-11-14 | [결정 기록](h446_cluster_approved_content_slice.md) |
 | H445 호의·간청 및 인명 | CORE34, 기존 승인2 유지·관계 신규26/교체12, 신규 hold 없음 | `active` | 높음 | 2026-11-14 | [기록](h445_cluster_approved_content_slice.md) |
