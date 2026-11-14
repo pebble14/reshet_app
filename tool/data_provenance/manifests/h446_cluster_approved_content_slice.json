@@ -1,0 +1,65 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H446-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h446_approval_20261114/00_user_approval.json",
+    "document_sha256": "0a156ec2fde825d742ecc1ee099b930503d0cb1b8cef1fd2a29ec1d191b53032"
+  },
+  "target": {
+    "expected_work_sha256": "231648ba0428d360d40103798c297aadb402f7c93de61aac18906d8372d894e6",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0446_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "엘리압 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엘리압·엘리-아브 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0446_0000",
+      "before": null,
+      "after": "헬론의 아들인 스불론 지파 지도자, 발루의 아들이며 다단·아비람의 아버지인 르우벤 사람, 이새의 맏아들이자 다윗의 형, 사무엘 계보의 레위인, 갓 지파 용사, 레위인 악사 등 여섯 사람의 이름이다. H410 엘(하나님)과 H1 아버지의 합성 이름으로, BDB는 ‘하나님은 아버지’로 풀이하고 Strong은 ‘(그의) 아버지의 하나님’으로 다르게 설명한다. 엘리압은 성경 관용 표기, 엘리-아브는 אֱלִי와 אָב의 구성 경계를 드러낸 교재식 읽기의 한글 근사이며 정확한 고대 발음의 재현은 아니다. 사무엘 계보의 엘리압은 대상 6:34의 엘리엘, 삼상 1:1의 엘리후와 비교된다. 다윗의 형 엘리압은 대상 27:18의 엘리후와 비교되며, 확보 LXX 자료는 그 자리에서 엘리압 형태를 전한다. 이러한 평행 전승을 별도 어휘의 자동 통합이나 확정된 이형 관계로 취급하지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0001_0000",
+      "word_id_2": "H0446_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "H446 이름의 두 번째 구성 요소인 אָב(아버지)를 연결한다. 이름 문장의 세부 해석과 구성 관계의 확실성을 구별한다.",
+      "source": "Strong HebrewLexicon 21c9add13bc727d3a951361778e97e3ff7afd1ce, H446 source; BDB H446 https://biblehub.com/bdb/446.htm"
+    },
+    {
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H0446_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "H446 이름의 첫 구성 요소 אֱלִי를 H410 엘/하나님에 연결한다. Strong과 BDB는 두 요소의 결합에는 일치하지만 전체 이름 풀이에는 차이가 있다.",
+      "source": "Strong HebrewLexicon 21c9add13bc727d3a951361778e97e3ff7afd1ce, H446 source; BDB H446 https://biblehub.com/bdb/446.htm"
+    }
+  ],
+  "supersedes": [],
+  "relation_replacements": [],
+  "meaning_approvals": []
+}
