@@ -1,0 +1,141 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H458-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h458_approval_20261117/00_user_approval.json",
+    "document_sha256": "0a38f7d27ed7f798972cd4137cc753032008687c8f48d2e90248bf72b57529cb"
+  },
+  "target": {
+    "expected_work_sha256": "8c60afebb1088520dd187e6f7ce5dcaed56d749ff9a496b009b0b41a0f3d9e02",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0458_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "엘리멜렉 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엘리멜렉·엘리-멜레크 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H4439_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "말기엘 Malchiel"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "말기엘·말키-엘 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H4440_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "말기엘의 후손 Malchielite"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "말기엘·말키-엘 가문(家門) 사람"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0458_0000",
+      "before": null,
+      "after": "나오미의 남편이며 말론과 기룐의 아버지인 유다 베들레헴 에브랏 사람의 이름이다(룻 1:2–3). 엘리멜렉은 성경 관용명이고 엘리-멜레크는 אֱלִי와 מֶלֶךְ의 구성 경계를 드러낸 교재식 한글 근사다. H410 엘(하나님)과 H4428 왕의 합성 이름으로, BDB는 하나님은 왕이시다로, 한국어 참고 사전과 새번역 룻 1:2의 주는 나의 하나님이 왕이시다로 풀이하며 Strong은 왕의 하나님으로 다르게 설명한다. 구성 요소의 연결과 이름 전체의 구문적 풀이를 구별한다. 확보 LXX의 여섯 대응 문맥은 αβιμελεχ라는 이름형을 전하지만, 이를 H40 아비멜렉과의 동일 어휘·인물 관계로 확정하지 않는다. 붙임표는 실제 마케프나 정확한 고대 발음을 뜻하지 않는다."
+    },
+    {
+      "word_id": "H4439_0000",
+      "before": null,
+      "after": "아셀의 아들 브리아에게서 난 인명으로 창 46:17, 민 26:45, 대상 7:31에 나온다. 민 26:45에서는 말기엘 가문의 선조로, 대상 7:31에서는 비르사잇의 아버지로 불린다. 말기엘은 성경 관용명이고 말키-엘은 מַלְכִּי와 אֵל의 구성 경계를 드러낸 교재식 한글 근사다. H4428 왕과 H410 엘(하나님)의 합성 이름으로, BDB는 나의 왕은 엘이시다로, 한국어 참고 사전은 하나님은 나의 왕이시다로 풀이하며 Strong은 하나님이 세우신 왕으로 다르게 설명한다. 이 어원 풀이가 그 인물이 실제 왕이었다는 뜻은 아니다. H458 엘리멜렉과 같은 요소를 반대 순서로 배치한 비교 대상이지만 동일 이름이나 직접 파생어로 합치지 않는다. 붙임표는 실제 마케프나 정확한 고대 발음을 뜻하지 않는다."
+    },
+    {
+      "word_id": "H4440_0000",
+      "before": null,
+      "after": "H4439 말기엘·말키-엘에서 나온 가문 소속형이다. 민 26:45에서 관사가 붙은 הַמַּלְכִּיאֵלִי가 מִשְׁפַּחַת와 결합하여 그 가문을 집합적으로 가리킨다. 사전은 소속형 형용사로, OSHB는 남성 단수 소속 명사로 분석하며 이 문맥에서는 가문 소속을 나타낸다. 말기엘·말키-엘은 기반 인명의 병기이고 가문 사람은 소속 기능을 풀어 쓴 말이다. 소속형 전체의 교재식 읽기는 말키엘리다. 본문의 가족·종족을 나타내는 별도 명사 H4940과 이 소속형을 구별한다. 확보 LXX 민 26:29는 히브리어 민 26:45에 대응하며, 인명 μελχιηλ과 소속형 μελχιηλι를 구별한다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H0458_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "אֱלִי라는 첫 신명 요소를 H410 엘/하나님에 연결한다. 전체 이름의 소유·서술 구문 풀이 차이는 별개다.",
+      "source": "Strong HebrewLexicon 21c9add13bc727d3a951361778e97e3ff7afd1ce, H0458 source; https://biblehub.com/bdb/458.htm"
+    },
+    {
+      "word_id_1": "H0458_0000",
+      "word_id_2": "H4428_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "둘째 요소 מֶלֶךְ를 H4428 왕에 연결한다. Strong과 BDB가 구성에는 일치하며 이름 전체 풀이에는 차이가 있다.",
+      "source": "Strong HebrewLexicon 21c9add13bc727d3a951361778e97e3ff7afd1ce, H0458 source; https://biblehub.com/bdb/458.htm"
+    },
+    {
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H4439_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "둘째 요소 אֵל을 H410 엘/하나님에 연결한다. H458과의 동일 이름이나 직접 파생을 뜻하지 않는다.",
+      "source": "Strong HebrewLexicon 21c9add13bc727d3a951361778e97e3ff7afd1ce, H4439 source; https://biblehub.com/bdb/4439.htm"
+    },
+    {
+      "word_id_1": "H4428_0000",
+      "word_id_2": "H4439_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "מַלְכִּי라는 첫 이름 요소를 H4428 왕에 연결한다. 이름 문장의 역사적 해석이나 인물의 실제 왕위는 확정하지 않는다.",
+      "source": "Strong HebrewLexicon 21c9add13bc727d3a951361778e97e3ff7afd1ce, H4439 source; https://biblehub.com/bdb/4439.htm"
+    },
+    {
+      "word_id_1": "H4439_0000",
+      "word_id_2": "H4440_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "H4439 기반 인명에서 -ִי 소속형이 형성된다. 관사가 붙은 단수형은 민26:45에서 집합적으로 쓰인다.",
+      "source": "Strong HebrewLexicon 21c9add13bc727d3a951361778e97e3ff7afd1ce, H4440 source; https://biblehub.com/hebrew/4440.htm"
+    }
+  ],
+  "relation_replacements": [],
+  "supersedes": [],
+  "meaning_approvals": []
+}

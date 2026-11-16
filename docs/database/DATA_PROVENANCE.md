@@ -2016,3 +2016,7 @@ H0336 의미 유지 승인 1건, 의미 교체 3건, 비고 4건, 관계 신규 
 ## H456 계절·모욕 및 인명 승인 — 2026-11-16
 
 [승인 manifest](../../tool/data_provenance/manifests/h456_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h456_cluster_approved_content_slice.md)에 R4 의미7·비고7·신규관계7(확정3·가설4, ID8441–8447)을 반영했다. 계절명은 추운 철, 동사는 추운 철을 지내다로 통일하고 H2741은 하룹·하루프 사람으로 정리했다. 공식 dry-run·실제 undo·적용기31테스트 후 live apply1회, history21행. 사용자 테이블12개·DDL·기존 이력·비대상·sequence 검증 및 integrity·FK·snapshot·seed 불변 확인. Progress 승인1034→1041·미승인13258→13251·hold6·anomaly113 유지. 원문·음역·발음·언어·schema·seed·앱/UI 변경 없음.
+
+## H458 엘리멜렉·말기엘 이름과 소속형 승인 — 2026-11-17
+
+[승인 manifest](../../tool/data_provenance/manifests/h458_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h458_cluster_approved_content_slice.md)에 R1 의미3·비고3·구성/소속형 관계5(ID8448–8452)를 반영했다. 공식 dry-run·실제 undo·적용기31테스트 및 독립 SQL 전체12테이블·DDL·기존 이력·비대상·sequence·DB안전성 검증 통과. History11행, progress승인1041→1044·hold6·anomaly113 유지. 원문·음역·발음·언어·schema·seed·앱/UI 변경 없음.

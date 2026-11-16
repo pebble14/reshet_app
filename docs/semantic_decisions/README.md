@@ -225,6 +225,8 @@
 | H442 알루스 지명 | H0442 의미1·비고1·관계 비생성·hold 없음 | active | 높음 | 2026-11-13 | [결정 기록](h442_cluster_approved_content_slice.md) |
 | H450·H1182 이름 클러스터 | 의미2·비고2·합성4·무방향 이름형1, hold 없음 | active | 높음 | 2026-11-14 | [결정 기록](h450_cluster_approved_content_slice.md) |
 
+| H458 엘리멜렉·말기엘 이름과 소속형 | 의미3·비고3·신규관계5, 가문 소속·어원 차이 보존·hold 없음 | active | 높음 | 2026-11-17 | [결정 기록](h458_cluster_approved_content_slice.md) |
+
 ## 열람 및 후속 판단 원칙
 
 1. 새 제안을 만들기 전에 관련 Strong이 이 색인에 있는지 확인한다.
