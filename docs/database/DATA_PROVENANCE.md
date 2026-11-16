@@ -284,6 +284,12 @@ relation discovery의 기존 CLI는 outgoing·incoming reverse index를 기본 2
 
 batch는 cluster discovery를 먼저 끝낸 뒤 node를 `explicit_approved`·`hold`·미승인으로 분류한다. 승인 node는 현재 meaning·note와 completion authority를, hold node는 disposition 사유·근거·reopen 조건을 재사용해 full preparation을 생략하지만 두 경우 모두 해당 node를 통과한 relation traversal은 계속한다. 미승인 node는 관련 node를 포함해 각각 Evidence Packet, node 중심 lexical relation JSON과 Review를 같은 flat output 디렉터리에 준비한다. `00_research_state.json`은 source fingerprint·실행 option·seed identity·visited/frontier·node별 artifact hash와 오류를 검증하는 resume 자료이고, `00_review_queue.md`는 사람이 볼 순서를 정리한 derivative다. 두 파일 모두 semantic authority가 아니며 research discovery evidence를 relation assertion이나 approval로 승격하지 않는다. 최종 meaning·relation 판단과 승인은 계속 사람이 수행하고, 이 workflow는 DB를 읽기만 하며 schema·data를 쓰지 않는다.
 
+여기서 full preparation 생략은 도구 동작이며 comprehensive 연구의 CORE evidence 검토를 생략하는 규칙이 아니다. 연구자는 기존 근거의 source fingerprint·검토 범위·추적성과 현재 source·DB·결정을 대조하고, 누락 자료·새 근거·새 기준의 영향을 보완한다. 검증·연결 가능한 Full Review는 재사용할 수 있으며 같은 자료를 매번 새 파일로 복제할 필요는 없다.
+
+생산적 hub 때문에 bounded CORE로 연구하면 global discovery·미확장 frontier와 CORE 검토 상태를 별도로 기록한다. CORE에 닿는 source·현재 DB 관계와 판단에 필요한 CONTEXT는 검토하고, 제외 가지의 발견 경로·wording·제외 사유는 보존한다. 이를 위해 managed state의 완료 flag·frontier·artifact hash를 임의 변경하지 않는다.
+
+공식 resume와 현재 packet 재사용에는 도구가 요구하는 DB·source·authority·artifact의 exact-match를 유지한다. 별도로 과거 lexical·occurrence 원자료를 참조할 때는 해당 source identity와 범위를 검증하고 과거 snapshot임을 밝힌다. 원자료가 같아도 현재 DB projection·승인 상태·relation·적용 precondition은 실제 현재 상태에서 확인하며 과거 packet으로 대체하지 않는다.
+
 canonical Hebrew·Aramaic occurrence는 `openscriptures/morphhb` commit `3d15126fb1ef74867fc1434be1942e837932691f`의 `wlc/` OSHB corpus를 사용한다. WLC 본문은 Public Domain, lemma·morphology는 CC BY 4.0이며 `Open Scriptures Hebrew Bible Project` attribution을 유지한다. augmented lemma 원문은 보존하고 숫자 slash component처럼 문법적으로 결정적인 경우에만 standard Strong으로 연결하며, 모호한 확장은 warning으로 남긴다. occurrence identity는 source-native OSIS verse로 유지하고 verse direct child의 `KJV:` note는 typed alternate 목록으로 별도 보존한다. 같은 kind의 서로 다른 복수 alternate와 `!b`처럼 현재 계약으로 확정할 수 없는 suffix는 임의 해석하지 않는다.
 
 canonical Greek NT occurrence는 `STEPBible/STEPBible-Data` commit `b86d26cdb1f51729e73b5b4eb7f7ccadc5dfba39`의 TAGNT Mat–Jhn·Act–Rev 파일을 사용한다. `editions` 필드에 NA27 또는 NA28 membership이 명시된 token만 기본 canonical profile에 포함하고 다른 판본에만 존재하는 variant token은 occurrence count에서 제외한다. TAGNT base reference를 occurrence identity로 유지하며 `[KJV]`, `(NA)`, `{other}` alternate는 kind와 원문 표기를 보존한 별도 후보로 전달한다. `(NA)`가 있다는 이유로 occurrence identity나 모든 local target의 lookup key를 NA reference로 교체하지 않는다. 자료는 CC BY 4.0이며 `STEP Bible` attribution을 유지한다. 개별 corpus 파일의 실제 SHA-256, repository·commit·path, parser 계약과 canonical profile은 `tool/data_provenance/manifests/biblical_occurrence_sources.json`에 고정한다. raw corpus cache는 ignored `tool/data_provenance/.source_cache/biblical_occurrences/`에 두고 추적하지 않는다.
@@ -327,6 +333,8 @@ python -B tool/data_provenance/semantic_progress_report.py `
 `semantic_status`는 `explicit_approved`, `hold`, `unapproved` 세 값만 사용한다. `progress_detail`의 `approved`, `hold`, `unapproved_with_meaning`, `unapproved_without_meaning`, `anomaly`는 사람이 진행표를 필터하기 위한 derivative 분류다. anomaly row도 authority 상태는 세 값 중 하나를 유지하므로 DB meaning 존재나 source/DB 불일치를 승인으로 승격하지 않는다. `semantic_approval_ratio`는 `explicit_approved / total_canonical_strongs`, `decision_disposition_ratio`는 `(explicit_approved + hold) / total_canonical_strongs`이며 hold는 승인이나 semantic 완료가 아니다.
 
 `canonical_occurrence_count`는 `biblical_occurrence_sources.json`이 고정한 OSHB/TAGNT canonical profile을 source별 한 번 읽어 Strong별로 집계하며 translation DB marker 수를 사용하지 않는다. `lexical_out_degree`, `lexical_in_degree`, `lexical_direct_degree`는 고정 Strong XML relation index에서 distinct direct node 수를 계산한 다음 대상·cluster 규모 참고값일 뿐 semantic approval, relation assertion 또는 hub 확정 근거가 아니다. recursive closure size 계산, research artifact 존재 여부, 자동 다음 Strong scoring은 이 v1 계약의 범위 밖이다.
+
+번호 기준 집계와 실제 어휘의 범위는 구별한다. 같은 숫자 Strong에 source 하위 식별자·동음어·다른 언어의 자료가 포함되면 연구 보고에서 전체 번호 집계와 해당 어휘별 수·집계 단위를 함께 제시한다. 이 분석상의 구별이 source annotation·공식 progress 집계 변경이나 DB 단어 분리·통합·보충 항목 생성을 자동 허용하지 않는다. 수록 방식 변경은 [H6211 보충 어휘 결정](../semantic_decisions/h102_cluster_approved_content_slice.md)처럼 별도 사용자 승인 범위로 처리한다.
 
 ### 11.7 LXXStp.bdb Human Reference 단건 verse 조회 경계
 

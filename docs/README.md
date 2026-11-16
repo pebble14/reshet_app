@@ -22,6 +22,12 @@
 - [Data Structure Policy](database/DATA_STRUCTURE_POLICY.md) — canonical storage, compatibility projection, repository/UI 경계를 정의한다.
 - [Data Provenance](database/DATA_PROVENANCE.md) — 외부 사전·Strong 자료와 Reshet 작성 데이터의 출처, 재배포 경계 및 향후 입력 정책을 정의한다.
 
+## 어휘 연구와 승인 콘텐츠
+
+- [한국어 어휘 표기 정책](semantic_research/korean_lexical_notation_policy.md) — meaning·비고·고유명사·음역의 필드별 기준과 승인안 검토 항목의 active authority다.
+- [Semantic 결정 기록과 색인](semantic_decisions/README.md) — 결정 기록의 작성·재사용·변경 기준과 사용자가 무엇을 왜 선택했는지 안내한다.
+- [승인 콘텐츠 batch applicator](database/APPROVED_CONTENT_BATCH_APPLICATOR.md) — 승인 payload의 입력·dry-run·적용·복구 계약이며 semantic 판단을 대신하지 않는다.
+
 ## UX와 navigation 계약
 
 - [Workspace UX Architecture](ux/workspace_ux_architecture.md) — workspace UX의 최상위 방향을 정의한다.
