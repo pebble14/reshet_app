@@ -2020,3 +2020,8 @@ H0336 의미 유지 승인 1건, 의미 교체 3건, 비고 4건, 관계 신규 
 ## H458 엘리멜렉·말기엘 이름과 소속형 승인 — 2026-11-17
 
 [승인 manifest](../../tool/data_provenance/manifests/h458_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h458_cluster_approved_content_slice.md)에 R1 의미3·비고3·구성/소속형 관계5(ID8448–8452)를 반영했다. 공식 dry-run·실제 undo·적용기31테스트 및 독립 SQL 전체12테이블·DDL·기존 이력·비대상·sequence·DB안전성 검증 통과. History11행, progress승인1041→1044·hold6·anomaly113 유지. 원문·음역·발음·언어·schema·seed·앱/UI 변경 없음.
+
+
+## H460 더함·요셉 이름군 승인 — 2026-11-17
+
+[승인 manifest](../../tool/data_provenance/manifests/h460_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h460_cluster_approved_content_slice.md)에 R2 우선/R1 나머지 의미10·비고10·신규관계7(ID8453–8459)·관계교체3을 반영했다. H3254는 더하다 단일 뜻, 요세프·예호세프는 붙임표 없이 유지하고 G2499/G2500은 원천 요세 표기로 정리했다. 공식 dry-run·실제 undo·원본불변·적용기31테스트와 독립 SQL 전체12테이블·DDL·비대상·기존 이력·sequence·DB안전성 검증 통과. History30행, progress승인1044→1054·hold6·anomaly113 유지. H2058 추정 관계 비생성·신규hold없음, 원문·발음·음역·언어·schema·seed·앱/UI 변경 없음.
