@@ -1,0 +1,65 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H453-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h453_approval_20261116/00_user_approval.json",
+    "document_sha256": "5b6235ff05ef57682a17f79eabebcf8728a81089b090c90f78a409f2bf069d8e"
+  },
+  "target": {
+    "expected_work_sha256": "871aab65fae654e1e80a5c1bcda31828d7a823aaf1668d3e830dae66f20c7820",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0453_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "엘리후 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엘리후·엘리-후 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0453_0000",
+      "before": null,
+      "after": "욥과 대화한 부스 사람 바라겔의 아들, 사무엘의 증조부, 다윗에게 합류한 므낫세 지파의 천부장, 오벧에돔 집안의 문지기, 유다 지파의 지도자인 다윗의 형제 등의 이름이다. אֱלִיהוּ와 אֱלִיהוּא는 같은 이름의 철자형이며, H410 엘(하나님)과 H1931 후(그)의 합성이다. BDB는 ‘그는 (나의) 하나님이다’, Strong은 ‘그의 하나님’으로 풀이하므로 이름의 어원 풀이와 인명 용법을 구별한다. 엘리후는 성경 관용 표기이고 엘리-후는 두 구성 요소의 경계를 드러낸 교재식 읽기의 한글 근사다. 사무엘 계보의 엘리후는 대상 6:27의 엘리압·6:34의 엘리엘과 비교된다. 확보 LXX는 대상 12:21(한국어 12:20)에서 ελιμουθ, 대상 27:18에서 ελιαβ를 전한다. 평행 이름과 본문 전승 차이를 별도 어휘의 자동 통합이나 확정된 이형 관계로 취급하지 않는다. 붙임표는 실제 마케프가 아니며 정확한 고대 발음을 재현하지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H0453_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "note": "H453의 אֱלִי 요소는 H410 엘(하나님)에 해당한다. Strong은 from H410 and H1931로 설명한다. 이름 전체의 문장 풀이 차이와 구성 관계를 구별한다.",
+      "source": "RESHET-EC-H453-CLUSTER-H0410-H0453",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H0453_0000",
+      "word_id_2": "H1931_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "note": "H453의 הוּ 또는 הוּא 요소는 H1931의 3인칭 대명사에 해당한다. Strong의 from H410 and H1931와 BDB의 이름 풀이를 함께 대조했다. 이름 구성 요소의 대응을 나타내며 H1931 전체 의미의 신규 승인은 아니다.",
+      "source": "RESHET-EC-H453-CLUSTER-H1931-H0453",
+      "description": null,
+      "relation_group_id": null
+    }
+  ],
+  "relation_replacements": [],
+  "supersedes": [],
+  "meaning_approvals": []
+}
