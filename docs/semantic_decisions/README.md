@@ -26,6 +26,7 @@
 
 | 결정 단위 | 대상 | 상태 | 복원 수준 | 최초 적용일 | 기록 |
 |---|---|---|---|---|---|
+| H455 숨김·사랑 계열과 인명 | 기존11어휘 의미·비고, 신규관계11, H3160 적용 제외·새 hold 없음 | active | 높음 | 2026-11-16 | [결정 기록](h455_cluster_approved_content_slice.md) |
 | H453 엘리후 이름 | H0453 의미1·비고1·확정 합성관계2, hold 없음 | active | 높음 | 2026-11-16 | [결정 기록](h453_cluster_approved_content_slice.md) |
 | H452 엘리야 이름군 | H0452·G2243 의미·비고, 관계교체3·hold 없음, G2243 원천 경계 보존 | active | 높음 | 2026-11-14 | [결정 기록](h452_cluster_approved_content_slice.md) |
 | H447 엘리엘 이름 | H0447 의미1·비고1·확정 합성관계1, hold 없음 | active | 높음 | 2026-11-14 | [결정 기록](h447_cluster_approved_content_slice.md) |

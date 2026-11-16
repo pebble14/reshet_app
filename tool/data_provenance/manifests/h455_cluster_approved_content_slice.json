@@ -1,0 +1,377 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H455-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h455_approval_20261116/00_user_approval.json",
+    "document_sha256": "04ad87e66bdcd45b97ed4b6e6b240d150dabd349828292fecc418200d77ba17c"
+  },
+  "target": {
+    "expected_work_sha256": "2738a028b63c90948ea80f9d26bbd797f3668a5978c1f19625dc364e1175f4f4",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0455_0000",
+      "before": [
+        {
+          "meaning": "엘리아바 (인)",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엘리아바·엘-야흐바 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2243_0000",
+      "before": [
+        {
+          "meaning": "가슴, 품 bosom",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "품"
+        }
+      ]
+    },
+    {
+      "word_id": "H2244_0000",
+      "before": [
+        {
+          "meaning": "물러나다, 숨다",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "숨다·숨기다"
+        },
+        {
+          "seq": 2,
+          "meaning": "얼다"
+        }
+      ]
+    },
+    {
+      "word_id": "H2245_0000",
+      "before": [
+        {
+          "meaning": "사랑하다 love",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "사랑하다"
+        }
+      ]
+    },
+    {
+      "word_id": "H2246_0000",
+      "before": [
+        {
+          "meaning": "호밥 Hobab(인)",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "호밥·호바브 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2247_0000",
+      "before": [
+        {
+          "meaning": "뒤로 물러나다, 숨다",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "숨다"
+        }
+      ]
+    },
+    {
+      "word_id": "H2252_0000",
+      "before": [
+        {
+          "meaning": "하바야 Habaiah",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "하바야·호바야·하바-야 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2253_0000",
+      "before": [
+        {
+          "meaning": "숨음, 숨는 곳",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "숨김"
+        }
+      ]
+    },
+    {
+      "word_id": "H2327_0000",
+      "before": [
+        {
+          "meaning": "호바 Hobah",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "호바 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H4224_0000",
+      "before": [
+        {
+          "meaning": "은신처, 피난처",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "숨는 곳"
+        }
+      ]
+    },
+    {
+      "word_id": "H5147_0000",
+      "before": [
+        {
+          "meaning": "나비 Nahbi",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "나비·나흐비 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0455_0000",
+      "before": null,
+      "after": "다윗의 용사 명단에 나오는 사알본 사람의 이름이다(삼하 23:32; 대상 11:33). 엘리아바는 성경 관용명이고 엘-야흐바는 אֶלְיַחְבָּא의 교재식 읽기와 구성 경계를 드러낸 한글 근사다. H0410 엘(하나님)과 H2244 숨기다의 합성으로 풀이하며, 이름 전체는 ‘하나님이 숨기신다’ 또는 ‘하나님이 숨기실 것이다’로 설명된다. 보호라는 함의와 이름 풀이를 인물의 실제 행적이나 작명 동기로 단정하지 않는다. 붙임표는 분석 기호이며 실제 마케프나 정확한 고대 발음을 뜻하지 않는다."
+    },
+    {
+      "word_id": "H2243_0000",
+      "before": null,
+      "after": "욥 31:33에서 죄악을 품 안에 감춘다는 표현에 쓰인 남성 명사다. 품이나 가슴 안쪽이라는 뜻이며, 이 단어 자체를 사랑이나 죄악의 뜻으로 바꾸지 않는다. H2245 사랑하다와 연결하는 전통 어원 설명이 있으나, 명사에서 동사가 생겼는지 동사에서 명사가 생겼는지는 자료가 갈린다."
+    },
+    {
+      "word_id": "H2244_0000",
+      "before": null,
+      "after": "주된 의미는 몸을 숨기거나 물러나는 것과 대상을 숨기는 것이다. 창 31:27의 몰래 떠남, 욥 29:8의 공경하여 물러섬, 29:10의 말소리 죽임, 사 42:22의 갇힘과 49:2의 보호는 이 의미가 구체화된 용법이다. 욥 38:30의 히트파엘형은 추위로 액체가 얼어 고체가 되는 별도 의미로 분류되기도 한다. 성경의 이 의미 용례는 여기 한 번이며, 얼음에 덮여 물이 숨는다는 다른 풀이도 있다. 이 둘째 뜻을 마음이나 물질 일반이 굳어지는 뜻으로 확대하지 않는다. H2247과 뜻·형태가 가깝지만 H2245와의 역사적 어원 연결은 확정하지 않는다."
+    },
+    {
+      "word_id": "H2245_0000",
+      "before": null,
+      "after": "신 33:3에서 백성을 사랑하고 아끼는 태도를 나타낸다. 품에 감추어 품는다는 전통 어원 설명이 있으나, 실제 용례의 뜻을 단순히 숨기다로 바꾸거나 다른 사랑 어휘보다 반드시 더 강한 사랑이라고 단정하지 않는다. H2243 품과의 파생 방향 및 H2244·H2247 숨다와의 역사적 어원 관계는 확정하지 않는다."
+    },
+    {
+      "word_id": "H2246_0000",
+      "before": null,
+      "after": "민 10:29에서 미디안 사람 르우엘의 아들로 나오고, 삿 4:11에서는 모세와 인척 관계인 호밥의 후손들이 언급된다. 호밥은 성경 관용명, 호바브는 חֹבָב의 교재식 읽기를 근사한 표기다. Strong은 H2245 사랑하다에서 ‘사랑받는 이’로 풀이한다. 다른 어원 비교도 있어 유력한 전통 풀이로 남기며, 르우엘·이드로와의 동일성이나 정확한 인척 관계를 이름의 뜻만으로 확정하지 않는다."
+    },
+    {
+      "word_id": "H2247_0000",
+      "before": null,
+      "after": "몸을 피하여 숨는 행위를 가리킨다. 수 2:16, 왕상 22:25, 왕하 7:12, 사 26:20, 렘 49:10에 쓰이며, 매복이나 심판을 피함은 각 문맥의 구체적 상황이다. H2244와 뜻·형태가 가깝고 왕상 22:25와 대하 18:24의 평행 구절은 각각 ה와 א로 끝나는 형태를 보인다. H2245 사랑하다와의 역사적 어원 연결은 확정하지 않는다."
+    },
+    {
+      "word_id": "H2252_0000",
+      "before": null,
+      "after": "스 2:61과 느 7:63에서 제사장 가문의 기반 이름으로 쓰인다. 개역 계열은 각각 하바야와 호바야, 새번역은 두 곳 모두 호바야로 적는다. 하바-야는 Strong 표제 חֲבַיָּה의 교재식 근사와 H2247·H3050의 구성 경계를 보인 표기이며, ‘야께서 숨기셨다’로 풀이한다. 확보 마소라 본문은 두 곳 모두 חֳבַיָּה로 적혀 첫 모음이 표제와 다르다. 요드의 중복과 세부 음가는 한글 근사에 완전히 드러나지 않는다. 붙임표는 분석 기호이며 실제 마케프를 뜻하지 않는다."
+    },
+    {
+      "word_id": "H2253_0000",
+      "before": null,
+      "after": "숨김이나 가림의 의미 영역에 속하는 남성 명사로 풀이되며, 숨는 곳 또는 가림막이라는 분석도 있다. 성경에는 합 3:4의 연계형 한 번만 나와 명사의 정확한 지시 범위는 확정하기 어렵다. 권능은 뒤따르는 별개의 단어가 나타내는 내용이며 이 단어 자체의 의미에 포함하지 않는다. H2247 숨다와의 연결 및 관련 아람어의 숨는 곳 용법은 숨김 계열 분석을 뒷받침하지만, 후대의 다른 언어 자료가 성경 히브리어의 세부 의미를 그대로 확정하지는 않는다. 확보 칠십인역은 사랑에 관한 다른 읽기를 전한다."
+    },
+    {
+      "word_id": "H2327_0000",
+      "before": null,
+      "after": "창 14:15에서 아브람이 추격한 곳으로, 다메섹의 왼쪽 곧 북쪽에 있는 지명이다. 호바는 성경 관용 표기와 חוֹבָה의 교재식 한글 근사가 같은 형태다. Strong은 H2247의 여성 분사형에서 ‘숨는 곳’으로 풀이하지만, 다른 어근을 연결하는 자료도 있어 확정된 어원으로 제시하지 않는다. 정확한 현대 위치는 이 용례만으로 확정하지 않는다."
+    },
+    {
+      "word_id": "H4224_0000",
+      "before": null,
+      "after": "H2244 숨다에서 나온 장소 명사다. 삼상 23:23에서는 다윗이 몸을 숨기는 곳들을, 사 32:2에서는 바람을 피할 곳에 비긴 보호의 기능을 가리킨다. מַחֲבֵא와 מַחֲבֹא 계열 형태를 같은 단어의 형태 차이로 보며, 숨어 피하는 장소와 그 보호 기능을 별도 sense로 나누지 않는다."
+    },
+    {
+      "word_id": "H5147_0000",
+      "before": null,
+      "after": "민 13:14에서 납달리 지파를 대표하여 파견된 웝시의 아들인 정탐꾼의 이름이다. 나비는 성경 관용명이고 나흐비는 נַחְבִּי의 교재식 한글 근사다. Strong은 H2247에서 ‘감추어진 이’로 풀이하며, 이 어원 풀이를 인물의 실제 성격이나 정탐 행위의 뜻으로 바꾸지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H0455_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "note": "엘과 숨기다의 합성 구성. 전체 작명 동기나 기도/미래 시제 확정은 아님. 근거: from H410 and H2244; God will hide",
+      "source": "Open Scriptures HebrewLexicon H455, commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; BDB H455; UBS H455",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H0455_0000",
+      "word_id_2": "H2244_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "note": "원천 동사에서 이름 구성으로 향함. reference 화살표를 그대로 복사하지 않음. 근거: from H410 and H2244; God will hide",
+      "source": "Open Scriptures HebrewLexicon H455, commit 21c9add13bc727d3a951361778e97e3ff7afd1ce; BDB H455; UBS H455",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H2243_0000",
+      "word_id_2": "H2245_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "note": "품/사랑의 관련성은 기록하되 어느 단어가 먼저인지 선택하지 않음. 근거: H2243: by contraction from H2245; HebGrkKo H2245는 반대 파생 설명",
+      "source": "Open Scriptures HebrewLexicon H2243; HebGrkKo exact H2243/H2245; BDB H2243/H2245",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H2245_0000",
+      "word_id_2": "H2246_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "note": "전통 파생은 형태·의미에 맞으나 BDB가 다른 비교 견해도 소개하여 asserted로 올리지 않음. 근거: from H2245; cherished",
+      "source": "Open Scriptures HebrewLexicon H2246; HebGrkKo H2246; BDB H2246",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H2247_0000",
+      "word_id_2": "H2252_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "note": "숨김 어근과 야 신명 요소의 구성. 본문/표제의 모음 차이와 정확한 형성 세부는 별도. 근거: from H2247 and H3050; Jah has hidden",
+      "source": "Open Scriptures HebrewLexicon H2252; UBS H2252; BDB H2252",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H2252_0000",
+      "word_id_2": "H3050_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "note": "야 요소에서 합성 인명으로 향함. H3050의 독립 meaning 승인은 포함하지 않음. 근거: from H2247 and H3050; Jah has hidden",
+      "source": "Open Scriptures HebrewLexicon H2252; UBS H2252; h215_cluster_approved_content_slice H223 선례",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H2247_0000",
+      "word_id_2": "H2253_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "note": "숨김 명사의 어휘 형성. 합3:4의 구체 구문 및 LXX 다른 읽기는 비고에 유지. 근거: from H2247",
+      "source": "Open Scriptures HebrewLexicon H2253; BDB H2253",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H2247_0000",
+      "word_id_2": "H2327_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "note": "Strong의 명시적 풀이를 기록하되 로컬 H2325 연결 및 정확한 지명 어원의 미확정을 반영. 근거: feminine active participle of H2247; hiding place",
+      "source": "Open Scriptures HebrewLexicon H2327; HebGrkKo H2327; BDB H2327",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H2244_0000",
+      "word_id_2": "H4224_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "note": "숨다와 숨는 곳의 직접 파생 설명 및 실제 같은 절의 사용이 일치. 근거: from H2244",
+      "source": "Open Scriptures HebrewLexicon H4224; BDB H4224; OSHB 1Sam.23.23/Isa.32.2",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H2247_0000",
+      "word_id_2": "H5147_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "note": "전통 파생과 숨김 계열 이름 풀이가 일치. 실제 작명 동기는 확정하지 않음. 근거: from H2247; occult",
+      "source": "Open Scriptures HebrewLexicon H5147; HebGrkKo H5147; BDB H5147",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H2244_0000",
+      "word_id_2": "H2247_0000",
+      "category_code": "semantic",
+      "relation_type": "similar",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "note": "두 어휘의 뜻이 가깝다는 관찰을 승인. 역사적 어근 동일성·발생 방향은 이 관계가 주장하지 않음. 근거: BDB의 상호 비교 + 왕상22:25/대하18:24 평행 형태",
+      "source": "BDB H2244/H2247; OSHB 1Kgs.22.25 and 2Chr.18.24",
+      "description": null,
+      "relation_group_id": null
+    }
+  ],
+  "relation_replacements": [],
+  "supersedes": [],
+  "meaning_approvals": []
+}

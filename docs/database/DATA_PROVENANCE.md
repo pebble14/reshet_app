@@ -1999,3 +1999,8 @@ H0336 의미 유지 승인 1건, 의미 교체 3건, 비고 4건, 관계 신규 
 ### H453 엘리후 이름 승인 — 2026-11-16
 
 [승인 manifest](../../tool/data_provenance/manifests/h453_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h453_cluster_approved_content_slice.md)에 의미1·비고1·확정 합성관계2(ID8428·8429)를 반영했다. 공식 dry-run·undo·원본 불변 및 적용기31테스트 후 live apply1회, history group1794799238445377의4행이다. 사용자 테이블12개·DDL·기존 이력·비대상 데이터·sequence 기대 증분만을 독립 검증했다. Integrity ok·FK0·sidecar없음·seed불변. Progress 승인1022→1023·미승인13270→13269, hold6·anomaly113 유지. 원문·음역·발음·언어·schema·앱/UI 변경 없음.
+
+
+## H455 숨김·사랑 계열과 인명 승인 — 2026-11-16
+
+[승인 manifest](../../tool/data_provenance/manifests/h455_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h455_cluster_approved_content_slice.md)에 R2를 반영했다. H2244는 숨다·숨기다 / 얼다, H2253은 세부 범위 미확정의 숨김이다. 기존11어휘 의미·비고 및 신규관계11(확정8·가설3), history33행을 적용했다. H3160은 행 누락으로 제외하며 새 hold 없음. 공식 dry-run·undo·31테스트 후 live apply1회 및 독립 전체 테이블·DDL·비대상·이력 검증 통과. Progress 승인1023→1034·hold6·anomaly113 유지. 원문·음역·발음·언어·schema·seed·앱/UI 변경 없음.
