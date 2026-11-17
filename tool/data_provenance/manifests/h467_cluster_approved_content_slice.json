@@ -1,0 +1,613 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H467-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h467_approval_20261117/00_user_approval.json",
+    "document_sha256": "a28c8c23ebd4fe8cb26a5534f6fc4d4df3f468a16c745f51678a5c3d5faa07e8"
+  },
+  "target": {
+    "expected_work_sha256": "587a08cb70acbc40e577dd9a94e8dea0a563a55f4dc849f1fdc648bf0aafe96c",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0467_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "엘리벨렛 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엘리벨렛·엘벨렛·엘리-펠렛·엘-펠렛 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H1046_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "벧벨렛 (지)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "벧벨렛·벳벨렛·베트-펠렛 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3310_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "야블렛 Japhlet(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "야블렛·야플렛 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3311_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "야블렛 사람 Japhletites"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "야블렛·야플렛 사람"
+        }
+      ]
+    },
+    {
+      "word_id": "H4655_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "피함, 피난"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "피난처(避難處)"
+        }
+      ]
+    },
+    {
+      "word_id": "H6403_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "도피(도산)하다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "건져 내다"
+        },
+        {
+          "seq": 2,
+          "meaning": "안전하게 지키다"
+        },
+        {
+          "seq": 3,
+          "meaning": "벗어나다"
+        },
+        {
+          "seq": 4,
+          "meaning": "낳다"
+        }
+      ]
+    },
+    {
+      "word_id": "H6404_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "벨렛 Pelet"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "벨렛·펠렛 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H6405_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "도망, 도피, 구원, 자유"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "건짐"
+        }
+      ]
+    },
+    {
+      "word_id": "H6406_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "발디 Palti"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "발디·팔티 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H6407_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "발디 사람 Paltite"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "발디·팔티 사람"
+        }
+      ]
+    },
+    {
+      "word_id": "H6408_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "빌대 Piltai"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "빌대·필타이 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H6409_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "발디엘 Paltiel"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "발디엘·팔티-엘 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H6410_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "블라댜 Pelatiah"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "블라댜·펠라트-야·펠라트-야후 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H6412_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "도피자, 도망자"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "피한 사람"
+        }
+      ]
+    },
+    {
+      "word_id": "H6413_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "도피, 탈출, 구원(생존)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "벗어남"
+        },
+        {
+          "seq": 2,
+          "meaning": "피한 무리·피한 것"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0467_0000",
+      "before": null,
+      "after": "다윗의 아들들, 다윗의 용사, 베냐민 계보 및 귀환자 명단 등에 쓰인 남성 이름이다. 엘리벨렛과 엘벨렛은 한국어 성경 관용명이며, 엘리-펠렛과 엘-펠렛은 Strong 표제의 일반형 אֱלִיפֶלֶט과 단축형 אֱלְפֶּלֶט 계열에서 신명 요소와 뒤 요소의 경계를 드러낸 교재식 근사다. 비분석형 읽기는 각각 엘리펠렛·엘펠렛이다. 본문에는 휴지형의 -팔렛도 보이며, 대상 14:5의 실제 형태는 אֶלְפָּלֶט이다. Strong은 H410과 H6405의 구성으로 구원의 하나님, BDB는 하나님은 구원이라는 취지로 풀이한다. 이 분석은 H6405의 표제 형태 פַּלֵּט이 그대로 이름에 삽입되었다는 뜻은 아니다. 대상 3:6·8과 14:5·7의 동명인 구별 및 삼하 23:34와 대상 11:35의 엘리발(H465) 병행은 각각의 문맥에서 검토하며 모든 동명인을 같은 인물로 합치지 않는다. 붙임표와 한글 근사는 정확한 고대 발음을 확정하지 않는다."
+    },
+    {
+      "word_id": "H1046_0000",
+      "before": null,
+      "after": "유다 남쪽의 성읍 이름으로 수 15:27과 느 11:26에 나온다. 벧벨렛은 개역 계열, 벳벨렛은 새번역의 관용명이고 베트-펠렛은 Strong 표제 בֵּית פֶּלֶט의 두 요소를 드러낸 교재식 분석 표기다. 실제 두 본문에는 뒤 요소의 휴지형 פָּלֶט이 쓰인다. Strong은 H1004의 집과 H6412 계열의 피함을 연결하여 피할 집·장소로 풀이한다. 인명 벨렛(H6404) 자체에서 직접 파생한 지명이라는 뜻은 아니다. 현재 OSHB는 뒤 요소 token을 H1046으로 집계하며, 로컬 원전분해의 H1004·H6412 분절 태그와 구별한다. 확보 LXX 느 11:26에는 이 지명이 직접 확인되지 않는다."
+    },
+    {
+      "word_id": "H3310_0000",
+      "before": null,
+      "after": "아셀 계보에서 헤벨의 아들로 나오는 남성 이름이다. 대상 7:32에 한 번, 7:33에 두 번 나온다. 야블렛은 성경 관용명이고 야플렛은 יַפְלֵט의 교재식 근사다. Strong은 H6403에서 나온 그가 구한다는 취지의 동사형 이름으로 설명한다. 야블렛 사람(H3311)의 기반 이름과 연결되지만 그 집단의 실제 선조가 반드시 이 인물이라는 계보는 본문에서 확정되지 않는다."
+    },
+    {
+      "word_id": "H3311_0000",
+      "before": null,
+      "after": "수 16:3에서 에브라임 경계의 한 집단을 가리키는 소속형이다. 야블렛 사람·야블렛 족속은 한국어 성경 표현이며 야플렛 사람은 기반 이름의 교재식 근사와 소속 기능을 함께 나타낸다. 전체형 יַפְלֵטִי의 읽기는 야플레티이다. Strong은 H3310에서 나온 후손 명칭으로, BDB는 가문 또는 씨족으로 설명하지만 대상 7장의 특정 아셀 사람을 이 집단의 선조로 확정하지 않는다."
+    },
+    {
+      "word_id": "H4655_0000",
+      "before": null,
+      "after": "시 55:8(마소라 55:9)에 한 번 나오는 H6403 계열의 명사로, 위험을 피하여 몸을 둘 곳을 가리킨다. 본문에서는 폭풍을 피할 곳이지만 특정 재난이나 실제 건물로 뜻을 제한하지 않는다. 피함·벗어남이라는 경쟁 풀이도 있으나, 형태와 문맥을 함께 보면 장소 풀이가 더 설득력 있다. 확보 LXX의 나를 구하는 이를 기다렸다는 표현은 다른 읽기·구성을 반영하므로 이 명사를 구원자라는 뜻으로 바꾸지 않는다."
+    },
+    {
+      "word_id": "H6403_0000",
+      "before": null,
+      "after": "위험이나 곤경에서 대상을 건져 안전에 이르게 하거나, 대상을 빼앗기거나 잃지 않도록 안전하게 확보·보존하는 동사이다. 일반적인 안전 조치 전체를 뜻하지는 않는다. 사람을 건지는 용법이 주되며 사 5:29의 사자는 먹이를 확보하여 가져가고 미 6:14는 대상을 보존하는 문맥이어서, 언제나 대상에게 선한 구조 행위만을 뜻하지 않는다. 자동 용법은 겔 7:16에서 위험을 벗어남을, 욥 21:10은 새끼를 낳음을 나타낸다. 피엘·히필의 구출과 보존은 겹칠 수 있어 어간만으로 둘을 기계적으로 나누지 않는다. 분사형의 건지는 이는 같은 동사의 명사적 쓰임이다. 욥 23:7의 태·본문 해석은 미해결로 남기며 무죄 판정을 독립 의미로 추가하지 않는다."
+    },
+    {
+      "word_id": "H6404_0000",
+      "before": null,
+      "after": "대상 2:47과 12:3에 나오는 서로 다른 남성의 이름이다. 벨렛은 성경 관용명이고 펠렛은 פֶּלֶט의 교재식 근사다. Strong은 H6403에서 나와 벗어남·구원이라는 취지로 풀이한다. 대상 12:3의 인물은 아스마웹 계열의 자손으로, 로컬 참고 사전의 부친 표기와 실제 본문을 구별한다. 벧벨렛(H1046)을 보라는 사전 참조는 이 사람 이름에서 지명이 직접 생겼다는 근거가 아니다."
+    },
+    {
+      "word_id": "H6405_0000",
+      "before": null,
+      "after": "전통 Strong에서 별도 표제로 수록한 H6403 계열의 구원·건짐 명칭이다. 시 32:7에서는 피엘 부정사가 명사적으로 쓰여 구원의 노래라는 구성을 이룬다. 이를 독립 명사로 세우는 분석과 동사의 명사적 쓰임으로 보는 분석을 구별한다. 시 56:7(마소라 56:8)은 OSHB의 피엘 명령형 분석, 전통적인 질문 번역 및 본문 교정안이 경쟁하므로 세부 해석을 확정하지 않는다. 이 두 구절은 동사의 피엘 연구에서도 함께 다뤄진다. 렘 44:14·50:28·51:50의 관련 복수형은 현재 정본에서 H6412에 속하므로 이 표제의 집계에 더하지 않는다."
+    },
+    {
+      "word_id": "H6406_0000",
+      "before": null,
+      "after": "민 13:9의 라부 아들과 삼상 25:44의 라이스 아들에게 쓰인 남성 이름이다. 발디는 성경 관용명이고 팔티는 פַּלְטִי의 교재식 근사다. Strong은 H6403의 구함 계열로 설명하고 BDB는 발디엘(H6409)의 단축형일 가능성을 제시한다. 라이스의 아들이자 미갈의 남편인 인물은 삼하 3:15에서 발디엘로 불리지만, 민수기의 다른 발디에게 이 장형을 직접 확인된 이름처럼 부여하지 않는다."
+    },
+    {
+      "word_id": "H6407_0000",
+      "before": null,
+      "after": "삼하 23:26에서 다윗의 용사 헬레스의 소속을 나타내는 말이다. 발디 사람은 성경 관용 표현이고 팔티 사람은 פַּלְטִי의 교재식 근사에 소속 기능을 드러낸 표현이다. Strong은 H6406의 후손 명칭으로 설명하지만 BDB는 벧벨렛(H1046) 출신과 연결한다. 따라서 어느 발디의 가문이나 특정 출신지를 확정하지 않는다. 대상 11:27·27:10의 블론·발론 사람(H6397)과 병행하지만 정확한 본문 형성과 두 소속형의 어휘적 관계는 미확정이다."
+    },
+    {
+      "word_id": "H6408_0000",
+      "before": null,
+      "after": "느 12:17에서 모아댜 계열과 연결되는 제사장 가문의 우두머리 이름이다. 빌대는 성경 관용명이고 필타이는 פִּלְטַי의 교재식 근사이며 본문에는 휴지형 פִּלְטָי가 쓰인다. Strong은 H6407을 대신하는 형태로 참조하고 로컬 사전은 H6403 계열로 풀이하지만, 이것만으로 소속형 발디 사람에서 이 인명이 직접 파생했다고 확정하지 않는다. 해당 인물의 귀환 시점이나 정확한 이름 어원도 이 절만으로 보충하지 않는다."
+    },
+    {
+      "word_id": "H6409_0000",
+      "before": null,
+      "after": "민 34:26의 잇사갈 지도자와 삼하 3:15의 미갈의 남편에게 쓰인 남성 이름이다. 발디엘은 성경 관용명이고 팔티-엘은 פַּלְטִיאֵל에서 엘 신명 요소의 경계를 드러낸 교재식 분석 표기이며 비분석형 읽기는 팔티엘이다. Strong은 H6404와 같은 어원 요소 및 H410을 연결하여 하나님의 구원이라는 취지로 풀이한다. H6404의 인물 벨렛에게서 직접 파생했다는 뜻은 아니다. 미갈의 남편은 삼상 25:44의 발디(H6406)와 대응하지만 모든 동명인을 동일시하지 않는다."
+    },
+    {
+      "word_id": "H6410_0000",
+      "before": null,
+      "after": "여러 남성에게 쓰인 이름이다. 블라댜는 성경 관용명이며 펠라트-야와 펠라트-야후는 פְּלַטְיָה·פְּלַטְיָהוּ의 신명 요소 경계를 드러낸 교재식 근사다. 정본에서는 -야형이 대상 3:21·4:42와 느 10:22(마소라 10:23), -야후형이 겔 11:1·13에 나온다. Strong은 H6403과 H3050의 합성으로 야께서 구하셨다는 취지로 풀이한다. 뒤 신명 요소와 달리 어두 셰와의 세부 음가와 고대 실제 발음은 확정하지 않는다. 다른 문맥의 동명인이나 대상·느헤미야의 인물 동일성은 별도 문제이다."
+    },
+    {
+      "word_id": "H6412_0000",
+      "before": null,
+      "after": "위험이나 전쟁에서 피하여 벗어난 사람 또는 그런 사람들을 가리킨다. 도망 중인 사람과 재난의 생존자 모두를 포함하며 범죄자·민간인·특정 민족으로 제한하지 않는다. 현재 정본 H6412의 24토큰에는 פָּלִיט 계열19개와 פָּלֵיט·פָּלֵט 계열5개가 함께 집계된다. 앞 형태는 이미 위험의 현장을 벗어난 사람을, 뒤 형태는 아직 이동하거나 정착하지 못한 사람을 강조한다는 연구가 있으나 의미가 겹치므로 확정된 배타적 차이로 보지 않는다. 어느 경우에도 이후의 모든 위험에서 영구히 안전하다는 뜻은 아니다. 삿 12:4는 상대 집단을 낮추어 부르는 말이어서 구체적인 도피 상황은 확정하지 않는다. 문법적 남성은 남성만이라는 생물학적 제한이 아니며 로컬 자료의 H6405 태그는 정본 집계와 구별한다."
+    },
+    {
+      "word_id": "H6413_0000",
+      "before": null,
+      "after": "위험에서 벗어남이라는 추상적 뜻과, 위험을 피한 사람들을 집합적으로 또는 피한 부분·것을 가리키는 구체적 뜻을 가진 여성 명사이다. H6412의 사람 명칭과 실제 지시 범위가 겹치며 초목에도 쓰이므로 사람 집단만으로 제한하지 않는다. 문법적 여성은 여성 생존자만을 뜻하지 않는다. 문맥에서는 남은 무리로 자주 옮기지만 원집단의 일부가 반드시 죽었거나 없어졌음, 소수만 남았음, 신앙적으로 충실함을 이 말의 필수 조건으로 두지 않는다. 피하여 남음은 해당 문맥에서의 설명으로 보존한다. 욜 2:32(마소라 3:5)와 옵 1:17은 추상적 벗어남과 구체적 피한 무리의 배정을 미해결로 남긴다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H0467_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "note": "일반형·단축형에 공통인 엘 신명 구성 요소. 이름의 모든 지시 대상을 동일 인물로 합치지 않음.",
+      "source": "고정 Strong XML / OSHB / BDB 해당 entry; 외부 H467 R1",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H0467_0000",
+      "word_id_2": "H6405_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "note": "벗어남·구원 계열의 이름 요소. H6405 표제 pallet이 그대로 삽입된 음운 경로까지 확정하지 않음.",
+      "source": "고정 Strong XML / OSHB / BDB 해당 entry; 외부 H467 R1",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H1004_0000",
+      "word_id_2": "H1046_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "note": "합성 지명의 집 요소. 실제 합성형 beyt와 단어 기본형 bayit를 구별.",
+      "source": "고정 Strong XML / OSHB / BDB 해당 entry; 외부 H467 R1",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H1046_0000",
+      "word_id_2": "H6412_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "note": "피함 계열의 지명 요소. 독립 H6412 출현에 이 합성 이름의 token을 더하지 않음.",
+      "source": "고정 Strong XML / OSHB / BDB 해당 entry; 외부 H467 R1",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H3310_0000",
+      "word_id_2": "H6403_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "note": "동사 계열 인명. 이름 풀이를 그 인물의 행적 또는 이름 부여 동기로 확정하지 않음.",
+      "source": "고정 Strong XML / OSHB / BDB 해당 entry; 외부 H467 R1",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H3310_0000",
+      "word_id_2": "H3311_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "note": "기반 이름과 소속형의 어휘적 형성 대응. 대상7장의 특정 인물이 실제 선조라는 계보 주장은 아님.",
+      "source": "고정 Strong XML / OSHB / BDB 해당 entry; 외부 H467 R1",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H4655_0000",
+      "word_id_2": "H6403_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "note": "피함의 명사 파생. 단일 구절의 행위/장소 경쟁 해석을 이 관계가 해결하지는 않음.",
+      "source": "고정 Strong XML / OSHB / BDB 해당 entry; 외부 H467 R1",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H6403_0000",
+      "word_id_2": "H6404_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "note": "벗어남 계열의 인명 형성. 일반명사 뜻을 이름의 별도 meaning으로 추가하지 않음.",
+      "source": "고정 Strong XML / OSHB / BDB 해당 entry; 외부 H467 R1",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H6403_0000",
+      "word_id_2": "H6405_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "note": "H6405의 피엘 부정사·명령형과 H6403은 같은 פלט 어근에 속한다. 독립 명사 어휘화와 특정 파생 경로는 확정하지 않는다. R1 derived 방향 대신 공통 어근 사실만 확정한다.",
+      "source": "고정 Strong XML / OSHB / BDB 해당 entry; 외부 H467 R1",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H6403_0000",
+      "word_id_2": "H6406_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "note": "구함 계열 이름 형성의 어근 연결. 발디엘 단축형 가능성과 정확한 역사 경로는 별도.",
+      "source": "고정 Strong XML / OSHB / BDB 해당 entry; 외부 H467 R1",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H6406_0000",
+      "word_id_2": "H6407_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "note": "Strong의 가문 소속 기원 가설. H1046 출신지 분석과 경쟁하며 두 기원을 동시에 확정하지 않음.",
+      "source": "고정 Strong XML / OSHB / BDB 해당 entry; 외부 H467 R1",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H1046_0000",
+      "word_id_2": "H6407_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "note": "BDB의 벧벨렛 출신 명칭 분석. H6406 가문 소속 분석과 경쟁하는 대안이며 실제 지리·계보 확정 아님.",
+      "source": "고정 Strong XML / OSHB / BDB 해당 entry; 외부 H467 R1",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H6409_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "note": "팔티-엘의 엘 신명 요소. H6404 인명에서 직접 파생했다는 해석은 아님.",
+      "source": "고정 Strong XML / OSHB / BDB 해당 entry; 외부 H467 R1",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H6404_0000",
+      "word_id_2": "H6409_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "note": "인명 Pelet와 Paltiel은 구함 계열의 공통 어원 요소를 공유함. Pelet 인물→Paltiel 직접 형성으로 저장하지 않음.",
+      "source": "고정 Strong XML / OSHB / BDB 해당 entry; 외부 H467 R1",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H6406_0000",
+      "word_id_2": "H6409_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "note": "라이스의 아들이자 미갈의 남편을 가리키는 두 본문 이름형의 대응에 한정. 모든 동명인 동일성이나 역사적 축약 방향을 확정하지 않음.",
+      "source": "고정 Strong XML / OSHB / BDB 해당 entry; 외부 H467 R1",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H6403_0000",
+      "word_id_2": "H6410_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "note": "구함 계열 동사 요소와 야 신명 요소가 결합한 이름. 단형·장형의 문맥별 사용을 구별.",
+      "source": "고정 Strong XML / OSHB / BDB 해당 entry; 외부 H467 R1",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H3050_0000",
+      "word_id_2": "H6410_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "note": "-야/-야후 신명 요소. H3050 자체의 새 의미 승인은 포함하지 않음.",
+      "source": "고정 Strong XML / OSHB / BDB 해당 entry; 외부 H467 R1",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H6403_0000",
+      "word_id_2": "H6412_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "note": "피하여 벗어난 사람의 명칭. 문법적 남성을 생물학적 성별 제한으로 바꾸지 않음.",
+      "source": "고정 Strong XML / OSHB / BDB 해당 entry; 외부 H467 R1",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H6412_0000",
+      "word_id_2": "H6413_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "note": "어휘화된 여성 명사의 형태 대응. 여성 도망자만을 가리키는 단순 성 굴절 관계로 저장하지 않음.",
+      "source": "고정 Strong XML / OSHB / BDB 해당 entry; 외부 H467 R1",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H6403_0000",
+      "word_id_2": "H6408_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "note": "SAHD Qal 연구의 어근군 인명 분류와 로컬 사전이 Piltai를 פלט 계열로 연결한다. H6407 소속형에서 이 인명이 직접 파생하거나 두 항목이 동일 어휘라는 주장과 구별한다.",
+      "source": "고정 Strong XML·OSHB; SAHD P.J.Williams 해당 연구; H467 R2",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H4422_0000",
+      "word_id_2": "H6403_0000",
+      "category_code": "semantic",
+      "relation_type": "similar",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "note": "위험 회피·구출이라는 뜻이 겹친다. 출발 쪽/안전에 이르는 결과 쪽의 경향 차이를 절대적 뜻 구별로 만들지 않는다. 공통 어근·직접 파생·전면적 동의어를 확정하는 관계가 아니다.",
+      "source": "고정 Strong XML·OSHB; SAHD P.J.Williams 해당 연구; H467 R2",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H6412_0000",
+      "word_id_2": "H8300_0000",
+      "category_code": "semantic",
+      "relation_type": "similar",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "note": "위험을 피한 사람·생존자를 가리키는 범위가 겹치며 수8:22·렘42:17·44:14·애2:22 등에 병행한다. 도피의 상태와 남아 생존함의 초점이 같지는 않으며 어디서나 교체 가능하다는 뜻은 아니다.",
+      "source": "고정 Strong XML·OSHB; SAHD P.J.Williams 해당 연구; H467 R2",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H6413_0000",
+      "word_id_2": "H7611_0000",
+      "category_code": "semantic",
+      "relation_type": "similar",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "note": "위험을 피한 집합과 남은 부분의 사람·사물 지시가 여러 문맥에서 겹친다. H6413의 위험 회피와 H7611의 잔여 초점을 구별하고 완전한 동의어·어원 관계로 보지 않는다.",
+      "source": "고정 Strong XML·OSHB; SAHD P.J.Williams 해당 연구; H467 R2",
+      "description": null,
+      "relation_group_id": null
+    }
+  ],
+  "relation_replacements": [],
+  "supersedes": [],
+  "meaning_approvals": []
+}
