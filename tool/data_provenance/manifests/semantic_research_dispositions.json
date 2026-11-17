@@ -64,6 +64,16 @@
         "reshet_research_output/H0054_cluster_20261012_b5a87078/00_cluster_summary.md"
       ],
       "reopen_condition": "OSHB의 Strong 부착·형태 분석과 Strong/BDB 항목 정체성을 본문 단위에서 정리하거나 사용자가 채택 분석을 명시적으로 결정할 때 재검토한다. 자동 Strong 재태깅이나 표제 교정으로 해소하지 않는다."
+    },
+    {
+      "strong_number": "H6737",
+      "status": "hold",
+      "reason": "유일한 정본 용례 수 9:4의 וַיִּצְטַיָּרוּ는 사자로 행동하다라는 명사 파생 분석과 וַיִּצְטַיָּדוּ·צוד 계열의 양식을 준비하다라는 대안 읽기가 경쟁한다. 확보 LXX의 ἐπεσιτίσαντο와 NET 본문비평 주석이 후자의 실질적 근거를 제공하므로 일반 의미와 H6735 파생 관계의 최종 승인을 보류한다.",
+      "evidence_refs": [
+        "docs/semantic_decisions/h468_cluster_approved_content_slice.md",
+        "reshet_research_output/H0468_cluster_20261117_fb21ed7f/17_followup_review_R2.md"
+      ],
+      "reopen_condition": "본문의 ר/ד 읽기와 형태·어근을 직접 본문비평·사본 근거로 판별하거나, 사용자가 현행 Strong의 사자 분석을 채택하고 경쟁 독법은 비고에 보존하는 범위를 명시적으로 결정할 때 재검토한다."
     }
   ]
 }

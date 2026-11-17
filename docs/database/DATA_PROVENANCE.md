@@ -2048,3 +2048,8 @@ H0336 의미 유지 승인 1건, 의미 교체 3건, 비고 4건, 관계 신규 
 ### H466 놀라움·구별·이름 대용 어휘군 승인 반영 (2026-11-17)
 
 [승인 manifest](../../tool/data_provenance/manifests/h466_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h466_cluster_approved_content_slice.md)에 R2.1 의미15(12어휘)·비고12·신규관계14(ID8485–8498, 확정7·가설7)를 반영했다. H6381 서원 과분할을 수정하고 H6382는 놀라운 일·놀라운 것 한 meaning을 채택했다. 공식 dry-run·undo·원본불변·적용기31테스트와 독립 SQL 전체12테이블·DDL·비대상·기존 이력 검증 통과, history38행. Integrity ok·FK0·seed불변. Progress 승인1095→1107·hold6·anomaly113 유지. 원문·음역·발음·언어·schema·앱/UI 변경 없음.
+
+
+### H468 클러스터 R2 승인 반영 — 2026-11-18
+
+[승인 manifest](../../tool/data_provenance/manifests/h468_cluster_approved_content_slice.json) 및 [결정 기록](../semantic_decisions/h468_cluster_approved_content_slice.md)에 의미34·비고23·신규관계18·교체4와 H6737 hold를 기록했다. 공식 dry-run·undo·원본불변·적용기31테스트·독립 SQL 검증 통과. History68행, integrity ok·FK0·비대상/스키마/seed 불변. Progress 승인1145·hold7·미승인13146·anomaly113. 원문·발음·음역·UI·seed 배포 변경 없음.

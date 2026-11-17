@@ -1,0 +1,862 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H468-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h468_approval_20261118/00_user_approval.json",
+    "document_sha256": "eff4b8fadc6eb8912c4397787a4a0203aad1339c254781c8018c8491e8e89954"
+  },
+  "target": {
+    "expected_work_sha256": "fb21ed7f9c76ab0a2614cf36271c7e97e8041673e546099ff0e9e5d8b4f2da7c",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0468_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "엘리술 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엘리술·엘리-추르 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H1049_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "벳술 (지)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "벧술·벳술·베트-추르 (인, 지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2521_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "헬갓핫수림 Helkath-hazzurim(지)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "헬갓핫수림·헬카트-핫추림 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2906_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "산, 언덕"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "산(山)"
+        }
+      ]
+    },
+    {
+      "word_id": "H4692_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "둘러쌈/에워쌈/포위(包圍)"
+        },
+        {
+          "seq": 2,
+          "meaning": "성벽(城壁)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "포위(包圍)"
+        },
+        {
+          "seq": 2,
+          "meaning": "공성 시설(攻城施設)"
+        },
+        {
+          "seq": 3,
+          "meaning": "보루(堡壘)"
+        }
+      ]
+    },
+    {
+      "word_id": "H4693_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "마초르"
+        },
+        {
+          "seq": 2,
+          "meaning": "이집트/애굽"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "애굽·이집트·마초르 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H4694_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "포위공격참호, 방어(벽, 물), 성벽"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "공성 시설(攻城施設)"
+        },
+        {
+          "seq": 2,
+          "meaning": "보루(堡壘)"
+        }
+      ]
+    },
+    {
+      "word_id": "H6301_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "브다술 Pedahzur"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "브다술·페다-추르 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H6676_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "목 neck"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "목"
+        }
+      ]
+    },
+    {
+      "word_id": "H6677_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "목 neck"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "목"
+        },
+        {
+          "seq": 2,
+          "meaning": "목걸이"
+        }
+      ]
+    },
+    {
+      "word_id": "H6696_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "한정하다, 가두다, 포위하다, 둘러싸다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "에워싸다"
+        },
+        {
+          "seq": 2,
+          "meaning": "싸매다"
+        },
+        {
+          "seq": 3,
+          "meaning": "대적하다(對敵하다)"
+        },
+        {
+          "seq": 4,
+          "meaning": "압박하다(壓迫하다)"
+        },
+        {
+          "seq": 5,
+          "meaning": "모양(模樣)을 만들다"
+        }
+      ]
+    },
+    {
+      "word_id": "H6697_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "바위, 반석, 절벽"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "바위"
+        },
+        {
+          "seq": 2,
+          "meaning": "날"
+        }
+      ]
+    },
+    {
+      "word_id": "H6698_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "수르 Zur"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "수르·술·추르 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H6699_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "형태, 형상, 모양"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "모양(模樣)"
+        }
+      ]
+    },
+    {
+      "word_id": "H6700_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "수리엘 Zuriel"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "수리엘·추리-엘 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H6701_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "수리삿대 Zurishaddai"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "수리삿대·추리-샷다이 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H6735_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "사자(신), 돌쩌귀, 고통"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "사자(使者)"
+        },
+        {
+          "seq": 2,
+          "meaning": "돌쩌귀"
+        },
+        {
+          "seq": 3,
+          "meaning": "심한 고통(苦痛)"
+        }
+      ]
+    },
+    {
+      "word_id": "H6736_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "형상, 우상"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "형상(形象)"
+        }
+      ]
+    },
+    {
+      "word_id": "H6864_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "부싯돌/차돌[돌칼]"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "부싯돌"
+        }
+      ]
+    },
+    {
+      "word_id": "H6865_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "두로"
+        },
+        {
+          "seq": 2,
+          "meaning": "뜻풀이: 돌, 반석"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "두로·초르·티레 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H6876_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "두로 사람, 두로의 주민들"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "두로·초르·티레 사람"
+        }
+      ]
+    },
+    {
+      "word_id": "G5183_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "두로의"
+        },
+        {
+          "seq": 2,
+          "meaning": "두로 사람"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "두로·튀로스·티레 사람"
+        }
+      ]
+    },
+    {
+      "word_id": "G5184_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "두로"
+        },
+        {
+          "seq": 2,
+          "meaning": "[뜻풀이: 돌, 반석]"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "두로·튀로스·티레 (지)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0468_0000",
+      "before": null,
+      "after": "스데울의 아들이며 광야 시대 르우벤 지파를 이끈 남성의 이름이다(민 1:5; 2:10; 7:30·35; 10:18). 엘리술은 성경 관용명이고 엘리-추르는 אֱלִי와 צוּר의 구성 경계를 보이는 교재식 한글 근사다. H410 엘과 H6697 바위의 합성 이름이다. Strong은 바위의 하나님으로, BDB는 바위는 하나님으로, 확보 한국어 참고 사전은 하나님은 반석이시다로 풀이한다. 구성 요소의 확인과 이름 문장 전체의 해석을 구별하며, 그 인물의 성품이나 실제 이름 부여 동기를 단정하지 않는다. 붙임표는 분석 기호이며 정확한 고대 발음이나 원문의 마케프를 뜻하지 않는다."
+    },
+    {
+      "word_id": "H1049_0000",
+      "before": null,
+      "after": "유다의 성읍 이름으로 수 15:58, 대하 11:7, 느 3:16에 나오며, 대상 2:45에서는 마온이 벳술의 아버지라고 한다. 마지막 문맥은 BDB와 고정 Strong의 품사 표기에서 인명으로도 분류되지만, 성읍의 지도자를 가리키는 표현으로도 읽힌다. 벧술과 벳술은 확보 한국어 성경에 실제로 나타나는 관용 표기이고, 베트-추르는 בֵּית와 צוּר의 구성 경계를 보이는 교재식 근사다. H1004 집의 연계형과 H6697 바위가 결합하여 바위의 집으로 풀이한다. 대상의 인명·성읍 해석 차이는 보존하되 같은 이름을 별도 의미로 나누지 않는다."
+    },
+    {
+      "word_id": "H2521_0000",
+      "before": null,
+      "after": "삼하 2:16에서 기브온의 결투 장소에 붙인 이름이다. 헬갓핫수림은 성경 관용명이고 헬카트-핫추림은 חֶלְקַת과 הַצֻּרִים의 경계를 보이는 교재식 근사다. 첫 요소는 땅의 몫·구획을 나타내는 H2513의 연계형으로 이해할 수 있다. Strong은 H2520과 H6697의 복수형에 관사가 붙은 구성으로 설명하고 바위들의 매끄러움으로 풀이하지만, H2520의 아셀 성읍 헬갓과 이 장소가 같다는 뜻은 아니다. 둘째 요소와 이름 전체에는 칼날의 벌판, 강한 자들의 벌판, 매복자들의 구획 등의 풀이가 경쟁한다. 확보 LXX는 매복자들의 구획으로 옮긴다. 일부 경계의 확인과 전체 어원·대안 본문의 확정은 구별한다."
+    },
+    {
+      "word_id": "H2906_0000",
+      "before": null,
+      "after": "다니엘서의 아람어 본문에서 산을 가리킨다(단 2:35·45). 2:35에서는 돌이 큰 산이 되고, 2:45에서는 산에서 돌이 떨어져 나온다. Strong은 히브리어 H6697에 대응한다고 설명하고 rock 또는 hill로 풀이하지만, BDB와 두 실제 문맥은 산이라는 명칭을 지지한다. 이 동계 대응이 히브리어에서 아람어로의 직접 차용 방향을 확정하지는 않는다."
+    },
+    {
+      "word_id": "H4692_0000",
+      "before": null,
+      "after": "둘러싸서 성을 압박하는 포위, 이를 위해 세우는 공성 시설, 적을 막는 방벽·방어 거점인 보루를 가리킨다. 신 20:20은 나무로 만드는 공성 시설, 슥 9:3은 두로가 쌓는 방어 거점이다. 성읍과 결합하면 요새화된 성읍 또는 포위된 성읍으로 옮길 수 있으며, 시 31:21(마소라 31:22)은 두 해석이 갈린다. 합 2:1의 성루·망대도 방어 거점의 문맥이며 확보 LXX는 바위로 옮긴다. H6696의 둘러싸다 계열에서 파생한 명사로 설명된다. 미 7:12의 첫 마초르는 정본에서 H4692로 표시되지만 품사는 고유명사이고 H4693의 이집트 명칭과 함께 읽히므로, 이 번호 배정을 일반명사에 이집트 뜻을 추가하는 근거로 삼지 않는다."
+    },
+    {
+      "word_id": "H4693_0000",
+      "before": "=H4714 מִצְרַיִם(미츠라임/미체라임)과 동일한 대상에 대한 표현",
+      "after": "시문에서 이집트를 가리키는 이름 מָצוֹר이다(왕하 19:24; 사 19:6; 37:25; 미 7:12). 애굽은 개역 계열, 이집트는 새번역의 표기이며 마초르는 원어의 교재식 한글 근사다. 관용명과 원어 명칭은 같은 대상을 나타내므로 한 의미로 묶는다. H4714 미츠라임과 대응하지만 Strong의 쌍수형 설명과 역사적 형성의 확실성을 구별한다. 일반명사 H4692와 같은 철자라는 이유로 포위나 국경을 이 이름의 실제 의미로 추가하지 않는다. KJV와 확보 LXX에는 방비·포위 또는 두로로 이해한 다른 독법이 있다. 미 7:12의 두 마초르 중 하나는 정본에서 H4692, 하나는 H4693으로 배정되어 있어 번호별 수와 실제 이름의 문맥 수를 구별한다."
+    },
+    {
+      "word_id": "H4694_0000",
+      "before": null,
+      "after": "성을 공격하기 위해 세운 공성 시설과 성을 방어하는 방벽·보루를 가리킨다. 사 29:3은 공격 시설이며, 대하 11·12·14·21장과 나 2:1(마소라 2:2)은 방어 거점이나 요새화된 성읍의 문맥이다. H4692의 여성형 파생 명사로 설명된다. 특정한 참호나 성벽 한 형태로 한정하지 않으며, 성읍이라는 말과 결합한 번역을 단어 자체의 별도 성읍 의미로 늘리지 않는다."
+    },
+    {
+      "word_id": "H6301_0000",
+      "before": null,
+      "after": "광야 시대 므낫세 지파 지도자 가말리엘의 아버지 이름이다(민 1:10; 2:20; 7:54·59; 10:23). 브다술은 성경 관용명이고 페다-추르는 פְּדָה와 צוּר의 구성을 보이는 교재식 근사다. H6299 속량하다와 H6697 바위가 결합하며 바위가 속량하셨다로 풀이된다. 여기서 바위는 신명적 요소로 이해된다. 민 10:23은 같은 이름을 두 토큰 모두 H6301로 표시하여 번호 집계는 6회지만 이름 문맥은 5절이다. 민 7:54·59에는 앞부분이 6301+로 적힌 분절도 있으며 이를 별도 인명이나 독립 동사 출현으로 더하지 않는다."
+    },
+    {
+      "word_id": "H6676_0000",
+      "before": null,
+      "after": "다니엘서 아람어 본문에서 금 사슬을 거는 목을 가리킨다(단 5:7·16·29). 히브리어 H6677과 대응하는 아람어 명사이며 두 언어 사이의 직접 차용 방향은 확정하지 않는다. 고정 OSHB는 호 10:11의 히브리어 목 형태도 이 번호에 배정하지만, 그 문맥과 형태의 언어는 히브리어다. 아람어 어휘의 실제 용례 3과 번호 전체 집계 4를 구별하며 원자료의 표지를 임의로 바꾸지 않는다."
+    },
+    {
+      "word_id": "H6677_0000",
+      "before": null,
+      "after": "사람과 동물의 목을 가리키며 목덜미도 이 범위에 든다. 목을 안는 재회, 멍에를 메는 복종과 고역, 목을 세우는 교만, 목까지 차는 물의 비유는 신체 부위를 통한 표현이다. 아 4:9의 장형 צַוָּרוֹן 계열은 BDB가 목걸이로 구별하며, 목으로 옮기는 전통과 경쟁하므로 이 드문 의미의 채택에는 그 한계를 둔다. 시 75:5(마소라 75:6)의 확보 LXX는 목 대신 하나님을 대적하여 말한다는 독법을 보인다. 애 5:5와 합 3:13은 문장·비유의 해석이 갈리지만 이를 곧바로 새로운 목 의미로 늘리지 않는다. Strong의 H6696 묶다에서 나온다는 설명은 전통 어원으로 보존하고 확정 파생 관계는 보류한다."
+    },
+    {
+      "word_id": "H6696_0000",
+      "before": null,
+      "after": "Strong 번호 안에 에워싸거나 묶는 동사, 적으로 대하는 동사, 모양을 만드는 동사가 함께 수록되어 있다. 이를 하나의 확정된 역사 어근으로 통합하지 않는다. 주로 성을 에워싸고, 왕하 12:10(마소라 12:11)과 겔 5:3에서는 돈이나 털을 싸맨다. 출 23:22, 신 2:9·19, 에 8:11은 상대를 적으로 대하는 행동이다. 대하 28:20의 Hiphil은 돕는 대신 압박하여 곤경에 빠뜨리는 문맥이므로 단순한 성가심까지 포함하는 괴롭히다보다 압박하다로 표현한다. 왕상 7:15의 마소라 형태와 고정 정본은 모양을 만드는 동사로 분류하지만 BDB는 주조하다에 해당하는 다른 읽기도 제안한다. 금속·기둥이라는 대상이나 주조라는 작업을 일반 의미에 고정하지 않는다. 삿 9:31의 성읍 포위·충동 해석, 시 139:5의 에워쌈과 확보 LXX의 빚음 독법, 정본 Hiphil과 다른 참고자료의 H6887 배정은 각각 구별한다."
+    },
+    {
+      "word_id": "H6697_0000",
+      "before": null,
+      "after": "큰 바윗덩이와 바위 벽·절벽, 돌의 재료를 가리키며, 하나님이나 의지할 대상을 바위에 비기는 반석 용법이 있다. 이 비유를 하나님·힘·피난처라는 별도 일반 의미로 일괄 늘리지 않는다. 수 5:2·3의 복수형은 돌칼에 쓰는 단단한 돌이며 H6864의 부싯돌과 비교된다. 시 89:43(마소라 89:44)의 칼의 날은 Strong과 번역 전통이 지지하지만 BDB는 형태·어휘 분석을 의심스럽게 보므로 조건부 의미로 남긴다. 시 49:14(마소라 49:15)의 케레는 같은 번호에 배정되어도 사람의 모양·형상으로 읽히는 다른 어휘이며, 그 케티브 H6736 및 BDB의 צוּרָה 분석과 구별한다. 욥 28:10의 여성형처럼 보이는 복수형은 이 번호로 배정되어 있고 Strong H6699가 바위로 설명하는 것과 사전 분류가 다르다. H6696의 압축·결박에서 바위가 나왔다는 설명은 확정 어원이 아니다."
+    },
+    {
+      "word_id": "H6698_0000",
+      "before": null,
+      "after": "미디안 지도자이며 고스비의 아버지인 인물과 베냐민 계보의 동명 남성에게 쓰인 이름이다(민 25:15; 31:8; 수 13:21; 대상 8:30; 9:36). 수르와 술은 확보 한국어 성경에 실제로 나타나는 관용 표기이고 추르는 צוּר의 교재식 한글 근사다. Strong은 H6697 바위와 같은 형태의 이름으로 설명한다. 바위라는 이름 풀이를 인물의 실제 성품이나 별도 일반명사 뜻으로 저장하지 않는다."
+    },
+    {
+      "word_id": "H6699_0000",
+      "before": null,
+      "after": "겔 43:11에서 성전의 모양·형태와 설계를 가리킨다. 구체적 대상이 성전이라는 이유로 건축 설계만을 단어의 일반 의미로 한정하거나 법도·규례를 별도 의미로 추가하지 않는다. 고정 정본은 이 절에 케티브와 케레를 포함한 5토큰을 두며, 실제 본문 자리로는 4곳이다. 첫 형태를 그리다라는 동사로 읽는 제안과 반복·소유 접미사에 관한 본문비평도 있다. Strong은 H6697의 여성형이며 욥 28:10에서는 바위라고 설명하지만, 현재 정본은 그 바위 복수형을 H6697에 배정하고 BDB는 모양 어휘를 별도로 다룬다. 따라서 바위에서 모양이 나왔다는 확정 파생 관계를 만들지 않는다."
+    },
+    {
+      "word_id": "H6700_0000",
+      "before": null,
+      "after": "민 3:35의 아비하일의 아들이며 레위 지파 므라리 종족의 지도자 이름이다. 수리엘은 성경 관용명이고 추리-엘은 צוּרִי와 אֵל의 구성을 보이는 교재식 근사다. H6697 바위와 H410 엘의 합성 이름으로, BDB는 나의 바위는 엘로, Strong은 하나님의 바위로, 확보 한국어 참고 사전은 나의 하나님은 반석이시다로 풀이한다. 요소의 연결과 전체 이름의 구문적 풀이를 구별하며 H468과 어순이 비슷한 의미를 나타내더라도 두 이름을 같은 표제로 합치지 않는다."
+    },
+    {
+      "word_id": "H6701_0000",
+      "before": null,
+      "after": "광야 시대 시므온 지도자 슬루미엘의 아버지 이름이다(민 1:6; 2:12; 7:36·41; 10:19). 수리삿대는 성경 관용명이고 추리-샷다이는 צוּרִי와 שַׁדַּי의 구성 경계를 보이는 교재식 근사다. H6697 바위와 H7706 샷다이의 합성으로, BDB는 나의 바위는 샷다이로, Strong은 전능자의 바위로 풀이한다. 샷다이는 이 meaning 근사의 받침 기준을 따른 표기이며 기존 음역 추리샫다이를 자동 교정하지 않는다. 민 2:12와 10:19의 분절 및 6701+ 표지를 구별하고, 별도 H7706의 독립 출현으로 더하지 않는다. 정확한 고대 발음과 샷다이 명칭 자체의 역사 어원은 확정하지 않는다."
+    },
+    {
+      "word_id": "H6735_0000",
+      "before": null,
+      "after": "보냄을 받아 말이나 일을 전하는 사자, 문짝이 도는 축인 돌쩌귀, 몸에 엄습하는 심한 고통을 가리킨다. 사자는 외교 사절뿐 아니라 잠 25:13의 심부름꾼도 포함한다. 고통은 출산의 진통과 그에 비긴 공포의 고통, 단 10:16에서 환상을 보고 겪는 고통·쇠약에 쓰인다. 일반적인 불편이나 모든 종류의 근심으로 넓히지 않으며 출산 때에만 쓰는 말로도 한정하지 않는다. 고정 OSHB는 사자 a, 돌쩌귀 b, 고통 c를 구별하고 BDB도 동음어 항목을 나눈다. 세 어휘를 압박이라는 하나의 확정 어원에서 도출하지 않는다. 사 13:8의 확보 LXX는 사절들과 진통이라는 다른 구문을 보이고 사 57:9의 새번역 난외에는 우상들이라는 대안이 있다."
+    },
+    {
+      "word_id": "H6736_0000",
+      "before": null,
+      "after": "사물이나 사람의 드러난 형상과 사물을 본떠 만든 형상을 포괄하는 표현으로 형상을 사용한다. 시 49:14(마소라 49:15)의 케티브는 사람의 모양·외양으로 읽히고, 사 45:16은 구체적으로 만들어 놓은 우상을 가리킨다. 이 차이는 비고에서 설명하며 한국어 형상이 포괄할 수 있는 범위를 모양과 상이라는 두 meaning으로 반드시 나누지는 않는다. 시편의 케레 צוּרָם은 정본에서 H6697에 배정되지만 BDB는 צוּרָה 계열로 분석한다. 아름다움·힘과 확보 LXX의 도움이라는 경쟁 독법은 보존한다. 모든 형상이 우상이라는 뜻으로 한정하지 않으며 H6735의 사자·돌쩌귀·고통과 같은 어원이라고 확정하지 않는다."
+    },
+    {
+      "word_id": "H6864_0000",
+      "before": null,
+      "after": "단단한 돌을 가리키며 출 4:25에서는 할례에 사용하는 돌칼의 재료·도구이고 겔 3:9에서는 이마의 단단함을 비기는 돌이다. 돌칼은 그 문맥의 사용 방식이며 별도 독립 의미로 반드시 나눌 필요는 없다. 차돌은 한국어에서 특정한 돌의 이름이기도 하므로 이 어휘의 광물 종을 자동으로 석영으로 고정하지 않는다. Strong은 H6696에서 파생했다고 설명하지만 BDB와 비교 어휘 자료는 돌 명칭을 별도로 다루므로 결박에서 단단한 돌이 생겼다는 역사 어원은 확정하지 않는다."
+    },
+    {
+      "word_id": "H6865_0000",
+      "before": null,
+      "after": "고대 페니키아의 도시이자 도시국가·왕국의 중심지였던 두로를 가리키며, 현재 레바논 남부의 도시 수르와 연결된다. צֹר와 צוֹר의 두 표기는 교재식 읽기에서 초르로 근사한다. 두로는 개역 계열의 관용명이고 티레는 새한글성경 및 현대 한국어에서 사용하는 같은 도시의 이름이다. 가톨릭 성경의 티로와 현대 아랍어 Ṣūr·수르도 비고에서 대응시킨다. 셈어의 바위·돌 명칭과 관련되지만 부싯돌로 만든 도시라는 뜻이나 이름 부여의 구체적인 경로를 확정하지 않는다. 그리스어 Τύρος·튀로스와 서구의 Tyre는 같은 도시 이름의 전승이며, 영어 Tyre의 현재 발음을 한국어 관용명 티레와 동일시하지 않는다. 호 9:13의 두로와 사냥·먹잇감 해석 차이는 해당 용례의 미해결로 보존한다."
+    },
+    {
+      "word_id": "H6876_0000",
+      "before": null,
+      "after": "두로에 속하거나 두로에서 온 사람을 나타내는 소속형 צֹרִי이다. 왕상 7:14와 대하 2:14(마소라 2:13)에서는 사람을 수식하고 대상 22:4·스 3:7·느 13:16의 복수형은 두로 사람들을 가리킨다. meaning의 두로·초르·티레는 같은 기반 도시 H6865의 이름이며, 소속형 전체의 교재식 읽기 초리는 기존 음역에 보존한다. 티레는 새한글성경과 현대 한국어에서 사용하는 기반 도시의 이름이다. 지명 소속을 가문·혈통이나 페니키아인 전체로 확대하지 않는다."
+    },
+    {
+      "word_id": "G5183_0000",
+      "before": null,
+      "after": "행 12:20의 Τυρίοις는 두로 사람들을 가리키는 복수 여격의 명사적 소속 표현이다. G5184 Τύρος에서 형성된 Τύριος이며, 두로 사람은 개역 계열, 티레 사람은 새한글성경, 티로 사람은 가톨릭 성경의 표기이다. meaning의 튀로스는 기반 지명의 교재식 근사이며 이 단어 전체의 읽기 튀리오스와 구별한다. 기반 도시의 두로·튀로스·티레라는 이름 뒤에 공통의 사람을 붙여 같은 소속을 한 meaning으로 표현한다. 두로의와 두로 사람을 이 용례의 별개 의미로 늘리지 않으며, 정확한 고대 주민의 자칭이나 혈통을 이 표기에서 단정하지 않는다."
+    },
+    {
+      "word_id": "G5184_0000",
+      "before": null,
+      "after": "신약에서 고대 페니키아 도시 두로와 그 지역을 가리키는 이름 Τύρος이다. 두로는 개역 계열의 성경 관용명, 튀로스는 프로젝트가 채택한 그리스어 교재식 읽기의 한글 근사, 티레는 새한글성경 및 현대 한국어에서 사용하는 이름이다. 가톨릭 성경의 티로와 한국어 연구의 티로스도 같은 지명을 가리키지만 읽기·표기 관습은 구별한다. 페니키아어 도시명 ṢR, 히브리어 대응형 H6865 צֹר·צוֹר, 현대 아랍어 Ṣūr·수르와 비교된다. 그리스어에서 라틴어 Tyrus와 영어 Tyre로 이어지는 서구의 이름 전승과 현지 셈어 계열 명칭은 단순한 한 줄의 개명 연표가 아니다. 영어 Tyre는 현재 타이어에 가까운 발음이며 한국어 관용명 티레의 발음과 다르다. 한국어 티레가 최초로 어느 언어를 거쳐 수용되었는지는 이번 조사로 확정하지 않는다. 셈어 도시 이름의 차용·전승은 인정하되 현존 히브리어 H6865에서 직접 차용했다는 구체적 경로는 확정하지 않는다. 돌·바위라는 어원 풀이를 이 지명의 별도 일반명사 의미로 저장하지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H0468_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "H468 source의 엘+바위 구성. 전체 이름 문장 해석은 별도이다.",
+      "source": "고정 Strong XML / OSHB·TAGNT / BDB·Thayer; H468 R2 승인 연구"
+    },
+    {
+      "word_id_1": "H0468_0000",
+      "word_id_2": "H6697_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "H468의 둘째 바위 요소. 이름을 일반명사 meaning으로 바꾸지 않는다.",
+      "source": "고정 Strong XML / OSHB·TAGNT / BDB·Thayer; H468 R2 승인 연구"
+    },
+    {
+      "word_id_1": "H1004_0000",
+      "word_id_2": "H1049_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "집의 연계형 בֵּית가 포함된 이름이다.",
+      "source": "고정 Strong XML / OSHB·TAGNT / BDB·Thayer; H468 R2 승인 연구"
+    },
+    {
+      "word_id_1": "H1049_0000",
+      "word_id_2": "H6697_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "בֵּית צוּר의 바위 요소. H6697 usage의 See also는 같은 pair의 추가 참조이며 역방향 파생이 아니다.",
+      "source": "고정 Strong XML / OSHB·TAGNT / BDB·Thayer; H468 R2 승인 연구"
+    },
+    {
+      "word_id_1": "H2513_0000",
+      "word_id_2": "H2521_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "BDB חֶלְקָה I의 땅 구획 명사와 실제 연계형 חֶלְקַת을 endpoint로 택한다. Strong의 인접 지명 H2520 참조를 원자료에서 고치는 것은 아니다.",
+      "source": "고정 Strong XML / OSHB·TAGNT / BDB·Thayer; H468 R2 승인 연구"
+    },
+    {
+      "word_id_1": "H2521_0000",
+      "word_id_2": "H6697_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "hypothesized",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "마소라 형태 הַצֻּרִים·Strong의 plural of 구성을 따르되 칼날·강한 자·바위 및 다른 자음 읽기의 경쟁을 보존한다.",
+      "source": "고정 Strong XML / OSHB·TAGNT / BDB·Thayer; H468 R2 승인 연구"
+    },
+    {
+      "word_id_1": "H2906_0000",
+      "word_id_2": "H6697_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "아람어 ṭūr/히브리어 ṣūr의 동계 대응. 직접 차용 방향 없음.",
+      "source": "고정 Strong XML / OSHB·TAGNT / BDB·Thayer; H468 R2 승인 연구"
+    },
+    {
+      "word_id_1": "H4692_0000",
+      "word_id_2": "H6696_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "둘러싸다·포위하다 계열 동사에서 포위·방어 구조물 명사로 파생한다.",
+      "source": "고정 Strong XML / OSHB·TAGNT / BDB·Thayer; H468 R2 승인 연구"
+    },
+    {
+      "word_id_1": "H4692_0000",
+      "word_id_2": "H4694_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "독립 어휘로 기능하는 여성형 파생 명사이다.",
+      "source": "고정 Strong XML / OSHB·TAGNT / BDB·Thayer; H468 R2 승인 연구"
+    },
+    {
+      "word_id_1": "H6299_0000",
+      "word_id_2": "H6301_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "속량하다와 바위의 이름 구성. 실제 이름 5문맥/숫자 token6 구별.",
+      "source": "고정 Strong XML / OSHB·TAGNT / BDB·Thayer; H468 R2 승인 연구"
+    },
+    {
+      "word_id_1": "H6301_0000",
+      "word_id_2": "H6697_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "반석을 신명적 요소로 사용한 합성 이름이다.",
+      "source": "고정 Strong XML / OSHB·TAGNT / BDB·Thayer; H468 R2 승인 연구"
+    },
+    {
+      "word_id_1": "H6676_0000",
+      "word_id_2": "H6677_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "아람어·히브리어 목 명사의 동계 대응이며 호10:11의 번호 배정을 언어 대응으로 혼동하지 않는다.",
+      "source": "고정 Strong XML / OSHB·TAGNT / BDB·Thayer; H468 R2 승인 연구"
+    },
+    {
+      "word_id_1": "H6697_0000",
+      "word_id_2": "H6698_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "바위 보통명사와 같은 형태의 인명 형성이다. 두 동명 인물의 동일성을 뜻하지 않는다.",
+      "source": "고정 Strong XML / OSHB·TAGNT / BDB·Thayer; H468 R2 승인 연구"
+    },
+    {
+      "word_id_1": "H6697_0000",
+      "word_id_2": "H6700_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "צוּרִי 이름 요소의 구성 관계. -i의 전체 구문 해석은 별도이다.",
+      "source": "고정 Strong XML / OSHB·TAGNT / BDB·Thayer; H468 R2 승인 연구"
+    },
+    {
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H6700_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "אֵל 신명 요소를 보존한다.",
+      "source": "고정 Strong XML / OSHB·TAGNT / BDB·Thayer; H468 R2 승인 연구"
+    },
+    {
+      "word_id_1": "H6697_0000",
+      "word_id_2": "H6701_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "צוּרִי 요소. 본문의 분절·6701+ 표지를 별도 어휘 생성으로 처리하지 않는다.",
+      "source": "고정 Strong XML / OSHB·TAGNT / BDB·Thayer; H468 R2 승인 연구"
+    },
+    {
+      "word_id_1": "H6701_0000",
+      "word_id_2": "H7706_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "샷다이라는 확인된 이름 요소의 구성 관계이며 H7706 자체의 역사 어원을 확정하지 않는다.",
+      "source": "고정 Strong XML / OSHB·TAGNT / BDB·Thayer; H468 R2 승인 연구"
+    },
+    {
+      "word_id_1": "H6865_0000",
+      "word_id_2": "H6876_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "두로 지명에서 출신·소속 명사를 형성한다.",
+      "source": "고정 Strong XML / OSHB·TAGNT / BDB·Thayer; H468 R2 승인 연구"
+    }
+  ],
+  "relation_replacements": [
+    {
+      "relation_id": 228,
+      "word_id_1": "H4693_0000",
+      "word_id_2": "H4714_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "etymological",
+        "relation_type": "root_shared",
+        "status_code": "asserted",
+        "direction_code": "undirected",
+        "description": null,
+        "relation_group_id": null,
+        "note": "이집트를 가리키는 mṣr 계열 명칭의 대응이다. Strong의 dual of와 달리 BDB는 접미·형성 분석에 의문을 남기므로 확정 쌍수 파생 방향은 부여하지 않는다.",
+        "source": "고정 Strong XML / OSHB·TAGNT / BDB·Thayer; H468 R2 승인 연구"
+      }
+    },
+    {
+      "relation_id": 3513,
+      "word_id_1": "H6864_0000",
+      "word_id_2": "H6865_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "etymological",
+        "relation_type": "root_shared",
+        "status_code": "asserted",
+        "direction_code": "undirected",
+        "description": null,
+        "relation_group_id": null,
+        "note": "같은 돌·바위 명칭 계열과 도시 이름의 연결. 부싯돌 칼에서 도시가 직접 파생했다는 주장은 하지 않는다.",
+        "source": "고정 Strong XML / OSHB·TAGNT / BDB·Thayer; H468 R2 승인 연구"
+      }
+    },
+    {
+      "relation_id": 3514,
+      "word_id_1": "G5184_0000",
+      "word_id_2": "H6865_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "etymological",
+        "relation_type": "borrowed_from",
+        "status_code": "hypothesized",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "그리스어 Τύρος는 현지 셈어 도시 이름을 전승한 이름이고 히브리어 H6865는 그 대응형이다. 페니키아어·다른 셈어 전승과 구별되는 직접 히브리어 차용 경로는 입증하지 못했으므로 이 H→G borrowed_from 주장은 가설로 둔다.",
+        "source": "고정 Strong XML / OSHB·TAGNT / BDB·Thayer; H468 R2 승인 연구"
+      }
+    },
+    {
+      "relation_id": 3515,
+      "word_id_1": "G5183_0000",
+      "word_id_2": "G5184_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "Τύρος→Τύριος의 두로 사람 소속형 형성.",
+        "source": "고정 Strong XML / OSHB·TAGNT / BDB·Thayer; H468 R2 승인 연구"
+      }
+    }
+  ],
+  "supersedes": [],
+  "meaning_approvals": []
+}
