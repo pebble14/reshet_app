@@ -2034,3 +2034,7 @@ H0336 의미 유지 승인 1건, 의미 교체 3건, 비고 4건, 관계 신규 
 ## H463 엘리암·암미엘 이름군 승인 — 2026-11-17
 
 [승인 manifest](../../tool/data_provenance/manifests/h463_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h463_cluster_approved_content_slice.md)에 R3 의미2·비고2·합성4·무방향 이름형1(ID8466–8470)을 반영했다. 공식 dry-run·실제 undo·원본불변·적용기31테스트 후 live apply1회, history9행. 독립 SQL 전체12테이블·DDL·비대상·기존 이력·기대 sequence 변화 및 integrity/FK·sidecar·seed 불변을 확인했다. Progress 승인1079→1081·미승인13213→13211·hold6·anomaly113 유지. 관용명 식별과 구성 분석을 병기하며 원문·음역·발음·언어·schema·seed·앱/UI는 변경하지 않았다.
+
+## H464 엘리바스·금·운동 어휘군 승인 — 2026-11-17
+
+[승인 manifest](../../tool/data_provenance/manifests/h464_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h464_cluster_approved_content_slice.md)에 R2 우선·R1 나머지 의미4·비고4·신규 구성관계2(ID8471–8472, 확정1·가설1)를 반영했다. H6338 정련하다·H6339 날래다/뛰다를 채택하며 H6338↔H6337 파생 및 H6338↔H6339 어원 관계는 비생성이다. 공식 dry-run·undo·원본불변·적용기31테스트와 독립 SQL 전체12테이블·DDL·비대상·기존 이력 검증 통과, history10행. Integrity ok·FK0·seed불변. Progress 승인1081→1085·hold6·anomaly113 유지. 원문·음역·발음·언어·schema·앱/UI 변경 없음.

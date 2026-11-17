@@ -1,0 +1,129 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H464-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h464_approval_20261117/00_user_approval.json",
+    "document_sha256": "1412c96aa95fe1535452bc4a488c8e54c01b46791f1f6581f7090eb9c8c6d191"
+  },
+  "target": {
+    "expected_work_sha256": "88f37ba60291526a133196901414575e59c5e95d7040a63cf762f3ac90328dea",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0464_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "엘리바스 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엘리바스·엘리-파즈 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H6337_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "정련된 순수한 금, 정금"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "순금(純金)"
+        }
+      ]
+    },
+    {
+      "word_id": "H6338_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "정련(제)하다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "정련하다(精鍊하다)"
+        }
+      ]
+    },
+    {
+      "word_id": "H6339_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "기민하다, 재빠르다, 날래다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "날래다"
+        },
+        {
+          "seq": 2,
+          "meaning": "뛰다"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0464_0000",
+      "before": null,
+      "after": "에서가 아다에게서 낳은 아들과 욥의 데만 사람 친구에게 쓰인 남성 이름이다. 본문이 두 지시 대상을 같은 인물로 직접 동일시하지는 않는다. 엘리바스는 성경 관용명이고, 엘리-파즈는 אֱלִיפַז의 교재식 한글 근사에 אֱלִי와 פַז 사이의 경계를 보이는 분석 표기다. 첫 요소는 H410 엘에 연결된다. Strong은 H410과 H6337 파즈의 합성으로 금의 하나님, 한국어 참고 사전은 하나님은 순금이시다, BDB는 하나님은 정금이시다라는 풀이에 의문 표시를 붙인다. 뒤 요소를 금으로 보는 분석과 이름 전체의 문장적 풀이는 추정 범위를 남기며, 이를 별도 일반 의미나 실제 인물의 성품으로 저장하지 않는다. 붙임표는 실제 마케프나 정확한 고대 발음을 뜻하지 않는다."
+    },
+    {
+      "word_id": "H6337_0000",
+      "before": null,
+      "after": "정련된 순수한 금을 가리키는 명사다. 성경의 순금·정금은 같은 뜻의 번역이며, 정확한 현대적 순도 수치를 본문이 지정하는 것은 아니다. 금관·그릇과 사랑하는 이의 아름다움, 지혜·계명·사람의 가치를 비교하는 문맥에 쓰이지만 장식품·아름다움·보배를 별도 뜻으로 두지 않는다. Strong은 정련하다 H6338에서의 파생으로 설명하나 그 어근의 분석과 역사적 파생 방향은 확정하지 않는다. 확보 LXX의 일부 구절은 보석으로 달리 옮기므로 히브리어 뜻을 자동으로 보석까지 넓히지 않는다."
+    },
+    {
+      "word_id": "H6338_0000",
+      "before": null,
+      "after": "금을 정련하여 순수하게 하는 뜻으로 풀이하는 전통적 분석을 따른다. 성경에는 왕상10:18의 호팔 분사 מוּפָז 한 번만 나오며, 금의 정련된 상태를 나타내는 것으로 이해된다. 정련하다는 이 분석의 기본 행위를 표시한 것이며, 본문에 능동형이 확인된다는 뜻은 아니다. BDB는 어근과 본문 읽기에 의문을 표시하고, HALOT는 H6337 순금에서 나온 말로 보아 순금을 입힌 상태로 풀이한다. 같은 단어의 확정된 두 뜻으로 통합하지 않으며, 어근의 뜻과 두 표제 사이의 역사적 파생 방향은 미확정이다."
+    },
+    {
+      "word_id": "H6339_0000",
+      "before": null,
+      "after": "몸이나 팔이 유연하고 재빠르게 움직이는 것, 그리고 몸을 솟구쳐 뛰는 동작을 나타낸다. 삼하6:16에서는 다윗의 춤 장면에 쓰이며, 뛰놀다는 문맥에 맞는 번역이지만 놀이·기쁨을 단어 자체의 필수 의미로 삼지는 않는다. BDB·Gesenius는 뛰는 동작을, HALOT는 피엘을 춤추다로 풀이한다. 창49:24의 칼형은 날래다와 굳세어지다 등의 해석이 경쟁하며, 확보 LXX도 다른 독법을 전하므로 이 용례의 의미 배정은 미해결로 남긴다. 동일 철자의 H6338과 역사적으로 같은 어근이라는 주장은 확정하지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H0464_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "note": "H464의 첫 신명 요소는 H410 엘에 연결된다. 이름 전체의 문장적 어원이나 실제 인물의 성품을 확정하지 않는다.",
+      "source": "Strong Hebrew XML H464 source: from H410 and H6337; BDB H464; H464 research R1/R2.",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H0464_0000",
+      "word_id_2": "H6337_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "hypothesized",
+      "direction_code": "w2_to_w1",
+      "note": "Strong은 H410과 H6337의 합성으로 설명한다. BDB의 전체 이름 풀이에는 의문 표시가 있으며 뒤 요소를 순금으로 보는 연결을 가설로 보존한다.",
+      "source": "Strong Hebrew XML H464 source: from H410 and H6337; BDB H464; H464 research R1/R2.",
+      "description": null,
+      "relation_group_id": null
+    }
+  ],
+  "relation_replacements": [],
+  "supersedes": [],
+  "meaning_approvals": []
+}
