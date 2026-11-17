@@ -1,0 +1,121 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H463-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h463_approval_20261117/00_user_approval.json",
+    "document_sha256": "22931d991fe9fb8ee8aa9cf94c6b952f62f94d37983a2dd4185cc90dbe02a36c"
+  },
+  "target": {
+    "expected_work_sha256": "b4cfcc776bf04f17bb5dd0df3f6be05dd6528cf08ecc9982ce89e4e196c6bf0d",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0463_0000",
+      "before": [
+        {
+          "meaning": "엘리암 (인)",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엘리암·엘리-암 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5988_0000",
+      "before": [
+        {
+          "meaning": "암미엘 Ammiel",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "암미엘·암미-엘 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0463_0000",
+      "before": null,
+      "after": "밧세바의 아버지(삼하 11:3)와 다윗의 용사인 길로 사람 아히도벨의 아들(삼하 23:34)에게 쓰인 남성 이름이다. 두 구절의 인물을 같은 사람으로 보기도 하지만 본문이 직접 동일시하지는 않는다. 엘리암은 성경 관용명이자 אֱלִיעָם의 교재식 한글 근사이며, 엘리-암은 אֱלִי와 עָם의 구성 경계를 보이는 분석 표기다. H410 엘과 H5971 암의 합성으로 Strong은 백성의 하나님, BDB와 한국어 참고 사전은 하나님은 친족이시다로 풀이한다. 대상 3:5의 밧수아(밧세바) 아버지 암미엘(H5988)과 대응하지만 두 이름의 모든 동명 인물을 한 사람으로 합치지는 않는다. 확보 LXX의 삼하 11:3·23:34는 ελιαβ로 달리 전하며, 이것만으로 H446 엘리압과 합치거나 정본 표제를 바꾸지 않는다. 붙임표는 구성 분석 기호이며 실제 마케프나 정확한 고대 발음을 뜻하지 않는다."
+    },
+    {
+      "word_id": "H5988_0000",
+      "before": null,
+      "after": "그말리의 아들인 단 지파 정탐꾼, 로드발·로데발 사람 마길의 아버지, 밧수아(밧세바)의 아버지, 오벧에돔의 여섯째 아들에게 쓰인 남성 이름이다. 암미엘은 성경 관용명이자 עַמִּיאֵל의 교재식 한글 근사이며, 암미-엘은 עַמִּי와 אֵל의 구성 경계를 보이는 분석 표기다. H5971 암과 H410 엘의 합성으로 Strong은 하나님의 백성, BDB는 나의 친족은 하나님이시다로 풀이하며 한국어 참고 사전은 하나님은 친척이시다로 설명한다. 이 어원 풀이를 별도 meaning이나 이름을 지닌 이의 성품으로 저장하지 않는다. 대상 3:5의 밧수아(밧세바) 아버지는 삼하 11:3의 엘리암(H463)과 대응하며, 두 이름은 구성 요소의 순서가 다르다. 이 대응을 모든 동명 인물의 동일성이나 어느 이름에서 다른 이름으로 직접 파생되었다는 방향으로 확대하지 않는다. 붙임표는 구성 분석 기호이며 실제 마케프나 정확한 고대 발음을 뜻하지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H0463_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "note": "H0463 אֱלִיעָם의 엘 구성 요소이다. 고정 Strong은 H410과 H5971의 합성으로 설명한다. 이름 전체의 백성의 하나님·하나님은 친족이시다라는 경쟁 풀이 또는 특정 인물의 성품을 이 관계로 확정하지 않는다.",
+      "source": "Strong Hebrew XML H463 source: from H410 and H5971; BDB H463.",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H0463_0000",
+      "word_id_2": "H5971_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "note": "H0463 אֱלִיעָם의 암 구성 요소이다. Strong의 백성 풀이와 BDB·한국어 참고 사전의 친족 풀이를 구별하며, 이 관계는 H5971의 독립 의미 전체를 승인하는 것이 아니다.",
+      "source": "Strong Hebrew XML H463 source: from H410 and H5971; BDB H463/H5971; HebGrkKo H463.",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H5988_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "note": "H5988 עַמִּיאֵל의 후반 엘 구성 요소이다. 고정 Strong은 H5971과 H410의 합성으로 설명하며 H463과 두 요소의 순서가 다르다. 전체 문장식 어원이나 어느 이름에서 다른 이름으로 파생되었다는 선후는 확정하지 않는다.",
+      "source": "Strong Hebrew XML H5988 source: from H5971 and H410; BDB H5988.",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H5971_0000",
+      "word_id_2": "H5988_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "note": "H5988 עַמִּיאֵל의 전반 암미 구성 요소이다. Strong의 하나님의 백성 풀이와 BDB의 나의 친족은 하나님이시다라는 풀이를 구별하며 H5971의 독립 의미 전체를 승인하지 않는다.",
+      "source": "Strong Hebrew XML H5988 source: from H5971 and H410; BDB H5988/H5971; HebGrkKo H5988.",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H0463_0000",
+      "word_id_2": "H5988_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "note": "삼하 11:3의 밧세바 아버지 אֱלִיעָם과 대상 3:5의 밧수아(밧세바) 아버지 עַמִּיאֵל을 대조한 이름형 대응이다. 엘과 암 요소의 순서가 다르다. 대응은 이 평행 문맥에 한정하며 두 이름의 모든 동명 인물 동일시, 삼하 23:34 인물의 동일성 또는 직접 파생 방향을 확정하지 않는다.",
+      "source": "OSHB 2Sam.11.3 / 1Chr.3.5; BDB H463/H5988; KJV 1Chronicles.3.5 margin.",
+      "description": null,
+      "relation_group_id": null
+    }
+  ],
+  "relation_replacements": [],
+  "supersedes": [],
+  "meaning_approvals": []
+}

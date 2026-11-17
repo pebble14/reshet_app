@@ -2029,3 +2029,8 @@ H0336 의미 유지 승인 1건, 의미 교체 3건, 비고 4건, 관계 신규 
 ## H461 도움·인명 어휘군 승인 — 2026-11-17
 
 [승인 manifest](../../tool/data_provenance/manifests/h461_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h461_cluster_approved_content_slice.md)에 R2 우선·R1 나머지 신규승인25(의미교체24·현행승인1)·비고25·신규관계6·관계교체25를 반영했다. 공식 dry-run·undo·원본불변 및 적용기31테스트, 독립 SQL 전체 테이블·DDL·비대상·이력·integrity/FK 검증 통과. History80행, progress승인1054→1079·hold6·anomaly113 유지. 원문·음역·발음·언어·schema·seed·앱/UI 변경 없음.
+
+
+## H463 엘리암·암미엘 이름군 승인 — 2026-11-17
+
+[승인 manifest](../../tool/data_provenance/manifests/h463_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h463_cluster_approved_content_slice.md)에 R3 의미2·비고2·합성4·무방향 이름형1(ID8466–8470)을 반영했다. 공식 dry-run·실제 undo·원본불변·적용기31테스트 후 live apply1회, history9행. 독립 SQL 전체12테이블·DDL·비대상·기존 이력·기대 sequence 변화 및 integrity/FK·sidecar·seed 불변을 확인했다. Progress 승인1079→1081·미승인13213→13211·hold6·anomaly113 유지. 관용명 식별과 구성 분석을 병기하며 원문·음역·발음·언어·schema·seed·앱/UI는 변경하지 않았다.
