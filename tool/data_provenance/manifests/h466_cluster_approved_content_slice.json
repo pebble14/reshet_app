@@ -1,0 +1,441 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H466-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h466_approval_20261117/00_user_approval.json",
+    "document_sha256": "7483ba3c3fe983781209455ebd7f7e42f6f1d77a50bf1ed19f285355723f08d5"
+  },
+  "target": {
+    "expected_work_sha256": "c8f54ce36745bef4b5423abc94dc3632cbb43ee3bb052d8d162ce8a3ace3d99a",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0466_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "엘리블레후 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엘리블레후·엘리-펠레후 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H4652_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "경이로운 일"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "놀라운 일"
+        }
+      ]
+    },
+    {
+      "word_id": "H6381_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "뛰어나다, 비범하다, 기이하다, 놀랍다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "놀랍다"
+        },
+        {
+          "seq": 2,
+          "meaning": "감당하기 어렵다(堪當하기 어렵다)"
+        },
+        {
+          "seq": 3,
+          "meaning": "구별하다(區別하다)"
+        }
+      ]
+    },
+    {
+      "word_id": "H6382_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "경이로운(기이한) 일, 기적"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "놀라운 일·놀라운 것"
+        }
+      ]
+    },
+    {
+      "word_id": "H6383_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "경이로운, 기이한, 불가사이한"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "놀라운·헤아리기 어려운"
+        }
+      ]
+    },
+    {
+      "word_id": "H6384_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "발루의 후손들"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "발루·팔루 가문(家門) 사람"
+        }
+      ]
+    },
+    {
+      "word_id": "H6395_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "구별하다, 뚜렷하다, 명확하다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "구별하다(區別하다)"
+        },
+        {
+          "seq": 2,
+          "meaning": "놀랍다"
+        }
+      ]
+    },
+    {
+      "word_id": "H6396_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "발루 Pallu"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "발루·팔루 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H6397_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "블론 사람 Pelonite"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "블론·발론·펠론 사람"
+        }
+      ]
+    },
+    {
+      "word_id": "H6411_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "블라야 Pelaiah"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "블라야·펠라-야 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H6422_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "어떤 것, 어떤 사람"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아무개"
+        }
+      ]
+    },
+    {
+      "word_id": "H6423_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "이러한 (것)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아무개·어디어디"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0466_0000",
+      "before": null,
+      "after": "다윗이 언약궤를 예루살렘으로 옮길 때 수금을 연주한 레위인의 이름이다(대상 15:18·21). 엘리블레후는 성경 관용명이고 엘리-펠레후는 אֱלִיפְלֵהוּ의 교재식 한글 근사와 구성 경계를 드러낸 표기다. H410 엘과 H6395 팔라의 동사형이 결합한 이름으로, Strong은 그의 구별의 하나님으로, BDB는 하나님께서 그를 구별하시기를이라는 바람을 담은 말로 풀이하며 한국어 참고 사전은 하나님께서 그를 구별하셨다로 설명한다. 구성 요소의 연결과 이름 전체의 정확한 구문·고대 발음은 구별한다. 분석형과 읽기가 겹치는 엘리펠레후는 meaning에 거듭 나열하지 않으며 기존 음역은 유지한다. 확보 LXX의 ελιφαλια·ελιφαλιας는 이 이름의 전승형으로 참고하되 다른 인명과 자동 병합하지 않는다. 붙임표는 분석 기호이며 실제 마케프를 뜻하지 않는다."
+    },
+    {
+      "word_id": "H4652_0000",
+      "before": null,
+      "after": "욥 37:16의 복수 연계형 מִפְלְאוֹת로 한 번 확인되는 여성 명사다. 구름과 하나님의 지식에 관한 문맥에서 놀라운 일을 가리키며, 구름이라는 특정 대상만을 뜻으로 삼지 않는다. H6382와 공통 의미를 가지지만 서로 다른 독립 표제다. Strong은 H6381에서 나온 말로 설명하나 BDB는 이 형태의 정당성을 유보하며 נִפְלְאוֹת로 읽는 교정안을 소개한다. 확보 LXX도 후반을 다르게 전하므로 현재 표제·정본 주석은 보존하고 정확한 본문 형성은 미확정으로 남긴다."
+    },
+    {
+      "word_id": "H6381_0000",
+      "before": null,
+      "after": "보통의 범위나 능력·이해를 넘어서는 성격, 또는 대상을 구별하여 따로 정하는 기능을 나타낸다. 놀랍다는 놀람을 느낀다는 감정 동사가 아니라 대상·행위의 성격을 가리키며, 히필·히트파엘형에서는 놀랍게 하거나 행하고 드러내는 것으로 실현된다. 긍정적인 기적뿐 아니라 재앙·파괴·이해하기 어려운 행위에도 쓰인다. 감당하기 어렵다는 어떤 이가 행하거나 판결하거나 이해할 수 있는 범위를 넘음을 뜻하며 반드시 절대적으로 불가능하거나 고통스럽다는 뜻은 아니다. 서원 구문의 피엘·히필 다섯 용례는 구별하여 따로 정하는 기능으로 함께 묶는다. 서원 자체는 함께 쓰인 נֶדֶר(H5088), 서원하다는 נָדַר(H5087) 등 구문의 다른 요소가 제공한다. 서원을 설정함·이행함·예물을 드림이라는 문장 번역을 각각 독립 meaning으로 만들지 않되 BDB의 특별한 서원 예물·어려운 서원 풀이와 전통적인 이행 해석은 경쟁 설명으로 보존한다. 이 구별 용법을 모든 물리적 분리·절단에 일반화하지 않는다. Klein은 놀라움 계열과 서원 구별 계열을 별도 항목으로 설명하면서 역사적 동일성 가능성도 제시한다. 세 meaning을 하나의 확정된 최초 어원에서 기계적으로 도출하지 않는다. 명사적으로 쓰인 놀라운 일들 분사와 문법형의 차이는 별도 meaning으로 늘리지 않는다. H6395와 구별·놀라움의 의미를 공유하지만 두 Strong의 어휘 identity나 역사적 파생 방향을 합치지 않는다."
+    },
+    {
+      "word_id": "H6382_0000",
+      "before": null,
+      "after": "보통을 벗어나 놀라움을 일으키는 일이나 것을 가리키는 명사다. 하나님의 놀라운 행위·기적을 포함하지만 초자연적 사건에만 한정하지 않는다. 시 119:129의 증거들과 사 9:5(MT; 한글 9:6)의 상담자 표현에도 적용된다. 애 1:9의 부사적 사용은 놀라운 정도를 나타내며 몰락 자체는 문맥이 제공한다. 놀라운 일·놀라운 것은 같은 명사 의미의 적용 범위를 함께 나타내는 표현이며 두 sense로 나누지 않는다. 사 9:5의 פֶּלֶא יוֹעֵץ를 기묘자와 모사 또는 놀라운 조언자로 옮기는 차이는 구문 해석이며 별도 고유명사 뜻을 추가하지 않는다. H4652·H6381·H6383과 놀라움의 의미를 공유하지만 품사·단어 형성의 차이는 보존한다. Strong의 동사 H6381 기반 명사 분석과 BDB의 명사 기반 동사 분석은 역사적 선후가 다른 설명이다."
+    },
+    {
+      "word_id": "H6383_0000",
+      "before": null,
+      "after": "보통의 범위를 넘어 놀랍거나 헤아리기 어려운 성격을 나타내는 형용사다. 두 한국어 표현은 가까운 의미 영역을 함께 드러내는 한 sense이며 모든 놀라운 것이 반드시 이해 불가능하다는 조건을 만들지 않는다. 삿 13:18의 이름과 시 139:6의 지식은 이 성격이 적용되는 대상이며 단어 자체의 뜻에 포함하지 않는다. BDB는 놀라움과 이해하기 어려움을 함께 풀이한다. KJV의 secret과 새번역의 비밀은 첫 문맥의 번역이므로 일반 명사 비밀이나 별도 인명 meaning으로 저장하지 않는다. OSHB는 시 139:6의 케티브·케레를 모두 w token으로 수록하므로 3 source-token, 2 lexical-sites다. Strong은 H6381과 연결하고 Klein은 H6382 명사와 형용사 접미 요소의 결합으로 분석하므로 공통 어근과 직접 형성 모형의 확실성을 구별한다. Klein의 비슷한 철자 중 후대 히브리어로 표시된 별도 항목은 성경시대 용례로 합산하지 않는다."
+    },
+    {
+      "word_id": "H6384_0000",
+      "before": null,
+      "after": "H6396 발루·팔루에서 나온 가문 소속형이다. 민 26:5에서 관사가 붙은 הַפַּלֻּאִי가 מִשְׁפַּחַת와 결합하여 발루 가문을 집합적으로 가리킨다. 사전은 소속형 형용사로, OSHB는 남성 단수 소속 명사로 분석하며 문법적 단수와 실제 집합 지시를 구별한다. 발루·팔루는 기반 인명의 병기이고 가문 사람은 소속 기능을 풀어 쓴 말이다. 전체 어형의 교재식 읽기는 팔루이이며 이 읽기와 한국어 소속 풀이를 구별한다. 본문의 가문·종족 명사 H4940과 이 소속형을 별개로 보존한다."
+    },
+    {
+      "word_id": "H6395_0000",
+      "before": null,
+      "after": "대상을 다른 것과 구별하거나 따로 삼는 것, 또는 보통을 벗어나 놀라운 성격을 나타낸다. 출 8:18(MT; 한글 8:22)·9:4·11:7과 33:16에서 대상을 다른 것과 구별하거나 구별된 상태를 나타낸다. 시 4:4(MT; 한글 4:3)의 경건한 자를 따로 삼음도 이 범위다. 시 17:7·139:14에서는 놀랍게 드러내거나 놀랍게 이루어진 상태로 이해되며 Strong의 usage와 BDB·확보 LXX도 이를 뒷받침한다. 시 139:14의 지으심은 앞뒤 창조 문맥에서 온 설명이며 이 동사 자체의 독립적인 만들다 뜻은 아니다. 시 4·17·139편의 형태와 정확한 어근 귀속·대안 독법에는 이견이 있어 일반 뜻과 본문 해석을 구별한다. H6381과의 병행 어근 설명을 역사적 파생 방향의 확정으로 보지 않는다."
+    },
+    {
+      "word_id": "H6396_0000",
+      "before": null,
+      "after": "르우벤의 아들이며 엘리압의 아버지인 남성 이름이다(창 46:9; 출 6:14; 민 26:5·8; 대상 5:3). 발루는 성경 관용명이고 팔루는 פַּלּוּא의 교재식 한글 근사다. 이 이름에서 민 26:5의 가문 소속형 H6384가 나온다. Strong은 H6395와 연결하여 구별된이라는 어원 풀이를 제시하지만 한국어 참고 사전은 H6382와 어원이 같으며 놀라움·기적을 뜻한다고 설명하고 BDB는 다른 셈어 이름을 비교한다. 이름의 실제 지시와 경쟁 어원을 구별하며 이 풀이들을 인물의 성품이나 별도 일반 명사 meaning으로 삼지 않는다."
+    },
+    {
+      "word_id": "H6397_0000",
+      "before": null,
+      "after": "대상 11:27·36의 블론 사람과 27:10의 발론 사람에 해당하는 소속형이다. 블론·발론은 확보 한국어 판본의 관용 표기이며 펠론 사람은 פְּלוֹנִי의 기반 부분과 소속 기능을 드러낸 교재식 근사다. 전체형의 읽기는 펠로니이며 이 표기만으로 독립 지명이나 선조 팔론의 실재를 확정하지 않는다. 헬레스의 다른 명칭인 삼하 23:26의 발디 사람과 BDB가 제안한 삼하 23:34의 길로 사람 대조는 본문비평 문제로 남기며, 특히 후자의 본문은 아히야가 아니라 엘리암·아히도벨 문맥이다. Strong의 미수록 이름을 거친 H6395 파생설과 BDB의 본문 교정설은 경쟁 분석이며 관계 확정 근거가 아니다. 대명사 H6423과 비슷한 철자·음가가 있어도 용법이 달라 통합하지 않는다."
+    },
+    {
+      "word_id": "H6411_0000",
+      "before": null,
+      "after": "다윗 계보의 엘료에내 아들(대상 3:24), 율법 풀이에 참여한 레위인 명단(느 8:7), 언약 문서 서명 명단(느 10:11 MT; 한글 10:10)에 나오는 남성 이름이다. 뒤 두 기록이 같은 인물인지 본문이 직접 확정하지는 않으며 세 출현을 세 뜻으로 나누지 않는다. 블라야는 성경 관용명이고 펠라-야는 פְּלָיָה·פְּלָאיָה의 교재식 근사와 H6381·H3050의 구성 경계를 드러낸 표기다. Strong은 야께서 구별하셨다로, 한국어 참고 사전은 여호와는 기적을 행하셨다로 풀이한다. 신명 야와 어근 연결은 보존하되 전체 이름의 어원 문장·정확한 고대 발음을 확정하지 않는다. 확보 LXX 느 8:7에는 이 이름이 없고 대상 3:24·느 10:11의 이름형과 구별한다. 붙임표는 구성 분석 기호이며 실제 마케프가 아니다."
+    },
+    {
+      "word_id": "H6422_0000",
+      "before": null,
+      "after": "이름을 직접 제시하지 않고 특정한 이를 가리키는 이름 대용 표현이다. 정본의 유일한 용례 단 8:13에서는 말하고 있던 거룩한 이를 가리키지만 천사·남성·그 장면의 특정 역할을 단어의 의미로 삼지 않는다. 누구든지라는 자유 선택도 아니며 실제 이름이 없거나 말하는 이가 정체를 모른다는 뜻으로 한정하지 않는다. 한국어 참고 사전은 어떤 것·어떤 사람으로 넓게 풀이한다. 한 용례가 인격적 대상을 가리킨다는 이유로 사물에 적용될 가능성 자체를 부정하지 않되 현재 자료에서 독립적인 사물·장소 용법이 입증된 것으로도 보고하지 않는다. H6423·H492와 이름을 대신하는 기능을 공유하므로 아무개를 대표어로 제안한다. Strong은 아마도 H6423 대신 쓰인 형태로, BDB와 Klein은 H6423·H492 관용 표현의 축약·혼성으로 설명한다. 이 형성설은 가설로 둔다. 확보 LXX의 φελμουνι 음역과 KJV 난외의 수를 세는 자라는 경쟁 풀이도 보존하지만 확정된 고유명이나 별도 일반 의미로 채택하지 않는다."
+    },
+    {
+      "word_id": "H6423_0000",
+      "before": null,
+      "after": "이름을 직접 제시하지 않고 특정 사람이나 장소를 가리키는 이름 대용 표현이다. 성경의 세 용례에서는 모두 H492 알모니와 짝을 이룬다. 사람을 부를 때에는 아무개, 장소 명사 מְקוֹם과 결합할 때에는 어디어디에 해당한다. 사람과 장소는 같은 이름 대용 기능이 적용되는 대상 차이이므로 한 sense로 제시한다. 누구든지나 아무 곳이나라는 자유 선택, 일반 지시어 이러한 것과는 구별하며 실제 무명·정체 불명·고의 은닉으로도 한정하지 않는다. H492의 기존 승인 의미 아무개·어디어디와 선택 이유를 따른다. 각 구성어의 어휘적 기능과 관용 표현 전체의 한국어 대응을 구별하므로 두 표제어의 뜻풀이가 같아도 완전한 동의어나 같은 어휘로 병합하지 않는다. Strong은 H6395에서 나온 말로, BDB는 미수록 명사를 거치는 전통 어원으로 설명한다. Klein은 아람어·시리아어·아랍어의 대응형과 비교한다. 정확한 형성은 미확정으로 두며 어원상의 구별을 현재의 일반 meaning으로 대체하지 않는다. 소속형 H6397과는 철자·음가가 비슷하다는 이유로 합치지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H0466_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "note": "엘 신명 요소와 H6395 계열 동사형이 결합한 인명. 전체 어원 문장의 구문·시제나 역사적 발음을 확정하지 않는다.",
+      "source": "Strong HebrewStrong.xml H466 (source); BDB H466; HebGrkKo H466 (reference-only)",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H0466_0000",
+      "word_id_2": "H6395_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "note": "H6395 계열의 동사형이 H410 엘 신명 요소와 결합한 인명. -후를 별도 독립 어휘 노드로 만들지 않는다.",
+      "source": "Strong HebrewStrong.xml H466 (source); BDB H466; HebGrkKo H466 (reference-only)",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H4652_0000",
+      "word_id_2": "H6381_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w2_to_w1",
+      "note": "Strong의 H6381 파생 설명을 보존하되 BDB가 독립 명사 형태를 유보하고 נִפְלְאוֹת 교정안을 제시하므로 가설로 둔다.",
+      "source": "Strong HebrewStrong.xml H4652 (source); BDB H4652 (si vera lectio)",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H6381_0000",
+      "word_id_2": "H6382_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "note": "동사 פלא와 명사 פלא의 어근 연결은 보존한다. Strong의 동사→명사와 BDB의 명사→동사 분석이 달라 역사적 파생 선후를 부여하지 않는다.",
+      "source": "Strong HebrewStrong.xml H6382 (source); BDB H6381/H6382 (denominative comparison)",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H6381_0000",
+      "word_id_2": "H6383_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "note": "Strong은 형용사를 H6381과 연결하며 Klein은 H6382 명사+형용사 접미 요소로 분석한다. פלא 계열 연결을 보존하되 동사에서 형용사로의 직접 역사적 파생을 확정하지 않는다.",
+      "source": "Strong HebrewStrong.xml H6383; BDB H6383; Klein Dictionary, פֶּלִאי.1 (reference-only)",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H6384_0000",
+      "word_id_2": "H6396_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "note": "발루·팔루 인명에서 나온 가문 소속형. 민26:5의 단수 소속형과 집합적 가문 지시를 구별한다.",
+      "source": "Strong HebrewStrong.xml H6384 (source); BDB H6384; OSHB Num26:5",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H6381_0000",
+      "word_id_2": "H6395_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "note": "BDB의 병행 어근 설명과 시편의 의미·형태 중첩을 반영한 공통 어근 가설. 두 Strong의 병합·같은 굴절형·역사적 파생 방향을 확정하지 않는다. Klein의 פלא I/II 구분과 동일성 가능성도 보존한다. 공통 뜻만으로 동일 어원·Strong 병합을 확정하지 않는다.",
+      "source": "BDB H6395 (parallel form of פלא); Strong H6381/H6395; OSHB Ps17:7/Ps139:14",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H6395_0000",
+      "word_id_2": "H6396_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "note": "Strong의 파생 설명. HebGrkKo는 H6382 계열로 설명하고 BDB는 비교 인명 자료를 제시하므로 정확한 역사적 어원은 가설로 둔다.",
+      "source": "Strong HebrewStrong.xml H6396 (source); HebGrkKo H6396 (reference-only); BDB H6396",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H6381_0000",
+      "word_id_2": "H6411_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "note": "פלא 계열 요소와 야 신명의 합성 이름. 구별하셨다·기적을 행하셨다라는 이름 전체의 풀이 차이를 보존한다.",
+      "source": "Strong HebrewStrong.xml H6411 (source); HebGrkKo H6411 (reference-only); OSHB 1Chr3:24/Neh8:7/Neh10:11",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H3050_0000",
+      "word_id_2": "H6411_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "note": "야 신명 요소가 들어간 합성 이름. H3050의 독립 meaning 승인이나 다른 야 계열 이름의 변경을 포함하지 않는다.",
+      "source": "Strong HebrewStrong.xml H6411 (source); HebGrkKo H6411 (reference-only); OSHB 1Chr3:24/Neh8:7/Neh10:11",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H6422_0000",
+      "word_id_2": "H6423_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "hypothesized",
+      "direction_code": "w2_to_w1",
+      "note": "BDB의 고정구 축약·혼성 및 Klein의 H6423·H492 두 요소 혼성 분석을 표시한다. 두 요소가 결합한 형성 가설이며 H6423 단독의 단순 접사 파생이나 정확한 역사 과정은 확정하지 않는다.",
+      "source": "Strong HebrewStrong.xml H6422 (probably for); BDB H6423; Klein Dictionary, פַּלְמוֹנִי.1 (reference-only)",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H6395_0000",
+      "word_id_2": "H6423_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "note": "Strong과 전통 어원의 H6395 연결. 미수록 명사를 거치는 역사적 설명이며 현재 고정구의 의미와 독립하여 가설로 둔다. Klein의 다른 언어 대응형 비교를 함께 보존하며 현재 이름 대용 의미를 구별하다로 바꾸지 않는다.",
+      "source": "Strong HebrewStrong.xml H6423 (source); BDB H6423 (Thes through an unused noun)",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H0492_0000",
+      "word_id_2": "H6422_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "note": "H6423·H492 관용구가 축약·혼성되어 H6422가 되었다는 BDB·Klein 설명의 H492 구성 요소다. 단순 동의어나 H492–H6423의 새 관계를 뜻하지 않는다. 정확한 형성은 가설로 둔다.",
+      "source": "BDB H6423 (contraction/conflation); Klein Dictionary, פַּלְמוֹנִי.1 (reference-only)",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H6382_0000",
+      "word_id_2": "H6383_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "note": "Klein은 삿13:18의 형용사를 명사 H6382와 형용사 접미 요소의 결합으로 분석한다. Strong의 H6381 연결과 함께 보존하며 직접 형성의 정확한 역사 모형은 가설로 둔다. 시139:6의 이형·케티브/케레도 보존한다.",
+      "source": "Klein Dictionary, פֶּלִאי.1 (reference-only); Strong HebrewStrong.xml H6383; OSHB Judg13:18/Ps139:6",
+      "description": null,
+      "relation_group_id": null
+    }
+  ],
+  "relation_replacements": [],
+  "supersedes": [],
+  "meaning_approvals": []
+}
