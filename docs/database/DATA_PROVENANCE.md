@@ -2038,3 +2038,8 @@ H0336 의미 유지 승인 1건, 의미 교체 3건, 비고 4건, 관계 신규 
 ## H464 엘리바스·금·운동 어휘군 승인 — 2026-11-17
 
 [승인 manifest](../../tool/data_provenance/manifests/h464_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h464_cluster_approved_content_slice.md)에 R2 우선·R1 나머지 의미4·비고4·신규 구성관계2(ID8471–8472, 확정1·가설1)를 반영했다. H6338 정련하다·H6339 날래다/뛰다를 채택하며 H6338↔H6337 파생 및 H6338↔H6339 어원 관계는 비생성이다. 공식 dry-run·undo·원본불변·적용기31테스트와 독립 SQL 전체12테이블·DDL·비대상·기존 이력 검증 통과, history10행. Integrity ok·FK0·seed불변. Progress 승인1081→1085·hold6·anomaly113 유지. 원문·음역·발음·언어·schema·앱/UI 변경 없음.
+
+
+## H465 판단·기도 및 인명 어휘군 승인 — 2026-11-17
+
+[승인 manifest](../../tool/data_provenance/manifests/h465_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h465_cluster_approved_content_slice.md)에 R2 meaning14(10어휘)·비고10·신규관계12(ID8473–8484, 확정10·가설2)를 반영했다. 에플랄·예상하다를 채택하고 기도 비고에 간청을 명시했다. 공식 dry-run·실제 undo·원본불변·적용기31테스트와 독립 SQL 전체12테이블·DDL·비대상·기존 이력 검증 통과, history32행. Integrity ok·FK0·seed불변. Progress 승인1085→1095·hold6·anomaly113 유지. 원문·음역·발음·언어·schema·앱/UI 변경 없음.
