@@ -40,6 +40,7 @@
 
 | 결정 단위 | 대상 | 상태 | 복원 수준 | 결정/최초 적용일 | 기록 |
 |---|---|---|---|---|---|
+| H461 도움·인명 어휘군 | 신규승인25·기존8유지, 비고25, 관계신규6/교체25, G1663·H3270 R2·새 hold 없음 | active | 높음 | 2026-11-17 | [결정 기록](h461_cluster_approved_content_slice.md) |
 | H460 더함·요셉 이름군 | CORE10 의미·비고, 관계신규7/교체3, H3254 단일 뜻·요세 단형, hold 없음 | active | 높음 | 2026-11-17 | [결정 기록](h460_cluster_approved_content_slice.md) |
 | H456 계절·모욕 및 인명 | CORE7 의미·비고, 추운 철 단일 정의, 관계 신규7·hold 없음 | active | 높음 | 2026-11-16 | [결정 기록](h456_cluster_approved_content_slice.md) |
 | H455 숨김·사랑 계열과 인명 | 기존11어휘 의미·비고, 신규관계11, H3160 적용 제외·새 hold 없음 | active | 높음 | 2026-11-16 | [결정 기록](h455_cluster_approved_content_slice.md) |

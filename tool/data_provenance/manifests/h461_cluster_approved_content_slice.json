@@ -1,0 +1,1234 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H461-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h461_approval_20261117/00_user_approval.json",
+    "document_sha256": "0e9bf869d0ef6695548558dd916a04776d75374428e7c09e0c3dc5c9ffd50dca"
+  },
+  "target": {
+    "expected_work_sha256": "bbea9322921b3f34c231b539f22828bb74df81b81d6ec1ac0fbcd87eafe30a17",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0461_0000",
+      "before": [
+        {
+          "meaning": "엘리에셀",
+          "seq": 1
+        },
+        {
+          "meaning": "뜻풀이: 나의 하나님은 도움이시다",
+          "seq": 2
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엘리에셀·엘리-에제르 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "G1663_0000",
+      "before": [
+        {
+          "meaning": "엘리에서/엘리에셀[나의 하나님은 도움이시다]",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엘리에서·엘리-에제르 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5828_0000",
+      "before": [
+        {
+          "meaning": "도움",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "도움"
+        },
+        {
+          "seq": 2,
+          "meaning": "돕는 이"
+        }
+      ]
+    },
+    {
+      "word_id": "H5833_0000",
+      "before": [
+        {
+          "meaning": "도움",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "도움"
+        },
+        {
+          "seq": 2,
+          "meaning": "돕는 이"
+        }
+      ]
+    },
+    {
+      "word_id": "H3134_0000",
+      "before": [
+        {
+          "meaning": "요에셀 Joezer(인)",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "요에셀·요-에제르 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5829_0000",
+      "before": [
+        {
+          "meaning": "에셀/에제르",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "에셀·에제르 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5836_0000",
+      "before": [
+        {
+          "meaning": "에스리/에즈리",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "에스리·에즈리 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5837_0000",
+      "before": [
+        {
+          "meaning": "아스리엘/아즈리-엘",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아스리엘·아즈리-엘 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5840_0000",
+      "before": [
+        {
+          "meaning": "아스리감/아즈리-캄",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아스리감·아즈리-캄 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H7320_0000",
+      "before": [
+        {
+          "meaning": "로암디에셀 Romantiezer",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "로맘디에셀·로암디에셀·로맘티-에제르 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0499_0000",
+      "before": [
+        {
+          "meaning": "엘르아살",
+          "seq": 1
+        },
+        {
+          "meaning": "뜻풀이: 신께서 도우셨다/하나님께서 도우셨다",
+          "seq": 2
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엘르아살·엘리아살·엘-아자르 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3270_0000",
+      "before": [
+        {
+          "meaning": "야셀 Jazer, Jaazer(지)",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "야셀·야스엘·야아제르·야제르 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5809_0000",
+      "before": [
+        {
+          "meaning": "앗술/앗주르",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "앗술·앗주르 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5827_0000",
+      "before": [
+        {
+          "meaning": "에셀/에제르",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "에셀·에제르 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5832_0000",
+      "before": [
+        {
+          "meaning": "아사렐/아자르-엘",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아사렐·아자르-엘 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5835_0000",
+      "before": [
+        {
+          "meaning": "울로 둘러싼 땅, 구내",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "뜰"
+        },
+        {
+          "seq": 2,
+          "meaning": "둘레의 층단(層段)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5838_0000",
+      "before": [
+        {
+          "meaning": "아사랴/아자르-야",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아사랴·아사리아·아자르-야·아자르-야후 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "G0107_0000",
+      "before": [
+        {
+          "meaning": "아소르/앗주르",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아소르·아조르 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "G1648_0000",
+      "before": [
+        {
+          "meaning": "엘르아살[신께서 도우셨다/하나님께서 도우셨다]",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엘르아살·엘-아자르 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "G2976_0000",
+      "before": [
+        {
+          "meaning": "나사로[신께서 도우셨다/하나님께서 도우셨다]",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "나사로·라자로스 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5830_0000",
+      "before": [
+        {
+          "meaning": "에스라/에즈라",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "에스라·에즈라 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5831_0000",
+      "before": [
+        {
+          "meaning": "에스라/에즈라",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "에스라·에즈라 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5834_0000",
+      "before": [
+        {
+          "meaning": "에스라/에즈라",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "에스라·에즈라 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5839_0000",
+      "before": [
+        {
+          "meaning": "아사랴/아자르-야",
+          "seq": 1
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아사랴·아자르-야 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0461_0000",
+      "before": null,
+      "after": "아브라함 집안의 다메섹 사람, 모세의 아들, 제사장·레위인 등 여러 남성에게 쓰인 이름이다. 엘리에셀은 성경 관용명이고 엘리-에제르는 אֱלִי와 עֶזֶר의 경계를 보이는 교재식 근사·분석 표기다. H410 엘과 H5828 도움의 구성으로, Strong은 도움의 하나님으로 풀이하고 BDB와 한국어 참고 사전은 하나님은 도움이시다로 설명한다. 나의 하나님은 도움이시다라는 풀이도 출 18:4의 이름 설명과 관련된다. 이 어원 풀이를 독립 meaning이나 이름을 지닌 이의 성품으로 저장하지 않는다. 창 24장의 종은 본문에서 이름이 제시되지 않으므로 창 15:2의 엘리에셀과의 동일시를 직접 명시된 사실로 확정하지 않는다. 확보 LXX 스 8:16은 ελεαζαρ로 달리 전하며 이것만으로 H499와 표제를 합치지 않는다. 붙임표는 실제 마케프나 정확한 고대 발음을 뜻하지 않는다."
+    },
+    {
+      "word_id": "G1663_0000",
+      "before": null,
+      "after": "눅 3:29의 예수 계보에 나오는 남성 이름이다. 엘리에서는 개역개정·개역한글의 관용명이다. H461 엘리에셀 이름의 헬라어 전승형이며, 엘리-에제르는 원천 히브리어 אֱלִיעֶזֶר의 구성 경계를 보이는 교재식 근사·분석 표기다. 헬라어의 새 형태소 경계를 주장하는 것이 아니다. 붙임표를 뺀 엘리에제르는 확보 새번역의 표기이자 헬라어 교재식 근사이며 기존 음역에도 보존되어 있으므로 meaning에서 중복 병기하지 않는다. 계보의 인물을 구약의 동명 인물과 동일시하지 않는다. 같은 절의 앞 이름을 예수 또는 요세로 옮기는 판본 차이는 이 이름의 별도 meaning이 아니다."
+    },
+    {
+      "word_id": "H5826_0000",
+      "before": null,
+      "after": "사람·집단·하나님 등이 다른 이에게 힘을 보태거나 필요한 도움을 주는 동사다. 군사 지원뿐 아니라 약한 이와 개인의 곤경을 돕는 데도 쓰인다. 분사형의 돕는 이, 수동형의 도움을 받다는 문법에 따른 풀이이므로 별도 meaning으로 나누지 않는다. 삼하 18:3의 케티브 ל/עזיר와 케레 לַעְזוֹר는 같은 자리의 다른 읽기이며, 히필형 분석과 대하 28:23의 어간 분석에는 사전 간 차이가 있다. 대하 20:23의 서로 멸하기를 도움과 슥 1:15의 재앙을 더 악화시킴은 돕는 행위의 문맥상 대상·결과다. Strong의 둘러싸다라는 어원적 설명을 이 정본 전체의 독립된 일반 뜻으로 확정하지 않는다. H5835의 둘레·뜰 계열과의 역사적 연결은 불확실하다."
+    },
+    {
+      "word_id": "H5828_0000",
+      "before": null,
+      "after": "도움 자체와 그 도움을 주는 주체를 가리킨다. 창 2:18·20에서는 돕는 상대, 출 18:4와 여러 시편에서는 하나님, 겔 12:14에서는 돕는 무리를 가리킨다. 문법적으로 남성 명사이지만 돕는 이의 성별이나 지위의 높낮이를 뜻하지 않는다. 배필이라는 구체적인 관계는 창세기의 문맥과 כְּנֶגְדּוֹ를 함께 읽어 얻으며 이 명사 하나의 일반 뜻으로 삼지 않는다. 정본 22토큰에는 겔 12:14의 케티브 עזר/ה와 케레 עֶזְרוֹ가 함께 들어 있어 본문 자리로는 21곳이다. 시 89:19(MT 89:20)는 도움을 베풂, 젊은 용사 또는 왕관 등의 본문·해석 차이가 있어 해당 용례의 의미 배정을 유보한다. 확보 LXX의 βοηθειαν은 도움 독법을 지지하지만 다른 분석을 완전히 해소하지 않는다."
+    },
+    {
+      "word_id": "H5833_0000",
+      "before": "H5828 עֵזֶר(에제르)의 여성형.",
+      "after": "H5828 עֵזֶר와 대응하는 여성 명사로, 도움 자체와 돕는 주체·무리를 가리키는 용법이 모두 있다. 문법적 여성형이라는 사실은 여자만을 뜻하거나 H5828보다 약한 도움을 뜻하지 않는다. עֶזְרָת·עֶזְרָתָה 및 접미사가 붙은 형태는 별도 meaning으로 나누지 않는다. 욥 6:13의 자기 안의 도움과 도와줄 이, 사 31:2의 도움과 돕는 자들처럼 추상적 도움과 그 주체가 겹쳐 읽히는 곳이 있다. 특정 역본의 유익·구원이라는 표현이나 군사적 문맥을 모두 독립 뜻으로 늘리지 않는다."
+    },
+    {
+      "word_id": "H3134_0000",
+      "before": null,
+      "after": "대상 12:6(MT 12:7)에서 시글락의 다윗에게 합류한 고라 사람으로 나온다. 요에셀은 성경 관용명, 요-에제르는 יוֹעֶזֶר의 신명 축약 요소와 도움 요소의 구성 경계를 보이는 교재식 근사다. Strong은 H3068과 H5828의 합성으로 여호와는 도움이시다로 풀이한다. 이 어원 풀이를 별도 meaning이나 인물의 실제 이름 부여 동기로 확정하지 않는다."
+    },
+    {
+      "word_id": "H5829_0000",
+      "before": "의미는 '도움'\n\n한글성경에서 대상4:4; 12:9; 느3:19; 12:42에 '에셀'로 표현.",
+      "after": "유다 계보의 후사와 관련된 인물, 다윗에게 합류한 갓 사람, 성벽을 보수한 미스바 책임자, 느 12:42의 성벽 봉헌식 참여자에게 쓰인 이름이다. 에셀은 성경 관용명, 에제르는 עֵזֶר의 교재식 근사다. Strong은 H5828 도움과 같은 형태라고 설명하고 H5827과 비교한다. BDB는 느 12:42를 H5827 쪽에서 다루지만 현행 OSHB는 H5829에 배정한다. 표제·인물의 분류와 정본 토큰 배정을 임의로 합치거나 교정하지 않는다."
+    },
+    {
+      "word_id": "H5836_0000",
+      "before": "의미는 '나의 도움',\n\n한글성경에서 대상27:26에 '에스리'로 표현.",
+      "after": "대상 27:26에서 밭 가는 사람들을 관리한 글룹의 아들 이름이다. 에스리는 성경 관용명, 에즈리는 עֶזְרִי의 교재식 근사다. H5828 도움 계열에서 형성된 이름으로 Strong은 도움이 되는, 한국어 참고 사전은 나의 도움으로 풀이한다. 이 풀이들은 이름의 설명이며 별도 일반명사 meaning이 아니다. 기존 음역의 모음 표기를 meaning에 기계적으로 복제하거나 음역 필드를 변경하지 않는다."
+    },
+    {
+      "word_id": "H5837_0000",
+      "before": "의미는 '신께서 나의 도움이시다',\n\n한글성경에서 역대상, 예레미야에 '아스리엘'로 표현.",
+      "after": "므낫세 계열의 족장, 납달리 지도자 여레못의 아버지, 렘 36:26에서 스라야의 아버지로 나오는 남성 이름이다. 아스리엘은 성경 관용명, 아즈리-엘은 עַזְרִי와 אֵל의 경계를 보이는 교재식 근사다. H5828 도움과 H410 엘의 구성으로 Strong은 하나님의 도움, BDB는 나의 도움은 엘로 풀이한다. H5832 아자르-엘과 구성·모음이 다르므로 같은 이름으로 병합하지 않는다."
+    },
+    {
+      "word_id": "H5840_0000",
+      "before": "의미는 '나의 도움이 일어났다'\n\n한글성경에서 역대상, 역대하, 느헤미야에 '아스리감'으로 표현.",
+      "after": "다윗 계보의 인물, 베냐민 계열의 인물, 레위인의 선조, 아하스의 궁내 대신 등 여러 남성에게 쓰인 이름이다. 아스리감은 성경 관용명, 아즈리-캄은 עַזְרִי와 קָם의 경계를 보이는 교재식 근사다. 도움 H5828과 일어나다 H6965 계열의 구성으로 한국어 참고 사전은 나의 도움이 일어났다로 풀이한다. Strong은 H6965의 능동분사 분석에서 대적의 도움이라는 다른 설명을 제시한다. 구성 요소의 연결과 이름 전체의 문장적 풀이를 구별하며 어느 풀이도 별도 meaning이나 실제 인물의 행적을 뜻하지 않는다."
+    },
+    {
+      "word_id": "H7320_0000",
+      "before": null,
+      "after": "대상 25:4·31에 나오는 헤만의 아들이자 성전 음악 담당자의 이름이다. 확보 개역개정은 25:4에서 로맘디에셀, 25:31에서 로암디에셀로 적으며 개역한글·새번역은 로암디에셀을 사용한다. 로맘티-에제르는 רוֹמַמְתִּי와 עֶזֶר의 경계를 보이는 교재식 근사다. H7311 높이다와 H5828 도움의 구성으로 나는 도움을 높였다 등으로 풀이한다. 정본 2토큰은 각각 이름의 뒤 요소에 7320을 붙인 수록 방식이며 앞 요소의 7320+ 표지를 별도 정본 출현으로 더하지 않는다. 확보 LXX는 ρωμεμθι-ωδ로 달리 전한다. 붙임표는 분석 표기이며 실제 마케프를 뜻하지 않는다."
+    },
+    {
+      "word_id": "H0499_0000",
+      "before": null,
+      "after": "아론의 아들을 비롯하여 여러 남성에게 쓰인 이름이다. 엘르아살은 주된 성경 관용명이며, 확보 개역개정·개역한글·새번역의 삼상 7:1은 아비나답의 아들을 엘리아살로 적는다. 엘-아자르는 אֶלְ과 עָזָר의 구성 경계를 보이는 교재식 근사다. H410 엘과 H5826 돕다의 합성으로 BDB와 한국어 참고 사전은 하나님께서 도우셨다로 풀이하며 Strong은 하나님은 돕는 이라는 설명을 제시한다. 이름 자체와 어원 풀이를 구별하므로 어원을 별도 meaning으로 두지 않는다. 이름이 같은 여러 인물을 한 사람으로 합치지 않는다."
+    },
+    {
+      "word_id": "H3270_0000",
+      "before": null,
+      "after": "요단 동쪽 길르앗 지역과 관련되는 성읍 이름이다. 야셀은 개역개정·개역한글의 관용명, 야스엘은 확보 새번역의 표기다. 야아제르는 고정 Strong 표제 יַעֲזֵיר의 하타프 파타흐 모음을 읽는 교재식 근사이고, 야제르는 Strong의 이형 יַעְזֵר 및 OSHB 본문 יַעְזֵר·יַעְזֵיר에 대응하는 근사다. 정본 13토큰 모두 ע 아래에 셰와를 적으며, 뒤쪽 י의 유무는 같은 야제르 읽기의 철자 차이로 구별한다. 야아제르의 아아는 장모음 하나를 두 음절로 늘인 것이 아니라 ע의 축약 모음 a를 근사한 것이다. H5826 돕다에서 형성된 이름으로 Strong은 도움이 되는 것으로 설명하고 BDB는 동사 미완료형 계열의 분석을 소개한다. 야를 독립 신명 요소로 확정할 근거가 없어 야-아제르 또는 야-제르로 나누지 않는다. 정확한 위치와 역사적 음가는 확정하지 않는다. 삼하 24:5의 확보 LXX는 ελιεζερ로 다르게 전하고 렘 48:32의 야셀 바다 표현에도 본문·해석 차이가 있다. 이를 별도 일반명사 meaning이나 다른 이름과의 병합 근거로 삼지 않는다."
+    },
+    {
+      "word_id": "H5809_0000",
+      "before": "의미는 '도움되는'.\n\n한글성경에서 느10:17; 렘28:1; 겔11:1에 '앗술'로 표현됨,",
+      "after": "언약 문서의 날인자, 거짓 예언자 하나냐의 아버지, 겔 11:1의 야아사냐의 아버지에게 쓰인 이름이다. 앗술은 성경 관용명, 앗주르는 עַזּוּר·עַזֻּר의 자음 중복을 제한적으로 보이는 교재식 한글 근사다. Meaning의 받침 제한을 적용한 표기이며 기존 음역 앚주르를 자동 변경하지 않는다. H5826 돕다 계열에서 나온 이름으로 Strong은 도움이 되는 것으로 설명하지만 실제 인물의 성품이나 이름 부여 동기를 확정하지 않는다. G107 아소르와의 compare 참조는 정확한 직접 전승을 입증하는 설명과 구별한다."
+    },
+    {
+      "word_id": "H5827_0000",
+      "before": "의미는 '도움'\n\n한글성경에서 대상7:21에 '에셀'로 표현됨.",
+      "after": "대상 7:21에서 에브라임 계열로 나오며 가드 사람들에게 죽은 인물의 이름이다. 에셀은 성경 관용명, 에제르는 고정 Strong 표제 עֶזֶר의 교재식 근사다. 현행 OSHB의 해당 본문은 עֵזֶר로 적으므로 표제 모음과 본문 모음을 구별한다. Strong은 H5826에서 나온 이름으로 설명하고 H5829와 비교한다. Strong의 두 이스라엘 사람이라는 설명 및 BDB의 느 12:42 분류와 달리 현재 정본 H5827 배정은 1토큰이다. 다른 자료의 분류를 이 번호 출현 수에 더하거나 H5829와 표제를 합치지 않는다."
+    },
+    {
+      "word_id": "H5832_0000",
+      "before": "의미는 '신께서 도우셨다',\n\n한글성경에서 역대상, 에스라, 느헤미야에 '아사렐'로 표현.",
+      "after": "고라 사람인 다윗의 용사, 음악 담당자, 단 지파 지도자, 귀환자와 제사장 계보 등에서 쓰인 남성 이름이다. 아사렐은 성경 관용명, 아자르-엘은 עֲזַרְ와 אֵל의 경계를 보이는 교재식 근사다. H5826 돕다와 H410 엘의 합성으로 하나님께서 도우셨다로 풀이한다. 대상 25:18의 음악 담당자는 25:4의 웃시엘과 비교되며 확보 LXX에도 이름 전승 차이가 있으나, 이 비교만으로 H5816 전체와 이 표제를 같은 어휘로 합치지 않는다. H5837 아즈리-엘과도 구별한다."
+    },
+    {
+      "word_id": "H5835_0000",
+      "before": null,
+      "after": "대하 4:9·6:13에서는 성전의 뜰을, 겔 43:14·17·20 및 45:19에서는 제단 둘레에 층을 이루는 평평한 단을 가리킨다. 둘레의 층단은 제단 전체나 사람이 오르내리는 층계가 아니며, 겔 43:17에서 따로 나오는 가장자리의 턱과도 구별한다. 기존의 울로 둘러싼 땅·구내만으로는 제단 구조를 가리키는 용법을 충분히 드러내기 어렵다. Strong은 H5826의 둘러싸다라는 원래 뜻에서 설명하지만 BDB는 별도의 עזר II 계열로 다루며 돕다 어근과의 연결을 의심스럽다고 한다. 의미는 승인할 수 있으나 그 역사적 파생 관계는 보류한다."
+    },
+    {
+      "word_id": "H5838_0000",
+      "before": "의미는 '야[하나님 존함의 축약]께서 도우셨다',\n\n'다니엘'의 세 친구 중 하나인 '아벳느고'의 히브리 이름,\n\n한글성경에서 역대상, 역대하, 에스라에 '아사랴'로 표현.",
+      "after": "왕·제사장·레위인·지도자 등 여러 남성에게 쓰인 이름이다. 아사랴는 주된 성경 관용명이며 확보 개역개정·개역한글의 왕상 4:2·5는 아사리아로 적는다. 아자르-야와 아자르-야후는 עֲזַרְיָה·עֲזַרְיָהוּ의 단형·장형 및 구성 경계를 보이는 교재식 근사다. 정본 48토큰은 단형 32·장형 16으로 구별된다. H5826 돕다와 H3050 야의 합성으로 야께서 도우셨다로 풀이한다. 유다 왕 문맥에서 웃시야와 대응하지만 모든 아사랴를 웃시야와 같은 인물로 보지 않는다. 대하 22:6의 마소라 본문은 아자르야후로 기록하고 새번역과 확보 LXX는 아하시야로 읽으므로 그 자리의 이름 전승 차이를 보존한다. 단 1장의 아사랴는 아벳느고라는 이름을 받으며 아람어 H5839와 대응한다."
+    },
+    {
+      "word_id": "G0107_0000",
+      "before": "H5809 עַזּוּר(앗주르)/עַזֻּר(앗주르)의 헬라어 음역,\n마1:13-14에서 사용됨,\n\n한글성경에서 H5809 עַזּוּר(앗주르)/עַזֻּר(앗주르)은 느10:17; 렘28:1; 겔11:1에서 '앗술'로 표현됨,\n의미는 '도움되는'.",
+      "after": "마 1:13·14의 예수 계보에서 엘리야김의 아들이며 사독의 아버지로 나오는 남성 이름이다. 두 절의 격 기능 차이는 별도 meaning이 아니다. 아소르는 성경 관용명, 아조르는 Ἀζώρ의 교재식 근사다. Strong은 히브리어 기원을 말하면서 H5809 앗술을 compare로 참조한다. 이것만으로 앗주르를 이 헬라어 이름의 직접 확인된 원천형으로 확정하지 않으며, 이번 meaning에서는 근거가 분명한 헬라어 근사를 사용한다. 정확한 원천형이 불확실해도 그리스어 본문의 인명 식별 자체를 hold할 이유는 없다."
+    },
+    {
+      "word_id": "G1648_0000",
+      "before": null,
+      "after": "마 1:15의 예수 계보에서 엘리웃의 아들이며 맛단의 아버지로 나오는 남성 이름이다. 한 절에 목적격 기능과 주격 기능으로 두 번 나오지만 같은 이름의 두 sense가 아니다. Ἐλεάζαρ는 H499 אֶלְעָזָר 이름의 헬라어 전승형이다. 엘르아살은 성경 관용명, 엘-아자르는 확인된 원천 히브리어 이름의 구성 근사다. 헬라어 자체의 교재식 읽기 엘레아자르는 기존 음역에 보존한다. 구약의 동명 인물과 동일시하지 않는다. 원천 이름의 경계를 보이는 붙임표를 헬라어의 독립 형태소 경계로 해석하지 않는다."
+    },
+    {
+      "word_id": "G2976_0000",
+      "before": null,
+      "after": "눅 16장의 부자와 가난한 이 이야기의 나사로와 요 11·12장의 베다니 사람 나사로에게 쓰인 이름이다. 두 지시 대상을 별도 lexical meaning으로 나누지 않는다. 나사로는 성경 관용명, 라자로스는 Λάζαρος의 교재식 근사다. H499 엘르아살 이름의 단형 계열과 연결되며 Strong은 히브리어 기원에 아마도라는 한정을 두고, Thayer는 랍비 문헌의 לעזר와 אֶלְעָזָר의 대응을 추정적으로 설명하면서 도움 없음이라는 다른 옛 분석도 소개한다. 인물의 처지에서 어원을 역산하지 않으며 정확한 단축·헬라어화 경로는 확정하지 않는다. 원천 장형 전체를 이 단형의 실제 호명처럼 meaning에 대신 적지 않는다."
+    },
+    {
+      "word_id": "H5830_0000",
+      "before": "의미는 '도움'\n\n한글성경에서 에스라, 느헤미야에 '에스라'로 표현.",
+      "after": "스 7·10장과 느 8장 등에 나오는 제사장·율법 학자 에스라 및 느 12장의 동명 제사장·인명에 쓰인다. 느 12:13에서는 이름으로 그 가문을 가리킨다. 에스라는 성경 관용명, 에즈라는 עֶזְרָא의 교재식 근사다. Strong은 여성 보통명사 H5833의 변이형으로 설명하지만 이 인명은 남성에게 쓰이며 도움이라는 어원을 별도 meaning으로 두지 않는다. H5831은 아람어 대응형이며 H5834 עֶזְרָה와는 끝 철자가 다르므로 같은 한국어 표기만으로 표제를 합치지 않는다. 후대의 에스라 전승과 본문에서 직접 확인되는 활동은 구별한다."
+    },
+    {
+      "word_id": "H5831_0000",
+      "before": "의미는 '도움'\n\n한글성경에서 에스라, 느헤미야에 '에스라'로 표현.",
+      "after": "스 7:12·21·25의 아람어 칙령에 나오는 제사장·율법 학자 이름이다. 히브리어 H5830과 같은 인물을 가리키는 언어별 대응형이다. 에스라는 성경 관용명, 에즈라는 עֶזְרָא의 교재식 근사다. 도움 계열의 이름이라는 설명은 이름의 어원이며 일반명사 뜻으로 따로 저장하지 않는다. 같은 형태가 두 언어에 수록되었다는 사실만으로 한 언어에서 다른 언어로의 직접 차용 방향을 확정하지 않는다."
+    },
+    {
+      "word_id": "H5834_0000",
+      "before": "H5833 עֶזרָה(에즈라/에제라)/עֶזְרָת(에즈라트/에제라트)와 동일,\n\n의미는 '도움'\n\n한글성경에서 대상4:17에 '에스라'로 표현",
+      "after": "대상 4:17의 유다 계보에 나오는 남성 이름이다. 에스라는 성경 관용명, 에즈라는 עֶזְרָה의 교재식 근사다. Strong은 H5833 도움과 같은 형태로 설명하지만 이 문맥에서는 인명이다. H5830·H5831의 עֶזְרָא와 한국어 표기는 같아도 끝 철자와 문맥이 다르며, 율법 학자 에스라와 동일 인물로 확정하지 않는다."
+    },
+    {
+      "word_id": "H5839_0000",
+      "before": "의미는 '야[하나님 존함의 축약]께서 도우셨다',\n\n'다니엘'의 세 친구 중 하나인 '아벳느고'의 히브리 이름,\n\n한글성경에서 단2:17에 '아사랴'로 표현.",
+      "after": "단 2:17의 아람어 문장에서 다니엘의 친구 이름으로 나온다. 히브리어 H5838과 같은 이름의 언어별 대응형이며 단 1:7에서 아벳느고라는 이름을 받은 인물이다. 아사랴는 성경 관용명, 아자르-야는 עֲזַרְיָה의 원천 구성 경계를 보이는 교재식 근사다. 이 표제에는 현재 확인한 단형을 제시하며 다른 인물이나 히브리어 장형을 이 문맥의 직접 확인된 호명처럼 덧붙이지 않는다. 히브리어·아람어의 대응만으로 직접 차용 방향을 확정하지 않는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H3068_0000",
+      "word_id_2": "H3134_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "note": "구성 요소 또는 해당 어근의 파생 요소에서 이름으로 향하는 관계이며 이름 전체의 번역·실제 성격·인물 동일성까지 확정하지 않는다.",
+      "source": "고정 Strong XML explicit reference; Reshet H461 cluster R1 연구 추천",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H3134_0000",
+      "word_id_2": "H5828_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "note": "구성 요소 또는 해당 어근의 파생 요소에서 이름으로 향하는 관계이며 이름 전체의 번역·실제 성격·인물 동일성까지 확정하지 않는다.",
+      "source": "고정 Strong XML explicit reference; Reshet H461 cluster R1 연구 추천",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H3270_0000",
+      "word_id_2": "H5826_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "note": "고정 Strong의 명시적 어휘 설명과 실제 형태·용례를 대조한 관계다. 단순 굴절형을 별도 어휘로 새로 만들지 않는다.",
+      "source": "고정 Strong XML explicit reference; Reshet H461 cluster R1 연구 추천",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H5827_0000",
+      "word_id_2": "H5829_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "note": "두 Ezer 표제의 모음·사전 분류 차이와 상호 Compare를 보존한 가설 변이 관계다. 정본 번호 배정·인물·DB 항목을 통합하지 않는다.",
+      "source": "고정 Strong XML explicit reference; Reshet H461 cluster R1 연구 추천",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H5828_0000",
+      "word_id_2": "H7320_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "note": "구성 요소 또는 해당 어근의 파생 요소에서 이름으로 향하는 관계이며 이름 전체의 번역·실제 성격·인물 동일성까지 확정하지 않는다.",
+      "source": "고정 Strong XML explicit reference; Reshet H461 cluster R1 연구 추천",
+      "description": null,
+      "relation_group_id": null
+    },
+    {
+      "word_id_1": "H7311_0000",
+      "word_id_2": "H7320_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "note": "구성 요소 또는 해당 어근의 파생 요소에서 이름으로 향하는 관계이며 이름 전체의 번역·실제 성격·인물 동일성까지 확정하지 않는다.",
+      "source": "고정 Strong XML explicit reference; Reshet H461 cluster R1 연구 추천",
+      "description": null,
+      "relation_group_id": null
+    }
+  ],
+  "relation_replacements": [
+    {
+      "relation_id": 3167,
+      "word_id_1": "G1648_0000",
+      "word_id_2": "H0499_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "etymological",
+        "relation_type": "borrowed_from",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "고정 Strong의 명시적 어휘 설명과 실제 형태·용례를 대조한 관계다. 단순 굴절형을 별도 어휘로 새로 만들지 않는다.",
+        "source": "고정 Strong XML explicit reference; Reshet H461 cluster R1 연구 추천"
+      }
+    },
+    {
+      "relation_id": 3942,
+      "word_id_1": "G1663_0000",
+      "word_id_2": "H0461_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "etymological",
+        "relation_type": "borrowed_from",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "고정 Strong의 명시적 어휘 설명과 실제 형태·용례를 대조한 관계다. 단순 굴절형을 별도 어휘로 새로 만들지 않는다.",
+        "source": "고정 Strong XML explicit reference; Reshet H461 cluster R1 연구 추천"
+      }
+    },
+    {
+      "relation_id": 3004,
+      "word_id_1": "G2976_0000",
+      "word_id_2": "H0499_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "etymological",
+        "relation_type": "borrowed_from",
+        "status_code": "hypothesized",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "Strong의 probably of Hebrew origin 및 Thayer의 apparently 대응과 경쟁 분석을 보존한다. 엘르아살 이름군의 단형 전승 가설이며 정확한 단축·차용 경로 및 인물 동일성은 확정하지 않는다.",
+        "source": "고정 Strong XML explicit reference; Reshet H461 cluster R1 연구 추천"
+      }
+    },
+    {
+      "relation_id": 3941,
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H0461_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "구성 요소 또는 해당 어근의 파생 요소에서 이름으로 향하는 관계이며 이름 전체의 번역·실제 성격·인물 동일성까지 확정하지 않는다.",
+        "source": "고정 Strong XML explicit reference; Reshet H461 cluster R1 연구 추천"
+      }
+    },
+    {
+      "relation_id": 3003,
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H0499_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "구성 요소 또는 해당 어근의 파생 요소에서 이름으로 향하는 관계이며 이름 전체의 번역·실제 성격·인물 동일성까지 확정하지 않는다.",
+        "source": "고정 Strong XML explicit reference; Reshet H461 cluster R1 연구 추천"
+      }
+    },
+    {
+      "relation_id": 176,
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H5832_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "구성 요소 또는 해당 어근의 파생 요소에서 이름으로 향하는 관계이며 이름 전체의 번역·실제 성격·인물 동일성까지 확정하지 않는다.",
+        "source": "고정 Strong XML explicit reference; Reshet H461 cluster R1 연구 추천"
+      }
+    },
+    {
+      "relation_id": 177,
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H5837_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "구성 요소 또는 해당 어근의 파생 요소에서 이름으로 향하는 관계이며 이름 전체의 번역·실제 성격·인물 동일성까지 확정하지 않는다.",
+        "source": "고정 Strong XML explicit reference; Reshet H461 cluster R1 연구 추천"
+      }
+    },
+    {
+      "relation_id": 6682,
+      "word_id_1": "H0461_0000",
+      "word_id_2": "H5828_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련2"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "구성 요소 또는 해당 어근의 파생 요소에서 이름으로 향하는 관계이며 이름 전체의 번역·실제 성격·인물 동일성까지 확정하지 않는다.",
+        "source": "고정 Strong XML explicit reference; Reshet H461 cluster R1 연구 추천"
+      }
+    },
+    {
+      "relation_id": 6297,
+      "word_id_1": "H0499_0000",
+      "word_id_2": "H5826_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련2"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "구성 요소 또는 해당 어근의 파생 요소에서 이름으로 향하는 관계이며 이름 전체의 번역·실제 성격·인물 동일성까지 확정하지 않는다.",
+        "source": "고정 Strong XML explicit reference; Reshet H461 cluster R1 연구 추천"
+      }
+    },
+    {
+      "relation_id": 180,
+      "word_id_1": "H3050_0000",
+      "word_id_2": "H5838_0000",
+      "before": {
+        "category_code": null,
+        "relation_type": null,
+        "status_code": "inferred",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "",
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "구성 요소 또는 해당 어근의 파생 요소에서 이름으로 향하는 관계이며 이름 전체의 번역·실제 성격·인물 동일성까지 확정하지 않는다.",
+        "source": "고정 Strong XML explicit reference; Reshet H461 cluster R1 연구 추천"
+      }
+    },
+    {
+      "relation_id": 167,
+      "word_id_1": "H5809_0000",
+      "word_id_2": "H5826_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "고정 Strong의 명시적 어휘 설명과 실제 형태·용례를 대조한 관계다. 단순 굴절형을 별도 어휘로 새로 만들지 않는다.",
+        "source": "고정 Strong XML explicit reference; Reshet H461 cluster R1 연구 추천"
+      }
+    },
+    {
+      "relation_id": 168,
+      "word_id_1": "H5826_0000",
+      "word_id_2": "H5827_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "고정 Strong의 명시적 어휘 설명과 실제 형태·용례를 대조한 관계다. 단순 굴절형을 별도 어휘로 새로 만들지 않는다.",
+        "source": "고정 Strong XML explicit reference; Reshet H461 cluster R1 연구 추천"
+      }
+    },
+    {
+      "relation_id": 169,
+      "word_id_1": "H5826_0000",
+      "word_id_2": "H5828_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "고정 Strong의 명시적 어휘 설명과 실제 형태·용례를 대조한 관계다. 단순 굴절형을 별도 어휘로 새로 만들지 않는다.",
+        "source": "고정 Strong XML explicit reference; Reshet H461 cluster R1 연구 추천"
+      }
+    },
+    {
+      "relation_id": 5409,
+      "word_id_1": "H5826_0000",
+      "word_id_2": "H5832_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련2"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "구성 요소 또는 해당 어근의 파생 요소에서 이름으로 향하는 관계이며 이름 전체의 번역·실제 성격·인물 동일성까지 확정하지 않는다.",
+        "source": "고정 Strong XML explicit reference; Reshet H461 cluster R1 연구 추천"
+      }
+    },
+    {
+      "relation_id": 5412,
+      "word_id_1": "H5826_0000",
+      "word_id_2": "H5838_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련2"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "구성 요소 또는 해당 어근의 파생 요소에서 이름으로 향하는 관계이며 이름 전체의 번역·실제 성격·인물 동일성까지 확정하지 않는다.",
+        "source": "고정 Strong XML explicit reference; Reshet H461 cluster R1 연구 추천"
+      }
+    },
+    {
+      "relation_id": 170,
+      "word_id_1": "H5828_0000",
+      "word_id_2": "H5829_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "보통명사와 같은 형태를 인명으로 쓰는 명명 관계다. 문자 변화·특정 동명 인물의 동일성을 주장하지 않는다.",
+        "source": "고정 Strong XML explicit reference; Reshet H461 cluster R1 연구 추천"
+      }
+    },
+    {
+      "relation_id": 173,
+      "word_id_1": "H5828_0000",
+      "word_id_2": "H5833_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "H5828의 feminine of에 따른 여성 명사 형성이다. 두 명사의 실제 의미 범위는 겹치며 생물학적 성별이나 도움의 강도를 뜻하지 않는다.",
+        "source": "고정 Strong XML explicit reference; Reshet H461 cluster R1 연구 추천"
+      }
+    },
+    {
+      "relation_id": 175,
+      "word_id_1": "H5828_0000",
+      "word_id_2": "H5836_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "고정 Strong의 명시적 어휘 설명과 실제 형태·용례를 대조한 관계다. 단순 굴절형을 별도 어휘로 새로 만들지 않는다.",
+        "source": "고정 Strong XML explicit reference; Reshet H461 cluster R1 연구 추천"
+      }
+    },
+    {
+      "relation_id": 5410,
+      "word_id_1": "H5828_0000",
+      "word_id_2": "H5837_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련2"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "구성 요소 또는 해당 어근의 파생 요소에서 이름으로 향하는 관계이며 이름 전체의 번역·실제 성격·인물 동일성까지 확정하지 않는다.",
+        "source": "고정 Strong XML explicit reference; Reshet H461 cluster R1 연구 추천"
+      }
+    },
+    {
+      "relation_id": 178,
+      "word_id_1": "H5828_0000",
+      "word_id_2": "H5840_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "구성 요소 또는 해당 어근의 파생 요소에서 이름으로 향하는 관계이며 이름 전체의 번역·실제 성격·인물 동일성까지 확정하지 않는다.",
+        "source": "고정 Strong XML explicit reference; Reshet H461 cluster R1 연구 추천"
+      }
+    },
+    {
+      "relation_id": 171,
+      "word_id_1": "H5830_0000",
+      "word_id_2": "H5831_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "etymological",
+        "relation_type": "root_shared",
+        "status_code": "asserted",
+        "direction_code": "undirected",
+        "description": null,
+        "relation_group_id": null,
+        "note": "히브리어·아람어의 같은 이름에 대한 언어별 대응이다. 직접 차용 방향이나 역사적 최초 형성 순서를 확정하지 않는다.",
+        "source": "고정 Strong XML explicit reference; Reshet H461 cluster R1 연구 추천"
+      }
+    },
+    {
+      "relation_id": 5408,
+      "word_id_1": "H5830_0000",
+      "word_id_2": "H5833_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련2"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "H5833의 variation이라는 설명에 따른 인명 형성 관계다. 어말 א/ה의 차이와 이름의 남성 지시를 보존하며, 보통명사의 여성 성을 인물 성별로 옮기지 않는다.",
+        "source": "고정 Strong XML explicit reference; Reshet H461 cluster R1 연구 추천"
+      }
+    },
+    {
+      "relation_id": 174,
+      "word_id_1": "H5833_0000",
+      "word_id_2": "H5834_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "보통명사와 같은 형태를 인명으로 쓰는 명명 관계다. 문자 변화·특정 동명 인물의 동일성을 주장하지 않는다.",
+        "source": "고정 Strong XML explicit reference; Reshet H461 cluster R1 연구 추천"
+      }
+    },
+    {
+      "relation_id": 181,
+      "word_id_1": "H5838_0000",
+      "word_id_2": "H5839_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "etymological",
+        "relation_type": "root_shared",
+        "status_code": "asserted",
+        "direction_code": "undirected",
+        "description": null,
+        "relation_group_id": null,
+        "note": "히브리어·아람어의 같은 이름에 대한 언어별 대응이다. 직접 차용 방향이나 역사적 최초 형성 순서를 확정하지 않는다.",
+        "source": "고정 Strong XML explicit reference; Reshet H461 cluster R1 연구 추천"
+      }
+    },
+    {
+      "relation_id": 5411,
+      "word_id_1": "H5840_0000",
+      "word_id_2": "H6965_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련2"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "구성 요소 또는 해당 어근의 파생 요소에서 이름으로 향하는 관계이며 이름 전체의 번역·실제 성격·인물 동일성까지 확정하지 않는다.",
+        "source": "고정 Strong XML explicit reference; Reshet H461 cluster R1 연구 추천"
+      }
+    }
+  ],
+  "supersedes": [],
+  "meaning_approvals": [
+    {
+      "word_id": "H5826_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "돕다"
+        }
+      ]
+    }
+  ]
+}
