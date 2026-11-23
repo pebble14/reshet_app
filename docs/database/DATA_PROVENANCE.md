@@ -2058,3 +2058,7 @@ H0336 의미 유지 승인 1건, 의미 교체 3건, 비고 4건, 관계 신규 
 ### H469 숨김·방위 및 인명 어휘군 승인 반영 (2026-11-23)
 
 [승인 매니페스트](../../tool/data_provenance/manifests/h469_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h469_cluster_approved_content_slice.md)에 R2의 다섯 어휘와 R1에서 승인한 네 고유명사를 반영했다. 뜻 교체 8건, 현행 뜻 승인 1건, 비고 9건, 신규 확정 관계 8건(ID 8540–8547)을 적용했다. 공식 dry-run·undo, 적용기 테스트 31개, 독립 SQL 검증을 통과했다. 변경 이력은 25행이며 SQLite 무결성은 `ok`, 외래 키 위반은 0건이다. 공식 집계는 승인 1,154건, 미승인 13,137건, hold 7건, 이상 항목 113건이다.
+
+### H470 엘리가와 토하다 어휘군 승인 반영 (2026-11-23)
+
+[승인 매니페스트](../../tool/data_provenance/manifests/h470_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h470_cluster_approved_content_slice.md)에 R2의 뜻과 비고 각 6건, 신규 관계 4건(ID 8548–8551)을 반영했다. 공식 사본 적용·undo, 적용기 테스트 31개와 독립 SQL 검증을 통과했다. 변경 이력은 16행이다. 공식 진행표는 승인 1,160, 미승인 13,131, hold 7, 이상 항목 113이다.

@@ -1,0 +1,189 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H470-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h470_approval_20261123/00_user_approval.json",
+    "document_sha256": "c7cdf3b56aabeba8a8fc18b68a7fbb76843ee3a3686005619399edb1cb2dda23"
+  },
+  "target": {
+    "expected_work_sha256": "6a380a57e56d44adaa2e48098db3eb15aa815a3dda2ab5e0f76a06f3bdafe7e5",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0470_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "엘리가 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엘리가·엘리-카 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H6892_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "구토물, 토한 것"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "토한 것"
+        }
+      ]
+    },
+    {
+      "word_id": "H6893_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "사다새나 부엉이의 일종"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "당아새[사다새류 추정]"
+        }
+      ]
+    },
+    {
+      "word_id": "H6958_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "토하다 vomit"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "토하다"
+        }
+      ]
+    },
+    {
+      "word_id": "H7006_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "토하다, 게우다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "토하다"
+        }
+      ]
+    },
+    {
+      "word_id": "H7021_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "박 넝쿨"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "키카욘[아주까리 추정]"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0470_0000",
+      "before": null,
+      "after": "삼하 23:25의 다윗의 용사 명단에 나오는 하롯 사람의 이름이다. 엘리가는 한국어 성경 관용명이고, 엘리-카는 마소라 표기의 교재식 한글 근사에 신명 요소 엘(H410)의 경계를 표시한 것이다. Strong은 둘째 요소를 토하다(H6958)와 연결해 ‘거절의 하나님’으로 풀이하고, 한국어 참고 사전은 H7006과 연결해 ‘하나님이 거절하셨다’로 풀이한다. 엘리야김의 단축형으로 보는 견해도 있어 둘째 요소의 기원은 미확정이다. 대상 11:27의 평행 명단에는 이름이 빠져 있으며, 사무엘서의 헬라어 전승에서도 이름의 포함 여부에 차이가 있다."
+    },
+    {
+      "word_id": "H6892_0000",
+      "before": null,
+      "after": "토해 낸 것을 가리키는 명사다. 잠 26:11에는 קֵא 계열이, 사 19:14·28:8과 렘 48:26에는 קִיא 계열이 쓰인다. 사 19:14의 ‘토하면서’는 전치사와 소유형 명사가 이루는 구절을 자연스럽게 옮긴 표현이다. 잠 26:11의 개 비유는 확보 LXX에 ἔμετος, 벧후 2:22의 다시 쓰인 속담에는 ἐξέραμα(G1829)로 나타난다. Strong은 토하다(H6958)에서 나온 말로 설명한다."
+    },
+    {
+      "word_id": "H6893_0000",
+      "before": null,
+      "after": "레 11:18과 신 14:17의 먹지 못할 새 목록, 시 102:6의 광야 새 비유, 사 34:11과 습 2:14의 폐허 문맥에 나온다. 레위기와 시편의 칠십인역은 사다새류로 옮긴다. 큰사다새(*Pelecanus onocrotalus*)가 제안된 종 후보이며, 올빼미류로 보는 견해도 있다. 정확한 종과 옛 명칭이 포괄한 범위는 미확정이다. Strong은 먹이를 되올리는 행동을 들어 토하다(H6958)와 연결한다."
+    },
+    {
+      "word_id": "H6958_0000",
+      "before": null,
+      "after": "먹거나 삼킨 것을 토한다. 잠 23:8과 25:16은 먹은 것을, 욘 2:10은 물고기가 삼킨 요나를 토하는 문맥이다. 레 18:25·28과 20:22에서는 땅이 주민을 내치는 모습을, 욥 20:15에서는 악인이 삼킨 재물을 도로 내놓는 모습을 이 동작으로 표현한다. 이러한 문맥에서는 ‘토해 내다’로도 옮길 수 있다. Strong은 렘 25:27의 קָיָה(H7006)를 이 동사의 다른 형태로 제시하며, 현행 OSHB는 그 절을 H7006으로 집계한다."
+    },
+    {
+      "word_id": "H7006_0000",
+      "before": null,
+      "after": "렘 25:27에서 열방에 심판의 잔을 마시고 취하여 토하라고 하는 칼 복수 명령형으로 쓰인다. Strong은 토하다(H6958) 항목에 이 형태와 구절을 함께 싣는다. BDB는 기록형과 낭독형을 달리 전하며 동일 어근 분석을 조건부로 제시한다. 현행 OSHB에는 읽힌 형태가 H7006 한 토큰으로 들어 있다."
+    },
+    {
+      "word_id": "H7021_0000",
+      "before": null,
+      "after": "욘 4장에서 요나에게 그늘을 드리웠다가 벌레의 공격을 받아 시든 식물이다. 키카욘은 새번역 각주에도 있는 히브리어 이름의 한글 표기다. 고대 이집트의 명칭과 후대 히브리어 자료를 볼 때 아주까리(피마자, *Ricinus communis*)가 유력하다. 칠십인역과 한국어 성경에는 박 계열 번역 전통이 있으며, 본문에서 정확한 종은 확인하기 어렵다. Strong은 토하다(H7006)와의 어원 연결을 가능성으로 제시하고, 욘 2장의 동사와 말놀이로 연결해 읽는 견해도 있다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H0470_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "마소라 이름 אֱלִיקָא의 앞부분에 있는 신명 요소 엘의 구성 관계다. Strong은 H410과 H6958을 연결하지만 둘째 성분과 이름 전체의 정확한 풀이는 미확정이다.",
+      "source": "RESHET-EC-H470-CLUSTER-H410-H470"
+    },
+    {
+      "word_id_1": "H6892_0000",
+      "word_id_2": "H6958_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong은 두 명사형 קֵא와 קִיא를 H6958에서 나온 결과물 명사로 설명한다. 잠 26:11과 사 19:14·28:8, 렘 48:26에서 토한 것을 가리킨다.",
+      "source": "RESHET-EC-H470-CLUSTER-H6958-H6892"
+    },
+    {
+      "word_id_1": "H6893_0000",
+      "word_id_2": "H6958_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong은 새 이름을 H6958에서 파생한 것으로 보고 먹이를 되올리는 행동과 연결한다. 여러 새가 그런 행동을 하며 성경의 새 종 식별에도 경쟁 견해가 있어 파생 가설로 둔다.",
+      "source": "RESHET-EC-H470-CLUSTER-H6958-H6893"
+    },
+    {
+      "word_id_1": "H6958_0000",
+      "word_id_2": "H7006_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong은 H6958의 다른 형태로 קָיָה와 렘 25:27을 명시한다. BDB는 동일 어근 분석에 조건을 두며 이 절의 읽기에도 차이가 있다. 두 정본 번호의 관계를 방향 없는 이형 가설로 둔다.",
+      "source": "RESHET-EC-H470-CLUSTER-H6958-H7006"
+    }
+  ],
+  "relation_replacements": [],
+  "supersedes": [],
+  "meaning_approvals": []
+}
