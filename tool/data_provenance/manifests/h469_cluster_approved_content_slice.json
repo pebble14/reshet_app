@@ -1,0 +1,296 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H469-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h469_approval_20261123/00_user_approval.json",
+    "document_sha256": "154b5a43f2705aed669162553266c0c1f01d97579353f5e0d40529af3ff53cb6"
+  },
+  "target": {
+    "expected_work_sha256": "db5bbb96db6d22008a228f02f4fa1a3eac4cd1f3309ac4d3acfa7a115df8e39b",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0469_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "엘사반 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엘리사반·엘사반·엘리-차판·엘-차판 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H1189_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "바알스본 (지)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "바알스본·바알-체폰 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H4710_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "감춰진 보물, 보화"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "숨겨 둔 것"
+        }
+      ]
+    },
+    {
+      "word_id": "H6828_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "북쪽 north"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "북쪽"
+        }
+      ]
+    },
+    {
+      "word_id": "H6829_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "사본 Zaphon"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "사본·차폰 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H6840_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "보물, 보화"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "숨겨 둔 보물(寶物)"
+        }
+      ]
+    },
+    {
+      "word_id": "H6845_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "숨기다, 비축하다, 저장하다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "숨다·숨기다"
+        },
+        {
+          "seq": 2,
+          "meaning": "쌓아 두다"
+        }
+      ]
+    },
+    {
+      "word_id": "H6846_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "스바니야"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "스바냐·체판-야·체판-야후 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0469_0000",
+      "before": null,
+      "after": "웃시엘의 아들 고핫 사람 지도자의 이름으로, 출 6:22와 레 10:4에서는 단형 엘사반, 민 3:30에서는 장형 엘리사반이 나온다. 대상 15:8과 대하 29:13은 그의 자손을 언급한다. 민 34:25의 엘리사반은 바르낙의 아들인 스불론 지파 지도자다. 엘리-차판과 엘-차판은 두 이름형의 교재식 한글 근사이며, 붙임표는 엘(H410)과 차판(H6845)의 경계를 보여 준다. Strong은 보물의 하나님으로, BDB는 하나님께서 보호하셨다로 풀이한다. 한국어 참고 사전은 숨겨 보호하셨다는 뜻으로 설명한다. 이 풀이는 이름의 구성에 관한 것이며 정확한 고대 호명은 확인하기 어렵다."
+    },
+    {
+      "word_id": "H1189_0000",
+      "before": null,
+      "after": "바알스본은 이스라엘이 바다를 건너기 전에 맞은편에 진을 친 곳의 이름이다(출 14:2·9, 민 33:7). 바알-체폰은 바알과 체폰의 구성 경계를 보인 교재식 한글 근사다. 첫 요소는 신명 바알(H1168)이다. Strong은 둘째 요소를 북쪽(H6828)과 추위에 연결해 겨울의 바알로 풀이하며, 티폰과 연결하는 견해도 전한다. 우가릿의 바알과 Ṣapan 산 전승은 차폰 산의 바알이라는 풀이를 뒷받침한다. 출애굽기 지명의 정확한 위치와 둘째 요소의 직접 어원은 확정하기 어렵다."
+    },
+    {
+      "word_id": "H4710_0000",
+      "before": null,
+      "after": "H6845에서 나온 명사로 숨겨 둔 대상을 가리킨다. 옵 1:6에서는 에서의 숨겨 둔 것들이 샅샅이 수색된다. 한국어 성경과 BDB는 숨겨 둔 보물로, 확보 LXX는 숨겨진 것들로 옮긴다. 페쉬타에는 은닉처로 풀이할 수 있는 표현이 쓰인다."
+    },
+    {
+      "word_id": "H6828_0000",
+      "before": null,
+      "after": "방위인 북쪽과 그쪽에 있는 면이나 지역을 가리킨다. 아 4:16에서는 북쪽을 불러 동산에 불라고 하므로 북풍을 가리킨다. 잠 25:23에는 바람이 함께 쓰인다. 욥 26:7에는 북쪽 하늘 또는 하늘이라는 풀이가 있으며, 시 48:2·89:12와 사 14:13에는 자폰 산이라는 독법이 있다. 삿 12:1은 북쪽 방향과 사본(H6829) 지명 독법이 갈린다. Strong은 숨다·숨기다를 뜻하는 H6845와 연결하지만 역사적 파생은 미확정이다."
+    },
+    {
+      "word_id": "H6829_0000",
+      "before": null,
+      "after": "요단 동쪽 갓 지파 영토의 성읍 이름이다(수 13:27). 사본은 한국어 성경 관용명이고 차폰은 교재식 한글 근사다. 삿 12:1은 새번역과 확보 LXX에서 지명으로 읽을 수 있으나 OSHB는 그 자리를 북쪽(H6828)으로 태깅했고 개역 계열도 방향으로 옮긴다. Strong은 이 지명을 북쪽과 연결한다. 같은 철자의 방위어에서 직접 유래했는지, 갓 계보의 인명과 어떤 관계인지에는 불확실성이 남는다."
+    },
+    {
+      "word_id": "H6830_0000",
+      "before": null,
+      "after": "북쪽(H6828)에서 파생한 형용사다. 욜 2:20에서는 관사와 결합해 북쪽에서 온 자 또는 무리를 가리킨다. 대상은 침입군과 메뚜기 떼 등으로 해석이 갈린다. 민 26:15에서 스본의 후손을 가리키는 같은 철자의 소속형은 H6831이다."
+    },
+    {
+      "word_id": "H6840_0000",
+      "before": null,
+      "after": "시 17:14의 기록형에 쓰인 남성 명사다. 주께서 숨겨 두신 재물로 배를 채우고 남은 것을 자녀에게 물려주는 문맥이다. 같은 자리의 낭독형은 H6845의 칼 수동분사로, 주께서 숨겨 두신 것을 가리킨다."
+    },
+    {
+      "word_id": "H6845_0000",
+      "before": null,
+      "after": "사람이나 물건, 사실을 숨기거나 스스로 몸을 숨긴다. 잠 1:11·18과 시 56:6에서는 상대를 숨어 기다리는 문맥에 쓰인다. 안전한 곳에 숨겨 주는 경우에는 보호의 뜻이 드러난다. 재물이나 죗값을 나중을 위해 쌓아 두고, 말씀·계명·지식을 간직할 때에도 쓰인다. 시 17:14의 낭독형은 주께서 숨겨 두신 것을 가리키며 같은 자리의 기록형에는 명사 H6840이 있다. 욥 15:20·24:1의 햇수와 때, 욥 20:26·겔 7:22의 숨겨 둔 물건이나 처소, 잠 27:16의 감추다와 제어하다는 해석이 갈린다."
+    },
+    {
+      "word_id": "H6846_0000",
+      "before": null,
+      "after": "스바냐는 예언자와 예레미야 시대의 제사장, 헤만 계보의 인물과 스가랴 시대에 언급된 인물에게 쓰인 이름이다. 체판-야와 체판-야후는 צְפַנְיָה와 צְפַנְיָהוּ의 교재식 한글 근사다. 숨기다·쌓아 두다를 뜻하는 H6845와 야 계열의 신명 요소(H3050)가 결합한다. Strong은 야께서 숨겨 두셨다로, BDB는 야께서 간직하셨다로 풀이한다. 정본의 장형 두 곳은 왕하 25:18과 렘 37:3의 제사장 문맥이다. 붙임표는 이름의 구성 경계를 나타낸다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H0469_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "엘은 엘리사반·엘사반의 첫 합성 요소이다. 이름 전체의 번역은 경쟁한다.",
+      "source": "Open Scriptures Hebrew Lexicon (Strong, H0469 어휘군 승인 연구)"
+    },
+    {
+      "word_id_1": "H0469_0000",
+      "word_id_2": "H6845_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "차판은 두 이름형의 둘째 요소이다. 숨겨 보호함과 보물 관련 풀이가 전해진다.",
+      "source": "Open Scriptures Hebrew Lexicon (Strong, H0469 어휘군 승인 연구)"
+    },
+    {
+      "word_id_1": "H1168_0000",
+      "word_id_2": "H1189_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "בַּעַל은 본문의 지명 구성과 외부 바알 Ṣapan 전승에서 확인되는 첫 요소이다. 둘째 요소의 어원에 경쟁 풀이가 있다.",
+      "source": "Open Scriptures Hebrew Lexicon (Strong, H0469 어휘군 승인 연구)"
+    },
+    {
+      "word_id_1": "H4710_0000",
+      "word_id_2": "H6845_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "숨기다를 뜻하는 צפן에서 숨겨 둔 것을 가리키는 명사가 파생했다.",
+      "source": "Open Scriptures Hebrew Lexicon (Strong, H0469 어휘군 승인 연구)"
+    },
+    {
+      "word_id_1": "H6828_0000",
+      "word_id_2": "H6830_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "북쪽 명사형에 관계 형용사의 끝 요소 -î가 결합한 형태이다. 욜 2:20과 확보 LXX가 방향 의미를 지지한다.",
+      "source": "Open Scriptures Hebrew Lexicon (Strong, H0469 어휘군 승인 연구)"
+    },
+    {
+      "word_id_1": "H6840_0000",
+      "word_id_2": "H6845_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "숨겨 둔 보물을 뜻하는 명사이다. 시 17:14에서 동일 어근 명사의 기록형과 동사 분사의 낭독형이 대응한다.",
+      "source": "Open Scriptures Hebrew Lexicon (Strong, H0469 어휘군 승인 연구)"
+    },
+    {
+      "word_id_1": "H3050_0000",
+      "word_id_2": "H6846_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "야 및 야후는 스바냐 단형·장형에서 확인되는 신명 계열 요소이다.",
+      "source": "Open Scriptures Hebrew Lexicon (Strong, H0469 어휘군 승인 연구)"
+    },
+    {
+      "word_id_1": "H6845_0000",
+      "word_id_2": "H6846_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "צפן은 스바냐의 첫 합성 요소이다. 숨겨 두셨다 또는 간직하셨다라는 풀이를 전한다.",
+      "source": "Open Scriptures Hebrew Lexicon (Strong, H0469 어휘군 승인 연구)"
+    }
+  ],
+  "relation_replacements": [],
+  "supersedes": [],
+  "meaning_approvals": [
+    {
+      "word_id": "H6830_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "북쪽의"
+        }
+      ]
+    }
+  ]
+}
