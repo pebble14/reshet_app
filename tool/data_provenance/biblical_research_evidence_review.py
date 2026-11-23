@@ -569,13 +569,6 @@ def _joined(values: list[object]) -> str:
     return " / ".join(rendered) if rendered else "—"
 
 
-def _html_joined(values: list[object]) -> str:
-    rendered = [
-        _html_inline(value) for value in values if value is not None and str(value)
-    ]
-    return " / ".join(rendered) if rendered else "—"
-
-
 def _reference_only_plain_text(value: object) -> str:
     if value is None:
         return "—"
@@ -893,7 +886,7 @@ def _render_occurrence_table(lines: list[str], packet: dict[str, Any]) -> None:
         ]
         lines.append(
             "| "
-            f"{_inline(occurrence['canonical_verse_key'])} | "
+            f"[[#{_inline(occurrence['canonical_verse_key'])}]] | "
             f"{_inline(occurrence['surface'])} | "
             f"{_inline(occurrence['morphology'])} | "
             + " | ".join(values)
@@ -901,12 +894,34 @@ def _render_occurrence_table(lines: list[str], packet: dict[str, Any]) -> None:
         )
 
 
-def _render_source_detail(
+def _verse_cell(value: object) -> str:
+    return re.sub(r"([*\[\]_~])", r"\\\1", _inline(value))
+
+
+def _render_source_rows(
     lines: list[str], source_id: str, label: str, reference: dict[str, Any]
 ) -> None:
+    status = _inline(reference["status"])
+    if not reference["records"]:
+        lines.append(f"| {label} | — | — | — | {status} |")
+        return
+    for record in reference["records"]:
+        if source_id == "korean_new_translation":
+            expression = "N/A — 구절 단위 참고"
+        else:
+            tokens = record["matched_translation_tokens"]
+            expression = " / ".join(map(_verse_cell, tokens)) or "—"
+        lines.append(
+            f"| {label} | {_inline(record['source_verse_key'])} | "
+            f"{_verse_cell(record['full_verse'])} | {expression} | {status} |"
+        )
+
+
+def _render_source_lookup(
+    lines: list[str], label: str, reference: dict[str, Any]
+) -> None:
     lookup_key = reference.get(
-        "target_lookup_verse_key",
-        reference.get("requested_canonical_verse_key"),
+        "target_lookup_verse_key", reference["requested_canonical_verse_key"]
     )
     selection_reason = reference.get(
         "reference_selection_reason", "legacy_canonical_key"
@@ -916,125 +931,117 @@ def _render_source_detail(
         "manual_review_required",
         reference["status"] == "manual_review_required",
     )
-    lines.extend(
-        [
-            "",
-            f"<h4>{_html_inline(label)}</h4>",
-            "",
-            "<ul>",
-            f"<li>상태: <code>{_html_inline(reference['status'])}</code></li>",
-            "<li>target reference profile: "
-            f"<code>{_html_inline(reference_profile)}</code></li>",
-            "<li>선택한 lookup reference: "
-            f"<code>{_html_inline(lookup_key, empty='N/A — 자동 lookup 생략')}</code></li>",
-            "<li>reference 선택 근거: "
-            f"<code>{_html_inline(selection_reason)}</code></li>",
-            f"<li>manual review: {_yes_no(bool(manual_review))}</li>",
-        ]
+    lookup = _html_inline(lookup_key, empty="N/A — 자동 lookup 생략")
+    lines.append(
+        f"<li><strong>{_html_inline(label)}</strong> · "
+        f"프로필: <code>{_html_inline(reference_profile)}</code> · "
+        f"선택한 lookup reference: <code>{lookup}</code> · "
+        f"선택 근거: <code>{_html_inline(selection_reason)}</code> · "
+        f"manual review: {_yes_no(manual_review)}</li>"
     )
-    if source_id == "korean_new_translation":
-        lines.append("<li>target 표현: N/A — verse-level reference only</li>")
-    if not reference["records"]:
-        if reference["status"] == "manual_review_required":
-            lines.extend(
-                ["<li>자료: 자동 lookup 생략 — manual review required</li>", "</ul>"]
-            )
-        else:
-            lines.extend(["<li>자료: unmatched</li>", "</ul>"])
-        return
-    for index, record in enumerate(reference["records"], start=1):
-        prefix = f"자료 {index}" if len(reference["records"]) > 1 else "자료"
-        lines.append(
-            f"<li>{prefix} 구절: "
-            f"<code>{_html_inline(record['source_verse_key'])}</code></li>"
-        )
-        lines.append(
-            f"<li>{prefix} 본문: {_html_inline(record['full_verse'])}</li>"
-        )
-        if source_id != "korean_new_translation":
+
+
+def _render_source_entries(
+    lines: list[str], label: str, reference: dict[str, Any]
+) -> None:
+    for record in reference["records"]:
+        entries = record.get("matched_source_entries", [])
+        for index, entry in enumerate(entries, 1):
+            parts = [
+                f"표면형={_html_inline(entry.get('surface'))}",
+                f"lemma={_html_inline(entry.get('lemma'))}",
+                f"음역={_html_inline(entry.get('transliteration'))}",
+                f"형태={_html_inline(entry.get('morphology'))}",
+                f"번역={_html_inline(entry.get('translation'))}",
+            ]
             lines.append(
-                f"<li>{prefix} matched 표현: "
-                f"{_html_joined(record['matched_translation_tokens'])}</li>"
+                f"<li>{_html_inline(label)} {_html_inline(record['source_verse_key'])} "
+                f"대응 항목 {index} · " + " · ".join(parts) + "</li>"
             )
-        if source_id == "original_language_analysis":
-            for entry_index, entry in enumerate(
-                record.get("matched_source_entries", []), start=1
-            ):
-                parts = [
-                    f"표면형={_html_inline(entry.get('surface'))}",
-                    f"lemma={_html_inline(entry.get('lemma'))}",
-                    f"음역={_html_inline(entry.get('transliteration'))}",
-                    f"형태={_html_inline(entry.get('morphology'))}",
-                    f"번역={_html_inline(entry.get('translation'))}",
-                ]
-                lines.append(
-                    f"<li>{prefix} matched source entry {entry_index}: "
-                    + "; ".join(parts)
-                    + "</li>"
-                )
-    lines.append("</ul>")
 
 
-def _render_occurrence_details(lines: list[str], packet: dict[str, Any]) -> None:
-    lines.extend(
-        [
-            "",
-            "## Occurrence 상세",
-            "",
-            "필요한 구절만 펼쳐 원문 전체와 verse-level 참고자료를 확인한다.",
-        ]
-    )
-    for occurrence in packet["canonical_occurrences"]:
-        source_base_verse_key = occurrence.get(
-            "source_base_verse_key", occurrence["canonical_verse_key"]
+def _source_reference_groups(
+    occurrences: list[dict[str, Any]], source_id: str
+) -> list[tuple[dict[str, Any], list[int]]]:
+    groups: list[tuple[dict[str, Any], list[int]]] = []
+    for index, occurrence in enumerate(occurrences, 1):
+        reference = occurrence["local_references"][source_id]
+        for previous, indexes in groups:
+            if reference == previous:
+                indexes.append(index)
+                break
+        else:
+            groups.append((reference, [index]))
+    return groups
+
+
+def _render_verse_tokens(
+    lines: list[str], verse: str, occurrences: list[dict[str, Any]]
+) -> None:
+    for index, occurrence in enumerate(occurrences, 1):
+        lines.append(
+            f"- 원어형 {index} · {_inline(occurrence['surface'])} · "
+            f"lemma {_inline(occurrence['lemma'])} · "
+            f"형태 {_inline(occurrence['morphology'])} · "
+            f"{_inline(occurrence['normalized_standard_strong'])}"
         )
-        alternate_labels = [
+        base = occurrence.get("source_base_verse_key", verse)
+        raw = occurrence.get("source_reference_raw")
+        raw_label = f" (raw {_inline(raw)})" if raw else ""
+        lines.append(f"  - 원자료 장절 · {_inline(base)}{raw_label}")
+        alternates = [
             _source_reference_alternate_label(alternate)
             for alternate in occurrence.get("source_reference_alternates", [])
         ]
-        summary = (
-            f"{_html_inline(occurrence['canonical_verse_key'])} — "
-            f"{_html_inline(occurrence['surface'])} / "
-            f"{_html_inline(occurrence['morphology'])}"
+        if alternates:
+            lines.append(f"  - source-provided alternates: {_joined(alternates)}")
+        if occurrence["warnings"]:
+            lines.append(f"  - 경고 · {_joined(occurrence['warnings'])}")
+
+
+def _render_occurrence_details(lines: list[str], packet: dict[str, Any]) -> None:
+    lines.extend(["", "## Occurrence 상세", ""])
+    verses: dict[str, list[dict[str, Any]]] = {}
+    for occurrence in packet["canonical_occurrences"]:
+        verses.setdefault(occurrence["canonical_verse_key"], []).append(occurrence)
+    if not verses:
+        lines.append("표시할 정본 구절이 없다.")
+        return
+
+    lines.append("비교표의 장절 링크를 누르면 구절별 판본 대조표로 이동한다.")
+    for verse, occurrences in verses.items():
+        lines.extend(["", f"### {_inline(verse)}", ""])
+        _render_verse_tokens(lines, verse, occurrences)
+        lines.extend(
+            [
+                "",
+                "| 자료 | 판본 장절 | 본문 | 대응 표현 | 대조 상태 |",
+                "|---|---|---|---|---|",
+            ]
         )
+        lookup_details: list[str] = []
+        for source_id, label in LOCAL_SOURCE_ORDER:
+            groups = _source_reference_groups(occurrences, source_id)
+            for reference, indexes in groups:
+                row_label = label
+                if len(groups) > 1:
+                    numbers = ", ".join(map(str, indexes))
+                    row_label = f"{label} (원어형 {numbers})"
+                _render_source_rows(lines, source_id, row_label, reference)
+                _render_source_lookup(lookup_details, row_label, reference)
+                if source_id == "original_language_analysis":
+                    _render_source_entries(lookup_details, row_label, reference)
         lines.extend(
             [
                 "",
                 "<details>",
-                f"<summary>{summary}</summary>",
-                "",
+                "<summary>판본 대조 근거</summary>",
                 "<ul>",
-                "<li>source-native/base reference: "
-                f"<code>{_html_inline(source_base_verse_key)}</code></li>",
-                "<li>source-provided alternates: "
-                f"{_html_joined(alternate_labels)}</li>",
-                f"<li>원어형: {_html_inline(occurrence['surface'])}</li>",
-                f"<li>lemma: {_html_inline(occurrence['lemma'])}</li>",
-                f"<li>morphology: {_html_inline(occurrence['morphology'])}</li>",
-                "<li>normalized Strong: "
-                f"<code>{_html_inline(occurrence['normalized_standard_strong'])}</code></li>",
+                *lookup_details,
+                "</ul>",
+                "</details>",
             ]
         )
-        if occurrence.get("source_reference_raw"):
-            lines.append(
-                "<li>source reference: "
-                f"<code>{_html_inline(occurrence['source_reference_raw'])}</code></li>"
-            )
-        if occurrence["warnings"]:
-            lines.append(
-                f"<li>warning: {_html_joined(occurrence['warnings'])}</li>"
-            )
-        else:
-            lines.append("<li>warning: —</li>")
-        lines.append("</ul>")
-        for source_id, label in LOCAL_SOURCE_ORDER:
-            _render_source_detail(
-                lines,
-                source_id,
-                label,
-                occurrence["local_references"][source_id],
-            )
-        lines.extend(["", "</details>"])
 
 
 def _render_provenance(lines: list[str], packet: dict[str, Any]) -> None:

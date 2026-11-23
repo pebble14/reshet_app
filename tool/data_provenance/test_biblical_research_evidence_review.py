@@ -351,10 +351,10 @@ class BiblicalResearchEvidenceReviewTest(unittest.TestCase):
     def test_occurrence_table_preserves_multiple_tokens_and_unmatched(self) -> None:
         output = review.render_review(_packet())
         first_row = next(
-            line for line in output.splitlines() if line.startswith("| Matthew.1.20 |")
+            line for line in output.splitlines() if line.startswith("| [[#Matthew.1.20]] |")
         )
         second_row = next(
-            line for line in output.splitlines() if line.startswith("| Matthew.4.11 |")
+            line for line in output.splitlines() if line.startswith("| [[#Matthew.4.11]] |")
         )
         self.assertIn("사자가 / 사자에게", first_row)
         self.assertIn("| unmatched |", second_row)
@@ -364,32 +364,72 @@ class BiblicalResearchEvidenceReviewTest(unittest.TestCase):
         output = review.render_review(_packet())
         self.assertNotIn("자동추측어", output)
         self.assertIn("자동 target 표현 집계 N/A — verse-level reference only", output)
-        self.assertIn("target 표현: N/A — verse-level reference only", output)
+        self.assertIn(
+            "| 새번역 | Matthew.1.20 | 새번역 표본 절 | N/A — 구절 단위 참고 | matched |",
+            output,
+        )
 
     def test_details_include_full_verse_and_structured_source_entry(self) -> None:
         output = review.render_review(_packet())
-        self.assertIn("<details>", output)
-        self.assertIn("<summary>Matthew.1.20 — ἄγγελος / N-NSM</summary>", output)
-        self.assertIn(
-            "<li>source-native/base reference: "
-            "<code>Matthew.1.20</code></li>",
-            output,
-        )
-        self.assertIn(
-            "<li>선택한 lookup reference: "
-            "<code>Matthew.1.20</code></li>",
-            output,
-        )
-        self.assertIn(
-            "<li>reference 선택 근거: "
-            "<code>same_key_no_source_conflict</code></li>",
-            output,
-        )
+        detail = output.split("### Matthew.1.20\n")[1].split("### Matthew.4.11\n")[0]
+        table, lookup = detail.split("<details>", 1)
+        self.assertIn("- 원어형 1 · ἄγγελος · lemma ἄγγελος · 형태 N-NSM", table)
+        self.assertIn("원자료 장절 · Matthew.1.20 (raw Mat.1.20)", table)
+        self.assertIn("| 자료 | 판본 장절 | 본문 | 대응 표현 | 대조 상태 |", table)
         for label in ("개역개정", "개역한글", "KJV", "원전분해", "새번역"):
-            self.assertIn(f"<h4>{label}</h4>", output)
-        self.assertIn("새번역 표본 절", output)
-        self.assertIn("matched source entry 1", output)
-        self.assertIn("번역=사자가", output)
+            self.assertIn(f"| {label} | Matthew.1.20 |", table)
+        self.assertIn(
+            "| KJV | Matthew.1.20 | KJV sample verse | messenger | matched |",
+            table,
+        )
+        self.assertIn("<summary>판본 대조 근거</summary>", lookup)
+        self.assertIn("선택한 lookup reference: <code>Matthew.1.20</code>", lookup)
+        self.assertIn("선택 근거: <code>same_key_no_source_conflict</code>", lookup)
+        self.assertIn("원전분해 Matthew.1.20 대응 항목 1", lookup)
+        self.assertIn("번역=사자가", lookup)
+
+    def test_same_verse_shares_heading_and_preserves_distinct_source_records(self) -> None:
+        packet = _packet()
+        first = packet["canonical_occurrences"][0]
+        second = deepcopy(first)
+        second["surface"] = "ἀγγέλου"
+        second["morphology"] = "N-GSM"
+        kjv_reference = second["local_references"]["kjv"]
+        kjv_reference["target_lookup_verse_key"] = "Matthew.1.19"
+        kjv_reference["records"] = [
+            {
+                "source_verse_key": "Matthew.1.19",
+                "full_verse": "First alternate",
+                "matched_translation_tokens": ["first"],
+            },
+            {
+                "source_verse_key": "Matthew.1.21",
+                "full_verse": "Second alternate",
+                "matched_translation_tokens": ["second"],
+            },
+        ]
+        packet["canonical_occurrences"].append(second)
+        packet["summary"]["canonical_occurrence_count"] = 3
+
+        output = review.render_review(packet)
+        self.assertEqual(output.count("### Matthew.1.20\n"), 1)
+        self.assertEqual(output.count("| [[#Matthew.1.20]] |"), 2)
+        detail = output.split("### Matthew.1.20\n")[1].split("### Matthew.4.11\n")[0]
+        self.assertIn("- 원어형 1 · ἄγγελος", detail)
+        self.assertIn("- 원어형 2 · ἀγγέλου", detail)
+        self.assertEqual(detail.count("| 개역개정 | Matthew.1.20 |"), 1)
+        self.assertIn(
+            "| KJV (원어형 1) | Matthew.1.20 | KJV sample verse | messenger | matched |",
+            detail,
+        )
+        self.assertIn(
+            "| KJV (원어형 2) | Matthew.1.19 | First alternate | first | matched |",
+            detail,
+        )
+        self.assertIn(
+            "| KJV (원어형 2) | Matthew.1.21 | Second alternate | second | matched |",
+            detail,
+        )
 
     def test_manual_review_is_distinct_from_unmatched_and_shows_candidates(self) -> None:
         packet = _packet()
@@ -422,7 +462,7 @@ class BiblicalResearchEvidenceReviewTest(unittest.TestCase):
         output = review.render_review(packet)
 
         first_row = next(
-            line for line in output.splitlines() if line.startswith("| Matthew.1.20 |")
+            line for line in output.splitlines() if line.startswith("| [[#Matthew.1.20]] |")
         )
         self.assertIn("manual_review_required", first_row)
         self.assertIn(
@@ -431,14 +471,11 @@ class BiblicalResearchEvidenceReviewTest(unittest.TestCase):
             output,
         )
         self.assertIn(
-            "<li>선택한 lookup reference: "
-            "<code>N/A — 자동 lookup 생략</code></li>",
+            "선택한 lookup reference: <code>N/A — 자동 lookup 생략</code>",
             output,
         )
-        self.assertIn(
-            "자료: 자동 lookup 생략 — manual review required",
-            output,
-        )
+        self.assertIn("| 개역개정 | — | — | — | manual_review_required |", output)
+        self.assertIn("| 개역한글 | — | — | — | unmatched |", output)
 
     def test_details_escape_html_without_damaging_multilingual_text(self) -> None:
         packet = _packet()
@@ -447,14 +484,15 @@ class BiblicalResearchEvidenceReviewTest(unittest.TestCase):
             "original_language_analysis"
         ]
         original_reference["records"][0]["full_verse"] = (
-            "דְּאָגָה <WH1674> & 원전분해 표본 절"
+            "דְּאָגָה <WH1674> & 원전분해 | [표본] *절*\n다음 줄"
         )
 
         output = review.render_review(packet)
 
         self.assertIn("ἄγγελος", output)
         self.assertIn(
-            "דְּאָגָה &lt;WH1674&gt; &amp; 원전분해 표본 절", output
+            r"דְּאָגָה &lt;WH1674&gt; &amp; 원전분해 \| \[표본\] \*절\* 다음 줄",
+            output,
         )
         self.assertNotIn("<WH1674>", output)
 
