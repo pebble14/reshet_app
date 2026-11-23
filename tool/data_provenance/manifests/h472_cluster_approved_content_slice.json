@@ -1,0 +1,353 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H472-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h472_approval_20261124/00_user_approval.json",
+    "document_sha256": "827de9c9e2c348353478baef38bdab963cd536fd5a8d62fd48800646aaac54b8"
+  },
+  "target": {
+    "expected_work_sha256": "1a245a7fb57937328206ea702a29d9cb2d063632b39aa07a1ca6f7dc3a84e8aa",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0472_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "엘리세바"
+        },
+        {
+          "seq": 2,
+          "meaning": "뜻풀이: 하나님께서 맹세하신다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엘리세바·엘리-셰바 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "G1665_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "엘리사벳[하나님께서 맹세하신다]"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엘리사벳·엘리-셰바 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H7650_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "맹세하다"
+        },
+        {
+          "seq": 2,
+          "meaning": "부탁하다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "맹세하다(盟誓하다)"
+        },
+        {
+          "seq": 2,
+          "meaning": "맹세하게 하다(盟誓하게 하다)"
+        }
+      ]
+    },
+    {
+      "word_id": "H7651_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "일곱[7]"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "일곱"
+        }
+      ]
+    },
+    {
+      "word_id": "H7621_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "맹세, 저주"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "맹세(盟誓)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0884_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "브엘세바 (지)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "브엘세바·베에르-셰바 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3089_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "여호세바 Jehosheba"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "여호세바·예호-셰바 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3090_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "여호사브앗 Jehoshabeath"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "여호사브앗·여호세바·예호-샤브아트 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0472_0000",
+      "before": null,
+      "after": "아론의 아내로, 암미나답의 딸이자 나손의 누이이다(출 6:23). 엘리세바는 성경 관용명이고 엘리-셰바는 히브리어 교재식 읽기를 근사하여 엘과 뒷요소의 경계를 보인 표기다. Strong과 BDB는 뒷요소를 맹세와 연결하고, HebGrkKo는 ‘하나님께서 맹세하신다’로 풀이한다. 비교 인명학에서는 셈어의 포만·풍요 어근을 근거로 ‘하나님은 풍요이시다’라는 해석도 제안한다. 이름의 정확한 어원 풀이는 미확정이다."
+    },
+    {
+      "word_id": "G1665_0000",
+      "before": null,
+      "after": "엘리사벳은 누가복음 1장의 사가랴의 아내이자 세례 요한의 어머니이다. 엘리사베트는 헬라어 Ἐλισάβετ의 교재식 읽기 근사이고, 엘리-셰바는 원천 히브리어 이름의 구성 경계를 보인 표기다. 출애굽기 6:23의 칠십인역에는 아론의 아내 이름이 ελισαβεθ로 나타나며, 누가복음의 이름은 마지막 글자가 τ이다. 두 본문은 서로 다른 여성을 가리킨다. 이름의 어원 풀이에는 맹세와 풍요 해석이 있다."
+    },
+    {
+      "word_id": "H7650_0000",
+      "before": null,
+      "after": "니팔은 사실이나 약속을 엄숙히 맹세하는 것이고, 히필은 상대에게 맹세를 요구하거나 맹세를 걸어 엄히 당부하는 것이다(스 10:5, 아 2:7). 지켜야 할 맹세의 내용은 문맥에 따라 달라진다. 렘 5:7의 ‘배불리 먹이다’는 같은 절에 있는 별도 어근 H7646이다. 겔 21:28(개역 21:23)의 맹약 구절은 형태와 해석이 갈린다. ‘일곱’과의 역사적 관계는 창 21장의 말놀이와 구별하여 가설로 둔다."
+    },
+    {
+      "word_id": "H7651_0000",
+      "before": null,
+      "after": "기수 일곱이다. 명사의 수량, 날짜·재위 연도의 순서, 복합수의 일곱 부분을 표시한다. 동작에 붙으면 일곱 번 또는 일곱 배로 옮길 수 있고, 시적 문맥에서는 반복과 강도를 강조한다(레 26:18, 잠 24:16). 이레는 일곱 날이라는 기간 표현이고, 독립된 기간 단위 표제는 H7620이다. 삼하 21:9의 케레는 ‘그 일곱 모두’이며 같은 자리에 케티브 이형이 기록되어 있다."
+    },
+    {
+      "word_id": "H7621_0000",
+      "before": null,
+      "after": "말의 진실이나 약속의 이행을 엄숙히 보증하는 맹세, 또는 그렇게 한 말이다. 어길 때 받을 저주를 함께 선언할 수 있고, 사 65:15에서는 이름이 저주의 공식에 쓰이는 맹셋거리가 된다. 이 절의 확보 칠십인역은 ‘충만’으로 옮긴다. 겔 21:28(개역 21:23)과 합 3:9의 표현에는 본문·구문 해석의 불확실성이 있다."
+    },
+    {
+      "word_id": "H0884_0000",
+      "before": null,
+      "after": "브엘세바는 우물과 그 성읍의 성경 관용명이고, 베에르-셰바는 ‘우물’의 베에르(H0875)와 뒷요소의 경계를 보인 교재식 근사다. 창 21:28–31은 암양 일곱 마리와 두 사람의 맹세를 함께 전한다. 창 26:31–33도 맹세와 우물의 이름 시바를 연결한다. 확보 칠십인역 창세기는 이름을 ‘맹세의 우물’로 번역한다. ‘일곱’과 ‘맹세’ 중 어느 쪽에서 이름이 역사적으로 형성되었는지는 미확정이다."
+    },
+    {
+      "word_id": "H3089_0000",
+      "before": null,
+      "after": "왕하 11:2에서 아달랴가 왕자들을 죽일 때 조카 요아스를 숨긴 여호람의 딸이다. 대하 22:11의 여호사브앗(H3090)과 같은 사람이다. 예호-셰바는 히브리어 교재식 근사로, 앞부분은 여호와의 신명 요소다. 뒷부분은 맹세와 연결하는 사전 풀이와 풍요를 뜻한다는 비교 인명학 풀이가 함께 있다."
+    },
+    {
+      "word_id": "H3090_0000",
+      "before": null,
+      "after": "대하 22:11에서 요아스를 숨긴 여호람의 딸이자 제사장 여호야다의 아내이다. 왕하 11:2의 여호세바(H3089)와 같은 여성이다. 개역 계열의 여호사브앗과 새번역 본문의 여호세바를 함께 적었고, 예호-샤브아트는 현재 히브리어 표제의 교재식 근사이다. 앞부분은 여호와의 신명 요소다. 두 이름형의 역사적 형성 방향과 뒷요소의 정확한 어원은 미확정이다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H7621_0000",
+      "word_id_2": "H7650_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "고정 Hebrew Strong XML H7621 및 OSHB 민 30:3"
+    },
+    {
+      "word_id_1": "H0875_0000",
+      "word_id_2": "H0884_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "고정 Hebrew Strong XML H0884 및 OSHB 창 21:31·26:33"
+    },
+    {
+      "word_id_1": "H0884_0000",
+      "word_id_2": "H7650_0000",
+      "category_code": "unspecified",
+      "relation_type": "related",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "창 21:31과 26:31–33은 맹세와 이 지명의 명명 전승을 연결한다.",
+      "source": "OSHB 창 21:31·26:31–33"
+    },
+    {
+      "word_id_1": "H0884_0000",
+      "word_id_2": "H7651_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "hypothesized",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "창 21:28–31의 일곱 암양과 이름 뒷부분이 관련될 수 있다. 본문과 칠십인역에는 맹세의 우물 풀이도 전해진다.",
+      "source": "고정 Hebrew Strong XML H0884 및 OSHB 창 21:28–31"
+    },
+    {
+      "word_id_1": "H3068_0000",
+      "word_id_2": "H3089_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "고정 Hebrew Strong XML H3089 및 OSHB 왕하 11:2"
+    },
+    {
+      "word_id_1": "H3068_0000",
+      "word_id_2": "H3090_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "고정 Hebrew Strong XML H3089·H3090 및 OSHB 왕하 11:2·대하 22:11"
+    },
+    {
+      "word_id_1": "H3089_0000",
+      "word_id_2": "H3090_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": null,
+      "source": "고정 Hebrew Strong XML H3089·H3090 및 OSHB 왕하 11:2·대하 22:11"
+    }
+  ],
+  "relation_replacements": [
+    {
+      "relation_id": 3872,
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H0472_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "고정 Hebrew Strong XML H0472 및 BDB אֱלִישֶׁבַע"
+      }
+    },
+    {
+      "relation_id": 3873,
+      "word_id_1": "G1665_0000",
+      "word_id_2": "H0472_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "transliteration",
+        "relation_type": "direct_transliteration",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "고정 Greek Strong XML G1665, OSHB 출 6:23, TAGNT 눅 1장 및 확보 LXX 출 6:23"
+      }
+    },
+    {
+      "relation_id": 3871,
+      "word_id_1": "H7650_0000",
+      "word_id_2": "H7651_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "etymological",
+        "relation_type": "root_shared",
+        "status_code": "hypothesized",
+        "direction_code": "undirected",
+        "description": null,
+        "relation_group_id": null,
+        "note": "창 21:28–31에서 일곱 암양과 두 사람의 맹세가 이름 설명에 함께 나타난다. 두 표제 사이의 역사적 파생 방향은 미확정이다.",
+        "source": "고정 Hebrew Strong XML H7650·H7651, OSHB 창 21:28–31 및 Klein שׁבע"
+      }
+    }
+  ],
+  "supersedes": [],
+  "meaning_approvals": []
+}

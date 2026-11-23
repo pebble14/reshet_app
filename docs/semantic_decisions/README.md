@@ -40,6 +40,7 @@
 
 | 결정 단위 | 대상 | 상태 | 복원 수준 | 결정/최초 적용일 | 기록 |
 |---|---|---|---|---|---|
+| H472 엘리세바와 일곱·맹세 어휘군 | R1 8어휘·뜻9·비고8·신규관계7·교체3, 새 hold 없음 | active | 높음 | 2026-11-24 | [결정 기록](h472_cluster_approved_content_slice.md) |
 | H471 엘리아김 어휘군 | R2 뜻11·비고11·신규관계14·교체3, 새 hold 없음 | active | 높음 | 2026-11-23 | [결정 기록](h471_cluster_approved_content_slice.md) |
 | H470 엘리가와 토하다 어휘군 | R2 뜻6·비고6·신규관계4, 새 hold 없음 | active | 높음 | 2026-11-23 | [결정 기록](h470_cluster_approved_content_slice.md) |
 | H469 숨김·방위 및 인명 어휘군 | 의미 교체8·현행 승인1·비고9·신규관계8, 새 hold 없음 | active | 높음 | 2026-11-23 | [결정 기록](h469_cluster_approved_content_slice.md) |
