@@ -2062,3 +2062,7 @@ H0336 의미 유지 승인 1건, 의미 교체 3건, 비고 4건, 관계 신규 
 ### H470 엘리가와 토하다 어휘군 승인 반영 (2026-11-23)
 
 [승인 매니페스트](../../tool/data_provenance/manifests/h470_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h470_cluster_approved_content_slice.md)에 R2의 뜻과 비고 각 6건, 신규 관계 4건(ID 8548–8551)을 반영했다. 공식 사본 적용·undo, 적용기 테스트 31개와 독립 SQL 검증을 통과했다. 변경 이력은 16행이다. 공식 진행표는 승인 1,160, 미승인 13,131, hold 7, 이상 항목 113이다.
+
+### H471 엘리아김 어휘군 승인 반영 (2026-11-23)
+
+[승인 매니페스트](../../tool/data_provenance/manifests/h471_cluster_approved_content_slice.json)와 [결정 기록](../semantic_decisions/h471_cluster_approved_content_slice.md)에 R2 뜻·비고 각 11건, 신규 관계 14건 및 교체 3건을 반영했다. 공식 사본 적용·undo, 적용기 테스트 31개와 독립 SQL 검증을 통과했다. 이력 39행, 공식 진행표 승인 1,171건, 미승인 13,120건, hold 7건, 이상 항목 113건이다.

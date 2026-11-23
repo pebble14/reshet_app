@@ -1,0 +1,489 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H471-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h471_approval_20261123/00_user_approval.json",
+    "document_sha256": "56176b0384e8294288bb42e82e7c5126e6c65abada6c00dd4faf6a07eebc5440"
+  },
+  "target": {
+    "expected_work_sha256": "8a56c9e3e3fa13a44f9bb53fe5b7b70e8ee8202cfb5d5624262e538fdad8fbd3",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0471_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "엘리야김/엘리아김"
+        },
+        {
+          "seq": 2,
+          "meaning": "뜻풀이: 신께서 세우셨다/ 하나님께서 세우셨다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엘리야김·엘리아김·엘-야킴 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "G1662_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "엘리아김[신께서 세우셨다/ 하나님께서 세우셨다]"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엘리아김·엘리야김·엘-야킴 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3079_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "여호야김 Jehoiakim(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "여호야김·예호-야킴 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3113_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "요야김 Joiakim(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "요야김·요-야킴 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3137_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "요김 Jokim(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "요김·요-킴 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "G0885_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아킴"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아킴·아케임 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3356_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "야김 Jakim(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "야김·야킴 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3359_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "여가먀 Jekamiah(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "여가먀·예캄-야 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H7055_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "그무엘 Kemuel"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "그므엘·그무엘·케무-엘 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3360_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "여가므암 Jekameam(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "여가므암·예캄-암 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3361_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "욕므암 Jokmeam"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "욕므암·요크메-암 (지)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0471_0000",
+      "before": null,
+      "after": "힐기야의 아들이자 히스기야의 궁내대신, 여호야김으로 개명한 요시야의 아들, 예루살렘 성벽 봉헌에 참여한 제사장에게 쓰인 남성 이름이다. 개역 계열은 왕하 18–19장에서 엘리야김으로, 이사야의 평행 기사와 왕의 개명 기사 및 느 12:41에서는 엘리아김으로 적는다. 새번역은 해당 구약 용례에서 엘리야김으로 적는다. 엘-야킴은 신명 요소 אֶל과 קוּם의 사역형 יָקִים의 경계를 드러낸 교재식 근사다. 이름 내부의 라메드 아래 셰와는 묵음이며 라메드로 첫 음절을 닫는다. 합성 이름을 ‘하나님이 세우신다’로 풀이할 수 있다."
+    },
+    {
+      "word_id": "G1662_0000",
+      "before": null,
+      "after": "마 1:13의 아비훗과 아소르 사이 인물, 눅 3:30–31의 요남과 멜레아 사이 인물에게 쓰인 남성 이름이다. 엘리아김은 개역 계열, 엘리야김은 새번역의 표기다. 엘리아케임은 Strong 표제 Ἐλιακείμ의 교재식 근사다. 정본 신약의 Ἐλιακίμ은 엘리아킴으로 읽을 수 있다. 엘-야킴은 이 헬라어 음역의 원천인 히브리어 H0471의 구성 경계를 보여 준다."
+    },
+    {
+      "word_id": "H3079_0000",
+      "before": null,
+      "after": "요시야의 아들인 유다 왕의 이름이다. 왕하 23:34와 대하 36:4에서 바로 느고가 이전 이름 엘리야김을 여호야김으로 바꾼다. 예호-야킴은 여호와 이름의 결합형 יְהוֹ와 קוּם에서 나온 יָקִים의 경계를 보이는 교재식 근사다. ‘여호와께서 세우신다’로 풀이할 수 있다. 렘 27:1의 마소라 본문은 여호야김을 적지만 새번역은 시드기야로 읽으며, 확보한 칠십인역에는 이 표제가 빠져 있다. 왕하 24:6의 히브리어는 여호야김과 뒤를 이은 아들 여호야긴의 이름을 구별한다."
+    },
+    {
+      "word_id": "H3113_0000",
+      "before": null,
+      "after": "예수아의 아들이자 엘리아십의 아버지인 제사장 계보 인물의 이름이다(느 12:10, 12, 26). 요야김은 한국어 성경 표기이고 요-야킴은 신명 단축 요소 יוֹ와 יָקִים의 결합을 드러낸 교재식 근사다. 여호야김 이름의 짧은 형태와 대응한다."
+    },
+    {
+      "word_id": "H3137_0000",
+      "before": null,
+      "after": "대상 4:22의 유다 계보에서 셀라의 자손 목록에 나오는 남성 이름이다. 요김은 한국어 성경 표기이고 요-킴은 Strong이 요-야킴(H3113)의 이형으로 설명한 짧은 형태의 교재식 근사다. 확보 칠십인역은 ιωακιμ으로 적는다."
+    },
+    {
+      "word_id": "G0885_0000",
+      "before": null,
+      "after": "마 1:14에서 사독과 엘리웃 사이에 있는 남성 이름이다. 두 토큰이 같은 사람을 가리킨다. 아킴은 한국어 성경의 관용 표기이면서 정본 Ἀχίμ의 교재식 근사다. 아케임은 Strong 표제 Ἀχείμ의 철자를 읽은 근사다. Strong은 히브리어 기원을 추정하며 요김(H3137)과 비교한다. 야김(H3356)을 원천으로 보는 견해도 있다. 대상 24:17의 칠십인역 일부에는 야긴(H3199)을 신약 아킴과 같은 철자로 적은 예가 있다. 마태의 이름에 대응하는 히브리어 형태는 미확정이다."
+    },
+    {
+      "word_id": "H3356_0000",
+      "before": null,
+      "after": "베냐민 계보의 인물과 열두째 제사장 반열을 대표하는 인물에게 쓰인 이름이다(대상 8:19, 24:12). 야김은 한국어 성경 표기이고 야킴은 יָקִים의 교재식 근사다. 같은 형태의 동사가 신 18:15에서 ‘세우다’로 쓰인다. Strong은 이 이름을 קוּם에서 ‘그가 세우신다’로 풀이한다. 특정 장형과의 연결은 사전에서 제시한 가설로 남는다."
+    },
+    {
+      "word_id": "H3359_0000",
+      "before": null,
+      "after": "대상 2:41에서 살룸의 아들이자 엘리사마의 아버지, 대상 3:18에서 여고냐 집안의 다른 인물에게 쓰인 이름이다. 여가먀는 한국어 성경 표기이고 예캄-야는 동사 요소와 신명 단축 요소 야의 경계를 보인 교재식 근사다. Strong은 ‘야께서 일어나신다’로, 한국어 참고 사전은 ‘여호와께서 세우실 것이다’로 풀이한다. 정확한 동사 형태와 역사적 이름 풀이에는 이견이 있다."
+    },
+    {
+      "word_id": "H7055_0000",
+      "before": null,
+      "after": "나홀의 아들이자 아람의 아버지, 에브라임의 대표인 십단의 아들, 레위 지도자 하사뱌의 아버지에게 쓰인 이름이다. 그므엘은 창 22:21과 민 34:24, 그무엘은 대상 27:17의 한국어 성경 표기다. 케무-엘은 표제의 교재식 근사로 끝의 엘 구성 요소를 드러낸다. Strong은 קוּם과 엘을 연결하여 ‘하나님이 일으키신 이’로 풀이한다. ‘하나님이 일어나셨다’와 ‘캄은 신이다’라는 다른 분석도 있다."
+    },
+    {
+      "word_id": "H3360_0000",
+      "before": null,
+      "after": "대상 23:19에서 레위 계보 헤브론의 넷째 아들로 나오며, 대상 24:23의 평행 목록에서도 넷째 위치에 놓인다. 여가므암은 한국어 성경 표기이고 예캄-암은 יְקַמְ과 עָם의 경계를 드러낸 교재식 근사다. 요드 아래의 어두 셰와는 약모음으로 읽고, 짧은 파타흐 뒤 멤의 셰와는 묵음이어서 ‘캄’으로 닫힌다. Strong은 ‘백성이 일어난다’로 풀이한다. ‘친족이 세워 주기를’이라는 분석과 뒤 요소를 신명 ʿAm으로 보는 분석도 있어 정확한 이름 풀이는 미확정이다."
+    },
+    {
+      "word_id": "H3361_0000",
+      "before": null,
+      "after": "대상 6:68(마소라 본문 6:53)에서 레위인에게 분배한 에브라임 지역의 성읍 이름이다. 욕므암은 그 절의 한국어 성경 표기이고 요크메-암은 사전 표제 יׇקְמְעָם의 교재식 근사다. 왕상 4:12의 히브리어 모음형 יָקְמֳעָם은 요크모암으로 읽을 수 있으며 개역 계열과 새번역은 그 절을 욕느암으로 적는다. 두 구절의 장소를 서로 또는 여호수아서의 욕느암(H3362)과 지리적으로 동일시하는 데에는 추가 근거가 필요하다. Strong은 קוּם과 עַם을 연결하며 이름의 정확한 역사적 형성은 가설로 남는다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0471_0000",
+      "word_id_2": "H3079_0000",
+      "category_code": "unspecified",
+      "relation_type": "related",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "요시야의 아들에 대해 이전 이름 엘리야김에서 개명한 이름 여호야김으로 향한다(왕하 23:34, 대하 36:4).",
+      "source": "OSHB 왕하 23:34 및 대하 36:4"
+    },
+    {
+      "word_id_1": "H3068_0000",
+      "word_id_2": "H3079_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "H3079의 앞부분 יְהוֹ는 여호와 이름의 결합형이다.",
+      "source": "고정 Hebrew Strong XML H3079"
+    },
+    {
+      "word_id_1": "H3079_0000",
+      "word_id_2": "H6965_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "H3079의 둘째 부분 יָקִים은 קוּם의 사역형과 대응한다.",
+      "source": "고정 Hebrew Strong XML H3079 및 OSHB 신 18:15"
+    },
+    {
+      "word_id_1": "H3079_0000",
+      "word_id_2": "H3113_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "긴 형태 יְהוֹיָקִים에서 앞 신명 요소가 짧은 형태 יוֹיָקִים으로 향한다. 두 인물은 각각의 본문에서 식별한다.",
+      "source": "고정 Hebrew Strong XML H3079·H3113 및 BDB 이름군 항목"
+    },
+    {
+      "word_id_1": "H3113_0000",
+      "word_id_2": "H3137_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "요-야킴에서 짧은 이름형 요-킴으로 향한다. 인물 식별은 느헤미야와 역대기의 문맥을 따른다.",
+      "source": "고정 Hebrew Strong XML H3113·H3137 및 확보 LXX 느 12장·대상 4:22"
+    },
+    {
+      "word_id_1": "H3356_0000",
+      "word_id_2": "H6965_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "קוּם의 사역형과 같은 형태 יָקִים이 독립 인명으로 쓰인다.",
+      "source": "고정 Hebrew Strong XML H3356 및 OSHB 신 18:15·대상 8:19·24:12"
+    },
+    {
+      "word_id_1": "H3050_0000",
+      "word_id_2": "H3359_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "H3359의 끝 신명 요소는 야(H3050)와 대응한다.",
+      "source": "고정 Hebrew Strong XML H3359 및 BDB יְקַמְיָה"
+    },
+    {
+      "word_id_1": "H3359_0000",
+      "word_id_2": "H6965_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "H3359의 앞 동사 요소를 קוּם과 연결한다. 일어남과 세움 가운데 정확한 역사적 풀이는 열어 둔다.",
+      "source": "고정 Hebrew Strong XML H3359 및 BDB·HALOT יְקַמְיָה"
+    },
+    {
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H7055_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "H7055의 뒤 요소 אֵל을 이름의 구성 요소로 연결한다.",
+      "source": "고정 Hebrew Strong XML H7055 및 HALOT 8411"
+    },
+    {
+      "word_id_1": "H6965_0000",
+      "word_id_2": "H7055_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "앞 요소를 קוּם으로 보는 어원 가설이다. Qam을 신명 요소로 보는 해석도 있다.",
+      "source": "고정 Hebrew Strong XML H7055 및 HALOT 8411"
+    },
+    {
+      "word_id_1": "H3360_0000",
+      "word_id_2": "H6965_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "여가므암의 앞 동사 성분은 קוּם 계열로 분석된다.",
+      "source": "고정 Hebrew Strong XML H3360 및 BDB יְקַמְעָם"
+    },
+    {
+      "word_id_1": "H3360_0000",
+      "word_id_2": "H5971_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "hypothesized",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 ‘백성’ 구성 가설이다. 뒤 요소의 친족 또는 신명 기능에 관한 경쟁 분석이 있다.",
+      "source": "고정 Hebrew Strong XML H3360 및 BDB·HALOT 항목"
+    },
+    {
+      "word_id_1": "H3361_0000",
+      "word_id_2": "H6965_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "hypothesized",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "욕므암의 앞 동사 요소를 קוּם과 연결하는 구성 가설이다.",
+      "source": "고정 Hebrew Strong XML H3361 및 BDB 지명 항목"
+    },
+    {
+      "word_id_1": "H3361_0000",
+      "word_id_2": "H5971_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "hypothesized",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "욕므암의 뒤 요소를 ‘백성’의 עַם으로 보는 구성 가설이다.",
+      "source": "고정 Hebrew Strong XML H3361 및 BDB 지명 항목"
+    }
+  ],
+  "relation_replacements": [
+    {
+      "relation_id": 3168,
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H0471_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "H0471의 첫 신명 요소 אֶל에서 해당 합성 인명으로 향한다.",
+        "source": "고정 Hebrew Strong XML H0471 및 BDB אֶלְיָקִים"
+      }
+    },
+    {
+      "relation_id": 6351,
+      "word_id_1": "H0471_0000",
+      "word_id_2": "H6965_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련2"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "H0471의 둘째 요소 יָקִים은 קוּם과 연결되는 사역형이다.",
+        "source": "고정 Hebrew Strong XML H0471 및 OSHB 신 18:15"
+      }
+    },
+    {
+      "relation_id": 3169,
+      "word_id_1": "G1662_0000",
+      "word_id_2": "H0471_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "transliteration",
+        "relation_type": "direct_transliteration",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "히브리어 엘리아김 이름의 헬라어 음역이다. 신약 계보의 인물 식별은 각 본문을 따른다.",
+        "source": "고정 Greek Strong XML G1662 및 OSHB·TAGNT"
+      }
+    }
+  ],
+  "supersedes": [],
+  "meaning_approvals": []
+}
