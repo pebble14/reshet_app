@@ -1,0 +1,40 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H473-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h473_approval_20261124/00_user_approval.json",
+    "document_sha256": "36f20175f2fce84b68a35c47b3ec8ed74908a8733b39c99b6607539d217ace51"
+  },
+  "target": {
+    "expected_work_sha256": "e795ec2b7f37825b8c294fbf99a65d1155b68caf5b8341c2a7129ef8bb34b1e7",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0473_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "엘리사 (인, 지)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엘리사·엘리샤 (인, 지)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0473_0000",
+      "before": null,
+      "after": "야완의 아들 이름(창 10:4, 대상 1:7). 겔 27:7에서는 엘리사의 섬들 또는 해안 지방에서 두로의 청색·자색 재료가 온 것으로 묘사된다. 고대 알라시야와 연결하는 견해가 있으나 정확한 위치와 어원은 확정되지 않았다. 엘리샤는 히브리어 교재식 한글 근사이다. 선지자 엘리사(H0477, אֱלִישָׁע)는 끝 글자와 지시 대상이 다르다."
+    }
+  ],
+  "relation_creates": [],
+  "relation_replacements": [],
+  "supersedes": [],
+  "meaning_approvals": []
+}

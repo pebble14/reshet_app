@@ -2070,3 +2070,7 @@ H0336 의미 유지 승인 1건, 의미 교체 3건, 비고 4건, 관계 신규 
 ### H472 엘리세바와 일곱·맹세 어휘군 승인 반영 (2026-11-24)
 
 R1의 8개 표제에 뜻 9개, 비고 8건, 신규 관계 7건(ID 8566–8572), 교체 3건을 반영했다. 공식 모의 적용·되돌리기, 적용기 테스트 31개, 독립 SQL 검증을 통과했다. 이력은 26행이며 작업 DB의 SQLite 무결성은 `ok`, 외래 키 위반은 0건이다. 표준 진행표는 승인 1,179, 미승인 13,112, hold 7, 이상 항목 113이다. [승인 매니페스트](../../tool/data_provenance/manifests/h472_cluster_approved_content_slice.json) · [결정 기록](../semantic_decisions/h472_cluster_approved_content_slice.md)
+
+### H473 엘리사 어휘군 승인 반영 (2026-11-24)
+
+R1의 뜻 `엘리사·엘리샤 (인, 지)`와 비고를 작업 DB에 반영했다. 공식 모의 적용과 되돌리기, 적용기 테스트 31개, 적용 전 백업·스냅샷 및 전체 13개 테이블의 독립 SQL 대조를 통과했다. 이력은 2행(ID 8567–8568)이며 무결성은 `ok`, 외래 키 위반은 0건이다. 공식 진행표는 승인 1,180, 미승인 13,111, hold 7, 이상 항목 113이다. [승인 매니페스트](../../tool/data_provenance/manifests/h473_cluster_approved_content_slice.json) · [결정 기록](../semantic_decisions/h473_cluster_approved_content_slice.md)
