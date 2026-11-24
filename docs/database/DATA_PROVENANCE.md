@@ -2078,3 +2078,7 @@ R1의 뜻 `엘리사·엘리샤 (인, 지)`와 비고를 작업 DB에 반영했�
 ### H475 엘리아십 어휘군 승인 반영 (2026-11-24)
 
 R2의 19개 어휘에 뜻 25개·비고 19건·신규 관계 23건을 작업 DB에 반영했다. 공식 모의 적용·되돌리기, 적용기 테스트 31개, 공식 스냅샷과 독립 SQL 대조를 통과했다. 신규 이력은 61행(ID 8569–8629)이며 무결성은 ok, 외래 키 위반은 0건이다. 공식 진행표는 승인 1,199, 미승인 13,092, hold 7, 이상 항목 113이다. [승인 매니페스트](../../tool/data_provenance/manifests/h475_cluster_approved_content_slice.json) · [결정 기록](../semantic_decisions/h475_cluster_approved_content_slice.md)
+
+### H476 엘리사마와 듣다 어휘군 승인 반영 (2026-11-24)
+
+R2의 34개 어휘에 뜻 39개와 비고 34건을 승인했다. 작업 DB에 뜻 교체 33건, 비고 34건, 신규 관계 20건과 교체 19건을 반영하고 현행 뜻 1건의 승인을 기록했다. 공식 모의 적용·되돌리기, 적용기 테스트 31개와 독립 SQL을 통과했다. 이력은 106행이며 무결성은 ok, 외래 키 위반은 0건이다. 표준 진행표는 승인 1,233, 미승인 13,058, hold 7, 이상 항목 113이다. [승인 매니페스트](../../tool/data_provenance/manifests/h476_cluster_approved_content_slice.json) · [결정 기록](../semantic_decisions/h476_cluster_approved_content_slice.md)

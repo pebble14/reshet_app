@@ -1,0 +1,1444 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H476-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h476_approval_20261124/00_user_approval.json",
+    "document_sha256": "41c4946e98cb85a27458e9ad8e47839f15d015442e2f1d0d6e10cf5ff5b0e955"
+  },
+  "target": {
+    "expected_work_sha256": "4ba7a57b81b647e7c77d665ca21a7375ee44ff252f4bad4bb948ffddb98fe223",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0476_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "엘리사마 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엘리사마·엘리-샤마 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H8085_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "듣다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "듣다"
+        },
+        {
+          "seq": 2,
+          "meaning": "알리다"
+        },
+        {
+          "seq": 3,
+          "meaning": "불러 모으다"
+        }
+      ]
+    },
+    {
+      "word_id": "H0851_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "에스드모아 (인, 지)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "에스드모아·에스드모·에쉬테모아 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H1953_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "호사마 Hoshama(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "호사마·호샤마 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H2045_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "듣게 함"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "들려줌"
+        }
+      ]
+    },
+    {
+      "word_id": "H3458_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "이스마엘 Ishmael(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "이스마엘·이쉬마-엘 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3459_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "이스마엘 족속 Ishmaelite"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "이스마엘·이쉬마-엘 사람"
+        }
+      ]
+    },
+    {
+      "word_id": "H3460_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "이스마야 Ishmaiah(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "이스마야·이쉬마-야·이쉬마-야후 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H4926_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "들음, 듣는 것"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "들은 것"
+        }
+      ]
+    },
+    {
+      "word_id": "H4927_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "미스마 Mishma"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "미스마·미쉬마 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H4928_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "복종하는 자들, 부하들이나 신하들, 백성"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "지시(指示)를 따르는 사람들"
+        },
+        {
+          "seq": 2,
+          "meaning": "복종(服從)"
+        }
+      ]
+    },
+    {
+      "word_id": "H8039_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "시므아 Shimea(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "시므아·쉬므아 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H8043_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "시므암 Shimeam(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "시므암·쉬므암 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H8050_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "사무엘"
+        },
+        {
+          "seq": 2,
+          "meaning": "뜻풀이: 하나님의 들으심"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "사무엘·스므엘·셰무-엘 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "G4545_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "사무엘"
+        },
+        {
+          "seq": 2,
+          "meaning": "[뜻풀이: 하나님의 들으심]"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "사무엘·셰무-엘 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H8087_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "세마/스마"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "세마·스마·셰마 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H8088_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "들은 것[소식, 소문, 명성, 평판]"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "전해 들은 말"
+        },
+        {
+          "seq": 2,
+          "meaning": "들음"
+        },
+        {
+          "seq": 3,
+          "meaning": "소리"
+        }
+      ]
+    },
+    {
+      "word_id": "H8089_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "들은 것[소식, 소문, 명성, 평판]"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "전해 들은 말"
+        }
+      ]
+    },
+    {
+      "word_id": "H8090_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "세마"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "세마·셰마 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H8091_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "사마"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "사마·샤마 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H8092_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "시므아/삼마"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "시므아·삼마·쉬므아 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H8093_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "시므아"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "시므아·쉬므아 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H8094_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "스마아"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "스마아·셰마아 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H8095_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "시므온"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "시므온·쉬므온"
+        }
+      ]
+    },
+    {
+      "word_id": "H8096_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "시므이"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "시므이·쉬므이 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H8097_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "시므이의 후손"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "시므이·쉬므이 가문(家門) 사람"
+        }
+      ]
+    },
+    {
+      "word_id": "H8098_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "스마야"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "스마야·셰마-야·셰마-야후 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H8099_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "시므온의 후손"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "시므온·쉬므온 자손(子孫)"
+        }
+      ]
+    },
+    {
+      "word_id": "H8100_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "시므앗"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "시므앗·쉬므아트 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H8101_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "시므앗 족속"
+        },
+        {
+          "seq": 2,
+          "meaning": "시므아 족속"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "시므앗·쉬므아트 가문(家門) 사람"
+        }
+      ]
+    },
+    {
+      "word_id": "G4584_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "서머인"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "서머인·쉬므이 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "G4613_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "시몬"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "시몬 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "G4826_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "시므온"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "시므온·시몬·쉬므온 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0476_0000",
+      "before": null,
+      "after": "개역개정·개역한글·새번역의 인명은 엘리사마다. 엘리-샤마는 אֱלִי와 שָׁמָע의 구성 경계를 드러내는 교재식 근사다. ‘나의 하나님이 들으셨다’로 풀이할 수 있다. 전반부는 엘(H0410)의 소유형 분석에 대응하고 뒷부분은 듣다(H8085)의 어형에 대응한다. 민수기의 암미훗 아들, 여가먀의 아들, 이스마엘의 조부, 예레미야 시대의 서기관, 여호사밧 때의 제사장, 다윗의 아들 목록에 쓰인다. 대상 3:6은 삼하 5:15·대상 14:5의 엘리수아가 나오는 목록 위치에 있고 대상 3:8에는 엘리사마가 별도로 나온다. 목록 사이의 차이는 이름이 전해진 사정의 단서다."
+    },
+    {
+      "word_id": "H8085_0000",
+      "before": null,
+      "after": "소리·말·소식을 듣거나 알아듣는 데 쓰인다. 지시나 권위를 따르거나 청을 들어주는 일도 문맥에 따라 나타난다. 니팔에서는 ‘들리다, 알려지다’, 히필에서는 ‘듣게 하다, 들려주다’로 옮길 수 있다. 히필 가운데 소식이나 명령을 알리는 쓰임이 있고, 알림을 받는 쪽에 주목한 니팔 용례도 있다(사 52:7, 렘 50:2, 에 1:20). 사람을 불러 모으는 용법은 삼상 15:4·23:8의 피엘과 렘 50:29·51:27의 히필에서 확인된다. 느 13:27에는 어간·문장 해석의 이견이 있다."
+    },
+    {
+      "word_id": "H0851_0000",
+      "before": null,
+      "after": "유다 산지의 성읍 이름이다. 수 15:50의 אֶשְׁתְּמֹה는 개역 계열과 새번역에서 에스드모로, 수 21:14 등의 אֶשְׁתְּמֹעַ는 에스드모아로 나타난다. 에쉬테모아는 긴 철자형의 교재식 근사다. 대상 4:17·19의 계보 표현에는 성읍의 창건·소속이나 동명의 인물을 가리킨다는 읽기가 있다. Strong은 듣고 따르는 뜻의 H8085와 연결한다."
+    },
+    {
+      "word_id": "H1953_0000",
+      "before": null,
+      "after": "대상 3:18의 여고냐 아들 목록에 나오는 이름이다. 호샤마는 교재식 근사다. Strong은 여호와 이름의 요소와 듣다(H8085)의 결합으로 보고 ‘여호와께서 들으셨다’로 풀이한다. 앞 음절의 형성은 추정으로 남긴다."
+    },
+    {
+      "word_id": "H2045_0000",
+      "before": null,
+      "after": "겔 24:26의 여성명사다. 도망쳐 온 사람이 에스겔의 귀에 성읍의 소식을 들려주는 상황에서 쓰인다. H8085의 듣게 하는 쓰임과 이어진다."
+    },
+    {
+      "word_id": "H3458_0000",
+      "before": null,
+      "after": "이쉬마-엘은 어근 שׁמע와 신명 요소 엘의 구성 경계를 보여 준다. 창 16:11은 여호와께서 하갈의 괴로움을 들으신 사실과 이름을 연결한다. 이름의 접두 활용형에는 ‘엘이 들으셨다’, ‘엘이 들으시기를’ 등의 풀이가 제시된다. 하갈의 아들, 느다니야의 아들 등 동명이인에게 쓰인다."
+    },
+    {
+      "word_id": "H3459_0000",
+      "before": null,
+      "after": "이스마엘(H3458)에서 형성된 소속 명칭이다. 그 후손으로 여겨지는 집단과 그에 속한 개인에게 쓰인다. 창 37장·39장에서는 상인 집단, 대상 2:17·27:30에서는 개인을 가리킨다. 삿 8:22–24는 패한 미디안 군에 이스마엘 사람이라는 명칭도 적용한다. 대상 2:17의 아마사 아버지는 이스마엘 사람 예델로 나오며, 삼하 17:25의 병행 본문은 이스라엘 사람 이드라로 전한다. 이쉬마-엘은 사람 이름의 구성 표기이며, 소속형 전체의 음역과는 구별된다."
+    },
+    {
+      "word_id": "H3460_0000",
+      "before": null,
+      "after": "대상 12:4(히브리어 절 번호)의 기브온 출신 용사와 대상 27:19의 스불론 지파 지도자에게 쓰인다. 전자는 יִשְׁמַעְיָה, 후자는 יִשְׁמַעְיָהוּ로 기록된다. 듣다(H8085)의 접두 활용형과 야 또는 야후가 결합한 이름으로 풀이된다."
+    },
+    {
+      "word_id": "H4926_0000",
+      "before": null,
+      "after": "사 11:3의 남성명사로, 눈에 보이는 것과 나란히 귀에 들은 것을 가리킨다. 문맥은 재판에서 의존할 수 있는 외적 인상과 실제 판단을 대비한다. 듣다(H8085)의 파생형이다."
+    },
+    {
+      "word_id": "H4927_0000",
+      "before": null,
+      "after": "창 25:14·대상 1:30에 이스마엘의 아들로, 대상 4:25–26에 시므온 계보의 인명으로 나온다. 미쉬마는 교재식 근사다. Strong은 사 11:3의 일반명사 미쉬마(H4926)와 형태가 같다고 설명한다."
+    },
+    {
+      "word_id": "H4928_0000",
+      "before": null,
+      "after": "지시를 받들어 따르는 사람들의 집단이나 그 따름을 가리킨다. 삼하 23:23·대상 11:25에서 브나야가 감독하는 다윗 휘하의 집단이어서 ‘호위대’로 옮길 수 있다. 삼상 22:14의 다윗은 사울의 지시를 받는 충신 또는 호위 임무를 맡은 인물로 해석된다. 사 11:14에서는 암몬 사람들이 복종한다는 뜻이다."
+    },
+    {
+      "word_id": "H8039_0000",
+      "before": null,
+      "after": "대상 8:32의 미글롯의 아들이다. 대상 9:38의 시므암(H8043)과 같은 계보 위치에 나온다. 쉬므아는 교재식 근사다. שִׁמְאָה의 셋째 자음은 알레프이며, 아인으로 적는 시므아(H8093)와의 어원 관계는 불확실하다."
+    },
+    {
+      "word_id": "H8043_0000",
+      "before": null,
+      "after": "대상 9:38에서 미글롯의 아들이다. 대상 8:32에서 같은 계보 위치의 이름을 시므아(H8039)로 기록한다. 쉬므암은 교재식 근사다. Strong의 아비얌 비교는 이름 끝 형태의 비슷한 예로 참고할 수 있다."
+    },
+    {
+      "word_id": "H8050_0000",
+      "before": null,
+      "after": "사사이자 예언자인 사무엘과 동일한 이름의 다른 사람들에게 쓰인다. 민 34:20과 대상 7:2에서 한국어 성경은 스므엘로 적는다. 셰무-엘은 교재식 읽기와 끝의 엘 요소를 보여 준다. 삼상 1:20의 한나는 여호와께 아이를 구했다고 설명한다. Strong은 듣다(H8085)의 수동 분사와 엘의 결합으로 풀이하나, 아인 없는 철자에는 ‘엘의 이름’ 또는 ‘그의 이름은 엘’이라는 경쟁 분석이 있다."
+    },
+    {
+      "word_id": "G4545_0000",
+      "before": null,
+      "after": "행 3:24·13:20과 히 11:32에서 히브리어 성경의 사무엘을 가리킨다. 사무엘은 관용명과 헬라어 교재식 근사가 겹치는 표기다. 셰무-엘은 원천 히브리어 이름(H8050)의 구성 표기다."
+    },
+    {
+      "word_id": "H8086_0000",
+      "before": null,
+      "after": "히브리어 H8085에 대응하는 성경 아람어 동사이다. 단 3장에서는 악기 소리, 단 5장에서는 전해 들은 말, 단 6:14(히브리어 성경 6:15)에서는 고발 내용을 듣는 데 쓰인다. 단 7:27의 히트파알형은 섬기는 일과 병행하여 ‘말을 듣다’, 곧 ‘복종하다’라는 뜻으로 쓰인다."
+    },
+    {
+      "word_id": "H8087_0000",
+      "before": null,
+      "after": "대상 2:43–44, 5:8, 8:13의 관용명은 세마이고 느 8:4에서는 스마다. 셰마는 교재식 근사다. Strong 설명의 지명에 해당할 수 있는 수 15:26의 표기는 정본 용례에서 별도 H8090에 배정된다. Strong은 소식 명사 H8088과 형태를 연결한다."
+    },
+    {
+      "word_id": "H8088_0000",
+      "before": null,
+      "after": "다른 사람에게서 전해 들은 말이다. 소식이나 소문일 수 있고 널리 알려진 사람의 평판이나 명성일 수도 있다. 창 29:12–13에는 라헬이 아버지에게 직접 전한 소식이, 출 23:1에는 거짓된 전언이, 왕상 10:1에는 솔로몬에 관해 퍼진 말이 나온다. 욥 42:5와 시 18:44(히브리어 성경 18:45)는 듣는 일, 시 150:5는 악기의 소리를 가리킨다. 호 7:12의 마지막 구절은 판본과 해석이 갈린다."
+    },
+    {
+      "word_id": "H8089_0000",
+      "before": null,
+      "after": "전해 들은 말로, 퍼진 소문이나 명성을 포함한다. 수 6:27은 여호수아에 관한 말이 땅에 퍼지는 장면이고, 수 9:9는 주님의 행적에 대해 들은 내용, 에 9:4는 모르드개에 관한 평판이 퍼지는 장면, 렘 6:24는 다가오는 적에 대해 들은 말이다. 네 본문 모두 3인칭 남성 단수 소유 접미형이 쓰인다. H8088의 ‘전해 들은 말’과 용법이 겹친다."
+    },
+    {
+      "word_id": "H8090_0000",
+      "before": null,
+      "after": "수 15:26에 아맘·몰라다와 함께 열거된 유다 남부 성읍의 이름이다. 셰마는 교재식 근사다. Strong은 인명 세마(H8087)와 어형을 연결하며, 본문은 별도의 지명으로 기록한다."
+    },
+    {
+      "word_id": "H8091_0000",
+      "before": null,
+      "after": "대상 11:44의 아로엘 사람 호담의 아들이다. 샤마는 교재식 근사다. Strong은 듣다(H8085)에서 파생한 이름으로 보고 말을 잘 듣는다는 뜻으로 풀이한다. 이름이 붙은 역사적 사정은 전해지지 않는다."
+    },
+    {
+      "word_id": "H8092_0000",
+      "before": null,
+      "after": "역대기에서 이새의 아들, 다윗의 아들, 레위 계보의 두 사람에게 쓰인다. 삼하 21:21의 읽는 본문은 시므아 계열의 שִׁמְעָה이며 개역 계열과 새번역은 삼마로 적는다. 그 절의 적힌 형태 שמעי는 정본에서 H8096으로 따로 집계된다. 대상 2:13·20:7과 삼상 16:9·17:13은 다윗의 형 시므아와 삼마의 이름 전승을 대조할 수 있는 자리다."
+    },
+    {
+      "word_id": "H8093_0000",
+      "before": null,
+      "after": "삼하 13:3·32에서 요나답의 아버지이며 다윗의 형을 가리킨다. 대상 2:13·20:7 등에 같은 인물의 H8092 표기가 나온다. Strong은 H8088과 형태상 연결한다. 대상 8:32의 알레프 표기와는 별도의 이름 자료다."
+    },
+    {
+      "word_id": "H8094_0000",
+      "before": null,
+      "after": "대상 12:3(히브리어 절 번호)에서 기브아 출신 다윗 용사 두 사람의 부친으로 나온다. 셰마아는 교재식 근사다. Strong은 시므아(H8093)와 어형을 연결하지만 확인된 지시 대상은 다르다."
+    },
+    {
+      "word_id": "H8095_0000",
+      "before": null,
+      "after": "쉬므온은 히브리어 교재식 근사이고 시므온은 한국어 성경 관용명이다. 창 29:33은 야곱의 아들 시므온의 이름을 여호와께서 들으신 일과 연결한다. 스 10:31에도 같은 이름의 사람이 나온다. 수 19:1, 삿 1:3, 겔 48:24에서는 그 이름을 이어받은 지파나 그 영역을 가리킨다. 소속을 직접 나타내는 파생형은 H8099이다."
+    },
+    {
+      "word_id": "H8096_0000",
+      "before": null,
+      "after": "게르손의 아들, 게라의 아들, 그 밖의 동명이인에게 쓰인다. 쉬므이는 교재식 근사다. Strong은 소식·평판 명사 H8088과 이름을 연결한다. 삼하 21:21의 적힌 형태 שמעי는 H8096, 읽는 형태 שִׁמְעָה는 H8092로 태그되며 두 형태가 같은 다윗의 형을 가리킨다. 눅 3:26의 헬라어 세메인 계열과 이름의 형태가 대응한다."
+    },
+    {
+      "word_id": "H8097_0000",
+      "before": null,
+      "after": "민 3:21에서는 게르손의 아들 시므이 계통이 한 가족으로 언급된다. 슥 12:13에서는 시므이의 집안이 별도의 애도 집단으로 나온다. 이름 시므이(H8096)에 소속을 나타내는 형태가 붙었다."
+    },
+    {
+      "word_id": "H8098_0000",
+      "before": null,
+      "after": "שְׁמַעְיָה와 שְׁמַעְיָהוּ는 짧은 형태와 긴 형태가 있는 이름이다. 듣다(H8085)에 야 또는 야후가 결합한 것으로 이해되며 ‘여호와께서 들으셨다’로 풀이할 수 있다. 르호보암 시대의 예언자와 스가냐의 아들 등 동명이인이 있다. 셰마-야와 셰마-야후는 교재식 읽기의 구성 표기다."
+    },
+    {
+      "word_id": "H8099_0000",
+      "before": null,
+      "after": "야곱의 아들 시므온(H8095)에게서 이름을 얻은 집단의 소속형이다. 민 25:14는 시므온 사람 중 한 집안의 족장을, 민 26:14는 여러 가족을 가리킨다. 수 21:4에서는 유다와 베냐민 사이에 시므온 계통의 지파가 나열되고, 대상 27:16에서는 이스라엘의 지파별 지도자 명단에 나온다. 쉬므온은 바탕 인명의 교재식 근사다."
+    },
+    {
+      "word_id": "H8100_0000",
+      "before": null,
+      "after": "왕하 12:21(히 12:22)과 대하 24:26에 나오는 암몬 여성의 이름이다. 요아스 살해 사건에 참여한 아들의 이름에는 두 병행 본문의 차이가 있다. 쉬므아트는 교재식 근사다. Strong은 소식 명사 H8088과 연결한다."
+    },
+    {
+      "word_id": "H8101_0000",
+      "before": null,
+      "after": "대상 2:55에서 야베스에 사는 서기관 가문 가운데 하나에 속한 사람들을 가리킨다. 히브리어 본문과 칠십인역은 모두 그들을 서기관들의 가문이라는 말 아래에 열거한다. 시므앗은 관용 이름이고 쉬므아트는 소속형의 바탕으로 읽을 수 있는 형태의 근사다. Strong은 시므아(H8093)를 연결하지만 이 가문의 조상이 그 인물인지는 확인되지 않는다."
+    },
+    {
+      "word_id": "G4584_0000",
+      "before": null,
+      "after": "눅 3:26의 예수 족보에 나오는 사람이다. 개역 계열의 이름은 서머인이다. 정본 헬라어는 Σεμεῒν이며 새번역과 교재식 근사에서 세메인으로 나타난다. Strong 표제와 Robinson–Pierpont 본문의 Σεμεΐ는 세메이에 해당한다. 칠십인역 출 6:17과 삼하 16:5의 σεμει가 히브리어 שִׁמְעִי(H8096)와 대응하므로 원천 이름의 근사 쉬므이를 함께 적는다. 눅 3:26 인물의 히브리어 이름을 직접 기록한 자료는 확인되지 않았다."
+    },
+    {
+      "word_id": "G4613_0000",
+      "before": null,
+      "after": "시몬은 한국어 성경 관용명과 헬라어 교재식 근사가 같다. 베드로, 열심당원, 예수의 형제, 구레네 사람 등에게 쓰인다. 마 16:16의 베드로는 Σίμων, 행 15:14와 벧후 1:1 정본의 같은 인물은 Συμεών(G4826)이다. 벧후 1:1에는 Σίμων으로 읽는 본문도 있다. 두 이름은 베드로에게 같은 히브리어 이름 계열의 대응형으로 쓰인다. 고전 그리스어에도 Σίμων이 쓰였으므로 신약의 개별 인물 모두에게 직접 음역의 경로를 확정하기는 어렵다."
+    },
+    {
+      "word_id": "G4826_0000",
+      "before": null,
+      "after": "시므온은 관용명이다. 벧후 1:1에서 개역 계열은 시몬, 새번역은 시므온으로 적으며, 새번역 각주의 다른 사본은 시몬으로 읽는다. 쉬므온은 이 이름에 대응하는 히브리어 H8095의 근사이며 쉬메온은 헬라어 Συμεών의 교재식 근사다. 눅 2장과 행 13장 등에는 같은 이름의 여러 사람이 나온다. 행 15:14와 벧후 1:1의 정본에서는 베드로를 가리킨다. 계 7:7은 야곱의 아들에게서 이름을 얻은 시므온 지파이다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H0476_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "אֱלִי는 엘과 소유 요소의 결합으로 읽을 수 있습니다. 출현한 이름의 첫 요소에 적용합니다.",
+      "source": "H0476 R2 관계 평가 · H0410 / H0476"
+    },
+    {
+      "word_id_1": "H0476_0000",
+      "word_id_2": "H8085_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "이름 뒤의 שָׁמָע와 완료형 듣다의 자음과 활용 형태가 대응합니다. 두 카메츠의 읽기 전통과 별개로 구성의 근거가 있습니다.",
+      "source": "H0476 R2 관계 평가 · H0476 / H8085"
+    },
+    {
+      "word_id_1": "G4613_0000",
+      "word_id_2": "G4826_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "마 16:16과 행 15:14에서 같은 베드로에게 두 이름형이 쓰입니다. 벧후 1:1의 정본과 대안 본문도 같은 자리에 두 이름형을 전합니다.",
+      "source": "H0476 R2 관계 평가 · G4613 / G4826"
+    },
+    {
+      "word_id_1": "G4584_0000",
+      "word_id_2": "H8096_0000",
+      "category_code": "transliteration",
+      "relation_type": "direct_transliteration",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 원천 지시와 출 6:17·삼하 16:5의 LXX σεμει가 대응합니다. Robinson–Pierpont의 눅 3:26에도 끝 ν가 없는 Σεμεΐ가 있습니다. 확정 추천은 이름형의 대응에 적용합니다.",
+      "source": "H0476 R2 관계 평가 · G4584 / H8096"
+    },
+    {
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H3458_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "창 16:11의 신명과 본문의 풀이가 이름 끝 요소 엘을 뒷받침합니다.",
+      "source": "H0476 R2 관계 평가 · H0410 / H3458"
+    },
+    {
+      "word_id_1": "H0851_0000",
+      "word_id_2": "H8085_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 ‘in the sense of obedience’와 자음 대응을 보존합니다. 성읍의 명명 과정과 계보의 독법은 미확정입니다.",
+      "source": "H0476 R2 관계 평가 · H0851 / H8085"
+    },
+    {
+      "word_id_1": "H1953_0000",
+      "word_id_2": "H3068_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "hypothesized",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 신명 단축형 분석은 가능한 풀이입니다. 대상을 같은 이름의 반복 용례로 검증할 수 없습니다.",
+      "source": "H0476 R2 관계 평가 · H1953 / H3068"
+    },
+    {
+      "word_id_1": "H1953_0000",
+      "word_id_2": "H8085_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "hypothesized",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "대상 3:18의 뒤 요소 שָׁמָע는 들음 계열에 맞습니다. 이름 전체와 앞 요소의 형성은 추정입니다.",
+      "source": "H0476 R2 관계 평가 · H1953 / H8085"
+    },
+    {
+      "word_id_1": "H2045_0000",
+      "word_id_2": "H8085_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "겔 24:26의 사동적 행위명사와 어근이 직접 연결됩니다.",
+      "source": "H0476 R2 관계 평가 · H2045 / H8085"
+    },
+    {
+      "word_id_1": "H3050_0000",
+      "word_id_2": "H3460_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "대상 12:4와 27:19에 야·야후형이 각각 확인됩니다.",
+      "source": "H0476 R2 관계 평가 · H3050 / H3460"
+    },
+    {
+      "word_id_1": "H3458_0000",
+      "word_id_2": "H3459_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "이름에 소속을 나타내는 -ִי가 붙은 형식이며 단·복수 용례가 확인됩니다.",
+      "source": "H0476 R2 관계 평가 · H3458 / H3459"
+    },
+    {
+      "word_id_1": "H3458_0000",
+      "word_id_2": "H8085_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "창 16:11은 같은 어근의 동사를 직접 사용합니다. 접두형의 시제·양태 풀이에는 여지가 있습니다.",
+      "source": "H0476 R2 관계 평가 · H3458 / H8085"
+    },
+    {
+      "word_id_1": "H3460_0000",
+      "word_id_2": "H8085_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "יִשְׁמַע의 접두 활용이 이름에 드러납니다.",
+      "source": "H0476 R2 관계 평가 · H3460 / H8085"
+    },
+    {
+      "word_id_1": "H4926_0000",
+      "word_id_2": "H4927_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "일반명사와 인명의 글자·모음이 일치합니다. 실제 인명 형성 경로는 문헌에서 확인되지 않습니다.",
+      "source": "H0476 R2 관계 평가 · H4926 / H4927"
+    },
+    {
+      "word_id_1": "H4926_0000",
+      "word_id_2": "H4928_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 ‘feminine of’와 형태는 일치합니다. 지시를 따르는 쪽으로 분화한 명사의 실제 형성 경로에는 여지가 있습니다.",
+      "source": "H0476 R2 관계 평가 · H4926 / H4928"
+    },
+    {
+      "word_id_1": "H4926_0000",
+      "word_id_2": "H8085_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "사 11:3의 명사가 듣기의 내용을 나타냅니다.",
+      "source": "H0476 R2 관계 평가 · H4926 / H8085"
+    },
+    {
+      "word_id_1": "H8039_0000",
+      "word_id_2": "H8043_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "대상 8:32와 9:38의 부친·목록·거주 설명이 맞물립니다.",
+      "source": "H0476 R2 관계 평가 · H8039 / H8043"
+    },
+    {
+      "word_id_1": "H8087_0000",
+      "word_id_2": "H8090_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "인명과 성읍명에 같은 자음이 쓰이고 Strong이 ‘for’로 연결합니다. 서로 다른 지시 범위를 기록합니다.",
+      "source": "H0476 R2 관계 평가 · H8087 / H8090"
+    },
+    {
+      "word_id_1": "H8088_0000",
+      "word_id_2": "H8096_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 ‘famous’는 소문·평판 어휘와 연결됩니다. 일반 악센트와 인명 형성의 역사까지는 미확정입니다.",
+      "source": "H0476 R2 관계 평가 · H8088 / H8096"
+    },
+    {
+      "word_id_1": "H8093_0000",
+      "word_id_2": "H8094_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "형태 대응을 지지하는 ‘for’가 있으나 다윗의 형과 기브아 사람에게서 각각 확인됩니다.",
+      "source": "H0476 R2 관계 평가 · H8093 / H8094"
+    }
+  ],
+  "relation_replacements": [
+    {
+      "relation_id": 1905,
+      "word_id_1": "H8085_0000",
+      "word_id_2": "H8086_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "etymological",
+        "relation_type": "root_shared",
+        "status_code": "asserted",
+        "direction_code": "undirected",
+        "description": null,
+        "relation_group_id": null,
+        "note": "아람어 대응형의 동일 자음과 단 3·5장 듣기, 단 7:27 복종을 대조합니다. 차용 방향은 부여하지 않습니다.",
+        "source": "H0476 R2 관계 평가 · H8085 / H8086"
+      }
+    },
+    {
+      "relation_id": 4339,
+      "word_id_1": "H8050_0000",
+      "word_id_2": "H8085_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "hypothesized",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "Strong의 수동 분사설을 반영합니다. 표제 철자에 아인이 없고 H8034 ‘이름’ 계열이라는 설명이 경쟁합니다.",
+        "source": "H0476 R2 관계 평가 · H8050 / H8085"
+      }
+    },
+    {
+      "relation_id": 4340,
+      "word_id_1": "G4545_0000",
+      "word_id_2": "H8050_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "transliteration",
+        "relation_type": "direct_transliteration",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "행 3:24·13:20와 히 11:32의 지시 대상과 이름이 일치합니다.",
+        "source": "H0476 R2 관계 평가 · G4545 / H8050"
+      }
+    },
+    {
+      "relation_id": 1916,
+      "word_id_1": "G4613_0000",
+      "word_id_2": "H8095_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "transliteration",
+        "relation_type": "direct_transliteration",
+        "status_code": "hypothesized",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "베드로에게 쓰인 두 이름형의 대응은 직접 확인됩니다. 크세노폰에도 Σίμων이 있으므로 표제 전체의 직접 음역 경로는 가설입니다.",
+        "source": "H0476 R2 관계 평가 · G4613 / H8095"
+      }
+    },
+    {
+      "relation_id": 1917,
+      "word_id_1": "G4826_0000",
+      "word_id_2": "H8095_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "transliteration",
+        "relation_type": "direct_transliteration",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "계 7:7은 시므온 지파, 창 29:33 LXX는 야곱 아들의 이름을 συμεων으로 전합니다. 관계는 인물 전체의 동일시 없이 이름형에 적용합니다.",
+        "source": "H0476 R2 관계 평가 · G4826 / H8095"
+      }
+    },
+    {
+      "relation_id": 6902,
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H8050_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련2"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "‘들음’과 ‘이름’ 두 분석에 공통인 끝의 אֵל입니다.",
+        "source": "H0476 R2 관계 평가 · H0410 / H8050"
+      }
+    },
+    {
+      "relation_id": 5968,
+      "word_id_1": "H3050_0000",
+      "word_id_2": "H8098_0000",
+      "before": {
+        "category_code": null,
+        "relation_type": null,
+        "status_code": "inferred",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "",
+        "source": "WORD_TABLE.관련2"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "짧은 야와 긴 야후 표기가 확인됩니다.",
+        "source": "H0476 R2 관계 평가 · H3050 / H8098"
+      }
+    },
+    {
+      "relation_id": 1906,
+      "word_id_1": "H8085_0000",
+      "word_id_2": "H8088_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "듣는 행위와 들은 내용을 나타내는 명사입니다.",
+        "source": "H0476 R2 관계 평가 · H8085 / H8088"
+      }
+    },
+    {
+      "relation_id": 1908,
+      "word_id_1": "H8085_0000",
+      "word_id_2": "H8089_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "수 9:9와 렘 6:24에서 듣다와 소식 명사의 공통 어근이 함께 보입니다.",
+        "source": "H0476 R2 관계 평가 · H8085 / H8089"
+      }
+    },
+    {
+      "relation_id": 1910,
+      "word_id_1": "H8085_0000",
+      "word_id_2": "H8091_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "hypothesized",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "‘obedient’ 풀이와 자음은 듣다의 파생 가능성을 지지합니다. 대상 11:44에는 이름 풀이가 없습니다.",
+        "source": "H0476 R2 관계 평가 · H8085 / H8091"
+      }
+    },
+    {
+      "relation_id": 1914,
+      "word_id_1": "H8085_0000",
+      "word_id_2": "H8095_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "창 29:33이 직접 듣다와 이름을 병치합니다.",
+        "source": "H0476 R2 관계 평가 · H8085 / H8095"
+      }
+    },
+    {
+      "relation_id": 1920,
+      "word_id_1": "H8085_0000",
+      "word_id_2": "H8098_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "동사 어근 שׁמע와 이름이 대응합니다. H3460과의 활용형 차이를 비고에 보존합니다.",
+        "source": "H0476 R2 관계 평가 · H8085 / H8098"
+      }
+    },
+    {
+      "relation_id": 1907,
+      "word_id_1": "H8087_0000",
+      "word_id_2": "H8088_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "hypothesized",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "‘for the same as’ 및 자음 공유가 인명과 명사의 연결을 시사합니다. 실제 작명 과정의 증거는 확보 범위에 없습니다.",
+        "source": "H0476 R2 관계 평가 · H8087 / H8088"
+      }
+    },
+    {
+      "relation_id": 1912,
+      "word_id_1": "H8088_0000",
+      "word_id_2": "H8093_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "hypothesized",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "명사와 이름의 자음·어형 대응 및 ‘feminine of’를 보존합니다. 이름의 작명 맥락은 미확정입니다.",
+        "source": "H0476 R2 관계 평가 · H8088 / H8093"
+      }
+    },
+    {
+      "relation_id": 1921,
+      "word_id_1": "H8088_0000",
+      "word_id_2": "H8100_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "hypothesized",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "Strong의 ‘feminine of’와 자음의 대응이 어원 가능성을 뒷받침합니다.",
+        "source": "H0476 R2 관계 평가 · H8088 / H8100"
+      }
+    },
+    {
+      "relation_id": 1913,
+      "word_id_1": "H8092_0000",
+      "word_id_2": "H8093_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "variant",
+        "status_code": "asserted",
+        "direction_code": "undirected",
+        "description": null,
+        "relation_group_id": null,
+        "note": "삼하 13:3과 대상 2:13·20:7이 다윗의 형에 대한 서로 다른 이름형을 뒷받침합니다.",
+        "source": "H0476 R2 관계 평가 · H8092 / H8093"
+      }
+    },
+    {
+      "relation_id": 1922,
+      "word_id_1": "H8093_0000",
+      "word_id_2": "H8101_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "hypothesized",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "대상 2:55는 가문 소속을 뒷받침합니다. Strong의 ‘patronymically from’은 어형의 관계 가설이며 특정 인물의 계보는 확인되지 않습니다.",
+        "source": "H0476 R2 관계 평가 · H8093 / H8101"
+      }
+    },
+    {
+      "relation_id": 1915,
+      "word_id_1": "H8095_0000",
+      "word_id_2": "H8099_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "시므온 이름에 소속을 나타내는 어형이 붙습니다. 민 26:14의 여러 가족, 수 21:4의 별도 지파 명사와 H1835–H1839 선례를 대조했습니다.",
+        "source": "H0476 R2 관계 평가 · H8095 / H8099"
+      }
+    },
+    {
+      "relation_id": 1919,
+      "word_id_1": "H8096_0000",
+      "word_id_2": "H8097_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "민 3:18·21의 게르손 아들 이름과 가문 명칭이 연속하여 확인됩니다.",
+        "source": "H0476 R2 관계 평가 · H8096 / H8097"
+      }
+    }
+  ],
+  "supersedes": [],
+  "meaning_approvals": [
+    {
+      "word_id": "H8086_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "듣다"
+        }
+      ]
+    }
+  ]
+}
