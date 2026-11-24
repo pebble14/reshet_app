@@ -1,0 +1,598 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H478-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h478_approval_20261124/00_user_approval.json",
+    "document_sha256": "24267fe3470180c6de403e63b4b393d03eef4c13bb5a5666916422e99b199d61"
+  },
+  "target": {
+    "expected_work_sha256": "93abf1f25d1e412c83cf1490292be06e08cda274a27fc76609710cb315f6064f",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0478_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "엘리사밧 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엘리사밧·엘리-샤파트 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H8199_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "판결하다/재판하다/심판하다"
+        },
+        {
+          "seq": 2,
+          "meaning": "다스리다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "심판하다(審判하다)"
+        },
+        {
+          "seq": 2,
+          "meaning": "권리(權利)를 지켜 주다"
+        },
+        {
+          "seq": 3,
+          "meaning": "송사(訟事)로 다투다"
+        },
+        {
+          "seq": 4,
+          "meaning": "다스리다"
+        }
+      ]
+    },
+    {
+      "word_id": "H4941_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "심판, 재판, 공의, 법령 등"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "심판(審判)·송사(訟事)"
+        },
+        {
+          "seq": 2,
+          "meaning": "공의(公義)"
+        },
+        {
+          "seq": 3,
+          "meaning": "권리(權利)·몫"
+        },
+        {
+          "seq": 4,
+          "meaning": "규정(規定)"
+        },
+        {
+          "seq": 5,
+          "meaning": "방식(方式)"
+        }
+      ]
+    },
+    {
+      "word_id": "H8196_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "심판, 심판행위"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "징벌(懲罰)"
+        }
+      ]
+    },
+    {
+      "word_id": "H8200_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "재판하다 judge"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "재판하다(裁判하다)"
+        }
+      ]
+    },
+    {
+      "word_id": "H8201_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "심판 judgment"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "징벌(懲罰)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3092_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "여호사밧"
+        },
+        {
+          "seq": 2,
+          "meaning": "뜻풀이: 여호와께서는 심판자 이시다/여호와께서 심판하셨다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "여호사밧·예호-샤파트 (인, 지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3146_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "요샤밧"
+        },
+        {
+          "seq": 2,
+          "meaning": "뜻풀이: 여호와께서는 심판자 이시다/여호와께서 심판하셨다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "요사밧·요-샤파트 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "G2498_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "여호사밧[여호와께서는 심판자 이시다/여호와께서 심판하셨다]"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "여호사밧·예호-샤파트 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H8202_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "사밧 Shaphat"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "사밧·샤파트 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H8203_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "스바댜 Shephatiah(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "스바댜·셰파트-야·셰파트-야후 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H8204_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "십단 Shiphtan"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "십단·쉬프탄 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5880_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "엔미스밧 En-Misphat(지)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엔미스밧·엔-미쉬파트 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H8614_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "관직의 이름"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "치안 관원(治安官員)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0478_0000",
+      "before": null,
+      "after": "시그리의 아들인 백부장으로, 여호야다와 함께 요아스를 왕으로 세우는 일에 참여했다(대하 23:1). 엘리사밧은 성경 관용명, 엘리-샤파트는 엘(H0410)의 이름 요소와 심판하다(H8199)의 경계를 보여 주는 교재식 근사다. 이름은 ‘하나님이 심판하셨다’로 풀이할 수 있다. Strong은 ‘심판의 하나님’으로 풀이한다."
+    },
+    {
+      "word_id": "H8199_0000",
+      "before": null,
+      "after": "시비를 가려 판결하며 그 판결을 집행할 때에도 쓰인다. 고아나 억눌린 사람의 권리를 지켜 주고 억울함을 풀어 주는 용법이 있다(시 82:3, 사 1:17). 상대와 송사로 다투는 용법은 사 43:26에서 확인된다. 왕이나 사사가 백성을 맡는 문맥에서는 다스린다는 뜻이다(삼상 8:20, 왕하 15:5). 분사는 문맥에 따라 재판관, 사사, 통치자를 가리킨다."
+    },
+    {
+      "word_id": "H4941_0000",
+      "before": null,
+      "after": "재판에 내놓는 송사와 그것을 심리해 판결하거나 집행하는 일을 가리킨다. 공정함 자체나 당사자에게 돌아갈 권리와 몫을 뜻하기도 한다. 지켜야 할 법규·제의 절차뿐 아니라 사물의 양식과 사람이 따르는 방식도 나타낸다(출 26:30, 삼상 27:11). 겔 7:23의 ‘피의 미쉬파트’는 피 흘린 죄목과 피에 관련된 판결이라는 풀이가 갈린다."
+    },
+    {
+      "word_id": "H8196_0000",
+      "before": null,
+      "after": "심판이 벌로 집행되는 일을 가리킨다. 대하 20:9의 단수는 재난의 문맥에, 겔 23:10의 복수는 칼로 처벌하는 문맥에 나온다. 두 구절의 히브리어 독법에는 이견이 있다. 집행되는 벌이라는 뜻에서 H8201과 가깝다."
+    },
+    {
+      "word_id": "H8200_0000",
+      "before": null,
+      "after": "히브리어 H8199에 대응하는 아람어 동사다. 스 7:25의 유일한 용례에서는 능동 분사 복수로 쓰여 법관을 가리킨다."
+    },
+    {
+      "word_id": "H8201_0000",
+      "before": null,
+      "after": "심판이 벌로 집행되는 일을 가리킨다. 성경에서는 복수형으로 쓰인다. 하나님의 재앙과 사람을 통한 형 집행을 가리킬 수 있다(겔 14:21, 대하 24:24). 잠 19:29의 칠십인역에는 매와 형벌이 다르게 전해진다. 집행되는 벌이라는 뜻에서 H8196과 가깝다."
+    },
+    {
+      "word_id": "H3092_0000",
+      "before": null,
+      "after": "아사의 아들 유다 왕, 아힐룻의 아들 기록관, 바루아의 아들, 예후의 아버지에게 쓰인 이름이다. 요엘 3:2·12(MT 4:2·12)에서는 여러 민족에 대한 심판이 일어나는 골짜기의 이름으로 쓰인다. 예호-샤파트는 신명 요소(H3068)와 심판하다(H8199)의 경계를 보여 주며, ‘여호와께서 심판하셨다’로 풀이할 수 있다. 단형 요-샤파트(H3146)와 이름 구조가 대응하고, 예호-자바드(H3075)와는 어근이 다르다. 요엘의 골짜기 위치는 확정하기 어렵다."
+    },
+    {
+      "word_id": "H3146_0000",
+      "before": null,
+      "after": "미덴 출신의 다윗 용사(대상 11:43)와 하나님의 궤 앞에서 나팔을 분 제사장(대상 15:24)의 이름이다. 요-샤파트는 신명 요와 심판하다에 대응하는 이름 요소를 드러내는 교재식 근사다. 여호사밧(H3092) 이름의 단형이며, 요-자바드(H3107)와는 어근이 다르다."
+    },
+    {
+      "word_id": "G2498_0000",
+      "before": null,
+      "after": "마태복음 1:8에서 아사의 아들이자 요람의 아버지인 유다 왕 여호사밧을 가리킨다. 예호-샤파트는 원천 히브리어 이름(H3092)의 구성 경계를 보여 준다. 헬라어 Ἰωσαφάτ의 교재식 근사는 이오사파트이며, 같은 왕의 이름이 대상 3:10과 대하 17:1의 칠십인역에도 이 형태로 전해진다."
+    },
+    {
+      "word_id": "H8202_0000",
+      "before": null,
+      "after": "호리의 아들인 정탐꾼, 엘리사의 아버지, 스마야의 아들, 바산의 갓 자손, 아들래의 아들에게 쓰인 이름이다. 샤파트는 교재식 근사다. 심판하다(H8199)의 어근과 이어지며, 이름은 ‘그가 심판하셨다’ 또는 심판하는 사람으로 풀이되기도 한다. 자바드(H2066)도 한국어에서 사밧으로 옮겨지며 히브리어 어근이 다르다."
+    },
+    {
+      "word_id": "H8203_0000",
+      "before": null,
+      "after": "다윗의 아들, 여호사밧의 아들, 여러 가계의 선조 등에게 쓰인 이름이다. 셰파트-야와 셰파트-야후는 심판하다(H8199)와 끝 신명 요소(H3050)의 경계를 나타내며, ‘야께서 심판하셨다’로 풀이할 수 있다. 장형은 대상 12:5(MT 12:6)과 27:16, 대하 21:2에서 확인된다. 스 8:8의 가계 이름 스바댜와 미가엘의 아들 스바댜(H2069)는 원문의 어근이 다르다."
+    },
+    {
+      "word_id": "H8204_0000",
+      "before": null,
+      "after": "에브라임 지파 대표 그므엘의 아버지다(민 34:24). 십단은 성경 관용명이고 쉬프탄은 교재식 근사다. 심판하다(H8199)와 이어지는 이름으로, Strong은 ‘재판관 같은’, BDB는 ‘심판’으로 풀이한다."
+    },
+    {
+      "word_id": "H5880_0000",
+      "before": null,
+      "after": "창세기 14:7에서 가데스라고도 불리는 곳이다. 엔-미쉬파트는 샘(H5869)의 연계형과 미쉬파트(H4941)의 구성 경계를 드러내는 교재식 근사다. 이름은 ‘심판의 샘’으로 풀이된다."
+    },
+    {
+      "word_id": "H8614_0000",
+      "before": null,
+      "after": "느부갓네살이 신상 봉헌에 불러 모은 관원들의 직함이다(단 3:2–3). 페르시아 시대 아람어 문서의 대응 직함은 재판관과 나란히 열거되며 치안을 맡은 관원으로 풀이된다. 한국어 성경은 법률사 또는 법률가로 옮긴다. 고대 페르시아어 차용으로 보는 견해가 있으며 다니엘 본문의 구체적인 직급과 직무 범위는 확정하기 어렵다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H0478_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "첫 אֱלִי 요소는 엘(H0410)에 대응합니다.",
+      "source": "H0478 R2 관계 평가 · H0410 / H0478"
+    },
+    {
+      "word_id_1": "H0478_0000",
+      "word_id_2": "H8199_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "이름 뒤의 샤파트는 שׁפט의 심판하다 어근을 보입니다.",
+      "source": "H0478 R2 관계 평가 · H0478 / H8199"
+    },
+    {
+      "word_id_1": "H4941_0000",
+      "word_id_2": "H8199_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "מ־ 명사형과 재판 의미군이 확인됩니다.",
+      "source": "H0478 R2 관계 평가 · H4941 / H8199"
+    },
+    {
+      "word_id_1": "H8196_0000",
+      "word_id_2": "H8199_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "정본 형태와 심판 의미의 연결입니다. 개별 절의 이독 가능성은 비고에서 보존합니다.",
+      "source": "H0478 R2 관계 평가 · H8196 / H8199"
+    },
+    {
+      "word_id_1": "H8199_0000",
+      "word_id_2": "H8200_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "히브리어와 아람어 동사의 어근 대응입니다. H8085·H8086에 적용한 것과 같은 관계입니다.",
+      "source": "H0478 R2 관계 평가 · H8199 / H8200"
+    },
+    {
+      "word_id_1": "H8199_0000",
+      "word_id_2": "H8201_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "집행되는 심판을 뜻하는 파생 명사입니다.",
+      "source": "H0478 R2 관계 평가 · H8199 / H8201"
+    },
+    {
+      "word_id_1": "H8196_0000",
+      "word_id_2": "H8201_0000",
+      "category_code": "semantic",
+      "relation_type": "similar",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "두 명사 모두 심판이 벌로 집행되는 사건을 가리킵니다. 본문의 구문과 뜻에 근거한 관계입니다.",
+      "source": "H0478 R2 관계 평가 · H8196 / H8201"
+    },
+    {
+      "word_id_1": "H8199_0000",
+      "word_id_2": "H8202_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "같은 어근으로 형성된 인명입니다. 이름의 세부 문법 해석은 여지가 있습니다.",
+      "source": "H0478 R2 관계 평가 · H8199 / H8202"
+    },
+    {
+      "word_id_1": "H8199_0000",
+      "word_id_2": "H8203_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "이름의 첫 요소가 심판하다에 대응합니다.",
+      "source": "H0478 R2 관계 평가 · H8199 / H8203"
+    },
+    {
+      "word_id_1": "H8199_0000",
+      "word_id_2": "H8204_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "어근 형태와 심판 관련 풀이가 함께 지지합니다. 이름의 구체적인 뜻풀이는 자료가 갈립니다.",
+      "source": "H0478 R2 관계 평가 · H8199 / H8204"
+    },
+    {
+      "word_id_1": "H4941_0000",
+      "word_id_2": "H5880_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "창 14:7의 지명 둘째 요소는 미쉬파트입니다.",
+      "source": "H0478 R2 관계 평가 · H4941 / H5880"
+    },
+    {
+      "word_id_1": "H5869_0000",
+      "word_id_2": "H5880_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "이름 앞의 עֵין은 ‘샘’의 연계형입니다.",
+      "source": "H0478 R2 관계 평가 · H5869 / H5880"
+    },
+    {
+      "word_id_1": "H3050_0000",
+      "word_id_2": "H8203_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "단형과 장형의 끝 신명 요소입니다.",
+      "source": "H0478 R2 관계 평가 · H3050 / H8203"
+    }
+  ],
+  "relation_replacements": [
+    {
+      "relation_id": 6361,
+      "word_id_1": "H3092_0000",
+      "word_id_2": "H8199_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련2"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "예호-샤파트의 둘째 요소입니다.",
+        "source": "H0478 R2 관계 평가 · H3092 / H8199"
+      }
+    },
+    {
+      "relation_id": 3201,
+      "word_id_1": "H3068_0000",
+      "word_id_2": "H3092_0000",
+      "before": {
+        "category_code": null,
+        "relation_type": null,
+        "status_code": "inferred",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "",
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "이름 시작의 예호 요소를 근거로 삼습니다. 기존 방향을 확인했습니다.",
+        "source": "H0478 R2 관계 평가 · H3068 / H3092"
+      }
+    },
+    {
+      "relation_id": 3202,
+      "word_id_1": "H3092_0000",
+      "word_id_2": "H3146_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "variant",
+        "status_code": "asserted",
+        "direction_code": "undirected",
+        "description": null,
+        "relation_group_id": null,
+        "note": "예호·요의 장단형 대응입니다. 형태가 대응해도 본문에서 지시하는 사람은 각각 확인합니다.",
+        "source": "H0478 R2 관계 평가 · H3092 / H3146"
+      }
+    },
+    {
+      "relation_id": 3203,
+      "word_id_1": "G2498_0000",
+      "word_id_2": "H3092_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "transliteration",
+        "relation_type": "conventional_transliteration",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "대상 3:10과 마 1:8의 아사 계보가 일치하며, 확보 칠십인역에 같은 헬라어 형태가 전해집니다.",
+        "source": "H0478 R2 관계 평가 · G2498 / H3092"
+      }
+    }
+  ],
+  "supersedes": [],
+  "meaning_approvals": []
+}
