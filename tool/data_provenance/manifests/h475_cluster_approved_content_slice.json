@@ -1,0 +1,701 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H475-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h475_approval_20261124/00_user_approval.json",
+    "document_sha256": "80a644fc0a9dd18976d4e741ba37d6f5506a94f868bdc8a5eb1cfd6ca5f6e9bd"
+  },
+  "target": {
+    "expected_work_sha256": "11c5d481d276c032c7a8f47c3583a5e5705c940ba6e9a0a8b47ac7a6cfdba378",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0475_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "엘리아십 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엘리아십·에랴십·엘-야쉬브 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H7725_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "(되)돌아가(오)다, 회복하다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "돌아가다, 돌아오다, 돌아서다"
+        },
+        {
+          "seq": 2,
+          "meaning": "되돌리다"
+        },
+        {
+          "seq": 3,
+          "meaning": "다시 하다"
+        },
+        {
+          "seq": 4,
+          "meaning": "대답(對答)하다, 보고(報告)하다"
+        }
+      ]
+    },
+    {
+      "word_id": "H3102_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "욥 Job(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "욥·요브 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3142_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "유삽헤셋 Jushab-hesed(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "유삽헤셋·유샤브-헤세드 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3432_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "야숩의 후손들 Jashubites"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "야숩·야슈브 가문(家門) 사람"
+        }
+      ]
+    },
+    {
+      "word_id": "H3433_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "야수비네헴 Jashubi-lehem"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "야수비네헴·야슈비-레헴 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3434_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "야소브암 Jashobeam(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "야소브암·야쇼브-암 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3437_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "야숩 Jashub"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "야숩·야슈브 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H4877_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "메소밥 Meshobab(지)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "메소밥·메쇼바브 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H4878_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "뒤로 돌아감, 배신, 변절"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "등을 돌림"
+        }
+      ]
+    },
+    {
+      "word_id": "H7610_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "스알야숩 Shear jashup"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "스알야숩·셰아르-야슈브 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H7619_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "수바엘 Shubael"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "스브엘·수바엘·셰부-엘·슈바-엘 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H7726_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "되돌아간, 배신(변절)의, 복종을 거부하는"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "등을 돌린"
+        }
+      ]
+    },
+    {
+      "word_id": "H7727_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "소밥 Shobab"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "소밥·쇼바브 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H7728_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "배교의, 배신(변절)한 apostate'"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "등을 돌린"
+        }
+      ]
+    },
+    {
+      "word_id": "H7729_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "퇴거, 물러남, 철회"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "돌이킴"
+        }
+      ]
+    },
+    {
+      "word_id": "H7870_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "포로"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "회복(回復)"
+        }
+      ]
+    },
+    {
+      "word_id": "H8421_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "(되)돌아오다(가다), 대항하다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "돌아오다"
+        },
+        {
+          "seq": 2,
+          "meaning": "되돌리다"
+        },
+        {
+          "seq": 3,
+          "meaning": "대답(對答)하다"
+        }
+      ]
+    },
+    {
+      "word_id": "H8666_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "돌아옴, 대답"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "돌아옴"
+        },
+        {
+          "seq": 2,
+          "meaning": "대답(對答)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0475_0000",
+      "before": null,
+      "after": "역대상·에스라·느헤미야에서 여러 남성에게 쓰인 이름이다. 바니 자손의 이름(스 10:36)은 개역개정·개역한글·새번역에서 에랴십으로 적는다. 엘-야쉬브는 엘(H0410)과 슈브(H7725)의 히필형에 대응하는 뒤 요소의 경계를 드러낸 교재식 근사다. 이름은 하나님이 되돌리신다 또는 하나님이 회복하신다는 뜻으로 풀이된다. 느헤미야의 대제사장과 다른 동명 인물을 구별하며, 에스라의 여호하난과 느헤미야의 요하난의 계보 연결은 문맥상의 판단으로 남긴다."
+    },
+    {
+      "word_id": "H7725_0000",
+      "before": null,
+      "after": "있던 자리나 상태로 돌아가거나 향하던 방향을 바꾸는 동사다. 대상을 되돌리는 용법은 문맥에 따라 돌려주다, 돌려보내다, 회복시키다, 물리치다, 철회하다, 갚다 등으로 나타난다. 뒤 동사와 결합하면 그 동작을 다시 한다는 뜻이 될 수 있다(창 26:18). 말을 되돌려 전하는 표현은 질문에 답하거나 소식을 보고하는 데 쓰이며, 욥 13:22처럼 ‘말’ 목적어가 생략되기도 한다. 하나님께로 돌아오거나 악한 길에서 돌아서는 문맥에서는 회개를 나타낸다. שׁוּב שְׁבוּת 구문은 형편의 회복이나 포로 귀환으로 옮길 수 있다. 렘 42:10에서는 뒤따르는 H3427의 거주 동사와의 관계 때문에 שׁוֹב의 어휘 배정에 이견이 있다."
+    },
+    {
+      "word_id": "H3102_0000",
+      "before": null,
+      "after": "창 46:13에서 돌라·부와·시므론과 함께 나오는 잇사갈의 아들 이름이다. 민 26:24와 대상 7:1은 같은 족보 위치에 야숩(H3437)을 두며, 확보 LXX도 창 46:13에서 야숩에 가까운 형태를 전한다. 두 이름의 대응은 유력하나 철자 차이의 발생 경위는 미확정이다. 요브는 히브리어 읽기의 한글 근사이다. 욥기의 욥(H0347)과 구별한다."
+    },
+    {
+      "word_id": "H3142_0000",
+      "before": null,
+      "after": "대상 3:20에서 스룹바벨 집안의 아들 목록에 나오는 남성 이름이다. 유샤브-헤세드는 יוּשַׁב과 חֶסֶד의 경계를 드러낸 교재식 근사다. Strong은 슈브(H7725)와 헤세드(H2617)의 합성으로 설명하며, 피동 형태를 반영하면 호의가 되돌려졌다는 풀이가 가능하다."
+    },
+    {
+      "word_id": "H3432_0000",
+      "before": null,
+      "after": "민 26:24에서 잇사갈의 아들 야숩(H3437)의 가문에 속한 사람을 뜻하며, 구문 전체는 야숩 가족을 집단으로 가리킨다. 야슈브는 기반 인명의 교재식 근사이고 이 소속형 전체의 근사는 야슈비이다."
+    },
+    {
+      "word_id": "H3433_0000",
+      "before": null,
+      "after": "대상 4:22에서 유다의 아들 셀라의 집안 명단에 나오는 이름으로, 마소라 본문을 인명으로 읽었다. 야수비네헴은 한국어 성경 표기이고, 야슈비-레헴은 Strong 표제에 따른 교재식 분석 표기다. 본문의 휴지형은 야슈비-라헴으로 읽는다. 새번역은 지명처럼 옮기며, 레헴으로 돌아갔다는 동사 독법과 레헴 주민이라는 재모음안도 있다. 슈브(H7725)와 레헴(H3899)의 구성 및 ‘빵을 돌려주는 이’라는 설명은 인명 독법에 따른 어원 가설이다."
+    },
+    {
+      "word_id": "H3434_0000",
+      "before": null,
+      "after": "다윗의 용사와 고라 사람 명단과 첫 달 군대 지휘관 기사에 나오는 이름이다(대상 11:11·12:7[한국어 12:6]·27:2). 야쇼브-암은 Strong 표제의 모음과 결합 분석을 반영한 교재식 근사다. 슈브(H7725)와 암(H5971)의 합성으로 백성이 돌아온다는 풀이가 있으나, 삼하 23:8의 평행 목록과 칠십인역의 이름형은 이스바알 계열을 포함한 대안을 전한다. 동명인 기사를 모두 한 인물로 확정하기는 어렵다."
+    },
+    {
+      "word_id": "H3437_0000",
+      "before": null,
+      "after": "잇사갈의 아들(민 26:24, 대상 7:1) 및 바니 자손(스 10:29)의 이름이다. H7725의 칼형 יָשׁוּב와 대응하는 일반형은 그가 돌아온다는 뜻으로 풀이된다. 대상 7:1의 케티브 ישיב는 야쉬브에 해당하는 이형이고 케레는 야슈브이다. 민 26:24의 야숩 가문 소속형은 H3432이며, 창 46:13의 족보 이름 욥(H3102)과의 대응은 비평상 별도 판단이다."
+    },
+    {
+      "word_id": "H4877_0000",
+      "before": null,
+      "after": "대상 4:34에서 시므온 자손 명단에 나오는 남성의 이름이다. 메쇼바브는 히브리어 읽기의 한글 근사이다. Strong은 슈브(H7725)에서 유래한 이름으로 설명하고 돌아왔거나 회복되었다는 풀이를 제시한다. 이름의 정확한 능동·수동 해석은 미확정이다."
+    },
+    {
+      "word_id": "H4878_0000",
+      "before": null,
+      "after": "슈브(H7725)에서 파생된 여성명사로, 따라야 할 분이나 길에 등을 돌리는 행위를 가리킨다. 예레미야와 호세아에서는 주로 하나님을 저버린 이스라엘·유다의 반역을 나타내며, 잠 1:32에서는 지혜에 등을 돌리는 태도를 가리킨다. 렘 5:6의 케티브와 케레는 한 본문 자리의 철자 이형이다. 호 11:7은 1인칭 접미사의 관계와 절의 나머지 읽기에 이견이 있다."
+    },
+    {
+      "word_id": "H7610_0000",
+      "before": null,
+      "after": "사 7:3에서 이사야가 아하스를 만나러 갈 때 함께 간 아들의 이름이다. 셰아르-야슈브는 남은 자(H7605)와 돌아오다(H7725)의 경계를 드러낸 교재식 근사다. 뜻풀이는 남은 자가 돌아온다이며, 사 10:21에는 같은 구성의 독립 구절이 나온다. 사 7:3의 확보 칠십인역은 첫 요소를 번역하고 야숩을 음역한다."
+    },
+    {
+      "word_id": "H7619_0000",
+      "before": null,
+      "after": "게르솜 가문의 사람과 헤만의 아들 이름으로, 대상 23:16·25:4·26:24에서는 스브엘, 24:20·25:20에서는 수바엘로 옮긴다. 셰부-엘과 슈바-엘은 두 원어형의 신명 요소 엘(H0410)을 드러낸 교재식 근사다. Strong은 앞 요소를 H7617의 축약형 또는 H7725와 연결하며, 하나님의 포로 또는 돌아옴에 관련한 풀이를 열어 둔다. 슈바엘의 형태는 슈브와의 비교를 돕지만 두 이름형의 원래 어원은 미확정이다."
+    },
+    {
+      "word_id": "H7726_0000",
+      "before": null,
+      "after": "슈브(H7725) 계열의 형용사로, 마땅히 따라야 할 쪽에서 등을 돌린 상태를 가리킨다. 사 57:17은 자기 마음의 길을 가는 사람에게, 렘 3:14·22는 돌아오라는 부름을 받는 자녀에게 쓴다. 렘 50:6에서는 케티브 שובבים을 이 번호로, 케레의 사역적 동사를 H7725로 태깅한다."
+    },
+    {
+      "word_id": "H7727_0000",
+      "before": null,
+      "after": "다윗의 아들(삼하 5:14, 대상 3:5·14:4)과 갈렙 집안의 아들(대상 2:18)에게 쓰인 남성 이름이다. 쇼바브는 히브리어 읽기의 한글 근사이다. 형용사 H7726과 철자가 같아 Strong은 연결하되, 이름의 정확한 뜻풀이와 작명 동기는 미확정이다."
+    },
+    {
+      "word_id": "H7728_0000",
+      "before": null,
+      "after": "슈브(H7725) 계열의 형용사다. 렘 31:22와 49:4에서 이스라엘과 암몬을 가리키는 딸을 수식한다. 미 2:4에서는 등을 돌린 자를 가리키는 명사적 용법, 돌려주기의 동사적 풀이, 포로로 잡은 자들을 가리키는 대안 읽기가 경쟁한다."
+    },
+    {
+      "word_id": "H7729_0000",
+      "before": null,
+      "after": "사 30:15에서 쉼과 함께 쓰인 여성명사로, 돌이키는 일을 가리킨다. 앞 문맥은 애굽에 의지하는 방책을 꾸짖고, 이 절은 잠잠히 하나님을 신뢰할 것을 권한다. 그 방책에서 물러남과 하나님께로 돌아섬을 함께 설명할 수 있다. 호 14:2(한국어 14:1)의 같은 모양은 H7725의 명령형이다."
+    },
+    {
+      "word_id": "H7870_0000",
+      "before": null,
+      "after": "시 126:1의 시온의 회복을 나타내는 연계 명사이다. 시온에서 잡혀간 사람들의 귀환과 시온의 형편 회복이라는 번역이 있다. 4절은 같은 구문에서 H7622를 사용하고 확보 칠십인역은 두 절에서 포로 상태를 가리키는 같은 헬라어를 쓴다. Strong의 슈브(H7725) 어형 변형 풀이와 H7622와의 이형 가능성은 미확정이다."
+    },
+    {
+      "word_id": "H8421_0000",
+      "before": null,
+      "after": "히브리어 슈브(H7725)에 대응하는 아람어 동사다. 단 4:31·33(한국어 4:34·36)에서 총명이나 영화가 돌아온다. 스 6:5에서는 성전 기물을 돌려보내고, 스 5:5·11과 단 2:14·3:16에서는 답을 돌려 준다. 공통 어근 관계는 두 언어 사이의 직접 차용 방향을 확정하지 않는다."
+    },
+    {
+      "word_id": "H8666_0000",
+      "before": null,
+      "after": "슈브(H7725)의 파생 여성명사다. 삼상 7:17에서는 장소로 돌아옴, 삼하 11:1 등에서는 해가 돌아옴을 나타낸다. 욥 21:34와 34:36에서는 말로 한 대답을 뜻한다. 확보 정본에서 회개를 독립 명사 의미로 더할 용례는 확인되지 않았다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H0475_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "אֶלְ의 신명 기능과 H471 선례.",
+      "source": "고정 Hebrew Strong XML 및 OSHB. H475 어휘군 R2의 관계 근거."
+    },
+    {
+      "word_id_1": "H0475_0000",
+      "word_id_2": "H7725_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "יָשִׁיב의 Hiphil과 출 21:34를 대조.",
+      "source": "고정 Hebrew Strong XML 및 OSHB. H475 어휘군 R2의 관계 근거."
+    },
+    {
+      "word_id_1": "H3102_0000",
+      "word_id_2": "H3437_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "창 46:13과 민 26:24·대상 7:1의 계보 자리와 확보 LXX. 전사의 방향은 미확정.",
+      "source": "고정 Hebrew Strong XML 및 OSHB. H475 어휘군 R2의 관계 근거."
+    },
+    {
+      "word_id_1": "H2617_0000",
+      "word_id_2": "H3142_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "대상 3:20의 명사 חֶסֶד.",
+      "source": "고정 Hebrew Strong XML 및 OSHB. H475 어휘군 R2의 관계 근거."
+    },
+    {
+      "word_id_1": "H3142_0000",
+      "word_id_2": "H7725_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "대상 3:20의 יוּשַׁב이 피동형과 대응.",
+      "source": "고정 Hebrew Strong XML 및 OSHB. H475 어휘군 R2의 관계 근거."
+    },
+    {
+      "word_id_1": "H3432_0000",
+      "word_id_2": "H3437_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "민 26:24가 기반 이름과 가문 소속형을 함께 전함.",
+      "source": "고정 Hebrew Strong XML 및 OSHB. H475 어휘군 R2의 관계 근거."
+    },
+    {
+      "word_id_1": "H3433_0000",
+      "word_id_2": "H3899_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "hypothesized",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 인명 독법에 따른 둘째 성분. לָחֶם과 표제 לֶחֶם의 모음 차이는 휴지형으로 설명 가능.",
+      "source": "고정 Hebrew Strong XML 및 OSHB. H475 어휘군 R2의 관계 근거."
+    },
+    {
+      "word_id_1": "H3433_0000",
+      "word_id_2": "H7725_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "hypothesized",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 인명 독법에서 첫 성분을 슈브 계열로 풀이. 굴절과 작명 경위에 이견이 있음.",
+      "source": "고정 Hebrew Strong XML 및 OSHB. H475 어휘군 R2의 관계 근거."
+    },
+    {
+      "word_id_1": "H3434_0000",
+      "word_id_2": "H5971_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "hypothesized",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "현행 MT에서 עָם을 분석할 수 있음. 이스바알 계열은 별도 본문 가설.",
+      "source": "고정 Hebrew Strong XML 및 OSHB. H475 어휘군 R2의 관계 근거."
+    },
+    {
+      "word_id_1": "H3434_0000",
+      "word_id_2": "H7725_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "hypothesized",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "닫힌 음절의 Qal 계열 풀이가 가능. 평행 이름의 첫 성분이 달라짐.",
+      "source": "고정 Hebrew Strong XML 및 OSHB. H475 어휘군 R2의 관계 근거."
+    },
+    {
+      "word_id_1": "H3437_0000",
+      "word_id_2": "H7725_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "민 26:24의 Qal형과 대상 7:1의 Hiphil형에 대응하는 이형.",
+      "source": "고정 Hebrew Strong XML 및 OSHB. H475 어휘군 R2의 관계 근거."
+    },
+    {
+      "word_id_1": "H4877_0000",
+      "word_id_2": "H7725_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "파생 분사형과 어울리는 이름. 능동·수동 풀이와 작명 동기는 열어 둠.",
+      "source": "고정 Hebrew Strong XML 및 OSHB. H475 어휘군 R2의 관계 근거."
+    },
+    {
+      "word_id_1": "H4878_0000",
+      "word_id_2": "H7725_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "렘 8:5·호 14:5의 돌아섬을 명사로 표현.",
+      "source": "고정 Hebrew Strong XML 및 OSHB. H475 어휘군 R2의 관계 근거."
+    },
+    {
+      "word_id_1": "H7605_0000",
+      "word_id_2": "H7610_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "사 7:3의 명사와 사 10:21 평행 구문.",
+      "source": "고정 Hebrew Strong XML 및 OSHB. H475 어휘군 R2의 관계 근거."
+    },
+    {
+      "word_id_1": "H7610_0000",
+      "word_id_2": "H7725_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "사 7:3의 יָשׁוּב가 사 10:21의 Qal과 대응.",
+      "source": "고정 Hebrew Strong XML 및 OSHB. H475 어휘군 R2의 관계 근거."
+    },
+    {
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H7619_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "두 어형의 끝 אֵל. 앞 요소의 경쟁 풀이에도 해당하는 형태적 접점.",
+      "source": "고정 Hebrew Strong XML 및 OSHB. H475 어휘군 R2의 관계 근거."
+    },
+    {
+      "word_id_1": "H7619_0000",
+      "word_id_2": "H7725_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "hypothesized",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "수바엘 쪽 앞 요소에 한정. 원래 인명의 역사적 생성에는 두 어원 가설이 있음.",
+      "source": "고정 Hebrew Strong XML 및 OSHB. H475 어휘군 R2의 관계 근거."
+    },
+    {
+      "word_id_1": "H7725_0000",
+      "word_id_2": "H7726_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "등을 돌리는 어근과 형용사 가족. 형태에서 מ 탈락을 가정하는 BDB 분석은 별도.",
+      "source": "고정 Hebrew Strong XML 및 OSHB. H475 어휘군 R2의 관계 근거."
+    },
+    {
+      "word_id_1": "H7726_0000",
+      "word_id_2": "H7727_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "철자와 공유 어근 후보. 이름이 형용사에서 직접 생긴 방향이나 작명 뜻은 미확정.",
+      "source": "고정 Hebrew Strong XML 및 OSHB. H475 어휘군 R2의 관계 근거."
+    },
+    {
+      "word_id_1": "H7725_0000",
+      "word_id_2": "H7728_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "예레미야 두 여성형은 공유 어근의 상태 형용사. 미 2:4의 대안 독법을 함께 보존.",
+      "source": "고정 Hebrew Strong XML 및 OSHB. H475 어휘군 R2의 관계 근거."
+    },
+    {
+      "word_id_1": "H7725_0000",
+      "word_id_2": "H7729_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "사 30:15의 독립 명사. 호 14:2 명령형은 동사 굴절.",
+      "source": "고정 Hebrew Strong XML 및 OSHB. H475 어휘군 R2의 관계 근거."
+    },
+    {
+      "word_id_1": "H7725_0000",
+      "word_id_2": "H8421_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "형태와 돌아옴·사동·응답이 대응하는 두 언어의 동계어. H426 선례.",
+      "source": "고정 Hebrew Strong XML 및 OSHB. H475 어휘군 R2의 관계 근거."
+    },
+    {
+      "word_id_1": "H7725_0000",
+      "word_id_2": "H8666_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "귀환·순환을 명사화하고 응답 용법도 공유.",
+      "source": "고정 Hebrew Strong XML 및 OSHB. H475 어휘군 R2의 관계 근거."
+    }
+  ],
+  "relation_replacements": [],
+  "supersedes": [],
+  "meaning_approvals": []
+}
