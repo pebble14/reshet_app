@@ -40,6 +40,7 @@
 
 | 결정 단위 | 대상 | 상태 | 복원 수준 | 결정/최초 적용일 | 기록 |
 |---|---|---|---|---|---|
+| H486 알모닷과 엘마담 어휘군 | R1 2어휘·뜻2·비고2·신규 가설 관계1 | active | 높음 | 2026-11-25 | [결정 기록](h486_cluster_approved_content_slice.md) |
 | H478 엘리사밧과 심판하다 어휘군 | R2 14어휘·뜻21·비고14·신규관계13·교체4, 새 hold 없음 | active | 높음 | 2026-11-24 | [결정 기록](h478_cluster_approved_content_slice.md) |
 | H476 엘리사마와 듣다 어휘군 | R2 34어휘·뜻39·비고34·신규관계20·교체19, 새 hold 없음 | active | 높음 | 2026-11-24 | [결정 기록](h476_cluster_approved_content_slice.md) |
 | H475 엘리아십 어휘군 | R2 19어휘·뜻25·비고19·신규관계23, 새 hold 없음 | active | 높음 | 2026-11-24 | [결정 기록](h475_cluster_approved_content_slice.md) |

@@ -1,0 +1,73 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H486-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h486_approval_20261125/00_user_approval.json",
+    "document_sha256": "eb4f3fd0918c4c31e1acbd7a9328641ac478eea05efcf0d4ab021c71df099864"
+  },
+  "target": {
+    "expected_work_sha256": "f4063380a5a0baeb2500f67a7f4b216fb69ff5ed3b49cddaa9b4318807b1e10a",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0486_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "알모닷 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "알모닷·알모다드 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "G1678_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "엘마담"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엘마담·엘모담 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0486_0000",
+      "before": null,
+      "after": "창세기 10:26과 역대상 1:20에서 욕단의 아들 목록 맨 앞에 나오는 이름이다. 알모닷은 한국어 성경 관용명이고 알모다드는 끝의 달레트를 드러내는 히브리어 교재식 근사다. Strong은 외래 기원을 추정한다. 남아라비아 집단과 연결하는 견해와 ‘하나님은 친구’라는 이름 풀이가 있으며, 정확한 구성과 어원은 미확정이다."
+    },
+    {
+      "word_id": "G1678_0000",
+      "before": null,
+      "after": "누가복음 3:28의 예수 계보에서 고삼과 에르 사이에 나오는 이름이다. 엘마담은 한국어 성경 관용명이자 NA27·NA28 본문형 Ἐλμαδὰμ의 교재식 근사다. 엘모담은 Strong 표제와 수용본문 계열의 Ἐλμωδάμ에 대응한다. Strong은 알모닷(H0486)과의 어원 연결을 추정하며, 일부 전승에서 철자가 겹친다. 직접 차용 경로는 미확정이다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "G1678_0000",
+      "word_id_2": "H0486_0000",
+      "category_code": "etymological",
+      "relation_type": "borrowed_from",
+      "status_code": "hypothesized",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong은 알모닷을 엘마담 이름의 가능 원천으로 본다. 창세기 10:26 칠십인역과 누가복음 3:28의 일부 헬라어 전승에서 철자가 겹치며, 시리아어 페쉬타에도 히브리어에 가까운 형태가 있다. 각 족보의 인물은 별개이며 직접 차용 경로는 미확정이다.",
+      "source": "Strong G1678 · Brooke–McLean과 Wevers 창 10:26 비평란 · TAGNT와 GA 2882 및 페쉬타 눅 3:28"
+    }
+  ],
+  "relation_replacements": [],
+  "supersedes": [],
+  "meaning_approvals": []
+}
