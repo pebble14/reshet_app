@@ -1,0 +1,40 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H495-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h495_approval_20261125/00_user_approval.json",
+    "document_sha256": "81df5c88eb74ae44ee3d5a17f7342d0ebba9a55831a909e0f7509e88234499b9"
+  },
+  "target": {
+    "expected_work_sha256": "a7df4499c20543f4a749c0e69805dde46557f4b9dc1cf3e04bea3d699c4a52a4",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0495_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "엘라살 (지)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엘라살·엘라사르 (지)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0495_0000",
+      "before": null,
+      "after": "창 14:1, 9에서 그돌라오멜과 함께한 아리옥이 다스린 곳의 이름이다. 엘라살은 한국어 성경의 관용명이고 엘라사르는 끝의 레쉬를 드러낸 히브리어 교재식 근사다. Strong은 외래 기원을 추정한다. 고대 라르사와 동일시하는 견해가 있다. 정확한 위치와 어원은 미확정이다."
+    }
+  ],
+  "relation_creates": [],
+  "relation_replacements": [],
+  "supersedes": [],
+  "meaning_approvals": []
+}

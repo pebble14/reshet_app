@@ -40,6 +40,7 @@
 
 | 결정 단위 | 대상 | 상태 | 복원 수준 | 결정/최초 적용일 | 기록 |
 |---|---|---|---|---|---|
+| H495 엘라살 어휘군 | R1 뜻 1개·비고 1건, 신규 관계·hold 0건 | active | 높음 | 2026-11-25 | [결정 기록](h495_cluster_approved_content_slice.md) |
 | H494 엘라단과 נ־ת־ן 어휘군 | 최신안 29어휘·뜻33·비고29·신규관계22·교체14, 새 hold 없음 | active | 높음 | 2026-11-25 | [결정 기록](h494_cluster_approved_content_slice.md) |
 | H493 엘라암과 נעם 어휘군 | R2 13어휘·뜻13·비고13·신규관계9·교체3, 새 hold 없음 | active | 높음 | 2026-11-25 | [결정 기록](h493_cluster_approved_content_slice.md) |
 | H486 알모닷과 엘마담 어휘군 | R1 2어휘·뜻2·비고2·신규 가설 관계1 | active | 높음 | 2026-11-25 | [결정 기록](h486_cluster_approved_content_slice.md) |
