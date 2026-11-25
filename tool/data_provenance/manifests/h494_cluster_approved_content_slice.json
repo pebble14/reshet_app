@@ -1,0 +1,1244 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H494-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h494_approval_20261125/00_user_approval.json",
+    "document_sha256": "2cddfe3f41af4aac93ec06c2be80115df5cd4478e117c48ca0d51e7074eac7ee"
+  },
+  "target": {
+    "expected_work_sha256": "733e62bfb2e6edb3ef63569da0c0dc80097fdd5f32ad4a70583c5764bdf873f5",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H5414_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "주다"
+        },
+        {
+          "seq": 2,
+          "meaning": "두다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "주다"
+        },
+        {
+          "seq": 2,
+          "meaning": "두다"
+        },
+        {
+          "seq": 3,
+          "meaning": "…이 되게 하다"
+        },
+        {
+          "seq": 4,
+          "meaning": "내다"
+        },
+        {
+          "seq": 5,
+          "meaning": "…하게 두다"
+        }
+      ]
+    },
+    {
+      "word_id": "H5415_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "주다 give"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "주다"
+        }
+      ]
+    },
+    {
+      "word_id": "H5411_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "느디님 사람 Nethinim"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "느디님·네티님 (성전 봉사 집단)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5412_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "느디님 사람들"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "느디님·네티님 (성전 봉사 집단)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5417_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "느다넬[뜻풀이: 하나님께서 주셨다]"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "느다넬·네탄-엘 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "G3482_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "나다나엘[하나님께서 주셨다]"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "나다나엘·네탄-엘 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5418_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "느다냐 Nethaniah"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "느다냐·느다니야·네탄-야·네탄-야후 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5419_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "나단멜렉 Nathan melech"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "나단멜렉·네탄-멜레크 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "G3156_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "마태[여호와의 선물]"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "마태·맛타이오스 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "G3158_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "맛닷[선물]"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "맛닷·맛타트 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "G3159_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "맛디아[여호와의 선물]"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "맛디아·맛티아스 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "G3160_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "맛다다[선물]"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "맛다다·맛타타 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "G3481_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "나단[주어진 것/선물]"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "나단·나탄 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0494_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "엘라단 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엘라단·엘-나탄 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H4976_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "선물/예물"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "선물(膳物)"
+        }
+      ]
+    },
+    {
+      "word_id": "H4979_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "선물 gift"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "선물(膳物)"
+        }
+      ]
+    },
+    {
+      "word_id": "H4978_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "선물 gift"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "선물(膳物)"
+        }
+      ]
+    },
+    {
+      "word_id": "H4991_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "선물/예물"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "선물(膳物)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5416_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "나단[뜻풀이: 주어진 것/선물]"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "나단·나탄 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3083_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "요나단 Jonathan(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "요나단·여호나단·예호-나탄 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3129_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "요나단 Jonathan"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "요나단·요-나탄 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H4977_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "맛단"
+        },
+        {
+          "seq": 2,
+          "meaning": "뜻풀이: 선물"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "맛단·맛탄 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "G3157_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "맛단[선물]"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "맛단·맛탄 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H4980_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "맛다나 Mattanah"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "맛다나·맛타나 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H4982_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "맛드내 Mattenai"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "맛드내·맛트나이 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H4983_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "맛다냐 Mattaniah"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "맛다냐·맛다니야·맛탄-야·맛탄-야후 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H4992_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "맛닷다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "맛닷다·맛탓타 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H4993_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "맛디댜/맛디디아/맛디디야"
+        },
+        {
+          "seq": 2,
+          "meaning": "뜻풀이: 여호와의 선물"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "맛디댜·맛디디아·맛디디야·맛티트-야·맛티트-야후 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "G3161_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "맛다디아[여호와의 선물]"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "맛다디아·맛티트-야·맛티트-야후 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H5414_0000",
+      "before": null,
+      "after": "물건·몫·은혜·권한 등을 주거나 넘겨주고, 대상을 어떤 곳에 두거나 일정한 지위·역할·상태에 이르게 한다. 땅의 소출, 바위의 물, 나드의 향기, 사람의 소리처럼 주체로부터 무엇이 나오는 경우에도 쓰인다. 사람이나 대상의 행동을 하게 두거나 허락하는 구문이 있으며 부정문은 그 행동을 막는 뜻이 된다. 손에 넘기다, 얼굴을 향하다, 마음을 두다, 값을 내다 등의 구체적인 풀이는 결합 표현에서 나온다. ‘미 이텐’은 소망을 나타낼 수 있다. 민 3:9와 8:16의 수동분사 반복은 맡기거나 바쳤다는 점을 강조한다. 창 3:12의 첫 동사처럼 주다와 곁에 두다의 풀이가 겹치는 경우도 있다."
+    },
+    {
+      "word_id": "H5415_0000",
+      "before": null,
+      "after": "성경 아람어에서 조공·세금을 바치거나 왕실 창고의 물품·비용을 지급하고, 기한이나 왕권을 주는 데 쓰인다. 스 7:20은 같은 동사의 두 형태를 한 절에 쓰고, 단 4장의 세 용례는 지극히 높으신 이가 원하시는 이에게 나라를 주는 문맥이다. 히브리어 H5414와 기본 뜻과 어근이 대응한다."
+    },
+    {
+      "word_id": "H5411_0000",
+      "before": null,
+      "after": "역대상과 에스라·느헤미야에서 레위인의 일을 돕도록 배정된 성전 봉사 집단이다. 느디님은 한국어 성경의 관용명이며 네티님은 본문에 쓰인 히브리어 복수형 נְתִינִים의 교재식 근사다. Strong의 단수형 표제 נָתִין은 나틴으로 읽는다. 스 8:17의 수동분사형 기록과 집단명의 읽기형은 같은 자리에 전해진다. 스 8:20은 다윗과 지도자들이 이들을 레위인의 봉사에 배정했다고 서술한다."
+    },
+    {
+      "word_id": "H5412_0000",
+      "before": null,
+      "after": "스 7:24에서 제사장·레위인·노래하는 이·문지기 등과 함께 세금 면제 대상으로 열거되는 성전 봉사 집단이다. 아람어 본문형은 한정 복수형 נְתִינַיָּא(네티나이야)이며, 뜻에 병기한 네티님은 히브리어 대응형 H5411의 본문 복수형을 따른 표기다. Strong의 단수형 표제 נְתִין은 네틴으로 읽는다."
+    },
+    {
+      "word_id": "H5417_0000",
+      "before": null,
+      "after": "잇사갈 지파 지도자, 이새의 아들, 제사장과 레위인 등 여러 남성에게 쓰인 이름이다. 느다넬은 한국어 성경 관용명이며 네탄-엘은 첫 유성 셰와를 짧은 e 계열로 근사하고 뒤의 신명 엘과의 경계를 드러낸 교재식 표기다. 티베리아 재구에서 첫 모음은 짧은 a 계열이다. Strong의 하나님에게서 주어진 이와 문장형 풀이인 하나님이 주셨다는 해석이 있다. 민 1:8 등에서 그리스어 Ναθαναήλ로 전승된다."
+    },
+    {
+      "word_id": "G3482_0000",
+      "before": null,
+      "after": "요 1장과 21:2의 갈릴리 가나 출신 나다나엘이다. 헬라어 표제의 교재식 근사는 나타나엘이다. 네탄-엘은 민 1:8 등의 그리스어 본문에서도 Ναθαναήλ로 전승된 히브리어 원천 이름 H5417의 구성 표기다. 그 이름의 한국어 구약 성경 관용명은 느다넬이다. 고대 인명의 개별 호명과 이름형의 전승은 구별한다."
+    },
+    {
+      "word_id": "H5418_0000",
+      "before": null,
+      "after": "역대상 25장의 아삽의 아들과 왕하 25장·렘 40–41장의 이스마엘의 아버지 등에게 쓰인 이름이다. 느다냐와 느다니야는 한국어 성경 관용 표기다. 네탄-야와 네탄-야후는 첫 유성 셰와를 짧은 e 계열로 근사한 이름 요소와 신명 야·야후의 경계를 나타낸다. H5414와 H3050이 연결되며 야께서 주셨다는 풀이가 있다. 대상 25:2와 25:12에는 단형과 장형이 각각 나온다."
+    },
+    {
+      "word_id": "H5419_0000",
+      "before": null,
+      "after": "왕하 23:11에서 요시야 때의 궁정 관리로 등장한다. 나단멜렉은 한국어 성경 관용명이며 네탄-멜레크는 첫 유성 셰와의 교재식 근사와 나탄 동사 요소·왕을 뜻하는 멜레크의 경계를 보인다. Strong은 왕에게서 주어진 이로 풀이하며 왕이 주었다는 문장형 해석도 가능하다. 예루살렘 발굴 인장에도 같은 자음 철자의 이름이 확인된다. 인장의 소유자와 성경의 관리가 같은 사람인지는 열려 있다."
+    },
+    {
+      "word_id": "G3156_0000",
+      "before": null,
+      "after": "마 9:9에서 부름을 받고 열두 제자 명단에 나오는 세관원 마태다. 맛타이오스는 Strong 표제 Ματθαῖος와 TAGNT 본문 Μαθθαῖος의 교재식 근사다. Strong은 G3161의 짧은 형태로 설명하며, 예루살렘 비문에 나타나는 셈어 짧은 인명 מתי를 거친 전승도 제안된다. 복음서 인물의 실제 셈어 이름과 구체적인 축약 경로는 확정하기 어렵다."
+    },
+    {
+      "word_id": "G3158_0000",
+      "before": null,
+      "after": "눅 3:24와 3:29의 계보에 따로 등장하는 맛닷이다. 맛타트는 고정 표제 Ματθάτ과 본문 Μαθθάτ을 교재식으로 근사한 표기이며 마지막 τ를 드러낸다. Strong은 G3161의 단축형일 가능성을 제시하고, H4991 선물 명사와도 형태를 비교할 수 있다. 특정 원천 인명과 축약 경로의 확실성은 낮다."
+    },
+    {
+      "word_id": "G3159_0000",
+      "before": null,
+      "after": "행 1:23과 1:26에서 가룟 유다 뒤를 잇도록 택해진 맛디아다. 맛티아스는 고정 표제 Ματθίας의 교재식 근사다. TAGNT는 두 용례에 목적격 Μαθθίαν을 전한다. Strong은 G3161의 짧은 이름형일 가능성을 제시한다. 그 원천 이름에 해당하는 ‘야의 선물’은 이름군의 어원 풀이로 참고할 수 있다."
+    },
+    {
+      "word_id": "G3160_0000",
+      "before": null,
+      "after": "눅 3:31의 계보에서 나단의 아들로 제시된다. 맛다다는 한국어 성경 관용명, 맛타타는 Ματταθά의 교재식 근사다. Strong은 G3161의 짧은 형태일 가능성을 제시하며 H4992와 비교한다. 스 10:33의 확보 LXX Μαθαθα와 형태가 가깝지만 직접 전승 경로를 확정하기 어렵다."
+    },
+    {
+      "word_id": "G3481_0000",
+      "before": null,
+      "after": "눅 3:31에서 다윗의 아들 나단을 가리킨다. 나단은 한국어 성경 관용명이며 나탄은 고정 Strong Ναθάν 및 원천 히브리어 이름의 교재식 근사다. 나탐은 TAGNT와 SBLGNT 본문에 나오는 Ναθάμ의 끝 μ을 반영한다. 삼하 5:14의 확보 LXX는 Ναθαν을 쓴다."
+    },
+    {
+      "word_id": "H0494_0000",
+      "before": null,
+      "after": "왕하 24:8의 느후스다의 아버지, 렘 26장과 36장의 악볼의 아들, 스 8:16 명단에 나오는 남성 이름이다. 엘라단은 한국어 성경 관용명이며 엘-나탄은 אֶלְ과 נָתָן의 경계를 드러낸 교재식 근사다. Strong의 하나님은 주시는 분이라는 풀이와 BDB의 하나님이 주셨다는 풀이가 있다. 왕하와 예레미야 본문 사이의 인물 동일성은 확정하기 어렵고 스 8:16에는 같은 이름이 세 번 나온다."
+    },
+    {
+      "word_id": "H4976_0000",
+      "before": null,
+      "after": "상대에게 주는 선물을 가리킨다. 창 34:12에서는 혼인 예물, 민 18:11에서는 하나님께 드려진 예물, 잠 21:14에서는 은밀히 주어 분노를 달래는 물건이다. 잠 18:16과 19:6에는 사람을 만나거나 관계를 맺는 데 작용하는 선물이 나온다. 주는 목적이 선물의 문맥상 성격을 달리한다."
+    },
+    {
+      "word_id": "H4979_0000",
+      "before": null,
+      "after": "물건·재산·몫 등 받는 이에게 주는 선물이다. 창 25:6은 자녀들에게 주는 재산, 레 23:38과 민 18:29는 드리는 예물, 잠 15:27과 전 7:7은 판단·행동을 그르치게 하는 뇌물 문맥이다. 민 18:6–7의 레위인과 제사장 직분도 선물로 주어졌다고 표현한다. Strong의 헌물·뇌물 풀이는 이러한 쓰임을 설명한다."
+    },
+    {
+      "word_id": "H4978_0000",
+      "before": null,
+      "after": "성경 아람어로 왕이 베푸는 선물을 가리킨다. 단 2:6과 2:48에서는 해석을 해 주는 보상에 포함되고 5:17에서는 다니엘이 왕에게 돌려보내는 선물이다. 히브리어 H4979에 대응한다."
+    },
+    {
+      "word_id": "H4991_0000",
+      "before": null,
+      "after": "주어지는 선물이다. 왕상 13:7에서는 왕이 제안한 사례품, 잠 25:14에서는 준다고 자랑만 한 선물, 전 3:13과 5:18(MT)에서는 하나님의 선물이다. 겔 46:5와 46:11의 손과 결합한 구문은 드리는 사람이 마련해 줄 수 있는 예물의 분량을 나타낸다. H4976과 같은 어근의 명사다."
+    },
+    {
+      "word_id": "H5416_0000",
+      "before": null,
+      "after": "다윗의 아들, 다윗을 책망한 예언자와 그 밖의 여러 남성에게 쓰인 이름이다. 나단은 한국어 성경 관용명이고 나탄은 נָתָן의 교재식 근사다. Strong은 H5414와 연결해 주어진 이로 설명하고, ‘그가 주었다’는 동사형 이름 풀이도 가능하다. 눅 3:31은 다윗의 아들 나단을 계보에 넣는다."
+    },
+    {
+      "word_id": "H3083_0000",
+      "before": null,
+      "after": "사울의 아들 요나단과 대하 17:8의 레위인 여호나단, 그 밖의 여러 남성에게 쓰인 이름이다. 요나단과 여호나단은 한국어 성경의 관용 표기이고 예호-나탄은 יְהוֹ와 נָתָן의 구성 경계를 드러낸 교재식 근사다. Strong은 H3068과 H5414에 연결하며 여호와께서 주셨다는 이름 풀이를 나타낸다. H3129의 요-나탄과 장형·단형으로 대응한다."
+    },
+    {
+      "word_id": "H3129_0000",
+      "before": null,
+      "after": "요나단의 단형 יוֹנָתָן이다. 요나단은 한국어 성경 관용명, 요-나탄은 축약된 신명 요소와 나탄의 경계를 보이는 교재식 근사다. 삼상 14:1의 사울의 아들은 삼상 18:1에서 장형으로도 등장한다. 다른 인물의 장형 사용 여부는 해당 본문에서 개별 확인이 필요하다."
+    },
+    {
+      "word_id": "H4977_0000",
+      "before": null,
+      "after": "왕하 11:18과 대하 23:17의 바알 제사장, 렘 38:1의 스바댜의 아버지에게 쓰인 이름이다. 맛단은 한국어 성경 관용명이며 맛탄은 동일한 철자의 선물 명사 H4976과 연결되는 교재식 근사다. 마 1:15의 맛단과 이름형이 대응한다."
+    },
+    {
+      "word_id": "G3157_0000",
+      "before": null,
+      "after": "마 1:15에서 엘르아살의 아들이며 야곱의 아버지로 두 번 나오는 맛단이다. 맛탄은 원천 히브리어 이름 H4977과 헬라어 Ματθάν의 교재식 근사다. 왕하 11:18과 대하 23:17의 확보 LXX도 Ματθαν으로 이름을 전한다."
+    },
+    {
+      "word_id": "H4980_0000",
+      "before": null,
+      "after": "민 21:18–19에서 광야 여정의 이동 지점으로 나오는 맛다나다. 맛타나는 히브리어 표기의 교재식 근사다. 선물을 뜻하는 H4979와 철자 및 읽기가 같고 Strong도 두 항목을 연결한다. 지명이 생긴 구체적 사유와 장소의 정확한 위치는 이 두 용례로 확정하기 어렵다."
+    },
+    {
+      "word_id": "H4982_0000",
+      "before": null,
+      "after": "스 10:33·37의 명단과 느 12:19의 제사장 명단에 나온다. 맛드내는 한국어 성경 관용명이고 맛트나이는 교재식 근사다. Strong은 선물 명사 H4976에서 유래한 이름으로, BDB는 맛다냐 H4983의 단축형으로 설명한다. 두 풀이가 같은 어근을 공유하며 정확한 형성 경로는 확정하기 어렵다."
+    },
+    {
+      "word_id": "H4983_0000",
+      "before": null,
+      "after": "왕하 24:17에서 시드기야로 이름이 바뀐 왕과 역대기·에스라·느헤미야의 여러 남성에게 쓰인 이름이다. 맛다냐와 맛다니야는 한국어 성경 표기다. 맛탄-야와 맛탄-야후는 선물 명사 H4976과 신명 요소 H3050의 결합을 드러내며 야의 선물로 풀이한다. 실제 장형은 대상 25:4·16과 대하 29:13에 나온다."
+    },
+    {
+      "word_id": "H4992_0000",
+      "before": null,
+      "after": "스 10:33의 남성 인명이다. 맛닷다는 한국어 성경 관용명이고 맛탓타는 מַתַּתָּה의 자음 중복을 의미 필드의 받침 기준 안에서 반영한 근사다. Strong은 H4993 이름으로 설명하며, 확보 LXX는 Μαθαθα로 적는다. 눅 3:31의 맛다다 이름과 형태가 가깝고 직접 이어지는 인물이나 전승 경로는 확인되지 않는다."
+    },
+    {
+      "word_id": "H4993_0000",
+      "before": null,
+      "after": "대상 9:31의 레위인, 다윗 시대 악사 및 에스라 관련 명단의 여러 남성에게 쓰인 이름이다. 맛디댜·맛디디아·맛디디야는 확인한 성경 관용 표기다. 맛티트-야와 맛티트-야후는 선물 명사 H4991 계열과 신명 요소 H3050의 경계를 보이며 야의 선물로 풀이한다. 대상 15:18·21과 25:3·21은 장형을 전한다. 역대기의 여러 절에서 그리스어 Ματταθίας로 음역된다."
+    },
+    {
+      "word_id": "G3161_0000",
+      "before": null,
+      "after": "눅 3:25–26의 계보에서 Ματταθίου라는 속격으로 나오는 맛다디아 이름이다. 맛티트-야와 맛티트-야후는 대상 9:31·25:3 등의 확보 LXX에서 Ματταθίας로 전승된 히브리어 이름 H4993의 구성 표기다. 헬라어 표제 Ματταθίας의 교재식 근사는 맛타티아스다. 이 이름을 지닌 사람들의 실제 히브리어 호명은 현전 본문으로 확정할 수 없다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H0494_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "엘 신명 요소가 앞에 오는 이름",
+      "source": "H0494 R2 관계 평가 · H0494→H0410 from"
+    },
+    {
+      "word_id_1": "H0494_0000",
+      "word_id_2": "H5414_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "나탄 동사 요소. 이름 풀이의 능동·받음 표현은 비고",
+      "source": "H0494 R2 관계 평가 · H0494→H5414 from"
+    },
+    {
+      "word_id_1": "H3083_0000",
+      "word_id_2": "H5414_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "장형 요나단의 동사 요소",
+      "source": "H0494 R2 관계 평가 · H3083→H5414 from"
+    },
+    {
+      "word_id_1": "H4976_0000",
+      "word_id_2": "H5414_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "받고 주는 대상을 가리키는 명사",
+      "source": "H0494 R2 관계 평가 · H4976→H5414 from"
+    },
+    {
+      "word_id_1": "H5411_0000",
+      "word_id_2": "H5414_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "수동형과 관련된 집단 명칭. 스 8:17·20",
+      "source": "H0494 R2 관계 평가 · H5411→H5414 from"
+    },
+    {
+      "word_id_1": "H5414_0000",
+      "word_id_2": "H5415_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "히브리어·아람어에서 확인되는 נתן 대응",
+      "source": "H0494 R2 관계 평가 · H5415→H5414 corresponding to"
+    },
+    {
+      "word_id_1": "H5414_0000",
+      "word_id_2": "H5418_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "느다냐 장·단형에 공유되는 동사 요소",
+      "source": "H0494 R2 관계 평가 · H5418→H5414 from"
+    },
+    {
+      "word_id_1": "H5414_0000",
+      "word_id_2": "H5419_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "왕하 23:11과 인장의 이름 첫 요소",
+      "source": "H0494 R2 관계 평가 · H5419→H5414 from"
+    },
+    {
+      "word_id_1": "H3068_0000",
+      "word_id_2": "H3083_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "예호 신명 요소. 신명 자체의 표제 의미는 별개",
+      "source": "H0494 R2 관계 평가 · H3083→H3068 from"
+    },
+    {
+      "word_id_1": "H3083_0000",
+      "word_id_2": "H3129_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "요나단 장·단형. 삼상 14:1과 18:1의 인물 비교",
+      "source": "H0494 R2 관계 평가 · H3083→H3129 Compare / H3129→H3083 a form of"
+    },
+    {
+      "word_id_1": "H4976_0000",
+      "word_id_2": "H4979_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "여성 명사형. 남녀나 예물·뇌물의 의미 대립을 부여하지 않음",
+      "source": "H0494 R2 관계 평가 · H4979→H4976 feminine of"
+    },
+    {
+      "word_id_1": "H4976_0000",
+      "word_id_2": "H4982_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 맛탄 기반과 BDB의 맛다냐 축약설에서 공통으로 확인되는 어근",
+      "source": "H0494 R2 관계 평가 · H4982→H4976 from"
+    },
+    {
+      "word_id_1": "H4976_0000",
+      "word_id_2": "H4983_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "맛탄과 야·야후가 결합",
+      "source": "H0494 R2 관계 평가 · H4983→H4976 from"
+    },
+    {
+      "word_id_1": "H5411_0000",
+      "word_id_2": "H5412_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "동일한 성전 봉사 집단 명칭의 히브리어·아람어 대응",
+      "source": "H0494 R2 관계 평가 · H5412→H5411 corresponding to"
+    },
+    {
+      "word_id_1": "H3050_0000",
+      "word_id_2": "H5418_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "야·야후",
+      "source": "H0494 R2 관계 평가 · H5418→H3050 from"
+    },
+    {
+      "word_id_1": "H4428_0000",
+      "word_id_2": "H5419_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "왕이라는 구성 요소. 인명 속 지시 대상은 미확정",
+      "source": "H0494 R2 관계 평가 · H5419→H4428 from"
+    },
+    {
+      "word_id_1": "H3050_0000",
+      "word_id_2": "H4983_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "야·야후",
+      "source": "H0494 R2 관계 평가 · H4983→H3050 from"
+    },
+    {
+      "word_id_1": "H4978_0000",
+      "word_id_2": "H4979_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "아람어·히브리어 선물 명사의 대응",
+      "source": "H0494 R2 관계 평가 · H4978→H4979 corresponding to"
+    },
+    {
+      "word_id_1": "H4979_0000",
+      "word_id_2": "H4980_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "선물과 동일한 철자·읽기의 지명. 실제 명명의 기원을 확인할 추가 증거 필요",
+      "source": "H0494 R2 관계 평가 · H4980→H4979 the same as"
+    },
+    {
+      "word_id_1": "H4992_0000",
+      "word_id_2": "H4993_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 for를 보존. 두 철자 사이에 확인된 변화 과정과 동일 인물 예는 없음",
+      "source": "H0494 R2 관계 평가 · H4992→H4993 for"
+    },
+    {
+      "word_id_1": "G3158_0000",
+      "word_id_2": "G3161_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "눅 3:24–26에서 함께 나오는 이름. 단축 방향을 확정할 수 없음",
+      "source": "H0494 R2 관계 평가 · G3158→G3161 probably a shortened form of"
+    },
+    {
+      "word_id_1": "G3160_0000",
+      "word_id_2": "G3161_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 단축 가능성. H4992와의 비교형도 있음",
+      "source": "H0494 R2 관계 평가 · G3160→G3161 probably a shortened form of"
+    }
+  ],
+  "relation_replacements": [
+    {
+      "relation_id": 6229,
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H5417_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련2"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "엘이 뒤에 오는 이름",
+        "source": "H0494 R2 관계 평가 · H5417→H0410 from"
+      }
+    },
+    {
+      "relation_id": 3986,
+      "word_id_1": "H5414_0000",
+      "word_id_2": "H5416_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "나단 인명의 주다 어근. 문장형 해석과 Strong 풀이 차이 보존",
+        "source": "H0494 R2 관계 평가 · H5416→H5414 from"
+      }
+    },
+    {
+      "relation_id": 2807,
+      "word_id_1": "H5414_0000",
+      "word_id_2": "H5417_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "느다넬의 첫 동사 요소",
+        "source": "H0494 R2 관계 평가 · H5417→H5414 from"
+      }
+    },
+    {
+      "relation_id": 3207,
+      "word_id_1": "H4976_0000",
+      "word_id_2": "H4977_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "같은 발음·철자의 명사가 인명으로 쓰임",
+        "source": "H0494 R2 관계 평가 · H4977→H4976 the same as"
+      }
+    },
+    {
+      "relation_id": 3971,
+      "word_id_1": "H4976_0000",
+      "word_id_2": "H4991_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "etymological",
+        "relation_type": "root_shared",
+        "status_code": "asserted",
+        "direction_code": "undirected",
+        "description": null,
+        "relation_group_id": null,
+        "note": "Strong은 축약된 여성형을 제시. 직접 파생 경로 대신 공통 어근을 기록",
+        "source": "H0494 R2 관계 평가 · H4991→H4976 feminine of"
+      }
+    },
+    {
+      "relation_id": 3987,
+      "word_id_1": "G3481_0000",
+      "word_id_2": "H5416_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "transliteration",
+        "relation_type": "direct_transliteration",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "다윗의 아들 나단. 삼하 5:14와 눅 3:31",
+        "source": "H0494 R2 관계 평가 · G3481→H5416 of Hebrew origin"
+      }
+    },
+    {
+      "relation_id": 2808,
+      "word_id_1": "G3482_0000",
+      "word_id_2": "H5417_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "transliteration",
+        "relation_type": "direct_transliteration",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "민 1:8 등의 LXX Ναθαναήλ과 요한복음 같은 이름형",
+        "source": "H0494 R2 관계 평가 · G3482→H5417 of Hebrew origin"
+      }
+    },
+    {
+      "relation_id": 6689,
+      "word_id_1": "H3050_0000",
+      "word_id_2": "H4993_0000",
+      "before": {
+        "category_code": null,
+        "relation_type": null,
+        "status_code": "inferred",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "",
+        "source": "WORD_TABLE.관련2"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "야·야후",
+        "source": "H0494 R2 관계 평가 · H4993→H3050 from"
+      }
+    },
+    {
+      "relation_id": 3208,
+      "word_id_1": "G3157_0000",
+      "word_id_2": "H4977_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "transliteration",
+        "relation_type": "direct_transliteration",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "맛탄 이름의 그리스어식 전승. 마 1:15와 구약의 인물은 구별",
+        "source": "H0494 R2 관계 평가 · G3157→H4977 of Hebrew origin"
+      }
+    },
+    {
+      "relation_id": 3975,
+      "word_id_1": "H4991_0000",
+      "word_id_2": "H4993_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "연계형 맛티트와 야·야후의 구성",
+        "source": "H0494 R2 관계 평가 · H4993→H4991 from"
+      }
+    },
+    {
+      "relation_id": 3976,
+      "word_id_1": "G3161_0000",
+      "word_id_2": "H4993_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "transliteration",
+        "relation_type": "direct_transliteration",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "대상 9:31·25:3 등의 LXX Ματταθίας가 이름형 대응을 지지",
+        "source": "H0494 R2 관계 평가 · G3161→H4993 of Hebrew origin"
+      }
+    },
+    {
+      "relation_id": 3978,
+      "word_id_1": "G3156_0000",
+      "word_id_2": "G3161_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "etymological",
+        "relation_type": "root_shared",
+        "status_code": "hypothesized",
+        "direction_code": "undirected",
+        "description": null,
+        "relation_group_id": null,
+        "note": "Strong의 단축설과 별개로 Mattay 계열을 거치는 설명이 있음",
+        "source": "H0494 R2 관계 평가 · G3156→G3161 a shorter form of"
+      }
+    },
+    {
+      "relation_id": 3977,
+      "word_id_1": "G3159_0000",
+      "word_id_2": "G3161_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "variant",
+        "status_code": "hypothesized",
+        "direction_code": "undirected",
+        "description": null,
+        "relation_group_id": null,
+        "note": "같은 이름군의 짧은 헬라어 형태 후보. 행 1장 인물과 눅 3장 계보는 별개",
+        "source": "H0494 R2 관계 평가 · G3159→G3161 apparently a shortened form of"
+      }
+    },
+    {
+      "relation_id": 3974,
+      "word_id_1": "G3160_0000",
+      "word_id_2": "H4992_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "transliteration",
+        "relation_type": "approx_transliteration",
+        "status_code": "hypothesized",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "스 10:33의 LXX Μαθαθα와 눅 3:31의 Ματταθά가 가까움. 직접 전승 경로 미확인",
+        "source": "H0494 R2 관계 평가 · G3160→H4992 compare"
+      }
+    }
+  ],
+  "supersedes": [],
+  "meaning_approvals": []
+}
