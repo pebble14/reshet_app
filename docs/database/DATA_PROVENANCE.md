@@ -2090,3 +2090,7 @@ R2의 14어휘에 뜻 21개와 비고 14건을 반영했다. 신규 관계 13건
 ### H486 알모닷과 엘마담 어휘군 승인 반영 (2026-11-25)
 
 R1의 두 인명에 뜻·비고 각 2건과 알모닷에서 엘마담으로 이어지는 가설 관계 1건을 작업 DB에 반영했다. 모의 적용과 되돌리기, 적용기 테스트 31개, 독립 SQL을 통과했다. 변경 이력은 5행이며 공식 진행표에서 승인 1,249개를 확인했다. [승인 매니페스트](../../tool/data_provenance/manifests/h486_cluster_approved_content_slice.json) · [결정 기록](../semantic_decisions/h486_cluster_approved_content_slice.md)
+
+### H493 엘라암과 נעם 어휘군 승인 반영 (2026-11-25)
+
+R2의 13어휘에 뜻·비고 각 13건, 신규 관계 9건과 기존 관계 교체 3건을 반영했다. 모의 적용·되돌리기, 적용기 테스트 31개와 독립 SQL 대조를 통과했다. 이력은 38행이고 공식 진행표의 승인 수는 1,262개다. [승인 매니페스트](../../tool/data_provenance/manifests/h493_cluster_approved_content_slice.json) · [결정 기록](../semantic_decisions/h493_cluster_approved_content_slice.md)

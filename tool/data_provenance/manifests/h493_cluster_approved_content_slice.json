@@ -1,0 +1,473 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H493-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h493_approval_20261125/00_user_approval.json",
+    "document_sha256": "952037a722a0766fe891daccefa9e4c939ad335768073b8e1d4ee1dfe7afb43c"
+  },
+  "target": {
+    "expected_work_sha256": "e5f54beca69ccf01fc417377aa9a22bb56db6ab6fdabe8f4d67df84bc07ab3e1",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0493_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "엘라암 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엘라암·엘-나암 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5276_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "즐겁다/기쁘다"
+        },
+        {
+          "seq": 2,
+          "meaning": "사랑스럽다"
+        },
+        {
+          "seq": 3,
+          "meaning": "아름답다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "즐거움을 주다"
+        }
+      ]
+    },
+    {
+      "word_id": "H5273_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "즐거운, 사랑스러운, 아름다운, 노래하는"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "즐거움을 주는"
+        }
+      ]
+    },
+    {
+      "word_id": "H5278_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "즐거움, 유쾌함, 기쁨, 은총"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "즐거움, 아름다움, 은총(恩寵)"
+        }
+      ]
+    },
+    {
+      "word_id": "H4516_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "맛좋은 음식, 진미"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "별미(別味)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5277_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "나암 Naama"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "나암 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5279_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "나아마 Naama"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "나아마 (인, 지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5280_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "나아만의 후손들"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "나아만 가문(家門) 사람"
+        }
+      ]
+    },
+    {
+      "word_id": "H5281_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "나오미 Naomi"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "나오미·노오미 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5282_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "즐거움/기쁨"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "즐거움을 주는 것"
+        }
+      ]
+    },
+    {
+      "word_id": "H5283_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "나아만[뜻풀이: 즐거움/기쁨]"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "나아만 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5284_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "나아마 사람 Naamathite"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "나아마 사람"
+        }
+      ]
+    },
+    {
+      "word_id": "G3497_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "나아만[즐거움/기쁨]"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "나아만 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0493_0000",
+      "before": null,
+      "after": "역대상 11:46에서 다윗의 용사 여리배와 요사위야의 아버지로 나온다. 엘라암은 확인한 한국어 성경의 관용명이고, 엘-나암은 H0410의 신명 요소와 H5276에 연결되는 ‘즐거움’ 계열의 이름 요소를 드러낸 교재식 분석 표기이다. Strong과 BDB는 하나님이 기쁨이시라는 방향으로 풀이하며, Strong은 그 사람의 기쁨이라는 소유 관계를 보충한다."
+    },
+    {
+      "word_id": "H5276_0000",
+      "before": null,
+      "after": "칼 상태동사로, 사람이나 사물이 마음에 들고 즐거움을 주는 상태를 나타낸다. 삼하 1:26의 요나단과 잠 2:10의 지식은 즐거움을 느끼는 사람이 따로 나타난다. 창 49:15의 땅, 잠 9:17의 빵, 시 141:6의 말에는 각각 안락함·맛·달게 들림의 문맥이 있다. 잠 24:25는 악인을 꾸짖는 이들에게 기쁨이 따른다는 비인칭 구문이다."
+    },
+    {
+      "word_id": "H5273_0000",
+      "before": null,
+      "after": "사람·말·보화·찬양처럼 즐거움을 주거나 마음을 끄는 대상을 꾸미는 형용사이다. 복수형은 즐거움을 주는 것들이나 즐거움 자체를 가리키기도 한다. OSHB는 삼하 23:1과 시 81:3(개역 81:2)을 5273 b로 따로 표지한다. 두 용례는 노래나 수금의 듣기 좋은 특성으로 이해할 수 있으며, BDB는 별도 음악형일 가능성도 제시한다."
+    },
+    {
+      "word_id": "H5278_0000",
+      "before": null,
+      "after": "H5276에 연결되는 명사이다. 잠 3:17에서는 지혜의 길, 잠 15:26과 16:24에서는 말이 주는 즐거움이다. 시 27:4에서는 바라보는 주님의 아름다움, 시 90:17에서는 주님의 좋으심이 사람에게 미치는 은총으로 쓰인다. 슥 11:7과 10에서 목자의 한 막대기 이름이며, 막대기를 꺾는 행위는 언약의 해소를 드러낸다. 아비노암과 아히노암의 뒷요소와도 관련된다."
+    },
+    {
+      "word_id": "H4516_0000",
+      "before": null,
+      "after": "시 141:4에서 악을 행하는 사람들의 맛있는 음식을 가리킨다. 본문에는 ‘그들의’라는 접미사가 붙은 복수형으로 나온다. H5276의 ‘즐거움을 주다’와 연결되며, 여기서는 맛으로 즐거움을 주는 음식이다."
+    },
+    {
+      "word_id": "H5277_0000",
+      "before": null,
+      "after": "역대상 4:15에서 여분네의 아들 갈렙의 아들로 나오는 남성 인명이다. Strong은 H5276에서 나온 이름으로 보아 ‘즐거움’ 계열로 풀이한다. 여성 인명과 지명으로 쓰이는 나아마(H5279)는 같은 계열의 다른 이름형이다."
+    },
+    {
+      "word_id": "H5279_0000",
+      "before": null,
+      "after": "창세기 4:22의 두발가인의 누이와 열왕기상 14:21, 31 및 역대하 12:13의 르호보암의 어머니인 암몬 여인에게 쓰인 이름이다. 여호수아 15:41에서는 유다의 성읍 이름이다. Strong은 나암(H5277)의 여성 이름형으로 보고 ‘즐거움’ 계열로 풀이한다."
+    },
+    {
+      "word_id": "H5280_0000",
+      "before": null,
+      "after": "민수기 26:40에서 벨라의 아들 나아만에게서 나온 가문을 가리키는 소속형이다. 형태는 남성 단수이고 본문에서는 집합적으로 쓰인다. 확보 LXX의 대응 절은 민수기 26:44이며, 그곳에도 기반 인명과 가문형이 함께 나온다. BDB는 사마리아 오경에 끝의 ㄴ에 해당하는 자음을 보존하는 이형이 있다고 보고한다."
+    },
+    {
+      "word_id": "H5281_0000",
+      "before": null,
+      "after": "룻의 시어머니이자 엘리멜렉의 아내이다. 룻기 1:20에서 쓴맛과 괴로움을 나타내는 마라라는 이름과 대비되어 H5278의 즐거움 계열 이름임을 보여 준다. 나오미는 한국어 성경 관용명이고, 노오미는 Strong 표제의 카메츠 카탄과 하테프 카메츠를 반영한 히브리어 교재식 근사 표기이다."
+    },
+    {
+      "word_id": "H5282_0000",
+      "before": null,
+      "after": "사 17:10에서 복수형으로 한 번 나온다. Strong은 H5276에서 온 ‘즐거움’ 계열의 명사로 설명한다. 이 구절의 복수형은 ‘즐거움을 주는 것’을 가리키는 것으로 풀이할 수 있다. 식재라는 대상은 함께 쓰인 앞 명사가 드러낸다. BDB는 아도니스의 별칭일 가능성도 제시하며, 새번역은 이방 제의 문맥을 살려 옮긴다. 같은 표제형의 H5283은 인명이다."
+    },
+    {
+      "word_id": "H5283_0000",
+      "before": null,
+      "after": "열왕기하 5장에서는 아람 왕의 군대 장관이며, 누가복음 4:27의 수리아 사람 나아만도 이 인물이다. 창세기 46:21, 민수기 26:40 및 역대상 8장에서는 베냐민 계보에 이 이름이 보인다. 민수기 26:40의 가문형 H5280은 벨라 계보의 나아만에 연결된다. Strong은 철자가 같은 H5282와 연결하여 ‘즐거움’ 계열로 보지만, 그 일반 명사의 유일한 구절은 다른 해석도 가능하다."
+    },
+    {
+      "word_id": "H5284_0000",
+      "before": null,
+      "after": "욥기의 네 용례에서 소발의 출신 소속을 나타낸다. Strong은 여호수아 15:41의 나아마(H5279)와 이름이 같은 다른 장소에서 온 형태로 본다. 확보 칠십인역은 소발을 미나이 사람으로 전한다. 출신 지명의 위치와 동일성은 미확정이다. 소속형 자체의 교재식 근사는 나아마티이다."
+    },
+    {
+      "word_id": "G3497_0000",
+      "before": null,
+      "after": "눅 4:27에서 열왕기하 5장의 아람 군대 장관 나아만(H5283)을 가리킨다. 나아만은 확인한 한국어 성경의 관용명이다. Strong 표제와 Scrivener TR의 Νεεμάν은 교재식으로 네에만, TAGNT 정본과 SBLGNT의 Ναιμάν은 나이만으로 읽을 수 있다. 확보 칠십인역의 열왕기하 5장에도 Ναιμάν 계열 철자가 나타난다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H0493_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "이름 첫 요소 엘. 신명 의미와 인명 구조를 연결",
+      "source": "H0493 R2 관계 평가 · H0493 → H0410"
+    },
+    {
+      "word_id_1": "H0493_0000",
+      "word_id_2": "H5276_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "둘째 요소가 H5276의 נעם 계열에 속한다. 문장적 풀이와 소유 관계는 비고 참조",
+      "source": "H0493 R2 관계 평가 · H0493 → H5276"
+    },
+    {
+      "word_id_1": "H4516_0000",
+      "word_id_2": "H5276_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "즐거움을 주는 음식 명사. 시 141:4와 Strong의 명시적 설명",
+      "source": "H0493 R2 관계 평가 · H4516 → H5276"
+    },
+    {
+      "word_id_1": "H5273_0000",
+      "word_id_2": "H5276_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "일반형 5273 a의 파생을 가리킨다. 음악형 5273 b의 어원은 열려 있다.",
+      "source": "H0493 R2 관계 평가 · H5273 → H5276"
+    },
+    {
+      "word_id_1": "H5276_0000",
+      "word_id_2": "H5277_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "같은 어근을 쓰는 남성 인명. Strong 분석과 표제 형태",
+      "source": "H0493 R2 관계 평가 · H5277 → H5276"
+    },
+    {
+      "word_id_1": "H5276_0000",
+      "word_id_2": "H5278_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "상태동사와 그 성질을 나타내는 명사",
+      "source": "H0493 R2 관계 평가 · H5278 → H5276"
+    },
+    {
+      "word_id_1": "H5278_0000",
+      "word_id_2": "H5281_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "룻 1:20–21의 나오미/마라 대조와 Strong의 파생 설명",
+      "source": "H0493 R2 관계 평가 · H5281 → H5278"
+    },
+    {
+      "word_id_1": "H5277_0000",
+      "word_id_2": "H5279_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "나암 계열의 여성 이름형이며, 같은 형태가 지명에도 쓰인다.",
+      "source": "H0493 R2 관계 평가 · H5279 → H5277"
+    },
+    {
+      "word_id_1": "H5280_0000",
+      "word_id_2": "H5283_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "벨라 계보의 나아만에서 가문 소속형. 민 26:40 및 대응 LXX 26:44",
+      "source": "H0493 R2 관계 평가 · H5280 → H5283"
+    }
+  ],
+  "relation_replacements": [
+    {
+      "relation_id": 3990,
+      "word_id_1": "H5276_0000",
+      "word_id_2": "H5282_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "hypothesized",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "Strong은 H5276에서 온 명사로 설명한다. 사 17:10의 유일한 용례에는 제의적 별칭 해석도 있어 파생은 가설로 둔다.",
+        "source": "H0493 R2 관계 평가 · H5282 → H5276"
+      }
+    },
+    {
+      "relation_id": 3991,
+      "word_id_1": "H5282_0000",
+      "word_id_2": "H5283_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "etymological",
+        "relation_type": "root_shared",
+        "status_code": "hypothesized",
+        "direction_code": "undirected",
+        "description": null,
+        "relation_group_id": null,
+        "note": "두 표제의 철자는 같고 Strong은 인명을 일반 명사와 연결한다. 사 17:10의 해석이 갈려 공통 어근을 가설로 둔다.",
+        "source": "H0493 R2 관계 평가 · H5283 → H5282"
+      }
+    },
+    {
+      "relation_id": 3992,
+      "word_id_1": "G3497_0000",
+      "word_id_2": "H5283_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "transliteration",
+        "relation_type": "direct_transliteration",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "왕하 5장의 아람 장군 이름에 해당한다. 눅 4:27의 Ναιμάν은 왕하 5장의 확보 칠십인역에도 전하며, Strong·TR의 Νεεμάν은 같은 이름의 다른 철자다.",
+        "source": "H0493 R2 관계 평가 · G3497 → H5283"
+      }
+    }
+  ],
+  "supersedes": [],
+  "meaning_approvals": []
+}
