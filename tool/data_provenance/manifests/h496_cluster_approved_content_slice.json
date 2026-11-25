@@ -1,0 +1,413 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H496-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h496_approval_20261125/00_user_approval.json",
+    "document_sha256": "406d4e1e8f2de67ae240a87b1b2c29a460d3e8f81b844c83a87bc6e98c763aed"
+  },
+  "target": {
+    "expected_work_sha256": "aad78a7a9ec30e5dcfeed5b3f76b3daba69b52b31c96f4029f56fba4baec2130",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0496_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "엘르앗 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엘르앗·엘-아드 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5749_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "되돌리다, 반복하다, 증거하다, 단언하다, 엄숙히 경고하다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "증언하다(證言하다)"
+        },
+        {
+          "seq": 2,
+          "meaning": "증인(證人)으로 삼다"
+        },
+        {
+          "seq": 3,
+          "meaning": "엄히 일러 주다"
+        },
+        {
+          "seq": 4,
+          "meaning": "일으켜 세우다"
+        },
+        {
+          "seq": 5,
+          "meaning": "둘러싸다"
+        }
+      ]
+    },
+    {
+      "word_id": "H5707_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "증인 witness"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "증인(證人)"
+        },
+        {
+          "seq": 2,
+          "meaning": "증거(證據)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5713_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "증거, 증언"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "증거(證據)"
+        },
+        {
+          "seq": 2,
+          "meaning": "증거(證據)의 말씀"
+        }
+      ]
+    },
+    {
+      "word_id": "H5715_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "증거 testimony"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "증거(證據)의 말씀"
+        }
+      ]
+    },
+    {
+      "word_id": "H8584_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "증명, 증거, 증언"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "증거(證據)"
+        }
+      ]
+    },
+    {
+      "word_id": "H1567_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "갈르엣 Galeed"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "갈르엣·갈-에드 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3026_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "증거의 (돌)더미"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "여갈사하두다·예가르-사하두타 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H7717_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "증언, 증거, 증인 witness"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "증인(證人)"
+        }
+      ]
+    },
+    {
+      "word_id": "H7802_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "수산 에둣 shushaneduth"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "수산에둣·소산님에둣·슈샨-에두트·쇼샨님 에두트"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0496_0000",
+      "before": null,
+      "after": "대상 7:21의 에브라임 계보에서 에셀과 함께 가드 사람들에게 죽임을 당한 남자의 이름이다. 엘르앗은 한국어 성경 관용명이고 엘-아드는 라메드 아래 셰와를 모음 없이 읽은 교재식 근사다. 앞의 엘은 신명 요소다. Strong은 뒷부분을 עוּד(H5749)와 연결해 ‘하나님이 증언하셨다’로 풀이하며 BDB도 같은 풀이를 제시한다. 대상 7:20의 엘르아다와 이름꼴이 비슷하며 두 인물의 동일성은 미확정이다."
+    },
+    {
+      "word_id": "H5749_0000",
+      "before": null,
+      "after": "직접 증언하거나 사람과 대상을 증인으로 삼는 데 쓴다. 왕상 21:13은 증언, 신 30:19와 렘 32:10은 증인 지정에 해당한다. 창 43:3의 경고와 느 9:26의 권면에서는 상대에게 중대한 일을 엄히 일러 준다. 시 146:9·147:6에서는 약한 사람을 붙들어 세우는 뜻이고 시 20:9에서는 주어가 굳게 서는 뜻이다. 시 119:61은 둘러싸는 뜻이다. Strong은 반복과 되돌아감에서 어원을 설명하며 BDB는 증언 동사를 따로 다룬다. 애 2:13의 정확한 문맥 의미는 미확정이다."
+    },
+    {
+      "word_id": "H5707_0000",
+      "before": null,
+      "after": "사실을 증언하는 사람이나 하나님을 증인으로 부르며, 사실이나 약정을 뒷받침하는 사물에도 쓴다. 창 31:48의 돌무더기와 31:50의 하나님, 출 22:12의 찢긴 가축, 수 22장의 제단, 신 31장의 노래와 율법책이 이 차이를 보여 준다. 수 22:34의 제단 명칭은 판본에 따라 다르다. 사 30:8은 OSHB에서 H5707로 집계되며, 마소라 모음의 시간 독법과 증거 독법이 갈린다."
+    },
+    {
+      "word_id": "H5713_0000",
+      "before": null,
+      "after": "단수형은 사실이나 약정을 확인하는 증거를 가리킨다. 창 21:30의 새끼 암양, 창 31:52의 기둥, 수 24:27의 돌이 이에 해당한다. 신 4:45·6:17·20과 시편의 복수형은 하나님이 지키게 하신 증거의 말씀을 가리키며 H5715와 이 용법을 공유한다. 두 복수형의 형태 관계에는 사전의 분석 차이가 있다. 동철자 H5712는 회중을 가리킨다."
+    },
+    {
+      "word_id": "H5715_0000",
+      "before": null,
+      "after": "하나님이 주시고 지켜 행하라고 하신 증거의 말씀이다. 출 25:16과 31:18에서는 그 말씀을 새긴 판을 가리키며, ‘증거궤’와 ‘증거의 장막’은 그 말씀을 담은 판과 연결된 표현이다. 시 19:8·119:88과 왕하 17:15에서는 지켜야 할 말씀으로 나타나며 H5713의 복수형과 용법이 겹친다. 왕하 11:12와 대하 23:11에서 왕에게 준 문서의 정확한 형태는 미확정이다."
+    },
+    {
+      "word_id": "H8584_0000",
+      "before": null,
+      "after": "사실이나 약정을 확증하는 증거다. 룻 4:7에서는 신을 벗어 건네는 절차가 거래를 확증하고, 사 8:16·20에서는 교훈과 함께 보존하고 참조할 증거의 말씀을 가리킨다. Strong은 증언하다 계열의 H5749에서 나온 명사로 풀이한다."
+    },
+    {
+      "word_id": "H1567_0000",
+      "before": null,
+      "after": "창 31:47–48에서 야곱과 라반의 약정을 증명하는 돌무더기와 그곳을 가리키는 히브리어 이름이다. 갈르엣은 성경 관용명이고 갈-에드는 갈 ‘무더기’(H1530)와 에드 ‘증거’(H5707)를 드러내는 교재식 표기다. 라반이 같은 돌무더기에 붙인 아람어 이름은 여갈사하두다(H3026)이며, 두 이름은 ‘증거의 돌무더기’로 풀이된다. 길르앗(H1568)과의 역사적 파생은 미확정이다."
+    },
+    {
+      "word_id": "H3026_0000",
+      "before": null,
+      "after": "창 31:47에서 라반이 약정의 증거가 된 돌무더기에 붙인 아람어 이름이다. 여갈사하두다는 성경 관용명이고 예가르-사하두타는 두 단어의 경계를 표시한 교재식 근사다. ‘증거의 돌무더기’라는 뜻이며, 야곱이 같은 돌무더기를 히브리어로 갈르엣(H1567)이라 부른다. 둘째 요소 사하두타의 증언 어근은 욥 16:19의 사헤드(H7717)와 대응한다."
+    },
+    {
+      "word_id": "H7717_0000",
+      "before": null,
+      "after": "욥 16:19에서 욥이 하늘에 계신 자기 증인을 부르는 명사다. 같은 절 앞부분의 ‘나의 증인’(H5707)과 병행한다. 보인·중보자·변호인이라는 번역은 이 증인이 욥을 위해 증언하는 역할을 드러낸다. 같은 아람어 계열의 증언 어근이 여갈사하두다(H3026)의 둘째 요소에 나타난다."
+    },
+    {
+      "word_id": "H7802_0000",
+      "before": null,
+      "after": "시 60편과 80편 표제의 음악 지시에 쓰인 표현이다. 시 60편의 수산에둣은 단수형 슈샨-에두트, 시 80편의 소산님에둣은 복수형 쇼샨님 에두트로 읽는다. 시 80편은 쇼샨님 뒤에 강한 악센트가 있어 두 말을 띄어 적었다. 앞 요소는 H7799, 뒤 요소는 H5715의 형태와 대응한다. ‘증거의 백합’이나 가락 이름이라는 풀이가 있으며, 시 80편의 구획과 구체적인 가락·악기는 미확정이다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H0496_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "앞 요소 엘. Strong·BDB 및 엘 신명 선례",
+      "source": "H0496 R2 관계 평가 · H0496의 from 410"
+    },
+    {
+      "word_id_1": "H0496_0000",
+      "word_id_2": "H5749_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "hypothesized",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "증언 풀이가 유력. 이름의 어형을 동사에 직접 배정하는 분석은 가설",
+      "source": "H0496 R2 관계 평가 · H0496의 from 5749"
+    },
+    {
+      "word_id_1": "H1530_0000",
+      "word_id_2": "H1567_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "창 31:48의 돌무더기",
+      "source": "H0496 R2 관계 평가 · H1567의 from 1530"
+    },
+    {
+      "word_id_1": "H1567_0000",
+      "word_id_2": "H5707_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "창 31:48의 명시적 ‘증거’ 풀이",
+      "source": "H0496 R2 관계 평가 · H1567의 from 5707"
+    },
+    {
+      "word_id_1": "H1567_0000",
+      "word_id_2": "H3026_0000",
+      "category_code": "translation",
+      "relation_type": "literal_translation",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "동일 돌무더기의 문자적 대응. 차용 방향은 미확정",
+      "source": "H0496 R2 관계 평가 · 창 31:47의 히브리어·아람어 이름 병행"
+    },
+    {
+      "word_id_1": "H3026_0000",
+      "word_id_2": "H7717_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "H3026의 둘째 요소와 H7717이 공유하는 ś-h-d 계열",
+      "source": "H0496 R2 관계 평가 · H3026의 a derivation of a root corresponding to 7717"
+    },
+    {
+      "word_id_1": "H5707_0000",
+      "word_id_2": "H5749_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "증언 계열 b의 동사·명사 관계. Strong의 방향과 BDB 명사 파생 동사 분석을 함께 보존",
+      "source": "H0496 R2 관계 평가 · H5707의 contracted from 5749"
+    },
+    {
+      "word_id_1": "H5707_0000",
+      "word_id_2": "H5713_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "H5713의 단수 a에 근거한 명사 형태. 창 31:52에서 병행. 복수 b의 어형 분석은 별도",
+      "source": "H0496 R2 관계 평가 · H5713의 feminine of … in its techn. sense"
+    },
+    {
+      "word_id_1": "H5707_0000",
+      "word_id_2": "H5715_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "증언 명사의 -ût 추상형으로 설명. 문법적 여성형의 파생",
+      "source": "H0496 R2 관계 평가 · H5715의 feminine of"
+    },
+    {
+      "word_id_1": "H5713_0000",
+      "word_id_2": "H5715_0000",
+      "category_code": "semantic",
+      "relation_type": "similar",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "지켜야 할 증거의 말씀이라는 뜻이 겹침. 정확한 복수 어형 관계는 보류",
+      "source": "H0496 R2 관계 평가 · 신 6:17의 5713 b, 시 19:8·119편의 5715"
+    },
+    {
+      "word_id_1": "H5749_0000",
+      "word_id_2": "H8584_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "증언 계열에서 사건·말씀의 확증을 나타내는 t- 명사",
+      "source": "H0496 R2 관계 평가 · H8584의 from 5749"
+    },
+    {
+      "word_id_1": "H7799_0000",
+      "word_id_2": "H7802_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "시 60·80편의 앞 요소 단수·복수. 구체적인 식물·악기 풀이와 독립",
+      "source": "H0496 R2 관계 평가 · H7802의 from 7799"
+    },
+    {
+      "word_id_1": "H5715_0000",
+      "word_id_2": "H7802_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "시 60편에서 강한 근거. 시 80편은 해당 요소의 결합 구획에 이견",
+      "source": "H0496 R2 관계 평가 · H7802의 from 5715"
+    },
+    {
+      "word_id_1": "H5707_0000",
+      "word_id_2": "H7717_0000",
+      "category_code": "semantic",
+      "relation_type": "similar",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "H5707의 ‘증인’ 뜻과 의미가 겹침",
+      "source": "H0496 R2 관계 평가 · 욥 16:19의 평행 두 명사"
+    }
+  ],
+  "relation_replacements": [],
+  "supersedes": [],
+  "meaning_approvals": []
+}

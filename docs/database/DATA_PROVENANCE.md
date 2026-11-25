@@ -2102,3 +2102,7 @@ R2의 13어휘에 뜻·비고 각 13건, 신규 관계 9건과 기존 관계 교
 ### H495 엘라살 어휘군 승인 반영 (2026-11-25)
 
 R1의 뜻 1개와 비고 1건을 작업 DB에 반영했다. 모의 적용·되돌리기, 적용기 테스트 31개, 독립 SQL 대조와 무결성·외래 키 검사를 통과했다. 이력은 2행이고 공식 진행표의 승인 어휘는 1,292개다. [승인 매니페스트](../../tool/data_provenance/manifests/h495_cluster_approved_content_slice.json) · [결정 기록](../semantic_decisions/h495_cluster_approved_content_slice.md)
+
+### H496 엘르앗과 증언 어휘군 승인 반영 (2026-11-25)
+
+R2의 10개 표제에 뜻 16개, 비고 10건, 신규 관계 14건을 작업 DB에 반영했다. 모의 적용·되돌리기, 적용기 테스트 31개와 독립 SQL 검증을 통과했다. 적용 이력은 34행이고 공식 진행표의 승인 어휘는 1,302개다. [승인 매니페스트](../../tool/data_provenance/manifests/h496_cluster_approved_content_slice.json) · [결정 기록](../semantic_decisions/h496_cluster_approved_content_slice.md)
