@@ -2106,3 +2106,7 @@ R1의 뜻 1개와 비고 1건을 작업 DB에 반영했다. 모의 적용·되�
 ### H496 엘르앗과 증언 어휘군 승인 반영 (2026-11-25)
 
 R2의 10개 표제에 뜻 16개, 비고 10건, 신규 관계 14건을 작업 DB에 반영했다. 모의 적용·되돌리기, 적용기 테스트 31개와 독립 SQL 검증을 통과했다. 적용 이력은 34행이고 공식 진행표의 승인 어휘는 1,302개다. [승인 매니페스트](../../tool/data_provenance/manifests/h496_cluster_approved_content_slice.json) · [결정 기록](../semantic_decisions/h496_cluster_approved_content_slice.md)
+
+### H497 엘르아다와 꾸밈 어휘군 승인 반영
+
+R2의 9개 표제에 뜻 11개, 비고 9건, 신규 관계 11건(ID 8675–8685)을 작업 DB에 반영했다. 사본 적용·되돌리기, 적용기 테스트 31개, 독립 SQL 검증을 통과했다. 적용 이력은 29행이다. 공식 진행표의 승인 어휘는 1,311개, hold는 7개다. [승인 매니페스트](../../tool/data_provenance/manifests/h497_cluster_approved_content_slice.json) · [결정 기록](../semantic_decisions/h497_cluster_approved_content_slice.md)

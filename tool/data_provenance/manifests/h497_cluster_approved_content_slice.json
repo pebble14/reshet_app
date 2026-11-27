@@ -1,0 +1,341 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H497-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h497_approval_20261127/00_user_approval.json",
+    "document_sha256": "1cff53f20418c28cb4e9bee4d653ffc622c77c602da53fa4e900235a63693c85"
+  },
+  "target": {
+    "expected_work_sha256": "c68a847d946db02a98e883d6c788d2f7bbe91e9db4013a12c59231109ef61324",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0497_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "엘르아다 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엘르아다·엘-아다 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5710_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "지나가다, 나아가다, 벗기다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "장식하다(裝飾하다)"
+        },
+        {
+          "seq": 2,
+          "meaning": "지나가다"
+        },
+        {
+          "seq": 3,
+          "meaning": "벗기다"
+        }
+      ]
+    },
+    {
+      "word_id": "H5716_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "장식, 장식품 ornaments"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "장식품(裝飾品)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5711_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아다 Adah(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아다 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3085_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "여호앗다 Jehoadah"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "여호앗다·예호-앗다 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H4572_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "마아대 Maadai"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "마아대·마아다이 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H4573_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "마아댜 Madi"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "마아댜·마아드-야 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5717_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아디엘 Adiel(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아디엘·아디-엘 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5718_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아다야 Adaiah(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아다야·아다-야·아다-야후 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0497_0000",
+      "before": null,
+      "after": "대상 7:20의 에브라임 계보에 나오는 남자 이름이다. 엘르아다는 한국어 성경 관용명이고 엘-아다는 라메드 아래 셰와를 모음 없이 읽어 앞의 신명 요소 엘을 표시한 교재식 근사다. Strong과 BDB는 뒷요소를 עָדָה의 꾸밈 용법과 연결해 ‘하나님이 꾸미셨다’로 풀이한다. 대상 7:21의 엘르앗과 이름꼴은 비슷하나 동일 인물인지 확정할 근거가 없다."
+    },
+    {
+      "word_id": "H5710_0000",
+      "before": null,
+      "after": "패물 등을 달거나 걸쳐 몸과 옷차림을 꾸미는 뜻이다. 겔 16:11에서는 상대를 장식품(H5716)으로 장식하고, 겔 23:40에서는 자신을 장식한다. 렘 31:4는 소구를 갖추는 장면이고 욥 40:10은 위엄과 존귀를 입는 비유다. 욥 28:8의 칼형은 ‘지나가다’, 잠 25:20의 히필형은 ‘입은 옷을 벗겨 내다’이며 후자의 칠십인역은 비유 구성이 다르다. OSHB는 통과와 벗김을 5710 a, 장식을 5710 b로 표시한다. Strong은 한 번호에 담고 BDB는 두 동사로 다룬다."
+    },
+    {
+      "word_id": "H5716_0000",
+      "before": null,
+      "after": "주로 몸이나 옷에 달거나 걸쳐 꾸미는 물건이다. 출 33:4–6은 몸에서 떼어 내는 장식품, 삼하 1:24는 옷에 다는 금 장식, 겔 16:11은 팔찌와 목걸이 같은 패물을 보여 준다. 겔 16:11과 23:40에서는 ‘장식하다’의 עָדָה(H5710)와 함께 쓰인다. 겔 16:7은 아름다움이나 성숙, 시 32:9는 말의 장구나 입·턱으로 풀이가 갈린다. 시 103:5는 한창때·평생·소원·입 등으로 달리 읽힌다."
+    },
+    {
+      "word_id": "H5711_0000",
+      "before": null,
+      "after": "라멕의 아내이자 야발의 어머니, 그리고 에서의 아내이자 엘리바스의 어머니가 쓰는 여성 이름이다. 아다는 한국어 성경 관용명과 히브리어 교재식 근사가 같다. Strong은 꾸미다의 עָדָה(H5710)와 연결해 ‘장식품’으로 풀이하며, BDB는 아랍어의 ‘아침’과 비교하는 가능성도 기록한다."
+    },
+    {
+      "word_id": "H3085_0000",
+      "before": null,
+      "after": "대상 8:36의 사울 계보에 나오는 남자다. 아하스의 아들이며 알레멧과 아스마웻과 시므리의 아버지다. 대상 9:42의 병행 계보에서는 야라(H3294)로 적는다. 여호앗다는 관용명이고 예호-앗다는 신명 요소와 달렛의 중복을 드러낸 교재식 근사다. Strong은 둘째 요소를 עָדָה(H5710)와 연결해 ‘여호와께서 꾸미셨다’로 풀이한다. BDB는 꾸밈 외에도 장비 또는 제거 등과 관련된 가능성을 소개하므로 정확한 이름 풀이에는 이견이 있다."
+    },
+    {
+      "word_id": "H4572_0000",
+      "before": null,
+      "after": "스 10:34에서 이방 여인과 혼인한 사람들을 열거할 때 나온 바니 자손의 남자 이름이다. 마아대는 성경 관용명이고 마아다이는 어말 -ay를 반영한 교재식 근사다. Strong은 꾸미다의 עָדָה(H5710)에서 유래한 이름으로 풀이한다. 다른 참고 사전은 H4571을 제시하며, 이름의 어원은 본문으로 확정하기 어렵다."
+    },
+    {
+      "word_id": "H4573_0000",
+      "before": null,
+      "after": "느 12:5에서 스룹바벨과 예수아와 함께 돌아온 제사장 이름이다. 마아댜는 성경 관용명이고 마아드-야는 신명 요소 야를 보여 주는 교재식 근사다. Strong은 앞부분을 עָדָה(H5710)와 연결하여 ‘야의 장식품’으로 풀이한다. 느 12:17의 모아댜(H4153)는 요야김 시대의 제사장 가문 명단에 나온다. 두 이름의 가문 대응 가능성이 있으나 철자와 어원 분석이 다르며, 동일 인물이라는 해석은 미확정이다."
+    },
+    {
+      "word_id": "H5717_0000",
+      "before": null,
+      "after": "시므온 자손 명단(대상 4:36), 예루살렘 제사장 계보에서 마아새의 아버지(9:12), 왕의 창고를 맡은 아스마웻의 아버지(27:25)에게 쓰인 남자 이름이다. 아디엘은 관용명이고 아디-엘은 아디 ‘장식품’(H5716)과 엘(H0410)의 경계를 표시한 교재식 분석 표기다. Strong은 ‘하나님의 장식품’으로, BDB는 ‘엘이 장식이다’라는 취지로 풀이한다."
+    },
+    {
+      "word_id": "H5718_0000",
+      "before": null,
+      "after": "요시야의 외조부, 아삽의 선대, 예루살렘 제사장 등 여러 사람에게 쓰인 남자 이름이다. 아다야는 관용명이다. 아다-야는 단형 עֲדָיָה의 분석 표기이고 아다-야후는 대하 23:1에 나온 장형 עֲדָיָהוּ의 교재식 근사다. 야·야후는 신명 요소다. Strong은 앞부분을 עָדָה(H5710)와 연결해 ‘야가 꾸미셨다’로 풀이하며 BDB는 자신을 꾸미는 쪽으로 해석한다. 대상 9:12와 느 11:12의 여로함의 아들은 같은 제사장 계보에 놓인다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H0497_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "앞 요소 엘. 대상 7:20의 원문과 신명 합성 선례.",
+      "source": "H0497 R2 관계 평가 · H0497의 from H0410"
+    },
+    {
+      "word_id_1": "H0497_0000",
+      "word_id_2": "H5710_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "hypothesized",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong·BDB의 ‘하나님이 꾸미셨다’. 이 연결은 H5710 b에 해당하며 이름의 뒷요소 분석은 가설.",
+      "source": "H0497 R2 관계 평가 · H0497의 from H5710"
+    },
+    {
+      "word_id_1": "H5710_0000",
+      "word_id_2": "H5716_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "겔 16:11·23:40과 렘 4:30에서 같은 어근의 ‘장식하다’와 ‘장식품’이 함께 쓰임. 파생 방향은 미확정.",
+      "source": "H0497 R2 관계 평가 · H5716의 from H5710 in the sense of trappings"
+    },
+    {
+      "word_id_1": "H5710_0000",
+      "word_id_2": "H5711_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "‘장식품’ 어원과 같은 형태가 가능성을 지지하고 BDB에 경쟁 분석이 있음.",
+      "source": "H0497 R2 관계 평가 · H5711의 from H5710"
+    },
+    {
+      "word_id_1": "H3068_0000",
+      "word_id_2": "H3085_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "יְהוֹ־는 신명 요소 예호. 뒷부분의 어원 이견과 구별.",
+      "source": "H0497 R2 관계 평가 · H3085의 from H3068"
+    },
+    {
+      "word_id_1": "H3050_0000",
+      "word_id_2": "H4573_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "느 12:5 실제 이름의 말미 야.",
+      "source": "H0497 R2 관계 평가 · H4573의 from H3050"
+    },
+    {
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H5717_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "이름의 뒷요소 엘.",
+      "source": "H0497 R2 관계 평가 · H5717의 from H0410"
+    },
+    {
+      "word_id_1": "H5716_0000",
+      "word_id_2": "H5717_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "처음의 아디는 장식품 명사와 대응. 이름 전체의 통사 풀이는 미확정.",
+      "source": "H0497 R2 관계 평가 · H5717의 from H5716"
+    },
+    {
+      "word_id_1": "H3050_0000",
+      "word_id_2": "H5718_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "단형 야와 장형 야후의 신명 요소.",
+      "source": "H0497 R2 관계 평가 · H5718의 from H3050, 장형 병기"
+    },
+    {
+      "word_id_1": "H5710_0000",
+      "word_id_2": "H5718_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong과 BDB가 꾸밈을 연결하며 목적어 해석은 다름. H5710 b에 한정.",
+      "source": "H0497 R2 관계 평가 · H5718의 from H5710"
+    },
+    {
+      "word_id_1": "H5709_0000",
+      "word_id_2": "H5710_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "히브리어 H5710 a와 아람어 H5709의 통과·제거 갈래. 단 2:21과 잠 25:20의 제거 대상은 다름.",
+      "source": "H0497 R2 관계 평가 · H5709의 corresponding to H5710"
+    }
+  ],
+  "relation_replacements": [],
+  "supersedes": [],
+  "meaning_approvals": []
+}
