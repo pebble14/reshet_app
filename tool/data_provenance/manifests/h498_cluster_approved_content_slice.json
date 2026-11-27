@@ -1,0 +1,919 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H498-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h498_approval_20261127/00_user_approval.json",
+    "document_sha256": "517e333ec9aff2fedb9ba84129191934b271e2bfc496c6dc324c45676e97bcea"
+  },
+  "target": {
+    "expected_work_sha256": "55a5780b7b44d7699f90ddada16380a085b5622cb96cf5d009fc1fa6de66345a",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0498_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "엘루새 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엘루새·엘-우자이 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5756_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "피난하다, 피난시키다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "피난하다(避難하다)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5797_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "힘/능력/세력/권능"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "힘"
+        }
+      ]
+    },
+    {
+      "word_id": "H4581_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "안전한 장소나 방편, 보호(자)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "위험(危險)에서 지켜 주는 곳이나 수단(手段)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5794_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "강한"
+        },
+        {
+          "seq": 2,
+          "meaning": "거센/맹렬한"
+        },
+        {
+          "seq": 3,
+          "meaning": "흉포한"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "강한(強한)"
+        },
+        {
+          "seq": 2,
+          "meaning": "거친"
+        }
+      ]
+    },
+    {
+      "word_id": "H5808_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "강한, 강력한 strong, mighty"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "강한(強한)"
+        }
+      ]
+    },
+    {
+      "word_id": "H4590_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "마아시야 Maaziah"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "마아시야·마아즈-야·마아즈-야후 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5815_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아시엘 Aziel(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아시엘·아지-엘 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3268_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "야아시엘 Jaaziel(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "야아시엘·야아지-엘 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5819_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아시사 Aziza(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아시사·아지자 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5798_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "웃사 Uzza, Uzzah(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "웃사·웃자 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H6560_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "베레스 웃사 perez-uzza"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "베레스웃사·페레츠-웃자 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5811_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아사스 Azaz(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아사스·아자즈 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5812_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아사시야 Azaziah(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아사시야·아자즈-야후 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5814_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "웃시야 Uzzia(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "웃시야·웃지야 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5816_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "웃시엘 Uzziel(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "웃시엘·웃지-엘 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5817_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "웃시엘의 후손 Uzzielites"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "웃시엘·웃지-엘 자손(子孫)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5818_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "웃시야"
+        },
+        {
+          "seq": 2,
+          "meaning": "뜻풀이: 여호와는 나의 힘"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "웃시야·웃지-야·웃지-야후 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "G3604_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "웃시야[여호와는 나의 힘]"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "웃시야·웃지-야 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5802_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아스북 Azbuk(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아스북·아즈부크 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5803_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아스갓 Azgad(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아스갓·아즈-가드 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5820_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아스마"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아스마웻·아스마·아즈-마웨트 (인, 지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H1041_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "벧아스마웻 (지)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "벧아스마웻·베트-아즈-마웨트 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5821_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "앗산 Azzan(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "앗산·앗잔 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0498_0000",
+      "before": null,
+      "after": "시글락에서 다윗에게 합류한 용사 명단에 나오는 남성 이름이다(대상 12:5, 히브리어·칠십인역 12:6). 엘루새는 성경 관용명이며 엘-우자이는 앞의 신명 엘(אֶלְ)과 뒤 이름 요소의 경계를 보이는 히브리어 교재식 근사다. BDB는 ‘하나님은 나의 힘’으로 풀이하고, Strong은 H5756을 H5797의 의미로 연결해 하나님이 지켜 주신다는 방향으로 풀이한다. 이름 뒷부분의 정확한 형성은 미확정이다."
+    },
+    {
+      "word_id": "H5756_0000",
+      "before": null,
+      "after": "위험을 피해 안전한 곳으로 옮겨 간다는 뜻이다. 정본의 네 토큰은 모두 히필형이다. 사 10:31과 렘 4:6·6:1에서는 주어가 피난하고, 출 9:19에서는 목적어가 있는 문장으로 가축과 들에 있는 것을 안전한 곳으로 옮기라고 한다. 이때는 ‘피난시키다’로 풀이한다. Strong은 강함에서의 의미 전개를 제시한다. BDB는 사 30:2의 칼형을 이 어휘로 분석하며 OSHB는 그 토큰을 H5810에 둔다."
+    },
+    {
+      "word_id": "H5797_0000",
+      "before": null,
+      "after": "사람과 동물의 힘, 행동의 힘찬 정도, 나라의 세력과 하나님의 권능에 쓰인다. 잠 18:10에서는 망대의 견고함, 잠 21:22에서는 성읍이 의지하는 방비를 가리킨다. 렘 16:19와 시 28:8은 마오즈(H4581)와 나란히 쓴다. 시 78:61에서 힘을 빼앗긴다는 말은 하나님의 힘을 나타내는 궤를 가리킨다. HALOT은 일부 하나님의 호칭을 ‘피난처·보호’에 해당하는 별도 표제나 다른 읽기로 분석한다. 전 8:1의 얼굴에 드러난 완강함은 어휘 분석이 갈린다."
+    },
+    {
+      "word_id": "H4581_0000",
+      "before": null,
+      "after": "위험에서 지켜 주는 곳이나 수단이다. 삿 6:26과 단 11:7에서는 자연 지형이나 군사 요새를 가리키고, 나 3:11에서는 원수를 피해 찾는 곳이다. 사 30:2–3의 바로와 느 8:10의 여호와로 인한 기쁨처럼 보호나 안전의 근거가 되는 대상에도 쓰인다. 시 60:7·108:8의 투구는 에브라임이 머리를 지켜 준다는 비유다. Strong은 עָזַז(H5810)에서 파생한 것으로 보며 עוּז(H5756) 계통의 분석도 있다. 단 11:10의 한 자리에 케티브·케레가 함께 전해진다."
+    },
+    {
+      "word_id": "H5794_0000",
+      "before": null,
+      "after": "힘이나 기세가 강하다는 뜻이며 물과 바람, 사랑, 사람이나 동물에 쓰인다. 상대를 대하는 태도와 말투가 거칠다는 데에도 쓰인다. 잠 18:23은 부유한 사람이 거칠게 응대한다는 용례다. 신 28:50과 단 8:23의 낯이 거칠다는 관용 표현, 창 49:7과 잠 21:14의 분노에는 강함과 거침이 겹친다. 사 56:11의 탐욕은 욕구가 강하다는 구문과 배부를 줄 모르는 개의 문맥에서 드러난다. 창 49:3과 사 26:1은 OSHB의 H5794 번호와 명사 형태가 함께 있으며 BDB는 그 두 자리를 힘 명사 계열에 둔다."
+    },
+    {
+      "word_id": "H5808_0000",
+      "before": null,
+      "after": "시 24:8에서는 전쟁에 능한 여호와를 두고 강하다고 말한다. 사 43:17의 עִזּוּז는 병거와 말, 군대와 함께 나오는 강한 무리를 가리킨다. Strong은 집합적으로 군대를 가리키는 용법을 들며 BDB는 두 구절 모두 형용사로 본다. 사 42:25의 힘 명사는 OSHB에서 H5807이다."
+    },
+    {
+      "word_id": "H4590_0000",
+      "before": null,
+      "after": "대상 24:18의 제사장 스물넷째 반열 이름에는 마아즈-야후가, 느 10:8(히브리어 10:9)의 인봉 제사장 명단에는 마아즈-야가 나온다. 마아시야는 성경 관용명이다. Strong은 앞부분을 피난 동사 עוּז(H5756)의 보호 의미에 연결할 가능성을 제시하고 HebGrkKo는 여호와가 피난처라는 뜻으로 풀이한다. 앞부분의 정확한 파생은 미확정이다."
+    },
+    {
+      "word_id": "H5815_0000",
+      "before": null,
+      "after": "대상 15:20에서 알라못에 맞춰 연주한 레위인 이름이다. 아시엘은 성경 관용명이며 아지-엘은 뒤의 신명 엘을 보이는 교재식 근사다. 15:18의 야아시엘과 함께 나열된 인명과 순서가 비슷하고 확인한 칠십인역은 두 자리에 같은 이름 형태를 쓴다. Strong은 H5756, HebGrkKo는 H5810과 연결한다. BDB는 두 히브리어 형태 모두 웃시엘(H5816)의 이형으로 생겼을 가능성을 제시한다."
+    },
+    {
+      "word_id": "H3268_0000",
+      "before": null,
+      "after": "대상 15:18에 나오는 레위인 이름이다. 야아시엘은 성경 관용명이며 야아지-엘은 앞의 두 모음과 뒤의 신명 엘을 보이는 교재식 근사다. 15:20의 아시엘과 같은 인물을 가리키는 다른 이름 형태로 볼 근거가 있다. Strong은 H3267과 연결하며 HebGrkKo는 H5810을 제시한다. BDB는 웃시엘(H5816)의 이형 가능성을 제안한다. 대상 27:21의 동일 관용명은 자인 ז 자리에 שׂ을 쓰는 별도 원어 이름 יַעֲשִׂיאֵל(H3300)이다."
+    },
+    {
+      "word_id": "H5819_0000",
+      "before": null,
+      "after": "스 10:27의 삿두 자손 명단에 나오는 남성 이름이다. 아시사는 성경 관용명이고 아지자는 히브리어 교재식 근사다. Strong은 H5756에, HebGrkKo는 H5810에 연결하며 두 자료의 이름 풀이는 강함 계열이다. 확보 칠십인역의 이름 형태는 οζιζα다. 정확한 어근은 미확정이다."
+    },
+    {
+      "word_id": "H5798_0000",
+      "before": null,
+      "after": "언약궤를 운반한 사람, 웃사의 동산 이름에 들어간 남성, 레위와 베냐민 계보의 남성과 귀환 집단의 조상 이름에 쓰인다. 웃사는 성경 관용명이며 웃자는 자인의 겹소리를 나타내는 교재식 근사다. עֻזָּא와 עֻזָּה는 어말 철자 이형이다. 왕하 21:26의 확보 개역 DB에는 웃시야로 표기되며, 대한성서공회 개역개정 본문과 새번역은 웃사다. Strong은 힘 명사 H5797와 연결한다."
+    },
+    {
+      "word_id": "H6560_0000",
+      "before": null,
+      "after": "웃사가 언약궤에 손을 댔다가 죽은 사건으로 이름을 얻은 곳이다(삼하 6:8, 대상 13:11). 베레스웃사는 관용명이고 페레츠-웃자는 파열·돌파를 뜻하는 페레츠(H6556)와 남성 이름 웃자(H5798)의 구성을 보인다. 두 본문은 웃자 부분을 각각 어말 헤와 알레프로 적는다."
+    },
+    {
+      "word_id": "H5811_0000",
+      "before": null,
+      "after": "대상 5:8의 르우벤 계보에서 베라의 아버지로 나온다. 아사스는 관용명이며 아자즈는 표제의 교재식 근사다. Strong은 같은 형태의 강하다(H5810)와 연결한다. 이름이 만들어진 구체적인 방식은 미확정이다."
+    },
+    {
+      "word_id": "H5812_0000",
+      "before": null,
+      "after": "다윗 때 연주자, 에브라임 지도자의 아버지와 히스기야 때 성전 물품 감독 명단에 쓰인 남성 이름이다. 아사시야는 관용명이고 아자즈-야후는 강하다의 어근과 신명 야후가 보이는 교재식 근사다. Strong은 야가 강하게 하셨다는 뜻으로, HebGrkKo는 여호와가 강하시다는 뜻으로 풀이한다."
+    },
+    {
+      "word_id": "H5814_0000",
+      "before": null,
+      "after": "대상 11:44에서 다윗의 용사 중 아스드랏 사람의 이름이다. 웃시야는 관용명이고 웃지야는 자인에 겹소리점이 있는 Strong·BDB의 표제 עֻזִּיָּא를 따른 교재식 근사다. 대상 11:44의 일부 마소라 본문 판본에도 겹자인이 있다. OSHB/WLC의 용례 עֻזִיָּא는 자인에 겹소리점이 없어 우지야로 근사할 수 있다. Strong은 어말 알레프가 있는 이 이름을 웃시야(H5818) 계열일 가능성으로 설명한다."
+    },
+    {
+      "word_id": "H5816_0000",
+      "before": null,
+      "after": "고핫의 아들과 여러 동명 남성에게 쓰인 이름이다. 웃시엘은 성경 관용명이며 웃지-엘은 힘 명사 H5797의 소유형과 신명 엘의 경계를 보이는 교재식 근사다. Strong은 하나님의 힘으로, BDB는 엘이 나의 힘으로 풀이한다. 대상 25:4의 악사 이름은 25:18의 아사렐과 비교되며, 스 7:4의 웃시엘은 원문에서 웃시(H5813)이다."
+    },
+    {
+      "word_id": "H5817_0000",
+      "before": null,
+      "after": "민 3:27과 대상 26:23에서 고핫의 아들 웃시엘에서 이어지는 집단을 가리킨다. 웃시엘은 기반 인명의 관용명이고 웃지-엘은 H5816의 구성 표기다. 두 표기에 이어 공통인 자손을 한 번 적는다. 소속 접미사가 붙은 히브리어 어형 עׇזִּיאֵלִי 자체는 옷지엘리로 근사할 수 있다. 문법상 단수형으로 웃시엘 가계를 집합적으로 가리킨다."
+    },
+    {
+      "word_id": "H5818_0000",
+      "before": null,
+      "after": "유다 왕과 다른 동명 남성에게 쓰인 이름이다. 웃시야는 관용명이며 웃지-야와 웃지-야후는 힘 명사의 1인칭 소유형과 신명 야·야후가 결합한 단형과 장형을 보이는 교재식 근사다. BDB는 여호와가 나의 힘으로 풀이한다. 왕하 14:21·15:1의 아사랴는 유다 왕 문맥에서 웃시야와 대응한다. 마 1:8–9의 오지아스는 이 왕 이름의 그리스어 전승이다."
+    },
+    {
+      "word_id": "G3604_0000",
+      "before": null,
+      "after": "마 1:8–9 예수의 계보에서 요담의 아버지로 나오는 유다 왕 웃시야의 그리스어 이름이다. 웃시야는 성경 관용명이고 웃지-야는 원천 히브리어 이름의 단형을 보이는 분석 표기다. 원천 이름의 장형은 웃지-야후다. Ὀζίας의 그리스어 교재식 근사는 오지아스이며 기존 음역에서 확인할 수 있다. 두 토큰은 같은 인명의 목적격과 주격이다. 그리스어 전승이 히브리어의 어느 형태를 직접 따랐는지는 미확정이다."
+    },
+    {
+      "word_id": "H5802_0000",
+      "before": null,
+      "after": "느 3:16에서 벧술 지방 절반을 다스리는 느헤미야의 아버지 이름이다. 아스북은 관용명이고 아즈부크는 히브리어 교재식 근사다. Strong은 앞을 강한(H5794)과, 뒤를 공허를 뜻하는 H0950의 어근과 연결한다. Annemarie Frank는 강함의 어근과 부크라는 요소의 조합을 검토하며 부크라는 신명은 입증되지 않았다고 밝힌다. 이름의 구성은 미확정이다."
+    },
+    {
+      "word_id": "H5803_0000",
+      "before": null,
+      "after": "스 2:12·8:12와 느 7:17의 귀환 명단 및 느 10:15(히브리어 10:16)의 인봉 명단에 나오는 남성·가계 이름이다. 아스갓은 관용명이고 아즈-가드는 원문의 두 요소를 보이는 교재식 근사다. Strong은 H5794와 H1409를 연결해 억센 무리로 이해하며, BDB는 가드가 강하다는 방향으로 풀이한다. 뒷부분의 가드가 정확히 어떤 어휘나 대상을 가리키는지는 미확정이다."
+    },
+    {
+      "word_id": "H5820_0000",
+      "before": null,
+      "after": "다윗의 용사와 왕의 곳간을 맡은 사람 및 사울 집안 계보의 남성 이름으로 쓰이며, 스 2:24와 느 12:29에서는 지명이다. 아스마웻은 대한성서공회 웹 개역개정의 표기이고 아스마는 확보 개역한글 자료에서도 확인되는 표기다. 아즈-마웨트는 강한(עַז)과 죽음(מָוֶת)의 경계를 보이는 교재식 근사다. Strong은 강함과 죽음을 연결해 풀이한다. 느 7:28의 벧아스마웻(H1041)은 같은 귀환 명단에 대응하는 장형이다."
+    },
+    {
+      "word_id": "H1041_0000",
+      "before": null,
+      "after": "느 7:28의 귀환자 명단에 있는 지명이다. 벧아스마웻은 개역개정 관용명이자 현재 DB 표기다. 베트-아즈-마웨트는 집을 뜻하는 베트와 아스마웻(H5820)의 구성을 드러낸다. 병행 목록인 스 2:24는 앞의 베트 없이 아스마웻이라 하고 두 절 모두 사십이 명을 기록한다. 이 지명의 이름을 준 사람과 현대 위치는 미확정이다."
+    },
+    {
+      "word_id": "H5821_0000",
+      "before": null,
+      "after": "민 34:26에서 잇사갈 지파 대표 발디엘의 아버지 이름이다. 앗산은 관용명이고 앗잔은 자인의 겹소리를 보이는 교재식 근사다. Strong은 강한(H5794)에서 파생한 이름으로 설명한다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H0498_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 첫 구성요소와 אֶלְ의 실제 형태가 일치한다. 이름에서 엘은 신명이다.",
+      "source": "H0498 R2 관계 평가 · H0410 → H0498"
+    },
+    {
+      "word_id_1": "H0498_0000",
+      "word_id_2": "H5797_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "hypothesized",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong은 H5797을 뜻의 비교로 참조한다. BDB의 אֶלְעֻזִּי 분석과 출 15:2·시 28:7의 힘 소유형이 명사 계열의 구성 가설을 보강한다. -ay의 정확한 형성은 미확정이다.",
+      "source": "H0498 R2 관계 평가 · H5797 → H0498"
+    },
+    {
+      "word_id_1": "H5808_0000",
+      "word_id_2": "H5810_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 from, 시 24:8의 강함 형용사 및 사 43:17의 명사적 용법이 같은 근거를 준다.",
+      "source": "H0498 R2 관계 평가 · H5810 → H5808"
+    },
+    {
+      "word_id_1": "H5810_0000",
+      "word_id_2": "H5811_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong은 H5810에서 왔다고 보고 이름의 형태도 동사와 같다. 단일 인명 용례에서 구체적인 형성 과정은 미확정이다.",
+      "source": "H0498 R2 관계 평가 · H5810 → H5811"
+    },
+    {
+      "word_id_1": "H5810_0000",
+      "word_id_2": "H5812_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 명시적 분석과 세 토큰의 עֲזַזְ이 일치한다. 이름의 문장식 풀이가 달라도 구성 근거는 같다.",
+      "source": "H0498 R2 관계 평가 · H5810 → H5812"
+    },
+    {
+      "word_id_1": "H3050_0000",
+      "word_id_2": "H5812_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "세 토큰의 실제 신명 장형은 -יָהוּ다. H3050은 야 계열 표제다.",
+      "source": "H0498 R2 관계 평가 · H3050 → H5812"
+    },
+    {
+      "word_id_1": "H3050_0000",
+      "word_id_2": "H4590_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "앞부분에 관한 probably와 별개로 실제 단형 -יָה 및 장형 -יָהוּ가 모두 확인된다.",
+      "source": "H0498 R2 관계 평가 · H3050 → H4590"
+    },
+    {
+      "word_id_1": "H4590_0000",
+      "word_id_2": "H5756_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "hypothesized",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 probably와 보호 의미를 유지한다. 마오즈 계열의 대안 분석도 비고에서 이해할 수 있다.",
+      "source": "H0498 R2 관계 평가 · H5756 → H4590"
+    },
+    {
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H5815_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "마지막 אֵל의 형태와 Strong·HebGrkKo 분석이 일치한다.",
+      "source": "H0498 R2 관계 평가 · H0410 → H5815"
+    },
+    {
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H3268_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 구성 설명과 실제 어말 신명 אֵל이 일치한다. 이름 앞의 야 소리를 신명으로 해석할 근거는 부족하다.",
+      "source": "H0498 R2 관계 평가 · H0410 → H3268"
+    },
+    {
+      "word_id_1": "H3268_0000",
+      "word_id_2": "H5815_0000",
+      "category_code": "morphological",
+      "relation_type": "variant",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "대상 15:18과 15:20에서 스가랴 다음에 오며 그 뒤 동료들의 이름과 순서가 유사하다. 두 절의 LXXStp 이름이 οζιηλ로 일치한다. 방향은 미확정이다.",
+      "source": "H0498 R2 관계 평가 · H3268 ↔ H5815"
+    },
+    {
+      "word_id_1": "H5797_0000",
+      "word_id_2": "H5798_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 feminine of와 명사의 עֻזּ- 형태에 근거한다. 이름의 남성 지시와 파생 방식은 구별한다.",
+      "source": "H0498 R2 관계 평가 · H5797 → H5798"
+    },
+    {
+      "word_id_1": "H6556_0000",
+      "word_id_2": "H6560_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "두 절의 설명구와 지명에 פֶּרֶץ가 반복된다. 합성어의 첫 요소는 일반명사 H6556에 해당한다.",
+      "source": "H0498 R2 관계 평가 · H6556 → H6560"
+    },
+    {
+      "word_id_1": "H5798_0000",
+      "word_id_2": "H6560_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "삼하 6:8과 대상 13:11에서 바로 앞의 사람 이름을 장소 이름에 사용한다.",
+      "source": "H0498 R2 관계 평가 · H5798 → H6560"
+    },
+    {
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H5816_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong과 BDB 및 표제의 어말 אֵל 합성이 일치한다.",
+      "source": "H0498 R2 관계 평가 · H0410 → H5816"
+    },
+    {
+      "word_id_1": "H5797_0000",
+      "word_id_2": "H5816_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong과 BDB 및 시 28:7의 소유형 עֻזִּי가 구성과 맞는다.",
+      "source": "H0498 R2 관계 평가 · H5797 → H5816"
+    },
+    {
+      "word_id_1": "H5816_0000",
+      "word_id_2": "H5817_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "민 3:27의 가계와 대상 26:23의 레위 소속형이 같은 기반 이름을 확인한다.",
+      "source": "H0498 R2 관계 평가 · H5816 → H5817"
+    },
+    {
+      "word_id_1": "H5794_0000",
+      "word_id_2": "H5803_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 앞요소와 BDB의 강하다 풀이는 일치한다. 인명이 실제로 형성된 과정은 추정이다.",
+      "source": "H0498 R2 관계 평가 · H5794 → H5803"
+    },
+    {
+      "word_id_1": "H5794_0000",
+      "word_id_2": "H5820_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong이 명시한 첫 요소와 실제 이름의 עַזְ이 일치한다. 아 8:6의 강함과 죽음의 병치는 두 요소의 독립된 의미를 대조할 수 있게 한다.",
+      "source": "H0498 R2 관계 평가 · H5794 → H5820"
+    },
+    {
+      "word_id_1": "H4194_0000",
+      "word_id_2": "H5820_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "실제 뒷요소가 מָוֶת이다. 이름 전체의 문장식 번역은 이 구성 판단에 포함되지 않는다.",
+      "source": "H0498 R2 관계 평가 · H4194 → H5820"
+    },
+    {
+      "word_id_1": "H5794_0000",
+      "word_id_2": "H5821_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 from과 자인 겹소리는 연결을 뒷받침한다. -ן을 포함한 정확한 이름 형성은 미확정이다.",
+      "source": "H0498 R2 관계 평가 · H5794 → H5821"
+    },
+    {
+      "word_id_1": "H1004_0000",
+      "word_id_2": "H1041_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "느 7:28의 첫 구성요소가 בֵית이며 스 2:24의 짧은 아스마웻과 대응한다.",
+      "source": "H0498 R2 관계 평가 · H1004 → H1041"
+    },
+    {
+      "word_id_1": "H1041_0000",
+      "word_id_2": "H5820_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "느 7:28의 합성에 아스마웻이 실제로 들어 있다. 스 2:24의 인원과 목록 자리가 대응한다. 상호 see/compare 참조는 별도 관계로 중복 등록하지 않는다.",
+      "source": "H0498 R2 관계 평가 · H5820 → H1041"
+    }
+  ],
+  "relation_replacements": [
+    {
+      "relation_id": 3222,
+      "word_id_1": "H5797_0000",
+      "word_id_2": "H5810_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "현 ID 3222는 방향 미정의 레거시 관계다. Strong의 from과 강함을 나타내는 명사의 형태·의미에 따라 어근에서 명사로 방향을 부여한다.",
+        "source": "H0498 R2 관계 평가 · H5810 → H5797"
+      }
+    },
+    {
+      "relation_id": 4356,
+      "word_id_1": "H5794_0000",
+      "word_id_2": "H5810_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "derived",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "현 ID 4356은 방향 미정의 레거시 관계다. Strong의 from과 형용사의 강함 의미가 동사의 어근과 이어진다. H5794의 명사 표지 두 토큰은 별도 쟁점이다.",
+        "source": "H0498 R2 관계 평가 · H5810 → H5794"
+      }
+    },
+    {
+      "relation_id": 3223,
+      "word_id_1": "H5797_0000",
+      "word_id_2": "H5818_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "현 ID 3223은 방향 미정의 레거시 관계다. עֻזִּי와 신명 장·단형의 결합이 Strong·BDB와 일치한다.",
+        "source": "H0498 R2 관계 평가 · H5797 → H5818"
+      }
+    },
+    {
+      "relation_id": 6365,
+      "word_id_1": "H3050_0000",
+      "word_id_2": "H5818_0000",
+      "before": {
+        "category_code": null,
+        "relation_type": null,
+        "status_code": "inferred",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "",
+        "source": "WORD_TABLE.관련2"
+      },
+      "after": {
+        "category_code": "morphological",
+        "relation_type": "compound",
+        "status_code": "asserted",
+        "direction_code": "w1_to_w2",
+        "description": null,
+        "relation_group_id": null,
+        "note": "현 ID 6365는 분류·유형이 NULL이다. 신명 -יָה 및 -יָהוּ 양쪽이 정본에 확인된다.",
+        "source": "H0498 R2 관계 평가 · H3050 → H5818"
+      }
+    },
+    {
+      "relation_id": 3224,
+      "word_id_1": "G3604_0000",
+      "word_id_2": "H5818_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "etymological",
+        "relation_type": "borrowed_from",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "현 ID 3224는 방향 미정의 레거시 관계다. Strong의 히브리어 기원과 왕의 계보가 일치한다. 헬라어 표제가 저장 pair에서 앞선다.",
+        "source": "H0498 R2 관계 평가 · H5818 → G3604"
+      }
+    }
+  ],
+  "supersedes": [],
+  "meaning_approvals": []
+}

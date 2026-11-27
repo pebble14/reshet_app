@@ -40,6 +40,7 @@
 
 | 결정 단위 | 대상 | 상태 | 복원 수준 | 결정/최초 적용일 | 기록 |
 |---|---|---|---|---|---|
+| H498 엘루새와 힘·피난 어휘군 | R2 24어휘·뜻 25개·비고 24건·신규 관계 23건·교체 5건, 새 hold 0건 | active | 높음 | 2026-11-27 | [결정 기록](h498_cluster_approved_content_slice.md) |
 | H497 엘르아다와 꾸밈 어휘군 | R2 9어휘·뜻 11개·비고 9건·신규 관계 11건, 새 hold 0건 | active | 높음 | 2026-11-27 | [결정 기록](h497_cluster_approved_content_slice.md) |
 | H496 엘르앗과 증언 어휘군 | R2 10어휘·뜻 16개·비고 10건·신규 관계 14건, 새 hold 0건 | active | 높음 | 2026-11-25 | [결정 기록](h496_cluster_approved_content_slice.md) |
 | H495 엘라살 어휘군 | R1 뜻 1개·비고 1건, 신규 관계·hold 0건 | active | 높음 | 2026-11-25 | [결정 기록](h495_cluster_approved_content_slice.md) |
