@@ -1,0 +1,912 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H500-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h500_approval_20261128/00_user_approval.json",
+    "document_sha256": "5a019a56edd07856f873944014d98529b263eda57307592de18fe8764cfe7f9a"
+  },
+  "target": {
+    "expected_work_sha256": "32e024a84acdff4005a35e8301e620ce1e3513b0bc0145cc48beae952ba11f07",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H0500_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "엘르알레 (지)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엘르알레·엘-알레 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5927_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "오르다"
+        },
+        {
+          "seq": 2,
+          "meaning": "올리다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "오르다"
+        },
+        {
+          "seq": 2,
+          "meaning": "올리다"
+        },
+        {
+          "seq": 3,
+          "meaning": "물러나다"
+        },
+        {
+          "seq": 4,
+          "meaning": "자라나다"
+        },
+        {
+          "seq": 5,
+          "meaning": "더 높다"
+        },
+        {
+          "seq": 6,
+          "meaning": "불을 켜다"
+        },
+        {
+          "seq": 7,
+          "meaning": "되새김질하다"
+        }
+      ]
+    },
+    {
+      "word_id": "H1175_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "브알롯 (지)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "브알롯·베알로트 (지)"
+        },
+        {
+          "seq": 2,
+          "meaning": "아롯·알로트 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H4605_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "~이상으로, 위로, 위에"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "위"
+        },
+        {
+          "seq": 2,
+          "meaning": "이상(以上)"
+        },
+        {
+          "seq": 3,
+          "meaning": "매우"
+        }
+      ]
+    },
+    {
+      "word_id": "H4607_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "들어올림, 들어올리기"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "들어 올림"
+        }
+      ]
+    },
+    {
+      "word_id": "H4608_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "올라감, 오름, 오르막, 비탈"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "오르는 길"
+        }
+      ]
+    },
+    {
+      "word_id": "H4609_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "떠오르는 것, 올라감, 계단, 층계"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "층계(層階)"
+        },
+        {
+          "seq": 2,
+          "meaning": "올라감"
+        },
+        {
+          "seq": 3,
+          "meaning": "떠오른 생각"
+        }
+      ]
+    },
+    {
+      "word_id": "H4610_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아그랍빔비탈 Maaleh-acrabbim"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아그랍빔 비탈·마알레-아크랍빔·전갈들의 오르막길 (지)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5866_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "일래 Ilai(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "일래·일라이 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5920_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "높음, 높으신 자, 위쪽에(으로)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "위"
+        }
+      ]
+    },
+    {
+      "word_id": "H5929_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "잎, 나무나 풀잎"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "잎"
+        }
+      ]
+    },
+    {
+      "word_id": "H5930_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "번제(물), 오르막길, 계단"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "번제(燔祭)"
+        },
+        {
+          "seq": 2,
+          "meaning": "오르는 길"
+        }
+      ]
+    },
+    {
+      "word_id": "H5928_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "번제 burnt offering"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "번제(燔祭)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5931_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "사건, 일, 이유"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "구실(口實)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5935_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "알완 Alvan(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "알완·알랸 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5940_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "공이"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "절굿공이"
+        }
+      ]
+    },
+    {
+      "word_id": "H5941_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "엘리"
+        },
+        {
+          "seq": 2,
+          "meaning": "뜻풀이: 높여짐, 높음"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엘리 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "G2242_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "헬리/엘리[높여짐, 높음]"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "헬리·엘리 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5942_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "위쪽의, 상부의"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "위쪽의"
+        }
+      ]
+    },
+    {
+      "word_id": "H5943_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "가장 높은 highest"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "가장 높으신 이"
+        }
+      ]
+    },
+    {
+      "word_id": "H5944_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "다락(방), 누각"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "위층 방(房)"
+        }
+      ]
+    },
+    {
+      "word_id": "H5945_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "높은, 위쪽의, 가장 높은 (자)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "높은"
+        },
+        {
+          "seq": 2,
+          "meaning": "가장 높으신 이"
+        }
+      ]
+    },
+    {
+      "word_id": "H5946_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "지극히 높으신 자"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "가장 높으신 이"
+        }
+      ]
+    },
+    {
+      "word_id": "H5952_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "옥상 방 roof-chamber"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "위층 방(房)"
+        }
+      ]
+    },
+    {
+      "word_id": "H8585_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "수로, 도랑"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "물길"
+        },
+        {
+          "seq": 2,
+          "meaning": "상처(傷處)의 아묾"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H0500_0000",
+      "before": null,
+      "after": "엘르알레는 요단 동쪽 헤스본 인근의 지명이다. 민수기 32:3·37에서는 갓과 르우벤이 요청한 성읍 가운데 하나이며, 37절은 르우벤 자손이 이 성읍을 세웠다고 한다. 이사야 15:4·16:9와 예레미야 48:34에서는 모압을 두고 말할 때 헤스본과 함께 나온다. 민 32:37은 אֶלְעָלֵא, 나머지 네 곳은 אֶלְעָלֵה로 적는다. 엘르알레는 한국어 성경 관용명이고, 엘-알레는 두 형태의 교재식 읽기에 근거해 첫 요소를 드러낸 표기다. Strong은 H0410 엘과 H5927 오르다를 결합해 ‘하나님이 오르신다’로 풀이하며, BDB는 그 풀이에 물음표를 붙인다."
+    },
+    {
+      "word_id": "H5927_0000",
+      "before": null,
+      "after": "사람이나 물체가 위로 가고 연기·물·날이 오르는 동작, 사람이나 물건을 위로 옮기는 사동에 두루 쓰인다. 생각이나 기억이 마음에 떠오르는 것은 עָלָה와 ‘마음 위로’가 결합한 비유이다. 히필도 그 결합에서 무엇을 마음에 두거나 들인다는 뜻을 낸다. 제의에서는 번제·곡식제물·향을 올린다. 동물 규정에서는 히필이 גֵּרָה와 결합하여 되새김질한다는 뜻을 낸다. 삼킨 먹이를 입으로 되올려 다시 씹는 행동이다. 군대가 포위를 풀고 물러남, 식물과 살이 자라남, 신분이나 덕이 다른 이보다 높음, 등불을 켬도 나타낸다. 왕상 10:5 등의 경쟁 독법과 욥 36:20·33, 렘 51:3의 세부 읽기는 열려 있다."
+    },
+    {
+      "word_id": "H1175_0000",
+      "before": null,
+      "after": "브알롯은 수 15:24에서 유다 남부 성읍을 가리키며, 베알로트는 이름에 ב를 포함한 בְּעָלוֹת의 교재식 근사이다. 아롯은 왕상 4:16에서 아셀과 함께 열거되는 지명으로 한국어 성경 세 판본에 나온다. וּבְעָלוֹת의 בְּ를 ‘~에’로 읽은 표기이며, 이때 이름 부분 עָלוֹת의 교재식 근사는 알로트이다. 왕상 4:16은 ב를 이름에 포함해 베알로트로 읽을 수도 있다. 왕상의 지명은 여호수아의 남부 성읍과 다른 곳일 가능성이 높으며 정확한 위치는 미확인이다. Strong은 ‘브알롯’을 H1172의 복수와 연결하고 왕상의 전치사 분절을 H5927의 복수와 연결하는 풀이에는 이의를 제기한다."
+    },
+    {
+      "word_id": "H4605_0000",
+      "before": null,
+      "after": "위쪽이라는 말이 전치사나 어미와 결합하여 위에·위로·위에서를 나타낸다. 나이·수량 기준과 함께 그 이상을 나타내며, ‘그날부터’ 같은 구문에서는 시간이 이어지는 방향을 나타낸다. לְמַעְלָה는 정도를 강조하기도 한다. 학 2:15·18은 ‘이전’과 ‘이후’의 번역이 갈린다. Strong은 H5927에서, BDB는 H4608의 축약을 거쳐 설명한다."
+    },
+    {
+      "word_id": "H4607_0000",
+      "before": null,
+      "after": "느헤미야 8:6에서는 백성이 손을 들어 올리며 응답하는 동작을 뜻한다. ‘손’은 뒤의 יָדַיִם 계열 명사가 나타낸다. Strong은 H5927 ‘올리다’에 연결한다."
+    },
+    {
+      "word_id": "H4608_0000",
+      "before": null,
+      "after": "높은 곳으로 오르는 길 또는 자리를 뜻한다. 언덕의 비탈길, 건물이나 성벽에서 층계로 오르는 길에 쓰인다. 느 9:4의 레위 사람들의 단은 오르는 곳의 구체적 형태가 분명하지 않다. 겔 40:31·34·37은 오르는 길을 가리키는 이 단어와 층계를 세는 H4609를 함께 싣는다. H5927의 ‘오르다’에서 형성된 명사이다."
+    },
+    {
+      "word_id": "H4609_0000",
+      "before": null,
+      "after": "층계나 그 단, 또는 높은 곳으로 올라가는 일을 가리킨다. 왕하 20:9–11과 사 38:8의 그림자 이야기에서는 그 단을 옮겨 가는 정도로 쓴다. 스 7:9에서는 바빌론에서 올라가는 일, 시 120–134편의 표제에서는 올라가는 노래에 쓰인다. 겔 11:5는 마음에 떠오른 생각의 비유이다. 대상 17:17과 암 9:6은 해석이 갈린다. 수 10:10의 본문은 오르는 길이며 형태가 H4608과 같지만 정본 색인은 H4609를 붙인다."
+    },
+    {
+      "word_id": "H4610_0000",
+      "before": null,
+      "after": "직역하면 ‘전갈들의 오르막길’이다. 첫 낱말 מַעֲלֵה는 H4608 ‘오르는 길’의 연계형이고, 둘째 낱말 עַקְרַבִּים은 H6137 ‘전갈’의 복수형이다. 가나안 남쪽 경계를 표시하는 한 지명이다. 한국어 성경의 아그랍빔 비탈과 아그랍빔 언덕은 같은 곳을 가리킨다. 마알레-아크랍빔은 두 요소의 경계를 보이는 교재식 근사이다. OSHB의 H4610 표지는 둘째 낱말에 붙지만 앞 낱말도 지명에 속한다."
+    },
+    {
+      "word_id": "H5866_0000",
+      "before": null,
+      "after": "역대상 11:29의 아호아 사람으로 다윗 용사 명단에 나온다. 일래는 개역 계열과 새번역의 관용명이고, 일라이는 עִילַי의 끝 모음을 살린 교재식 근사이다. 삼하 23:28의 짝이 되는 목록에는 살몬이 나온다. Strong은 H5927에서 비롯되어 ‘높은’이라는 이름으로 풀이한다."
+    },
+    {
+      "word_id": "H5920_0000",
+      "before": null,
+      "after": "삼하 23:1에서 높이 세워진 자, 시 50:4에서 위에 있는 하늘을 말할 때 쓰인다. 호 7:16·11:7은 ‘위로’를 하나님을 향하는 말로 풀이하거나 ‘높으신 이’라는 신칭으로 읽는 견해가 있다. 두 절의 구문과 그리스어 증거가 달라 신칭의 독립 뜻은 유보한다. 같은 철자의 전치사 H5921과 연결하여 설명하는 사전이 있다."
+    },
+    {
+      "word_id": "H5929_0000",
+      "before": null,
+      "after": "식물의 잎을 뜻하며, 나무에 난 잎들을 한꺼번에 가리킬 수 있다. 느 8:15에서는 초막을 덮을 재료여서 각 나무의 잎 달린 가지로 옮긴다. 겔 47:12에서는 잎 자체가 치료에 쓰인다. Strong과 BDB는 식물의 돋고 자라는 용법을 가진 H5927과 연결한다."
+    },
+    {
+      "word_id": "H5930_0000",
+      "before": null,
+      "after": "제단에서 살라 드리는 번제나 그 제물을 가리킨다. 이름의 형태는 H5927 ‘오르다’의 여성 분사와 연결한다. 겔 40:26에는 올라가는 길의 문맥에 케티브와 케레가 있으며, 이 부분은 층계 관련 다른 어형이나 교정으로도 설명한다. 왕상 10:5는 히필 구문과 칠십인역이 번제를 지지하지만 개역 계열과 새번역은 층계로 읽는다. 사 61:8은 마소라 모음이 번제형이고 문맥과 칠십인역은 불의를 지지한다."
+    },
+    {
+      "word_id": "H5928_0000",
+      "before": null,
+      "after": "스 6:9에서 하늘의 하나님께 드릴 번제를 말한다. 본문에는 복수형으로 나온다. 히브리어 H5930의 제의 명사에 대응한다."
+    },
+    {
+      "word_id": "H5931_0000",
+      "before": null,
+      "after": "단 6:4–5(아람어 본문 6:5–6)에서 다니엘을 고발하는 데 내세울 구실을 정승들이 찾는다. 세 토큰은 고발할 빌미라는 같은 기능을 하며, 본문에 별도로 나오는 ‘허물’은 실제 잘못을 가리킨다. Strong은 H5927 대응 어근을 제시하고, BDB는 시리아어와 히브리어 עלל을 비교한다. 어느 어근에서 비롯되었는지는 유보한다."
+    },
+    {
+      "word_id": "H5935_0000",
+      "before": null,
+      "after": "소발의 아들로 에돔 계보에 등장한다. 창 36:23은 עַלְוָן, 대상 1:40은 עַלְיָן을 전한다. 알완과 알랸은 한국어 관용 표기이며 각 히브리어 형태의 교재식 근사를 겸한다. Strong은 H5927에 연결해 ‘높은’이라는 이름으로 풀이한다. 두 형태 사이의 역사적 변화와 어원은 미확정이다."
+    },
+    {
+      "word_id": "H5940_0000",
+      "before": null,
+      "after": "잠언 27:22에서 절구에 넣은 것을 찧는 공이를 가리킨다. Strong과 BDB는 내리치기 전에 들어 올린다는 점을 들어 H5927과 연결한다."
+    },
+    {
+      "word_id": "H5941_0000",
+      "before": null,
+      "after": "실로의 제사장 엘리의 이름이다. 한국어 관용명과 עֵלִי의 교재식 근사 표기를 엘리로 함께 적었다. 모음 ī의 길이를 한글 두 음절로 펼치지 않는다. Strong은 H5927과 연결하여 ‘높은’으로 풀이한다. 누가복음 3:23에서 같은 이름 모양으로 전하는 헬리와 인물은 구별된다."
+    },
+    {
+      "word_id": "G2242_0000",
+      "before": null,
+      "after": "누가복음 3:23에서 요셉 바로 앞 세대에 놓인 인명이다. 개역 계열의 헬리와 새번역의 엘리를 병기한다. TAGNT의 Ἠλὶ와 DB의 Ἠλί는 약한 기식의 읽기여서 교재식 근사는 엘리이다. Strong XML 표제는 강한 기식의 Ἡλί를 기록하고 H5941에서 비롯된 이름으로 풀이한다. 실로의 제사장 엘리와 누가 족보의 헬리는 서로 다른 인물이며, 마 27:46의 G2241은 ‘나의 하나님’이라는 다른 어휘다."
+    },
+    {
+      "word_id": "H5942_0000",
+      "before": null,
+      "after": "수 15:19와 삿 1:15에서 아래쪽 샘에 대조되는 위쪽의 샘을 나타낸다. 원문 표제는 형용사이며 샘은 다른 명사가 나타낸다. 높이의 어근은 H5927과 연결되고, Strong은 아람어 H5943에 대응시키지만 H5943의 성경 용례에는 신적 칭호가 쓰인다."
+    },
+    {
+      "word_id": "H5943_0000",
+      "before": null,
+      "after": "다니엘서의 아람어에서 하나님을 ‘가장 높으신 이’라고 부르거나 ‘가장 높으신 하나님’과 같이 수식한다. 단 4:17(아람어 본문 4:14)은 그가 사람의 나라를 다스리고 원하는 이에게 왕권을 맡긴다고 설명한다. 개역 계열은 ‘지극히 높으신’으로, 새번역은 ‘가장 높으신’으로 옮긴다. 케티브 עִלָּיָא와 케레 עִלָּאָה가 함께 표시된 곳은 같은 본문 자리를 기록한 것이다. 단 7:25에는 H5946도 같은 칭호로 나온다."
+    },
+    {
+      "word_id": "H5944_0000",
+      "before": null,
+      "after": "집이나 성문·성전의 높은 층 또는 지붕에 마련한 방이다. 왕하 4:10의 방에는 침상과 책상 등을 놓으며, 삼하 18:33(히브리어 본문 19:1)은 성문 위의 방이다. 시 104편은 하늘에 있는 하나님의 방들에 비유해 쓴다. 대하 9:4는 보통 뜻, 올라가는 층계, 번제 독법이 서로 경쟁한다."
+    },
+    {
+      "word_id": "H5945_0000",
+      "before": null,
+      "after": "윗부분이나 높은 위치, 또는 비교 대상보다 높은 지위를 나타낸다. 창 40:17의 맨 위 광주리와 시 89:27(히브리어 본문 89:28)의 세상 왕들 가운데 높은 왕이 그 예다. 하나님을 가리키는 칭호에는 ‘가장 높으신 이’를 쓴다. 개역 계열은 창 14:18에서 ‘지극히 높으신 하나님’이라고 옮기고, 새번역은 ‘가장 높으신 하나님’이라고 옮긴다. 독립적으로 쓰일 때에는 지존자로도 옮긴다. Strong은 H5927과 연결한다."
+    },
+    {
+      "word_id": "H5946_0000",
+      "before": null,
+      "after": "단 7:18·22·25·27에서 ‘가장 높으신 이의 거룩한 자들’에 해당하는 표현에 나온다. 실제 아람어 표면형 עֶלְיוֹנִין은 복수 철자이다. 그리스어는 단수 칭호인 ὕψιστος로 읽고 새번역도 ‘가장 높으신 분’으로 옮긴다. 개역 계열의 ‘지극히 높으신 이’는 같은 칭호이다. 복수를 ‘높은 곳들’로 읽는 견해도 있다."
+    },
+    {
+      "word_id": "H5952_0000",
+      "before": null,
+      "after": "단 6:10(아람어 본문 6:11)에서 다니엘이 기도한 위층 방이다. 창이 예루살렘 쪽으로 나 있다. 아람어 본문은 בְּעִלִּיתֵהּ로 적으며, 히브리어 H5944의 위층 방과 비교할 수 있다."
+    },
+    {
+      "word_id": "H8585_0000",
+      "before": null,
+      "after": "물을 보내거나 모으는 길이나 도랑을 뜻한다. 왕상 18:32–38의 제단 둘레 도랑, 왕하 18:17의 윗못 물길, 욥 38:25의 빗물 길에 쓰인다. 렘 30:13·46:11에서는 상처가 아물거나 나을 수 있음을 가리키는 말로 쓰이며 여기서는 부정된다. BDB는 이 두 뜻을 서로 다른 항목으로 구별한다. Strong은 둘을 한 번호에 싣고 상처에 바르는 붕대 또는 고약으로도 풀이한다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H0500_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong이 주는 첫 신명 요소와 히브리어 형식 אֶלְ을 근거로 한다. 이름 전체의 역사적 풀이에는 여러 견해가 있다. 근거는 Strong 고정 XML · H0496의 합성 이름 선례.",
+      "source": "H0500 R2 관계 평가 · H0410 → H0500"
+    },
+    {
+      "word_id_1": "H0500_0000",
+      "word_id_2": "H5927_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "hypothesized",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong은 이름 뒤를 ‘오르다’와 연결한다. BDB의 물음표와 ‘높은 곳’ 풀이를 고려해 귀속을 가설로 둔다. 근거는 Strong 고정 XML · BDB H0500.",
+      "source": "H0500 R2 관계 평가 · H5927 → H0500"
+    },
+    {
+      "word_id_1": "H1172_0000",
+      "word_id_2": "H1175_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "수 15:24의 이름 전체는 ‘여주인들’과 형태가 대응한다. 왕상 4:16의 아롯은 전치사 분절과 귀속이 열려 있어 이 관계가 다루는 근거를 수 15:24로 좁힌다. 근거는 Strong 고정 XML · 수 15:24.",
+      "source": "H0500 R2 관계 평가 · H1172 → H1175"
+    },
+    {
+      "word_id_1": "H4605_0000",
+      "word_id_2": "H5927_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "위로의 뜻과 공통 어근을 기록한다. BDB가 제안한 H4608을 거치는 어형의 경로는 별도 가설이다. 근거는 Strong 고정 XML · BDB H4605.",
+      "source": "H0500 R2 관계 평가 · H5927 ↔ H4605"
+    },
+    {
+      "word_id_1": "H4607_0000",
+      "word_id_2": "H5927_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "느 8:6에 손을 들어 올리는 행위명사로 등장한다. 근거는 Strong 고정 XML · 느 8:6.",
+      "source": "H0500 R2 관계 평가 · H5927 → H4607"
+    },
+    {
+      "word_id_1": "H4608_0000",
+      "word_id_2": "H5927_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "동사의 오르다에서 오르는 길을 가리키는 명사가 형성된다. 근거는 Strong 고정 XML · 사 15:5.",
+      "source": "H0500 R2 관계 평가 · H5927 → H4608"
+    },
+    {
+      "word_id_1": "H4608_0000",
+      "word_id_2": "H4609_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "מַעֲלֶה와 מַעֲלָה는 겔 40:31에서 오르는 길과 층계를 가리키며 어근을 공유한다. Strong의 여성형 설명을 보존하되 같은 어근에서 나왔다는 증거의 강도에 맞춰 방향을 두지 않는다. 근거는 Strong 고정 XML · BDB H4608·H4609 · 겔 40:31.",
+      "source": "H0500 R2 관계 평가 · H4608 ↔ H4609"
+    },
+    {
+      "word_id_1": "H4608_0000",
+      "word_id_2": "H4610_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "수 15:3에서 מַעֲלֵה가 연계형으로 쓰인다. H4608의 ‘오르는 길’은 이 지형에서 ‘오르막길’에 해당한다. 근거는 Strong 고정 XML · 수 15:3.",
+      "source": "H0500 R2 관계 평가 · H4608 → H4610"
+    },
+    {
+      "word_id_1": "H4610_0000",
+      "word_id_2": "H6137_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "עַקְרַבִּים은 ‘전갈’의 복수이고 연계형 מַעֲלֵה에 이어져 ‘전갈들의 오르막길’이라는 이름을 이룬다. 근거는 Strong 고정 XML · 민 34:4.",
+      "source": "H0500 R2 관계 평가 · H6137 → H4610"
+    },
+    {
+      "word_id_1": "H5866_0000",
+      "word_id_2": "H5927_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "hypothesized",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong이 일래를 ‘높은’으로 풀이한다. 대상 11:29는 인명이며 작명 어원의 직접 증거는 부족하다. 근거는 Strong 고정 XML · BDB H5866.",
+      "source": "H0500 R2 관계 평가 · H5927 ↔ H5866"
+    },
+    {
+      "word_id_1": "H5920_0000",
+      "word_id_2": "H5927_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "높이의 뜻과 형태가 이어진다. 직접 파생 단계는 확정하기 어렵다. 근거는 Strong 고정 XML · Klein עַל I.",
+      "source": "H0500 R2 관계 평가 · H5927 ↔ H5920"
+    },
+    {
+      "word_id_1": "H5927_0000",
+      "word_id_2": "H5929_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "성장 용법과 잎의 형태가 대응한다. 겔 47:12에 두 표제가 함께 쓰인다. 근거는 Strong 고정 XML · BDB H5929 · 겔 47:12.",
+      "source": "H0500 R2 관계 평가 · H5927 → H5929"
+    },
+    {
+      "word_id_1": "H5927_0000",
+      "word_id_2": "H5930_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "창 22:13에서 동사는 번제를 ‘올리다’이고 명사는 ‘번제’다. Strong은 이 명사를 동사의 여성 능동 분사에서 형성된 말로 설명한다. 근거는 Strong 고정 XML · 창 22:13.",
+      "source": "H0500 R2 관계 평가 · H5927 → H5930"
+    },
+    {
+      "word_id_1": "H5928_0000",
+      "word_id_2": "H5930_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "아람어와 히브리어의 제의 명사가 형태와 뜻에서 대응한다. 차용의 방향은 미확정이다. 근거는 Strong 고정 XML · 스 6:9 · 창 22:13.",
+      "source": "H0500 R2 관계 평가 · H5928 ↔ H5930"
+    },
+    {
+      "word_id_1": "H5927_0000",
+      "word_id_2": "H5940_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "공이를 들어 올리는 동작에서 파생되었다는 사전 풀이를 가설로 기록한다. 근거는 Strong 고정 XML · BDB H5940.",
+      "source": "H0500 R2 관계 평가 · H5927 → H5940"
+    },
+    {
+      "word_id_1": "H5927_0000",
+      "word_id_2": "H5942_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "위쪽 샘과 아래쪽 샘을 대조하는 높이 형용사이다. 근거는 Strong 고정 XML · 수 15:19 · 삿 1:15.",
+      "source": "H0500 R2 관계 평가 · H5927 → H5942"
+    },
+    {
+      "word_id_1": "H5942_0000",
+      "word_id_2": "H5943_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "두 언어 형태가 높이의 어근을 공유한다. 히브리어는 위쪽 위치, 아람어 본문은 가장 높으신 이라는 칭호를 표현한다. 근거는 Strong 고정 XML · 수 15:19 · 단 3:26.",
+      "source": "H0500 R2 관계 평가 · H5942 ↔ H5943"
+    },
+    {
+      "word_id_1": "H5927_0000",
+      "word_id_2": "H5944_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "높은 위치에 마련한 방을 가리키는 히브리어 명사 파생을 기록한다. 근거는 Strong 고정 XML · 왕하 4:10.",
+      "source": "H0500 R2 관계 평가 · H5927 → H5944"
+    },
+    {
+      "word_id_1": "H5944_0000",
+      "word_id_2": "H5952_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "두 언어의 위층 방 명사, Strong의 compare와 BDB의 형태 비교에 근거한다. 근거는 Strong 고정 XML · BDB H5944·H5952 · 단 6:10.",
+      "source": "H0500 R2 관계 평가 · H5944 ↔ H5952"
+    },
+    {
+      "word_id_1": "H5927_0000",
+      "word_id_2": "H5945_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "높은 위치나 지위를 가리키는 형용사와 칭호의 어근 연결이다. 근거는 Strong 고정 XML · BDB H5945.",
+      "source": "H0500 R2 관계 평가 · H5927 → H5945"
+    },
+    {
+      "word_id_1": "H5945_0000",
+      "word_id_2": "H5946_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "형태와 칭호가 대응하며, 아람어 표제의 실제 본문형은 복수이다. 근거는 Strong 고정 XML · 단 7:25 · 창 14:18.",
+      "source": "H0500 R2 관계 평가 · H5945 ↔ H5946"
+    },
+    {
+      "word_id_1": "H4605_0000",
+      "word_id_2": "H4608_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "hypothesized",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "BDB가 H4605를 H4608의 축약으로 설명한다. 재구된 어형 경로를 가설로 제안한다. 근거는 BDB H4605.",
+      "source": "H0500 R2 관계 평가 · H4608 → H4605"
+    },
+    {
+      "word_id_1": "H5943_0000",
+      "word_id_2": "H5946_0000",
+      "category_code": "semantic",
+      "relation_type": "similar",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "단 7:25에서 두 형태가 ‘가장 높으신 이’라는 칭호 역할을 한다. 실제 아람어 형태와 문법은 각각의 비고에 보존한다. 근거는 단 7:25의 아람어 원문과 LXX.",
+      "source": "H0500 R2 관계 평가 · H5943 ↔ H5946"
+    }
+  ],
+  "relation_replacements": [
+    {
+      "relation_id": 3948,
+      "word_id_1": "H5927_0000",
+      "word_id_2": "H5941_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "etymological",
+        "relation_type": "root_shared",
+        "status_code": "hypothesized",
+        "direction_code": "undirected",
+        "description": null,
+        "relation_group_id": null,
+        "note": "Strong은 이름을 ‘높은’으로 풀이한다. 실로의 제사장이라는 인물 식별과 어원은 별도의 판단이다. 근거는 Strong 고정 XML · BDB H5941.",
+        "source": "H0500 R2 관계 평가 · H5927 ↔ H5941"
+      }
+    },
+    {
+      "relation_id": 3949,
+      "word_id_1": "G2242_0000",
+      "word_id_2": "H5941_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "transliteration",
+        "relation_type": "conventional_transliteration",
+        "status_code": "hypothesized",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "Strong은 이 히브리어 이름을 연결하고 확보 LXX도 ηλι로 음역한다. 누가의 원천 철자와 정확한 전승 경로는 미확정이다. 근거는 Strong Greek 고정 XML · 삼상 1:9 LXX · 눅 3:23 TAGNT.",
+        "source": "H0500 R2 관계 평가 · H5941 → G2242"
+      }
+    }
+  ],
+  "supersedes": [],
+  "meaning_approvals": []
+}

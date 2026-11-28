@@ -2110,3 +2110,7 @@ R2의 10개 표제에 뜻 16개, 비고 10건, 신규 관계 14건을 작업 DB�
 ### H497 엘르아다와 꾸밈 어휘군 승인 반영
 
 R2의 9개 표제에 뜻 11개, 비고 9건, 신규 관계 11건(ID 8675–8685)을 작업 DB에 반영했다. 사본 적용·되돌리기, 적용기 테스트 31개, 독립 SQL 검증을 통과했다. 적용 이력은 29행이다. 공식 진행표의 승인 어휘는 1,311개, hold는 7개다. [승인 매니페스트](../../tool/data_provenance/manifests/h497_cluster_approved_content_slice.json) · [결정 기록](../semantic_decisions/h497_cluster_approved_content_slice.md)
+
+### H500 엘르알레와 ‘오르다’ 어휘군 승인 반영 (2026-11-28)
+
+25개 표제에 뜻 39개와 비고 25건, 신규 관계 23건과 교체 2건을 작업 DB에 반영했다. 모의 적용·되돌리기, 적용기 테스트 31개, 독립 SQL 대조와 무결성·외래 키 검사를 통과했다. 적용 이력은 75행이며 표준 진행표의 승인 어휘는 1,360개다. [승인 매니페스트](../../tool/data_provenance/manifests/h500_cluster_approved_content_slice.json) · [결정 기록](../semantic_decisions/h500_cluster_approved_content_slice.md)
