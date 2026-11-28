@@ -1,0 +1,518 @@
+{
+  "format_version": 5,
+  "batch_id": "RESHET-EC-H501-CLUSTER-APPROVED-CONTENT-SLICE",
+  "provenance": {
+    "document_id": "data/backups/approved_content_batch/h501_approval_20261128/00_user_approval.json",
+    "document_sha256": "ca8db8b4e5b29427e979125c9d6523f179431dbcd91c581ad2b399db372ddded"
+  },
+  "target": {
+    "expected_work_sha256": "50ff22ad94a1e4710d78ab8878129ed0a5aef557df6b0c08926ca53e4dc9fd03",
+    "expected_user_version": 0
+  },
+  "meaning_replacements": [
+    {
+      "word_id": "H6213_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "일하다, 행하다, 만들다, 형성하다, 이루다"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "하다"
+        },
+        {
+          "seq": 2,
+          "meaning": "만들다"
+        },
+        {
+          "seq": 3,
+          "meaning": "누르다"
+        }
+      ]
+    },
+    {
+      "word_id": "H4639_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "행위, 행동, 일, 노동, 제작이나 공작(품)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "일"
+        },
+        {
+          "seq": 2,
+          "meaning": "산물(産物)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3299_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "야아수 Jaasu(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "야아수·야아사이 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H0501_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "엘르아사 (인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "엘르아사·엘라사·엘-아사 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H3300_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "야아시엘 Jaasiel(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "야아시엘·야아시-엘 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H4640_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "마아새 Maasiai"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "마아새·마아사이 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H4641_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "마아세야 Maaseiah"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "마아세야·마아세-야·마아세-야후 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H6214_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아사헬 Asahel"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아사헬·아사-엘 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H6215_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "에서"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "에서·에사우 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "G2269_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "에서"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "에서·에사우 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H6221_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아시엘 Asiel(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아시엘·아시-엘 (인)"
+        }
+      ]
+    },
+    {
+      "word_id": "H6222_0000",
+      "before": [
+        {
+          "seq": 1,
+          "meaning": "아사야 Asaiah(인)"
+        }
+      ],
+      "after": [
+        {
+          "seq": 1,
+          "meaning": "아사야·아사-야 (인)"
+        }
+      ]
+    }
+  ],
+  "meaning_approvals": [
+    {
+      "word_id": "H1202_0000",
+      "meanings": [
+        {
+          "seq": 1,
+          "meaning": "바아세야 (인)"
+        }
+      ]
+    }
+  ],
+  "word_note_replacements": [
+    {
+      "word_id": "H6213_0000",
+      "before": null,
+      "after": "일을 하거나 무엇을 만들어 생기게 하는 기본 동사다. 파생 명사 H4639의 ‘일’은 하는 일에, ‘산물’은 만들어졌거나 생겨난 것에 대응한다. 명령의 이행, 제사와 절기의 시행에도 쓰이며, 열매를 내거나 부를 일구고 어떤 지위에 세우는 풀이는 문맥에 따른다. 겔 23:3·8의 피엘은 몸의 일부를 누르는 뜻이다. OSHB는 이 용법을 6213 b로 구분하며, 23:21은 b 표지에 칼형이 쓰여 그 자리의 분석을 유보한다."
+    },
+    {
+      "word_id": "H4639_0000",
+      "before": null,
+      "after": "H6213 ‘하다·만들다’에서 나온 명사다. ‘일’은 하는 일, 한 일, 해야 할 일을 가리키며 노동·생업·제작 과정에도 쓰인다. ‘산물’은 만들어 낸 물건, 수확한 것, 행위에서 생긴 결과를 가리킨다. 출 32:16의 돌판, 합 3:17의 올리브 소출, 사 32:17의 평화가 그 예다. 삿 13:12는 아이가 할 일과 그 아이에게 해야 할 일을 두고 해석이 갈리며, 삼상 25:2는 목축 사업이나 그 소유를 가리키는 문맥이다. 욥 37:7은 절 후반부의 구문 해석이 갈린다."
+    },
+    {
+      "word_id": "H3299_0000",
+      "before": null,
+      "after": "스 10:37의 인명이다. 본문에 적힌 기록형(케티브) ויעשו는 Strong 표제 יַעֲשׂוּ와 관용명 야아수에 대응한다. 마소라 주석이 지시하는 낭독형(케레) וְיַעֲשָׂי의 이름 부분을 교재식으로 옮기면 야아사이다. 둘은 명단의 같은 한 자리에 해당한다. Strong은 기록형 계열의 이름을 H6213의 ‘그들이 할 것이다’와 연결한다. 확보 칠십인역은 그 자리에서 동사 ἐποίησαν으로 읽는다."
+    },
+    {
+      "word_id": "H0501_0000",
+      "before": null,
+      "after": "대상 2:39–40의 헬레스의 아들, 대상 8:37과 9:43의 사울 계보 인물, 스 10:22의 바스훌 자손, 렘 29:3의 사반의 아들 이름이다. 개역 계열은 역대상에서 엘르아사, 에스라와 예레미야에서 엘라사를 쓰며, 새번역은 렘 29:3에서 엘리사로 옮긴다. 엘-아사는 신명 요소 엘(H0410)과 ‘만들다’의 아사(H6213)를 드러낸 교재식 표기다. 이름은 ‘하나님이 만드셨다’로 풀이된다."
+    },
+    {
+      "word_id": "H1202_0000",
+      "before": null,
+      "after": "대상 6:40(마소라 본문 6:25)의 아삽 계보에 나오는 말기야의 아들이자 미가엘의 아버지다. 끝의 야는 신명 요소다. Strong은 ‘야의 일에’로 풀이하고 BDB는 마아세야와의 형태 관계를 묻는다. 확보 칠십인역의 마아시아 표기는 그 비교를 뒷받침하지만 이름의 첫 부분과 형성 경로는 미확정이다."
+    },
+    {
+      "word_id": "H3300_0000",
+      "before": null,
+      "after": "대상 11:47의 므소바 용사와 대상 27:21의 아브넬의 아들 이름이다. 야아시-엘은 ‘하다·만들다’의 H6213 계열과 신명 요소 엘(H0410)의 경계를 드러낸다. Strong의 ‘하나님이 만든 이’와 UBS의 ‘하나님이 하시기를’ 풀이가 있다. 대상 15:18에서 같은 한글 이름을 쓰는 판본의 해당 히브리어 표제는 H3268이다."
+    },
+    {
+      "word_id": "H4640_0000",
+      "before": null,
+      "after": "대상 9:12에서 임멜 계열의 제사장 이름이다. 마아사이는 Strong 표제 מַעֲשַׂי의 교재식 근사이며, 마소라 본문에는 아인 아래 단순 셰와가 있는 מַעְשַׂי로 나온다. Strong은 H6213과 연결하고 BDB는 ‘야의 일’ 계열의 다른 이름과 함께 다룬다. 느 11:13의 아맛새와 계보가 비슷하며 같은 인물인지와 이름이 단축된 경로는 미확정이다."
+    },
+    {
+      "word_id": "H4641_0000",
+      "before": null,
+      "after": "역대기, 에스라, 느헤미야, 예레미야에서 여러 남자의 이름으로 쓰인다. ‘일’의 마아세(H4639)와 신명 요소 야·야후로 이루어져 ‘야의 일’로 풀이된다. 마아세-야와 마아세-야후는 실제 본문의 단형과 장형을 드러낸 교재식 근사다."
+    },
+    {
+      "word_id": "H6214_0000",
+      "before": null,
+      "after": "요압의 동생, 대하 17:8의 레위인, 대하 31:13의 예물 관리에 참여한 인물, 스 10:15의 요나단의 아버지 이름이다. 아사-엘은 동사 H6213의 이름 형태와 신명 요소 엘(H0410)을 드러낸 교재식 표기다. 삼하 3:27 등에서는 이름의 두 부분이 따로 적힌다. ‘하나님이 만드셨다’로 풀이된다."
+    },
+    {
+      "word_id": "H6215_0000",
+      "before": null,
+      "after": "이삭의 맏아들이자 야곱의 형이다. 창 36:1·8·19에서 에돔과 같은 인물로 불리며, 신 2장과 오바댜에서는 그 이름으로 후손과 가문·지역을 가리키기도 한다. 에사우는 끝 와우를 반영한 교재식 근사다. 창 25:25의 털옷 같은 외모에서 이름을 설명하는 전승이 있고, H6213의 수동 분사에서 왔다는 설명은 추정이다."
+    },
+    {
+      "word_id": "G2269_0000",
+      "before": null,
+      "after": "이삭의 맏아들 에서의 히브리어 이름 H6215가 전해진 그리스어 형태다. 롬 9:13은 말 1:2–3을 인용하며, 히 11:20과 12:16은 각각 이삭의 축복과 에서의 장자권 사건을 언급한다. 에사우는 Ἠσαῦ의 교재식 근사다."
+    },
+    {
+      "word_id": "H6221_0000",
+      "before": null,
+      "after": "대상 4:35의 시므온 계보에서 예후의 증조부다. 아시-엘은 ‘하다·만들다’의 H6213 계열과 신명 요소 엘(H0410)의 경계를 드러낸다. Strong은 ‘하나님이 만든 이’로 풀이한다. 확보 칠십인역의 아시엘 계열 음역은 다른 몇몇 히브리어 이름 자리에도 나온다."
+    },
+    {
+      "word_id": "H6222_0000",
+      "before": null,
+      "after": "요시야의 시종과 시므온·므라리 계열 및 실로 계열 명단에 나오는 남자 이름이다. 아사-야는 ‘만들다’의 H6213 계열과 신명 요소 야(H3050)를 보여 주는 교재식 표기다. ‘야께서 만드셨다’로 풀이된다."
+    }
+  ],
+  "relation_creates": [
+    {
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H0501_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "엘 신명 요소. 근거는 H0501의 from H0410 and H6213.",
+      "source": "H0501 R2 관계 평가 · H0410 → H0501"
+    },
+    {
+      "word_id_1": "H0501_0000",
+      "word_id_2": "H6213_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "‘만들다’ 동사 요소. 근거는 H0501의 from H0410 and H6213.",
+      "source": "H0501 R2 관계 평가 · H6213 → H0501"
+    },
+    {
+      "word_id_1": "H1202_0000",
+      "word_id_2": "H3050_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "실제 이름 끝 -야. 근거는 H1202의 from … H3050 with a prepositional prefix.",
+      "source": "H0501 R2 관계 평가 · H3050 → H1202"
+    },
+    {
+      "word_id_1": "H1202_0000",
+      "word_id_2": "H6213_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "hypothesized",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong의 직접 설명과 BDB의 마아세야 대안. 앞 요소의 경로 미확정. 근거는 H1202의 from H6213 … with a prepositional prefix.",
+      "source": "H0501 R2 관계 평가 · H6213 → H1202"
+    },
+    {
+      "word_id_1": "H3299_0000",
+      "word_id_2": "H6213_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "기록형에서 확인되는 동사 어근과 인명으로의 전용. 근거는 H3299의 from H6213.",
+      "source": "H0501 R2 관계 평가 · H6213 → H3299"
+    },
+    {
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H3300_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "엘 요소. 근거는 H3300의 from H6213 and H0410.",
+      "source": "H0501 R2 관계 평가 · H0410 → H3300"
+    },
+    {
+      "word_id_1": "H3300_0000",
+      "word_id_2": "H6213_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "Strong과 UBS의 공통 어근 분석. 문장의 양태는 이견. 근거는 H3300의 from H6213 and H0410.",
+      "source": "H0501 R2 관계 평가 · H6213 → H3300"
+    },
+    {
+      "word_id_1": "H4639_0000",
+      "word_id_2": "H6213_0000",
+      "category_code": "morphological",
+      "relation_type": "derived",
+      "status_code": "asserted",
+      "direction_code": "w2_to_w1",
+      "description": null,
+      "relation_group_id": null,
+      "note": "동사에서 나온 행위·결과 명사. 근거는 H4639의 from H6213.",
+      "source": "H0501 R2 관계 평가 · H6213 → H4639"
+    },
+    {
+      "word_id_1": "H4640_0000",
+      "word_id_2": "H6213_0000",
+      "category_code": "etymological",
+      "relation_type": "root_shared",
+      "status_code": "asserted",
+      "direction_code": "undirected",
+      "description": null,
+      "relation_group_id": null,
+      "note": "어근은 일치하며 BDB의 이름군 대안 때문에 직접 파생 경로는 유보. 근거는 H4640의 from H6213.",
+      "source": "H0501 R2 관계 평가 · H4640 ↔ H6213"
+    },
+    {
+      "word_id_1": "H3050_0000",
+      "word_id_2": "H4641_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "실제 야·야후 단형과 장형. 근거는 H4641의 from H4639 and H3050.",
+      "source": "H0501 R2 관계 평가 · H3050 → H4641"
+    },
+    {
+      "word_id_1": "H4639_0000",
+      "word_id_2": "H4641_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "‘일’의 명사 계열이 합성의 앞 요소. 근거는 H4641의 from H4639 and H3050.",
+      "source": "H0501 R2 관계 평가 · H4639 → H4641"
+    },
+    {
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H6214_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "붙여 쓴 형태와 나뉜 형태에서 엘 확인. 근거는 H6214의 from H6213 and H0410.",
+      "source": "H0501 R2 관계 평가 · H0410 → H6214"
+    },
+    {
+      "word_id_1": "H6213_0000",
+      "word_id_2": "H6214_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "아사 요소의 실제 분리 표기. 근거는 H6214의 from H6213 and H0410.",
+      "source": "H0501 R2 관계 평가 · H6213 → H6214"
+    },
+    {
+      "word_id_1": "H0410_0000",
+      "word_id_2": "H6221_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "엘 요소. 근거는 H6221의 from H6213 and H0410.",
+      "source": "H0501 R2 관계 평가 · H0410 → H6221"
+    },
+    {
+      "word_id_1": "H6213_0000",
+      "word_id_2": "H6221_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "H3300과 같은 어근·신명 조합. 구체적 문장 분석은 비고. 근거는 H6221의 from H6213 and H0410.",
+      "source": "H0501 R2 관계 평가 · H6213 → H6221"
+    },
+    {
+      "word_id_1": "H3050_0000",
+      "word_id_2": "H6222_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "실제 이름 끝 -야. 근거는 H6222의 from H6213 and H3050.",
+      "source": "H0501 R2 관계 평가 · H3050 → H6222"
+    },
+    {
+      "word_id_1": "H6213_0000",
+      "word_id_2": "H6222_0000",
+      "category_code": "morphological",
+      "relation_type": "compound",
+      "status_code": "asserted",
+      "direction_code": "w1_to_w2",
+      "description": null,
+      "relation_group_id": null,
+      "note": "동사에서 온 앞 요소. 근거는 H6222의 from H6213 and H3050.",
+      "source": "H0501 R2 관계 평가 · H6213 → H6222"
+    }
+  ],
+  "relation_replacements": [
+    {
+      "relation_id": 4796,
+      "word_id_1": "G2269_0000",
+      "word_id_2": "H6215_0000",
+      "before": {
+        "category_code": "unspecified",
+        "relation_type": "related",
+        "status_code": "inferred",
+        "direction_code": "unknown",
+        "description": null,
+        "relation_group_id": null,
+        "note": null,
+        "source": "WORD_TABLE.관련1"
+      },
+      "after": {
+        "category_code": "etymological",
+        "relation_type": "borrowed_from",
+        "status_code": "asserted",
+        "direction_code": "w2_to_w1",
+        "description": null,
+        "relation_group_id": null,
+        "note": "본문과 참조가 공유하는 Ἠσαῦ 이름형. 근거는 G2269의 of Hebrew origin.",
+        "source": "H0501 R2 관계 평가 · H6215 → G2269"
+      }
+    }
+  ],
+  "supersedes": []
+}
